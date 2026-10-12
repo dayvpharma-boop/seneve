@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { dayInfo, eventIdFor, webText, TOTAL_DAYS } from '@/lib/espace';
+import { WhatsAppLink } from '@/components/WhatsAppLink';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
 type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
@@ -88,7 +89,7 @@ export function Espace() {
     <div className="card"><p className="tag">Découverte 7 jours</p>
       <p>Un parcours gratuit de 7 jours, à ton rythme, à partir du livre « Arrête de mendier des miracles ».</p>
       <button type="button" className="btn" disabled={starting} onClick={start}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
-    </div></main>;
+    </div><WhatsAppLink /></main>;
 
   const { day, finished } = dayInfo(data.enrollment.date_debut);
   const maxOpen = finished ? TOTAL_DAYS : day;
@@ -113,6 +114,7 @@ export function Espace() {
     </article>
     {action && <ActionCard key={action.activity_id} enrollmentId={data.enrollment.enrollment_id} activity={action} state={data.states.find(s => s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">Question pour réfléchir</p><p className="action">{question.consigne}</p></div>}
+    <WhatsAppLink />
   </main>;
 }
 
