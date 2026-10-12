@@ -1,16 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { dayInfo, eventIdFor, webText, TOTAL_DAYS } from '@/lib/espace';
+import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
+type Programme = { programme_id: string; nom: string; duree_jours: number | null };
 type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
 type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean };
 type State = { enrollment_id: string; activity_id: string; etat: string; realisee_le: string | null };
-type Data = { prenom: string; enrollment: Enrollment | null; contents: Content[]; activities: Activity[]; states: State[] };
+type Parcours = Enrollment & { nom: string; duree: number };
+type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[] };
 
 const LOAD_ERROR = 'Impossible de charger ta journée pour le moment.';
+
+/** Nom court affiché : « Accompagnement du livre — 14 jours ». */
+function shortName(nom: string) { return nom.replace(/ en français/, ''); }
 
 /** Charge les données du participant connecté. Renvoie null s'il n'y a pas de session. */
 async function load(): Promise<Data | null> {
@@ -22,25 +27,37 @@ async function load(): Promise<Data | null> {
   if (ep.error) throw ep.error;
   const [p, e] = await Promise.all([
     supabase.from('participants').select('prenom').maybeSingle(),
-    supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').order('date_debut', { ascending: false }),
+    // Un parcours arrêté n'est pas affiché ; son historique reste conservé en base.
+    supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').neq('etat', 'annulee'),
   ]);
   if (p.error) throw p.error;
   if (e.error) throw e.error;
   const prenom = (p.data?.prenom as string | undefined) ?? meta;
-  const enrollment = (e.data?.[0] as Enrollment | undefined) ?? null;
-  if (!enrollment) return { prenom, enrollment, contents: [], activities: [], states: [] };
-  const c = await supabase.from('contents').select('content_id, programme_id, version, jour, numero_message, theme, explication, texte_officiel, reference_livre')
-    .eq('programme_id', enrollment.programme_id).eq('version', enrollment.version).order('jour').order('numero_message');
+  const enrollments = (e.data ?? []) as Enrollment[];
+  if (!enrollments.length) return { prenom, parcours: [], contents: [], activities: [], states: [] };
+  const progIds = [...new Set(enrollments.map(x => x.programme_id))];
+  const [pr, c] = await Promise.all([
+    supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', progIds),
+    supabase.from('contents').select('content_id, programme_id, version, jour, numero_message, theme, explication, texte_officiel, reference_livre')
+      .in('programme_id', progIds).order('jour').order('numero_message'),
+  ]);
+  if (pr.error) throw pr.error;
   if (c.error) throw c.error;
-  const contents = (c.data ?? []) as Content[];
+  const programmes = (pr.data ?? []) as Programme[];
+  const parcours: Parcours[] = enrollments.map(x => {
+    const prog = programmes.find(q => q.programme_id === x.programme_id);
+    return { ...x, nom: shortName(prog?.nom ?? x.programme_id), duree: prog?.duree_jours ?? 7 };
+  });
+  // Chaque inscription garde sa version : on ne retient que les contenus de cette version.
+  const contents = ((c.data ?? []) as Content[]).filter(ct => enrollments.some(x => x.programme_id === ct.programme_id && String(x.version) === String(ct.version)));
   const ids = contents.map(x => x.content_id);
   const [a, st] = await Promise.all([
     ids.length ? supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire').in('content_id', ids) : Promise.resolve({ data: [], error: null }),
-    supabase.from('activity_state').select('enrollment_id, activity_id, etat, realisee_le').eq('enrollment_id', enrollment.enrollment_id),
+    supabase.from('activity_state').select('enrollment_id, activity_id, etat, realisee_le').in('enrollment_id', enrollments.map(x => x.enrollment_id)),
   ]);
   if (a.error) throw a.error;
   if (st.error) throw st.error;
-  return { prenom, enrollment, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
+  return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
 }
 
 function formatDate(iso: string | null) {
@@ -48,11 +65,18 @@ function formatDate(iso: string | null) {
   return new Intl.DateTimeFormat('fr-FR', { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
 }
 
+/** Date de début (AAAA-MM-JJ) affichée en toutes lettres, sans décalage de fuseau. */
+function formatStart(ymd: string) {
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(ymd) ? new Date(`${ymd}T12:00:00Z`) : new Date(ymd);
+  return new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }).format(d);
+}
+
 export function Espace() {
   const navigate = useNavigate();
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
+  const [chosen, setChosen] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -85,40 +109,55 @@ export function Espace() {
   if (failed) return <main className="wrap">{header}{errorCard}</main>;
   if (!data) return <main className="wrap">{header}<p className="muted">Chargement…</p></main>;
 
-  if (!data.enrollment) return <main className="wrap">{header}
+  if (!data.parcours.length) return <main className="wrap">{header}
     <div className="card"><p className="tag">Découverte 7 jours</p>
       <p>Un parcours gratuit de 7 jours, à ton rythme, à partir du livre « Arrête de mendier des miracles ».</p>
       <button type="button" className="btn" disabled={starting} onClick={start}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
     </div><WhatsAppLink /></main>;
 
-  const { day, finished } = dayInfo(data.enrollment.date_debut);
-  const maxOpen = finished ? TOTAL_DAYS : day;
-  const current = selected ?? day;
-  const content = data.contents.find(c => c.jour === current);
-  if (!content) return <main className="wrap">{header}{errorCard}</main>;
+  const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
+  const total = enr.duree;
+  const tabs = data.parcours.length > 1 && <div className="prog-tabs" role="tablist" aria-label="Mes parcours">
+    {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); }}>{x.nom}</button>)}
+  </div>;
+
+  const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);
+  if (notStarted) return <main className="wrap">{header}{tabs}
+    <div className="card"><p className="tag">{enr.nom}</p>
+      <p>Ton accompagnement commence le {formatStart(enr.date_debut)}. Le jour 1 s'ouvrira ce jour-là.</p>
+    </div><WhatsAppLink /></main>;
+
+  const maxOpen = finished ? total : day;
+  const current = Math.min(selected ?? day, maxOpen);
+  const contents = data.contents.filter(c => c.programme_id === enr.programme_id && String(c.version) === String(enr.version));
+  const content = contents.find(c => c.jour === current);
+  if (!content) return <main className="wrap">{header}{tabs}{errorCard}</main>;
   const acts = data.activities.filter(a => a.content_id === content.content_id);
   const action = acts.find(a => a.type_activite === 'action');
   const question = acts.find(a => a.type_activite === 'question');
+  const paused = enr.etat === 'en_pause';
 
-  return <main className="wrap">{header}
-    {finished ? <p>Ta Découverte de 7 jours est terminée. Tu peux relire les 7 journées.</p> : <p className="day-count">Jour {day} sur 7</p>}
+  return <main className="wrap">{header}{tabs}
+    {!tabs && <p className="tag">{enr.nom}</p>}
+    {finished ? <p>Ce parcours de {total} jours est terminé. Tu peux relire les {total} journées.</p> : <p className="day-count">Jour {day} sur {total}</p>}
+    {paused && <p className="muted" role="status">Ce parcours est en pause.</p>}
     <div className="day-chips">
-      {Array.from({ length: TOTAL_DAYS }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? `Jour ${n}, pas encore ouvert` : `Jour ${n}`} onClick={() => setSelected(n)}>{n}</button>)}
+      {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? `Jour ${n}, pas encore ouvert` : `Jour ${n}`} onClick={() => setSelected(n)}>{n}</button>)}
     </div>
-    {maxOpen < TOTAL_DAYS && <p className="muted">Le jour {maxOpen + 1} s'ouvre demain.</p>}
+    {maxOpen < total && <p className="muted">Le jour {maxOpen + 1} s'ouvre demain.</p>}
     <article className="card">
       <p className="tag">Jour {current}</p>
       <h2>{content.theme}</h2>
       <p className="day-text">{webText(content.texte_officiel, data.prenom)}</p>
       {content.reference_livre && <p className="src">Dans le livre : {content.reference_livre}</p>}
     </article>
-    {action && <ActionCard key={action.activity_id} enrollmentId={data.enrollment.enrollment_id} activity={action} state={data.states.find(s => s.activity_id === action.activity_id)} />}
+    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">Question pour réfléchir</p><p className="action">{question.consigne}</p></div>}
     <WhatsAppLink />
   </main>;
 }
 
-function ActionCard({ enrollmentId, activity, state }: { enrollmentId: string; activity: Activity; state: State | undefined }) {
+function ActionCard({ enrollmentId, activity, state, readOnly = false }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean }) {
   const [doneAt, setDoneAt] = useState<string | null>(state?.etat === 'realisee' ? (state.realisee_le ?? '') : null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
@@ -141,7 +180,7 @@ function ActionCard({ enrollmentId, activity, state }: { enrollmentId: string; a
   return <div className="card"><p className="tag">Ton action du jour</p><p className="action">{activity.consigne}</p>
     {doneAt !== null
       ? <p className="success" role="status">Action réalisée{doneAt ? ` le ${formatDate(doneAt)}` : ''}</p>
-      : <>
+      : readOnly ? null : <>
         <button type="button" className="btn action-btn" disabled={pending} onClick={record}>{pending ? 'Enregistrement…' : "J'ai réalisé cette action"}</button>
         {error && <p className="error" role="alert">Non enregistré. Vérifie ta connexion et réessaie.</p>}
       </>}

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { dayInfo, eventIdFor, fillPrenom, webText } from '@/lib/espace';
+import { dayInfo, eventIdFor, fillPrenom, pickDefault, webText } from '@/lib/espace';
 
 describe('dayInfo (Africa/Kinshasa)', () => {
   it('jour 1 le jour du début', () => {
-    expect(dayInfo('2026-10-10', new Date('2026-10-10T12:00:00Z'))).toEqual({ day: 1, finished: false });
+    expect(dayInfo('2026-10-10', new Date('2026-10-10T12:00:00Z'))).toEqual({ day: 1, finished: false, notStarted: false });
   });
   it('utilise le fuseau de Kinshasa (UTC+1) : 23h30 UTC est déjà le lendemain', () => {
     expect(dayInfo('2026-10-10', new Date('2026-10-10T23:30:00Z')).day).toBe(2);
@@ -12,13 +12,19 @@ describe('dayInfo (Africa/Kinshasa)', () => {
   it('date_debut horodatée convertie en date de Kinshasa', () => {
     expect(dayInfo('2026-10-09T23:30:00Z', new Date('2026-10-10T10:00:00Z')).day).toBe(1);
   });
-  it('borné à 1 avant le début', () => {
-    expect(dayInfo('2026-10-12', new Date('2026-10-10T12:00:00Z'))).toEqual({ day: 1, finished: false });
+  it('avant le début : notStarted, aucun jour ouvert', () => {
+    expect(dayInfo('2026-10-12', new Date('2026-10-10T12:00:00Z'))).toEqual({ day: 1, finished: false, notStarted: true });
+    expect(dayInfo('2026-10-19T00:00:00.000+01:00', new Date('2026-10-18T22:59:00Z')).notStarted).toBe(true);
+    expect(dayInfo('2026-10-19T00:00:00.000+01:00', new Date('2026-10-18T23:00:00Z')).notStarted).toBe(false);
   });
   it('jour 7 encore en cours, au-delà terminé et borné à 7', () => {
-    expect(dayInfo('2026-10-01', new Date('2026-10-07T12:00:00Z'))).toEqual({ day: 7, finished: false });
-    expect(dayInfo('2026-10-01', new Date('2026-10-08T12:00:00Z'))).toEqual({ day: 7, finished: true });
-    expect(dayInfo('2026-10-01', new Date('2026-11-30T12:00:00Z'))).toEqual({ day: 7, finished: true });
+    expect(dayInfo('2026-10-01', new Date('2026-10-07T12:00:00Z'))).toEqual({ day: 7, finished: false, notStarted: false });
+    expect(dayInfo('2026-10-01', new Date('2026-10-08T12:00:00Z'))).toEqual({ day: 7, finished: true, notStarted: false });
+    expect(dayInfo('2026-10-01', new Date('2026-11-30T12:00:00Z'))).toEqual({ day: 7, finished: true, notStarted: false });
+  });
+  it('durée du programme : 14 jours', () => {
+    expect(dayInfo('2026-10-01', new Date('2026-10-14T12:00:00Z'), 14)).toEqual({ day: 14, finished: false, notStarted: false });
+    expect(dayInfo('2026-10-01', new Date('2026-10-15T12:00:00Z'), 14)).toEqual({ day: 14, finished: true, notStarted: false });
   });
 });
 
@@ -51,5 +57,24 @@ describe('eventIdFor', () => {
     expect(retry).toBe(first);
     expect(n).toBe(1);
     expect(eventIdFor(null, gen)).toBe('id-2');
+  });
+});
+
+describe('pickDefault', () => {
+  const now = new Date('2026-10-12T12:00:00Z');
+  const decouverte = { id: 'D', date_debut: '2026-10-12', duree: 7 };
+  const livreFutur = { id: 'L', date_debut: '2026-10-19', duree: 14 };
+  const livreEnCours = { id: 'L2', date_debut: '2026-10-10', duree: 14 };
+  const ancien = { id: 'A', date_debut: '2026-09-01', duree: 7 };
+  it('un parcours en cours passe avant un parcours qui commence plus tard', () => {
+    expect(pickDefault([livreFutur, decouverte], now)?.id).toBe('D');
+  });
+  it('parmi les parcours en cours, le plus récemment commencé', () => {
+    expect(pickDefault([livreEnCours, decouverte], now)?.id).toBe('D');
+  });
+  it('sinon le prochain à commencer, puis le dernier terminé', () => {
+    expect(pickDefault([ancien, livreFutur], now)?.id).toBe('L');
+    expect(pickDefault([ancien], now)?.id).toBe('A');
+    expect(pickDefault([], now)).toBeNull();
   });
 });

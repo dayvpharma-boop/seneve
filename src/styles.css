@@ -92,3 +92,6 @@ button { font:inherit; cursor:pointer; color:inherit; }
 :root { --ok: oklch(0.52 0.13 150); --danger: oklch(0.55 0.19 27); }
 @media (prefers-color-scheme: dark) { :root { --ok: oklch(0.78 0.14 150); --danger: oklch(0.72 0.16 27); } }
 .link-code { font-family:Lora,serif; font-size:26px; font-weight:600; letter-spacing:.08em; text-align:center; background:var(--background); border:1.5px dashed var(--line); border-radius:12px; padding:12px; margin:8px 0 10px; }
+.prog-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 12px; }
+.prog-tab { border:1.5px solid var(--line); background:var(--surface); color:inherit; border-radius:999px; padding:8px 14px; font:inherit; font-size:14px; font-weight:600; min-height:44px; }
+.prog-tab[aria-selected="true"] { background:var(--gold-fill); border-color:var(--gold-fill); color:var(--on-gold); }

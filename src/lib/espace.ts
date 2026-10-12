@@ -9,11 +9,35 @@ function toUtcDay(ymd: string): number {
   return Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1) / 86400000;
 }
 
-/** Jour du parcours (fuseau Africa/Kinshasa) : jours calendaires depuis date_debut + 1. */
-export function dayInfo(dateDebut: string, now: Date = new Date()): { day: number; finished: boolean } {
+function rawDay(dateDebut: string, now: Date): number {
   const start = /^\d{4}-\d{2}-\d{2}$/.test(dateDebut) ? dateDebut : kinshasaDate(new Date(dateDebut));
-  const raw = toUtcDay(kinshasaDate(now)) - toUtcDay(start) + 1;
-  return { day: Math.min(TOTAL_DAYS, Math.max(1, raw)), finished: raw > TOTAL_DAYS };
+  return toUtcDay(kinshasaDate(now)) - toUtcDay(start) + 1;
+}
+
+/**
+ * Jour du parcours (fuseau Africa/Kinshasa) : jours calendaires depuis date_debut + 1.
+ * notStarted : la date de début n'est pas encore arrivée (aucun jour n'est ouvert).
+ */
+export function dayInfo(dateDebut: string, now: Date = new Date(), total: number = TOTAL_DAYS): { day: number; finished: boolean; notStarted: boolean } {
+  const raw = rawDay(dateDebut, now);
+  return { day: Math.min(total, Math.max(1, raw)), finished: raw > total, notStarted: raw < 1 };
+}
+
+type Pickable = { date_debut: string; duree: number };
+
+/**
+ * Parcours affiché par défaut quand le compte en a plusieurs :
+ * 1) un parcours en cours (le plus récemment commencé) ; 2) sinon le prochain à commencer ;
+ * 3) sinon le dernier terminé.
+ */
+export function pickDefault<T extends Pickable>(list: T[], now: Date = new Date()): T | null {
+  const withRaw = list.map(e => ({ e, raw: rawDay(e.date_debut, now) }));
+  const running = withRaw.filter(x => x.raw >= 1 && x.raw <= x.e.duree).sort((a, b) => a.raw - b.raw);
+  if (running[0]) return running[0].e;
+  const future = withRaw.filter(x => x.raw < 1).sort((a, b) => b.raw - a.raw);
+  if (future[0]) return future[0].e;
+  const done = withRaw.sort((a, b) => a.raw - b.raw);
+  return done[0]?.e ?? null;
 }
 
 export function fillPrenom(text: string, prenom: string | null | undefined): string {
