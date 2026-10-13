@@ -5,6 +5,7 @@ import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
+import { SeanceCard } from '@/components/SeanceCard';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { journalTextes } from '@/lib/journal';
 
@@ -178,6 +179,7 @@ export function Espace() {
     {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
       <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
+    <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
     <GoalCard langue={enr.langue} />
     <EmailMatinCard langue={enr.langue} />
     {outils(enr.langue, enr.enrollment_id)}
