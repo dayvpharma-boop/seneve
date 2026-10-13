@@ -6,6 +6,8 @@ import { TestPage } from '@/routes/index';
 import { Connexion } from '@/routes/connexion';
 import { Espace } from '@/routes/espace';
 import { NewPassword } from '@/routes/nouveau-mot-de-passe';
+import { Journal } from '@/routes/journal';
+import { Aide } from '@/routes/aide';
 
 function NotFound() {
   return <main className="wrap"><p className="brand">SÉNEVÉ</p><h1>Page introuvable</h1><p>Cette page n'existe pas ou a été déplacée.</p><Link className="btn btn-link" to="/">Revenir au Test des 7 Racines</Link></main>;
@@ -20,6 +22,8 @@ if (root) createRoot(root).render(
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
         <Route path="/connexion" element={<Connexion />} />
         <Route path="/espace" element={<Espace />} />
+        <Route path="/journal" element={<Journal />} />
+        <Route path="/aide" element={<Aide />} />
         <Route path="/nouveau-mot-de-passe" element={<NewPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

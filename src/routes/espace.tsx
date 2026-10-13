@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 import { nomParcours, textes } from '@/lib/espace-textes';
+import { journalTextes } from '@/lib/journal';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null };
@@ -104,6 +105,13 @@ export function Espace() {
   }
 
   const header = <div className="espace-head"><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}<button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
+  const outils = (langue: string, inscription?: string) => {
+    const J = journalTextes(langue);
+    const q = inscription ? `?inscription=${inscription}` : '';
+    return <div className="card"><p className="tag">{J.carteTitre}</p><p>{J.carteTexte}</p>
+      <div className="link-row"><Link className="btn btn-link" to="/journal">{J.ouvrirJournal}</Link><Link className="link" to={`/aide${q}`}>{J.demanderAide}</Link></div>
+    </div>;
+  };
   const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
 
   if (failed) return <main className="wrap">{header}{errorCard}</main>;
@@ -113,7 +121,7 @@ export function Espace() {
     <div className="card"><p className="tag">Découverte 7 jours</p>
       <p>Un parcours gratuit de 7 jours, à ton rythme, à partir du livre « Arrête de mendier des miracles ».</p>
       <button type="button" className="btn" disabled={starting} onClick={start}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
-    </div><WhatsAppLink /></main>;
+    </div>{outils('fr')}<WhatsAppLink /></main>;
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
@@ -126,7 +134,7 @@ export function Espace() {
   if (notStarted) return <main className="wrap">{header}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
-    </div><WhatsAppLink /></main>;
+    </div>{outils(enr.langue, enr.enrollment_id)}<WhatsAppLink /></main>;
 
   const maxOpen = finished ? total : day;
   const current = Math.min(selected ?? day, maxOpen);
@@ -153,7 +161,9 @@ export function Espace() {
       {content.reference_livre && <p className="src">{T.dansLeLivre}{content.reference_livre}</p>}
     </article>
     {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
-    {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p></div>}
+    {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
+      <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
+    {outils(enr.langue, enr.enrollment_id)}
     <WhatsAppLink />
   </main>;
 }
