@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
@@ -77,8 +77,11 @@ export function Espace() {
   const navigate = useNavigate();
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [chosen, setChosen] = useState<string | null>(null);
+  // Lien direct depuis « Mes progrès » : ?parcours=<inscription>&jour=<n>
+  const [params] = useSearchParams();
+  const jourDemande = Number(params.get('jour'));
+  const [selected, setSelected] = useState<number | null>(Number.isInteger(jourDemande) && jourDemande > 0 ? jourDemande : null);
+  const [chosen, setChosen] = useState<string | null>(params.get('parcours'));
   const [starting, setStarting] = useState(false);
   const [equipe, setEquipe] = useState(false);
 
@@ -118,7 +121,7 @@ export function Espace() {
     const J = journalTextes(langue);
     const q = inscription ? `?inscription=${inscription}` : '';
     return <div className="card"><p className="tag">{J.carteTitre}</p><p>{J.carteTexte}</p>
-      <div className="link-row"><Link className="btn btn-link" to="/journal">{J.ouvrirJournal}</Link><Link className="link" to="/coach">{J.parlerCoach}</Link><Link className="link" to={`/aide${q}`}>{J.demanderAide}</Link></div>
+      <div className="link-row"><Link className="btn btn-link" to="/journal">{J.ouvrirJournal}</Link><Link className="link" to="/coach">{J.parlerCoach}</Link><Link className="link" to="/progres">{J.mesProgres}</Link><Link className="link" to={`/aide${q}`}>{J.demanderAide}</Link></div>
     </div>;
   };
   const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
