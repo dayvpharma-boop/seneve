@@ -109,9 +109,9 @@ export function Espace() {
     navigate('/connexion', { replace: true });
   }
 
-  async function start() {
+  async function start(langue: 'fr' | 'en') {
     setStarting(true);
-    const { error } = await supabase.rpc('start_discovery', { p_langue: 'fr' });
+    const { error } = await supabase.rpc('start_discovery', { p_langue: langue });
     setStarting(false);
     if (error) { setFailed(true); return; }
     await refresh();
@@ -133,7 +133,9 @@ export function Espace() {
   if (!data.parcours.length) return <main className="wrap">{header}
     <div className="card"><p className="tag">Découverte 7 jours</p>
       <p>Un parcours gratuit de 7 jours, à ton rythme, à partir du livre « Arrête de mendier des miracles ».</p>
-      <button type="button" className="btn" disabled={starting} onClick={start}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
+      <button type="button" className="btn" disabled={starting} onClick={() => void start('fr')}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
+      <p className="muted lang-alt" lang="en">A free 7-day journey based on the book « Stop Begging for Miracles ».</p>
+      <button type="button" className="btn-secondaire" lang="en" disabled={starting} onClick={() => void start('en')}>Start in English</button>
     </div>{outils('fr')}<WhatsAppLink /></main>;
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
