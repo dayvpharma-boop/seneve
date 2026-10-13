@@ -95,3 +95,16 @@ button { font:inherit; cursor:pointer; color:inherit; }
 .prog-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 12px; }
 .prog-tab { border:1.5px solid var(--line); background:var(--surface); color:inherit; border-radius:999px; padding:8px 14px; font:inherit; font-size:14px; font-weight:600; min-height:44px; }
 .prog-tab[aria-selected="true"] { background:var(--gold-fill); border-color:var(--gold-fill); color:var(--on-gold); }
+/* Carte « Partager » */
+.share-label { margin:14px 0 8px; }
+.share-options { display:grid; gap:8px; }
+.root-choice[aria-pressed="true"] { background:var(--gold-fill); border-color:var(--gold-fill); color:var(--on-gold); }
+.tab[aria-pressed="true"] { background:var(--gold-fill); border-color:var(--gold-fill); color:var(--on-gold); font-weight:600; }
+.tab-hint { display:block; font-size:12px; font-weight:400; opacity:.8; margin-top:2px; }
+.share-check { display:flex; gap:10px; align-items:flex-start; margin:14px 0 4px; font-size:15px; }
+.share-check input { width:20px; height:20px; margin-top:2px; accent-color:var(--gold-fill); flex:none; }
+.share-preview { display:block; margin:12px auto 16px; border-radius:12px; border:1px solid var(--line); max-width:100%; height:auto; }
+.share-preview-vertical { width:220px; }
+.share-preview-carre { width:280px; }
+.share-actions { display:grid; gap:4px; justify-items:center; }
+.share-actions .btn { width:100%; }

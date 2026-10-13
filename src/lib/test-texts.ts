@@ -86,7 +86,16 @@ export const texts = {
   actionSource: (day:number,name:string) => `Livre, annexe 1, jour ${day} · ${name}`,
   further: 'Aller plus loin', furtherText: 'Reçois gratuitement le parcours Découverte de 7 jours sur WhatsApp. Tu écris toi-même le premier message et tu peux arrêter à tout moment en envoyant STOP.',
   whatsappButton: 'Continuer sur WhatsApp', whatsappMessage: 'Bonjour, je viens de faire le Test des 7 Racines. Je souhaite découvrir le parcours gratuit de 7 jours.',
-  final: 'Ce résultat repose sur tes réponses du moment. Il propose une orientation pédagogique ; il ne mesure ni ta foi ni ta valeur personnelle.', again: 'Refaire le test'
+  final: 'Ce résultat repose sur tes réponses du moment. Il propose une orientation pédagogique ; il ne mesure ni ta foi ni ta valeur personnelle.', again: 'Refaire le test',
+  share: {
+   tag: 'Partager', text: 'Crée une image de ton résultat pour tes réseaux. Elle montre seulement le nom de tes racines, jamais tes notes.',
+   create: 'Créer mon image', formats: 'Format de l’image', vertical: 'Vertical', verticalHint: 'Stories, Reels, TikTok, Shorts, statuts', square: 'Carré', squareHint: 'Publications Facebook, Instagram, LinkedIn, X',
+   chooseStrength: 'Plusieurs racines sont aussi solides. Choisis celle à montrer :',
+   addStart: (name: string) => `Ajouter aussi : je commence par ${name}`,
+   preview: 'Aperçu de ton image', making: 'Préparation de l’image…', unavailable: 'Ton navigateur ne permet pas de créer l’image.',
+   shareButton: 'Partager l’image', download: 'Télécharger l’image', fileName: 'mes-racines-seneve',
+   card: { brand: 'SÉNEVÉ', title: 'Le Test des 7 Racines', book: 'D’après « Arrête de mendier des miracles »', appui: 'Mon point d’appui', solide: 'Ma racine la plus solide', start: 'Je commence par', question: 'Et toi, quelle est ta racine ?' }
+  }
  },
  en: {
   roots: englishRoots, questions: englishQuestions,
@@ -108,7 +117,16 @@ export const texts = {
   actionSource: (day:number,name:string) => `Book, Appendix 1, Day ${day} · ${name}`,
   further: 'Go further', furtherText: 'Receive the free 7-day Discovery journey on WhatsApp. You write the first message yourself and you can stop at any time by sending STOP.',
   whatsappButton: 'Continue on WhatsApp', whatsappMessage: 'Hello, I have just taken the 7 Roots Test. I would like to discover the free 7-day journey.',
-  final: 'This result is based on your answers at this moment. It offers educational guidance; it measures neither your faith nor your personal worth.', again: 'Take the test again'
+  final: 'This result is based on your answers at this moment. It offers educational guidance; it measures neither your faith nor your personal worth.', again: 'Take the test again',
+  share: {
+   tag: 'Share', text: 'Create an image of your result for your social networks. It only shows the names of your roots, never your scores.',
+   create: 'Create my image', formats: 'Image format', vertical: 'Vertical', verticalHint: 'Stories, Reels, TikTok, Shorts, statuses', square: 'Square', squareHint: 'Facebook, Instagram, LinkedIn, X posts',
+   chooseStrength: 'Several roots are equally strong. Choose the one to show:',
+   addStart: (name: string) => `Also add: I am starting with ${name}`,
+   preview: 'Preview of your image', making: 'Preparing the image…', unavailable: 'Your browser cannot create the image.',
+   shareButton: 'Share the image', download: 'Download the image', fileName: 'my-roots-seneve',
+   card: { brand: 'SÉNEVÉ', title: 'The 7 Roots Test', book: 'From “Stop Begging for Miracles”', appui: 'My anchor', solide: 'My strongest root', start: 'I am starting with', question: 'And you, what is your root?' }
+  }
  }
 };
 export const whatsappUrls = {
