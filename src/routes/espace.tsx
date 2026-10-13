@@ -161,11 +161,13 @@ export function Espace() {
   const action = acts.find(a => a.type_activite === 'action');
   const question = acts.find(a => a.type_activite === 'question');
   const paused = enr.etat === 'en_pause';
+  const cloture = enr.etat === 'terminee';
 
   return <main className="wrap">{header}{tabs}
     {!tabs && <p className="tag">{enr.nom}</p>}
     {finished ? <p>{T.termine(total)}</p> : <p className="day-count">{T.jourSur(day, total)}</p>}
     {paused && <p className="muted" role="status">{T.pause}</p>}
+    {cloture && <p className="muted" role="status">{T.cloture}</p>}
     <div className="day-chips">
       {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? T.jourFerme(n) : T.jour(n)} onClick={() => setSelected(n)}>{n}</button>)}
     </div>
@@ -176,7 +178,7 @@ export function Espace() {
       <p className="day-text">{webText(content.texte_officiel, data.prenom)}</p>
       {content.reference_livre && <p className="src">{referenceAffichee(content.reference_livre, enr.langue)}</p>}
     </article>
-    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
+    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused || cloture} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
       <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
     <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
