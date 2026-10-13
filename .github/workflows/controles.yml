@@ -1,0 +1,26 @@
+name: Contrôles (sans mise en ligne)
+
+# Vérifie une branche de travail avant qu'elle rejoigne main.
+# Ne publie jamais rien : seule la branche main est mise en ligne (voir deploy.yml).
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  controles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Installer
+        run: npm install --no-audit --no-fund
+      - name: Contrôles automatiques
+        run: npm test
+      - name: Construire le site
+        run: npm run build

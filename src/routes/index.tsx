@@ -2,17 +2,20 @@ import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode 
 import { Link, useSearchParams } from 'react-router-dom';
 import { compute, categorie } from '@/lib/racines';
 import { texts, whatsappUrls, languageFrom, type Language } from '@/lib/test-texts';
+import { chooseRoot, cleanSource, recordVisit, submitResult } from '@/lib/suivi-test';
 
-/** Page du test, reliée à l'adresse : ?lang=en affiche la version anglaise. */
+/** Page du test, reliée à l'adresse : ?lang=en affiche la version anglaise, ?src=tt indique la provenance. */
 export function TestPage() {
  const [search] = useSearchParams();
  const language = languageFrom(search.get('lang'));
+ const source = cleanSource(search.get('src'));
  const next = language === 'fr' ? 'en' : 'fr';
  useEffect(() => {
   document.documentElement.lang = language;
   document.title = texts[language].tabTitle;
  }, [language]);
- return <Index language={language} languageLink={<Link to={`/?lang=${next}`} className="link language-link">{texts[language].languageLink}</Link>} />;
+ const nextLink = `/?lang=${next}${source ? `&src=${source}` : ''}`;
+ return <Index language={language} source={source} languageLink={<Link to={nextLink} className="link language-link">{texts[language].languageLink}</Link>} />;
 }
 function PrototypeButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
  return <button type="button" {...props} />;
@@ -71,7 +74,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
     {root && <div className="card"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a></div>}
  </>;
 }
-export function Index({ language = 'fr', languageLink }: { language?: Language; languageLink?: ReactNode } = {}) {
+export function Index({ language = 'fr', languageLink, source = null }: { language?: Language; languageLink?: ReactNode; source?: string | null } = {}) {
  const t = texts[language];
  const [screen, setScreen] = useState<'home' | 'quiz' | 'result'>('home');
  const [answers, setAnswers] = useState<(number | null)[]>(Array(21).fill(null));
@@ -81,7 +84,29 @@ export function Index({ language = 'fr', languageLink }: { language?: Language; 
  const question = useRef<HTMLParagraphElement>(null);
  const title = useRef<HTMLHeadingElement>(null);
  const focusNext = useRef(false);
+ const visitRecorded = useRef(false);
+ const savedResult = useRef<Promise<string | null> | null>(null);
  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+ // Une ouverture comptée par chargement de la page.
+ useEffect(() => {
+  if (visitRecorded.current) return;
+  visitRecorded.current = true;
+  void recordVisit(source, language);
+ }, []);
+ // Un enregistrement par test terminé.
+ useEffect(() => {
+  if (screen !== 'result' || savedResult.current) return;
+  const complete = answers.filter((a): a is number => a !== null);
+  if (complete.length !== 21) return;
+  savedResult.current = submitResult(complete, source, language);
+ }, [screen]);
+ // En cas d'égalité, la racine choisie est enregistrée une fois le résultat sauvegardé.
+ useEffect(() => {
+  const pending = savedResult.current;
+  if (chosenRoot === null || !pending) return;
+  const k = chosenRoot;
+  void pending.then(id => { if (id) void chooseRoot(id, k); });
+ }, [chosenRoot]);
  useEffect(() => {
   window.scrollTo(0,0);
   if (screen === 'result') title.current?.focus();
@@ -125,7 +150,7 @@ export function Index({ language = 'fr', languageLink }: { language?: Language; 
    <p className="brand">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
     <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} />}</div>
     <p className="muted">{t.final}</p>
-    <PrototypeButton className="link" id="again" onClick={() => { setAnswers(Array(21).fill(null)); setChosenRoot(null); setI(0); setScreen('home'); }}>{t.again}</PrototypeButton>
+    <PrototypeButton className="link" id="again" onClick={() => { savedResult.current = null; setAnswers(Array(21).fill(null)); setChosenRoot(null); setI(0); setScreen('home'); }}>{t.again}</PrototypeButton>
   </section>
  </main>;
 }
