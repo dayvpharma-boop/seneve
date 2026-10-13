@@ -63,12 +63,12 @@ describe('Choix sous l’action du jour', () => {
     expect(screen.getByRole('button', { name: "J'ai réalisé cette action" })).toBeEnabled();
   });
 
-  it('« besoin d’aide » : dit honnêtement que l’équipe n’est pas prévenue, et donne le lien', async () => {
+  it('« besoin d’aide » : demande transmise à l’équipe, avec lien pour la suivre', async () => {
     reponse = () => ({ data: { etat: 'non_commencee', aide_demandee: true }, error: null });
     ouvrir();
     fireEvent.click(await screen.findByRole('button', { name: "J'ai besoin d'aide" }));
-    expect(await screen.findByText(/L’équipe n’est prévenue que si tu lui écris/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Écrire à l’équipe' })).toHaveAttribute('href', '/aide?inscription=E7');
+    expect(await screen.findByText(/transmise à l’équipe d’accompagnement/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Suivre ma demande' })).toHaveAttribute('href', '/aide?inscription=E7');
     expect(screen.getByRole('link', { name: 'Demander au coach' })).toHaveAttribute('href', '/coach');
   });
 
@@ -95,7 +95,7 @@ describe('Choix sous l’action du jour', () => {
     tables['activity_state'] = [{ enrollment_id: 'E7', activity_id: 'A2', etat: 'partielle', aide_demandee: true, realisee_le: null }];
     ouvrir();
     expect(await screen.findByText(/tu l’as faite en partie/)).toBeInTheDocument();
-    expect(screen.getByText(/cette action te pose difficulté/)).toBeInTheDocument();
+    expect(screen.getByText(/transmise à l’équipe/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: "J'ai besoin d'aide" })).not.toBeInTheDocument();
   });
 });
