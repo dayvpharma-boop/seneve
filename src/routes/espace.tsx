@@ -5,7 +5,7 @@ import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
-import { nomParcours, textes } from '@/lib/espace-textes';
+import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { journalTextes } from '@/lib/journal';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
@@ -171,7 +171,7 @@ export function Espace() {
       <p className="tag">{T.jour(current)}</p>
       <h2>{content.theme}</h2>
       <p className="day-text">{webText(content.texte_officiel, data.prenom)}</p>
-      {content.reference_livre && <p className="src">{T.dansLeLivre}{content.reference_livre}</p>}
+      {content.reference_livre && <p className="src">{referenceAffichee(content.reference_livre, enr.langue)}</p>}
     </article>
     {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>

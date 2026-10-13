@@ -12,6 +12,9 @@ export const ESPACE_TEXTES = {
     jourFerme: (n: number) => `Jour ${n}, pas encore ouvert`,
     ouvreDemain: (n: number) => `Le jour ${n} s'ouvre demain.`,
     dansLeLivre: 'Dans le livre : ',
+    sources: 'Sources : ',
+    carnet: 'Carnet de bord : ',
+    livre: 'Livre : ',
     question: 'Question pour réfléchir',
     action: 'Ton action du jour',
     realisee: 'Action réalisée',
@@ -36,6 +39,9 @@ export const ESPACE_TEXTES = {
     jourFerme: (n: number) => `Day ${n}, not open yet`,
     ouvreDemain: (n: number) => `Day ${n} opens tomorrow.`,
     dansLeLivre: 'In the book: ',
+    sources: 'Sources: ',
+    carnet: 'Journal: ',
+    livre: 'Book: ',
     question: 'Question to reflect on',
     action: 'Your action for today',
     realisee: 'Action completed',
@@ -60,4 +66,15 @@ export function textes(langue: string | null | undefined) {
 export function nomParcours(nom: string, langue: string, duree: number): string {
   if (langue === 'en') return `Book companion — ${duree} days`;
   return nom.replace(/ en français/, '');
+}
+
+/** Référence affichée sous le texte du jour. Les contenus des formations notent « C : » (carnet de bord)
+ *  et « L : » (livre) : on écrit ces sources en clair au lieu de tout présenter comme « Dans le livre ». */
+export function referenceAffichee(ref: string, langue: string | null | undefined): string {
+  const T = textes(langue);
+  const r = ref.trim();
+  if (!/^C\s*:/.test(r) && !/(^|[.;]\s*)L\s*:/.test(r)) return T.dansLeLivre + r;
+  const parts = r.split(/(?:^|(?<=[.;])\s*)(?=[CL]\s*:)/).map(x => x.trim()).filter(Boolean);
+  const lisible = parts.map(x => x.replace(/^C\s*:\s*/, T.carnet).replace(/^L\s*:\s*/, T.livre).replace(/[.;]\s*$/, ''));
+  return T.sources + lisible.join(' — ');
 }
