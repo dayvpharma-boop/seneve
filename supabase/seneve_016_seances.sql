@@ -91,3 +91,7 @@ revoke all on function seneve.seances_etat(uuid) from public, anon;
 revoke all on function seneve.seance_demander(uuid, int) from public, anon;
 grant execute on function seneve.seances_etat(uuid) to authenticated;
 grant execute on function seneve.seance_demander(uuid, int) to authenticated;
+
+-- 016b — Décision de Dr Justin (13/10/2026 21:58) : l'Accompagnement 90 jours reprend les séances du 30 jours, trois fois.
+update seneve.programmes set jours_seances = '{7,14,21,30,37,44,51,60,67,74,81,90}'
+ where programme_id in ('ACHETEUR_ACCOMP90_90J_FR_V1','ACHETEUR_ACCOMP90_90J_EN_V1');
