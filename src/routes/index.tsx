@@ -4,6 +4,7 @@ import { compute, categorie } from '@/lib/racines';
 import { texts, whatsappUrls, languageFrom, type Language } from '@/lib/test-texts';
 import { chooseRoot, cleanSource, recordVisit, submitResult } from '@/lib/suivi-test';
 import { ShareCard } from '@/components/ShareCard';
+import { memoriserRacineTest } from '@/lib/objectif';
 
 /** Page du test, reliée à l'adresse : ?lang=en affiche la version anglaise, ?src=tt indique la provenance.
  * L'adresse courte /p, imprimée sur les images partagées, ouvre le test avec la provenance « partage ». */
@@ -75,7 +76,13 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
     {root && <div className="card"><p className="tag">{t.firstAction}</p><p className="action">{root.a}</p><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
     {root && <div className="card"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a></div>}
     {root && act !== null && act !== undefined && <ShareCard language={language} totals={r.t} startRoot={act} />}
+    {act !== null && act !== undefined && <RememberRoot k={act} />}
  </>;
+}
+/** Garde sur cet appareil seulement la racine retenue, pour la proposer (sans l'imposer) comme objectif dans l'espace. */
+function RememberRoot({ k }: { k: number }) {
+  useEffect(() => { memoriserRacineTest(k); }, [k]);
+  return null;
 }
 export function Index({ language = 'fr', languageLink, source = null }: { language?: Language; languageLink?: ReactNode; source?: string | null } = {}) {
  const t = texts[language];

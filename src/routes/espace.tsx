@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
+import { GoalCard } from '@/components/GoalCard';
 import { nomParcours, textes } from '@/lib/espace-textes';
 import { journalTextes } from '@/lib/journal';
 
@@ -142,7 +143,7 @@ export function Espace() {
   if (notStarted) return <main className="wrap">{header}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
-    </div>{outils(enr.langue, enr.enrollment_id)}<WhatsAppLink /></main>;
+    </div><GoalCard langue={enr.langue} />{outils(enr.langue, enr.enrollment_id)}<WhatsAppLink /></main>;
 
   const maxOpen = finished ? total : day;
   const current = Math.min(selected ?? day, maxOpen);
@@ -171,6 +172,7 @@ export function Espace() {
     {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
       <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
+    <GoalCard langue={enr.langue} />
     {outils(enr.langue, enr.enrollment_id)}
     <WhatsAppLink />
   </main>;
