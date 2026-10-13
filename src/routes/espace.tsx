@@ -117,7 +117,7 @@ export function Espace() {
     const J = journalTextes(langue);
     const q = inscription ? `?inscription=${inscription}` : '';
     return <div className="card"><p className="tag">{J.carteTitre}</p><p>{J.carteTexte}</p>
-      <div className="link-row"><Link className="btn btn-link" to="/journal">{J.ouvrirJournal}</Link><Link className="link" to={`/aide${q}`}>{J.demanderAide}</Link></div>
+      <div className="link-row"><Link className="btn btn-link" to="/journal">{J.ouvrirJournal}</Link><Link className="link" to="/coach">{J.parlerCoach}</Link><Link className="link" to={`/aide${q}`}>{J.demanderAide}</Link></div>
     </div>;
   };
   const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
