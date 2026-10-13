@@ -103,9 +103,9 @@ begin
     v_etat := 'recue';
   end if;
 
-  if v_etat is distinct from v_req.etat then v_changes := v_changes || 'etat'; end if;
-  if v_reponse is distinct from v_req.reponse then v_changes := v_changes || 'reponse'; end if;
-  if v_affecte is distinct from v_req.affecte_a then v_changes := v_changes || 'affectation'; end if;
+  if v_etat is distinct from v_req.etat then v_changes := array_append(v_changes, 'etat'); end if;
+  if v_reponse is distinct from v_req.reponse then v_changes := array_append(v_changes, 'reponse'); end if;
+  if v_affecte is distinct from v_req.affecte_a then v_changes := array_append(v_changes, 'affectation'); end if;
   if cardinality(v_changes) = 0 then
     return jsonb_build_object('request_id', p_request_id, 'etat', v_req.etat, 'modifie_le', v_req.modifie_le, 'changements', '[]'::jsonb);
   end if;
