@@ -79,6 +79,7 @@ export function Espace() {
   const [selected, setSelected] = useState<number | null>(null);
   const [chosen, setChosen] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
+  const [equipe, setEquipe] = useState(false);
 
   const refresh = useCallback(async () => {
     setFailed(false); setData(null);
@@ -89,6 +90,13 @@ export function Espace() {
     } catch { setFailed(true); }
   }, [navigate]);
   useEffect(() => { void refresh(); }, [refresh]);
+  // Lien vers l'administration, affiché seulement aux membres de l'équipe (sans bloquer l'espace).
+  useEffect(() => {
+    void Promise.resolve(supabase.rpc('staff_me')).then(r => {
+      const d = r?.data as { admin?: boolean; roles?: string[] } | null | undefined;
+      setEquipe(Boolean(d && (d.admin || d.roles?.length)));
+    }).catch(() => undefined);
+  }, []);
   useEffect(() => { document.title = 'Mon espace — SÉNEVÉ'; document.documentElement.lang = 'fr'; }, []);
 
   async function signOut() {
@@ -104,7 +112,7 @@ export function Espace() {
     await refresh();
   }
 
-  const header = <div className="espace-head"><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}<button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
+  const header = <div className="espace-head"><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}<span className="link-row">{equipe && <Link className="link" to="/admin">Administration</Link>}<button type="button" className="link" onClick={signOut}>Se déconnecter</button></span></div>;
   const outils = (langue: string, inscription?: string) => {
     const J = journalTextes(langue);
     const q = inscription ? `?inscription=${inscription}` : '';
