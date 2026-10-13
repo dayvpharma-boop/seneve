@@ -5,11 +5,12 @@ import { texts, whatsappUrls, languageFrom, type Language } from '@/lib/test-tex
 import { chooseRoot, cleanSource, recordVisit, submitResult } from '@/lib/suivi-test';
 import { ShareCard } from '@/components/ShareCard';
 
-/** Page du test, reliée à l'adresse : ?lang=en affiche la version anglaise, ?src=tt indique la provenance. */
-export function TestPage() {
+/** Page du test, reliée à l'adresse : ?lang=en affiche la version anglaise, ?src=tt indique la provenance.
+ * L'adresse courte /p, imprimée sur les images partagées, ouvre le test avec la provenance « partage ». */
+export function TestPage({ defaultSource = null }: { defaultSource?: string | null } = {}) {
  const [search] = useSearchParams();
  const language = languageFrom(search.get('lang'));
- const source = cleanSource(search.get('src'));
+ const source = cleanSource(search.get('src')) ?? cleanSource(defaultSource);
  const next = language === 'fr' ? 'en' : 'fr';
  useEffect(() => {
   document.documentElement.lang = language;

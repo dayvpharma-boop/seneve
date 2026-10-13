@@ -25,10 +25,10 @@ export function strengthKind(total: number): 'appui' | 'solide' | null {
   return null;
 }
 
-/** Adresse affichée sur l'image : le test, marqué « partage » pour compter les visiteurs venus des images. */
+/** Adresse courte affichée sur l'image : /p ouvre le test avec la provenance « partage ». */
 export function shareAddress(host: string, base: string, language: 'fr' | 'en'): string {
   const path = base.endsWith('/') ? base : `${base}/`;
-  return `${host}${path}?src=partage${language === 'en' ? '&lang=en' : ''}`;
+  return `${host}${path}p${language === 'en' ? '?lang=en' : ''}`;
 }
 
 function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
@@ -76,61 +76,75 @@ function seed(ctx: CanvasRenderingContext2D, cx: number, cy: number, s: number) 
 export function drawCard(ctx: CanvasRenderingContext2D, format: CardFormat, c: CardContent) {
   const { w, h } = CARD_SIZES[format];
   const tall = format === 'vertical';
-  const k = tall ? 1 : 0.8; // taille des textes
-  const maxW = w - 200;
+  // Tailles : le vertical est lu en plein écran, le carré dans un fil d'actualité.
+  const m = tall
+    ? { top: 250, brand: 46, title: 80, book: 40, seed: 2.6, label: 40, name: 128, name2: 100, question: 64, address: 44, foot: 250 }
+    : { top: 150, brand: 34, title: 60, book: 30, seed: 0, label: 32, name: 100, name2: 68, question: 48, address: 34, foot: 140 };
+  const maxW = w - 180;
   ctx.fillStyle = NOIR; ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = OR; ctx.globalAlpha = 0.55; ctx.lineWidth = 3;
-  ctx.strokeRect(48, 48, w - 96, h - 96);
+  ctx.strokeStyle = OR; ctx.globalAlpha = 0.6; ctx.lineWidth = 4;
+  ctx.strokeRect(44, 44, w - 88, h - 88);
   ctx.globalAlpha = 1;
   ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
 
   // En-tête
-  let y = tall ? 230 : 150;
-  ctx.fillStyle = OR; ctx.font = `600 ${Math.round(34 * k)}px Lora, serif`;
-  spaced(ctx, c.brand, w / 2, y, 14 * k);
-  y += 70 * k;
-  ctx.fillStyle = IVOIRE; ctx.font = `600 ${Math.round(54 * k)}px Lora, serif`;
-  ctx.fillText(c.title, w / 2, y);
-  y += 52 * k;
-  ctx.fillStyle = IVOIRE_DOUX; ctx.font = `italic 500 ${Math.round(30 * k)}px Lora, serif`;
-  for (const line of wrap(ctx, c.book, maxW)) { ctx.fillText(line, w / 2, y); y += 40 * k; }
+  let y = m.top;
+  ctx.fillStyle = OR; ctx.font = `600 ${m.brand}px Lora, serif`;
+  spaced(ctx, c.brand, w / 2, y, m.brand * 0.45);
+  y += m.title * 1.25;
+  ctx.fillStyle = IVOIRE; ctx.font = `600 ${m.title}px Lora, serif`;
+  for (const line of wrap(ctx, c.title, maxW)) { ctx.fillText(line, w / 2, y); y += m.title * 1.15; }
+  y += m.book * 0.1;
+  ctx.fillStyle = IVOIRE_DOUX; ctx.font = `italic 500 ${m.book}px Lora, serif`;
+  for (const line of wrap(ctx, c.book, maxW)) { ctx.fillText(line, w / 2, y); y += m.book * 1.35; }
 
-  // Corps : une ou deux racines, centrées dans l'espace libre
+  // Corps : une ou deux racines. Avec deux racines, la graine est plus petite.
   const blocks = [c.strength, c.start].filter((b): b is { label: string; name: string } => Boolean(b));
-  const nameSize = Math.round((blocks.length > 1 ? 84 : 104) * k);
-  const blockH = (b: { name: string }) => {
+  const seedScale = blocks.length > 1 ? m.seed * 0.6 : m.seed;
+  // Graine et ses sept racines (vertical seulement)
+  if (seedScale) {
+    const cy = y + 66 * seedScale + 20;
+    seed(ctx, w / 2, cy, seedScale);
+    y = cy + 70 * seedScale;
+  }
+  const labelGap = m.label * 1.9;
+  const between = m.label * 2.2;
+  const footTop = h - m.foot - m.question * 1.2;
+  let nameSize = blocks.length > 1 ? m.name2 : m.name;
+  let lines: string[][] = [];
+  let bodyH = 0;
+  // Réduit le nom des racines jusqu'à ce que tout tienne sans toucher le pied.
+  for (;;) {
     ctx.font = `600 ${nameSize}px Lora, serif`;
-    return 56 * k + wrap(ctx, b.name, maxW).length * nameSize * 1.15;
-  };
-  const gap = 70 * k;
-  const bodyH = blocks.reduce((s, b) => s + blockH(b), 0) + gap * (blocks.length - 1);
-  const top = y + (tall ? 170 : 60);
-  const bottom = h - (tall ? 380 : 230);
-  if (tall) seed(ctx, w / 2, y + 85, 1.1);
-  y = top + Math.max(0, (bottom - top - bodyH) / 2);
+    lines = blocks.map(b => wrap(ctx, b.name, maxW));
+    bodyH = lines.reduce((sum, l) => sum + labelGap + l.length * nameSize * 1.12, 0) + between * (blocks.length - 1);
+    if (bodyH <= footTop - y - 2 * m.label || nameSize <= 48) break;
+    nameSize -= 4;
+  }
+  y += Math.max(m.label, (footTop - y - bodyH) / 2);
   blocks.forEach((b, i) => {
     if (i > 0) {
-      ctx.strokeStyle = OR; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(w / 2 - 70, y - gap / 2); ctx.lineTo(w / 2 + 70, y - gap / 2); ctx.stroke();
+      ctx.strokeStyle = OR; ctx.globalAlpha = 0.6; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(w / 2 - 90, y - between / 2); ctx.lineTo(w / 2 + 90, y - between / 2); ctx.stroke();
       ctx.globalAlpha = 1;
     }
-    ctx.fillStyle = OR; ctx.font = `600 ${Math.round(30 * k)}px Poppins, sans-serif`;
-    spaced(ctx, b.label.toUpperCase(), w / 2, y + 30 * k, 6 * k);
-    y += 56 * k;
+    ctx.fillStyle = OR; ctx.font = `600 ${m.label}px Poppins, sans-serif`;
+    spaced(ctx, b.label.toUpperCase(), w / 2, y + m.label, m.label * 0.18);
+    y += labelGap;
     ctx.fillStyle = IVOIRE; ctx.font = `600 ${nameSize}px Lora, serif`;
-    for (const line of wrap(ctx, b.name, maxW)) { y += nameSize; ctx.fillText(line, w / 2, y); y += nameSize * 0.15; }
-    y += gap;
+    for (const line of lines[i] ?? []) { y += nameSize * 0.95; ctx.fillText(line, w / 2, y); y += nameSize * 0.17; }
+    y += between;
   });
 
   // Pied : invitation et adresse
-  const fy = h - (tall ? 250 : 150);
-  ctx.fillStyle = IVOIRE; ctx.font = `italic 500 ${Math.round(50 * k)}px Lora, serif`;
+  const fy = h - m.foot;
+  ctx.fillStyle = IVOIRE; ctx.font = `italic 500 ${m.question}px Lora, serif`;
   ctx.fillText(c.question, w / 2, fy);
   ctx.fillStyle = OR;
-  let size = Math.round(32 * k);
-  ctx.font = `500 ${size}px Poppins, sans-serif`;
-  while (size > 18 && ctx.measureText(c.address).width > maxW) { size -= 1; ctx.font = `500 ${size}px Poppins, sans-serif`; }
-  ctx.fillText(c.address, w / 2, fy + 70 * k);
+  let size = m.address;
+  ctx.font = `600 ${size}px Poppins, sans-serif`;
+  while (size > 20 && ctx.measureText(c.address).width > maxW) { size -= 1; ctx.font = `600 ${size}px Poppins, sans-serif`; }
+  ctx.fillText(c.address, w / 2, fy + m.question * 1.35);
 }
 
 /** Crée l'image PNG, ou null si le navigateur ne sait pas dessiner. */

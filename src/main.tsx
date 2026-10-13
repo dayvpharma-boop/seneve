@@ -17,6 +17,7 @@ if (root) createRoot(root).render(
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <Routes>
         <Route path="/" element={<TestPage />} />
+        <Route path="/p" element={<TestPage defaultSource="partage" />} />
         <Route path="/connexion" element={<Connexion />} />
         <Route path="/espace" element={<Espace />} />
         <Route path="/nouveau-mot-de-passe" element={<NewPassword />} />

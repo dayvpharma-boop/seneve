@@ -32,6 +32,11 @@ describe('Suivi anonyme du test', () => {
     expect(recordVisit).toHaveBeenCalledWith('tt', 'fr');
   });
 
+  it('l’adresse courte /p des images partagées compte la provenance « partage »', () => {
+    render(<MemoryRouter initialEntries={['/p']}><Routes><Route path="/p" element={<TestPage defaultSource="partage" />} /></Routes></MemoryRouter>);
+    expect(recordVisit).toHaveBeenCalledWith('partage', 'fr');
+  });
+
   it('garde la source quand on passe en anglais', () => {
     render(<MemoryRouter initialEntries={['/?src=tt']}><Routes><Route path="/" element={<TestPage />} /></Routes></MemoryRouter>);
     expect(screen.getByRole('link', { name: 'English' })).toHaveAttribute('href', '/?lang=en&src=tt');

@@ -28,7 +28,7 @@ const content: CardContent = {
   brand: 'SÉNEVÉ', title: 'Le Test des 7 Racines', book: 'D’après « Arrête de mendier des miracles »',
   strength: { label: 'Mon point d’appui', name: 'Dîme et offrande' },
   start: { label: 'Je commence par', name: 'Liberté face à l’argent' },
-  question: 'Et toi, quelle est ta racine ?', address: 'exemple.org/seneve/?src=partage',
+  question: 'Et toi, quelle est ta racine ?', address: 'exemple.org/seneve/p',
 };
 
 describe('Image à partager — contenu', () => {
@@ -36,9 +36,9 @@ describe('Image à partager — contenu', () => {
     expect(strengthKind(total)).toBe(kind);
   });
 
-  it('marque l’adresse « partage » et garde la langue anglaise', () => {
-    expect(shareAddress('exemple.org', '/seneve/', 'fr')).toBe('exemple.org/seneve/?src=partage');
-    expect(shareAddress('exemple.org', '/', 'en')).toBe('exemple.org/?src=partage&lang=en');
+  it('affiche l’adresse courte /p et garde la langue anglaise', () => {
+    expect(shareAddress('exemple.org', '/seneve/', 'fr')).toBe('exemple.org/seneve/p');
+    expect(shareAddress('exemple.org', '/', 'en')).toBe('exemple.org/p?lang=en');
   });
 
   it.each(['vertical', 'carre'] as const)('format %s : les deux racines, l’invitation, l’adresse, et aucune note', (format) => {
@@ -48,7 +48,7 @@ describe('Image à partager — contenu', () => {
     expect(all).toContain('Dîme et offrande');
     expect(all).toContain('Liberté face à l’argent');
     expect(all).toContain('Et toi, quelle est ta racine ?');
-    expect(all).toContain('exemple.org/seneve/?src=partage');
+    expect(all).toContain('exemple.org/seneve/p');
     expect(all).not.toMatch(/\d+\s*\/\s*15/);
   });
 });
