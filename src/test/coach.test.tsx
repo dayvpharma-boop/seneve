@@ -119,3 +119,27 @@ describe('Coach', () => {
     expect(screen.queryByPlaceholderText('Ta question…')).not.toBeInTheDocument();
   });
 });
+
+describe('Coach : parcours choisi', () => {
+  it('suit le parcours ouvert depuis l’espace et permet d’en changer', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-13T12:00:00Z'));
+    tables['enrollments'] = [
+      { enrollment_id: 'E1', programme_id: 'PROSPECT_LIVRE_7J_FR_V1', langue: 'fr', date_debut: '2026-10-11', etat: 'active' },
+      { enrollment_id: 'E2', programme_id: 'ACHETEUR_FORMATION30_30J_FR_V1', langue: 'fr', date_debut: '2026-10-13', etat: 'active' },
+    ];
+    tables['programmes'] = [
+      { programme_id: 'PROSPECT_LIVRE_7J_FR_V1', nom: 'Découverte du livre en français — 7 jours', duree_jours: 7 },
+      { programme_id: 'ACHETEUR_FORMATION30_30J_FR_V1', nom: 'Formation 30 jours', duree_jours: 30 },
+    ];
+    rpcResults['coach_ask'] = { data: { message_id: 'M9', etat: 'en_attente' }, error: null };
+    render(<MemoryRouter initialEntries={['/coach?inscription=E1']}><Routes><Route path="/coach" element={<Coach />} /></Routes></MemoryRouter>);
+    expect(await screen.findByRole('tab', { name: 'Découverte du livre — 7 jours' })).toHaveAttribute('aria-selected', 'true');
+    fireEvent.change(screen.getByPlaceholderText('Ta question…'), { target: { value: 'Une question' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer' }));
+    await waitFor(() => expect(rpcs.find(r => r.name === 'coach_ask')?.args).toMatchObject({ p_enrollment_id: 'E1' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Formation 30 jours' }));
+    expect(screen.getByRole('tab', { name: 'Formation 30 jours' })).toHaveAttribute('aria-selected', 'true');
+    vi.useRealTimers();
+  });
+});

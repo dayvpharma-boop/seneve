@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { eventIdFor, pickDefault } from '@/lib/espace';
+import { nomParcours } from '@/lib/espace-textes';
 import { COACH_MAX, coachTextes, enAttente, reveillerCoach, type CoachMessage } from '@/lib/coach';
 
-type Enrollment = { enrollment_id: string; programme_id: string; langue: string; date_debut: string; etat: string; duree: number };
-type Loaded = { langue: string; enrollment: Enrollment | null; messages: CoachMessage[]; restants: number; quota: number };
+type Enrollment = { enrollment_id: string; programme_id: string; langue: string; date_debut: string; etat: string; duree: number; nom: string };
+type Loaded = { langue: string; enrollments: Enrollment[]; defaut: Enrollment | null; messages: CoachMessage[]; restants: number; quota: number };
 
 async function load(): Promise<Loaded | null> {
   const { data: s } = await supabase.auth.getSession();
@@ -19,18 +20,23 @@ async function load(): Promise<Loaded | null> {
     supabase.rpc('coach_quota'),
   ]);
   for (const r of [p, e, m, q]) if (r.error) throw r.error;
-  const enr = (e.data ?? []) as Omit<Enrollment, 'duree'>[];
-  let enrollment: Enrollment | null = null;
+  const enr = (e.data ?? []) as Omit<Enrollment, 'duree' | 'nom'>[];
+  let enrollments: Enrollment[] = [];
   if (enr.length) {
-    const pr = await supabase.from('programmes').select('programme_id, duree_jours').in('programme_id', [...new Set(enr.map(x => x.programme_id))]);
+    const pr = await supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', [...new Set(enr.map(x => x.programme_id))]);
     if (pr.error) throw pr.error;
-    const durees = new Map(((pr.data ?? []) as { programme_id: string; duree_jours: number | null }[]).map(x => [x.programme_id, x.duree_jours ?? 7]));
-    enrollment = pickDefault(enr.map(x => ({ ...x, duree: durees.get(x.programme_id) ?? 7 })));
+    const progs = new Map(((pr.data ?? []) as { programme_id: string; nom: string; duree_jours: number | null }[]).map(x => [x.programme_id, x]));
+    enrollments = enr.map(x => {
+      const prog = progs.get(x.programme_id);
+      const duree = prog?.duree_jours ?? 7;
+      return { ...x, duree, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, duree) };
+    });
   }
+  const defaut = pickDefault(enrollments);
   const quota = (q.data ?? { quota: 5, restants: 0 }) as { quota: number; restants: number };
   return {
-    langue: enrollment?.langue ?? ((p.data?.langue as string | undefined) ?? 'fr'),
-    enrollment,
+    langue: defaut?.langue ?? ((p.data?.langue as string | undefined) ?? 'fr'),
+    enrollments, defaut,
     messages: (m.data ?? []) as CoachMessage[],
     restants: quota.restants, quota: quota.quota,
   };
@@ -44,6 +50,9 @@ export function Coach() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [confirm, setConfirm] = useState(false);
+  // Le parcours vient du lien de l'espace (?inscription=…) ; à défaut, le parcours en cours.
+  const [params] = useSearchParams();
+  const [chosen, setChosen] = useState<string | null>(params.get('inscription'));
   const pendingId = useRef<string | null>(null);
   const bottom = useRef<HTMLDivElement | null>(null);
 
@@ -56,8 +65,9 @@ export function Coach() {
   }, [navigate]);
   useEffect(() => { void refresh(); }, [refresh]);
 
-  const T = coachTextes(data?.langue);
-  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = data?.langue === 'en' ? 'en' : 'fr'; }, [T, data?.langue]);
+  const enrollment = data ? (data.enrollments.find(x => x.enrollment_id === chosen) ?? data.defaut) : null;
+  const T = coachTextes(enrollment?.langue ?? data?.langue);
+  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = (enrollment?.langue ?? data?.langue) === 'en' ? 'en' : 'fr'; }, [T, enrollment?.langue, data?.langue]);
 
   // Tant qu'une réponse est attendue, on relit la conversation toutes les 4 secondes.
   const attente = data ? enAttente(data.messages) : false;
@@ -70,13 +80,13 @@ export function Coach() {
 
   async function send(e: FormEvent) {
     e.preventDefault();
-    if (busy || !data?.enrollment) return;
+    if (busy || !data || !enrollment) return;
     const t = texte.trim();
     if (!t || t.length > COACH_MAX) return;
     pendingId.current = eventIdFor(pendingId.current);
     setBusy(true); setError('');
     try {
-      const { error } = await supabase.rpc('coach_ask', { p_client_message_id: pendingId.current, p_enrollment_id: data.enrollment.enrollment_id, p_texte: t });
+      const { error } = await supabase.rpc('coach_ask', { p_client_message_id: pendingId.current, p_enrollment_id: enrollment.enrollment_id, p_texte: t });
       if (error) { setError(error.message.includes('QUOTA_ATTEINT') ? T.quota : T.erreurEnvoi); return; }
       pendingId.current = null;
       setTexte('');
@@ -106,7 +116,13 @@ export function Coach() {
     <h1>{T.titre}</h1>
     <p>{T.intro}</p>
     <p className="notice" role="note">{T.avertissement} {T.conservation}</p>
-    {!data.enrollment ? <div className="card"><p>{T.sansParcours}</p></div> : <>
+    {!enrollment ? <div className="card"><p>{T.sansParcours}</p></div> : <>
+      <p className="muted">{T.surParcours}</p>
+      {data.enrollments.length > 1
+        ? <div className="prog-tabs" role="tablist" aria-label={T.surParcours}>
+            {data.enrollments.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enrollment.enrollment_id} onClick={() => setChosen(x.enrollment_id)}>{x.nom}</button>)}
+          </div>
+        : <p className="tag">{enrollment.nom}</p>}
       <section className="coach-thread" aria-live="polite">
         {data.messages.length === 0 && <p className="muted">{T.aucun}</p>}
         {data.messages.map(m => <div key={m.message_id} className={`coach-msg ${m.role === 'coach' ? 'coach-msg-coach' : 'coach-msg-moi'}`}>
@@ -127,7 +143,7 @@ export function Coach() {
         {error && <p className="error" role="alert">{error}</p>}
       </form>
     </>}
-    <p className="muted">{T.aide} <Link className="link" to={data.enrollment ? `/aide?inscription=${data.enrollment.enrollment_id}` : '/aide'}>{T.aideLien}</Link></p>
+    <p className="muted">{T.aide} <Link className="link" to={enrollment ? `/aide?inscription=${enrollment.enrollment_id}` : '/aide'}>{T.aideLien}</Link></p>
     {data.messages.length > 0 && (confirm
       ? <div className="row-actions"><p>{T.confirmer}</p><button type="button" className="link danger" disabled={busy} onClick={() => void clear()}>{T.oui}</button><button type="button" className="link" onClick={() => setConfirm(false)}>{T.non}</button></div>
       : <button type="button" className="link" onClick={() => setConfirm(true)}>{T.effacer}</button>)}
