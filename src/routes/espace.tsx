@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 import { GoalCard } from '@/components/GoalCard';
+import { EmailMatinCard } from '@/components/EmailMatinCard';
 import { nomParcours, textes } from '@/lib/espace-textes';
 import { journalTextes } from '@/lib/journal';
 
@@ -146,7 +147,7 @@ export function Espace() {
   if (notStarted) return <main className="wrap">{header}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
-    </div><GoalCard langue={enr.langue} />{outils(enr.langue, enr.enrollment_id)}<WhatsAppLink /></main>;
+    </div><GoalCard langue={enr.langue} /><EmailMatinCard langue={enr.langue} />{outils(enr.langue, enr.enrollment_id)}<WhatsAppLink /></main>;
 
   const maxOpen = finished ? total : day;
   const current = Math.min(selected ?? day, maxOpen);
@@ -176,6 +177,7 @@ export function Espace() {
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
       <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
     <GoalCard langue={enr.langue} />
+    <EmailMatinCard langue={enr.langue} />
     {outils(enr.langue, enr.enrollment_id)}
     <WhatsAppLink />
   </main>;
