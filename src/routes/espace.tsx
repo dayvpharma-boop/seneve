@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
+import { nomParcours, textes } from '@/lib/espace-textes';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null };
@@ -14,8 +15,6 @@ type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activit
 
 const LOAD_ERROR = 'Impossible de charger ta journée pour le moment.';
 
-/** Nom court affiché : « Accompagnement du livre — 14 jours ». */
-function shortName(nom: string) { return nom.replace(/ en français/, ''); }
 
 /** Charge les données du participant connecté. Renvoie null s'il n'y a pas de session. */
 async function load(): Promise<Data | null> {
@@ -46,7 +45,8 @@ async function load(): Promise<Data | null> {
   const programmes = (pr.data ?? []) as Programme[];
   const parcours: Parcours[] = enrollments.map(x => {
     const prog = programmes.find(q => q.programme_id === x.programme_id);
-    return { ...x, nom: shortName(prog?.nom ?? x.programme_id), duree: prog?.duree_jours ?? 7 };
+    const duree = prog?.duree_jours ?? 7;
+    return { ...x, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, duree), duree };
   });
   // Chaque inscription garde sa version : on ne retient que les contenus de cette version.
   const contents = ((c.data ?? []) as Content[]).filter(ct => enrollments.some(x => x.programme_id === ct.programme_id && String(x.version) === String(ct.version)));
@@ -60,15 +60,15 @@ async function load(): Promise<Data | null> {
   return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
 }
 
-function formatDate(iso: string | null) {
+function formatDate(iso: string | null, locale = 'fr-FR') {
   if (!iso) return '';
-  return new Intl.DateTimeFormat('fr-FR', { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
+  return new Intl.DateTimeFormat(locale, { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
 }
 
 /** Date de début (AAAA-MM-JJ) affichée en toutes lettres, sans décalage de fuseau. */
-function formatStart(ymd: string) {
+function formatStart(ymd: string, locale = 'fr-FR') {
   const d = /^\d{4}-\d{2}-\d{2}$/.test(ymd) ? new Date(`${ymd}T12:00:00Z`) : new Date(ymd);
-  return new Intl.DateTimeFormat('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }).format(d);
+  return new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }).format(d);
 }
 
 export function Espace() {
@@ -117,6 +117,7 @@ export function Espace() {
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
+  const T = textes(enr.langue);
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" role="tablist" aria-label="Mes parcours">
     {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); }}>{x.nom}</button>)}
   </div>;
@@ -124,7 +125,7 @@ export function Espace() {
   const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);
   if (notStarted) return <main className="wrap">{header}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
-      <p>Ton accompagnement commence le {formatStart(enr.date_debut)}. Le jour 1 s'ouvrira ce jour-là.</p>
+      <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
     </div><WhatsAppLink /></main>;
 
   const maxOpen = finished ? total : day;
@@ -139,25 +140,26 @@ export function Espace() {
 
   return <main className="wrap">{header}{tabs}
     {!tabs && <p className="tag">{enr.nom}</p>}
-    {finished ? <p>Ce parcours de {total} jours est terminé. Tu peux relire les {total} journées.</p> : <p className="day-count">Jour {day} sur {total}</p>}
-    {paused && <p className="muted" role="status">Ce parcours est en pause.</p>}
+    {finished ? <p>{T.termine(total)}</p> : <p className="day-count">{T.jourSur(day, total)}</p>}
+    {paused && <p className="muted" role="status">{T.pause}</p>}
     <div className="day-chips">
-      {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? `Jour ${n}, pas encore ouvert` : `Jour ${n}`} onClick={() => setSelected(n)}>{n}</button>)}
+      {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? T.jourFerme(n) : T.jour(n)} onClick={() => setSelected(n)}>{n}</button>)}
     </div>
-    {maxOpen < total && <p className="muted">Le jour {maxOpen + 1} s'ouvre demain.</p>}
+    {maxOpen < total && <p className="muted">{T.ouvreDemain(maxOpen + 1)}</p>}
     <article className="card">
-      <p className="tag">Jour {current}</p>
+      <p className="tag">{T.jour(current)}</p>
       <h2>{content.theme}</h2>
       <p className="day-text">{webText(content.texte_officiel, data.prenom)}</p>
-      {content.reference_livre && <p className="src">Dans le livre : {content.reference_livre}</p>}
+      {content.reference_livre && <p className="src">{T.dansLeLivre}{content.reference_livre}</p>}
     </article>
-    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
-    {question && <div className="card"><p className="tag">Question pour réfléchir</p><p className="action">{question.consigne}</p></div>}
+    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
+    {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p></div>}
     <WhatsAppLink />
   </main>;
 }
 
-function ActionCard({ enrollmentId, activity, state, readOnly = false }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean }) {
+function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr' }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string }) {
+  const T = textes(langue);
   const [doneAt, setDoneAt] = useState<string | null>(state?.etat === 'realisee' ? (state.realisee_le ?? '') : null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
@@ -177,12 +179,12 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false }: { enrol
     finally { setPending(false); }
   }
 
-  return <div className="card"><p className="tag">Ton action du jour</p><p className="action">{activity.consigne}</p>
+  return <div className="card"><p className="tag">{T.action}</p><p className="action">{activity.consigne}</p>
     {doneAt !== null
-      ? <p className="success" role="status">Action réalisée{doneAt ? ` le ${formatDate(doneAt)}` : ''}</p>
+      ? <p className="success" role="status">{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>
       : readOnly ? null : <>
-        <button type="button" className="btn action-btn" disabled={pending} onClick={record}>{pending ? 'Enregistrement…' : "J'ai réalisé cette action"}</button>
-        {error && <p className="error" role="alert">Non enregistré. Vérifie ta connexion et réessaie.</p>}
+        <button type="button" className="btn action-btn" disabled={pending} onClick={record}>{pending ? T.enregistrement : T.bouton}</button>
+        {error && <p className="error" role="alert">{T.erreur}</p>}
       </>}
   </div>;
 }

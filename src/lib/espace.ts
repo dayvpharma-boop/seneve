@@ -49,7 +49,10 @@ export function fillPrenom(text: string, prenom: string | null | undefined): str
  * « Tu peux répondre ici… » qui ne vaut que pour WhatsApp (pas de champ de réponse sur le web).
  */
 export function webText(text: string, prenom: string | null | undefined): string {
-  return fillPrenom(text, prenom).replace(/\s*Tu peux répondre ici[^.!?]*[.!?]/g, '').trim();
+  return fillPrenom(text, prenom)
+    .replace(/\s*Tu peux répondre ici[^.!?]*[.!?]/g, '')
+    .replace(/\s*(You can reply here|If you have any trouble accessing it, let us know here)[^.!?]*[.!?]/g, '')
+    .trim();
 }
 
 /** Identifiant d'événement : réutilise celui du clic en attente, sinon en génère un nouveau. */

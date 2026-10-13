@@ -60,6 +60,25 @@ describe('Espace avec plusieurs parcours', () => {
     expect(screen.queryByText(/Thème ACHETEUR/)).not.toBeInTheDocument();
   });
 
+  it('parcours anglais : libellés en anglais', async () => {
+    tables['programmes'] = [{ programme_id: 'ACHETEUR_LIVRE_14J_EN_V1', nom: 'Accompagnement du livre en anglais — 14 jours', duree_jours: 14 }];
+    tables['enrollments'] = [{ enrollment_id: 'EN', programme_id: 'ACHETEUR_LIVRE_14J_EN_V1', version: 1, langue: 'en', date_debut: '2026-10-11', etat: 'active' }];
+    tables['contents'] = Array.from({ length: 14 }, (_, k) => content('ACHETEUR_LIVRE_14J_EN_V1', k + 1));
+    tables['activities'] = [{ activity_id: 'A2', content_id: 'ACHETEUR_LIVRE_14J_EN_V1-2', type_activite: 'action', consigne: 'Read chapter 1.', obligatoire: true }];
+    render(<MemoryRouter><Espace /></MemoryRouter>);
+    expect(await screen.findByText('Day 2 of 14')).toBeInTheDocument();
+    expect(screen.getByText('Day 3 opens tomorrow.')).toBeInTheDocument();
+    expect(screen.getByText('Your action for today')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'I completed this action' })).toBeInTheDocument();
+  });
+
+  it('parcours anglais pas commencé : date en anglais', async () => {
+    tables['programmes'] = [{ programme_id: 'ACHETEUR_LIVRE_14J_EN_V1', nom: 'Accompagnement du livre en anglais — 14 jours', duree_jours: 14 }];
+    tables['enrollments'] = [{ enrollment_id: 'EN', programme_id: 'ACHETEUR_LIVRE_14J_EN_V1', version: 1, langue: 'en', date_debut: '2026-11-03', etat: 'active' }];
+    render(<MemoryRouter><Espace /></MemoryRouter>);
+    expect(await screen.findByText(/Your journey starts on Tuesday 3 November/)).toBeInTheDocument();
+  });
+
   it('14 jours commencé : 14 pastilles et durée lue dans le programme', async () => {
     tables['enrollments'] = [{ enrollment_id: 'E14', programme_id: 'ACHETEUR_LIVRE_14J_FR_V1', version: 1, langue: 'fr', date_debut: '2026-10-10', etat: 'active' }];
     render(<MemoryRouter><Espace /></MemoryRouter>);

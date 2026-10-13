@@ -43,6 +43,10 @@ describe('webText', () => {
     expect(webText('Quelle priorité cette décision révèle-t-elle ? Tu peux répondre ici.', 'Marie')).toBe('Quelle priorité cette décision révèle-t-elle ?');
     expect(webText('Quelle démarche ? Tu peux répondre ici, sans partager de détails personnels.', '')).toBe('Quelle démarche ?');
   });
+  it('retire aussi les invitations à répondre en anglais', () => {
+    expect(webText('What time of day will you set aside for your book? If you have any trouble accessing it, let us know here.', 'Ann')).toBe('What time of day will you set aside for your book?');
+    expect(webText('Question for today: why? You can reply here.', '')).toBe('Question for today: why?');
+  });
   it('ne change rien d’autre', () => {
     expect(webText('Bonjour {prenom} 👋 Jour 7/7 — Merci d’avoir suivi ce parcours !', 'Marie')).toBe('Bonjour Marie 👋 Jour 7/7 — Merci d’avoir suivi ce parcours !');
   });
