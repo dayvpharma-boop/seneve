@@ -62,6 +62,9 @@ describe('Administration', () => {
     expect(await screen.findByText('Je bloque sur le jour 3')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '+243900000000' })).toHaveAttribute('href', 'https://wa.me/243900000000');
     fireEvent.change(screen.getByLabelText(/^Confier à/), { target: { value: 'U2' } });
+    expect(screen.getByText(/prévenue par e-mail qu’au passage à « Résolue »/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/^État/), { target: { value: 'resolue' } });
+    expect(screen.getByText(/recevra un e-mail avec ta réponse/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText(/^État/), { target: { value: 'en_cours' } });
     fireEvent.change(screen.getByLabelText(/Réponse visible/), { target: { value: 'Voici une piste.' } });
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }));

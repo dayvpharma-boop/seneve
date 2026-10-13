@@ -110,7 +110,9 @@ function RequestAdmin({ request, admin, team, onSaved }: { request: StaffRequest
           <textarea rows={4} value={reponse} onChange={e => setReponse(e.target.value)} placeholder="Écris ici la réponse que la personne lira." />
         </label>
         {trop && <p className="error" role="alert">{REPONSE_MAX} caractères au plus.</p>}
-        <p className="muted">La personne n’est pas prévenue automatiquement : si besoin, écris-lui aussi par e-mail ou WhatsApp.</p>
+        <p className="muted">{etat === 'resolue'
+          ? 'En passant à « Résolue », la personne recevra un e-mail avec ta réponse (si son compte a une adresse e-mail).'
+          : 'La personne n’est prévenue par e-mail qu’au passage à « Résolue ». Avant cela, écris-lui par e-mail ou WhatsApp si besoin.'}</p>
         <button type="submit" className="btn action-btn" disabled={busy || trop}>{busy ? 'Enregistrement…' : 'Enregistrer'}</button>
         {error && <p className="error" role="alert">{error}</p>}
       </form>}
