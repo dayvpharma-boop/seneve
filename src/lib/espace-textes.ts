@@ -15,6 +15,7 @@ export const ESPACE_TEXTES = {
     sources: 'Sources : ',
     carnet: 'Carnet de bord : ',
     livre: 'Livre : ',
+    guide: 'Guide de l’accompagnement : ',
     question: 'Question pour réfléchir',
     action: 'Ton action du jour',
     realisee: 'Action réalisée',
@@ -42,6 +43,7 @@ export const ESPACE_TEXTES = {
     sources: 'Sources: ',
     carnet: 'Journal: ',
     livre: 'Book: ',
+    guide: 'Coaching guide: ',
     question: 'Question to reflect on',
     action: 'Your action for today',
     realisee: 'Action completed',
@@ -73,8 +75,8 @@ export function nomParcours(nom: string, langue: string, duree: number): string 
 export function referenceAffichee(ref: string, langue: string | null | undefined): string {
   const T = textes(langue);
   const r = ref.trim();
-  if (!/^C\s*:/.test(r) && !/(^|[.;]\s*)L\s*:/.test(r)) return T.dansLeLivre + r;
-  const parts = r.split(/(?:^|(?<=[.;])\s*)(?=[CL]\s*:)/).map(x => x.trim()).filter(Boolean);
-  const lisible = parts.map(x => x.replace(/^C\s*:\s*/, T.carnet).replace(/^L\s*:\s*/, T.livre).replace(/[.;]\s*$/, ''));
+  if (!/^[CG]\s*:/.test(r) && !/(^|[.;]\s*)[LG]\s*:/.test(r)) return T.dansLeLivre + r;
+  const parts = r.split(/(?:^|(?<=[.;])\s*)(?=[CLG]\s*:)/).map(x => x.trim()).filter(Boolean);
+  const lisible = parts.map(x => x.replace(/^C\s*:\s*/, T.carnet).replace(/^L\s*:\s*/, T.livre).replace(/^G\s*:\s*/, T.guide).replace(/[.;]\s*$/, ''));
   return T.sources + lisible.join(' — ');
 }

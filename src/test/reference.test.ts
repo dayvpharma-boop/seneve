@@ -12,6 +12,10 @@ describe('référence sous le texte du jour', () => {
   it('carnet seul', () => {
     expect(referenceAffichee('C : Jour 7, Bilan de la semaine 1', 'fr')).toBe('Sources : Carnet de bord : Jour 7, Bilan de la semaine 1');
   });
+  it('accompagnement : guide aussi', () => {
+    expect(referenceAffichee('C : Jour 7, Bilan de la semaine 1 ; Séance 1 avec Dr Justin. G : Fréquence, séance 1', 'fr'))
+      .toBe('Sources : Carnet de bord : Jour 7, Bilan de la semaine 1 ; Séance 1 avec Dr Justin — Guide de l’accompagnement : Fréquence, séance 1');
+  });
   it('anglais', () => {
     expect(referenceAffichee('C : Day 1. L : Matthew 6:33 p. 9', 'en')).toBe('Sources: Journal: Day 1 — Book: Matthew 6:33 p. 9');
   });
