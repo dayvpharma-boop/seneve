@@ -11,7 +11,7 @@ type Enrollment = { enrollment_id: string; programme_id: string; version: number
 type Programme = { programme_id: string; nom: string; duree_jours: number | null };
 type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
 type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean };
-type State = { enrollment_id: string; activity_id: string; etat: string; realisee_le: string | null };
+type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
 type Parcours = Enrollment & { nom: string; duree: number };
 type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[] };
 
@@ -55,7 +55,7 @@ async function load(): Promise<Data | null> {
   const ids = contents.map(x => x.content_id);
   const [a, st] = await Promise.all([
     ids.length ? supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire').in('content_id', ids) : Promise.resolve({ data: [], error: null }),
-    supabase.from('activity_state').select('enrollment_id, activity_id, etat, realisee_le').in('enrollment_id', enrollments.map(x => x.enrollment_id)),
+    supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enrollments.map(x => x.enrollment_id)),
   ]);
   if (a.error) throw a.error;
   if (st.error) throw st.error;
@@ -181,33 +181,50 @@ export function Espace() {
   </main>;
 }
 
+type Choix = 'realisee' | 'partielle' | 'aide_demandee';
+
 function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr' }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string }) {
   const T = textes(langue);
-  const [doneAt, setDoneAt] = useState<string | null>(state?.etat === 'realisee' ? (state.realisee_le ?? '') : null);
-  const [pending, setPending] = useState(false);
+  const [etat, setEtat] = useState<string>(state?.etat ?? 'non_commencee');
+  const [aide, setAide] = useState<boolean>(Boolean(state?.aide_demandee));
+  const [doneAt, setDoneAt] = useState<string>(state?.realisee_le ?? '');
+  const [pending, setPending] = useState<Choix | null>(null);
   const [error, setError] = useState(false);
-  const eventId = useRef<string | null>(null);
+  // Un identifiant par choix, réutilisé si l'envoi échoue : une nouvelle tentative ne crée jamais de doublon.
+  const eventIds = useRef<Partial<Record<Choix, string | null>>>({});
 
-  async function record() {
+  async function record(choix: Choix) {
     if (pending) return;
-    // Le même identifiant est réutilisé si l'envoi échoue : une nouvelle tentative ne crée jamais de doublon.
-    eventId.current = eventIdFor(eventId.current);
-    setPending(true); setError(false);
+    const id = eventIdFor(eventIds.current[choix] ?? null);
+    eventIds.current[choix] = id;
+    setPending(choix); setError(false);
     try {
-      const { data, error } = await supabase.rpc('record_progress', { p_enrollment_id: enrollmentId, p_activity_id: activity.activity_id, p_client_event_id: eventId.current, p_etat: 'realisee', p_canal: 'web' });
-      if (error || !data || (data as { etat?: string }).etat !== 'realisee') throw error ?? new Error('bad');
-      eventId.current = null;
-      setDoneAt(new Date().toISOString());
+      const { data, error } = await supabase.rpc('record_progress', { p_enrollment_id: enrollmentId, p_activity_id: activity.activity_id, p_client_event_id: id, p_etat: choix, p_canal: 'web' });
+      const r = data as { etat?: string; aide_demandee?: boolean } | null;
+      const ok = !error && r && (choix === 'aide_demandee' ? r.aide_demandee === true : choix === 'realisee' ? r.etat === 'realisee' : (r.etat === 'partielle' || r.etat === 'realisee'));
+      if (!ok || !r) throw error ?? new Error('bad');
+      eventIds.current[choix] = null;
+      // L'état affiché est celui renvoyé par la base (un état déjà plus avancé n'est jamais rétrogradé).
+      setEtat(r.etat ?? etat);
+      setAide(Boolean(r.aide_demandee));
+      if (r.etat === 'realisee' && !doneAt) setDoneAt(new Date().toISOString());
     } catch { setError(true); }
-    finally { setPending(false); }
+    finally { setPending(null); }
   }
 
+  const realisee = etat === 'realisee';
   return <div className="card"><p className="tag">{T.action}</p><p className="action">{activity.consigne}</p>
-    {doneAt !== null
-      ? <p className="success" role="status">{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>
-      : readOnly ? null : <>
-        <button type="button" className="btn action-btn" disabled={pending} onClick={record}>{pending ? T.enregistrement : T.bouton}</button>
-        {error && <p className="error" role="alert">{T.erreur}</p>}
-      </>}
+    {realisee && <p className="success" role="status">{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>}
+    {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
+    {!realisee && aide && <div className="aide-notee" role="status"><p>{T.aideNotee}</p>
+      <div className="link-row"><Link className="link" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link><Link className="link" to="/coach">{T.demanderCoach}</Link></div></div>}
+    {!realisee && !readOnly && <>
+      <button type="button" className="btn action-btn" disabled={pending !== null} onClick={() => void record('realisee')}>{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
+      <div className="choix-row">
+        {etat !== 'partielle' && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('partielle')}>{pending === 'partielle' ? T.enregistrement : T.boutonPartie}</button>}
+        {!aide && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('aide_demandee')}>{pending === 'aide_demandee' ? T.enregistrement : T.boutonAide}</button>}
+      </div>
+      {error && <p className="error" role="alert">{T.erreur}</p>}
+    </>}
   </div>;
 }

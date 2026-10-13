@@ -139,3 +139,10 @@ details summary { cursor:pointer; padding:6px 0; }
 .bilan-etat .link { padding:0; }
 .etat-realisee .link { color:var(--ok); }
 .bilan-ferme { opacity:.55; }
+
+/* Choix plus fins sous l'action du jour */
+.choix-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.btn-secondaire { flex:1 1 140px; background:transparent; color:inherit; border:1px solid var(--gold-fill); border-radius:12px; padding:12px 14px; font-size:15px; font-weight:600; }
+.btn-secondaire:disabled { opacity:.6; }
+.aide-notee { margin-top:12px; }
+.aide-notee p { margin:0 0 6px; }
