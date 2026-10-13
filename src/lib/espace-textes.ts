@@ -66,7 +66,8 @@ export function textes(langue: string | null | undefined) {
 
 /** Nom court du parcours, dans sa langue. */
 export function nomParcours(nom: string, langue: string, duree: number): string {
-  if (langue === 'en') return `Book companion — ${duree} days`;
+  // Parcours anglais : le suivi du livre porte un nom français dans la base, les formations un nom anglais.
+  if (langue === 'en') return /livre|book/i.test(nom) || !nom.trim() ? `Book companion — ${duree} days` : nom;
   return nom.replace(/ en français/, '');
 }
 

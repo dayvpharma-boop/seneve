@@ -20,3 +20,10 @@ describe('référence sous le texte du jour', () => {
     expect(referenceAffichee('C : Day 1. L : Matthew 6:33 p. 9', 'en')).toBe('Sources: Journal: Day 1 — Book: Matthew 6:33 p. 9');
   });
 });
+
+import { nomParcours } from '@/lib/espace-textes';
+describe('nom des parcours', () => {
+  it('livre en anglais', () => expect(nomParcours('Accompagnement du livre en anglais — 14 jours', 'en', 14)).toBe('Book companion — 14 days'));
+  it('formation en anglais', () => expect(nomParcours('30-Day Training', 'en', 30)).toBe('30-Day Training'));
+  it('français inchangé', () => expect(nomParcours('Accompagnement du livre en français — 14 jours', 'fr', 14)).toBe('Accompagnement du livre — 14 jours'));
+});
