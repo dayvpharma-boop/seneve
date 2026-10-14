@@ -32,6 +32,16 @@ body { margin:0; background:var(--background); color:var(--foreground); font-fam
 #s-home:not([hidden]) { border:1px solid var(--line); border-radius:24px; padding:clamp(22px,6vw,36px); background:linear-gradient(160deg,var(--surface),var(--background)); box-shadow:0 18px 48px rgba(35,57,47,.10); }
 #s-home ul.plain { padding:16px 16px 8px; border:1px solid var(--line); border-radius:14px; background:var(--surface); }
 #s-home .btn { border-radius:999px; }
+#s-home .home-intro { max-width:34rem; color:var(--muted); font-size:15px; line-height:1.7; margin-bottom:22px; }
+.home-card { position:relative; overflow:hidden; padding:22px; border:1px solid var(--line); border-radius:18px; background:var(--surface); box-shadow:0 12px 28px rgba(35,57,47,.07); }
+.home-card::after { content:""; position:absolute; width:170px; height:170px; right:-72px; top:-86px; border:1px solid color-mix(in srgb,var(--brand) 16%,transparent); border-radius:50%; box-shadow:0 0 0 16px color-mix(in srgb,var(--brand) 3%,transparent),0 0 0 34px color-mix(in srgb,var(--brand) 2%,transparent); pointer-events:none; }
+.home-card > * { position:relative; z-index:1; }
+.home-kicker { color:var(--brand); font-family:Lora,serif; font-size:20px; line-height:1.35; margin:0 0 12px; }
+.home-card ul.plain { padding:14px 16px 7px; margin:0 0 15px; border:1px solid var(--line); border-radius:13px; background:color-mix(in srgb,var(--surface) 88%,var(--background)); }
+.home-card .home-note { font-size:13px; line-height:1.6; margin:0 0 16px; }
+.home-card .btn { border-radius:13px; min-height:52px; box-shadow:0 7px 16px color-mix(in srgb,var(--brand) 18%,transparent); }
+#s-home .language-link { margin:16px auto 0; }
+@media(max-width:420px) { .home-card { padding:18px; } }
 .wrap { max-width:600px; margin:0 auto; padding:16px 16px 48px; min-height:100vh; display:flex; flex-direction:column; }
 .brand { font-family:Lora,serif; letter-spacing:.28em; font-size:13px; color:var(--brand); text-transform:uppercase; margin:0 0 8px; }
 h1 { font-family:Lora,serif; font-weight:600; font-size:32px; line-height:1.2; margin:0 0 16px; text-wrap:balance; }
