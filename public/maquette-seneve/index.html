@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f3e9">
+<title>SÉNEVÉ — Prototype du parcours</title>
+<style>
+:root{--bg:#f6f3e9;--surface:#fffdf8;--ink:#23392f;--muted:#69766e;--brand:#315d48;--brand-dark:#234534;--accent:#c59b4b;--line:#dce2d7;--soft:#e9efe6;--shadow:0 18px 48px rgba(35,57,47,.09);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 90% 4%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 28rem),var(--bg);color:var(--ink);min-height:100vh}
+button{font:inherit}button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}.wrap{max-width:1080px;margin:auto;padding:20px 24px 52px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.16em;font-size:13px}.grain{width:32px;height:32px;border:1px solid color-mix(in srgb,var(--brand) 42%,white);border-radius:50%;display:grid;place-items:center;color:var(--brand);font:italic 22px Georgia}
+.badge{border:1px solid color-mix(in srgb,var(--accent) 45%,white);border-radius:999px;padding:7px 11px;color:color-mix(in srgb,var(--accent) 65%,var(--ink));background:var(--surface);font-size:10px;font-weight:750;letter-spacing:.08em}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:34px;align-items:start;margin-top:48px}main{min-width:0}.kicker{color:var(--brand);font-size:10px;letter-spacing:.19em;font-weight:800;text-transform:uppercase;margin:0 0 14px}
+h1,h2,h3,p{margin-top:0}h1{font:500 clamp(38px,5.2vw,58px)/1.07 Georgia,serif;letter-spacing:-.035em;max-width:700px;margin-bottom:16px}
+h2{font:500 clamp(29px,3.8vw,40px)/1.12 Georgia,serif;letter-spacing:-.025em;margin-bottom:13px}.lede{max-width:600px;color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:25px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(21px,4vw,34px);box-shadow:var(--shadow)}
+.hero{position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-85px;top:-105px;width:235px;height:235px;border:1px solid color-mix(in srgb,var(--brand) 15%,transparent);border-radius:50%;box-shadow:0 0 0 20px color-mix(in srgb,var(--brand) 3%,transparent),0 0 0 43px color-mix(in srgb,var(--brand) 2%,transparent);pointer-events:none}.hero>*{position:relative;z-index:1}
+.btn{min-height:50px;border:0;border-radius:13px;padding:0 19px;font-weight:750;cursor:pointer;transition:transform .15s,background .15s}.btn:hover{transform:translateY(-1px)}.primary{background:var(--brand);color:#fff}.primary:hover{background:var(--brand-dark)}.outline{background:transparent;border:1px solid var(--line);color:var(--brand)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:21px}.small-note{font-size:11px;color:var(--muted);line-height:1.6;margin:17px 0 0}
+.sidebar{border:1px solid var(--line);border-radius:18px;padding:20px;background:color-mix(in srgb,var(--surface) 78%,transparent)}.sidebar h3{font-size:13px;margin-bottom:14px}.steps{list-style:none;padding:0;margin:0 0 17px;display:grid;gap:13px}.steps li{display:flex;gap:9px;color:var(--muted);font-size:11px;line-height:1.45}.num{width:19px;height:19px;flex:none;border:1px solid color-mix(in srgb,var(--brand) 35%,white);border-radius:50%;display:grid;place-items:center;color:var(--brand);font-size:9px;font-weight:800}.sidebar p{font-size:11px;color:var(--muted);line-height:1.6;margin:0}
+.palette{margin-top:19px}.palette-title{font-size:11px;font-weight:750;margin-bottom:9px}.swatches{display:flex;gap:4px;margin-bottom:6px}.swatches i{display:block;width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.07)}
+.screen{display:none}.screen.active{display:block;animation:up .22s ease-out}@keyframes up{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.quiz-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:10px}.track{height:5px;background:color-mix(in srgb,var(--line) 80%,white);border-radius:9px;overflow:hidden;margin-bottom:24px}.bar{height:100%;width:4.76%;background:var(--brand);transition:width .2s}
+.question{font:500 clamp(22px,3vw,30px)/1.32 Georgia,serif;margin:0 0 21px}.options{display:grid;gap:9px}.option{width:100%;min-height:55px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--ink);padding:12px 14px;text-align:left;display:flex;align-items:center;gap:12px;cursor:pointer}.option:hover,.option[aria-checked=true]{border-color:var(--brand);background:var(--soft)}.radio{width:17px;height:17px;border-radius:50%;border:1.5px solid #a7b2a5;display:grid;place-items:center;flex:none}.option[aria-checked=true] .radio{border-color:var(--brand)}.option[aria-checked=true] .radio:after{content:"";width:7px;height:7px;background:var(--brand);border-radius:50%}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:20px}.linkbtn{border:0;background:none;color:var(--muted);padding:12px 0;cursor:pointer}.linkbtn:disabled{opacity:.4;cursor:default}
+.notice{margin-top:17px;padding:11px 13px;border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface));border-radius:0 9px 9px 0;color:var(--muted);font-size:11px;line-height:1.55}
+.root-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:20px 0}.root{border:1px solid var(--line);border-radius:13px;background:var(--surface);padding:13px}.root small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}.root strong{font:500 16px Georgia,serif}.root span{float:right;color:var(--brand);opacity:.6}
+.actionbox{border:1px solid color-mix(in srgb,var(--brand) 20%,white);background:var(--soft);border-radius:15px;padding:17px}.actionbox p{font-size:11px;color:var(--muted);line-height:1.6;margin:8px 0 0}
+.footnote{color:var(--muted);font-size:10px;line-height:1.6;margin-top:14px}
+@media(max-width:760px){.wrap{padding:16px 15px 34px}.layout{grid-template-columns:1fr;gap:18px;margin-top:34px}.sidebar{order:2}h1{font-size:42px}.badge{font-size:9px;letter-spacing:.04em}.card{border-radius:19px}}
+@media(max-width:390px){.root-grid{grid-template-columns:1fr}.actions .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="logo"><span class="grain" aria-hidden="true">s</span><span>SÉNEVÉ</span></div><span class="badge">DIRECTION A · CROISSANCE RETENUE</span></header>
+<div class="layout">
+<main>
+<section class="screen active" id="home" aria-labelledby="home-title">
+<p class="kicker">Un compagnon de croissance</p>
+<h1 id="home-title">Avancer à la racine, un petit pas à la fois.</h1>
+<p class="lede">Découvrez le Test des 7 Racines, puis explorez une première action adaptée à votre parcours.</p>
+<div class="card hero">
+<p class="kicker">Le test SÉNEVÉ</p>
+<h2>21 questions, à votre rythme.</h2>
+<p class="lede" style="font-size:13px;margin:0">Répondez simplement. Vous pourrez revenir à la question précédente pendant le test.</p>
+<div class="actions"><button class="btn primary" onclick="startTest()" type="button">Commencer le test <span aria-hidden="true">→</span></button><button class="btn outline" onclick="show('results')" type="button">Voir l’aperçu du résultat</button></div>
+<p class="small-note">Pas de compte ni de numéro demandé dans ce prototype.</p>
+</div>
+<div class="palette" aria-label="Direction visuelle retenue"><p class="palette-title">Piste retenue : A — Croissance</p><div class="swatches"><i style="background:#f6f3e9"></i><i style="background:#315d48"></i><i style="background:#c59b4b"></i></div><p class="small-note" style="margin-top:5px">Crème, vert profond et or doux. Direction choisie pour cette maquette ; le contenu reste à valider.</p></div>
+</section>
+<section class="screen" id="quiz" aria-labelledby="question">
+<p class="kicker">Votre parcours</p><div class="quiz-meta"><span id="step">Question 1 sur 21</span><span>À votre rythme</span></div>
+<div class="track" role="progressbar" aria-label="Progression du test" aria-valuemin="1" aria-valuemax="21" aria-valuenow="1"><div class="bar" id="bar"></div></div>
+<div class="card"><p class="kicker">Choisissez la réponse qui vous correspond</p><h2 class="question" id="question"></h2><div class="options" id="options" role="radiogroup" aria-label="Réponses possibles"></div>
+<div class="quiz-nav"><button class="linkbtn" type="button" id="previous" onclick="previous()">← Précédent</button><button class="btn primary" type="button" id="next" onclick="next()">Continuer →</button></div>
+<div class="notice">Les questions suivantes sont des emplacements de maquette. Le contenu officiel du test reste à intégrer.</div></div>
+<p class="footnote">Prototype uniquement : les réponses ne sont pas enregistrées et aucun calcul de résultat n’est effectué.</p>
+</section>
+<section class="screen" id="results" aria-labelledby="result-title">
+<p class="kicker">Après le test</p><h2 id="result-title">Comprendre ses points d’appui et choisir un premier pas.</h2>
+<p class="lede" style="font-size:13px">Le résultat final reliera les réponses au référentiel validé des sept racines.</p>
+<div class="card"><span class="badge">APERÇU VISUEL · RÉSULTAT NON CALCULÉ</span>
+<div class="root-grid">
+<div class="root"><span>○</span><small>Racine 01</small><strong>Nom officiel à intégrer</strong></div><div class="root"><span>○</span><small>Racine 02</small><strong>Nom officiel à intégrer</strong></div>
+<div class="root"><span>○</span><small>Racine 03</small><strong>Nom officiel à intégrer</strong></div><div class="root"><span>○</span><small>Racine 04</small><strong>Nom officiel à intégrer</strong></div>
+<div class="root"><span>○</span><small>Racine 05</small><strong>Nom officiel à intégrer</strong></div><div class="root"><span>○</span><small>Racine 06</small><strong>Nom officiel à intégrer</strong></div>
+<div class="root"><span>○</span><small>Racine 07</small><strong>Nom officiel à intégrer</strong></div></div>
+<div class="actionbox"><p class="kicker" style="margin-bottom:0">Votre première action</p><strong>Contenu approuvé à relier au résultat.</strong><p>Cette zone montre la structure prévue, sans inventer de conseil ni de score.</p></div>
+<div class="actions"><button class="btn primary" type="button" onclick="show('action')">Découvrir la suite →</button><button class="btn outline" type="button" onclick="startTest()">Essayer le parcours</button></div></div>
+</section>
+<section class="screen" id="action" aria-labelledby="action-title">
+<p class="kicker">Espace participant</p><h2 id="action-title">Votre petit pas du jour.</h2><p class="lede" style="font-size:13px">Le tableau de bord peut mettre en avant l’action du jour, la progression et la reprise du parcours.</p>
+<div class="card"><div class="actionbox"><p class="kicker" style="margin-bottom:0">Jour 1 · contenu à valider</p><strong>Message, activité et source officielle à connecter.</strong><p>Le texte affiché ici est un emplacement de maquette, pas un extrait du livre ni une recommandation personnelle.</p></div>
+<div class="actions"><button class="btn primary" type="button" onclick="show('home')">Retour à l’accueil</button><button class="btn outline" type="button" onclick="show('results')">Revoir l’aperçu</button></div>
+<p class="small-note">Direction visuelle A choisie pour la maquette ; textes et règles du parcours restent à valider avant intégration.</p></div>
+</section>
+</main>
+<aside class="sidebar" aria-label="Parcours représenté par la maquette"><h3>Parcours illustré</h3><ol class="steps"><li><span class="num">1</span><span>Accueil et démarrage du test.</span></li><li><span class="num">2</span><span>Questions avec progression visible.</span></li><li><span class="num">3</span><span>Résultat expliqué et première action.</span></li></ol><p>Prototype de revue séparé de l’application et de Supabase en production. La maquette ne modifie aucune donnée.</p></aside>
+</div></div>
+<script>
+const answers={};let current=0;
+const choices=["Pas du tout d’accord","Plutôt pas d’accord","Plutôt d’accord","Tout à fait d’accord"];
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));window.scrollTo({top:0,behavior:"smooth"})}
+function textFor(i){return i===0?"Je commence chaque journée par un temps de prière avant toute autre activité.":"Question officielle "+(i+1)+" à intégrer depuis la version validée du test."}
+function paintQuestion(){document.getElementById("step").textContent="Question "+(current+1)+" sur 21";document.getElementById("question").textContent=textFor(current);document.getElementById("bar").style.width=((current+1)/21*100)+"%";document.querySelector('[role="progressbar"]').setAttribute("aria-valuenow",current+1);document.getElementById("previous").disabled=current===0;document.getElementById("next").textContent=current===20?"Voir l’aperçu →":"Continuer →";
+const box=document.getElementById("options");box.innerHTML="";choices.forEach((label,index)=>{const b=document.createElement("button");b.type="button";b.className="option";b.setAttribute("role","radio");b.setAttribute("aria-checked",answers[current]===index?"true":"false");b.innerHTML='<span class="radio" aria-hidden="true"></span><span>'+label+'</span>';b.addEventListener("click",()=>{answers[current]=index;paintQuestion();document.querySelectorAll(".option")[index].focus()});box.appendChild(b)})}
+function startTest(){current=0;paintQuestion();show("quiz")}
+function next(){if(answers[current]===undefined){document.getElementById("options").querySelector("button").focus();return}if(current<20){current++;paintQuestion()}else show("results")}
+function previous(){if(current>0){current--;paintQuestion()}}
+paintQuestion();
+</script>
+</body>
+</html>
