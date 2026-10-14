@@ -7,7 +7,7 @@ import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
 import { SeanceCard } from '@/components/SeanceCard';
 import { SemaineCard } from '@/components/SemaineCard';
-import { bilan as bilanParcours, semaineDuJour } from '@/lib/progres';
+import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { journalTextes } from '@/lib/journal';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
@@ -185,9 +185,13 @@ export function Espace() {
   const paused = enr.etat === 'en_pause';
   const cloture = enr.etat === 'terminee';
   const horsLigne = copieDu !== null || !enLigne;
-  const semaine = semaineDuJour(
-    bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) }))),
-    rawDay(enr.date_debut, new Date()));
+  const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
+  const jourCal = rawDay(enr.date_debut, new Date());
+  const semaine = semaineDuJour(bilanEnr, jourCal);
+  const reprise = !paused && !cloture ? jourDeReprise(bilanEnr, jourCal) : null;
+  const R = REPRISE_TEXTES[enr.langue === 'en' ? 'en' : 'fr'];
+  // Une action enregistrée met à jour les données de l'espace (le message de reprise disparaît aussitôt).
+  const surEnregistre = (st: State) => setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev);
 
   return <main className="wrap">{header}{tabs}
     {!tabs && <p className="tag">{enr.nom}</p>}
@@ -195,6 +199,13 @@ export function Espace() {
     {paused && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
     {horsLigne && <p className="muted hors-ligne" role="status">{T.horsLigne(copieDu ? formatDate(copieDu, T.locale) : formatDate(new Date().toISOString(), T.locale))}</p>}
+    {reprise !== null && <section className="card reprise-card" aria-label={R.titre(data.prenom)}>
+      <p className="tag">{R.titre(data.prenom)}</p>
+      <p>{R.texte(reprise)}</p>
+      {current !== reprise && <button type="button" className="btn action-btn" onClick={() => setSelected(reprise)}>{R.bouton(reprise)}</button>}
+      <p className="muted">{R.aide}</p>
+      {!horsLigne && <div className="link-row"><Link className="link" to={`/coach?inscription=${enr.enrollment_id}`}>{R.coach}</Link><Link className="link" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
+    </section>}
     <div className="day-chips">
       {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? T.jourFerme(n) : T.jour(n)} onClick={() => setSelected(n)}>{n}</button>)}
     </div>
@@ -206,7 +217,7 @@ export function Espace() {
       <p className="day-text">{webText(content.texte_officiel, data.prenom)}</p>
       {content.reference_livre && <p className="src">{referenceAffichee(content.reference_livre, enr.langue)}</p>}
     </article>
-    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused || cloture || horsLigne} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
+    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused || cloture || horsLigne} langue={enr.langue} onEnregistre={surEnregistre} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
       <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
     {!horsLigne && <>
@@ -221,7 +232,7 @@ export function Espace() {
 
 type Choix = 'realisee' | 'partielle' | 'aide_demandee';
 
-function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr' }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string }) {
+function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr', onEnregistre }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string; onEnregistre?: (st: State) => void }) {
   const T = textes(langue);
   const [etat, setEtat] = useState<string>(state?.etat ?? 'non_commencee');
   const [aide, setAide] = useState<boolean>(Boolean(state?.aide_demandee));
@@ -246,6 +257,7 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
       setEtat(r.etat ?? etat);
       setAide(Boolean(r.aide_demandee));
       if (r.etat === 'realisee' && !doneAt) setDoneAt(new Date().toISOString());
+      onEnregistre?.({ enrollment_id: enrollmentId, activity_id: activity.activity_id, etat: r.etat ?? etat, aide_demandee: Boolean(r.aide_demandee), realisee_le: r.etat === 'realisee' ? (doneAt || new Date().toISOString()) : (state?.realisee_le ?? null) });
     } catch { setError(true); }
     finally { setPending(null); }
   }

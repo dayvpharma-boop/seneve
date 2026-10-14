@@ -66,6 +66,41 @@ export function semaineDuJour(b: Bilan, jourCalendaire: number): Semaine | null 
   return semaines(b).find(x => x.complete && (jourCalendaire === x.a || jourCalendaire === x.a + 1)) ?? null;
 }
 
+/** Seuil validé par Dr Justin (14/10/2026) : 3 jours ouverts sans aucune action enregistrée. */
+export const SEUIL_REPRISE_JOURS = 3;
+
+/**
+ * Aide à la reprise : renvoie le jour à reprendre si, depuis le dernier jour où une action a été enregistrée,
+ * au moins SEUIL_REPRISE_JOURS jours se sont ouverts sans aucune action enregistrée. Aucune interprétation : seulement des dates.
+ */
+export function jourDeReprise(b: Bilan, jourCalendaire: number): number | null {
+  if (b.pasCommence || b.termine || jourCalendaire > b.duree) return null;
+  const enregistre = (j: JourBilan) => j.etat !== null && (j.etat !== 'non_commencee' || j.aide);
+  const dernier = b.jours.filter(j => j.ouvert && enregistre(j)).reduce((m, j) => Math.max(m, j.jour), 0);
+  const silencieux = b.jours.filter(j => j.ouvert && j.jour > dernier && j.etat !== null);
+  if (jourCalendaire - dernier - 1 < SEUIL_REPRISE_JOURS || silencieux.length === 0) return null;
+  return silencieux[0]!.jour;
+}
+
+export const REPRISE_TEXTES = {
+  fr: {
+    titre: (p: string) => p ? `Content de te revoir, ${p} 🌱` : 'Content de te revoir 🌱',
+    texte: (j: number) => `Tu peux reprendre là où tu t’es arrêté : l’action du jour ${j}.`,
+    bouton: (j: number) => `Reprendre au jour ${j}`,
+    aide: 'Si quelque chose t’a bloqué, tu peux le dire au coach ou demander de l’aide.',
+    coach: 'Parler au coach',
+    demander: 'Demander de l’aide',
+  },
+  en: {
+    titre: (p: string) => p ? `Good to see you again, ${p} 🌱` : 'Good to see you again 🌱',
+    texte: (j: number) => `You can pick up where you left off: the action of day ${j}.`,
+    bouton: (j: number) => `Resume at day ${j}`,
+    aide: 'If something held you back, you can tell the coach or ask for help.',
+    coach: 'Talk to the coach',
+    demander: 'Ask for help',
+  },
+} as const;
+
 export const SEMAINE_TEXTES = {
   fr: {
     titre: (n: number) => `Ta semaine ${n} en bref`,
