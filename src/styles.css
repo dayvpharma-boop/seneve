@@ -18,21 +18,37 @@
  --font-serif: Lora, serif;
 }
 :root {
- --background:#F6F3E9; --surface:#FFFDF8; --foreground:#23392F; --muted:#69766E;
+ --background:#F6F3E9; --surface:#FFFDF8; --foreground:#23392F; --muted:#5F6B63;
  --brand:#315D48; --gold:#85632E; --primary-fill:var(--brand); --on-primary:#FFFFFF; --line:#DCE2D7;
+ /* Contour des commandes (boutons de réponse) : au moins 3:1 sur le fond et les cartes. */
+ --control-line:#7F8F82; --chip:#E9EFE6; --on-chip:#234534;
 }
 @media (prefers-color-scheme: dark) {
  :root {
   --background:#17231B; --surface:#20372A; --foreground:#F4F0E4; --muted:#BBC5BA;
   --brand:#7BAE86; --gold:#D8BC75; --primary-fill:#73A57C; --on-primary:#0B160E; --line:#3B5644;
+  --control-line:#6F8E78; --chip:#2A4535; --on-chip:#F4F0E4;
  }
 }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--background); color:var(--foreground); font-family:Poppins,system-ui,sans-serif; font-size:16px; line-height:1.55; }
-#s-home:not([hidden]) { border:1px solid var(--line); border-radius:24px; padding:clamp(22px,6vw,36px); background:linear-gradient(160deg,var(--surface),var(--background)); box-shadow:0 18px 48px rgba(35,57,47,.10); }
-#s-home ul.plain { padding:16px 16px 8px; border:1px solid var(--line); border-radius:14px; background:var(--surface); }
-#s-home .btn { border-radius:999px; }
-#s-home .home-intro { max-width:34rem; color:var(--muted); font-size:15px; line-height:1.7; margin-bottom:22px; }
+/* Accueil du test — variante 1 « Sentier » (décision du 14/10/2026) */
+#s-home:not([hidden]) { padding-top:4px; }
+#s-home .home-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px; }
+#s-home .home-head .brand { margin:0; }
+#s-home .btn { border-radius:14px; }
+#s-home .home-intro { max-width:34rem; color:var(--muted); font-size:16px; line-height:1.6; margin-bottom:16px; }
+.home-reassure { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; }
+.reassure-chip { display:inline-flex; align-items:center; gap:6px; font-size:13px; line-height:1.3; padding:6px 12px; border-radius:999px; background:var(--chip); color:var(--on-chip); }
+.reassure-chip svg { color:var(--brand); flex:none; }
+#s-home .home-steps { list-style:none; counter-reset:etape; padding:0; margin:0; border:0; background:none; display:grid; gap:12px; }
+#s-home .home-steps li { counter-increment:etape; display:flex; align-items:center; gap:12px; margin:0; font-size:16px; line-height:1.4; }
+#s-home .home-steps li::before { content:counter(etape); flex:none; width:32px; height:32px; border-radius:50%; background:var(--primary-fill); color:var(--on-primary); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:15px; }
+#s-home .home-note { font-size:14px; line-height:1.6; margin:16px 0 0; }
+/* Bouton « Commencer » fixé en bas sur téléphone, dans la zone du pouce ; à sa place sur ordinateur. */
+.home-start { position:sticky; bottom:0; margin:20px -16px -48px; padding:16px 16px calc(24px + env(safe-area-inset-bottom)); background:var(--background); border-top:1px solid var(--line); }
+.home-start .btn { min-height:56px; font-size:17px; box-shadow:0 7px 16px color-mix(in srgb,var(--brand) 18%,transparent); }
+@media (min-width:640px) { .home-start { position:static; margin:24px 0 0; padding:0; border-top:0; background:none; } }
 .home-card { position:relative; overflow:hidden; padding:22px; border:1px solid var(--line); border-radius:18px; background:var(--surface); box-shadow:0 12px 28px rgba(35,57,47,.07); }
 .home-card::after { content:""; position:absolute; width:170px; height:170px; right:-72px; top:-86px; border:1px solid color-mix(in srgb,var(--brand) 16%,transparent); border-radius:50%; box-shadow:0 0 0 16px color-mix(in srgb,var(--brand) 3%,transparent),0 0 0 34px color-mix(in srgb,var(--brand) 2%,transparent); pointer-events:none; }
 .home-card > * { position:relative; z-index:1; }
@@ -40,7 +56,7 @@ body { margin:0; background:var(--background); color:var(--foreground); font-fam
 .home-card ul.plain { padding:14px 16px 7px; margin:0 0 15px; border:1px solid var(--line); border-radius:13px; background:color-mix(in srgb,var(--surface) 88%,var(--background)); }
 .home-card .home-note { font-size:13px; line-height:1.6; margin:0 0 16px; }
 .home-card .btn { border-radius:13px; min-height:52px; box-shadow:0 7px 16px color-mix(in srgb,var(--brand) 18%,transparent); }
-#s-home .language-link { margin:16px auto 0; }
+#s-home .home-head .language-link { margin:0; padding:12px 0 12px 12px; }
 @media(max-width:420px) { .home-card { padding:18px; } }
 .wrap { max-width:600px; margin:0 auto; padding:16px 16px 48px; min-height:100vh; display:flex; flex-direction:column; }
 .brand { font-family:Lora,serif; letter-spacing:.28em; font-size:13px; color:var(--brand); text-transform:uppercase; margin:0 0 8px; }
@@ -62,7 +78,7 @@ button { font:inherit; cursor:pointer; color:inherit; }
 .count { font-size:13px; color:var(--muted); display:flex; justify-content:space-between; }
 .q { font-family:Lora,serif; font-size:23px; line-height:1.4; margin:0 0 28px; min-height:130px; }
 .scale { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
-.scale-button { aspect-ratio:1; max-height:72px; width:100%; background:var(--surface); border:1.5px solid var(--line); border-radius:14px; font-size:20px; font-weight:600; }
+.scale-button { aspect-ratio:1; width:100%; max-width:60px; justify-self:center; background:var(--surface); border:1.5px solid var(--control-line); border-radius:50%; font-size:20px; font-weight:600; }
 .scale-button[aria-pressed="true"] { background:var(--primary-fill); border-color:var(--primary-fill); color:var(--on-primary); }
 .root-choices { display:grid; gap:8px; margin-bottom:16px; }
 .root-choice { width:100%; min-height:48px; background:var(--surface); border:1.5px solid var(--line); border-radius:14px; padding:12px 16px; text-align:left; }
@@ -82,7 +98,14 @@ button { font:inherit; cursor:pointer; color:inherit; }
 .root-summary-row .root-category { grid-column:1 / -1; }
 .note { font-size:14px; color:var(--muted); margin:10px 0 0; }
 [hidden] { display:none!important; }
-@media (prefers-reduced-motion:reduce) { .bar i { transition:none; } }
+@media (prefers-reduced-motion:reduce) { .bar i, .segment i { transition:none; } }
+/* Questions — variante 1 « Sentier » : une part de progression par racine. */
+.count { align-items:baseline; }
+.count-main { font-size:15px; font-weight:600; color:var(--foreground); }
+.segments { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin:10px 0 24px; }
+.segment { height:8px; border-radius:4px; background:var(--line); overflow:hidden; }
+.segment i { display:block; height:100%; background:var(--primary-fill); border-radius:4px; transition:width .25s; }
+.tap-hint { text-align:center; font-size:14px; color:var(--muted); margin:0 0 4px; }
 .tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0 16px; }
 .tab { background:var(--surface); border:1.5px solid var(--line); border-radius:12px; padding:10px; font:inherit; color:inherit; }
 .tab[aria-selected="true"] { background:var(--primary-fill); border-color:var(--primary-fill); color:var(--on-primary); font-weight:600; }

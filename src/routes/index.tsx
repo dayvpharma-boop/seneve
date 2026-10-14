@@ -23,6 +23,9 @@ export function TestPage({ defaultSource = null }: { defaultSource?: string | nu
 function PrototypeButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
  return <button type="button" {...props} />;
 }
+function CheckIcon() {
+ return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l4 4 10-10" /></svg>;
+}
 function RootCard({ tag, k, total, language }: { tag: string; k: number; total: number; language: Language }) {
  const t = texts[language];
  const root = t.roots[k];
@@ -138,25 +141,32 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  }
  return <main className="wrap">
   <section id="s-home" hidden={screen !== 'home'}>
-   <p className="brand">{t.brand}</p><h1>{t.homeTitle}</h1>
+   <div className="home-head"><p className="brand">{t.brand}</p>{languageLink}</div>
+   <h1>{t.homeTitle}</h1>
    <p className="home-intro">{t.intro}</p>
+   <div className="home-reassure">{t.reassurance.map(item => <span key={item} className="reassure-chip"><CheckIcon />{item}</span>)}</div>
    <div className="home-card">
     <p className="home-kicker">{t.discover}</p>
-    <ul className="plain">{t.discoveries.map(item => <li key={item}>{item}</li>)}</ul>
-    <p className="muted home-note">{t.instruction}</p>
+    <ul className="plain home-steps" role="list">{t.discoveries.map(item => <li key={item}>{item}</li>)}</ul>
+   </div>
+   <p className="muted home-note">{t.instruction}</p>
+   <div className="home-start">
     <PrototypeButton className="btn" id="start" onClick={() => setScreen('quiz')}>{t.start}</PrototypeButton>
    </div>
-   {languageLink}
   </section>
   <section id="s-quiz" hidden={screen !== 'quiz'}>
-   <div className="count"><span id="racine">{t.rootCount(Math.floor(i/3)+1)}</span><span id="num">{t.questionCount(i+1)}</span></div>
-   <div className="bar"><i id="prog" style={{ width: `${i/21*100}%` }} /></div>
+   <div className="count"><span id="num" className="count-main">{t.questionCount(i+1)}</span><span id="racine">{t.rootCount(Math.floor(i/3)+1)}</span></div>
+   {/* Une part par racine : elle se remplit question par question (3 questions par racine). */}
+   <div className="segments" aria-hidden="true">
+    {[0,1,2,3,4,5,6].map(k => <span key={k} className="segment"><i style={{ width: `${Math.min(1, Math.max(0, (i + 1 - 3*k) / 3)) * 100}%` }} /></span>)}
+   </div>
    <div className="quiz-card">
    <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
    <div className="scale" id="scale" role="group" aria-label={t.answerGroup}>
     {[1,2,3,4,5].map(v => <PrototypeButton key={v} className="scale-button" aria-pressed={answers[i]===v} aria-label={t.answerLabel(v)} onClick={() => answer(v)}>{v}</PrototypeButton>)}
    </div>
    <div className="ends"><span>{t.never}</span><span>{t.always}</span></div>
+   <p className="tap-hint">{t.tapHint}</p>
       <PrototypeButton className="link" id="back" hidden={i===0} onClick={back}>{t.back}</PrototypeButton>
    </div>
   </section>
