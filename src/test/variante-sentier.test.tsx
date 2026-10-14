@@ -1,7 +1,10 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Index } from '@/routes/index';
-import css from '@/styles.css?raw';
+import { readFileSync } from 'node:fs';
+
+// Lecture directe : dans les tests, un import de feuille de style revient vide.
+const css = readFileSync(`${process.cwd()}/src/styles.css`, 'utf8');
 
 // Variante 1 « Sentier » retenue par Dr Justin le 14/10/2026 pour l'accueil et les questions du test.
 function widths(): number[] {
