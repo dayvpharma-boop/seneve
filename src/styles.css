@@ -173,3 +173,15 @@ details summary { cursor:pointer; padding:6px 0; }
 .quiz-card .ends { margin-bottom:18px; }
 .quiz-card .link { margin-top:4px; }
 @media(max-width:420px) { .quiz-card { padding:18px; border-radius:17px; } .quiz-card .scale { gap:6px; } }
+
+/* Résultats : hiérarchie claire pour scores et première action */
+#s-result h1 { margin-bottom:12px; }
+#s-result .card { border-radius:18px; padding:22px; box-shadow:0 12px 30px rgba(35,57,47,.07); }
+#s-result .root-summary { border-color:color-mix(in srgb,var(--gold) 28%,var(--line)); background:linear-gradient(155deg,var(--surface),color-mix(in srgb,var(--background) 72%,var(--surface))); }
+.root-summary-list { margin-top:10px; }
+.root-summary-row { padding:13px 0; }
+.root-score { color:var(--brand); font-weight:700; border-radius:999px; padding:2px 9px; background:color-mix(in srgb,var(--brand) 10%,var(--surface)); }
+#s-result .root-category { color:var(--gold); font-weight:600; }
+#s-result .action { border-left:3px solid var(--gold); border-radius:0 10px 10px 0; padding:13px 14px; background:color-mix(in srgb,var(--gold) 8%,var(--surface)); line-height:1.6; }
+#s-result .card .btn { margin-top:16px; }
+@media(max-width:420px) { #s-result .card { padding:18px; } }
