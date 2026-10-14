@@ -11,6 +11,9 @@ import { Aide } from '@/routes/aide';
 import { Admin } from '@/routes/admin';
 import { Coach } from '@/routes/coach';
 import { Progres } from '@/routes/progres';
+import { enregistrerServiceWorker } from '@/lib/hors-ligne';
+
+enregistrerServiceWorker();
 
 function NotFound() {
   return <main className="wrap"><p className="brand">SÉNEVÉ</p><h1>Page introuvable</h1><p>Cette page n'existe pas ou a été déplacée.</p><Link className="btn btn-link" to="/">Revenir au Test des 7 Racines</Link></main>;

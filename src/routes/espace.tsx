@@ -8,6 +8,7 @@ import { EmailMatinCard } from '@/components/EmailMatinCard';
 import { SeanceCard } from '@/components/SeanceCard';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { journalTextes } from '@/lib/journal';
+import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null };
@@ -87,15 +88,33 @@ export function Espace() {
   const [starting, setStarting] = useState(false);
   const [equipe, setEquipe] = useState(false);
 
+  // Copie hors connexion : date de la copie affichée quand le réseau manque.
+  const [copieDu, setCopieDu] = useState<string | null>(null);
+  const enLigne = useEnLigne();
+
   const refresh = useCallback(async () => {
-    setFailed(false); setData(null);
+    setFailed(false);
+    let userId: string | null = null;
     try {
+      const { data: s } = await supabase.auth.getSession();
+      userId = s.session?.user.id ?? null;
       const loaded = await load();
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
-      setData(loaded);
-    } catch { setFailed(true); }
+      setData(loaded); setCopieDu(null);
+      if (userId) enregistrerEspace(userId, loaded);
+    } catch {
+      const copie = userId ? lireEspace<Data>(userId) : null;
+      if (copie) { setData(copie.donnees); setCopieDu(copie.le); }
+      else setFailed(true);
+    }
   }, [navigate]);
   useEffect(() => { void refresh(); }, [refresh]);
+  // Retour du réseau : on recharge les vraies données.
+  const etaitHorsLigne = useRef(false);
+  useEffect(() => {
+    if (!enLigne) { etaitHorsLigne.current = true; return; }
+    if (etaitHorsLigne.current) { etaitHorsLigne.current = false; void refresh(); }
+  }, [enLigne, refresh]);
   // Lien vers l'administration, affiché seulement aux membres de l'équipe (sans bloquer l'espace).
   useEffect(() => {
     void Promise.resolve(supabase.rpc('staff_me')).then(r => {
@@ -106,6 +125,7 @@ export function Espace() {
   useEffect(() => { document.title = 'Mon espace — SÉNEVÉ'; document.documentElement.lang = 'fr'; }, []);
 
   async function signOut() {
+    effacerEspaces();
     await supabase.auth.signOut();
     navigate('/connexion', { replace: true });
   }
@@ -162,12 +182,14 @@ export function Espace() {
   const question = acts.find(a => a.type_activite === 'question');
   const paused = enr.etat === 'en_pause';
   const cloture = enr.etat === 'terminee';
+  const horsLigne = copieDu !== null || !enLigne;
 
   return <main className="wrap">{header}{tabs}
     {!tabs && <p className="tag">{enr.nom}</p>}
     {finished ? <p>{T.termine(total)}</p> : <p className="day-count">{T.jourSur(day, total)}</p>}
     {paused && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
+    {horsLigne && <p className="muted hors-ligne" role="status">{T.horsLigne(copieDu ? formatDate(copieDu, T.locale) : formatDate(new Date().toISOString(), T.locale))}</p>}
     <div className="day-chips">
       {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? T.jourFerme(n) : T.jour(n)} onClick={() => setSelected(n)}>{n}</button>)}
     </div>
@@ -178,14 +200,16 @@ export function Espace() {
       <p className="day-text">{webText(content.texte_officiel, data.prenom)}</p>
       {content.reference_livre && <p className="src">{referenceAffichee(content.reference_livre, enr.langue)}</p>}
     </article>
-    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused || cloture} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
+    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused || cloture || horsLigne} langue={enr.langue} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
       <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
-    <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
-    <GoalCard langue={enr.langue} />
-    <EmailMatinCard langue={enr.langue} />
+    {!horsLigne && <>
+      <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
+      <GoalCard langue={enr.langue} />
+      <EmailMatinCard langue={enr.langue} />
+    </>}
     {outils(enr.langue, enr.enrollment_id)}
-    <WhatsAppLink />
+    {!horsLigne && <WhatsAppLink />}
   </main>;
 }
 
