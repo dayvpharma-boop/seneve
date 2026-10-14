@@ -139,12 +139,14 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  return <main className="wrap">
   <section id="s-home" hidden={screen !== 'home'}>
    <p className="brand">{t.brand}</p><h1>{t.homeTitle}</h1>
-   <p>{t.intro}</p>
-   <p>{t.discover}</p>
-   <ul className="plain">{t.discoveries.map(item => <li key={item}>{item}</li>)}</ul>
-   <p className="muted">{t.instruction}</p>
-   <PrototypeButton className="btn" id="start" onClick={() => setScreen('quiz')}>{t.start}</PrototypeButton>
-    {languageLink}
+   <p className="home-intro">{t.intro}</p>
+   <div className="home-card">
+    <p className="home-kicker">{t.discover}</p>
+    <ul className="plain">{t.discoveries.map(item => <li key={item}>{item}</li>)}</ul>
+    <p className="muted home-note">{t.instruction}</p>
+    <PrototypeButton className="btn" id="start" onClick={() => setScreen('quiz')}>{t.start}</PrototypeButton>
+   </div>
+   {languageLink}
   </section>
   <section id="s-quiz" hidden={screen !== 'quiz'}>
    <div className="count"><span id="racine">{t.rootCount(Math.floor(i/3)+1)}</span><span id="num">{t.questionCount(i+1)}</span></div>
