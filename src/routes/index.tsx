@@ -151,12 +151,14 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
   <section id="s-quiz" hidden={screen !== 'quiz'}>
    <div className="count"><span id="racine">{t.rootCount(Math.floor(i/3)+1)}</span><span id="num">{t.questionCount(i+1)}</span></div>
    <div className="bar"><i id="prog" style={{ width: `${i/21*100}%` }} /></div>
+   <div className="quiz-card">
    <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
    <div className="scale" id="scale" role="group" aria-label={t.answerGroup}>
     {[1,2,3,4,5].map(v => <PrototypeButton key={v} className="scale-button" aria-pressed={answers[i]===v} aria-label={t.answerLabel(v)} onClick={() => answer(v)}>{v}</PrototypeButton>)}
    </div>
    <div className="ends"><span>{t.never}</span><span>{t.always}</span></div>
-   <PrototypeButton className="link" id="back" hidden={i===0} onClick={back}>{t.back}</PrototypeButton>
+      <PrototypeButton className="link" id="back" hidden={i===0} onClick={back}>{t.back}</PrototypeButton>
+   </div>
   </section>
   <section id="s-result" hidden={screen !== 'result'}>
    <p className="brand">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
