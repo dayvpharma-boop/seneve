@@ -89,13 +89,20 @@ button { font:inherit; cursor:pointer; color:inherit; }
 .quote { font-family:Lora,serif; font-style:italic; border-left:3px solid var(--primary-fill); padding-left:12px; margin:12px 0 0; }
 .src { font-size:12px; color:var(--muted); margin:8px 0 0; }
 .action { font-weight:500; margin:0; }
-.root-summary-list { list-style:none; padding:0; margin:0; }
-.root-summary-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 12px; padding:12px 0; border-bottom:1px solid var(--line); }
-.root-summary-row:last-child { border-bottom:0; padding-bottom:0; }
+/* Liste des 7 racines du résultat : une barre par score (décorative, le score reste écrit). */
+.root-rows { list-style:none; padding:0; margin:12px 0 0; display:grid; gap:4px; }
+.root-row { padding:10px 0; border-bottom:1px solid var(--line); }
+.root-row:last-child { border-bottom:0; }
+.root-row-top { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
 .root-summary-name { min-width:0; overflow-wrap:break-word; }
-.root-score { white-space:nowrap; font-variant-numeric:tabular-nums; }
-.root-category { color:var(--gold); font-size:12px; margin:0; }
-.root-summary-row .root-category { grid-column:1 / -1; }
+.root-score { font-weight:700; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.root-bar { display:block; height:8px; border-radius:999px; background:var(--line); margin:8px 0 6px; overflow:hidden; }
+.root-bar i { display:block; height:100%; border-radius:inherit; background:var(--primary-fill); }
+.root-category { color:var(--gold); font-size:13px; font-weight:600; margin:0; }
+.root-row.is-start { margin:0 -12px; padding:12px; border-radius:12px; border-bottom:0; background:color-mix(in srgb,var(--gold) 9%,var(--surface)); }
+.root-row.is-start .root-bar i { background:var(--gold); }
+.root-row.is-start .root-summary-name { font-weight:600; }
+.cat-chip { display:inline-block; padding:4px 12px; border-radius:999px; background:var(--chip); color:var(--on-chip); font-size:14px; font-weight:600; }
 .note { font-size:14px; color:var(--muted); margin:10px 0 0; }
 [hidden] { display:none!important; }
 @media (prefers-reduced-motion:reduce) { .bar i, .segment i { transition:none; } }
@@ -200,11 +207,13 @@ details summary { cursor:pointer; padding:6px 0; }
 /* Résultats : hiérarchie claire pour scores et première action */
 #s-result h1 { margin-bottom:12px; }
 #s-result .card { border-radius:18px; padding:22px; box-shadow:0 12px 30px rgba(35,57,47,.07); }
-#s-result .root-summary { border-color:color-mix(in srgb,var(--gold) 28%,var(--line)); background:linear-gradient(155deg,var(--surface),color-mix(in srgb,var(--background) 72%,var(--surface))); }
-.root-summary-list { margin-top:10px; }
-.root-summary-row { padding:13px 0; }
-.root-score { color:var(--brand); font-weight:700; border-radius:999px; padding:2px 9px; background:color-mix(in srgb,var(--brand) 10%,var(--surface)); }
-#s-result .root-category { color:var(--gold); font-weight:600; }
-#s-result .action { border-left:3px solid var(--gold); border-radius:0 10px 10px 0; padding:13px 14px; background:color-mix(in srgb,var(--gold) 8%,var(--surface)); line-height:1.6; }
+#s-result .result-hero { border-color:color-mix(in srgb,var(--gold) 35%,var(--line)); }
+#s-result .result-hero h2 { font-size:27px; line-height:1.2; margin:4px 0 10px; text-wrap:balance; }
+#s-result .result-hero .quote { font-size:17px; line-height:1.55; margin-top:14px; }
+#s-result .src { font-size:13px; }
+#s-result .action { border-left:3px solid var(--gold); border-radius:0 10px 10px 0; padding:13px 14px; background:color-mix(in srgb,var(--gold) 8%,var(--surface)); line-height:1.6; font-size:17px; }
+#s-result .result-next .more { margin-bottom:0; }
 #s-result .card .btn { margin-top:16px; }
+/* Partage : bouton discret, pour ne pas concurrencer « Continuer sur WhatsApp ». */
+#s-result .share-card > .btn { background:transparent; color:var(--foreground); border:1px solid var(--primary-fill); min-height:48px; margin-top:4px; padding:12px 14px; font-size:15px; }
 @media(max-width:420px) { #s-result .card { padding:18px; } }

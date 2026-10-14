@@ -30,7 +30,7 @@ function RootCard({ tag, k, total, language }: { tag: string; k: number; total: 
  const t = texts[language];
  const root = t.roots[k];
  if (!root) return null;
-  return <div className="card"><p className="tag">{tag}</p><h2>{root.n}</h2><p className="root-category">{categorie(total, language)}</p><p className="quote">{t.quote(root.p)}</p><p className="src">{t.quoteSource}</p></div>;
+  return <div className="card result-hero"><p className="tag">{tag}</p><h2>{root.n}</h2><span className="cat-chip">{categorie(total, language)}</span><p className="quote">{t.quote(root.p)}</p><p className="src">{t.quoteSource}</p></div>;
 }
 function RootChoices({ indices, chosenRoot, onChoose, language }: { indices: number[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language }) {
  const t = texts[language];
@@ -67,17 +67,23 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
        : r.same
          ? t.equal
          : t.minimumTie;
+  // Ordre « Sentier » (14/10/2026) : d'abord la racine proposée, la première action et la suite WhatsApp,
+  // puis le détail des 7 racines avec une barre par score, enfin le partage.
   return <>
-     <div className="card root-summary"><p>{t.summary}</p>
-       <ul className="root-summary-list">{R.map((item, k) => <li key={item.n} className="root-summary-row">
-         <span className="root-summary-name">{item.n}</span><span className="root-score">{r.t[k]} / 15</span>
-         <span className="root-category">{categorie(r.t[k] ?? 3, language)}</span>
-       </li>)}</ul>
-     </div>
      {needsChoice && <><p>{message}</p><RootChoices language={language} indices={indices} chosenRoot={chosenRoot} onChoose={onChoose} /></>}
      {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} />}
     {root && <div className="card"><p className="tag">{t.firstAction}</p><p className="action">{root.a}</p><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
-    {root && <div className="card"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a></div>}
+    {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a></div>}
+     <div className="card root-list-card"><p className="tag">{t.rootsTitle}</p><p>{t.summary}</p>
+       <ul className="root-rows" role="list">{R.map((item, k) => {
+         const total = r.t[k] ?? 3;
+         return <li key={item.n} className={k === act ? 'root-row is-start' : 'root-row'}>
+           <div className="root-row-top"><span className="root-summary-name">{item.n}</span><span className="root-score">{total} / 15</span></div>
+           <span className="root-bar" aria-hidden="true"><i style={{ width: `${(total / 15) * 100}%` }} /></span>
+           <span className="root-category">{categorie(total, language)}</span>
+         </li>;
+       })}</ul>
+     </div>
     {root && act !== null && act !== undefined && <ShareCard language={language} totals={r.t} startRoot={act} />}
     {act !== null && act !== undefined && <RememberRoot k={act} />}
  </>;
