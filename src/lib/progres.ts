@@ -39,6 +39,68 @@ export function bilan(dateDebut: string, duree: number, contenus: Contenu[], act
   };
 }
 
+export type Semaine = { numero: number; de: number; a: number; complete: boolean; applicables: number; realisees: number; partielles: number; aides: number };
+
+/** Bilan hebdomadaire (cahier des charges) : semaines de 7 jours depuis le début du parcours, à partir des seules actions enregistrées. */
+export function semaines(b: Bilan): Semaine[] {
+  const out: Semaine[] = [];
+  for (let de = 1; de <= b.duree; de += 7) {
+    const a = Math.min(de + 6, b.duree);
+    const jours = b.jours.filter(j => j.jour >= de && j.jour <= a);
+    if (!jours.some(j => j.ouvert)) break;
+    const ouverts = jours.filter(j => j.ouvert && j.etat !== null);
+    out.push({
+      numero: (de - 1) / 7 + 1, de, a, complete: jours.every(j => j.ouvert),
+      applicables: ouverts.length,
+      realisees: ouverts.filter(j => j.etat === 'realisee').length,
+      partielles: ouverts.filter(j => j.etat === 'partielle').length,
+      aides: ouverts.filter(j => j.aide).length,
+    });
+  }
+  return out;
+}
+
+/** Semaine à mettre en avant dans l'espace : le dernier jour d'une semaine et le jour suivant. */
+export function semaineDuJour(b: Bilan, jourCalendaire: number): Semaine | null {
+  if (b.pasCommence) return null;
+  return semaines(b).find(x => x.complete && (jourCalendaire === x.a || jourCalendaire === x.a + 1)) ?? null;
+}
+
+export const SEMAINE_TEXTES = {
+  fr: {
+    titre: (n: number) => `Ta semaine ${n} en bref`,
+    jours: (de: number, a: number) => `Jours ${de} à ${a}`,
+    realisees: (n: number, t: number) => `Actions réalisées : ${n} sur ${t}`,
+    partielles: (n: number) => `Faites en partie : ${n}`,
+    aides: (n: number) => `Aide demandée : ${n}`,
+    nonEvalue: 'Non évalué : aucune action prévue cette semaine.',
+    objectif: (t: string) => `Ton objectif : « ${t} »`,
+    journal: 'Prends 5 minutes pour écrire ton bilan dans ton journal.',
+    ouvrirJournal: 'Écrire mon bilan',
+    note: 'Ce bilan reprend uniquement ce que tu as enregistré.',
+    titreListe: 'Semaine par semaine',
+    enCours: 'en cours',
+  },
+  en: {
+    titre: (n: number) => `Your week ${n} at a glance`,
+    jours: (de: number, a: number) => `Days ${de} to ${a}`,
+    realisees: (n: number, t: number) => `Actions completed: ${n} of ${t}`,
+    partielles: (n: number) => `Partly done: ${n}`,
+    aides: (n: number) => `Help requested: ${n}`,
+    nonEvalue: 'Not evaluated: no action planned this week.',
+    objectif: (t: string) => `Your goal: “${t}”`,
+    journal: 'Take 5 minutes to write your review in your journal.',
+    ouvrirJournal: 'Write my review',
+    note: 'This summary only shows what you have recorded.',
+    titreListe: 'Week by week',
+    enCours: 'in progress',
+  },
+} as const;
+
+export function semaineTextes(langue: string | null | undefined) {
+  return SEMAINE_TEXTES[langue === 'en' ? 'en' : 'fr'];
+}
+
 export const PROGRES_TEXTES = {
   fr: {
     locale: 'fr-FR',

@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { dayInfo, eventIdFor, pickDefault, webText } from '@/lib/espace';
+import { dayInfo, eventIdFor, pickDefault, rawDay, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
 import { SeanceCard } from '@/components/SeanceCard';
+import { SemaineCard } from '@/components/SemaineCard';
+import { bilan as bilanParcours, semaineDuJour } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { journalTextes } from '@/lib/journal';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
@@ -183,6 +185,9 @@ export function Espace() {
   const paused = enr.etat === 'en_pause';
   const cloture = enr.etat === 'terminee';
   const horsLigne = copieDu !== null || !enLigne;
+  const semaine = semaineDuJour(
+    bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) }))),
+    rawDay(enr.date_debut, new Date()));
 
   return <main className="wrap">{header}{tabs}
     {!tabs && <p className="tag">{enr.nom}</p>}
@@ -194,6 +199,7 @@ export function Espace() {
       {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? T.jourFerme(n) : T.jour(n)} onClick={() => setSelected(n)}>{n}</button>)}
     </div>
     {maxOpen < total && <p className="muted">{T.ouvreDemain(maxOpen + 1)}</p>}
+    {semaine && <SemaineCard key={`semaine-${enr.enrollment_id}-${semaine.numero}`} semaine={semaine} langue={enr.langue} horsLigne={horsLigne} />}
     <article className="card">
       <p className="tag">{T.jour(current)}</p>
       <h2>{content.theme}</h2>

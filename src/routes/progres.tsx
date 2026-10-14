@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { pickDefault } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
-import { bilan, progresTextes, type Bilan } from '@/lib/progres';
+import { bilan, progresTextes, semaines, semaineTextes, type Bilan } from '@/lib/progres';
 
 type Parcours = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; duree: number; nom: string };
 type Loaded = { langue: string; parcours: Parcours[]; bilans: Record<string, Bilan>; notes: number };
@@ -107,6 +107,14 @@ export function Progres() {
           : b.actionsOuvertes > 0 && <p className="success">{T.toutFait}</p>}
       </>}
     </section>
+    {!b.pasCommence && semaines(b).length > 0 && <section className="card">
+      <p className="tag">{semaineTextes(enr.langue).titreListe}</p>
+      <ul className="bilan-list">
+        {semaines(b).map(w => { const S = semaineTextes(enr.langue); return <li key={w.numero}>
+          <strong>{S.titre(w.numero)}</strong>{w.complete ? '' : ` (${S.enCours})`} — {w.applicables === 0 ? S.nonEvalue : S.realisees(w.realisees, w.applicables)}{w.partielles > 0 ? ` · ${S.partielles(w.partielles)}` : ''}{w.aides > 0 ? ` · ${S.aides(w.aides)}` : ''}
+        </li>; })}
+      </ul>
+    </section>}
     <ol className="bilan-jours">
       {b.jours.map(j => <li key={j.jour} className={`bilan-jour${j.ouvert ? '' : ' bilan-ferme'}`}>
         <span className="bilan-num">{T.jour(j.jour)}</span>

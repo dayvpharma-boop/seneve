@@ -9,7 +9,7 @@ function toUtcDay(ymd: string): number {
   return Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1) / 86400000;
 }
 
-function rawDay(dateDebut: string, now: Date): number {
+export function rawDay(dateDebut: string, now: Date): number {
   const start = /^\d{4}-\d{2}-\d{2}$/.test(dateDebut) ? dateDebut : kinshasaDate(new Date(dateDebut));
   return toUtcDay(kinshasaDate(now)) - toUtcDay(start) + 1;
 }
