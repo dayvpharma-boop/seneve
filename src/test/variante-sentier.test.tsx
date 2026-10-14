@@ -17,6 +17,12 @@ describe('Variante 1 « Sentier » du Test des 7 Racines', () => {
     expect(screen.getByRole('button', { name: 'Commencer' })).toBeVisible();
   });
 
+  it('garde « 5 = toujours » et le titre du livre groupés sur une ligne (espaces insécables)', () => {
+    render(<Index />);
+    expect(document.querySelector('.home-intro')?.textContent).toContain('« Arrête de mendier des miracles »');
+    expect(document.querySelector('.home-note')?.textContent).toContain('(1 = jamais, 5 = toujours)');
+  });
+
   it('montre les mêmes repères en anglais', () => {
     render(<Index language="en" />);
     for (const label of ['No account', '21 questions', 'You can go back']) expect(screen.getByText(label)).toBeVisible();
