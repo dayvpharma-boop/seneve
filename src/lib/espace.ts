@@ -44,12 +44,16 @@ export function fillPrenom(text: string, prenom: string | null | undefined): str
   return text.split('{prenom}').join((prenom ?? '').trim()).replace(/ {2,}/g, ' ').replace(/ ([,.])/g, '$1');
 }
 
+/** En-tête des messages WhatsApp (« Bonjour {prenom} 🌱 Jour 3/14 — ») : sur le web, la page affiche déjà
+ *  la salutation et le jour, on le retire (décision du 15/10/2026 ; 730 contenus sur 1 026 concernés). */
+const ENTETE_MESSAGE = /^(?:Bonjour|Bonsoir|Hello|Hi|Good morning|Good evening)\s+\{prenom\}\s*\S*\s*(?:Jour|Day)\s+\d+\s*\/\s*\d+\s*[—–-]\s*/u;
+
 /**
- * Texte affiché sur le web : même contenu que le message d'origine, sans l'invitation
- * « Tu peux répondre ici… » qui ne vaut que pour WhatsApp (pas de champ de réponse sur le web).
+ * Texte affiché sur le web : même contenu que le message d'origine, sans l'en-tête de salutation
+ * ni l'invitation « Tu peux répondre ici… » qui ne valent que pour WhatsApp.
  */
 export function webText(text: string, prenom: string | null | undefined): string {
-  return fillPrenom(text, prenom)
+  return fillPrenom(text.replace(ENTETE_MESSAGE, ''), prenom)
     .replace(/\s*Tu peux répondre ici[^.!?]*[.!?]/g, '')
     .replace(/\s*(You can reply here|If you have any trouble accessing it, let us know here)[^.!?]*[.!?]/g, '')
     .trim();

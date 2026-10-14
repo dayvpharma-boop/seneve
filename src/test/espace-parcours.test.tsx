@@ -84,6 +84,7 @@ describe('Espace avec plusieurs parcours', () => {
     render(<MemoryRouter><Espace /></MemoryRouter>);
     expect(await screen.findByText('Jour 3 sur 14')).toBeInTheDocument();
     expect(screen.getByText('Thème ACHETEUR_LIVRE_14J_FR_V1 3')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Voir tous les jours' }));
     expect(screen.getByRole('button', { name: 'Jour 14, pas encore ouvert' })).toBeDisabled();
     expect(screen.queryByRole('tab')).not.toBeInTheDocument();
   });

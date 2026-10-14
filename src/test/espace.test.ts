@@ -47,8 +47,15 @@ describe('webText', () => {
     expect(webText('What time of day will you set aside for your book? If you have any trouble accessing it, let us know here.', 'Ann')).toBe('What time of day will you set aside for your book?');
     expect(webText('Question for today: why? You can reply here.', '')).toBe('Question for today: why?');
   });
-  it('ne change rien d’autre', () => {
-    expect(webText('Bonjour {prenom} 👋 Jour 7/7 — Merci d’avoir suivi ce parcours !', 'Marie')).toBe('Bonjour Marie 👋 Jour 7/7 — Merci d’avoir suivi ce parcours !');
+  it('retire l’en-tête « Bonjour {prenom} … Jour N/M — », déjà affiché par la page (décision du 15/10/2026)', () => {
+    expect(webText('Bonjour {prenom} 👋 Jour 7/7 — Merci d’avoir suivi ce parcours !', 'Marie')).toBe('Merci d’avoir suivi ce parcours !');
+    expect(webText('Bonjour {prenom} 🌱 Jour 3/14 — Dans le chapitre 1, le Dr Justin Tshims raconte…', '')).toBe('Dans le chapitre 1, le Dr Justin Tshims raconte…');
+    expect(webText('Hello {prenom} 🌱 Day 2/14 — Read chapter 2.', 'Ann')).toBe('Read chapter 2.');
+  });
+  it('ne change rien d’autre : salutation sans « Jour N/M », ou « Jour N/M » au milieu du texte', () => {
+    expect(webText('Bonsoir {prenom} 🌙 Ce soir, fais tienne la prière.', 'Marie')).toBe('Bonsoir Marie 🌙 Ce soir, fais tienne la prière.');
+    expect(webText('{prenom} ✨ La perle du jour : « Dieu permet… »', 'Marie')).toBe('Marie ✨ La perle du jour : « Dieu permet… »');
+    expect(webText('Relis le passage. Bonjour {prenom} Jour 2/7 — fin.', 'Marie')).toBe('Relis le passage. Bonjour Marie Jour 2/7 — fin.');
   });
 });
 

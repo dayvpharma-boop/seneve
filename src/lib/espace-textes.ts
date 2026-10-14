@@ -33,6 +33,11 @@ export const ESPACE_TEXTES = {
     erreur: 'Non enregistré. Vérifie ta connexion et réessaie.',
     moment: (n: number, heure: string | null) => heure ? `${heureFr(heure)}` : `Moment ${n}`,
     momentFerme: (heure: string) => `Ce moment s’ouvre à ${heureFr(heure)} (heure de Kinshasa).`,
+    tousLesJours: 'Voir tous les jours',
+    jourPrecedent: (n: number) => `Jour précédent : jour ${n}`,
+    jourSuivant: (n: number) => `Jour suivant : jour ${n}`,
+    autresMoments: 'Les autres moments du jour',
+    reglages: 'Mes réglages',
   },
   en: {
     locale: 'en-GB',
@@ -65,6 +70,11 @@ export const ESPACE_TEXTES = {
     erreur: 'Not saved. Check your connection and try again.',
     moment: (n: number, heure: string | null) => heure ? heure : `Moment ${n}`,
     momentFerme: (heure: string) => `This moment opens at ${heure} (Kinshasa time).`,
+    tousLesJours: 'See all days',
+    jourPrecedent: (n: number) => `Previous day: day ${n}`,
+    jourSuivant: (n: number) => `Next day: day ${n}`,
+    autresMoments: 'The other moments of the day',
+    reglages: 'My settings',
   },
 } as const;
 

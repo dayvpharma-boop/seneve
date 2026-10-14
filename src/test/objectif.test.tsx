@@ -53,6 +53,8 @@ describe('Carte Mon objectif', () => {
   it('sans objectif : le participant le formule et le confirme lui-même', async () => {
     render(<GoalCard langue="fr" />);
     expect(await screen.findByText(/C’est toi qui le formules/)).toBeInTheDocument();
+    expect(screen.queryByLabelText('Mon objectif')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Choisir mon objectif' }));
     const bouton = screen.getByRole('button', { name: 'Confirmer mon objectif' });
     expect(bouton).toBeDisabled();
     fireEvent.change(screen.getByLabelText('Mon objectif'), { target: { value: '  Lire 15 minutes chaque matin  ' } });
@@ -64,6 +66,7 @@ describe('Carte Mon objectif', () => {
   it('racine du test proposée, jamais imposée', async () => {
     memoriserRacineTest(2);
     render(<GoalCard langue="fr" />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Choisir mon objectif' }));
     expect(await screen.findByText(/tu as retenu : Travail et intégrité/)).toBeInTheDocument();
     expect((screen.getByLabelText(/Racine liée/) as HTMLSelectElement).value).toBe('');
     fireEvent.click(screen.getByRole('button', { name: 'La choisir' }));
@@ -83,6 +86,7 @@ describe('Carte Mon objectif', () => {
   it('échec d’enregistrement : message clair', async () => {
     rpcError = { message: 'Failed to fetch' };
     render(<GoalCard langue="en" />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Choose my goal' }));
     fireEvent.change(await screen.findByLabelText('My goal'), { target: { value: 'Read every morning' } });
     fireEvent.click(screen.getByRole('button', { name: 'Confirm my goal' }));
     expect(await screen.findByText(/Goal not saved/)).toBeInTheDocument();

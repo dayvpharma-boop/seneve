@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { dayInfo, eventIdFor, momentVisible, pickDefault, rawDay, webText } from '@/lib/espace';
@@ -68,6 +68,17 @@ async function load(): Promise<Data | null> {
   return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
 }
 
+/** Icônes simples des quatre outils (traits, couleur du texte de marque). */
+const ICONES = {
+  journal: <><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z" /><path d="M5 17a3 3 0 0 1 3-3h11" /></>,
+  coach: <><path d="M4 5h16v11H9l-5 4z" /><path d="M8 9h8M8 12h5" /></>,
+  progres: <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />,
+  aide: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3.5" /><path d="M5.6 5.6l3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9" /></>,
+};
+function Icone({ nom }: { nom: keyof typeof ICONES }) {
+  return <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{ICONES[nom]}</svg>;
+}
+
 function formatDate(iso: string | null, locale = 'fr-FR') {
   if (!iso) return '';
   return new Intl.DateTimeFormat(locale, { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
@@ -92,6 +103,8 @@ export function Espace() {
   const [equipe, setEquipe] = useState(false);
   // Après une action enregistrée pendant cette visite, le message de reprise ne réapparaît pas.
   const [repriseFaite, setRepriseFaite] = useState(false);
+  // Grille de tous les jours : repliée par défaut, ouverte par « Voir tous les jours ».
+  const [tousJours, setTousJours] = useState(false);
 
   // Copie hors connexion : date de la copie affichée quand le réseau manque.
   const [copieDu, setCopieDu] = useState<string | null>(null);
@@ -143,18 +156,31 @@ export function Espace() {
     await refresh();
   }
 
-  const header = <div className="espace-head"><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}<span className="link-row">{equipe && <Link className="link" to="/admin">Administration</Link>}<button type="button" className="link" onClick={signOut}>Se déconnecter</button></span></div>;
+  // Disposition « Sentier » (15/10/2026) : salutation en haut, « Se déconnecter » en bas de page.
+  const header = <header className="today-head"><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}</header>;
+  const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
   const outils = (langue: string, inscription?: string) => {
     const J = journalTextes(langue);
     const q = inscription ? `?inscription=${inscription}` : '';
     return <div className="card"><p className="tag">{J.carteTitre}</p><p>{J.carteTexte}</p>
-      <div className="link-row"><Link className="btn btn-link" to="/journal">{J.ouvrirJournal}</Link><Link className="link" to={`/coach${q}`}>{J.parlerCoach}</Link><Link className="link" to="/progres">{J.mesProgres}</Link><Link className="link" to={`/aide${q}`}>{J.demanderAide}</Link></div>
+      <div className="tools-grid">
+        <Link className="tool" to="/journal"><Icone nom="journal" />{J.ouvrirJournal}</Link>
+        <Link className="tool" to={`/coach${q}`}><Icone nom="coach" />{J.parlerCoach}</Link>
+        <Link className="tool" to="/progres"><Icone nom="progres" />{J.mesProgres}</Link>
+        <Link className="tool" to={`/aide${q}`}><Icone nom="aide" />{J.demanderAide}</Link>
+      </div>
     </div>;
   };
+  // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
+  const reglages = (langue: string, avecEmail: boolean) => <section className="reglages" aria-label={textes(langue).reglages}>
+    <p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>
+    {avecEmail && <EmailMatinCard langue={langue} />}
+    <WhatsAppLink />
+  </section>;
   const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
 
-  if (failed) return <main className="wrap">{header}{errorCard}</main>;
-  if (!data) return <main className="wrap">{header}<p className="muted">Chargement…</p></main>;
+  if (failed) return <main className="wrap">{header}{errorCard}{footer}</main>;
+  if (!data) return <main className="wrap">{header}<p className="muted">Chargement…</p>{footer}</main>;
 
   if (!data.parcours.length) return <main className="wrap">{header}
     <div className="card"><p className="tag">Découverte 7 jours</p>
@@ -162,27 +188,27 @@ export function Espace() {
       <button type="button" className="btn" disabled={starting} onClick={() => void start('fr')}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
       <p className="muted lang-alt" lang="en">A free 7-day journey based on the book « Stop Begging for Miracles ».</p>
       <button type="button" className="btn-secondaire" lang="en" disabled={starting} onClick={() => void start('en')}>Start in English</button>
-    </div>{outils('fr')}<WhatsAppLink /></main>;
+    </div>{outils('fr')}{reglages('fr', false)}{footer}</main>;
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
   const T = textes(enr.langue);
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" role="tablist" aria-label="Mes parcours">
-    {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); }}>{x.nom}</button>)}
+    {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}>{x.nom}</button>)}
   </div>;
 
   const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);
   if (notStarted) return <main className="wrap">{header}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
-    </div><GoalCard langue={enr.langue} /><EmailMatinCard langue={enr.langue} />{outils(enr.langue, enr.enrollment_id)}<WhatsAppLink /></main>;
+    </div>{outils(enr.langue, enr.enrollment_id)}<GoalCard langue={enr.langue} />{reglages(enr.langue, true)}{footer}</main>;
 
   const maxOpen = finished ? total : day;
   const current = Math.min(selected ?? day, maxOpen);
   const contents = data.contents.filter(c => c.programme_id === enr.programme_id && String(c.version) === String(enr.version));
   // Message 1 : l'enseignement du jour, avec son action. Messages 2 et 3 : les autres moments de la journée.
   const content = contents.find(c => c.jour === current && Number(c.numero_message) === 1) ?? contents.find(c => c.jour === current);
-  if (!content) return <main className="wrap">{header}{tabs}{errorCard}</main>;
+  if (!content) return <main className="wrap">{header}{tabs}{errorCard}{footer}</main>;
   const moments = contents.filter(c => c.jour === current && c.content_id !== content.content_id)
     .sort((a, b) => Number(a.numero_message) - Number(b.numero_message));
   const acts = data.activities.filter(a => a.content_id === content.content_id);
@@ -199,9 +225,34 @@ export function Espace() {
   // Une action enregistrée met à jour les données de l'espace (le message de reprise disparaît aussitôt).
   const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
 
+  // Progression : une part par jour (jusqu'à 21 jours), sinon une barre continue ; le jour du calendrier en doré.
+  const atteint = finished ? total : day;
+  const progression = total <= 21
+    ? <div className="segments today-segments" style={{ '--n': total } as CSSProperties} aria-hidden="true">
+        {Array.from({ length: total }, (_, k) => <span key={k} className={!finished && k + 1 === day ? 'segment is-today' : 'segment'}><i style={{ width: k + 1 <= atteint ? '100%' : '0%' }} /></span>)}
+      </div>
+    : <div className="today-bar" aria-hidden="true"><i style={{ width: `${(atteint / total) * 100}%` }} /></div>;
+  const choisirJour = (n: number) => { setSelected(n); setTousJours(false); };
+  const heureMatin = enr.heures?.[0] ?? null;
+
   return <main className="wrap">{header}{tabs}
-    {!tabs && <p className="tag">{enr.nom}</p>}
-    {finished ? <p>{T.termine(total)}</p> : <p className="day-count">{T.jourSur(day, total)}</p>}
+    {!tabs && <p className="today-parcours">{enr.nom}</p>}
+    <div className="today-progress">
+      {finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
+      {progression}
+      <div className="day-nav">
+        {current > 1
+          ? <button type="button" className="btn-secondaire" aria-label={T.jourPrecedent(current - 1)} onClick={() => choisirJour(current - 1)}><span aria-hidden="true">‹ </span>{T.jour(current - 1)}</button>
+          : <span className="day-nav-spacer" />}
+        <button type="button" className="link" aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}>{T.tousLesJours}</button>
+        {current < total
+          ? <button type="button" className="btn-secondaire" aria-label={T.jourSuivant(current + 1)} disabled={current + 1 > maxOpen} onClick={() => choisirJour(current + 1)}>{T.jour(current + 1)}<span aria-hidden="true"> ›</span></button>
+          : <span className="day-nav-spacer" />}
+      </div>
+      {tousJours && <div id="tous-les-jours" className="day-chips">
+        {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? T.jourFerme(n) : T.jour(n)} onClick={() => choisirJour(n)}>{n}</button>)}
+      </div>}
+    </div>
     {paused && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
     {horsLigne && <p className="muted hors-ligne" role="status">{T.horsLigne(copieDu ? formatDate(copieDu, T.locale) : formatDate(new Date().toISOString(), T.locale))}</p>}
@@ -212,13 +263,9 @@ export function Espace() {
       <p className="muted">{R.aide}</p>
       {!horsLigne && <div className="link-row"><Link className="link" to={`/coach?inscription=${enr.enrollment_id}`}>{R.coach}</Link><Link className="link" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
     </section>}
-    <div className="day-chips">
-      {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? T.jourFerme(n) : T.jour(n)} onClick={() => setSelected(n)}>{n}</button>)}
-    </div>
-    {maxOpen < total && <p className="muted">{T.ouvreDemain(maxOpen + 1)}</p>}
     {semaine && <SemaineCard key={`semaine-${enr.enrollment_id}-${semaine.numero}`} semaine={semaine} langue={enr.langue} horsLigne={horsLigne} />}
-    <article className="card">
-      <p className="tag">{T.jour(current)}</p>
+    <article className="card day-card">
+      <p className="tag">{T.jour(current)}{heureMatin && <span className="time-chip">{T.moment(1, heureMatin)}</span>}</p>
       <h2>{content.theme}</h2>
       <p className="day-text">{webText(content.texte_officiel, data.prenom)}</p>
       {content.reference_livre && <p className="src">{referenceAffichee(content.reference_livre, enr.langue)}</p>}
@@ -226,26 +273,37 @@ export function Espace() {
     {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused || cloture || horsLigne} langue={enr.langue} onEnregistre={surEnregistre} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
       <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
-    {moments.map(m => {
-      const n = Number(m.numero_message);
-      const heure = enr.heures?.[n - 1] ?? null;
-      const ouvert = momentVisible(heure, current, day, finished);
-      return <article key={m.content_id} className="card moment-card" aria-label={`${T.moment(n, heure)} — ${m.theme}`}>
-        <p className="tag">{T.moment(n, heure)}</p>
-        <h2>{m.theme}</h2>
-        {ouvert
-          ? <><p className="day-text">{webText(m.texte_officiel, data.prenom)}</p>
-              {m.reference_livre && <p className="src">{referenceAffichee(m.reference_livre, enr.langue)}</p>}</>
-          : <p className="muted">{T.momentFerme(heure ?? '')}</p>}
-      </article>;
-    })}
+    {moments.length > 0 && <>
+      <p className="section-title">{T.autresMoments}</p>
+      {/* Chemin des moments du jour : un point plein quand le moment est ouvert. */}
+      <ol className="path">{moments.map(m => {
+        const n = Number(m.numero_message);
+        const heure = enr.heures?.[n - 1] ?? null;
+        const ouvert = momentVisible(heure, current, day, finished);
+        const nom = `${T.moment(n, heure)} — ${m.theme}`;
+        return <li key={m.content_id} className={ouvert ? 'path-step is-open' : 'path-step'}>
+          <span className="path-dot" aria-hidden="true" />
+          {ouvert
+            ? <article className="card moment-card" aria-label={nom}>
+                <p className="tag"><span className="time-chip">{T.moment(n, heure)}</span></p>
+                <h2>{m.theme}</h2>
+                <p className="day-text">{webText(m.texte_officiel, data.prenom)}</p>
+                {m.reference_livre && <p className="src">{referenceAffichee(m.reference_livre, enr.langue)}</p>}
+              </article>
+            : <article className="moment-closed" aria-label={nom}>
+                <h2 className="moment-closed-title"><span className="time-chip">{T.moment(n, heure)}</span> <span>{m.theme}</span></h2>
+                <p className="muted">{T.momentFerme(heure ?? '')}</p>
+              </article>}
+        </li>;
+      })}</ol>
+    </>}
+    {outils(enr.langue, enr.enrollment_id)}
     {!horsLigne && <>
       <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
       <GoalCard langue={enr.langue} />
-      <EmailMatinCard langue={enr.langue} />
+      {reglages(enr.langue, true)}
     </>}
-    {outils(enr.langue, enr.enrollment_id)}
-    {!horsLigne && <WhatsAppLink />}
+    {footer}
   </main>;
 }
 
@@ -282,7 +340,7 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
   }
 
   const realisee = etat === 'realisee';
-  return <div className="card"><p className="tag">{T.action}</p><p className="action">{activity.consigne}</p>
+  return <div className="card action-card"><p className="tag">{T.action}</p><p className="action">{activity.consigne}</p>
     {realisee && <p className="success" role="status">{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>}
     {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
     {!realisee && aide && <div className="aide-notee" role="status"><p>{T.aideNotee}</p>

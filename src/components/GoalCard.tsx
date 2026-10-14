@@ -46,6 +46,12 @@ export function GoalCard({ langue }: { langue: string }) {
   }
 
   if (goal === undefined) return null;
+  // Sans objectif : une invitation courte et un bouton ; le formulaire ne s'ouvre qu'à la demande (15/10/2026).
+  if (!goal && !editing) return <div className="card">
+    <p className="tag">{T.titre}</p>
+    <p>{T.invitation}</p>
+    <button type="button" className="btn-secondaire wide" onClick={ouvrir}>{T.choisir}</button>
+  </div>;
   const formulaire = editing || !goal;
   const longueurOk = texte.trim().length === 0 || objectifValide(texte) !== null;
 
@@ -73,7 +79,7 @@ export function GoalCard({ langue }: { langue: string }) {
       {suggestion !== null && racine !== suggestion + 1 && <p className="muted">{T.suggestionTest(racines[suggestion] ?? '')} <button type="button" className="link" onClick={() => setRacine(suggestion + 1)}>{T.utiliser}</button></p>}
       <div className="row-actions">
         <button type="submit" className="btn action-btn" disabled={busy || !objectifValide(texte)}>{busy ? T.enregistrement : T.confirmer}</button>
-        {goal && <button type="button" className="link" onClick={() => setEditing(false)}>{T.annuler}</button>}
+        <button type="button" className="link" onClick={() => setEditing(false)}>{T.annuler}</button>
       </div>
       <p className="muted">{T.note}</p>
       {error && <p className="error" role="alert">{error}</p>}

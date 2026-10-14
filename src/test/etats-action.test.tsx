@@ -106,6 +106,7 @@ describe('Parcours terminé', () => {
     tables['enrollments'] = [{ enrollment_id: 'E7', programme_id: P, version: 1, langue: 'fr', date_debut: '2026-10-11', etat: 'terminee' }];
     ouvrir();
     expect(await screen.findByText(/Ce parcours est terminé : les actions sont fermées/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Voir tous les jours' }));
     fireEvent.click(screen.getByRole('button', { name: 'Jour 2' }));
     expect(await screen.findByText('Lis un chapitre.')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: "J'ai réalisé cette action" })).not.toBeInTheDocument();

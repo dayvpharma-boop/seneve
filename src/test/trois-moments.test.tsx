@@ -78,6 +78,7 @@ describe('Trois moments par jour dans l’espace', () => {
     base(['08:00', '13:00', '19:00']);
     render(<MemoryRouter><Espace /></MemoryRouter>);
     await screen.findByText('Jour 2 sur 14');
+    fireEvent.click(screen.getByRole('button', { name: 'Voir tous les jours' }));
     fireEvent.click(screen.getByRole('button', { name: 'Jour 1' }));
     expect(screen.getByText('Marie — texte du jour 1, moment 1.')).toBeInTheDocument();
     expect(screen.getByText('Marie — texte du jour 1, moment 2.')).toBeInTheDocument();
