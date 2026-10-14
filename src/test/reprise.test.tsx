@@ -69,3 +69,22 @@ describe('Reprise après 3 jours (espace)', () => {
     expect(screen.queryByRole('region', { name: 'Content de te revoir, Marie 🌱' })).not.toBeInTheDocument();
   });
 });
+
+describe('Reprise : une action suffit à faire disparaître le message', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-10T12:00:00Z'));   // jour 10, dernière action au jour 2
+    localStorage.clear();
+    tables['activity_state'] = [fait(1), fait(2)];
+  });
+  afterEach(() => { cleanup(); vi.useRealTimers(); });
+
+  it('après avoir repris le jour 3, le message ne revient pas pendant la visite', async () => {
+    render(<MemoryRouter><Espace /></MemoryRouter>);
+    await screen.findByRole('region', { name: 'Content de te revoir, Marie 🌱' });
+    fireEvent.click(screen.getByRole('button', { name: 'Reprendre au jour 3' }));
+    fireEvent.click(await screen.findByRole('button', { name: "J'ai réalisé cette action" }));
+    await screen.findByText(/Action réalisée/);
+    expect(screen.queryByRole('region', { name: 'Content de te revoir, Marie 🌱' })).not.toBeInTheDocument();
+  });
+});

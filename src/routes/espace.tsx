@@ -89,6 +89,8 @@ export function Espace() {
   const [chosen, setChosen] = useState<string | null>(params.get('parcours'));
   const [starting, setStarting] = useState(false);
   const [equipe, setEquipe] = useState(false);
+  // Après une action enregistrée pendant cette visite, le message de reprise ne réapparaît pas.
+  const [repriseFaite, setRepriseFaite] = useState(false);
 
   // Copie hors connexion : date de la copie affichée quand le réseau manque.
   const [copieDu, setCopieDu] = useState<string | null>(null);
@@ -188,10 +190,10 @@ export function Espace() {
   const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
   const jourCal = rawDay(enr.date_debut, new Date());
   const semaine = semaineDuJour(bilanEnr, jourCal);
-  const reprise = !paused && !cloture ? jourDeReprise(bilanEnr, jourCal) : null;
+  const reprise = !paused && !cloture && !repriseFaite ? jourDeReprise(bilanEnr, jourCal) : null;
   const R = REPRISE_TEXTES[enr.langue === 'en' ? 'en' : 'fr'];
   // Une action enregistrée met à jour les données de l'espace (le message de reprise disparaît aussitôt).
-  const surEnregistre = (st: State) => setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev);
+  const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
 
   return <main className="wrap">{header}{tabs}
     {!tabs && <p className="tag">{enr.nom}</p>}
