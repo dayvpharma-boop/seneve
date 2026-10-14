@@ -1,6 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Index } from '@/routes/index';
+import css from '@/styles.css?raw';
 
 // Variante 1 « Sentier » retenue par Dr Justin le 14/10/2026 pour l'accueil et les questions du test.
 function widths(): number[] {
@@ -21,6 +22,12 @@ describe('Variante 1 « Sentier » du Test des 7 Racines', () => {
     render(<Index />);
     expect(document.querySelector('.home-intro')?.textContent).toContain('« Arrête de mendier des miracles »');
     expect(document.querySelector('.home-note')?.textContent).toContain('(1 = jamais, 5 = toujours)');
+  });
+
+  it('n’allume pas un chiffre au toucher : l’effet de survol est réservé à la souris', () => {
+    const hoverRules = css.split('\n').filter(line => line.includes('.scale-button:hover'));
+    expect(hoverRules.length).toBeGreaterThan(0);
+    for (const line of hoverRules) expect(line.startsWith('@media (hover:hover) and (pointer:fine)')).toBe(true);
   });
 
   it('montre les mêmes repères en anglais', () => {
