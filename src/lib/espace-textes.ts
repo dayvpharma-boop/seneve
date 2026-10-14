@@ -31,6 +31,8 @@ export const ESPACE_TEXTES = {
     demanderCoach: 'Demander au coach',
     enregistrement: 'Enregistrement…',
     erreur: 'Non enregistré. Vérifie ta connexion et réessaie.',
+    moment: (n: number, heure: string | null) => heure ? `${heureFr(heure)}` : `Moment ${n}`,
+    momentFerme: (heure: string) => `Ce moment s’ouvre à ${heureFr(heure)} (heure de Kinshasa).`,
   },
   en: {
     locale: 'en-GB',
@@ -61,8 +63,18 @@ export const ESPACE_TEXTES = {
     demanderCoach: 'Ask the coach',
     enregistrement: 'Saving…',
     erreur: 'Not saved. Check your connection and try again.',
+    moment: (n: number, heure: string | null) => heure ? heure : `Moment ${n}`,
+    momentFerme: (heure: string) => `This moment opens at ${heure} (Kinshasa time).`,
   },
 } as const;
+
+/** « 13:00 » → « 13 h » ; « 08:30 » → « 8 h 30 ». */
+function heureFr(heure: string): string {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(heure);
+  if (!m) return heure;
+  const h = String(Number(m[1]));
+  return m[2] === '00' ? `${h} h` : `${h} h ${m[2]}`;
+}
 
 export function textes(langue: string | null | undefined) {
   return ESPACE_TEXTES[langue === 'en' ? 'en' : 'fr'];

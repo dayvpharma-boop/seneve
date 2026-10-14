@@ -55,6 +55,22 @@ export function webText(text: string, prenom: string | null | undefined): string
     .trim();
 }
 
+/** Heure actuelle à Kinshasa, au format HH:MM (même fuseau que le calcul des jours). */
+export function heureKinshasa(now: Date): string {
+  return new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Kinshasa', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(now);
+}
+
+/**
+ * Un moment de la journée (message 2 ou 3) est-il visible ?
+ * Les jours passés et les parcours terminés montrent tous leurs moments. Le jour en cours suit les horaires
+ * du programme, comme les messages WhatsApp. Sans horaire valide, le moment est visible dès l'ouverture du jour.
+ */
+export function momentVisible(heure: string | null | undefined, jourAffiche: number, jourEnCours: number, termine: boolean, now: Date = new Date()): boolean {
+  if (termine || jourAffiche < jourEnCours) return true;
+  if (!heure || !/^([01]\d|2[0-3]):[0-5]\d$/.test(heure)) return true;
+  return heureKinshasa(now) >= heure;
+}
+
 /** Identifiant d'événement : réutilise celui du clic en attente, sinon en génère un nouveau. */
 export function eventIdFor(pending: string | null | undefined, generate: () => string = () => crypto.randomUUID()): string {
   return pending ?? generate();

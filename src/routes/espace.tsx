@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { dayInfo, eventIdFor, pickDefault, rawDay, webText } from '@/lib/espace';
+import { dayInfo, eventIdFor, momentVisible, pickDefault, rawDay, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
@@ -13,11 +13,12 @@ import { journalTextes } from '@/lib/journal';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
-type Programme = { programme_id: string; nom: string; duree_jours: number | null };
+type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
 type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
 type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean };
 type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
-type Parcours = Enrollment & { nom: string; duree: number };
+// heures : horaires des moments du jour (message 1, 2, 3), lus dans le programme publié ; absents = tout visible.
+type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
 type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[] };
 
 const LOAD_ERROR = 'Impossible de charger ta journée pour le moment.';
@@ -43,7 +44,7 @@ async function load(): Promise<Data | null> {
   if (!enrollments.length) return { prenom, parcours: [], contents: [], activities: [], states: [] };
   const progIds = [...new Set(enrollments.map(x => x.programme_id))];
   const [pr, c] = await Promise.all([
-    supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', progIds),
+    supabase.from('programmes').select('programme_id, nom, duree_jours, heures_messages').in('programme_id', progIds),
     supabase.from('contents').select('content_id, programme_id, version, jour, numero_message, theme, explication, texte_officiel, reference_livre')
       .in('programme_id', progIds).order('jour').order('numero_message'),
   ]);
@@ -53,7 +54,7 @@ async function load(): Promise<Data | null> {
   const parcours: Parcours[] = enrollments.map(x => {
     const prog = programmes.find(q => q.programme_id === x.programme_id);
     const duree = prog?.duree_jours ?? 7;
-    return { ...x, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, duree), duree };
+    return { ...x, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, duree), duree, heures: prog?.heures_messages ?? null };
   });
   // Chaque inscription garde sa version : on ne retient que les contenus de cette version.
   const contents = ((c.data ?? []) as Content[]).filter(ct => enrollments.some(x => x.programme_id === ct.programme_id && String(x.version) === String(ct.version)));
@@ -179,8 +180,11 @@ export function Espace() {
   const maxOpen = finished ? total : day;
   const current = Math.min(selected ?? day, maxOpen);
   const contents = data.contents.filter(c => c.programme_id === enr.programme_id && String(c.version) === String(enr.version));
-  const content = contents.find(c => c.jour === current);
+  // Message 1 : l'enseignement du jour, avec son action. Messages 2 et 3 : les autres moments de la journée.
+  const content = contents.find(c => c.jour === current && Number(c.numero_message) === 1) ?? contents.find(c => c.jour === current);
   if (!content) return <main className="wrap">{header}{tabs}{errorCard}</main>;
+  const moments = contents.filter(c => c.jour === current && c.content_id !== content.content_id)
+    .sort((a, b) => Number(a.numero_message) - Number(b.numero_message));
   const acts = data.activities.filter(a => a.content_id === content.content_id);
   const action = acts.find(a => a.type_activite === 'action');
   const question = acts.find(a => a.type_activite === 'question');
@@ -222,6 +226,19 @@ export function Espace() {
     {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused || cloture || horsLigne} langue={enr.langue} onEnregistre={surEnregistre} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
     {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
       <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
+    {moments.map(m => {
+      const n = Number(m.numero_message);
+      const heure = enr.heures?.[n - 1] ?? null;
+      const ouvert = momentVisible(heure, current, day, finished);
+      return <article key={m.content_id} className="card moment-card" aria-label={`${T.moment(n, heure)} — ${m.theme}`}>
+        <p className="tag">{T.moment(n, heure)}</p>
+        <h2>{m.theme}</h2>
+        {ouvert
+          ? <><p className="day-text">{webText(m.texte_officiel, data.prenom)}</p>
+              {m.reference_livre && <p className="src">{referenceAffichee(m.reference_livre, enr.langue)}</p>}</>
+          : <p className="muted">{T.momentFerme(heure ?? '')}</p>}
+      </article>;
+    })}
     {!horsLigne && <>
       <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
       <GoalCard langue={enr.langue} />
