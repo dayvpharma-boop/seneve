@@ -163,3 +163,13 @@ details summary { cursor:pointer; padding:6px 0; }
 .lang-alt { margin:18px 0 8px; }
 .card > .btn-secondaire { width:100%; }
 .hors-ligne { border:1px solid var(--gold); border-radius:12px; padding:10px 12px; color:var(--foreground); }
+
+/* Questionnaire : panneau cohérent avec l’accueil SÉNEVÉ */
+.quiz-card { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:clamp(20px,5vw,30px); box-shadow:0 14px 34px rgba(35,57,47,.08); }
+.quiz-card .q { min-height:0; margin-bottom:24px; }
+.quiz-card .scale-button { transition:background .15s ease,border-color .15s ease,transform .15s ease; }
+.quiz-card .scale-button:hover { border-color:var(--brand); transform:translateY(-1px); }
+.quiz-card .scale-button[aria-pressed="true"] { box-shadow:0 5px 14px color-mix(in srgb,var(--brand) 18%,transparent); }
+.quiz-card .ends { margin-bottom:18px; }
+.quiz-card .link { margin-top:4px; }
+@media(max-width:420px) { .quiz-card { padding:18px; border-radius:17px; } .quiz-card .scale { gap:6px; } }
