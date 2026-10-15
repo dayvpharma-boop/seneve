@@ -35,7 +35,7 @@ describe('Résultat « Sentier »', () => {
     expect(follows(hero, action) && follows(action, whatsapp) && follows(whatsapp, roots) && follows(roots, share)).toBe(true);
     // Le résultat mène aussi à l'espace du site, sous WhatsApp (15/10/2026).
     const espace = within(whatsapp).getByRole('link', { name: 'Créer mon espace' });
-    expect(espace).toHaveAttribute('href', '/connexion');
+    expect(espace).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion`);
     expect(follows(within(whatsapp).getByRole('link', { name: 'Continuer sur WhatsApp' }), espace)).toBe(true);
     // Même encadré doré que l'action du jour de l'espace.
     expect(action.querySelector('.action-box .action')).not.toBeNull();
