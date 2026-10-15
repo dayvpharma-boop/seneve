@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { BarreNav } from '@/components/BarreNav';
 import { pickDefault } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { bilan, progresTextes, semaines, semaineTextes, type Bilan } from '@/lib/progres';
@@ -75,9 +76,9 @@ export function Progres() {
   useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = enr?.langue === 'en' ? 'en' : 'fr'; }, [T, enr?.langue]);
 
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;
-  if (!data) return <main className="wrap"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p></main>;
-  if (!enr) return <main className="wrap"><p className="brand">SÉNEVÉ</p>{back}<h1>{T.titre}</h1><p className="muted">{T.aucun}</p></main>;
+  if (failed) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enr?.langue ?? data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p><BarreNav langue={enr?.langue ?? data?.langue} /></main>;
+  if (!enr) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<h1>{T.titre}</h1><p className="muted">{T.aucun}</p><BarreNav langue={enr?.langue ?? data?.langue} /></main>;
 
   const b = data.bilans[enr.enrollment_id]!;
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" role="tablist" aria-label={T.titre}>
@@ -85,7 +86,7 @@ export function Progres() {
   </div>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;
 
-  return <main className="wrap">
+  return <main className="wrap avec-nav">
     <p className="brand">SÉNEVÉ</p>
     {back}
     <h1>{T.titre}</h1>
@@ -126,5 +127,5 @@ export function Progres() {
         </span>
       </li>)}
     </ol>
-  </main>;
+  <BarreNav langue={enr?.langue ?? data?.langue} /></main>;
 }

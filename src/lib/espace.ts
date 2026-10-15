@@ -55,6 +55,7 @@ const ENTETE_MESSAGE = /^(?:Bonjour|Bonsoir|Hello|Hi|Good morning|Good evening)\
 export function webText(text: string, prenom: string | null | undefined): string {
   return fillPrenom(text.replace(ENTETE_MESSAGE, ''), prenom)
     .replace(/\s*Tu peux répondre ici[^.!?]*[.!?]/g, '')
+    .replace(/\s*Si tu as un souci d[’']accès, dis-le-nous ici[^.!?]*[.!?]/g, '')
     .replace(/\s*(You can reply here|If you have any trouble accessing it, let us know here)[^.!?]*[.!?]/g, '')
     .trim();
 }
@@ -73,6 +74,21 @@ export function momentVisible(heure: string | null | undefined, jourAffiche: num
   if (termine || jourAffiche < jourEnCours) return true;
   if (!heure || !/^([01]\d|2[0-3]):[0-5]\d$/.test(heure)) return true;
   return heureKinshasa(now) >= heure;
+}
+
+/** Période d'un moment selon son heure (« 08:00 » → matin, « 13:00 » → midi, « 19:00 » → soir) ; sans heure, selon son rang. */
+export function periodeMoment(heure: string | null | undefined, rang: number): 'matin' | 'midi' | 'soir' {
+  const m = heure ? /^(\d{1,2}):\d{2}$/.exec(heure) : null;
+  if (m) { const h = Number(m[1]); return h < 11 ? 'matin' : h < 17 ? 'midi' : 'soir'; }
+  return rang <= 1 ? 'matin' : rang === 2 ? 'midi' : 'soir';
+}
+
+/** Date (AAAA-MM-JJ) du jour n d'un parcours commencé à dateDebut, au fuseau de Kinshasa. */
+export function dateDuJour(dateDebut: string, n: number): Date {
+  const start = /^\d{4}-\d{2}-\d{2}$/.test(dateDebut) ? dateDebut : kinshasaDate(new Date(dateDebut));
+  const [y, m, d] = start.split('-').map(Number);
+  // Midi UTC = 13 h à Kinshasa : la date affichée ne change pas selon le fuseau.
+  return new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, (d ?? 1) + n - 1, 12));
 }
 
 /** Identifiant d'événement : réutilise celui du clic en attente, sinon en génère un nouveau. */

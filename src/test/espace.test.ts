@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayInfo, eventIdFor, fillPrenom, pickDefault, webText } from '@/lib/espace';
+import { dateDuJour, dayInfo, eventIdFor, fillPrenom, periodeMoment, pickDefault, webText } from '@/lib/espace';
 
 describe('dayInfo (Africa/Kinshasa)', () => {
   it('jour 1 le jour du début', () => {
@@ -47,6 +47,9 @@ describe('webText', () => {
     expect(webText('What time of day will you set aside for your book? If you have any trouble accessing it, let us know here.', 'Ann')).toBe('What time of day will you set aside for your book?');
     expect(webText('Question for today: why? You can reply here.', '')).toBe('Question for today: why?');
   });
+  it('retire « Si tu as un souci d’accès, dis-le-nous ici. », propre à WhatsApp (jour 1 du Livre 14 jours)', () => {
+    expect(webText("Quel moment de ta journée réserves-tu à ton livre ? Si tu as un souci d'accès, dis-le-nous ici.", 'Marie')).toBe('Quel moment de ta journée réserves-tu à ton livre ?');
+  });
   it('retire l’en-tête « Bonjour {prenom} … Jour N/M — », déjà affiché par la page (décision du 15/10/2026)', () => {
     expect(webText('Bonjour {prenom} 👋 Jour 7/7 — Merci d’avoir suivi ce parcours !', 'Marie')).toBe('Merci d’avoir suivi ce parcours !');
     expect(webText('Bonjour {prenom} 🌱 Jour 3/14 — Dans le chapitre 1, le Dr Justin Tshims raconte…', '')).toBe('Dans le chapitre 1, le Dr Justin Tshims raconte…');
@@ -87,5 +90,21 @@ describe('pickDefault', () => {
     expect(pickDefault([ancien, livreFutur], now)?.id).toBe('L');
     expect(pickDefault([ancien], now)?.id).toBe('A');
     expect(pickDefault([], now)).toBeNull();
+  });
+});
+
+describe('Écran « Aujourd’hui » : période et date d’un jour', () => {
+  it('période selon l’heure du moment, sinon selon son rang', () => {
+    expect(periodeMoment('08:00', 1)).toBe('matin');
+    expect(periodeMoment('13:00', 2)).toBe('midi');
+    expect(periodeMoment('19:00', 3)).toBe('soir');
+    expect(periodeMoment(null, 1)).toBe('matin');
+    expect(periodeMoment(null, 3)).toBe('soir');
+  });
+  it('date du jour n, au fuseau de Kinshasa', () => {
+    const f = (d: Date) => new Intl.DateTimeFormat('fr-FR', { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(d);
+    expect(f(dateDuJour('2026-10-13', 1))).toBe('mardi 13 octobre');
+    expect(f(dateDuJour('2026-10-13', 3))).toBe('jeudi 15 octobre');
+    expect(f(dateDuJour('2026-10-30', 3))).toBe('dimanche 1 novembre');
   });
 });

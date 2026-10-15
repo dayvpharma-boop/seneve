@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { dayInfo, eventIdFor, momentVisible, pickDefault, rawDay, webText } from '@/lib/espace';
+import { dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, rawDay, webText } from '@/lib/espace';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
@@ -9,7 +9,9 @@ import { SeanceCard } from '@/components/SeanceCard';
 import { SemaineCard } from '@/components/SemaineCard';
 import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
-import { journalTextes } from '@/lib/journal';
+import { Icone } from '@/components/Icone';
+import { Scene, type Periode } from '@/components/Scene';
+import { BarreNav } from '@/components/BarreNav';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
@@ -68,17 +70,6 @@ async function load(): Promise<Data | null> {
   return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
 }
 
-/** Icônes simples des quatre outils (traits, couleur du texte de marque). */
-const ICONES = {
-  journal: <><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z" /><path d="M5 17a3 3 0 0 1 3-3h11" /></>,
-  coach: <><path d="M4 5h16v11H9l-5 4z" /><path d="M8 9h8M8 12h5" /></>,
-  progres: <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />,
-  aide: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3.5" /><path d="M5.6 5.6l3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9" /></>,
-};
-function Icone({ nom }: { nom: keyof typeof ICONES }) {
-  return <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{ICONES[nom]}</svg>;
-}
-
 function formatDate(iso: string | null, locale = 'fr-FR') {
   if (!iso) return '';
   return new Intl.DateTimeFormat(locale, { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
@@ -90,21 +81,30 @@ function formatStart(ymd: string, locale = 'fr-FR') {
   return new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }).format(d);
 }
 
+/** Un moment du jour : le message 1 (enseignement et action), puis les messages 2 et 3 (midi, soir). */
+type Moment = { n: number; content: Content; heure: string | null; ouvert: boolean; periode: Periode; principal: boolean };
+const ICONE_PERIODE = { matin: 'lever', midi: 'midi', soir: 'lune' } as const;
+
+function majuscule(t: string) { return t.charAt(0).toUpperCase() + t.slice(1); }
+
 export function Espace() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
-  // Lien direct depuis « Mes progrès » : ?parcours=<inscription>&jour=<n>
+  // Lien direct depuis « Mes progrès » : ?parcours=<inscription>&jour=<n> ; page d'un moment : &moment=<n>.
   const [params] = useSearchParams();
   const jourDemande = Number(params.get('jour'));
+  const momentParam = Number(params.get('moment'));
   const [selected, setSelected] = useState<number | null>(Number.isInteger(jourDemande) && jourDemande > 0 ? jourDemande : null);
   const [chosen, setChosen] = useState<string | null>(params.get('parcours'));
   const [starting, setStarting] = useState(false);
   const [equipe, setEquipe] = useState(false);
   // Après une action enregistrée pendant cette visite, le message de reprise ne réapparaît pas.
   const [repriseFaite, setRepriseFaite] = useState(false);
-  // Grille de tous les jours : repliée par défaut, ouverte par « Voir tous les jours ».
+  // Tuiles : la semaine du jour affiché par défaut, tous les jours avec « Voir tous les jours ».
   const [tousJours, setTousJours] = useState(false);
+  const titreMoment = useRef<HTMLHeadingElement>(null);
 
   // Copie hors connexion : date de la copie affichée quand le réseau manque.
   const [copieDu, setCopieDu] = useState<string | null>(null);
@@ -141,6 +141,12 @@ export function Espace() {
     }).catch(() => undefined);
   }, []);
   useEffect(() => { document.title = 'Mon espace — SÉNEVÉ'; document.documentElement.lang = 'fr'; }, []);
+  // Page d'un moment : on part du haut, le titre reçoit le focus (lecteurs d'écran).
+  useEffect(() => {
+    if (!momentParam || !data) return;
+    try { window.scrollTo(0, 0); } catch { /* environnement sans défilement */ }
+    titreMoment.current?.focus();
+  }, [momentParam, data]);
 
   async function signOut() {
     effacerEspaces();
@@ -156,21 +162,13 @@ export function Espace() {
     await refresh();
   }
 
-  // Disposition « Sentier » (15/10/2026) : salutation en haut, « Se déconnecter » en bas de page.
-  const header = <header className="today-head"><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}</header>;
+  // Écran « Aujourd'hui » validé le 15/10/2026 : salutation et initiale en haut, barre du bas, « Se déconnecter » en bas de page.
+  const initiale = (data?.prenom ?? '').trim().charAt(0).toUpperCase();
+  const header = <header className="today-head">
+    <div><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}</div>
+    {initiale && <span className="avatar" aria-hidden="true">{initiale}</span>}
+  </header>;
   const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
-  const outils = (langue: string, inscription?: string) => {
-    const J = journalTextes(langue);
-    const q = inscription ? `?inscription=${inscription}` : '';
-    return <div className="card"><p className="tag">{J.carteTitre}</p><p>{J.carteTexte}</p>
-      <div className="tools-grid">
-        <Link className="tool" to="/journal"><Icone nom="journal" />{J.ouvrirJournal}</Link>
-        <Link className="tool" to={`/coach${q}`}><Icone nom="coach" />{J.parlerCoach}</Link>
-        <Link className="tool" to="/progres"><Icone nom="progres" />{J.mesProgres}</Link>
-        <Link className="tool" to={`/aide${q}`}><Icone nom="aide" />{J.demanderAide}</Link>
-      </div>
-    </div>;
-  };
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
   const reglages = (langue: string, avecEmail: boolean) => <section className="reglages" aria-label={textes(langue).reglages}>
     <p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>
@@ -178,17 +176,18 @@ export function Espace() {
     <WhatsAppLink />
   </section>;
   const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
+  const page = (langue: string, contenu: ReactNode, classe = '') => <main className={`wrap avec-nav ${classe}`.trim()}>{contenu}<BarreNav langue={langue} /></main>;
 
-  if (failed) return <main className="wrap">{header}{errorCard}{footer}</main>;
-  if (!data) return <main className="wrap">{header}<p className="muted">Chargement…</p>{footer}</main>;
+  if (failed) return page('fr', <>{header}{errorCard}{footer}</>);
+  if (!data) return page('fr', <>{header}<p className="muted">Chargement…</p>{footer}</>);
 
-  if (!data.parcours.length) return <main className="wrap">{header}
+  if (!data.parcours.length) return page('fr', <>{header}
     <div className="card"><p className="tag">Découverte 7 jours</p>
       <p>Un parcours gratuit de 7 jours, à ton rythme, à partir du livre « Arrête de mendier des miracles ».</p>
       <button type="button" className="btn" disabled={starting} onClick={() => void start('fr')}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
       <p className="muted lang-alt" lang="en">A free 7-day journey based on the book « Stop Begging for Miracles ».</p>
       <button type="button" className="btn-secondaire" lang="en" disabled={starting} onClick={() => void start('en')}>Start in English</button>
-    </div>{outils('fr')}{reglages('fr', false)}{footer}</main>;
+    </div>{reglages('fr', false)}{footer}</>);
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
@@ -198,60 +197,117 @@ export function Espace() {
   </div>;
 
   const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);
-  if (notStarted) return <main className="wrap">{header}{tabs}
+  if (notStarted) return page(enr.langue, <>{header}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
-    </div>{outils(enr.langue, enr.enrollment_id)}<GoalCard langue={enr.langue} />{reglages(enr.langue, true)}{footer}</main>;
+    </div><GoalCard langue={enr.langue} />{reglages(enr.langue, true)}{footer}</>);
 
   const maxOpen = finished ? total : day;
   const current = Math.min(selected ?? day, maxOpen);
   const contents = data.contents.filter(c => c.programme_id === enr.programme_id && String(c.version) === String(enr.version));
-  // Message 1 : l'enseignement du jour, avec son action. Messages 2 et 3 : les autres moments de la journée.
-  const content = contents.find(c => c.jour === current && Number(c.numero_message) === 1) ?? contents.find(c => c.jour === current);
-  if (!content) return <main className="wrap">{header}{tabs}{errorCard}{footer}</main>;
-  const moments = contents.filter(c => c.jour === current && c.content_id !== content.content_id)
-    .sort((a, b) => Number(a.numero_message) - Number(b.numero_message));
-  const acts = data.activities.filter(a => a.content_id === content.content_id);
-  const action = acts.find(a => a.type_activite === 'action');
-  const question = acts.find(a => a.type_activite === 'question');
   const paused = enr.etat === 'en_pause';
   const cloture = enr.etat === 'terminee';
   const horsLigne = copieDu !== null || !enLigne;
+  const lectureSeule = paused || cloture || horsLigne;
+
+  /** Moments d'un jour : le message 1 d'abord (ou le premier contenu), puis les autres par numéro. */
+  const momentsDuJour = (jour: number): Moment[] => {
+    const duJour = contents.filter(c => c.jour === jour).sort((a, b) => Number(a.numero_message) - Number(b.numero_message));
+    const principal = duJour.find(c => Number(c.numero_message) === 1) ?? duJour[0];
+    if (!principal) return [];
+    return [principal, ...duJour.filter(c => c !== principal)].map(c => {
+      const n = Number(c.numero_message) || 1;
+      const heure = enr.heures?.[n - 1] ?? null;
+      const estPrincipal = c === principal;
+      return { n, content: c, heure, principal: estPrincipal, periode: periodeMoment(heure, estPrincipal ? 1 : n), ouvert: estPrincipal || momentVisible(heure, jour, day, finished) };
+    });
+  };
+  const activitesDu = (jour: number) => {
+    const principal = momentsDuJour(jour)[0];
+    const acts = principal ? data.activities.filter(a => a.content_id === principal.content.content_id) : [];
+    return { action: acts.find(a => a.type_activite === 'action'), question: acts.find(a => a.type_activite === 'question') };
+  };
+  const etatDe = (a: Activity) => data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === a.activity_id);
+  // Une action enregistrée met à jour les données de l'espace (le message de reprise disparaît aussitôt).
+  const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
+  const lienJournal = (q: Activity) => `/journal?inscription=${enr.enrollment_id}&activite=${q.activity_id}`;
+  const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} readOnly={lectureSeule} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;
+
+  // Page d'un moment (« Lire et agir » / « Lire »).
+  if (momentParam > 0) {
+    const jourVu = Math.min(Number.isInteger(jourDemande) && jourDemande > 0 ? jourDemande : current, maxOpen);
+    const m = momentsDuJour(jourVu).find(x => x.n === momentParam);
+    const fermer = () => {
+      if ((location.state as { depuisAujourdhui?: boolean } | null)?.depuisAujourdhui) navigate(-1);
+      else navigate(`/espace?parcours=${enr.enrollment_id}&jour=${jourVu}`, { replace: true });
+    };
+    const date = majuscule(new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, jourVu)));
+    const { action, question } = activitesDu(jourVu);
+    return page(enr.langue, <>
+      <button type="button" className="back-btn" aria-label={T.retour} onClick={fermer}><Icone nom="retour" taille={20} /></button>
+      {!m || !m.ouvert
+        ? <div className="card"><p role="status">{m?.heure ? T.momentFerme(m.heure) : T.jourFerme(jourVu)}</p></div>
+        : <article className="moment-page" aria-labelledby="titre-moment">
+            <p className="moment-date">{date}{m.heure ? ` · ${T.moment(m.n, m.heure)}` : ''}</p>
+            <h1 id="titre-moment" ref={titreMoment} tabIndex={-1}>{m.content.theme}</h1>
+            <p className="moment-chips"><span className="time-chip">{T.jour(jourVu)}</span>{m.heure && <span className="time-chip">{T.periodes[m.periode]}</span>}</p>
+            <div className="moment-banniere"><Scene periode={m.periode} largeur={390} hauteur={130} /></div>
+            <p className="day-text moment-texte">{webText(m.content.texte_officiel, data.prenom)}</p>
+            {m.content.reference_livre && <p className="src">{referenceAffichee(m.content.reference_livre, enr.langue)}</p>}
+            {m.principal && action && carteAction(action, true)}
+            {m.principal && question && <div className="card question-card"><p className="tag">{T.question}</p><p className="action" id="question-moment">{question.consigne}</p>
+              <Link className="prompt-ecrire" to={lienJournal(question)} aria-describedby="question-moment">{T.ecrireReflexion}<Icone nom="crayon" taille={20} /></Link></div>}
+          </article>}
+    </>, 'moment-vue');
+  }
+
+  const moments = momentsDuJour(current);
+  if (!moments.length) return page(enr.langue, <>{header}{tabs}{errorCard}{footer}</>);
+  const { action, question } = activitesDu(current);
   const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
   const jourCal = rawDay(enr.date_debut, new Date());
   const semaine = semaineDuJour(bilanEnr, jourCal);
   const reprise = !paused && !cloture && !repriseFaite ? jourDeReprise(bilanEnr, jourCal) : null;
   const R = REPRISE_TEXTES[enr.langue === 'en' ? 'en' : 'fr'];
-  // Une action enregistrée met à jour les données de l'espace (le message de reprise disparaît aussitôt).
-  const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
+  const estAujourdhui = !finished && current === day;
 
-  // Progression : une part par jour (jusqu'à 21 jours), sinon une barre continue ; le jour du calendrier en doré.
-  const atteint = finished ? total : day;
-  const progression = total <= 21
-    ? <div className="segments today-segments" style={{ '--n': total } as CSSProperties} aria-hidden="true">
-        {Array.from({ length: total }, (_, k) => <span key={k} className={!finished && k + 1 === day ? 'segment is-today' : 'segment'}><i style={{ width: k + 1 <= atteint ? '100%' : '0%' }} /></span>)}
-      </div>
-    : <div className="today-bar" aria-hidden="true"><i style={{ width: `${(atteint / total) * 100}%` }} /></div>;
   const choisirJour = (n: number) => { setSelected(n); setTousJours(false); };
-  const heureMatin = enr.heures?.[0] ?? null;
+  const ouvrirMoment = (n: number) => navigate(`/espace?parcours=${enr.enrollment_id}&jour=${current}&moment=${n}`, { state: { depuisAujourdhui: true } });
+  const jourSemaine = (n: number) => new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'short' }).format(dateDuJour(enr.date_debut, n));
 
-  return <main className="wrap">{header}{tabs}
+  // Tuiles des jours : la semaine du jour affiché (7 jours), ou tous les jours sur demande.
+  const debutSemaine = Math.floor((current - 1) / 7) * 7 + 1;
+  const numeros = tousJours
+    ? Array.from({ length: total }, (_, k) => k + 1)
+    : Array.from({ length: Math.min(7, total - debutSemaine + 1) }, (_, k) => debutSemaine + k);
+  const tuiles = <div id="tous-les-jours" className="day-tiles">
+    {numeros.map(n => {
+      const ouvert = n <= maxOpen;
+      const fait = bilanEnr.jours[n - 1]?.etat === 'realisee';
+      const auj = !finished && n === day;
+      const nom = !ouvert ? T.jourFerme(n) : auj ? T.jourAujourdhui(n) : fait ? T.jourFait(n) : T.jour(n);
+      const classe = ['day-tile', auj && 'is-today', fait && 'is-done', !ouvert && 'is-locked', n === current && !auj && 'is-selected'].filter(Boolean).join(' ');
+      return <button type="button" key={n} className={classe} aria-label={nom} aria-pressed={ouvert ? n === current : undefined} disabled={!ouvert} onClick={() => choisirJour(n)}>
+        <span className="tile-wd" aria-hidden="true">{jourSemaine(n)}</span>
+        <b aria-hidden="true">{n}</b>
+        {auj ? <em aria-hidden="true">{T.auj}</em> : !ouvert ? <Icone nom="cadenas" taille={16} /> : fait ? <Icone nom="coche" taille={16} /> : <span className="tile-vide" aria-hidden="true" />}
+      </button>;
+    })}
+  </div>;
+
+  // Questions du journal : celle du jour affiché, et celle de la veille quand on regarde aujourd'hui.
+  const invitations: { jour: number; libelle: string; q: Activity }[] = [];
+  if (question) invitations.push({ jour: current, libelle: estAujourdhui ? `${T.jour(current)} · ${T.aujourdhui}` : T.jour(current), q: question });
+  if (estAujourdhui && current > 1) {
+    const veille = activitesDu(current - 1).question;
+    if (veille) invitations.push({ jour: current - 1, libelle: `${T.jour(current - 1)} · ${T.hier}`, q: veille });
+  }
+
+  return page(enr.langue, <>{header}{tabs}
     {!tabs && <p className="today-parcours">{enr.nom}</p>}
     <div className="today-progress">
+      {tuiles}
       {finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
-      {progression}
-      <div className="day-nav">
-        {current > 1
-          ? <button type="button" className="btn-secondaire" aria-label={T.jourPrecedent(current - 1)} onClick={() => choisirJour(current - 1)}><span aria-hidden="true">‹ </span>{T.jour(current - 1)}</button>
-          : <span className="day-nav-spacer" />}
-        <button type="button" className="link" aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}>{T.tousLesJours}</button>
-        {current < total
-          ? <button type="button" className="btn-secondaire" aria-label={T.jourSuivant(current + 1)} disabled={current + 1 > maxOpen} onClick={() => choisirJour(current + 1)}>{T.jour(current + 1)}<span aria-hidden="true"> ›</span></button>
-          : <span className="day-nav-spacer" />}
-      </div>
-      {tousJours && <div id="tous-les-jours" className="day-chips">
-        {Array.from({ length: total }, (_, k) => k + 1).map(n => <button type="button" key={n} className="day-chip" aria-pressed={n === current} disabled={n > maxOpen} aria-label={n > maxOpen ? T.jourFerme(n) : T.jour(n)} onClick={() => choisirJour(n)}>{n}</button>)}
-      </div>}
     </div>
     {paused && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
@@ -264,52 +320,58 @@ export function Espace() {
       {!horsLigne && <div className="link-row"><Link className="link" to={`/coach?inscription=${enr.enrollment_id}`}>{R.coach}</Link><Link className="link" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
     </section>}
     {semaine && <SemaineCard key={`semaine-${enr.enrollment_id}-${semaine.numero}`} semaine={semaine} langue={enr.langue} horsLigne={horsLigne} />}
-    <article className="card day-card">
-      <p className="tag">{T.jour(current)}{heureMatin && <span className="time-chip">{T.moment(1, heureMatin)}</span>}</p>
-      <h2>{content.theme}</h2>
-      <p className="day-text">{webText(content.texte_officiel, data.prenom)}</p>
-      {content.reference_livre && <p className="src">{referenceAffichee(content.reference_livre, enr.langue)}</p>}
-    </article>
-    {action && <ActionCard key={`${enr.enrollment_id}:${action.activity_id}`} enrollmentId={enr.enrollment_id} activity={action} readOnly={paused || cloture || horsLigne} langue={enr.langue} onEnregistre={surEnregistre} state={data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === action.activity_id)} />}
-    {question && <div className="card"><p className="tag">{T.question}</p><p className="action">{question.consigne}</p>
-      <Link className="link" to={`/journal?inscription=${enr.enrollment_id}&activite=${question.activity_id}`}>{journalTextes(enr.langue).repondreJournal}</Link></div>}
-    {moments.length > 0 && <>
-      <p className="section-title">{T.autresMoments}</p>
-      {/* Chemin des moments du jour : un point plein quand le moment est ouvert. */}
-      <ol className="path">{moments.map(m => {
-        const n = Number(m.numero_message);
-        const heure = enr.heures?.[n - 1] ?? null;
-        const ouvert = momentVisible(heure, current, day, finished);
-        const nom = `${T.moment(n, heure)} — ${m.theme}`;
-        return <li key={m.content_id} className={ouvert ? 'path-step is-open' : 'path-step'}>
-          <span className="path-dot" aria-hidden="true" />
-          {ouvert
-            ? <article className="card moment-card" aria-label={nom}>
-                <p className="tag"><span className="time-chip">{T.moment(n, heure)}</span></p>
-                <h2>{m.theme}</h2>
-                <p className="day-text">{webText(m.texte_officiel, data.prenom)}</p>
-                {m.reference_livre && <p className="src">{referenceAffichee(m.reference_livre, enr.langue)}</p>}
-              </article>
-            : <article className="moment-closed" aria-label={nom}>
-                <h2 className="moment-closed-title"><span className="time-chip">{T.moment(n, heure)}</span> <span>{m.theme}</span></h2>
-                <p className="muted">{T.momentFerme(heure ?? '')}</p>
-              </article>}
-        </li>;
-      })}</ol>
-    </>}
-    {outils(enr.langue, enr.enrollment_id)}
+
+    <section className="today-section" aria-labelledby="titre-journee">
+      <div className="sec-head">
+        <h2 id="titre-journee">{estAujourdhui ? T.taJournee : T.jour(current)}</h2>
+        <button type="button" className="link" aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}>{T.tousLesJours}</button>
+      </div>
+      <ul className={moments.length > 1 ? 'moment-rail' : 'moment-rail is-seul'}>
+        {moments.map(m => {
+          const id = `moment-${current}-${m.n}`;
+          return <li key={m.content.content_id}>
+            <article className={m.ouvert ? 'moment-tuile' : 'moment-tuile is-closed'} aria-label={`${T.moment(m.n, m.heure)} — ${m.content.theme}`}>
+              <div className="moment-head">
+                {(m.heure || moments.length > 1) ? <span className="time-chip">{T.moment(m.n, m.heure)}{m.heure ? ` · ${T.periodes[m.periode]}` : ''}</span> : <span />}
+                <Icone nom={ICONE_PERIODE[m.periode]} taille={22} />
+              </div>
+              <h3 id={id}>{m.content.theme}</h3>
+              <div className="moment-illus"><Scene periode={m.periode} largeur={244} hauteur={110} /></div>
+              {m.ouvert
+                ? <button type="button" className="btn moment-btn" aria-describedby={id} onClick={() => ouvrirMoment(m.n)}>{m.principal && action ? T.lireEtAgir : T.lire}<Icone nom="fleche" taille={20} /></button>
+                : <p className="moment-ferme">{T.momentFerme(m.heure ?? '')}</p>}
+            </article>
+          </li>;
+        })}
+      </ul>
+    </section>
+
+    {action && <section className="today-section" aria-labelledby="titre-action">
+      <h2 id="titre-action">{T.action}</h2>
+      {carteAction(action, false)}
+    </section>}
+
+    {invitations.length > 0 && <section className="today-section" aria-labelledby="titre-ecrire">
+      <h2 id="titre-ecrire">{T.ecrireJournal}</h2>
+      {invitations.map((x, k) => <div key={x.q.activity_id} className={k === 0 ? 'prompt-carte' : 'prompt-carte is-passe'}>
+        <p className="tag">{x.libelle}</p>
+        <p className="prompt-question" id={`question-${x.jour}`}>{x.q.consigne}</p>
+        <Link className="prompt-ecrire" to={lienJournal(x.q)} aria-describedby={`question-${x.jour}`}>{T.ecrireReflexion}<Icone nom="crayon" taille={20} /></Link>
+      </div>)}
+    </section>}
+
     {!horsLigne && <>
       <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
       <GoalCard langue={enr.langue} />
       {reglages(enr.langue, true)}
     </>}
     {footer}
-  </main>;
+  </>);
 }
 
 type Choix = 'realisee' | 'partielle' | 'aide_demandee';
 
-function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr', onEnregistre }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string; onEnregistre?: (st: State) => void }) {
+function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr', titre = true, onEnregistre }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string; titre?: boolean; onEnregistre?: (st: State) => void }) {
   const T = textes(langue);
   const [etat, setEtat] = useState<string>(state?.etat ?? 'non_commencee');
   const [aide, setAide] = useState<boolean>(Boolean(state?.aide_demandee));
@@ -340,13 +402,15 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
   }
 
   const realisee = etat === 'realisee';
-  return <div className="card action-card"><p className="tag">{T.action}</p><p className="action">{activity.consigne}</p>
-    {realisee && <p className="success" role="status">{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>}
+  // Consigne dans un encadré doré, bouton doré « J'ai réalisé cette action » (écran validé le 15/10/2026).
+  return <div className="card action-card">{titre && <p className="tag">{T.action}</p>}
+    <div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{activity.consigne}</p></div>
+    {realisee && <p className="success action-faite" role="status"><Icone nom="coche" taille={20} />{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>}
     {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
     {!realisee && aide && <div className="aide-notee" role="status"><p>{T.aideNotee}</p>
       <div className="link-row"><Link className="link" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link><Link className="link" to="/coach">{T.demanderCoach}</Link></div></div>}
     {!realisee && !readOnly && <>
-      <button type="button" className="btn action-btn" disabled={pending !== null} onClick={() => void record('realisee')}>{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
+      <button type="button" className="btn btn-or action-btn" disabled={pending !== null} onClick={() => void record('realisee')}><Icone nom="coche" taille={20} />{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
       <div className="choix-row">
         {etat !== 'partielle' && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('partielle')}>{pending === 'partielle' ? T.enregistrement : T.boutonPartie}</button>}
         {!aide && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('aide_demandee')}>{pending === 'aide_demandee' ? T.enregistrement : T.boutonAide}</button>}

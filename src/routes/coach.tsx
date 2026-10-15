@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { BarreNav } from '@/components/BarreNav';
 import { eventIdFor, pickDefault } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { COACH_MAX, coachTextes, enAttente, reveillerCoach, type CoachMessage } from '@/lib/coach';
@@ -105,12 +106,12 @@ export function Coach() {
   }
 
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed && !data) return <main className="wrap"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;
-  if (!data) return <main className="wrap"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p></main>;
+  if (failed && !data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p><BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
 
   const epuise = data.restants <= 0;
   const trop = texte.trim().length > COACH_MAX;
-  return <main className="wrap">
+  return <main className="wrap avec-nav">
     <p className="brand">SÉNEVÉ</p>
     {back}
     <h1>{T.titre}</h1>
@@ -147,5 +148,5 @@ export function Coach() {
     {data.messages.length > 0 && (confirm
       ? <div className="row-actions"><p>{T.confirmer}</p><button type="button" className="link danger" disabled={busy} onClick={() => void clear()}>{T.oui}</button><button type="button" className="link" onClick={() => setConfirm(false)}>{T.non}</button></div>
       : <button type="button" className="link" onClick={() => setConfirm(true)}>{T.effacer}</button>)}
-  </main>;
+  <BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
 }

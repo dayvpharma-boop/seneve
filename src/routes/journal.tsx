@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { BarreNav } from '@/components/BarreNav';
 import { eventIdFor } from '@/lib/espace';
 import { NOTE_MAX, draft, formatDateHeure, journalTextes, texteValide } from '@/lib/journal';
 
@@ -42,6 +43,9 @@ export function Journal() {
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
   const pendingId = useRef<string | null>(null);
+  // « Écrire » (barre du bas) ou « Écrire ma réflexion » : le champ de la note est prêt à recevoir le texte.
+  const champ = useRef<HTMLTextAreaElement>(null);
+  const ecrire = params.has('ecrire') || Boolean(activite);
 
   const refresh = useCallback(async () => {
     setFailed(false);
@@ -52,6 +56,12 @@ export function Journal() {
     } catch { setFailed(true); }
   }, [activite, navigate]);
   useEffect(() => { void refresh(); }, [refresh]);
+  const pret = data !== null;
+  useEffect(() => {
+    if (!pret || !ecrire || !champ.current) return;
+    try { champ.current.scrollIntoView({ block: 'center' }); } catch { /* sans défilement */ }
+    champ.current.focus({ preventScroll: true });
+  }, [pret, ecrire]);
 
   const T = journalTextes(data?.langue);
   useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = data?.langue === 'en' ? 'en' : 'fr'; }, [T, data?.langue]);
@@ -81,11 +91,11 @@ export function Journal() {
   }
 
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;
-  if (!data) return <main className="wrap"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p></main>;
+  if (failed) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p><BarreNav langue={data?.langue} /></main>;
 
   const trop = texte.trim().length > NOTE_MAX;
-  return <main className="wrap">
+  return <main className="wrap avec-nav">
     <p className="brand">SÉNEVÉ</p>
     {back}
     <h1>{T.titreJournal}</h1>
@@ -94,7 +104,7 @@ export function Journal() {
       <p className="tag">{T.nouvelle}</p>
       {data.consigne && <p className="action"><span className="muted">{T.reponseA}</span> {data.consigne}</p>}
       <label className="field"><span className="sr-only">{T.nouvelle}</span>
-        <textarea rows={6} value={texte} maxLength={NOTE_MAX + 500} placeholder={T.placeholderNote} onChange={e => change(e.target.value)} />
+        <textarea ref={champ} rows={6} value={texte} maxLength={NOTE_MAX + 500} placeholder={T.placeholderNote} onChange={e => change(e.target.value)} />
       </label>
       {trop && <p className="error" role="alert">{T.trop(NOTE_MAX)}</p>}
       <label className="share-check"><input type="checkbox" checked={ia} onChange={e => setIa(e.target.checked)} /><span>{T.iaCase}<br /><span className="muted">{T.iaAide}</span></span></label>
@@ -106,7 +116,7 @@ export function Journal() {
     <h2>{T.mesNotes}</h2>
     {data.entries.length === 0 ? <p className="muted">{T.aucune}</p>
       : data.entries.map(x => <EntryCard key={x.entry_id} entry={x} langue={data.langue} onChanged={refresh} />)}
-  </main>;
+  <BarreNav langue={data?.langue} /></main>;
 }
 
 function EntryCard({ entry, langue, onChanged }: { entry: Entry; langue: string; onChanged: () => Promise<void> }) {

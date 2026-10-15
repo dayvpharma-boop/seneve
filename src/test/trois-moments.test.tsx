@@ -45,6 +45,8 @@ function base(heures: string[] | null, langue = 'fr', programme_id = PROG) {
   tables['channel_links'] = [];
 }
 
+const ouvrir = (url = '/espace') => render(<MemoryRouter initialEntries={[url]}><Espace /></MemoryRouter>);
+
 describe('Trois moments par jour dans l’espace', () => {
   beforeEach(() => { vi.useFakeTimers({ toFake: ['Date'] }); });
   afterEach(() => { cleanup(); vi.useRealTimers(); });
@@ -52,63 +54,82 @@ describe('Trois moments par jour dans l’espace', () => {
   it('jour en cours, 10 h à Kinshasa : seul le message du matin est ouvert', async () => {
     vi.setSystemTime(new Date('2026-10-14T09:00:00Z')); // 10 h à Kinshasa, jour 2
     base(['08:00', '13:00', '19:00']);
-    render(<MemoryRouter><Espace /></MemoryRouter>);
+    ouvrir();
     expect(await screen.findByText('Jour 2 sur 14')).toBeInTheDocument();
-    expect(screen.getByText('Marie — texte du jour 2, moment 1.')).toBeInTheDocument();
     expect(screen.getByText('Action du jour 2')).toBeInTheDocument();
     expect(screen.getByText('La perle du jour 2')).toBeInTheDocument();
     expect(screen.getByText('Ce moment s’ouvre à 13 h (heure de Kinshasa).')).toBeInTheDocument();
     expect(screen.getByText('Ce moment s’ouvre à 19 h (heure de Kinshasa).')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Lire et agir' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Lire' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
+    expect(await screen.findByText('Marie — texte du jour 2, moment 1.')).toBeInTheDocument();
+  });
+
+  it('lien direct vers la perle du jour avant 13 h : fermée', async () => {
+    vi.setSystemTime(new Date('2026-10-14T09:00:00Z'));
+    base(['08:00', '13:00', '19:00']);
+    ouvrir('/espace?jour=2&moment=2');
+    expect(await screen.findByText('Ce moment s’ouvre à 13 h (heure de Kinshasa).')).toBeInTheDocument();
     expect(screen.queryByText('Marie — texte du jour 2, moment 2.')).not.toBeInTheDocument();
-    expect(screen.queryByText('Marie — texte du jour 2, moment 3.')).not.toBeInTheDocument();
   });
 
   it('13 h 30 : la perle du jour est ouverte, le moment du soir reste fermé', async () => {
     vi.setSystemTime(new Date('2026-10-14T12:30:00Z'));
     base(['08:00', '13:00', '19:00']);
-    render(<MemoryRouter><Espace /></MemoryRouter>);
-    expect(await screen.findByText('Marie — texte du jour 2, moment 2.')).toBeInTheDocument();
-    expect(screen.getByText('13 h')).toBeInTheDocument();
-    expect(screen.getByText('Dans le livre : Ch. 1 (p. 12)')).toBeInTheDocument();
+    ouvrir();
+    expect(await screen.findByText('13 h · Midi')).toBeInTheDocument();
     expect(screen.getByText('Ce moment s’ouvre à 19 h (heure de Kinshasa).')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Lire' }));
+    expect(await screen.findByText('Marie — texte du jour 2, moment 2.')).toBeInTheDocument();
+    expect(screen.getByText('Dans le livre : Ch. 1 (p. 12)')).toBeInTheDocument();
   });
 
   it('jour précédent : les trois moments sont lisibles', async () => {
     vi.setSystemTime(new Date('2026-10-14T09:00:00Z'));
     base(['08:00', '13:00', '19:00']);
-    render(<MemoryRouter><Espace /></MemoryRouter>);
+    ouvrir();
     await screen.findByText('Jour 2 sur 14');
     fireEvent.click(screen.getByRole('button', { name: 'Voir tous les jours' }));
     fireEvent.click(screen.getByRole('button', { name: 'Jour 1' }));
-    expect(screen.getByText('Marie — texte du jour 1, moment 1.')).toBeInTheDocument();
-    expect(screen.getByText('Marie — texte du jour 1, moment 2.')).toBeInTheDocument();
-    expect(screen.getByText('Marie — texte du jour 1, moment 3.')).toBeInTheDocument();
     expect(screen.queryByText(/Ce moment s’ouvre/)).not.toBeInTheDocument();
+    const lire = screen.getAllByRole('button', { name: 'Lire' });
+    expect(lire).toHaveLength(2);
+    fireEvent.click(lire[1]!);
+    expect(await screen.findByText('Marie — texte du jour 1, moment 3.')).toBeInTheDocument();
   });
 
-  it('sans horaires publiés : tous les moments du jour sont visibles', async () => {
+  it('sans horaires publiés : tous les moments du jour sont ouverts', async () => {
     vi.setSystemTime(new Date('2026-10-14T06:00:00Z'));
     base(null);
-    render(<MemoryRouter><Espace /></MemoryRouter>);
-    expect(await screen.findByText('Marie — texte du jour 2, moment 3.')).toBeInTheDocument();
-    expect(screen.getByText('Moment 2')).toBeInTheDocument();
+    ouvrir();
+    expect(await screen.findByText('Moment 2')).toBeInTheDocument();
+    expect(screen.getByText('Moment 3')).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Lire' })).toHaveLength(2);
+    expect(screen.queryByText(/Ce moment s’ouvre/)).not.toBeInTheDocument();
   });
 
   it('parcours anglais : libellés en anglais', async () => {
     vi.setSystemTime(new Date('2026-10-14T09:00:00Z'));
     base(['08:00', '13:00', '19:00'], 'en', 'ACHETEUR_LIVRE_14J_EN_V1');
-    render(<MemoryRouter><Espace /></MemoryRouter>);
+    ouvrir();
     expect(await screen.findByText('Day 2 of 14')).toBeInTheDocument();
     expect(screen.getByText('This moment opens at 13:00 (Kinshasa time).')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Your day' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Read and act' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
   });
 
-  it('un seul message par jour (programme publié avant) : affichage inchangé', async () => {
+  it('un seul message par jour (programme publié avant) : une seule grande carte', async () => {
     vi.setSystemTime(new Date('2026-10-14T09:00:00Z'));
     base(null);
     tables['contents'] = [1, 2].map(j => ({ ...content(PROG, j, 1), version: 2 }));
-    render(<MemoryRouter><Espace /></MemoryRouter>);
+    ouvrir();
+    expect(await screen.findByRole('button', { name: 'Lire et agir' })).toBeInTheDocument();
+    expect(document.querySelector('.moment-rail')).toHaveClass('is-seul');
+    expect(screen.queryByText(/Moment 1|Moment 2|13 h|Ce moment s’ouvre/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
     expect(await screen.findByText('Marie — texte du jour 2, moment 1.')).toBeInTheDocument();
-    expect(screen.queryByText(/Moment 2|13 h|Ce moment s’ouvre/)).not.toBeInTheDocument();
   });
 });
 

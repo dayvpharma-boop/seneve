@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -44,14 +44,17 @@ afterEach(() => { cleanup(); vi.useRealTimers(); });
 describe('Espace hors connexion', () => {
   it('sans réseau, la dernière copie reste lisible et les actions sont fermées', async () => {
     const premier = ouvrir();
+    expect(await screen.findByRole('button', { name: "J'ai réalisé cette action" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
     expect(await screen.findByText('Texte du jour 2')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: "J'ai réalisé cette action" })).toBeInTheDocument();
     premier.unmount();
 
     reseau = false;
     ouvrir();
     expect(await screen.findByText(/Tu n’as pas de connexion. Tu peux relire tes journées/)).toBeInTheDocument();
-    expect(screen.getByText('Texte du jour 2')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: "J'ai réalisé cette action" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
+    expect(await screen.findByText('Texte du jour 2')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: "J'ai réalisé cette action" })).not.toBeInTheDocument();
   });
 
@@ -63,7 +66,7 @@ describe('Espace hors connexion', () => {
 
   it('la déconnexion efface la copie de l’appareil', async () => {
     const r = ouvrir();
-    await screen.findByText('Texte du jour 2');
+    await screen.findByText('Jour 2 sur 7');
     r.unmount();
     expect(Object.keys(localStorage).some(k => k.startsWith('seneve:espace:'))).toBe(true);
     effacerEspaces();

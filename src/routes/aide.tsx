@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { BarreNav } from '@/components/BarreNav';
+import { Icone } from '@/components/Icone';
 import { eventIdFor } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { MOTIF_MAX, draft, formatDateHeure, journalTextes, peutAnnuler, texteValide } from '@/lib/journal';
@@ -96,16 +98,18 @@ export function Aide() {
   }
 
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;
-  if (!data) return <main className="wrap"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p></main>;
+  if (failed) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p><BarreNav langue={data?.langue} /></main>;
 
   const trop = motif.trim().length > MOTIF_MAX;
-  return <main className="wrap">
+  return <main className="wrap avec-nav">
     <p className="brand">SÉNEVÉ</p>
     {back}
     <h1>{T.titreAide}</h1>
     <p>{T.introAide}</p>
     <p className="notice" role="note">{T.urgence}</p>
+    {/* Le coach est rangé ici depuis la barre du bas (écran validé le 15/10/2026). */}
+    <Link className="btn-secondaire coach-lien" to={`/coach${parcours ? `?inscription=${parcours}` : ''}`}><Icone nom="coach" taille={20} />{T.parlerCoach}</Link>
     <form className="card" onSubmit={send}>
       <label className="field"><span>{T.motif}</span>
         <textarea rows={5} value={motif} placeholder={T.placeholderMotif} onChange={e => changeMotif(e.target.value)} />
@@ -132,7 +136,7 @@ export function Aide() {
     <h2>{T.mesDemandes}</h2>
     {data.requests.length === 0 ? <p className="muted">{T.aucuneDemande}</p>
       : data.requests.map(r => <RequestCard key={r.request_id} request={r} langue={data.langue} onChanged={refresh} />)}
-  </main>;
+  <BarreNav langue={data?.langue} /></main>;
 }
 
 function RequestCard({ request, langue, onChanged }: { request: Request; langue: string; onChanged: () => Promise<void> }) {
