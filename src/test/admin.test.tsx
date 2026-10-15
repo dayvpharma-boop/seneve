@@ -107,7 +107,7 @@ describe('Administration', () => {
   it('ajout d’un accompagnateur par e-mail', async () => {
     results['staff_me'] = { data: { roles: ['administrateur'], admin: true }, error: null };
     results['staff_list_help_requests'] = { data: [], error: null };
-    results['staff_list_team'] = { data: [{ auth_user_id: 'U1', email: 'dayvpharma@gmail.com', prenom: 'Justin', roles: ['administrateur'] }], error: null };
+    results['staff_list_team'] = { data: [{ auth_user_id: 'U1', email: 'justin@exemple.invalid', prenom: 'Justin', roles: ['administrateur'] }], error: null };
     page();
     fireEvent.change(await screen.findByPlaceholderText('adresse e-mail du compte'), { target: { value: 'lucie@exemple.invalid' } });
     fireEvent.click(screen.getByRole('button', { name: 'Donner ce rôle' }));

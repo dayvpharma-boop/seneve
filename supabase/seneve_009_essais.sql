@@ -1,10 +1,11 @@
+-- Adresse réelle de l'administrateur retirée du dépôt public le 15/10/2026 ; remplacer justin@exemple.invalid par l'adresse de connexion avant de rejouer ces essais.
 -- SÉNEVÉ 009 — Essais de l'interface administrateur.
 -- Ne laisse AUCUNE trace : tout ce que l'essai crée ou modifie est annulé à la fin, même en cas d'erreur.
 -- Résultat attendu : un tableau où la colonne « ok » vaut true sur chaque ligne.
 do $essais$
 declare
   res jsonb := '[]';
-  a_uid constant text := (select id::text from auth.users where lower(email) = 'dayvpharma@gmail.com');
+  a_uid constant text := (select id::text from auth.users where lower(email) = 'justin@exemple.invalid');
   b_uid constant text := '00000000-0000-4000-8000-0000000000b2';
   a_claims text;
   b_claims text;
@@ -112,7 +113,7 @@ begin
       res := res || jsonb_build_object('essai', '17 retrait refusé tant que des demandes sont en cours', 'ok', sqlstate = 'P0001');
     end;
     begin
-      perform seneve.staff_set_role('dayvpharma@gmail.com', 'administrateur', false);
+      perform seneve.staff_set_role('justin@exemple.invalid', 'administrateur', false);
       res := res || jsonb_build_object('essai', '18 le dernier administrateur ne peut pas être retiré', 'ok', false);
     exception when others then
       res := res || jsonb_build_object('essai', '18 le dernier administrateur ne peut pas être retiré', 'ok', sqlstate = 'P0001');

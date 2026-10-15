@@ -195,7 +195,8 @@ grant execute on function seneve.staff_update_help_request(uuid, timestamptz, te
 grant execute on function seneve.staff_list_team() to authenticated;
 grant execute on function seneve.staff_set_role(text, text, boolean) to authenticated;
 
+-- Adresse réelle du premier administrateur retirée du dépôt public le 15/10/2026 (la migration appliquée utilisait son adresse de connexion).
 -- 6) Premier administrateur : Dr Justin Tshims (décision du 13 octobre 2026) -----------------------
 insert into seneve.staff_roles (auth_user_id, role)
-select id, 'administrateur' from auth.users where lower(email) = 'dayvpharma@gmail.com'
+select id, 'administrateur' from auth.users where lower(email) = 'justin@exemple.invalid'
 on conflict (auth_user_id, role) do nothing;
