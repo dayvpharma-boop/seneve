@@ -3,8 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
 import { Icone } from '@/components/Icone';
-import { placerOngletActif } from '@/lib/espace';
-import { eventIdFor, pickDefault } from '@/lib/espace';
+import { eventIdFor, pickDefault, placerOngletActif } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { COACH_MAX, coachTextes, enAttente, reveillerCoach, type CoachMessage } from '@/lib/coach';
 
