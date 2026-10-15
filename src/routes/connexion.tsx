@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { siteUrl, supabase } from '@/lib/supabase';
+import { Icone } from '@/components/Icone';
 
 export function authError(message: string | undefined): string {
   const m = (message ?? '').toLowerCase();
@@ -22,6 +23,7 @@ export function Connexion() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
+  const [voir, setVoir] = useState(false);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -59,21 +61,29 @@ export function Connexion() {
 
   function choose(next: 'signup' | 'signin') { setTab(next); setError(''); setInfo(''); }
 
-  return <main className="wrap">
-    <p className="brand">SÉNEVÉ</p>
-    <h1>Ton espace</h1>
-    <div className="tabs" role="tablist">
-      <button type="button" role="tab" aria-selected={tab === 'signup'} className="tab" onClick={() => choose('signup')}>Créer un compte</button>
-      <button type="button" role="tab" aria-selected={tab === 'signin'} className="tab" onClick={() => choose('signin')}>Se connecter</button>
+  // Style de l'écran « Aujourd'hui » (validé le 15/10/2026) : choix en deux parties, champs bien visibles,
+  // rappel « même adresse que pour l'achat » à l'inscription, mot de passe qu'on peut afficher.
+  return <main className="wrap connexion">
+    <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>Ton espace</h1></div></header>
+    <p className="connexion-intro">Ton parcours du jour, ton journal et tes progrès, au même endroit.</p>
+    <div className="choix-double" role="tablist" aria-label="Ton espace">
+      <button type="button" role="tab" aria-selected={tab === 'signup'} onClick={() => choose('signup')}>Créer un compte</button>
+      <button type="button" role="tab" aria-selected={tab === 'signin'} onClick={() => choose('signin')}>Se connecter</button>
     </div>
-    <form className="card form" onSubmit={submit}>
+    <form className="card form connexion-form" onSubmit={submit}>
       {tab === 'signup' && <label className="field">Ton prénom<input value={prenom} onChange={e => setPrenom(e.target.value)} autoComplete="given-name" required /></label>}
-      <label className="field">E-mail<input type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" required /></label>
-      <label className="field">Mot de passe<input type="password" value={password} onChange={e => setPassword(e.target.value)} minLength={8} autoComplete={tab === 'signup' ? 'new-password' : 'current-password'} required /></label>
+      <label className="field">E-mail<input type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" inputMode="email" required /></label>
+      {tab === 'signup' && <p className="connexion-achat"><Icone nom="livre" taille={20} />Tu as acheté le livre ou un parcours ? Utilise la même adresse e-mail que pour l’achat : c’est elle qui ouvre ton accès.</p>}
+      <label className="field" htmlFor="mot-de-passe">Mot de passe</label>
+      <div className="champ-mdp">
+        <input id="mot-de-passe" type={voir ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} minLength={8} autoComplete={tab === 'signup' ? 'new-password' : 'current-password'} aria-describedby={tab === 'signup' ? 'aide-mdp' : undefined} required />
+        <button type="button" className="mdp-voir" aria-controls="mot-de-passe" aria-pressed={voir} onClick={() => setVoir(v => !v)}>{voir ? 'Masquer' : 'Afficher'}</button>
+      </div>
+      {tab === 'signup' && <p className="muted connexion-aide" id="aide-mdp">Au moins 8 caractères.</p>}
       {error && <p className="error" role="alert">{error}</p>}
-      {info && <p className="info" role="status">{info}</p>}
-      <button className="btn" type="submit" disabled={busy}>{busy ? 'Un instant…' : tab === 'signup' ? 'Créer un compte' : 'Se connecter'}</button>
-      {tab === 'signin' && <button type="button" className="link" onClick={forgot}>Mot de passe oublié ?</button>}
+      {info && <p className="connexion-info" role="status">{info}</p>}
+      <button className="btn moment-btn" type="submit" disabled={busy}>{busy ? 'Un instant…' : tab === 'signup' ? 'Créer un compte' : 'Se connecter'}</button>
+      {tab === 'signin' && <button type="button" className="link connexion-oubli" onClick={forgot}>Mot de passe oublié ?</button>}
     </form>
   </main>;
 }
