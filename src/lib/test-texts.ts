@@ -87,6 +87,7 @@ export const texts = {
   quote: (p:string) => `« ${p} »`, quoteSource: 'Phrase du livre, annexe 4', firstAction: 'Ta première action',
   actionSource: (day:number,name:string) => `Livre, annexe 1, jour ${day} · ${name}`,
   further: 'Aller plus loin', furtherText: 'Reçois gratuitement le parcours Découverte de 7 jours sur WhatsApp. Tu écris toi-même le premier message et tu peux arrêter à tout moment en envoyant STOP.',
+  espaceTexte: 'Tu préfères le suivre ici, sur le site\u00A0? Crée ton espace gratuit avec ton adresse e-mail.', espaceBouton: 'Créer mon espace',
   whatsappButton: 'Continuer sur WhatsApp', whatsappMessage: 'Bonjour, je viens de faire le Test des 7 Racines. Je souhaite découvrir le parcours gratuit de 7 jours.',
   final: 'Ce résultat repose sur tes réponses du moment. Il propose une orientation pédagogique ; il ne mesure ni ta foi ni ta valeur personnelle.', again: 'Refaire le test',
   share: {
@@ -119,6 +120,7 @@ export const texts = {
   quote: (p:string) => `“${p}”`, quoteSource: 'Phrase from the book, Appendix 4', firstAction: 'Your first action',
   actionSource: (day:number,name:string) => `Book, Appendix 1, Day ${day} · ${name}`,
   further: 'Go further', furtherText: 'Receive the free 7-day Discovery journey on WhatsApp. You write the first message yourself and you can stop at any time by sending STOP.',
+  espaceTexte: 'Prefer to follow it here, on the website? Create your free space with your email address.', espaceBouton: 'Create my space',
   whatsappButton: 'Continue on WhatsApp', whatsappMessage: 'Hello, I have just taken the 7 Roots Test. I would like to discover the free 7-day journey.',
   final: 'This result is based on your answers at this moment. It offers educational guidance; it measures neither your faith nor your personal worth.', again: 'Take the test again',
   share: {

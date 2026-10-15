@@ -387,3 +387,7 @@ details summary { cursor:pointer; padding:6px 0; }
 .coach-msg { border-radius:18px; padding:12px 14px; box-shadow:var(--shadow-soft); }
 .coach-msg-coach { background:var(--prompt-green); border-color:transparent; }
 .coach-form .field textarea { min-height:96px; }
+/* Résultat du test : lien discret vers l'espace du site, sous « Continuer sur WhatsApp » (15/10/2026). */
+#s-result .result-espace { margin-top:18px; padding-top:16px; border-top:1px solid var(--line); }
+#s-result .result-espace .more { margin:0; }
+#s-result .result-espace .btn { background:transparent; color:var(--foreground); border:1px solid var(--primary-fill); min-height:48px; padding:12px 14px; font-size:15px; margin-top:12px; }

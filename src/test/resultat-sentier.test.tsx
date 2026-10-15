@@ -33,6 +33,10 @@ describe('Résultat « Sentier »', () => {
     expect(within(hero).getByRole('heading', { name: R[4]?.n ?? '' })).toBeVisible();
     expect(within(hero).getByText('Racine à développer')).toHaveClass('cat-chip');
     expect(follows(hero, action) && follows(action, whatsapp) && follows(whatsapp, roots) && follows(roots, share)).toBe(true);
+    // Le résultat mène aussi à l'espace du site, sous WhatsApp (15/10/2026).
+    const espace = within(whatsapp).getByRole('link', { name: 'Créer mon espace' });
+    expect(espace).toHaveAttribute('href', '/connexion');
+    expect(follows(within(whatsapp).getByRole('link', { name: 'Continuer sur WhatsApp' }), espace)).toBe(true);
     // Même encadré doré que l'action du jour de l'espace.
     expect(action.querySelector('.action-box .action')).not.toBeNull();
   });
@@ -70,5 +74,7 @@ describe('Résultat « Sentier »', () => {
     }
     expect(screen.getByText('Your 7 roots')).toBeVisible();
     expect(screen.queryByText('Tes 7 racines')).not.toBeInTheDocument();
+    // La page de connexion n'existe qu'en français : pas de lien vers l'espace sur le résultat anglais.
+    expect(screen.queryByRole('link', { name: 'Create my space' })).not.toBeInTheDocument();
   });
 });

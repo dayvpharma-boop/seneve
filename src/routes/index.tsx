@@ -74,7 +74,10 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
      {needsChoice && <><p>{message}</p><RootChoices language={language} indices={indices} chosenRoot={chosenRoot} onChoose={onChoose} /></>}
      {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} />}
     {root && <div className="card action-card result-action"><p className="tag">{t.firstAction}</p><div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
-    {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a></div>}
+    {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a>
+      {/* Accord du 15/10/2026 : le résultat mène aussi à l'espace du site. La page de connexion n'existe qu'en français pour l'instant. */}
+      {language === 'fr' && <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion`}>{t.espaceBouton}</a></div>}
+    </div>}
      <div className="card root-list-card"><p className="tag">{t.rootsTitle}</p><p>{t.summary}</p>
        <ul className="root-rows" role="list">{R.map((item, k) => {
          const total = r.t[k] ?? 3;
