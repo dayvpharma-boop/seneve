@@ -7,6 +7,7 @@ import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
 import { SeanceCard } from '@/components/SeanceCard';
 import { SemaineCard } from '@/components/SemaineCard';
+import { SuiteCard } from '@/components/SuiteCard';
 import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { Icone } from '@/components/Icone';
@@ -369,6 +370,7 @@ export function Espace() {
       <GoalCard langue={enr.langue} />
       {reglages(enr.langue, true)}
     </>}
+    {!horsLigne && (jourCal >= total || cloture) && <SuiteCard key={`suite-${enr.enrollment_id}`} programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x => x.programme_id)} />}
     {footer}
   </>);
 }
