@@ -363,3 +363,4 @@ details summary { cursor:pointer; padding:6px 0; }
 .demande-tete .etat-annulee { background:var(--tile); color:var(--muted); }
 .demande-reponse { margin:6px 0 8px; padding:12px 14px; }
 .demande-reponse .day-text { margin:0; font-size:16px; }
+.aide-form .field + .field { margin-top:14px; }
