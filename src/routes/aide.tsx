@@ -97,20 +97,18 @@ export function Aide() {
     finally { setBusy(false); }
   }
 
+  // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026).
+  const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titreAide}</h1></div></header>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p><BarreNav langue={data?.langue} /></main>;
+  if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={data?.langue} /></main>;
 
   const trop = motif.trim().length > MOTIF_MAX;
   return <main className="wrap avec-nav">
-    <p className="brand">SÉNEVÉ</p>
-    {back}
-    <h1>{T.titreAide}</h1>
-    <p>{T.introAide}</p>
-    <p className="notice" role="note">{T.urgence}</p>
-    {/* Le coach est rangé ici depuis la barre du bas (écran validé le 15/10/2026). */}
-    <Link className="btn-secondaire coach-lien" to={`/coach${parcours ? `?inscription=${parcours}` : ''}`}><Icone nom="coach" taille={20} />{T.parlerCoach}</Link>
-    <form className="card" onSubmit={send}>
+    {tete}
+    <p className="aide-intro">{T.introAide}</p>
+    <p className="aide-urgence" role="note"><Icone nom="aide" taille={22} />{T.urgence}</p>
+    <form className="card aide-form" onSubmit={send}>
       <label className="field"><span>{T.motif}</span>
         <textarea rows={5} value={motif} placeholder={T.placeholderMotif} onChange={e => changeMotif(e.target.value)} />
       </label>
@@ -129,14 +127,19 @@ export function Aide() {
           <span>{apercu(n.texte)}<br /><span className="muted">{formatDateHeure(n.cree_le, T.locale)}</span></span>
         </label>)}
       </fieldset>}
-      <button type="submit" className="btn action-btn" disabled={busy || !motif.trim() || trop}>{busy ? T.envoi : T.envoyer}</button>
+      <button type="submit" className="btn action-btn moment-btn" disabled={busy || !motif.trim() || trop}>{busy ? T.envoi : T.envoyer}</button>
       {sent && <p className="success" role="status">{T.envoyee}</p>}
       {error && <p className="error" role="alert">{error}</p>}
     </form>
-    <h2>{T.mesDemandes}</h2>
-    {data.requests.length === 0 ? <p className="muted">{T.aucuneDemande}</p>
-      : data.requests.map(r => <RequestCard key={r.request_id} request={r} langue={data.langue} onChanged={refresh} />)}
-  <BarreNav langue={data?.langue} /></main>;
+    {/* Le coach est rangé ici depuis la barre du bas (écran validé le 15/10/2026). */}
+    <Link className="btn-secondaire coach-lien" to={`/coach${parcours ? `?inscription=${parcours}` : ''}`}><Icone nom="coach" taille={20} />{T.parlerCoach}</Link>
+    <section className="today-section" aria-labelledby="titre-demandes">
+      <h2 id="titre-demandes">{T.mesDemandes}</h2>
+      {data.requests.length === 0 ? <div className="card journal-vide"><Icone nom="aide" taille={28} /><p>{T.aucuneDemande}</p></div>
+        : data.requests.map(r => <RequestCard key={r.request_id} request={r} langue={data.langue} onChanged={refresh} />)}
+    </section>
+    <BarreNav langue={data.langue} />
+  </main>;
 }
 
 function RequestCard({ request, langue, onChanged }: { request: Request; langue: string; onChanged: () => Promise<void> }) {
@@ -154,12 +157,11 @@ function RequestCard({ request, langue, onChanged }: { request: Request; langue:
     finally { setBusy(false); }
   }
 
-  return <article className="card">
-    <p className="tag">{T.etats[request.etat] ?? request.etat}</p>
-    <p className="muted">{formatDateHeure(request.cree_le, T.locale)}</p>
+  return <article className="card note-carte demande-carte">
+    <div className="demande-tete"><p className="note-date">{formatDateHeure(request.cree_le, T.locale)}</p><span className={`time-chip etat-${request.etat}`}>{T.etats[request.etat] ?? request.etat}</span></div>
     <p className="day-text">{request.motif}</p>
     {request.extraits_partages && <details><summary className="muted">{T.notesJointes}</summary><p className="day-text">{request.extraits_partages}</p></details>}
-    {request.reponse && <p className="day-text"><strong>{T.reponse}</strong> {request.reponse}</p>}
+    {request.reponse && <div className="prompt-carte demande-reponse"><p className="tag">{T.reponse}</p><p className="day-text">{request.reponse}</p></div>}
     {peutAnnuler(request.etat) && <button type="button" className="link" disabled={busy} onClick={() => void cancel()}>{T.annulerDemande}</button>}
     {error && <p className="error" role="alert">{error}</p>}
   </article>;

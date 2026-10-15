@@ -351,3 +351,15 @@ details summary { cursor:pointer; padding:6px 0; }
 .note-ia { margin:0 0 4px; }
 .note-carte .row-actions { gap:0 18px; }
 .note-carte .row-actions .link { padding:8px 0; }
+/* Page « Aide » dans le style de l'écran « Aujourd'hui » */
+.aide-intro { margin:0 0 12px; }
+.aide-urgence { display:flex; gap:10px; align-items:flex-start; background:var(--soft-gold); border-radius:14px; padding:12px 14px; font-size:15px; line-height:1.5; margin:0 0 16px; }
+.aide-urgence svg { flex:none; color:var(--gold); margin-top:1px; }
+.aide-form { border-radius:20px; box-shadow:var(--shadow-soft); }
+.aide-form .moment-btn { margin-top:14px; }
+.demande-tete { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 8px; }
+.demande-tete .note-date { margin:0; }
+.demande-tete .etat-resolue { background:var(--prompt-green); }
+.demande-tete .etat-annulee { background:var(--tile); color:var(--muted); }
+.demande-reponse { margin:6px 0 8px; padding:12px 14px; }
+.demande-reponse .day-text { margin:0; font-size:16px; }
