@@ -73,7 +73,7 @@ export function Connexion() {
     <form className="card form connexion-form" onSubmit={submit}>
       {tab === 'signup' && <label className="field">Ton prénom<input value={prenom} onChange={e => setPrenom(e.target.value)} autoComplete="given-name" required /></label>}
       <label className="field">E-mail<input type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" inputMode="email" required /></label>
-      {tab === 'signup' && <p className="connexion-achat"><Icone nom="livre" taille={20} />Tu as acheté le livre ou un parcours ? Utilise la même adresse e-mail que pour l’achat : c’est elle qui ouvre ton accès.</p>}
+      {tab === 'signup' && <p className="connexion-achat"><Icone nom="livre" taille={20} />{'Tu as acheté le livre ou un parcours\u00A0? Utilise la même adresse e-mail que pour l’achat\u00A0: c’est elle qui ouvre ton accès.'}</p>}
       <label className="field" htmlFor="mot-de-passe">Mot de passe</label>
       <div className="champ-mdp">
         <input id="mot-de-passe" type={voir ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} minLength={8} autoComplete={tab === 'signup' ? 'new-password' : 'current-password'} aria-describedby={tab === 'signup' ? 'aide-mdp' : undefined} required />
