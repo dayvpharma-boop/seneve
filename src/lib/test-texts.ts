@@ -87,7 +87,7 @@ export const texts = {
   quote: (p:string) => `« ${p} »`, quoteSource: 'Phrase du livre, annexe 4', firstAction: 'Ta première action',
   actionSource: (day:number,name:string) => `Livre, annexe 1, jour ${day} · ${name}`,
   further: 'Aller plus loin', furtherText: 'Reçois gratuitement le parcours Découverte de 7 jours sur WhatsApp. Tu écris toi-même le premier message et tu peux arrêter à tout moment en envoyant STOP.',
-  espaceTexte: 'Tu préfères le suivre ici, sur le site\u00A0? Crée ton espace gratuit avec ton adresse e-mail.', espaceBouton: 'Créer mon espace',
+  espaceTexte: 'Tu préfères le suivre ici, sur le site\u00A0? Crée ton espace gratuit avec ton adresse e-\u2060mail.', espaceBouton: 'Créer mon espace',
   whatsappButton: 'Continuer sur WhatsApp', whatsappMessage: 'Bonjour, je viens de faire le Test des 7 Racines. Je souhaite découvrir le parcours gratuit de 7 jours.',
   final: 'Ce résultat repose sur tes réponses du moment. Il propose une orientation pédagogique ; il ne mesure ni ta foi ni ta valeur personnelle.', again: 'Refaire le test',
   share: {
