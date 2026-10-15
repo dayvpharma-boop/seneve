@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
+import { Icone } from '@/components/Icone';
+import { placerOngletActif } from '@/lib/espace';
 import { eventIdFor, pickDefault } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { COACH_MAX, coachTextes, enAttente, reveillerCoach, type CoachMessage } from '@/lib/coach';
@@ -106,24 +108,24 @@ export function Coach() {
   }
 
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed && !data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p><BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
+  // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026).
+  const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titre}</h1></div></header>;
+  if (failed && !data) return <main className="wrap avec-nav">{tete}{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
 
   const epuise = data.restants <= 0;
   const trop = texte.trim().length > COACH_MAX;
   return <main className="wrap avec-nav">
-    <p className="brand">SÉNEVÉ</p>
-    {back}
-    <h1>{T.titre}</h1>
-    <p>{T.intro}</p>
-    <p className="notice" role="note">{T.avertissement} {T.conservation}</p>
+    {tete}
+    <p className="aide-intro">{T.intro}</p>
+    <p className="aide-urgence" role="note"><Icone nom="coach" taille={22} /><span>{T.avertissement} {T.conservation}</span></p>
     {!enrollment ? <div className="card"><p>{T.sansParcours}</p></div> : <>
       <p className="muted">{T.surParcours}</p>
       {data.enrollments.length > 1
-        ? <div className="prog-tabs" role="tablist" aria-label={T.surParcours}>
+        ? <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.surParcours}>
             {data.enrollments.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enrollment.enrollment_id} onClick={() => setChosen(x.enrollment_id)}>{x.nom}</button>)}
           </div>
-        : <p className="tag">{enrollment.nom}</p>}
+        : <p className="today-parcours">{enrollment.nom}</p>}
       <section className="coach-thread" aria-live="polite">
         {data.messages.length === 0 && <p className="muted">{T.aucun}</p>}
         {data.messages.map(m => <div key={m.message_id} className={`coach-msg ${m.role === 'coach' ? 'coach-msg-coach' : 'coach-msg-moi'}`}>
@@ -134,12 +136,12 @@ export function Coach() {
         {attente && <p className="muted" role="status">{T.attente}</p>}
         <div ref={bottom} />
       </section>
-      <form className="card" onSubmit={send}>
+      <form className="card journal-form coach-form" onSubmit={send}>
         <label className="field"><span className="sr-only">{T.placeholder}</span>
           <textarea rows={3} value={texte} placeholder={T.placeholder} disabled={epuise} onChange={e => { setTexte(e.target.value); pendingId.current = null; }} />
         </label>
         {trop && <p className="error" role="alert">{T.trop(COACH_MAX)}</p>}
-        <button type="submit" className="btn action-btn" disabled={busy || epuise || attente || !texte.trim() || trop}>{busy ? T.envoi : T.envoyer}</button>
+        <button type="submit" className="btn action-btn moment-btn" disabled={busy || epuise || attente || !texte.trim() || trop}>{busy ? T.envoi : T.envoyer}</button>
         <p className="muted">{epuise ? T.quota : T.restants(data.restants, data.quota)}</p>
         {error && <p className="error" role="alert">{error}</p>}
       </form>
@@ -148,5 +150,6 @@ export function Coach() {
     {data.messages.length > 0 && (confirm
       ? <div className="row-actions"><p>{T.confirmer}</p><button type="button" className="link danger" disabled={busy} onClick={() => void clear()}>{T.oui}</button><button type="button" className="link" onClick={() => setConfirm(false)}>{T.non}</button></div>
       : <button type="button" className="link" onClick={() => setConfirm(true)}>{T.effacer}</button>)}
+    {back}
   <BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
 }

@@ -383,3 +383,7 @@ details summary { cursor:pointer; padding:6px 0; }
 .connexion-info { background:var(--prompt-green); border-radius:14px; padding:12px 14px; font-size:15px; margin:0; }
 .connexion-form .moment-btn { margin-top:4px; }
 .connexion-oubli { justify-self:center; color:var(--foreground); }
+/* Coach : bulles et formulaire dans le style de l'écran « Aujourd'hui » */
+.coach-msg { border-radius:18px; padding:12px 14px; box-shadow:var(--shadow-soft); }
+.coach-msg-coach { background:var(--prompt-green); border-color:transparent; }
+.coach-form .field textarea { min-height:96px; }
