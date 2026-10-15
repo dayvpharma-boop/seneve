@@ -350,3 +350,4 @@ details summary { cursor:pointer; padding:6px 0; }
 .note-carte .day-text { font-size:16px; line-height:1.6; margin:0 0 10px; }
 .note-ia { margin:0 0 4px; }
 .note-carte .row-actions { gap:0 18px; }
+.note-carte .row-actions .link { padding:8px 0; }
