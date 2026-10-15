@@ -93,7 +93,7 @@ export function Progres() {
   const fermes = b.jours.filter(j => !j.ouvert);
   const jourSemaine = (n: number) => new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'short' }).format(dateDuJour(enr.date_debut, n));
   // Carte du parcours : une tuile par jour (même dessin que l'écran « Aujourd'hui »). Décorative : la liste des jours, plus bas, porte les liens.
-  const carte = <div className="day-tiles progres-tuiles" aria-hidden="true">
+  const carte = <div className={b.duree > 14 ? 'day-tiles progres-tuiles is-compact' : 'day-tiles progres-tuiles'} aria-hidden="true">
     {b.jours.map(j => {
       const fait = j.etat === 'realisee';
       const auj = j.jour === aujourdhui;

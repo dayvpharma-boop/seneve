@@ -328,3 +328,8 @@ details summary { cursor:pointer; padding:6px 0; }
 .progres-chiffres .is-principal svg { color:var(--primary-fill); }
 .progres-suite { margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
 .progres-suite p { margin:0 0 12px; }
+/* Parcours de plus de 14 jours : tuiles compactes (numéro et état), pour que 30 ou 90 jours restent lisibles. */
+.progres-tuiles.is-compact .tile-wd { display:none; }
+.progres-tuiles.is-compact .day-tile { min-height:50px; padding:6px 0; border-radius:12px; }
+.progres-tuiles.is-compact .day-tile b { font-size:15px; }
+.progres-tuiles.is-compact .day-tile em { font-size:9px; }
