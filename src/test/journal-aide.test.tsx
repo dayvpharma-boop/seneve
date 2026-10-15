@@ -73,6 +73,7 @@ describe('Mon journal', () => {
   it('note privée par défaut : le coach IA n’y a pas accès sans accord', async () => {
     at('/journal');
     expect(await screen.findByText(/toi seul peux le lire/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Nouvelle note' }));
     const box = screen.getByRole('checkbox', { name: /Le coach IA peut lire cette note/ });
     expect(box).not.toBeChecked();
     fireEvent.change(screen.getByPlaceholderText(/Ce que tu as compris/), { target: { value: '  Ma note  ' } });
@@ -84,7 +85,7 @@ describe('Mon journal', () => {
 
   it('nouvelle tentative après échec : même identifiant, aucune note en double', async () => {
     insertErrors = [{ code: '08006', message: 'network' }, null];
-    at('/journal');
+    at('/journal?ecrire=1');
     fireEvent.change(await screen.findByPlaceholderText(/Ce que tu as compris/), { target: { value: 'Note' } });
     fireEvent.click(screen.getByRole('button', { name: 'Enregistrer la note' }));
     expect(await screen.findByText(/Non enregistrée/)).toBeInTheDocument();
@@ -107,6 +108,7 @@ describe('Mon journal', () => {
 
   it('le brouillon reste sur l’appareil tant qu’il n’est pas enregistré', async () => {
     at('/journal');
+    fireEvent.click(await screen.findByRole('button', { name: 'Nouvelle note' }));
     fireEvent.change(await screen.findByPlaceholderText(/Ce que tu as compris/), { target: { value: 'en cours' } });
     expect(screen.getByText(/Brouillon conservé sur cet appareil/)).toBeInTheDocument();
     cleanup();
@@ -125,6 +127,29 @@ describe('Mon journal', () => {
     expect(writes.some(x => x.op === 'delete')).toBe(false);
     fireEvent.click(screen.getByRole('button', { name: 'Oui, supprimer' }));
     await waitFor(() => expect(writes.some(x => x.op === 'delete')).toBe(true));
+  });
+});
+
+describe('Mon journal — style de l’écran « Aujourd’hui »', () => {
+  it('« Journal » : les notes d’abord, le formulaire s’ouvre avec « Nouvelle note »', async () => {
+    tables['journal_entries'] = [{ entry_id: 'N1', texte: 'Ancienne note', usage_ia_autorise: false, cree_le: '2026-10-12T08:00:00Z', modifie_le: '2026-10-12T08:00:00Z', activity_id: null }];
+    at('/journal');
+    expect(await screen.findByText('Ancienne note')).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/Ce que tu as compris/)).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Journal' })).toHaveAttribute('aria-current', 'page');
+    fireEvent.click(screen.getByRole('button', { name: 'Nouvelle note' }));
+    expect(screen.getByPlaceholderText(/Ce que tu as compris/)).toHaveFocus();
+  });
+
+  it('« Écrire » (barre du bas) : le champ est ouvert et prêt', async () => {
+    at('/journal?ecrire=1');
+    expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveFocus();
+    expect(screen.queryByRole('button', { name: 'Nouvelle note' })).not.toBeInTheDocument();
+  });
+
+  it('aucune note : message d’attente', async () => {
+    at('/journal');
+    expect(await screen.findByText('Aucune note pour le moment.')).toBeInTheDocument();
   });
 });
 

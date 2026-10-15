@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
+import { Icone } from '@/components/Icone';
 import { eventIdFor } from '@/lib/espace';
 import { NOTE_MAX, draft, formatDateHeure, journalTextes, texteValide } from '@/lib/journal';
 
@@ -46,6 +47,11 @@ export function Journal() {
   // « Écrire » (barre du bas) ou « Écrire ma réflexion » : le champ de la note est prêt à recevoir le texte.
   const champ = useRef<HTMLTextAreaElement>(null);
   const ecrire = params.has('ecrire') || Boolean(activite);
+  // Page « Journal » : les notes d'abord, le formulaire s'ouvre avec « Nouvelle note » (ou tout de suite pour « Écrire »,
+  // une question du jour, ou un brouillon en cours).
+  const [formOuvert, setFormOuvert] = useState(() => ecrire || Boolean(draft.read(draftKey)));
+  const focusDemande = useRef(false);
+  useEffect(() => { if (ecrire) setFormOuvert(true); }, [ecrire]);
 
   const refresh = useCallback(async () => {
     setFailed(false);
@@ -58,10 +64,11 @@ export function Journal() {
   useEffect(() => { void refresh(); }, [refresh]);
   const pret = data !== null;
   useEffect(() => {
-    if (!pret || !ecrire || !champ.current) return;
+    if (!pret || !formOuvert || !champ.current || !(ecrire || focusDemande.current)) return;
+    focusDemande.current = false;
     try { champ.current.scrollIntoView({ block: 'center' }); } catch { /* sans défilement */ }
     champ.current.focus({ preventScroll: true });
-  }, [pret, ecrire]);
+  }, [pret, ecrire, formOuvert]);
 
   const T = journalTextes(data?.langue);
   useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = data?.langue === 'en' ? 'en' : 'fr'; }, [T, data?.langue]);
@@ -90,33 +97,40 @@ export function Journal() {
     finally { setBusy(false); }
   }
 
+  // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026).
+  const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titreJournal}</h1></div></header>;
+  const intro = <p className="journal-intro"><Icone nom="cadenas" taille={18} />{T.introJournal}</p>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p><BarreNav langue={data?.langue} /></main>;
+  if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={data?.langue} /></main>;
 
   const trop = texte.trim().length > NOTE_MAX;
   return <main className="wrap avec-nav">
-    <p className="brand">SÉNEVÉ</p>
-    {back}
-    <h1>{T.titreJournal}</h1>
-    <p className="muted">{T.introJournal}</p>
-    <form className="card" onSubmit={save}>
-      <p className="tag">{T.nouvelle}</p>
-      {data.consigne && <p className="action"><span className="muted">{T.reponseA}</span> {data.consigne}</p>}
-      <label className="field"><span className="sr-only">{T.nouvelle}</span>
-        <textarea ref={champ} rows={6} value={texte} maxLength={NOTE_MAX + 500} placeholder={T.placeholderNote} onChange={e => change(e.target.value)} />
-      </label>
-      {trop && <p className="error" role="alert">{T.trop(NOTE_MAX)}</p>}
-      <label className="share-check"><input type="checkbox" checked={ia} onChange={e => setIa(e.target.checked)} /><span>{T.iaCase}<br /><span className="muted">{T.iaAide}</span></span></label>
-      <button type="submit" className="btn action-btn" disabled={busy || !texte.trim() || trop}>{busy ? T.enregistrement : T.enregistrer}</button>
-      {texte.trim() && !busy && <p className="muted">{T.brouillon}</p>}
-      {saved && <p className="success" role="status">{T.enregistree}</p>}
-      {error && <p className="error" role="alert">{error}</p>}
-    </form>
-    <h2>{T.mesNotes}</h2>
-    {data.entries.length === 0 ? <p className="muted">{T.aucune}</p>
-      : data.entries.map(x => <EntryCard key={x.entry_id} entry={x} langue={data.langue} onChanged={refresh} />)}
-  <BarreNav langue={data?.langue} /></main>;
+    {tete}
+    {intro}
+    {formOuvert
+      ? <form className="card journal-form" onSubmit={save} aria-label={T.nouvelle}>
+          <p className="tag">{T.nouvelle}</p>
+          {data.consigne && <div className="prompt-carte journal-question"><p className="tag">{T.reponseA}</p><p className="prompt-question">{data.consigne}</p></div>}
+          <label className="field"><span className="sr-only">{T.nouvelle}</span>
+            <textarea ref={champ} rows={6} value={texte} maxLength={NOTE_MAX + 500} placeholder={T.placeholderNote} onChange={e => change(e.target.value)} />
+          </label>
+          {trop && <p className="error" role="alert">{T.trop(NOTE_MAX)}</p>}
+          <label className="share-check"><input type="checkbox" checked={ia} onChange={e => setIa(e.target.checked)} /><span>{T.iaCase}<br /><span className="muted">{T.iaAide}</span></span></label>
+          <button type="submit" className="btn action-btn moment-btn" disabled={busy || !texte.trim() || trop}>{busy ? T.enregistrement : T.enregistrer}</button>
+          {texte.trim() && !busy && <p className="muted">{T.brouillon}</p>}
+          {saved && <p className="success" role="status">{T.enregistree}</p>}
+          {error && <p className="error" role="alert">{error}</p>}
+        </form>
+      : <button type="button" className="btn moment-btn journal-nouvelle" onClick={() => { focusDemande.current = true; setFormOuvert(true); }}><Icone nom="crayon" taille={20} />{T.nouvelle}</button>}
+    <section className="today-section" aria-labelledby="titre-notes">
+      <h2 id="titre-notes">{T.mesNotes}</h2>
+      {data.entries.length === 0
+        ? <div className="card journal-vide"><Icone nom="journal" taille={28} /><p>{T.aucune}</p></div>
+        : data.entries.map(x => <EntryCard key={x.entry_id} entry={x} langue={data.langue} onChanged={refresh} />)}
+    </section>
+    <BarreNav langue={data.langue} />
+  </main>;
 }
 
 function EntryCard({ entry, langue, onChanged }: { entry: Entry; langue: string; onChanged: () => Promise<void> }) {
@@ -140,12 +154,12 @@ function EntryCard({ entry, langue, onChanged }: { entry: Entry; langue: string;
   const t = texteValide(texte, NOTE_MAX);
   const edited = entry.modifie_le && new Date(entry.modifie_le).getTime() - new Date(entry.cree_le).getTime() > 60000;
 
-  return <article className="card">
-    <p className="muted">{formatDateHeure(entry.cree_le, T.locale)}{edited ? ` · ${T.modifiee}` : ''}</p>
+  return <article className="card note-carte">
+    <p className="note-date">{formatDateHeure(entry.cree_le, T.locale)}{edited ? ` · ${T.modifiee}` : ''}</p>
     {editing
       ? <label className="field"><span className="sr-only">{T.modifier}</span><textarea rows={5} value={texte} onChange={e => setTexte(e.target.value)} /></label>
       : <p className="day-text">{entry.texte}</p>}
-    <p className="muted">{entry.usage_ia_autorise ? T.iaOui : T.iaNon}</p>
+    <p className="note-ia"><span className="time-chip">{entry.usage_ia_autorise ? T.iaOui : T.iaNon}</span></p>
     {editing ? <div className="row-actions">
       <button type="button" className="btn action-btn" disabled={busy || !t} onClick={() => void run(() => supabase.from('journal_entries').update({ texte: t }).eq('entry_id', entry.entry_id))}>{busy ? T.enregistrement : T.enregistrer}</button>
       <button type="button" className="link" onClick={() => { setEditing(false); setTexte(entry.texte); }}>{T.annulerModif}</button>
