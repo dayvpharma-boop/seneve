@@ -194,6 +194,14 @@ describe('Besoin d’aide', () => {
     await waitFor(() => expect(rpcs).toContainEqual({ name: 'cancel_help_request', args: { p_request_id: 'R2' } }));
   });
 
+  it('style de l’écran « Aujourd’hui » : urgence en évidence, coach accessible, « Aide » dans la barre du bas', async () => {
+    at('/aide');
+    expect(await screen.findByRole('note')).toHaveClass('aide-urgence');
+    expect(screen.getByRole('link', { name: 'Parler au coach' })).toHaveAttribute('href', '/coach');
+    expect(screen.getByRole('link', { name: 'Aide' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByText('Aucune demande pour le moment.')).toBeInTheDocument();
+  });
+
   it('participant anglophone : page en anglais', async () => {
     tables['participants'] = [{ prenom: 'Mary', langue: 'en' }];
     at('/aide');
