@@ -74,7 +74,7 @@ p { margin:0 0 14px; }
 ul.plain { padding-left:20px; margin:0 0 20px; list-style:disc; }
 ul.plain li { margin-bottom:6px; }
 button { font:inherit; cursor:pointer; color:inherit; }
-.btn { display:block; width:100%; background:var(--primary-fill); color:var(--on-primary); border:0; border-radius:12px; padding:15px 18px; font-weight:600; font-size:16px; }
+.btn { display:block; width:100%; background:var(--primary-fill); color:var(--on-primary); border:0; border-radius:14px; padding:15px 18px; font-weight:600; font-size:16px; }
 .btn-link { text-decoration:none; text-align:center; }
 .more { margin:0 0 14px; }
 .language-link { display:block; width:fit-content; margin:0 auto; }
@@ -223,7 +223,9 @@ details summary { cursor:pointer; padding:6px 0; }
 #s-result .result-hero h2 { font-size:27px; line-height:1.2; margin:4px 0 10px; text-wrap:balance; }
 #s-result .result-hero .quote { font-size:17px; line-height:1.55; margin-top:14px; }
 #s-result .src { font-size:13px; }
-#s-result .action { border-left:3px solid var(--gold); border-radius:0 10px 10px 0; padding:13px 14px; background:color-mix(in srgb,var(--gold) 8%,var(--surface)); line-height:1.6; font-size:17px; }
+/* Première action : même encadré doré que l'action du jour de l'espace (écran « Aujourd'hui » validé le 15/10/2026). */
+#s-result .result-action .action { line-height:1.6; font-size:17px; }
+#s-result .result-action .src { margin-top:10px; }
 #s-result .result-next .more { margin-bottom:0; }
 #s-result .card .btn { margin-top:16px; }
 /* Partage : bouton discret, pour ne pas concurrencer « Continuer sur WhatsApp ». */

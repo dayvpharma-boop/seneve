@@ -4,6 +4,7 @@ import { compute, categorie } from '@/lib/racines';
 import { texts, whatsappUrls, languageFrom, type Language } from '@/lib/test-texts';
 import { chooseRoot, cleanSource, recordVisit, submitResult } from '@/lib/suivi-test';
 import { ShareCard } from '@/components/ShareCard';
+import { Icone } from '@/components/Icone';
 import { memoriserRacineTest } from '@/lib/objectif';
 
 /** Page du test, reliée à l'adresse : ?lang=en affiche la version anglaise, ?src=tt indique la provenance.
@@ -72,7 +73,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
   return <>
      {needsChoice && <><p>{message}</p><RootChoices language={language} indices={indices} chosenRoot={chosenRoot} onChoose={onChoose} /></>}
      {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} />}
-    {root && <div className="card"><p className="tag">{t.firstAction}</p><p className="action">{root.a}</p><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
+    {root && <div className="card action-card result-action"><p className="tag">{t.firstAction}</p><div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
     {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a></div>}
      <div className="card root-list-card"><p className="tag">{t.rootsTitle}</p><p>{t.summary}</p>
        <ul className="root-rows" role="list">{R.map((item, k) => {

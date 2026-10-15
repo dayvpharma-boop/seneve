@@ -33,6 +33,8 @@ describe('Résultat « Sentier »', () => {
     expect(within(hero).getByRole('heading', { name: R[4]?.n ?? '' })).toBeVisible();
     expect(within(hero).getByText('Racine à développer')).toHaveClass('cat-chip');
     expect(follows(hero, action) && follows(action, whatsapp) && follows(whatsapp, roots) && follows(roots, share)).toBe(true);
+    // Même encadré doré que l'action du jour de l'espace.
+    expect(action.querySelector('.action-box .action')).not.toBeNull();
   });
 
   it('dessine une barre par racine, proportionnelle au score, et met en avant la racine proposée', () => {
