@@ -28,6 +28,14 @@ describe('Découverte : choix de la langue', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Commencer la Découverte' }));
     await waitFor(() => expect(appels).toContainEqual({ name: 'start_discovery', args: { p_langue: 'fr' } }));
   });
+  it('à l’arrivée dans l’espace, les achats faits avec la même adresse sont ouverts (après le compte participant)', async () => {
+    render(<MemoryRouter><Espace /></MemoryRouter>);
+    await screen.findByRole('button', { name: 'Commencer la Découverte' });
+    const noms = appels.map(a => a.name);
+    expect(noms).toContain('claim_my_purchases');
+    expect(noms.indexOf('ensure_participant')).toBeLessThan(noms.indexOf('claim_my_purchases'));
+  });
+
   it('anglais sur demande', async () => {
     render(<MemoryRouter><Espace /></MemoryRouter>);
     fireEvent.click(await screen.findByRole('button', { name: 'Start in English' }));

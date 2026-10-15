@@ -34,6 +34,9 @@ async function load(): Promise<Data | null> {
   const meta = (user.user_metadata?.['prenom'] as string | undefined) ?? '';
   const ep = await supabase.rpc('ensure_participant', { p_prenom: meta });
   if (ep.error) throw ep.error;
+  // Achat fait avec la même adresse e-mail (confirmée) : l'accès s'ouvre dès l'arrivée dans l'espace, sans attendre
+  // la synchronisation n8n (toutes les 15 minutes), qui reste en secours. Une erreur ici ne bloque jamais l'espace.
+  await Promise.resolve(supabase.rpc('claim_my_purchases')).catch(() => undefined);
   const [p, e] = await Promise.all([
     supabase.from('participants').select('prenom').maybeSingle(),
     // Un parcours arrêté n'est pas affiché ; son historique reste conservé en base.
