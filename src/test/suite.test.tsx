@@ -79,7 +79,7 @@ describe('Et après ? (espace)', () => {
   it('pas de carte avant le dernier jour', async () => {
     vi.setSystemTime(new Date('2026-10-10T12:00:00Z'));   // jour 10
     render(<MemoryRouter><Espace /></MemoryRouter>);
-    await screen.findByText('Texte 10');
+    expect((await screen.findAllByText('Thème 10')).length).toBeGreaterThan(0);
     expect(screen.queryByRole('region', { name: 'Et après ?' })).not.toBeInTheDocument();
   });
 });
