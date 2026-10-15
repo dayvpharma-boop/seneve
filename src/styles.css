@@ -233,7 +233,7 @@ details summary { cursor:pointer; padding:6px 0; }
 .today-head { display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .today-head .brand { margin-bottom:6px; }
 .today-head h1 { margin:0 0 2px; }
-.avatar { flex:none; width:46px; height:46px; border-radius:50%; background:var(--gold-fill); color:var(--on-gold); display:grid; place-items:center; font-weight:700; font-size:18px; }
+.avatar { flex:none; width:46px; height:46px; border-radius:50%; background:var(--gold-fill); color:var(--on-gold); display:grid; place-items:center; font-weight:600; font-size:18px; }
 .today-parcours { color:var(--muted); font-size:15px; margin:0 0 14px; }
 .today-progress { margin:0 0 8px; }
 .today-progress .count { font-size:14px; flex-wrap:wrap; gap:2px 12px; }
@@ -248,10 +248,11 @@ details summary { cursor:pointer; padding:6px 0; }
 .day-tile:disabled { cursor:default; }
 .day-tile.is-today { background:var(--gold-fill); color:var(--on-gold); box-shadow:var(--shadow-today); }
 .day-tile.is-today .tile-wd { color:var(--on-gold); font-weight:600; }
-.day-tile em { font-style:normal; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+.day-tile em { font-style:normal; font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
 .day-tile.is-selected { box-shadow:inset 0 0 0 2px var(--primary-fill); }
 .tile-vide { display:block; height:16px; }
-.today-section { margin:26px 0 0; }
+.today-section { margin:26px 0 22px; }
+.today-section .card:last-child { margin-bottom:0; }
 .today-section > h2, .sec-head h2 { font-size:21px; line-height:1.25; margin:0 0 10px; }
 .sec-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
 .sec-head .link { color:var(--foreground); font-size:14px; font-weight:500; padding:10px 0; flex:none; }
