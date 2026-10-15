@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Fausse base : chaque table renvoie les lignes fournies, quelle que soit la chaîne de filtres.
@@ -58,6 +59,14 @@ describe('Espace avec plusieurs parcours', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Accompagnement du livre — 14 jours' }));
     expect(screen.getByText(/Ton accompagnement commence le lundi 19 octobre/)).toBeInTheDocument();
     expect(screen.queryByText(/Thème ACHETEUR/)).not.toBeInTheDocument();
+  });
+
+  it('onglets des parcours sur une seule ligne qu’on fait glisser', async () => {
+    render(<MemoryRouter><Espace /></MemoryRouter>);
+    expect(await screen.findByRole('tablist', { name: 'Mes parcours' })).toHaveClass('prog-tabs');
+    const css = readFileSync(`${process.cwd()}/src/styles.css`, 'utf8');
+    expect(css).toMatch(/\.prog-tabs \{[^}]*flex-wrap:nowrap[^}]*overflow-x:auto/);
+    expect(css).toMatch(/\.prog-tab \{[^}]*white-space:nowrap/);
   });
 
   it('parcours anglais : libellés en anglais', async () => {

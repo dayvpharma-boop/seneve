@@ -95,3 +95,9 @@ export function dateDuJour(dateDebut: string, n: number): Date {
 export function eventIdFor(pending: string | null | undefined, generate: () => string = () => crypto.randomUUID()): string {
   return pending ?? generate();
 }
+
+/** Onglets des parcours sur une ligne : à l'ouverture, l'onglet choisi est ramené en vue (sans faire défiler la page). */
+export function placerOngletActif(liste: HTMLElement | null): void {
+  const actif = liste?.querySelector<HTMLElement>('[aria-selected="true"]');
+  if (liste && actif) liste.scrollLeft = Math.max(0, actif.offsetLeft - liste.offsetLeft - 16);
+}

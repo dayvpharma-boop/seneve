@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
-import { pickDefault } from '@/lib/espace';
+import { pickDefault, placerOngletActif } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { bilan, progresTextes, semaines, semaineTextes, type Bilan } from '@/lib/progres';
 
@@ -81,7 +81,7 @@ export function Progres() {
   if (!enr) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<h1>{T.titre}</h1><p className="muted">{T.aucun}</p><BarreNav langue={enr?.langue ?? data?.langue} /></main>;
 
   const b = data.bilans[enr.enrollment_id]!;
-  const tabs = data.parcours.length > 1 && <div className="prog-tabs" role="tablist" aria-label={T.titre}>
+  const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.titre}>
     {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => setChosen(x.enrollment_id)}>{x.nom}</button>)}
   </div>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;
