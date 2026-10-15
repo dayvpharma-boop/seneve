@@ -147,6 +147,21 @@ describe('Mon journal — style de l’écran « Aujourd’hui »', () => {
     expect(screen.queryByRole('button', { name: 'Nouvelle note' })).not.toBeInTheDocument();
   });
 
+  it('de « Écrire » à « Journal » : retour aux notes quand rien n’est écrit', async () => {
+    at('/journal?ecrire=1');
+    await screen.findByPlaceholderText(/Ce que tu as compris/);
+    fireEvent.click(screen.getByRole('link', { name: 'Journal' }));
+    expect(await screen.findByRole('button', { name: 'Nouvelle note' })).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/Ce que tu as compris/)).not.toBeInTheDocument();
+  });
+
+  it('de « Écrire » à « Journal » avec un texte en cours : le formulaire reste ouvert', async () => {
+    at('/journal?ecrire=1');
+    fireEvent.change(await screen.findByPlaceholderText(/Ce que tu as compris/), { target: { value: 'en cours' } });
+    fireEvent.click(screen.getByRole('link', { name: 'Journal' }));
+    expect(await screen.findByDisplayValue('en cours')).toBeInTheDocument();
+  });
+
   it('aucune note : message d’attente', async () => {
     at('/journal');
     expect(await screen.findByText('Aucune note pour le moment.')).toBeInTheDocument();

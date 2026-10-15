@@ -326,7 +326,8 @@ export function Espace() {
         <h2 id="titre-journee">{estAujourdhui ? T.taJournee : T.jour(current)}</h2>
         <button type="button" className="link" aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}>{T.tousLesJours}</button>
       </div>
-      <ul className={moments.length > 1 ? 'moment-rail' : 'moment-rail is-seul'}>
+      {/* Nouvelle liste à chaque jour choisi : elle repart de la carte du matin (et non de la carte vue avant). */}
+      <ul key={`rail-${enr.enrollment_id}-${current}`} className={moments.length > 1 ? 'moment-rail' : 'moment-rail is-seul'}>
         {moments.map(m => {
           const id = `moment-${current}-${m.n}`;
           return <li key={m.content.content_id}>

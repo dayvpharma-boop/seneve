@@ -110,6 +110,15 @@ describe('Espace — écran « Aujourd’hui »', () => {
     expect(within(soir).queryByRole('button')).not.toBeInTheDocument();
   });
 
+  it('changer de jour : la liste des moments repart de la carte du matin', async () => {
+    ouvrir();
+    const avant = (await screen.findByRole('article', { name: '8 h — Thème 2.1' })).closest('ul');
+    fireEvent.click(screen.getByRole('button', { name: 'Voir tous les jours' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Jour 1' }));
+    const apres = screen.getByRole('article', { name: '8 h — Thème 1.1' }).closest('ul');
+    expect(apres).not.toBe(avant);
+  });
+
   it('« Lire et agir » : page du moment avec date, texte sans l’en-tête WhatsApp, source, action et question ; « Retour »', async () => {
     ouvrir();
     fireEvent.click(await screen.findByRole('button', { name: 'Lire et agir' }));

@@ -98,6 +98,11 @@ export function eventIdFor(pending: string | null | undefined, generate: () => s
 
 /** Onglets des parcours sur une ligne : à l'ouverture, l'onglet choisi est ramené en vue (sans faire défiler la page). */
 export function placerOngletActif(liste: HTMLElement | null): void {
-  const actif = liste?.querySelector<HTMLElement>('[aria-selected="true"]');
-  if (liste && actif) liste.scrollLeft = Math.max(0, actif.offsetLeft - liste.offsetLeft - 16);
+  const placer = () => {
+    const actif = liste?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (liste && actif) liste.scrollLeft = Math.max(0, actif.offsetLeft - liste.offsetLeft - 16);
+  };
+  placer();
+  // Les polices du site arrivent parfois après l'affichage et changent la largeur des onglets : on recale une fois.
+  try { void document.fonts?.ready.then(placer); } catch { /* navigateur sans cette information */ }
 }

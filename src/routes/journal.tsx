@@ -51,7 +51,13 @@ export function Journal() {
   // une question du jour, ou un brouillon en cours).
   const [formOuvert, setFormOuvert] = useState(() => ecrire || Boolean(draft.read(draftKey)));
   const focusDemande = useRef(false);
-  useEffect(() => { if (ecrire) setFormOuvert(true); }, [ecrire]);
+  // Passage de « Écrire » à « Journal » (barre du bas) : on revient aux notes, sauf s'il y a un texte en cours.
+  const ecrireAvant = useRef(ecrire);
+  useEffect(() => {
+    if (ecrire) setFormOuvert(true);
+    else if (ecrireAvant.current && !texte.trim()) setFormOuvert(false);
+    ecrireAvant.current = ecrire;
+  }, [ecrire]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const refresh = useCallback(async () => {
     setFailed(false);
