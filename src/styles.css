@@ -319,7 +319,8 @@ details summary { cursor:pointer; padding:6px 0; }
 /* Page « Parcours » (Mes progrès) dans le style de l'écran « Aujourd'hui » */
 .progres-intro { margin:0 0 12px; }
 .progres-carte { border-radius:20px; box-shadow:var(--shadow-soft); }
-.progres-compte { font-family:Lora,serif; font-weight:600; font-size:20px; line-height:1.3; margin:0 0 12px; }
+.progres-carte .progres-suite:first-child { margin-top:0; padding-top:0; border-top:0; }
+.progres-compte { font-family:Lora,serif; font-weight:600; font-size:20px; line-height:1.3; margin:4px 0 10px; }
 .progres-tuiles { margin:0 0 16px; }
 .progres-chiffres { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
 .progres-chiffres li { display:flex; align-items:center; gap:10px; font-size:15px; line-height:1.4; }

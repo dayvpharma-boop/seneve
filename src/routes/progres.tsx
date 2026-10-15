@@ -90,6 +90,7 @@ export function Progres() {
   </div>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;
   const aujourdhui = !b.termine && !b.pasCommence ? b.joursOuverts : null;
+  const fermes = b.jours.filter(j => !j.ouvert);
   const jourSemaine = (n: number) => new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'short' }).format(dateDuJour(enr.date_debut, n));
   // Carte du parcours : une tuile par jour (même dessin que l'écran « Aujourd'hui »). Décorative : la liste des jours, plus bas, porte les liens.
   const carte = <div className="day-tiles progres-tuiles" aria-hidden="true">
@@ -109,10 +110,9 @@ export function Progres() {
     <p className="muted progres-intro">{T.intro}</p>
     {tabs}
     {!tabs && <p className="today-parcours">{enr.nom}</p>}
+    {!b.pasCommence && <><p className="progres-compte">{b.termine ? T.termine : T.joursOuverts(b.joursOuverts, b.duree)}</p>{carte}</>}
     <section className="card progres-carte" aria-label={enr.nom}>
       {b.pasCommence ? <p>{T.pasCommence}</p> : <>
-        <p className="progres-compte">{b.termine ? T.termine : T.joursOuverts(b.joursOuverts, b.duree)}</p>
-        {carte}
         <ul className="progres-chiffres">
           <li className="is-principal"><Icone nom="coche" taille={20} /><strong>{T.realisees(b.realisees, b.actionsOuvertes)}</strong></li>
           {b.partielles > 0 && <li><Icone nom="fleche" taille={20} />{T.partielles(b.partielles)}</li>}
@@ -134,7 +134,7 @@ export function Progres() {
       </ul>
     </section>}
     <ol className="bilan-jours">
-      {b.jours.map(j => <li key={j.jour} className={`bilan-jour${j.ouvert ? '' : ' bilan-ferme'}${j.jour === aujourdhui ? ' is-today' : ''}${j.etat === 'realisee' ? ' is-done' : ''}`}>
+      {b.jours.filter(j => j.ouvert).map(j => <li key={j.jour} className={`bilan-jour${j.ouvert ? '' : ' bilan-ferme'}${j.jour === aujourdhui ? ' is-today' : ''}${j.etat === 'realisee' ? ' is-done' : ''}`}>
         <span className="bilan-pastille" aria-hidden="true">{j.etat === 'realisee' ? <Icone nom="coche" taille={18} /> : !j.ouvert ? <Icone nom="cadenas" taille={16} /> : j.jour}</span>
         <span className="bilan-num">{T.jour(j.jour)}</span>
         <span className="bilan-theme">{j.ouvert ? (j.theme ?? '') : ''}</span>
@@ -144,6 +144,12 @@ export function Progres() {
             : <Link className="link" to={lienJour(j.jour)}>{T.etats[j.etat]}{j.etat === 'realisee' && j.realiseeLe ? `${T.le}${dateCourte(j.realiseeLe, T.locale)}` : ''}{j.aide ? ` · ${T.aide}` : ''}</Link>}
         </span>
       </li>)}
+      {/* Jours pas encore ouverts : une seule ligne (un parcours de 90 jours en aurait 87). */}
+      {fermes.length > 0 && <li className="bilan-jour bilan-ferme">
+        <span className="bilan-pastille" aria-hidden="true"><Icone nom="cadenas" taille={16} /></span>
+        <span className="bilan-num">{fermes.length === 1 ? T.jour(fermes[0]!.jour) : T.jours(fermes[0]!.jour, fermes[fermes.length - 1]!.jour)}</span>
+        <span className="bilan-etat etat-aucune">{fermes.length === 1 ? T.ferme : T.fermes}</span>
+      </li>}
     </ol>
     <BarreNav langue={langue} />
   </main>;

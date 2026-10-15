@@ -86,7 +86,10 @@ describe('page Mes progrès', () => {
     expect(screen.getByText(/Prochaine étape : l’action du jour 2/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Reprendre dans mon espace' })).toHaveAttribute('href', '/espace?parcours=E7&jour=2');
     expect(screen.getByRole('link', { name: 'Réalisée le 11 octobre' })).toBeInTheDocument();
-    expect(screen.getAllByText('Pas encore ouvert')).toHaveLength(4);
+    // Jours 4 à 7 pas encore ouverts : une seule ligne.
+    expect(screen.getByText('Jours 4 à 7')).toBeInTheDocument();
+    expect(screen.getAllByText('Pas encore ouverts')).toHaveLength(1);
+    expect(screen.queryByText('Jour 5')).not.toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/score|%/i);
     // Style de l'écran « Aujourd'hui » : carte des jours (décorative), jour du calendrier en doré, barre du bas.
     const tuiles = document.querySelectorAll('.progres-tuiles .day-tile');
