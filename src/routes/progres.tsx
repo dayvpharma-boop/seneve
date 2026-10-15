@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
-import { pickDefault, placerOngletActif } from '@/lib/espace';
-import { nomParcours } from '@/lib/espace-textes';
+import { dateDuJour, pickDefault, placerOngletActif } from '@/lib/espace';
+import { Icone } from '@/components/Icone';
+import { nomParcours, textes } from '@/lib/espace-textes';
 import { bilan, progresTextes, semaines, semaineTextes, type Bilan } from '@/lib/progres';
 
 type Parcours = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; duree: number; nom: string };
@@ -76,35 +77,51 @@ export function Progres() {
   useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = enr?.langue === 'en' ? 'en' : 'fr'; }, [T, enr?.langue]);
 
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enr?.langue ?? data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p><p className="muted">{T.chargement}</p><BarreNav langue={enr?.langue ?? data?.langue} /></main>;
-  if (!enr) return <main className="wrap avec-nav"><p className="brand">SÉNEVÉ</p>{back}<h1>{T.titre}</h1><p className="muted">{T.aucun}</p><BarreNav langue={enr?.langue ?? data?.langue} /></main>;
+  const langue = enr?.langue ?? data?.langue;
+  // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026) : marque puis titre.
+  const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titre}</h1></div></header>;
+  if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langue} /></main>;
+  if (!enr) return <main className="wrap avec-nav">{tete}<p className="muted">{T.aucun}</p>{back}<BarreNav langue={langue} /></main>;
 
   const b = data.bilans[enr.enrollment_id]!;
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.titre}>
     {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => setChosen(x.enrollment_id)}>{x.nom}</button>)}
   </div>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;
+  const aujourdhui = !b.termine && !b.pasCommence ? b.joursOuverts : null;
+  const jourSemaine = (n: number) => new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'short' }).format(dateDuJour(enr.date_debut, n));
+  // Carte du parcours : une tuile par jour (même dessin que l'écran « Aujourd'hui »). Décorative : la liste des jours, plus bas, porte les liens.
+  const carte = <div className="day-tiles progres-tuiles" aria-hidden="true">
+    {b.jours.map(j => {
+      const fait = j.etat === 'realisee';
+      const auj = j.jour === aujourdhui;
+      const classe = ['day-tile', auj && 'is-today', fait && 'is-done', !j.ouvert && 'is-locked', j.etat === 'partielle' && 'is-partial'].filter(Boolean).join(' ');
+      return <span key={j.jour} className={classe}>
+        <span className="tile-wd">{jourSemaine(j.jour)}</span><b>{j.jour}</b>
+        {auj ? <em>{textes(enr.langue).auj}</em> : !j.ouvert ? <Icone nom="cadenas" taille={16} /> : fait ? <Icone nom="coche" taille={16} /> : <span className="tile-vide" />}
+      </span>;
+    })}
+  </div>;
 
   return <main className="wrap avec-nav">
-    <p className="brand">SÉNEVÉ</p>
-    {back}
-    <h1>{T.titre}</h1>
-    <p className="muted">{T.intro}</p>
+    {tete}
+    <p className="muted progres-intro">{T.intro}</p>
     {tabs}
-    {!tabs && <p className="tag">{enr.nom}</p>}
-    <section className="card">
+    {!tabs && <p className="today-parcours">{enr.nom}</p>}
+    <section className="card progres-carte" aria-label={enr.nom}>
       {b.pasCommence ? <p>{T.pasCommence}</p> : <>
-        <p className="day-count">{b.termine ? T.termine : T.joursOuverts(b.joursOuverts, b.duree)}</p>
-        <ul className="bilan-list">
-          <li><strong>{T.realisees(b.realisees, b.actionsOuvertes)}</strong></li>
-          {b.partielles > 0 && <li>{T.partielles(b.partielles)}</li>}
-          {b.preparees > 0 && <li>{T.preparees(b.preparees)}</li>}
-          {b.aides > 0 && <li>{T.aides(b.aides)}</li>}
-          <li>{T.notes(data.notes)}</li>
+        <p className="progres-compte">{b.termine ? T.termine : T.joursOuverts(b.joursOuverts, b.duree)}</p>
+        {carte}
+        <ul className="progres-chiffres">
+          <li className="is-principal"><Icone nom="coche" taille={20} /><strong>{T.realisees(b.realisees, b.actionsOuvertes)}</strong></li>
+          {b.partielles > 0 && <li><Icone nom="fleche" taille={20} />{T.partielles(b.partielles)}</li>}
+          {b.preparees > 0 && <li><Icone nom="livre" taille={20} />{T.preparees(b.preparees)}</li>}
+          {b.aides > 0 && <li><Icone nom="aide" taille={20} />{T.aides(b.aides)}</li>}
+          <li><Icone nom="journal" taille={20} />{T.notes(data.notes)}</li>
         </ul>
         {b.prochain !== null
-          ? <><p>{T.prochain(b.prochain)}</p><Link className="btn btn-link" to={lienJour(b.prochain)}>{T.reprendre}</Link></>
+          ? <div className="progres-suite"><p>{T.prochain(b.prochain)}</p><Link className="btn btn-link moment-btn" to={lienJour(b.prochain)}>{T.reprendre}<Icone nom="fleche" taille={20} /></Link></div>
           : b.actionsOuvertes > 0 && <p className="success">{T.toutFait}</p>}
       </>}
     </section>
@@ -117,7 +134,8 @@ export function Progres() {
       </ul>
     </section>}
     <ol className="bilan-jours">
-      {b.jours.map(j => <li key={j.jour} className={`bilan-jour${j.ouvert ? '' : ' bilan-ferme'}`}>
+      {b.jours.map(j => <li key={j.jour} className={`bilan-jour${j.ouvert ? '' : ' bilan-ferme'}${j.jour === aujourdhui ? ' is-today' : ''}${j.etat === 'realisee' ? ' is-done' : ''}`}>
+        <span className="bilan-pastille" aria-hidden="true">{j.etat === 'realisee' ? <Icone nom="coche" taille={18} /> : !j.ouvert ? <Icone nom="cadenas" taille={16} /> : j.jour}</span>
         <span className="bilan-num">{T.jour(j.jour)}</span>
         <span className="bilan-theme">{j.ouvert ? (j.theme ?? '') : ''}</span>
         <span className={`bilan-etat etat-${j.etat ?? 'aucune'}`}>
@@ -127,5 +145,6 @@ export function Progres() {
         </span>
       </li>)}
     </ol>
-  <BarreNav langue={enr?.langue ?? data?.langue} /></main>;
+    <BarreNav langue={langue} />
+  </main>;
 }

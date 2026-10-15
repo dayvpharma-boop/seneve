@@ -88,5 +88,13 @@ describe('page Mes progrès', () => {
     expect(screen.getByRole('link', { name: 'Réalisée le 11 octobre' })).toBeInTheDocument();
     expect(screen.getAllByText('Pas encore ouvert')).toHaveLength(4);
     expect(document.body.textContent).not.toMatch(/score|%/i);
+    // Style de l'écran « Aujourd'hui » : carte des jours (décorative), jour du calendrier en doré, barre du bas.
+    const tuiles = document.querySelectorAll('.progres-tuiles .day-tile');
+    expect(tuiles).toHaveLength(7);
+    expect(tuiles[2]).toHaveClass('is-today');
+    expect(tuiles[0]).toHaveClass('is-done');
+    expect(tuiles[4]).toHaveClass('is-locked');
+    expect(document.querySelector('.progres-tuiles')).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getByRole('link', { name: 'Parcours' })).toHaveAttribute('aria-current', 'page');
   });
 });
