@@ -86,7 +86,7 @@ export function ConventionsAdmin() {
           {c.etat === 'active' && <button type="button" className="link danger" disabled={busy} onClick={() => void clore(c)}>Clore</button>}
         </div>
         {ouverte === c.convention_id && (!codes ? <p className="muted">Chargement…</p> : <>
-          {c.libres > 0 && <button type="button" className="btn-secondaire" onClick={() => telecharger(c)}>Télécharger les {codes.filter(k => k.etat === 'libre').length} codes libres</button>}
+          {c.libres > 0 && <button type="button" className="btn-secondaire" onClick={() => telecharger(c)}>{(n => n > 1 ? `Télécharger les ${n} codes libres` : 'Télécharger le code libre')(codes.filter(k => k.etat === 'libre').length)}</button>}
           <ul className="bilan-list" aria-label={`Codes de ${c.organisation}`}>
             {codes.map(k => <li key={k.code}><code>{k.code}</code> — {k.etat === 'libre' ? 'libre' : k.etat === 'utilise' ? 'utilisé' : 'annulé'}</li>)}
           </ul>
