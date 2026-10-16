@@ -9,6 +9,7 @@ import { SeanceCard } from '@/components/SeanceCard';
 import { SemaineCard } from '@/components/SemaineCard';
 import { ObstacleCard } from '@/components/ObstacleCard';
 import { SuiteCard } from '@/components/SuiteCard';
+import { CodePlaceCard } from '@/components/CodePlaceCard';
 import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour, serieObstacle } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { Icone } from '@/components/Icone';
@@ -179,6 +180,7 @@ export function Espace() {
     <p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>
     {avecEmail && <EmailMatinCard langue={langue} />}
     <WhatsAppLink />
+    <CodePlaceCard langue={langue} onOuvert={refresh} />
   </section>;
   const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
   const page = (langue: string, contenu: ReactNode, classe = '') => <main className={`wrap avec-nav ${classe}`.trim()}>{contenu}<BarreNav langue={langue} /></main>;

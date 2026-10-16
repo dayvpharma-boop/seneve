@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { FreinsAdmin } from '@/components/FreinsAdmin';
+import { ConventionsAdmin } from '@/components/ConventionsAdmin';
 import { formatDateHeure } from '@/lib/journal';
 import { ETATS_EQUIPE, ETAT_LIBELLE, REPONSE_MAX, erreurAdmin, filtrer, lienWhatsApp, type Filtre, type StaffRequest, type TeamMember } from '@/lib/admin';
 
@@ -59,6 +60,7 @@ export function Admin() {
     {liste.length === 0 ? <p className="muted">Aucune demande ici.</p>
       : liste.map(r => <RequestAdmin key={`${r.request_id}:${r.modifie_le}`} request={r} admin={data.me.admin} team={data.team} onSaved={refresh} />)}
     <FreinsAdmin admin={data.me.admin} />
+    {data.me.admin && <ConventionsAdmin />}
     {data.me.admin && <Team team={data.team} onChanged={refresh} />}
   </main>;
 }
