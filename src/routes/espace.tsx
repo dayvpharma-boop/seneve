@@ -7,8 +7,9 @@ import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
 import { SeanceCard } from '@/components/SeanceCard';
 import { SemaineCard } from '@/components/SemaineCard';
+import { ObstacleCard } from '@/components/ObstacleCard';
 import { SuiteCard } from '@/components/SuiteCard';
-import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour } from '@/lib/progres';
+import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour, serieObstacle } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { Icone } from '@/components/Icone';
 import { Scene, type Periode } from '@/components/Scene';
@@ -272,6 +273,8 @@ export function Espace() {
   const jourCal = rawDay(enr.date_debut, new Date());
   const semaine = semaineDuJour(bilanEnr, jourCal);
   const reprise = !paused && !cloture && !repriseFaite ? jourDeReprise(bilanEnr, jourCal) : null;
+  // Pas les deux messages en même temps : l'accueil de reprise passe d'abord.
+  const obstacle = !lectureSeule && reprise === null && !repriseFaite ? serieObstacle(bilanEnr, jourCal) : null;
   const R = REPRISE_TEXTES[enr.langue === 'en' ? 'en' : 'fr'];
   const estAujourdhui = !finished && current === day;
 
@@ -323,6 +326,7 @@ export function Espace() {
       <p className="muted">{R.aide}</p>
       {!horsLigne && <div className="link-row"><Link className="link" to={`/coach?inscription=${enr.enrollment_id}`}>{R.coach}</Link><Link className="link" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
     </section>}
+    {obstacle && <ObstacleCard key={`obstacle-${enr.enrollment_id}-${obstacle}`} enrollmentId={enr.enrollment_id} cle={obstacle} langue={enr.langue} />}
     {semaine && <SemaineCard key={`semaine-${enr.enrollment_id}-${semaine.numero}`} semaine={semaine} langue={enr.langue} horsLigne={horsLigne} />}
 
     <section className="today-section" aria-labelledby="titre-journee">

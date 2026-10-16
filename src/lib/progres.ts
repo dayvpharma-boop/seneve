@@ -82,6 +82,54 @@ export function jourDeReprise(b: Bilan, jourCalendaire: number): number | null {
   return silencieux[0]!.jour;
 }
 
+/** Seuil validé par Dr Justin (16/10/2026) : 2 actions de suite non réalisées. */
+export const SEUIL_OBSTACLE_ACTIONS = 2;
+
+/**
+ * « Qu'est-ce qui t'a freiné ? » : les 2 dernières actions des jours passés (le jour en cours n'est pas compté,
+ * la personne peut encore agir aujourd'hui) ne sont ni réalisées, ni faites en partie, sans aide demandée.
+ * Renvoie la clé de la série (ex. « 4-5 ») pour ne poser la question qu'une fois.
+ */
+export function serieObstacle(b: Bilan, jourCalendaire: number): string | null {
+  if (b.pasCommence || b.termine) return null;
+  const passes = b.jours.filter(j => j.ouvert && j.etat !== null && j.jour < jourCalendaire);
+  const derniers = passes.slice(-SEUIL_OBSTACLE_ACTIONS);
+  if (derniers.length < SEUIL_OBSTACLE_ACTIONS) return null;
+  const nonFaite = (j: JourBilan) => (j.etat === 'non_commencee' || j.etat === 'preparee') && !j.aide;
+  return derniers.every(nonFaite) ? derniers.map(j => j.jour).join('-') : null;
+}
+
+export const OBSTACLE_TEXTES = {
+  fr: {
+    titre: 'Qu’est-ce qui t’a freiné ces derniers jours ?',
+    motifs: { temps: 'Je n’ai pas eu le temps', compris: 'Je n’ai pas bien compris l’action', difficile: 'L’action me paraît trop difficile', personnel: 'Une situation personnelle', autre: 'Autre chose' } as Record<string, string>,
+    envoyer: 'Envoyer',
+    plusTard: 'Pas maintenant',
+    envoi: 'Envoi…',
+    merci: 'Merci. Reprends quand tu peux, à ton rythme.',
+    coachTexte: 'Le coach peut t’expliquer l’action et la découper en petits pas.',
+    coach: 'Parler au coach',
+    aideTexte: 'Tu peux en parler à l’équipe d’accompagnement.',
+    aide: 'Demander de l’aide',
+    erreur: 'Réponse non envoyée. Vérifie ta connexion et réessaie.',
+    prive: 'Ta réponse reste privée : elle sert seulement à mieux t’accompagner.',
+  },
+  en: {
+    titre: 'What held you back these last days?',
+    motifs: { temps: 'I didn’t have the time', compris: 'I didn’t really understand the action', difficile: 'The action seems too hard', personnel: 'A personal situation', autre: 'Something else' } as Record<string, string>,
+    envoyer: 'Send',
+    plusTard: 'Not now',
+    envoi: 'Sending…',
+    merci: 'Thank you. Pick it up again whenever you can, at your own pace.',
+    coachTexte: 'The coach can explain the action and break it into small steps.',
+    coach: 'Talk to the coach',
+    aideTexte: 'You can talk about it with the support team.',
+    aide: 'Ask for help',
+    erreur: 'Answer not sent. Check your connection and try again.',
+    prive: 'Your answer stays private: it is only used to support you better.',
+  },
+} as const;
+
 export const REPRISE_TEXTES = {
   fr: {
     titre: (p: string) => p ? `Content de te revoir, ${p} 🌱` : 'Content de te revoir 🌱',
