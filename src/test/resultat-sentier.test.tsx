@@ -100,6 +100,13 @@ describe('Racine forte (cahier n°4, §11 A)', () => {
     expect(within(forte).getAllByRole('listitem').map(li => li.textContent)).toEqual([R[0]?.n, R[2]?.n]);
   });
 
+  it('s’affiche dès le résultat, sans attendre le choix quand plusieurs racines sont à égalité en bas', () => {
+    render(<Index />);
+    finishQuiz([9, 7, 13, 14, 13, 14, 7]);
+    expect(screen.getByRole('radiogroup')).toBeVisible();
+    expect(within(cardOf('Tes points d’appui')).getAllByRole('listitem').map(li => li.textContent)).toEqual([R[3]?.n, R[5]?.n]);
+  });
+
   it('parle de « racine la plus solide » quand le plus haut total est entre 7 et 11', () => {
     render(<Index />);
     finishQuiz([10, 7, 8, 9, 6, 8, 9]);
