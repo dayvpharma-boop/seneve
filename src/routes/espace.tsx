@@ -12,6 +12,7 @@ import { SuiteCard } from '@/components/SuiteCard';
 import { CodePlaceCard } from '@/components/CodePlaceCard';
 import { JardinCard } from '@/components/JardinCard';
 import { InviteCard } from '@/components/InviteCard';
+import { ParoleCard } from '@/components/ParoleCard';
 import { compteJardin } from '@/lib/jardin';
 import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour, serieObstacle } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
@@ -361,6 +362,8 @@ export function Espace() {
         })}
       </ul>
     </section>
+
+    {!horsLigne && <ParoleCard key={`parole-${enr.enrollment_id}-${current}`} programmeId={enr.programme_id} version={Number(enr.version)} langue={enr.langue} jour={current} />}
 
     {action && <section className="today-section" aria-labelledby="titre-action">
       <h2 id="titre-action">{T.action}</h2>

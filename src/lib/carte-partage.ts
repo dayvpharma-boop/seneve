@@ -6,7 +6,7 @@ export const CARD_SIZES: Record<CardFormat, { w: number; h: number }> = {
   vertical: { w: 1080, h: 1920 }, // Stories, Reels, TikTok, Shorts, statuts
   carre: { w: 1080, h: 1080 },    // publications Facebook, Instagram, LinkedIn, X, Telegram
 };
-const NOIR = '#0A0907', OR = '#C9A84C', IVOIRE = '#F4EEDF', IVOIRE_DOUX = 'rgba(244,238,223,0.72)';
+export const NOIR = '#0A0907', OR = '#C9A84C', IVOIRE = '#F4EEDF', IVOIRE_DOUX = 'rgba(244,238,223,0.72)';
 
 export interface CardContent {
   brand: string;          // SÉNEVÉ
@@ -31,7 +31,7 @@ export function shareAddress(host: string, base: string, language: 'fr' | 'en'):
   return `${host}${path}p${language === 'en' ? '?lang=en' : ''}`;
 }
 
-function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+export function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
   const words = text.split(/\s+/).filter(Boolean);
   const lines: string[] = [];
   let line = '';
@@ -43,7 +43,7 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): st
   return lines;
 }
 
-function spaced(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, spacing: number) {
+export function spaced(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, spacing: number) {
   // Lettres espacées, centrées sur x (letterSpacing n'existe pas partout).
   const chars = [...text];
   const width = chars.reduce((sum, c) => sum + ctx.measureText(c).width, 0) + spacing * (chars.length - 1);
@@ -54,7 +54,7 @@ function spaced(ctx: CanvasRenderingContext2D, text: string, x: number, y: numbe
 }
 
 /** Petite graine de sénevé et ses sept racines, à la couleur or. */
-function seed(ctx: CanvasRenderingContext2D, cx: number, cy: number, s: number) {
+export function seed(ctx: CanvasRenderingContext2D, cx: number, cy: number, s: number) {
   ctx.save();
   ctx.strokeStyle = OR; ctx.fillStyle = OR; ctx.lineCap = 'round';
   ctx.lineWidth = 3 * s;

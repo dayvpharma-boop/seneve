@@ -400,6 +400,9 @@ details summary { cursor:pointer; padding:6px 0; }
 .jardin-compte { margin:0 0 6px; }
 .jardin-note { margin:0; font-size:13px; }
 @media (max-width: 360px) { .jardin-card { flex-direction:column; text-align:center; } }
+/* Parole du jour */
+.parole-card { background:var(--soft-gold); }
+.parole-citation { margin:8px 0 10px; padding:0; font-family:Lora, serif; font-style:italic; font-size:20px; line-height:1.5; color:var(--foreground); }
 /* Invite un proche */
 .invite-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
 .invite-actions .btn, .invite-actions .btn-secondaire { flex:1 1 180px; min-height:48px; }
