@@ -400,6 +400,11 @@ details summary { cursor:pointer; padding:6px 0; }
 .jardin-compte { margin:0 0 6px; }
 .jardin-note { margin:0; font-size:13px; }
 @media (max-width: 360px) { .jardin-card { flex-direction:column; text-align:center; } }
+/* Audio du jour */
+.audio-item { margin:12px 0 0; }
+.audio-item figcaption { font-weight:600; margin-bottom:6px; }
+.audio-item audio { width:100%; }
+.audio-note { margin:8px 0 0; font-size:13px; }
 /* Parole du jour */
 .parole-card { background:var(--soft-gold); }
 .parole-citation { margin:8px 0 10px; padding:0; font-family:Lora, serif; font-style:italic; font-size:20px; line-height:1.5; color:var(--foreground); }
