@@ -4,6 +4,7 @@ import { compute, categorie } from '@/lib/racines';
 import { texts, whatsappUrls, languageFrom, type Language } from '@/lib/test-texts';
 import { chooseRoot, cleanSource, recordVisit, submitResult } from '@/lib/suivi-test';
 import { ShareCard } from '@/components/ShareCard';
+import { InviteCard } from '@/components/InviteCard';
 import { Icone } from '@/components/Icone';
 import { memoriserRacineTest } from '@/lib/objectif';
 
@@ -89,6 +90,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
        })}</ul>
      </div>
     {root && act !== null && act !== undefined && <ShareCard language={language} totals={r.t} startRoot={act} />}
+    {root && <InviteCard langue={language} />}
     {act !== null && act !== undefined && <RememberRoot k={act} />}
  </>;
 }

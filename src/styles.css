@@ -391,6 +391,19 @@ details summary { cursor:pointer; padding:6px 0; }
 #s-result .result-espace { margin-top:18px; padding-top:16px; border-top:1px solid var(--line); }
 #s-result .result-espace .more { margin:0; }
 #s-result .result-espace .btn { background:transparent; color:var(--foreground); border:1px solid var(--primary-fill); min-height:48px; padding:12px 14px; font-size:15px; margin-top:12px; }
+/* Le jardin du sénevé */
+.jardin-card { display:flex; align-items:center; gap:14px; }
+.jardin-illus { flex:none; width:120px; display:flex; justify-content:center; }
+.jardin-texte { min-width:0; }
+.jardin-texte .tag { margin-bottom:4px; }
+.jardin-message { margin:0 0 6px; font-weight:600; line-height:1.4; }
+.jardin-compte { margin:0 0 6px; }
+.jardin-note { margin:0; font-size:13px; }
+@media (max-width: 360px) { .jardin-card { flex-direction:column; text-align:center; } }
+/* Invite un proche */
+.invite-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.invite-actions .btn, .invite-actions .btn-secondaire { flex:1 1 180px; min-height:48px; }
+.invite-note { margin:10px 0 0; font-size:13px; }
 /* Tableau de pilotage administrateur */
 .pilotage-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; }
 .pilotage-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin:20px 0; }

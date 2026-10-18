@@ -10,6 +10,9 @@ import { SemaineCard } from '@/components/SemaineCard';
 import { ObstacleCard } from '@/components/ObstacleCard';
 import { SuiteCard } from '@/components/SuiteCard';
 import { CodePlaceCard } from '@/components/CodePlaceCard';
+import { JardinCard } from '@/components/JardinCard';
+import { InviteCard } from '@/components/InviteCard';
+import { compteJardin } from '@/lib/jardin';
 import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour, serieObstacle } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { Icone } from '@/components/Icone';
@@ -273,6 +276,7 @@ export function Espace() {
   const { action, question } = activitesDu(current);
   const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
   const jourCal = rawDay(enr.date_debut, new Date());
+  const jardin = compteJardin(bilanEnr);
   const semaine = semaineDuJour(bilanEnr, jourCal);
   const reprise = !paused && !cloture && !repriseFaite ? jourDeReprise(bilanEnr, jourCal) : null;
   // Pas les deux messages en même temps : l'accueil de reprise passe d'abord.
@@ -318,6 +322,7 @@ export function Espace() {
       {tuiles}
       {finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
     </div>
+    {jardin.total > 0 && <JardinCard realisees={jardin.realisees} total={jardin.total} langue={enr.langue} />}
     {paused && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
     {horsLigne && <p className="muted hors-ligne" role="status">{T.horsLigne(copieDu ? formatDate(copieDu, T.locale) : formatDate(new Date().toISOString(), T.locale))}</p>}
@@ -374,6 +379,7 @@ export function Espace() {
     {!horsLigne && <>
       <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
       <GoalCard langue={enr.langue} />
+      <InviteCard langue={enr.langue} />
       {reglages(enr.langue, true)}
     </>}
     {!horsLigne && (jourCal >= total || cloture) && <SuiteCard key={`suite-${enr.enrollment_id}`} programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x => x.programme_id)} />}
