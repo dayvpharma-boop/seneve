@@ -109,8 +109,8 @@ export function Coach() {
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
   // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026).
   const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titre}</h1></div></header>;
-  if (failed && !data) return <main className="wrap avec-nav">{tete}{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
+  if (failed && !data) return <main className="wrap avec-nav">{tete}{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enrollment?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={enrollment?.langue} /></main>;
 
   const epuise = data.restants <= 0;
   const trop = texte.trim().length > COACH_MAX;

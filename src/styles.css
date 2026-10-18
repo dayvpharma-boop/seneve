@@ -391,3 +391,19 @@ details summary { cursor:pointer; padding:6px 0; }
 #s-result .result-espace { margin-top:18px; padding-top:16px; border-top:1px solid var(--line); }
 #s-result .result-espace .more { margin:0; }
 #s-result .result-espace .btn { background:transparent; color:var(--foreground); border:1px solid var(--primary-fill); min-height:48px; padding:12px 14px; font-size:15px; margin-top:12px; }
+/* Tableau de pilotage administrateur */
+.pilotage-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; }
+.pilotage-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin:20px 0; }
+.pilotage-stats div { background:var(--tile); border-radius:14px; padding:14px; }
+.pilotage-stats dt { font-size:14px; }
+.pilotage-stats dd { margin:8px 0 0; font-size:30px; font-weight:700; }
+.pilotage-list { padding-left:20px; }
+.pilotage-list li { padding:12px 0; overflow-wrap:anywhere; }
+.pilotage-list p { margin:6px 0; }
+.pilotage .prog-tabs { margin-top:14px; }
+.pilotage-evo { margin:6px 0 0; font-size:13px; color:var(--muted); }
+.pilotage-a-traiter { margin:16px 0 8px; padding:14px 16px; border-radius:14px; background:var(--soft-gold); border:1px solid var(--line); }
+.pilotage-a-traiter h3 { margin:0 0 6px; }
+.pilotage-a-traiter ul { margin:0; padding-left:20px; }
+.pilotage-a-traiter li { padding:4px 0; }
+.pilotage-a-traiter p { margin:0; }

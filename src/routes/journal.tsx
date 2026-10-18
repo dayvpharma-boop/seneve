@@ -108,7 +108,7 @@ export function Journal() {
   const intro = <p className="journal-intro"><Icone nom="cadenas" taille={18} />{T.introJournal}</p>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
   if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} /></main>;
 
   const trop = texte.trim().length > NOTE_MAX;
   return <main className="wrap avec-nav">

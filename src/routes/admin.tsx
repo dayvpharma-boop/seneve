@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { FreinsAdmin } from '@/components/FreinsAdmin';
 import { ConventionsAdmin } from '@/components/ConventionsAdmin';
+import { PilotageAdmin } from '@/components/PilotageAdmin';
 import { formatDateHeure } from '@/lib/journal';
 import { ETATS_EQUIPE, ETAT_LIBELLE, REPONSE_MAX, erreurAdmin, filtrer, lienWhatsApp, type Filtre, type StaffRequest, type TeamMember } from '@/lib/admin';
 
@@ -53,6 +54,7 @@ export function Admin() {
 
   return <main className="wrap">
     {head}
+    {data.me.admin && <PilotageAdmin />}
     <p className="muted">{data.me.admin ? 'Tu vois toutes les demandes d’aide. ' : 'Tu vois les demandes qui te sont confiées. '}Les journaux restent privés : seules les notes que le participant a choisi de joindre apparaissent ici.</p>
     <div className="prog-tabs" role="tablist" aria-label="Demandes">
       {onglets.map(([f, label]) => <button key={f} type="button" role="tab" className="prog-tab" aria-selected={filtre === f} onClick={() => setFiltre(f)}>{label} ({compte(f)})</button>)}

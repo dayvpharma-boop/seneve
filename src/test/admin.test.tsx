@@ -92,6 +92,7 @@ describe('Administration', () => {
     expect(screen.queryByLabelText(/^Confier à/)).not.toBeInTheDocument();
     expect(screen.queryByText('Équipe')).not.toBeInTheDocument();
     expect(calls.some(c => c.name === 'staff_list_team')).toBe(false);
+    expect(calls.some(c => c.name === 'staff_dashboard')).toBe(false);
   });
 
   it('une demande annulée n’est plus modifiable', async () => {

@@ -101,7 +101,7 @@ export function Aide() {
   const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titreAide}</h1></div></header>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
   if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={data?.langue} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} /></main>;
 
   const trop = motif.trim().length > MOTIF_MAX;
   return <main className="wrap avec-nav">
