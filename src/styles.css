@@ -222,6 +222,9 @@ details summary { cursor:pointer; padding:6px 0; }
 #s-result .result-hero { border-color:color-mix(in srgb,var(--gold) 35%,var(--line)); }
 #s-result .result-hero h2 { font-size:27px; line-height:1.2; margin:4px 0 10px; text-wrap:balance; }
 #s-result .result-hero .quote { font-size:17px; line-height:1.55; margin-top:14px; }
+#s-result .result-strength h2 { font-size:22px; line-height:1.25; margin:4px 0 8px; text-wrap:balance; }
+#s-result .result-strength .strength-list { margin:6px 0 8px; font-family:Lora,serif; font-size:18px; line-height:1.5; }
+#s-result .result-strength .muted { margin:10px 0 0; font-size:13px; }
 #s-result .src { font-size:13px; }
 /* Première action : même encadré doré que l'action du jour de l'espace (écran « Aujourd'hui » validé le 15/10/2026). */
 #s-result .result-action .action { line-height:1.6; font-size:17px; }

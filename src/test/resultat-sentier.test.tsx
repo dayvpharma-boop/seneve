@@ -78,3 +78,42 @@ describe('Résultat « Sentier »', () => {
     expect(screen.getByRole('link', { name: 'Create my space' })).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion?lang=en`);
   });
 });
+
+describe('Racine forte (cahier n°4, §11 A)', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => { cleanup(); vi.useRealTimers(); });
+
+  it('nomme le point d’appui avec sa phrase du livre, après la première action et sans note', () => {
+    render(<Index />);
+    finishQuiz([11, 7, 13, 9, 6, 12, 10]);
+    const forte = cardOf('Ton point d’appui');
+    expect(within(forte).getByRole('heading', { name: R[2]?.n ?? '' })).toBeVisible();
+    expect(within(forte).getByText(`« ${R[2]?.p} »`)).toBeVisible();
+    expect(within(forte).queryByText(/\/ 15/)).not.toBeInTheDocument();
+    expect(follows(cardOf('Ta première action'), forte) && follows(forte, cardOf('Aller plus loin'))).toBe(true);
+  });
+
+  it('liste les racines à égalité au plus haut', () => {
+    render(<Index />);
+    finishQuiz([12, 7, 12, 9, 6, 8, 10]);
+    const forte = cardOf('Tes points d’appui');
+    expect(within(forte).getAllByRole('listitem').map(li => li.textContent)).toEqual([R[0]?.n, R[2]?.n]);
+  });
+
+  it('parle de « racine la plus solide » quand le plus haut total est entre 7 et 11', () => {
+    render(<Index />);
+    finishQuiz([10, 7, 8, 9, 6, 8, 9]);
+    expect(within(cardOf('Ta racine la plus solide')).getByRole('heading', { name: R[0]?.n ?? '' })).toBeVisible();
+  });
+
+  it.each([
+    ['toutes à égalité', [9, 9, 9, 9, 9, 9, 9]],
+    ['toutes points d’appui', [12, 13, 14, 15, 12, 13, 14]],
+    ['toutes à développer', [6, 5, 4, 6, 3, 5, 4]],
+  ])('n’affiche pas de racine forte quand elles sont %s', (_cas, totals) => {
+    render(<Index />);
+    finishQuiz(totals);
+    if (screen.queryByRole('radiogroup')) fireEvent.click(screen.getAllByRole('radio')[0]!);
+    expect(document.querySelector('.result-strength')).toBeNull();
+  });
+});

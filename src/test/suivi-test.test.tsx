@@ -37,6 +37,15 @@ describe('Suivi anonyme du test', () => {
     expect(recordVisit).toHaveBeenCalledWith('partage', 'fr');
   });
 
+  it('compte une visite en anglais quand on clique sur « English », une seule fois par langue', () => {
+    render(<MemoryRouter initialEntries={['/?src=tt']}><Routes><Route path="/" element={<TestPage />} /></Routes></MemoryRouter>);
+    fireEvent.click(screen.getByRole('link', { name: 'English' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Français' }));
+    expect(recordVisit).toHaveBeenCalledTimes(2);
+    expect(recordVisit).toHaveBeenNthCalledWith(1, 'tt', 'fr');
+    expect(recordVisit).toHaveBeenNthCalledWith(2, 'tt', 'en');
+  });
+
   it('garde la source quand on passe en anglais', () => {
     render(<MemoryRouter initialEntries={['/?src=tt']}><Routes><Route path="/" element={<TestPage />} /></Routes></MemoryRouter>);
     expect(screen.getByRole('link', { name: 'English' })).toHaveAttribute('href', '/?lang=en&src=tt');

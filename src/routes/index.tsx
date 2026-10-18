@@ -7,6 +7,7 @@ import { ShareCard } from '@/components/ShareCard';
 import { InviteCard } from '@/components/InviteCard';
 import { Icone } from '@/components/Icone';
 import { memoriserRacineTest } from '@/lib/objectif';
+import { strengthKind } from '@/lib/carte-partage';
 
 /** Page du test, reliée à l'adresse : ?lang=en affiche la version anglaise, ?src=tt indique la provenance.
  * L'adresse courte /p, imprimée sur les images partagées, ouvre le test avec la provenance « partage ». */
@@ -33,6 +34,22 @@ function RootCard({ tag, k, total, language }: { tag: string; k: number; total: 
  const root = t.roots[k];
  if (!root) return null;
   return <div className="card result-hero"><p className="tag">{tag}</p><h2>{root.n}</h2><span className="cat-chip">{categorie(total, language)}</span><p className="quote">{t.quote(root.p)}</p><p className="src">{t.quoteSource}</p></div>;
+}
+/** Racine forte (cahier n°4, §11 A) : la ou les racines au total le plus haut, sans note chiffrée.
+ * Absente quand les sept racines sont au même niveau, toutes points d'appui, ou toutes à développer. */
+function StrengthCard({ fortes, total, language }: { fortes: number[]; total: number; language: Language }) {
+ const t = texts[language];
+ const kind = strengthKind(total);
+ const k = fortes[0];
+ if (!kind || k === undefined) return null;
+ const plusieurs = fortes.length > 1;
+ const tag = kind === 'appui' ? (plusieurs ? t.strength.appuiPlusieurs : t.strength.appui) : (plusieurs ? t.strength.solidePlusieurs : t.strength.solide);
+ return <div className="card result-strength"><p className="tag">{tag}</p>
+  {plusieurs
+   ? <ul className="plain strength-list" role="list">{fortes.map(i => <li key={i}>{t.roots[i]?.n}</li>)}</ul>
+   : <><h2>{t.roots[k]?.n}</h2><p className="quote">{t.quote(t.roots[k]?.p ?? '')}</p><p className="src">{t.quoteSource}</p></>}
+  <p className="muted">{t.summary}</p>
+ </div>;
 }
 function RootChoices({ indices, chosenRoot, onChoose, language }: { indices: number[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language }) {
  const t = texts[language];
@@ -75,6 +92,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
      {needsChoice && <><p>{message}</p><RootChoices language={language} indices={indices} chosenRoot={chosenRoot} onChoose={onChoose} /></>}
      {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} />}
     {root && <div className="card action-card result-action"><p className="tag">{t.firstAction}</p><div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
+    {root && !r.same && !allSupport && <StrengthCard language={language} fortes={r.fortes} total={Math.max(...r.t)} />}
     {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a>
       {/* Accord du 15/10/2026 : le résultat mène aussi à l'espace du site ; en anglais depuis le 18/10/2026 (page de connexion bilingue). */}
       <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion${language === 'en' ? '?lang=en' : ''}`}>{t.espaceBouton}</a></div>
@@ -109,15 +127,16 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  const question = useRef<HTMLParagraphElement>(null);
  const title = useRef<HTMLHeadingElement>(null);
  const focusNext = useRef(false);
- const visitRecorded = useRef(false);
+ const visitRecorded = useRef(new Set<Language>());
  const savedResult = useRef<Promise<string | null> | null>(null);
  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
- // Une ouverture comptée par chargement de la page.
+ // Une ouverture comptée par chargement de la page et par langue affichée : passer au lien « English »
+ // compte aussi une visite en anglais, pour que les tests terminés en anglais aient leurs visites.
  useEffect(() => {
-  if (visitRecorded.current) return;
-  visitRecorded.current = true;
+  if (visitRecorded.current.has(language)) return;
+  visitRecorded.current.add(language);
   void recordVisit(source, language);
- }, []);
+ }, [language]);
  // Un enregistrement par test terminé.
  useEffect(() => {
   if (screen !== 'result' || savedResult.current) return;

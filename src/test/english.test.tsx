@@ -64,7 +64,8 @@ describe('English test with unchanged rules', () => {
     render(<Index language="en" />);
     finish(totals);
     expect(screen.queryAllByRole('radio')).toHaveLength(count);
-    const rows = screen.getAllByRole('listitem');
+    const rows = within(screen.getByText('Your 7 roots').closest('.card') as HTMLElement).getAllByRole('listitem');
+    expect(rows).toHaveLength(7);
     rows.forEach((row, i) => expect(within(row).getByText(`${totals[i]} / 15`)).toBeVisible());
     expect(screen.queryByText('Your first action') !== null).toBe(count === 0);
     expect(compute(totals.flatMap(total => { const n = Math.floor(total/3); return [n,n,total-2*n]; }))?.t).toEqual(totals);
