@@ -25,7 +25,7 @@ it.each(['fr', 'en'] as const)('enregistre sous la version réellement affichée
   expect(rpc).toHaveBeenCalledWith('submit_test_result_versioned', {
     p_langue: langue, p_reponses: Array(21).fill(3), p_source: 'tt', p_version: TEST_VERSIONS[langue],
   });
-  expect(TEST_VERSIONS[langue]).toBe(langue === 'fr' ? 2 : 1);
+  expect(TEST_VERSIONS[langue]).toBe(langue === 'fr' ? 3 : 2);
 });
 
 it('ne réattribue pas une V2 à une ancienne version si le serveur refuse', async () => {
@@ -33,4 +33,15 @@ it('ne réattribue pas une V2 à une ancienne version si le serveur refuse', asy
   rpc.mockResolvedValue({ data: null, error: { message: 'Version indisponible' } });
   expect(await submitResult(Array(21).fill(3), null, 'fr')).toBeNull();
   expect(rpc).toHaveBeenCalledTimes(1);
+});
+
+it.each([
+  ['fr', 1, 'Je consulte Dieu avant de prendre des décisions professionnelles importantes.'],
+  ['fr', 6, 'Est-ce que je travaille avec la même qualité quand mon patron n\'est pas là ?'],
+  ['en', 1, 'I consult God before making important professional decisions.'],
+  ['en', 6, 'Do I work with the same quality when my boss is not there?'],
+  ['en', 12, 'I check on a lonely person or someone in difficulty and offer help suited to my means.'],
+] as const)('questions décidées le 19/10/2026 (%s, question %i + 1)', async (langue, index, texte) => {
+  const { texts } = await import('@/lib/test-texts');
+  expect(texts[langue].questions[index]).toBe(texte);
 });

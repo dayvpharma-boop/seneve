@@ -9,12 +9,12 @@ const frenchRoots = [
 ];
 const frenchQuestions = [
  "Je commence chaque journée par un temps de prière avant toute autre activité.",
- "Je consulte Dieu avant de prendre des décisions importantes.",
+ "Je consulte Dieu avant de prendre des décisions professionnelles importantes.",
  "Ma relation avec Dieu ne dépend pas de ma situation financière du moment.",
  "Ma dîme est la première dépense que je règle dès que je reçois un revenu.",
  "Je donne avec joie et non par obligation ou par peur.",
  "Quand je donne, je le fais avec confiance plutôt que sous la pression de la peur.",
- "Est-ce que je travaille avec la même qualité quand personne ne me regarde ?",
+ "Est-ce que je travaille avec la même qualité quand mon patron n'est pas là ?",
  "Dans mes activités quotidiennes, je choisis l’honnêteté, même lorsque personne ne peut vérifier.",
  "Je pose des démarches concrètes pour avancer, sans attendre que les occasions viennent seules.",
  "Est-ce que je prie avec la même ferveur dans l'abondance que dans le manque ?",
@@ -32,8 +32,8 @@ const frenchQuestions = [
 ];
 
 export type Language = 'fr' | 'en';
-/** Version du questionnaire réellement affiché ; l'anglais conserve les formulations validées en V1. */
-export const TEST_VERSIONS: Record<Language, number> = { fr: 2, en: 1 };
+/** Version du questionnaire réellement affiché (FR V3 et EN V2 du 19/10/2026 : questions 2 et 7 reprises du livre, question 13 anglaise adaptée comme en français). */
+export const TEST_VERSIONS: Record<Language, number> = { fr: 3, en: 2 };
 export function languageFrom(value: unknown): Language { return value === 'en' ? 'en' : 'fr'; }
 const englishRoots = [
  {n:"Kingdom First", p:"Seek the King, and the miracles will return to their rightful place.", a:"Begin your day with 15 minutes of silence before your phone. Read Matthew 6:25-34.", j:1},
@@ -46,18 +46,18 @@ const englishRoots = [
 ];
 const englishQuestions = [
  "I begin each day with a time of prayer before any other activity.",
- "I consult God before making important decisions.",
+ "I consult God before making important professional decisions.",
  "My relationship with God does not depend on my financial situation of the moment.",
  "My tithe is the first expense I settle as soon as I receive income.",
  "I give with joy and not out of obligation or fear.",
  "I believe that God can protect and multiply my resources.",
- "Do I work with the same quality when no one is watching?",
+ "Do I work with the same quality when my boss is not there?",
  "Is my conscience clear of any dishonest practice at work?",
  "Do I believe that God can open doors my diplomas cannot open?",
  "Do I pray with the same fervor in abundance as in lack?",
  "Can I sincerely rejoice when a brother prospers more than I do?",
  "Does my life reflect an intentional simplicity?",
- "Do I have in my circle a widow or a lonely person whom I visit regularly?",
+ "I check on a lonely person or someone in difficulty and offer help suited to my means.",
  "Do I give to the poor in a concrete and regular way?",
  "Do I give in secret, without seeking recognition?",
  "Do I keep an expense notebook that lets me see where my money goes?",
