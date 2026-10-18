@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { langueMemorisee } from '@/lib/langue';
 import { BarreNav } from '@/components/BarreNav';
 import { Icone } from '@/components/Icone';
 import { eventIdFor, pickDefault, placerOngletActif } from '@/lib/espace';
@@ -68,8 +69,8 @@ export function Coach() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   const enrollment = data ? (data.enrollments.find(x => x.enrollment_id === chosen) ?? data.defaut) : null;
-  const T = coachTextes(enrollment?.langue ?? data?.langue);
-  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = (enrollment?.langue ?? data?.langue) === 'en' ? 'en' : 'fr'; }, [T, enrollment?.langue, data?.langue]);
+  const T = coachTextes(enrollment?.langue ?? data?.langue ?? langueMemorisee());
+  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = (enrollment?.langue ?? data?.langue ?? langueMemorisee()) === 'en' ? 'en' : 'fr'; }, [T, enrollment?.langue, data?.langue]);
 
   // Tant qu'une réponse est attendue, on relit la conversation toutes les 4 secondes.
   const attente = data ? enAttente(data.messages) : false;
@@ -109,8 +110,8 @@ export function Coach() {
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
   // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026).
   const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titre}</h1></div></header>;
-  if (failed && !data) return <main className="wrap avec-nav">{tete}{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enrollment?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={enrollment?.langue} /></main>;
+  if (failed && !data) return <main className="wrap avec-nav">{tete}{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enrollment?.langue ?? langueMemorisee()} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={enrollment?.langue ?? langueMemorisee()} /></main>;
 
   const epuise = data.restants <= 0;
   const trop = texte.trim().length > COACH_MAX;

@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { siteUrl, supabase } from '@/lib/supabase';
 import { Icone } from '@/components/Icone';
+import { memoriserLangue } from '@/lib/langue';
 
 const ERREURS = {
   fr: {
@@ -51,7 +52,7 @@ const TEXTES = {
     envoye: 'We have sent you an email. Open it and click the link to confirm your address, then come back to sign in.',
     oubliSansEmail: 'Enter your email above, then tap “Forgot your password?”.',
     oubliEnvoye: 'If an account exists for this address, we have sent you an email to choose a new password.',
-    age: 'By creating an account, you confirm that you are at least 18 years old. ', confidentialite: 'How we protect your data (in French)',
+    age: 'By creating an account, you confirm that you are at least 18 years old. ', confidentialite: 'How we protect your data',
     autreLangue: 'Français', titrePage: 'Your space — SÉNEVÉ',
   },
 };
@@ -80,10 +81,11 @@ export function Connexion() {
       if (tab === 'signup') {
         const { data, error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: siteUrl('espace'), data: { prenom: prenom.trim() } },
+          options: { emailRedirectTo: siteUrl('espace'), data: { prenom: prenom.trim(), langue } },
         });
         if (error) { setError(authError(error.message, langue)); return; }
         if (data.user && data.user.identities?.length === 0) { setError(ERREURS[langue].deja); return; }
+        memoriserLangue(langue);
         if (!data.session) { setInfo(T.envoye); return; }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -131,6 +133,6 @@ export function Connexion() {
       <button className="btn moment-btn" type="submit" disabled={busy}>{busy ? T.patienter : tab === 'signup' ? T.creer : T.connecter}</button>
       {tab === 'signin' && <button type="button" className="link connexion-oubli" onClick={forgot}>{T.oubli}</button>}
     </form>
-    <p className="muted connexion-legal">{tab === 'signup' ? T.age : ''}<Link className="link-inline" to="/confidentialite">{T.confidentialite}</Link></p>
+    <p className="muted connexion-legal">{tab === 'signup' ? T.age : ''}<Link className="link-inline" to={langue === 'en' ? '/confidentialite?lang=en' : '/confidentialite'}>{T.confidentialite}</Link></p>
   </main>;
 }

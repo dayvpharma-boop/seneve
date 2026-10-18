@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { langueMemorisee } from '@/lib/langue';
 import { BarreNav } from '@/components/BarreNav';
 import { dateDuJour, pickDefault, placerOngletActif } from '@/lib/espace';
 import { Icone } from '@/components/Icone';
@@ -73,11 +74,11 @@ export function Progres() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   const enr = data ? (data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0] ?? null) : null;
-  const T = progresTextes(enr?.langue ?? data?.langue);
-  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = enr?.langue === 'en' ? 'en' : 'fr'; }, [T, enr?.langue]);
+  const T = progresTextes(enr?.langue ?? data?.langue ?? langueMemorisee());
+  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = (enr?.langue ?? data?.langue ?? langueMemorisee()) === 'en' ? 'en' : 'fr'; }, [T, enr?.langue, data?.langue]);
 
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  const langue = enr?.langue ?? data?.langue;
+  const langue = enr?.langue ?? data?.langue ?? langueMemorisee();
   // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026) : marque puis titre.
   const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titre}</h1></div></header>;
   if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} /></main>;

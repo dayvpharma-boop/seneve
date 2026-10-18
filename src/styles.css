@@ -370,7 +370,7 @@ details summary { cursor:pointer; padding:6px 0; }
 .connexion-intro { color:var(--muted); font-size:16px; margin:0 0 16px; }
 .choix-double { display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; margin:0 0 16px; border-radius:16px; background:var(--chip); }
 .choix-double button { min-height:48px; border:0; border-radius:12px; background:transparent; color:var(--on-chip); font-weight:600; font-size:15px; }
-.choix-double button[aria-selected="true"] { background:var(--primary-fill); color:var(--on-primary); box-shadow:var(--shadow-soft); }
+.choix-double button[aria-selected="true"], .choix-double button[aria-pressed="true"] { background:var(--primary-fill); color:var(--on-primary); box-shadow:var(--shadow-soft); }
 .connexion-form { border-radius:20px; box-shadow:var(--shadow-soft); }
 .connexion-form .field { font-size:15px; font-weight:600; }
 .connexion-form .field input, .champ-mdp input { font-weight:400; background:var(--surface); border-radius:12px; min-height:52px; }

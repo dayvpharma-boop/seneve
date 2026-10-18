@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { langueMemorisee } from '@/lib/langue';
 import { BarreNav } from '@/components/BarreNav';
 import { Icone } from '@/components/Icone';
 import { eventIdFor } from '@/lib/espace';
@@ -76,8 +77,10 @@ export function Journal() {
     champ.current.focus({ preventScroll: true });
   }, [pret, ecrire, formOuvert]);
 
-  const T = journalTextes(data?.langue);
-  useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = data?.langue === 'en' ? 'en' : 'fr'; }, [T, data?.langue]);
+  // Avant la lecture du compte : la dernière langue connue sur cet appareil.
+  const L = data?.langue ?? langueMemorisee();
+  const T = journalTextes(L);
+  useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = L === 'en' ? 'en' : 'fr'; }, [T, L]);
 
   function change(v: string) { setTexte(v); setSaved(false); draft.write(draftKey, v); }
 
@@ -107,8 +110,8 @@ export function Journal() {
   const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titreJournal}</h1></div></header>;
   const intro = <p className="journal-intro"><Icone nom="cadenas" taille={18} />{T.introJournal}</p>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} /></main>;
+  if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={L} /></main>;
+  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={L} /></main>;
 
   const trop = texte.trim().length > NOTE_MAX;
   return <main className="wrap avec-nav">

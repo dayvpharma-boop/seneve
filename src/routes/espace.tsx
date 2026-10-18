@@ -21,6 +21,8 @@ import { Icone } from '@/components/Icone';
 import { Scene, type Periode } from '@/components/Scene';
 import { BarreNav } from '@/components/BarreNav';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
+import { choisirLangue, enregistrerLangueFiche, langueDesMenus, langueMemorisee, memoriserLangue, type Langue } from '@/lib/langue';
+import { LangueCard } from '@/components/LangueCard';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
@@ -29,9 +31,26 @@ type Activity = { activity_id: string; content_id: string; type_activite: 'actio
 type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
 // heures : horaires des moments du jour (message 1, 2, 3), lus dans le programme publié ; absents = tout visible.
 type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
-type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[] };
+// langue : langue des menus (choix du participant) ; chaque parcours garde la sienne pour ses textes.
+type Data = { prenom: string; langue: Langue; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[] };
 
-const LOAD_ERROR = 'Impossible de charger ta journée pour le moment.';
+// Textes du cadre de l'espace (en-tête, accueil, bas de page), dans la langue des menus.
+const CADRE = {
+  fr: {
+    titrePage: 'Mon espace — SÉNEVÉ', bonjour: (p: string) => p ? `Bonjour ${p}` : 'Bonjour', chargement: 'Chargement…',
+    erreur: 'Impossible de charger ta journée pour le moment.', reessayer: 'Réessayer', mesParcours: 'Mes parcours',
+    confidentialite: 'Confidentialité', deconnexion: 'Se déconnecter', unInstant: 'Un instant…',
+    decouverte: 'Découverte 7 jours', decouverteTexte: 'Un parcours gratuit de 7 jours, à ton rythme, à partir du livre « Arrête de mendier des miracles ».',
+    commencer: 'Commencer la Découverte', autreTexte: 'A free 7-day journey based on the book « Stop Begging for Miracles ».', autreBouton: 'Start in English', autreLangue: 'en' as Langue,
+  },
+  en: {
+    titrePage: 'My space — SÉNEVÉ', bonjour: (p: string) => p ? `Hello ${p}` : 'Hello', chargement: 'Loading…',
+    erreur: 'Your day could not be loaded right now.', reessayer: 'Try again', mesParcours: 'My journeys',
+    confidentialite: 'Privacy', deconnexion: 'Sign out', unInstant: 'Just a moment…',
+    decouverte: '7-day Discovery', decouverteTexte: 'A free 7-day journey, at your own pace, based on the book « Stop Begging for Miracles ».',
+    commencer: 'Start the Discovery', autreTexte: 'Un parcours gratuit de 7 jours à partir du livre « Arrête de mendier des miracles ».', autreBouton: 'Commencer en français', autreLangue: 'fr' as Langue,
+  },
+} as const;
 
 
 /** Charge les données du participant connecté. Renvoie null s'il n'y a pas de session. */
@@ -46,7 +65,7 @@ async function load(): Promise<Data | null> {
   // la synchronisation n8n (toutes les 15 minutes), qui reste en secours. Une erreur ici ne bloque jamais l'espace.
   await Promise.resolve(supabase.rpc('claim_my_purchases')).catch(() => undefined);
   const [p, e] = await Promise.all([
-    supabase.from('participants').select('prenom').maybeSingle(),
+    supabase.from('participants').select('prenom, langue').maybeSingle(),
     // Un parcours arrêté n'est pas affiché ; son historique reste conservé en base.
     supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').neq('etat', 'annulee'),
   ]);
@@ -54,7 +73,11 @@ async function load(): Promise<Data | null> {
   if (e.error) throw e.error;
   const prenom = (p.data?.prenom as string | undefined) ?? meta;
   const enrollments = (e.data ?? []) as Enrollment[];
-  if (!enrollments.length) return { prenom, parcours: [], contents: [], activities: [], states: [] };
+  // Langue des menus : choix du compte, sinon celle des parcours, sinon la fiche. La fiche est mise à jour si besoin.
+  const langue = langueDesMenus(user.user_metadata?.['langue'], enrollments.map(x => x.langue), p.data?.langue);
+  if (langue !== (p.data?.langue ?? 'fr')) void enregistrerLangueFiche(langue);
+  memoriserLangue(langue);
+  if (!enrollments.length) return { prenom, langue, parcours: [], contents: [], activities: [], states: [] };
   const progIds = [...new Set(enrollments.map(x => x.programme_id))];
   const [pr, c] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours, heures_messages').in('programme_id', progIds),
@@ -78,7 +101,7 @@ async function load(): Promise<Data | null> {
   ]);
   if (a.error) throw a.error;
   if (st.error) throw st.error;
-  return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
+  return { prenom, langue, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
 }
 
 function formatDate(iso: string | null, locale = 'fr-FR') {
@@ -151,7 +174,10 @@ export function Espace() {
       setEquipe(Boolean(d && (d.admin || d.roles?.length)));
     }).catch(() => undefined);
   }, []);
-  useEffect(() => { document.title = 'Mon espace — SÉNEVÉ'; document.documentElement.lang = 'fr'; }, []);
+  // Langue du cadre : celle du parcours affiché ; sans parcours, la langue des menus du participant.
+  const [langueVue, setLangueVue] = useState<Langue>(() => langueMemorisee());
+  const C = CADRE[langueVue];
+  useEffect(() => { document.title = C.titrePage; document.documentElement.lang = langueVue; }, [C, langueVue]);
   // Page d'un moment : on part du haut, le titre reçoit le focus (lecteurs d'écran).
   useEffect(() => {
     if (!momentParam || !data) return;
@@ -165,8 +191,9 @@ export function Espace() {
     navigate('/connexion', { replace: true });
   }
 
-  async function start(langue: 'fr' | 'en') {
+  async function start(langue: Langue) {
     setStarting(true);
+    if (langue !== data?.langue) await choisirLangue(langue);
     const { error } = await supabase.rpc('start_discovery', { p_langue: langue });
     setStarting(false);
     if (error) { setFailed(true); return; }
@@ -176,35 +203,42 @@ export function Espace() {
   // Écran « Aujourd'hui » validé le 15/10/2026 : salutation et initiale en haut, barre du bas, « Se déconnecter » en bas de page.
   const initiale = (data?.prenom ?? '').trim().charAt(0).toUpperCase();
   const header = <header className="today-head">
-    <div><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}</div>
+    <div><p className="brand">SÉNEVÉ</p>{data && <h1>{C.bonjour(data.prenom)}</h1>}</div>
     {initiale && <span className="avatar" aria-hidden="true">{initiale}</span>}
   </header>;
-  const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to="/confidentialite">Confidentialité</Link><button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
+  const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to={langueVue === 'en' ? '/confidentialite?lang=en' : '/confidentialite'}>{C.confidentialite}</Link><button type="button" className="link" onClick={signOut}>{C.deconnexion}</button></div>;
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
   const reglages = (langue: string, avecEmail: boolean) => <section className="reglages" aria-label={textes(langue).reglages}>
     <p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>
     {avecEmail && <EmailMatinCard langue={langue} />}
-    <WhatsAppLink />
+    <WhatsAppLink langue={langue} />
     <CodePlaceCard langue={langue} onOuvert={refresh} />
+    {data && <LangueCard vue={langue} choix={data.langue === 'en' ? 'en' : 'fr'} avecParcours={data.parcours.length > 0} onChange={async l => { await choisirLangue(l); await refresh(); }} />}
   </section>;
-  const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
+  const errorCard = <div className="card"><p role="alert">{C.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{C.reessayer}</button></div>;
   const page = (langue: string, contenu: ReactNode, classe = '') => <main className={`wrap avec-nav ${classe}`.trim()}>{contenu}<BarreNav langue={langue} /></main>;
 
-  if (failed) return page('fr', <>{header}{errorCard}{footer}</>);
-  if (!data) return page('fr', <>{header}<p className="muted">Chargement…</p>{footer}</>);
+  if (failed) return page(langueVue, <>{header}{errorCard}{footer}</>);
+  if (!data) return page(langueVue, <>{header}<p className="muted">{C.chargement}</p>{footer}</>);
 
-  if (!data.parcours.length) return page('fr', <>{header}
-    <div className="card"><p className="tag">Découverte 7 jours</p>
-      <p>Un parcours gratuit de 7 jours, à ton rythme, à partir du livre « Arrête de mendier des miracles ».</p>
-      <button type="button" className="btn" disabled={starting} onClick={() => void start('fr')}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
-      <p className="muted lang-alt" lang="en">A free 7-day journey based on the book « Stop Begging for Miracles ».</p>
-      <button type="button" className="btn-secondaire" lang="en" disabled={starting} onClick={() => void start('en')}>Start in English</button>
-    </div>{reglages('fr', false)}{footer}</>);
+  // Copie hors connexion d'avant le 18/10/2026 : pas de langue enregistrée, français.
+  const langueMenus: Langue = data.langue === 'en' ? 'en' : 'fr';
+  if (!data.parcours.length) {
+    if (langueVue !== langueMenus) setLangueVue(langueMenus);
+    return page(langueMenus, <>{header}
+    <div className="card"><p className="tag">{C.decouverte}</p>
+      <p>{C.decouverteTexte}</p>
+      <button type="button" className="btn" disabled={starting} onClick={() => void start(langueVue)}>{starting ? C.unInstant : C.commencer}</button>
+      <p className="muted lang-alt" lang={C.autreLangue}>{C.autreTexte}</p>
+      <button type="button" className="btn-secondaire" lang={C.autreLangue} disabled={starting} onClick={() => void start(C.autreLangue)}>{C.autreBouton}</button>
+    </div>{reglages(langueMenus, false)}{footer}</>);
+  }
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
   const T = textes(enr.langue);
-  const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label="Mes parcours">
+  if (langueVue !== (enr.langue === 'en' ? 'en' : 'fr')) setLangueVue(enr.langue === 'en' ? 'en' : 'fr');
+  const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={C.mesParcours}>
     {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}>{x.nom}</button>)}
   </div>;
 

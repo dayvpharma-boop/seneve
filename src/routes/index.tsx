@@ -165,7 +165,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    <div className="home-start">
     <PrototypeButton className="btn" id="start" onClick={() => setScreen('quiz')}>{t.start}</PrototypeButton>
    </div>
-   <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite`}>{language === 'en' ? 'Privacy policy (in French)' : 'Confidentialité'}</a></p>
+   <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite${language === 'en' ? '?lang=en' : ''}`}>{language === 'en' ? 'Privacy policy' : 'Confidentialité'}</a></p>
   </section>
   <section id="s-quiz" hidden={screen !== 'quiz'}>
    <div className="count"><span id="num" className="count-main">{t.questionCount(i+1)}</span><span id="racine">{t.rootCount(Math.floor(i/3)+1)}</span></div>
