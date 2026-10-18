@@ -101,7 +101,7 @@ export function PilotageAdmin() {
 
       <h3>Vue d’ensemble</h3>
       <dl className="pilotage-stats">{vue.map(([label, value, evo]) => <div key={label}><dt>{label}</dt><dd>{value}</dd>{evo && <p className="pilotage-evo">{evo}</p>}</div>)}</dl>
-      <p className="muted">Actif = au moins une action déclarée (réalisée, en partie ou aide demandée) sur la période. Les parcours sont comptés par inscription, les actifs par personne. « Terminé » décrit le statut du parcours, pas la réalisation de toutes ses actions.</p>
+      <p className="muted">Actif = au moins une action déclarée (préparée, réalisée, en partie ou aide demandée) sur la période. Les parcours sont comptés par inscription, les actifs par personne. « Terminé » décrit le statut du parcours, pas la réalisation de toutes ses actions.</p>
 
       <h3>Parcours d’entrée · {p} jours</h3>
       <dl className="pilotage-stats">{entree.map(([label, value, avant, part]) => <div key={label}><dt>{label}</dt><dd>{value}</dd>

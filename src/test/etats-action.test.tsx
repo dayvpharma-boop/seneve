@@ -46,11 +46,31 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 
 describe('Choix sous l’action du jour', () => {
-  it('trois choix proposés tant que rien n’est enregistré', async () => {
+  it('quatre choix proposés tant que rien n’est enregistré', async () => {
     ouvrir();
     expect(await screen.findByRole('button', { name: "J'ai réalisé cette action" })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "Je l'ai préparée" })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "Je l'ai faite en partie" })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "J'ai besoin d'aide" })).toBeInTheDocument();
+  });
+
+  it('« préparée » : enregistré, pas compté comme réalisé, les autres choix restent', async () => {
+    reponse = () => ({ data: { etat: 'preparee', aide_demandee: false }, error: null });
+    ouvrir();
+    fireEvent.click(await screen.findByRole('button', { name: "Je l'ai préparée" }));
+    expect(await screen.findByText(/tu l’as préparée. Elle n’est pas encore comptée comme réalisée/)).toBeInTheDocument();
+    expect(appels).toEqual([expect.objectContaining({ etat: 'preparee' })]);
+    expect(screen.queryByRole('button', { name: "Je l'ai préparée" })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Action réalisée/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "J'ai réalisé cette action" })).toBeEnabled();
+    expect(screen.getByRole('button', { name: "Je l'ai faite en partie" })).toBeEnabled();
+  });
+
+  it('« préparée » après une action déjà faite en partie : l’état plus avancé est gardé', async () => {
+    tables['activity_state'] = [{ enrollment_id: 'E7', activity_id: 'A2', etat: 'partielle', aide_demandee: false, realisee_le: null }];
+    ouvrir();
+    expect(await screen.findByText(/tu l’as faite en partie/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: "Je l'ai préparée" })).not.toBeInTheDocument();
   });
 
   it('« en partie » : enregistré, l’action reste à terminer', async () => {

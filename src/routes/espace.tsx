@@ -381,7 +381,7 @@ export function Espace() {
   </>);
 }
 
-type Choix = 'realisee' | 'partielle' | 'aide_demandee';
+type Choix = 'realisee' | 'partielle' | 'preparee' | 'aide_demandee';
 
 function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr', titre = true, onEnregistre }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string; titre?: boolean; onEnregistre?: (st: State) => void }) {
   const T = textes(langue);
@@ -401,7 +401,10 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
     try {
       const { data, error } = await supabase.rpc('record_progress', { p_enrollment_id: enrollmentId, p_activity_id: activity.activity_id, p_client_event_id: id, p_etat: choix, p_canal: 'web' });
       const r = data as { etat?: string; aide_demandee?: boolean } | null;
-      const ok = !error && r && (choix === 'aide_demandee' ? r.aide_demandee === true : choix === 'realisee' ? r.etat === 'realisee' : (r.etat === 'partielle' || r.etat === 'realisee'));
+      const ok = !error && r && (choix === 'aide_demandee' ? r.aide_demandee === true
+        : choix === 'realisee' ? r.etat === 'realisee'
+        : choix === 'partielle' ? (r.etat === 'partielle' || r.etat === 'realisee')
+        : (r.etat === 'preparee' || r.etat === 'partielle' || r.etat === 'realisee'));
       if (!ok || !r) throw error ?? new Error('bad');
       eventIds.current[choix] = null;
       // L'état affiché est celui renvoyé par la base (un état déjà plus avancé n'est jamais rétrogradé).
@@ -418,13 +421,16 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
   return <div className="card action-card">{titre && <p className="tag">{T.action}</p>}
     <div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{activity.consigne}</p></div>
     {realisee && <p className="success action-faite" role="status"><Icone nom="coche" taille={20} />{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>}
+    {!realisee && etat === 'preparee' && <p className="success" role="status">{T.prepareeNotee}</p>}
     {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
     {!realisee && aide && <div className="aide-notee" role="status"><p>{T.aideNotee}</p>
       <div className="link-row"><Link className="link" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link><Link className="link" to="/coach">{T.demanderCoach}</Link></div></div>}
     {!realisee && !readOnly && <>
       <button type="button" className="btn btn-or action-btn" disabled={pending !== null} onClick={() => void record('realisee')}><Icone nom="coche" taille={20} />{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
       <div className="choix-row">
-        {etat !== 'partielle' && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('partielle')}>{pending === 'partielle' ? T.enregistrement : T.boutonPartie}</button>}
+        {/* « Préparée » ne compte jamais comme réalisée ; proposé seulement tant que rien de plus avancé n'est noté. */}
+        {etat === 'non_commencee' && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('preparee')}>{pending === 'preparee' ? T.enregistrement : T.boutonPrepa}</button>}
+        {etat !== 'partielle' &&<button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('partielle')}>{pending === 'partielle' ? T.enregistrement : T.boutonPartie}</button>}
         {!aide && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('aide_demandee')}>{pending === 'aide_demandee' ? T.enregistrement : T.boutonAide}</button>}
       </div>
       {error && <p className="error" role="alert">{T.erreur}</p>}
