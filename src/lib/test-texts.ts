@@ -13,18 +13,18 @@ const frenchQuestions = [
  "Ma relation avec Dieu ne dépend pas de ma situation financière du moment.",
  "Ma dîme est la première dépense que je règle dès que je reçois un revenu.",
  "Je donne avec joie et non par obligation ou par peur.",
- "Je crois que Dieu peut protéger et multiplier mes ressources.",
+ "Quand je donne, je le fais avec confiance plutôt que sous la pression de la peur.",
  "Est-ce que je travaille avec la même qualité quand personne ne me regarde ?",
- "Ma conscience est-elle nette de toute pratique malhonnête au travail ?",
- "Est-ce que je crois que Dieu peut ouvrir des portes que mes diplômes ne peuvent pas ouvrir ?",
+ "Dans mes activités quotidiennes, je choisis l’honnêteté, même lorsque personne ne peut vérifier.",
+ "Je pose des démarches concrètes pour avancer, sans attendre que les occasions viennent seules.",
  "Est-ce que je prie avec la même ferveur dans l'abondance que dans le manque ?",
  "Puis-je me réjouir sincèrement quand un frère prospère plus que moi ?",
  "Est-ce que ma vie reflète une simplicité intentionnelle ?",
- "Est-ce que j'ai dans mon entourage une veuve ou une personne seule que je visite régulièrement ?",
+ "Je prends des nouvelles d’une personne seule ou en difficulté et je lui apporte une aide adaptée à mes possibilités.",
  "Est-ce que je donne aux pauvres de manière concrète et régulière ?",
  "Est-ce que je donne dans le secret, sans chercher la reconnaissance ?",
  "Est-ce que je tiens un carnet de dépenses qui me permet de voir où va mon argent ?",
- "Est-ce que je mets régulièrement de l'argent de côté en épargne ?",
+ "Je tiens mes petits engagements du quotidien, même lorsqu’ils semblent peu importants.",
  "Est-ce que j'accomplis les petites tâches avec le même sérieux que les grandes ?",
  "Est-ce que je reconnais la différence entre la pression de l'urgence et la paix de l'Esprit ?",
  "Est-ce que j'obéis aux petites impressions de l'Esprit au quotidien ?",
@@ -32,6 +32,8 @@ const frenchQuestions = [
 ];
 
 export type Language = 'fr' | 'en';
+/** Version du questionnaire réellement affiché ; l'anglais conserve les formulations validées en V1. */
+export const TEST_VERSIONS: Record<Language, number> = { fr: 2, en: 1 };
 export function languageFrom(value: unknown): Language { return value === 'en' ? 'en' : 'fr'; }
 const englishRoots = [
  {n:"Kingdom First", p:"Seek the King, and the miracles will return to their rightful place.", a:"Begin your day with 15 minutes of silence before your phone. Read Matthew 6:25-34.", j:1},
@@ -76,7 +78,8 @@ export const texts = {
   reassurance: ['Sans compte', '21 questions', 'Retour possible'], tapHint: 'Touche un chiffre : la question suivante s’affiche.',
   start: 'Commencer', languageLink: 'English', rootCount: (x:number) => `Racine ${x} sur 7`, questionCount: (x:number) => `Question ${x} sur 21`,
   never: '1 = jamais', always: '5 = toujours', answerGroup: 'Ta réponse, de 1 jamais à 5 toujours',
-  answerLabel: (n:number) => `${n} sur 5${n===1 ? ' (jamais)' : n===5 ? ' (toujours)' : ''}`,
+  answerOptions: ['Jamais', 'Rarement', 'Parfois', 'Souvent', 'Toujours'],
+  answerLabel: (n:number) => `${n} sur 5 (${['jamais', 'rarement', 'parfois', 'souvent', 'toujours'][n - 1]})`,
   back: '← Question précédente', resultBrand: 'Ton résultat', resultTitle: "Tes racines aujourd'hui", rootsTitle: 'Tes 7 racines', summary: 'Selon tes réponses d’aujourd’hui',
   categories: ['Racine à développer', 'Racine à consolider', 'Point d’appui à entretenir'],
   allOne: 'Les sept racines sont à développer selon tes réponses. Choisis celle par laquelle tu souhaites commencer.',

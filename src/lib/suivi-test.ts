@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Language } from './test-texts';
+import { TEST_VERSIONS, type Language } from './test-texts';
 
 // Suivi anonyme du Test des 7 Racines : ouvertures par source et tests terminés.
 // Aucune donnée personnelle. Une panne réseau ne bloque jamais le test : les erreurs sont ignorées.
@@ -19,7 +19,7 @@ export async function recordVisit(source: string | null, language: Language): Pr
 /** Enregistre un test terminé et renvoie son identifiant, ou null si l'envoi a échoué. */
 export async function submitResult(answers: number[], source: string | null, language: Language): Promise<string | null> {
   try {
-    const { data, error } = await supabase.rpc('submit_test_result', { p_langue: language, p_reponses: answers, p_source: source });
+    const { data, error } = await supabase.rpc('submit_test_result_versioned', { p_langue: language, p_reponses: answers, p_source: source, p_version: TEST_VERSIONS[language] });
     if (error || !data) return null;
     const id = (data as { result_id?: unknown }).result_id;
     return typeof id === 'string' ? id : null;

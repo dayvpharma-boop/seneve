@@ -438,3 +438,6 @@ details summary { cursor:pointer; padding:6px 0; }
 .home-legal { text-align:center; margin:8px 0 0; }
 .connexion-legal { text-align:center; margin:12px 0 0; font-size:13px; }
 .link-inline { color:var(--muted); text-decoration:underline; }
+/* Libellés de fréquence du questionnaire V2 français. */
+.scale-option { display:flex; flex-direction:column; align-items:center; gap:8px; min-width:0; }
+.scale-label { font-size:clamp(10px,2.8vw,13px); color:var(--muted); line-height:1.3; text-align:center; }

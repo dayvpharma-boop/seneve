@@ -176,7 +176,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    <div className="quiz-card">
    <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
    <div className="scale" id="scale" role="group" aria-label={t.answerGroup}>
-    {[1,2,3,4,5].map(v => <PrototypeButton key={v} className="scale-button" aria-pressed={answers[i]===v} aria-label={t.answerLabel(v)} onClick={() => answer(v)}>{v}</PrototypeButton>)}
+    {[1,2,3,4,5].map(v => <div className="scale-option" key={v}><PrototypeButton className="scale-button" aria-pressed={answers[i]===v} aria-label={t.answerLabel(v)} onClick={() => answer(v)}>{v}</PrototypeButton>{'answerOptions' in t && <span className="scale-label" aria-hidden="true">{t.answerOptions[v - 1]}</span>}</div>)}
    </div>
    <div className="ends"><span>{t.never}</span><span>{t.always}</span></div>
    <p className="tap-hint">{t.tapHint}</p>
