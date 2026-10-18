@@ -55,3 +55,30 @@ describe('Connexion', () => {
     expect(appels).toHaveLength(0);
   });
 });
+
+describe('Connexion en anglais (?lang=en)', () => {
+  const ouvrirEn = () => render(<MemoryRouter initialEntries={['/connexion?lang=en']}><Connexion /></MemoryRouter>);
+  it('textes en anglais, rappel d’achat et âge minimum', () => {
+    ouvrirEn();
+    expect(screen.getByRole('heading', { level: 1, name: 'Your space' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Create an account' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByText(/same email address as for your purchase/)).toBeInTheDocument();
+    expect(screen.getByText(/at least 18 years old/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Français' })).toHaveAttribute('href', '/connexion');
+    expect(document.documentElement.lang).toBe('en');
+  });
+  it('mot de passe trop court : message en anglais, rien n’est envoyé', () => {
+    ouvrirEn();
+    fireEvent.change(screen.getByLabelText('Your first name'), { target: { value: 'Mary' } });
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'mary@example.org' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'short' } });
+    fireEvent.submit(screen.getByLabelText('Password').closest('form')!);
+    expect(screen.getByRole('alert')).toHaveTextContent('The password must contain at least 8 characters.');
+    expect(appels).toHaveLength(0);
+  });
+  it('se connecter : « Forgot your password? » proposé', () => {
+    ouvrirEn();
+    fireEvent.click(screen.getByRole('tab', { name: 'Sign in' }));
+    expect(screen.getByRole('button', { name: 'Forgot your password?' })).toBeInTheDocument();
+  });
+});

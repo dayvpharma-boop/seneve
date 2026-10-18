@@ -74,7 +74,7 @@ describe('Résultat « Sentier »', () => {
     }
     expect(screen.getByText('Your 7 roots')).toBeVisible();
     expect(screen.queryByText('Tes 7 racines')).not.toBeInTheDocument();
-    // La page de connexion n'existe qu'en français : pas de lien vers l'espace sur le résultat anglais.
-    expect(screen.queryByRole('link', { name: 'Create my space' })).not.toBeInTheDocument();
+    // Depuis le 18/10/2026, la page de connexion existe en anglais : le résultat anglais y mène.
+    expect(screen.getByRole('link', { name: 'Create my space' })).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion?lang=en`);
   });
 });
