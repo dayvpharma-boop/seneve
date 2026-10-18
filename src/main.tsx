@@ -11,6 +11,7 @@ import { Aide } from '@/routes/aide';
 import { Admin } from '@/routes/admin';
 import { Coach } from '@/routes/coach';
 import { Progres } from '@/routes/progres';
+import { Confidentialite } from '@/routes/confidentialite';
 import { enregistrerServiceWorker } from '@/lib/hors-ligne';
 
 enregistrerServiceWorker();
@@ -33,6 +34,7 @@ if (root) createRoot(root).render(
         <Route path="/admin" element={<Admin />} />
         <Route path="/coach" element={<Coach />} />
         <Route path="/progres" element={<Progres />} />
+        <Route path="/confidentialite" element={<Confidentialite />} />
         <Route path="/nouveau-mot-de-passe" element={<NewPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

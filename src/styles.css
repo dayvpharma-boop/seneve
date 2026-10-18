@@ -428,3 +428,13 @@ details summary { cursor:pointer; padding:6px 0; }
 .pilotage-a-traiter ul { margin:0; padding-left:20px; }
 .pilotage-a-traiter li { padding:4px 0; }
 .pilotage-a-traiter p { margin:0; }
+
+/* Politique de confidentialité (18/10/2026) */
+.confidentialite section { margin:24px 0 8px; }
+.confidentialite h3 { font-family:Lora,serif; font-weight:600; font-size:17px; margin:0 0 6px; }
+.conf-carte p { margin:0 0 6px; }
+.conf-liste li { margin-bottom:10px; }
+.confidentialite a { color:var(--brand); }
+.home-legal { text-align:center; margin:8px 0 0; }
+.connexion-legal { text-align:center; margin:12px 0 0; font-size:13px; }
+.link-inline { color:var(--muted); text-decoration:underline; }

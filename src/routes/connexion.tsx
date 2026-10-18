@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { siteUrl, supabase } from '@/lib/supabase';
 import { Icone } from '@/components/Icone';
 
@@ -85,5 +85,6 @@ export function Connexion() {
       <button className="btn moment-btn" type="submit" disabled={busy}>{busy ? 'Un instant…' : tab === 'signup' ? 'Créer un compte' : 'Se connecter'}</button>
       {tab === 'signin' && <button type="button" className="link connexion-oubli" onClick={forgot}>Mot de passe oublié ?</button>}
     </form>
+    <p className="muted connexion-legal">{tab === 'signup' ? 'En créant un compte, tu confirmes avoir au moins 18\u00A0ans. ' : ''}<Link className="link-inline" to="/confidentialite">Comment nous protégeons tes données</Link></p>
   </main>;
 }

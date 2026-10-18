@@ -179,7 +179,7 @@ export function Espace() {
     <div><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}</div>
     {initiale && <span className="avatar" aria-hidden="true">{initiale}</span>}
   </header>;
-  const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
+  const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to="/confidentialite">Confidentialité</Link><button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
   const reglages = (langue: string, avecEmail: boolean) => <section className="reglages" aria-label={textes(langue).reglages}>
     <p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>
