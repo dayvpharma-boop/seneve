@@ -25,7 +25,7 @@
  /* Écran « Aujourd'hui » validé le 15/10/2026 (système de design SÉNEVÉ) */
  --gold-fill:#E9C77F; --on-gold:#23392F; --tile:#ECEFE6; --soft-gold:#F7EED9; --prompt-green:#E7EFE4; --prompt-gold:#F4EAD3;
  --sky-dawn:#FBEFD2; --sky-low:#F6F3E9; --sun:#E3B65C; --hill-light:#9DBFA3; --hill-deep:#4F7D63; --night:#2E4A3C; --star:#F4F0E4;
- --shadow-soft:0 4px 20px -2px rgba(35,57,47,.06); --shadow-today:0 6px 14px rgba(197,155,75,.35); --shadow-primary:0 8px 18px rgba(49,93,72,.35);
+ --shadow-soft:none; --shadow-today:none; --shadow-primary:0 8px 18px rgba(49,93,72,.35);
 }
 @media (prefers-color-scheme: dark) {
  :root {
@@ -34,7 +34,7 @@
   --control-line:#6F8E78; --chip:#2A4535; --on-chip:#F4F0E4;
   --gold-fill:#D8BC75; --on-gold:#17231B; --tile:#22392B; --soft-gold:#33352A; --prompt-green:#26402F; --prompt-gold:#3A3626;
   --sky-dawn:#3A4A3A; --sky-low:#22352A; --sun:#D8B45E; --hill-light:#4E7A5C; --hill-deep:#2C5139; --night:#16251C; --star:#F4F0E4;
-  --shadow-soft:0 4px 20px -2px rgba(0,0,0,.35); --shadow-today:0 6px 14px rgba(0,0,0,.35); --shadow-primary:0 8px 18px rgba(0,0,0,.4);
+  --shadow-soft:none; --shadow-today:none; --shadow-primary:0 8px 18px rgba(0,0,0,.4);
  }
 }
 * { box-sizing: border-box; }
@@ -54,15 +54,13 @@ body { margin:0; background:var(--background); color:var(--foreground); font-fam
 #s-home .home-note { font-size:14px; line-height:1.6; margin:16px 0 0; }
 /* Bouton « Commencer » fixé en bas sur téléphone, dans la zone du pouce ; à sa place sur ordinateur. */
 .home-start { position:sticky; bottom:0; margin:20px -16px -48px; padding:16px 16px calc(24px + env(safe-area-inset-bottom)); background:var(--background); border-top:1px solid var(--line); }
-.home-start .btn { min-height:56px; font-size:17px; box-shadow:0 7px 16px color-mix(in srgb,var(--brand) 18%,transparent); }
+.home-start .btn { min-height:56px; font-size:17px; }
 @media (min-width:640px) { .home-start { position:static; margin:24px 0 0; padding:0; border-top:0; background:none; } }
-.home-card { position:relative; overflow:hidden; padding:22px; border:1px solid var(--line); border-radius:18px; background:var(--surface); box-shadow:0 12px 28px rgba(35,57,47,.07); }
-.home-card::after { content:""; position:absolute; width:170px; height:170px; right:-72px; top:-86px; border:1px solid color-mix(in srgb,var(--brand) 16%,transparent); border-radius:50%; box-shadow:0 0 0 16px color-mix(in srgb,var(--brand) 3%,transparent),0 0 0 34px color-mix(in srgb,var(--brand) 2%,transparent); pointer-events:none; }
-.home-card > * { position:relative; z-index:1; }
+.home-card { position:relative; overflow:hidden; padding:22px; border:1px solid var(--line); border-radius:18px; background:var(--surface); }
 .home-kicker { color:var(--brand); font-family:Lora,serif; font-size:20px; line-height:1.35; margin:0 0 12px; }
 .home-card ul.plain { padding:14px 16px 7px; margin:0 0 15px; border:1px solid var(--line); border-radius:13px; background:color-mix(in srgb,var(--surface) 88%,var(--background)); }
 .home-card .home-note { font-size:13px; line-height:1.6; margin:0 0 16px; }
-.home-card .btn { border-radius:13px; min-height:52px; box-shadow:0 7px 16px color-mix(in srgb,var(--brand) 18%,transparent); }
+.home-card .btn { border-radius:13px; min-height:52px; }
 #s-home .home-head .language-link { margin:0; padding:12px 0 12px 12px; }
 @media(max-width:420px) { .home-card { padding:18px; } }
 .wrap { max-width:600px; margin:0 auto; padding:16px 16px 48px; min-height:100vh; display:flex; flex-direction:column; }
@@ -92,7 +90,7 @@ button { font:inherit; cursor:pointer; color:inherit; }
 .root-choice[aria-checked="true"] { background:var(--primary-fill); border-color:var(--primary-fill); color:var(--on-primary); }
 .ends { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin:8px 2px 20px; }
 .card { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:20px; margin-bottom:16px; }
-.card .tag { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); font-weight:600; margin:0 0 6px; }
+.card .tag { font-size:14px; color:var(--gold); font-weight:600; margin:0 0 6px; }
 .quote { font-family:Lora,serif; font-style:italic; border-left:3px solid var(--primary-fill); padding-left:12px; margin:12px 0 0; }
 .src { font-size:12px; color:var(--muted); margin:8px 0 0; }
 .action { font-weight:500; margin:0; }
@@ -172,7 +170,7 @@ details summary { cursor:pointer; padding:6px 0; }
 /* Coach IA */
 .coach-thread { display:grid; gap:10px; margin:12px 0 16px; }
 .coach-msg { border:1px solid var(--line); border-radius:14px; padding:12px 14px; background:var(--surface); }
-.coach-msg .tag { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); font-weight:600; margin:0 0 4px; }
+.coach-msg .tag { font-size:14px; color:var(--gold); font-weight:600; margin:0 0 4px; }
 .coach-msg p { margin:0; }
 .coach-msg-moi { margin-left:12%; }
 .coach-msg-coach { margin-right:12%; border-color:var(--gold); }
@@ -181,7 +179,7 @@ details summary { cursor:pointer; padding:6px 0; }
 .bilan-jours { list-style:none; padding:0; margin:0 0 16px; display:grid; gap:8px; }
 .bilan-jour { display:grid; grid-template-columns:40px 1fr; gap:1px 12px; align-items:start; border:1px solid var(--line); border-radius:16px; padding:12px 14px; background:var(--surface); }
 .bilan-pastille { grid-row:1 / span 3; width:40px; height:40px; border-radius:12px; background:var(--tile); color:var(--foreground); display:grid; place-items:center; font-weight:600; }
-.bilan-num { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); font-weight:600; }
+.bilan-num { font-size:14px; color:var(--gold); font-weight:600; }
 .bilan-theme { font-family:Lora,serif; font-weight:600; font-size:16px; line-height:1.35; min-width:0; overflow-wrap:anywhere; }
 .bilan-theme:empty { display:none; }
 .bilan-etat { grid-column:2; font-size:14px; }
@@ -206,19 +204,19 @@ details summary { cursor:pointer; padding:6px 0; }
 .hors-ligne { border:1px solid var(--gold); border-radius:12px; padding:10px 12px; color:var(--foreground); }
 
 /* Questionnaire : panneau cohérent avec l’accueil SÉNEVÉ */
-.quiz-card { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:clamp(20px,5vw,30px); box-shadow:0 14px 34px rgba(35,57,47,.08); }
+.quiz-card { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:clamp(20px,5vw,30px); }
 .quiz-card .q { min-height:0; margin-bottom:24px; }
 .quiz-card .scale-button { transition:background .15s ease,border-color .15s ease,transform .15s ease; }
 /* Survol réservé à la souris : sur écran tactile, le chiffre touché restait allumé à la question suivante. */
 @media (hover:hover) and (pointer:fine) { .quiz-card .scale-button:hover { border-color:var(--brand); transform:translateY(-1px); } }
-.quiz-card .scale-button[aria-pressed="true"] { box-shadow:0 5px 14px color-mix(in srgb,var(--brand) 18%,transparent); }
 .quiz-card .ends { margin-bottom:18px; }
 .quiz-card .link { margin-top:4px; }
 @media(max-width:420px) { .quiz-card { padding:18px; border-radius:17px; } .quiz-card .scale { gap:6px; } }
 
 /* Résultats : hiérarchie claire pour scores et première action */
 #s-result h1 { margin-bottom:12px; }
-#s-result .card { border-radius:18px; padding:22px; box-shadow:0 12px 30px rgba(35,57,47,.07); }
+#s-result h1:focus:not(:focus-visible) { outline:none; }
+#s-result .card { border-radius:18px; padding:22px; }
 #s-result .result-hero { border-color:color-mix(in srgb,var(--gold) 35%,var(--line)); }
 #s-result .result-hero h2 { font-size:27px; line-height:1.2; margin:4px 0 10px; text-wrap:balance; }
 #s-result .result-hero .quote { font-size:17px; line-height:1.55; margin-top:14px; }
@@ -241,7 +239,7 @@ details summary { cursor:pointer; padding:6px 0; }
 
 /* Espace participant — écran « Aujourd'hui » validé le 15/10/2026 (fusion référence Dribbble + essai Stitch) */
 .time-chip { display:inline-block; padding:1px 8px; border-radius:999px; background:var(--chip); color:var(--on-chip); letter-spacing:0; text-transform:none; font-size:12px; font-weight:600; }
-.section-title { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); font-weight:600; margin:26px 0 12px; }
+.section-title { font-size:14px; color:var(--gold); font-weight:600; margin:26px 0 12px; }
 .wrap.avec-nav { padding-bottom:calc(112px + env(safe-area-inset-bottom)); }
 .today-head { display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .today-head .brand { margin-bottom:6px; }
@@ -261,7 +259,7 @@ details summary { cursor:pointer; padding:6px 0; }
 .day-tile:disabled { cursor:default; }
 .day-tile.is-today { background:var(--gold-fill); color:var(--on-gold); box-shadow:var(--shadow-today); }
 .day-tile.is-today .tile-wd { color:var(--on-gold); font-weight:600; }
-.day-tile em { font-style:normal; font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+.day-tile em { font-style:normal; font-size:11px; font-weight:600; }
 .day-tile.is-selected { box-shadow:inset 0 0 0 2px var(--primary-fill); }
 .tile-vide { display:block; height:16px; }
 .today-section { margin:26px 0 22px; }
@@ -297,7 +295,7 @@ details summary { cursor:pointer; padding:6px 0; }
 .prompt-carte { border-radius:20px; padding:14px 16px 16px; background:var(--prompt-green); }
 .prompt-carte + .prompt-carte { margin-top:12px; }
 .prompt-carte.is-passe { background:var(--prompt-gold); }
-.prompt-carte .tag { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); font-weight:600; margin:0 0 4px; }
+.prompt-carte .tag { font-size:14px; color:var(--gold); font-weight:600; margin:0 0 4px; }
 .prompt-question { font-family:Lora,serif; font-weight:600; font-size:18px; line-height:1.35; margin:0 0 12px; }
 .prompt-ecrire { display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:48px; padding:0 14px; border-radius:12px; background:var(--surface); color:var(--muted); text-decoration:none; font-size:15px; }
 .prompt-ecrire svg { color:var(--foreground); flex:none; }
@@ -351,7 +349,7 @@ details summary { cursor:pointer; padding:6px 0; }
 .journal-vide svg { flex:none; color:var(--gold); }
 .journal-vide p { margin:0; }
 .note-carte { border-radius:18px; box-shadow:var(--shadow-soft); }
-.note-date { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); font-weight:600; margin:0 0 8px; }
+.note-date { font-size:14px; color:var(--gold); font-weight:600; margin:0 0 8px; }
 .note-carte .day-text { font-size:16px; line-height:1.6; margin:0 0 10px; }
 .note-ia { margin:0 0 4px; }
 .note-carte .row-actions { gap:0 18px; }
@@ -444,3 +442,11 @@ details summary { cursor:pointer; padding:6px 0; }
 /* Libellés de fréquence du questionnaire V2 français. */
 .scale-option { display:flex; flex-direction:column; align-items:center; gap:8px; min-width:0; }
 .scale-label { font-size:clamp(10px,2.8vw,13px); color:var(--muted); line-height:1.3; text-align:center; }
+/* Blocs repliés de l'écran « Aujourd'hui » (19/10/2026) : « Pour aller plus loin » et « Mes réglages ». */
+details.repli { margin:22px 0 0; }
+details.repli > summary { list-style:none; display:flex; justify-content:space-between; align-items:center; min-height:52px; padding:0 16px; border-radius:14px; background:var(--tile); font-weight:600; font-size:16px; }
+details.repli > summary::-webkit-details-marker { display:none; }
+details.repli > summary::after { content:"+"; font-size:22px; font-weight:500; color:var(--muted); }
+details.repli[open] > summary { margin-bottom:12px; }
+details.repli[open] > summary::after { content:"−"; }
+details.repli + .reglages > details.repli { margin-top:10px; }

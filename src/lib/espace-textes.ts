@@ -37,6 +37,7 @@ export const ESPACE_TEXTES = {
     momentFerme: (heure: string) => `Ce moment s’ouvre à ${heureFr(heure)} (heure de Kinshasa).`,
     tousLesJours: 'Voir tous les jours',
     reglages: 'Mes réglages',
+    plusLoin: 'Pour aller plus loin',
     // Écran « Aujourd'hui » validé le 15/10/2026 (fusion référence Dribbble + essai Stitch).
     taJournee: 'Ta journée',
     lireEtAgir: 'Lire et agir',
@@ -86,6 +87,7 @@ export const ESPACE_TEXTES = {
     momentFerme: (heure: string) => `This moment opens at ${heure} (Kinshasa time).`,
     tousLesJours: 'See all days',
     reglages: 'My settings',
+    plusLoin: 'Going further',
     taJournee: 'Your day',
     lireEtAgir: 'Read and act',
     lire: 'Read',

@@ -205,7 +205,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    </div>
   </section>
   <section id="s-result" hidden={screen !== 'result'}>
-   <p className="brand">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
+   <p className="brand">{t.brand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
     <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} />}</div>
     <p className="muted">{t.final}</p>
     <PrototypeButton className="link" id="again" onClick={() => { savedResult.current = null; setAnswers(Array(21).fill(null)); setChosenRoot(null); setI(0); setScreen('home'); }}>{t.again}</PrototypeButton>

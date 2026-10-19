@@ -181,12 +181,13 @@ export function Espace() {
   </header>;
   const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to="/confidentialite">Confidentialité</Link><button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
-  const reglages = (langue: string, avecEmail: boolean) => <section className="reglages" aria-label={textes(langue).reglages}>
-    <p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>
-    {avecEmail && <EmailMatinCard langue={langue} />}
-    <WhatsAppLink />
-    <CodePlaceCard langue={langue} onOuvert={refresh} />
-  </section>;
+  // Repliés sur l'écran « Aujourd'hui » (allègement du 19/10/2026) : on les ouvre quand on en a besoin.
+  const reglages = (langue: string, avecEmail: boolean, replie = false) => {
+    const cartes = <>{avecEmail && <EmailMatinCard langue={langue} />}<WhatsAppLink /><CodePlaceCard langue={langue} onOuvert={refresh} /></>;
+    return replie
+      ? <section className="reglages" aria-label={textes(langue).reglages}><details className="repli"><summary>{textes(langue).reglages}</summary>{cartes}</details></section>
+      : <section className="reglages" aria-label={textes(langue).reglages}><p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>{cartes}</section>;
+  };
   const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
   const page = (langue: string, contenu: ReactNode, classe = '') => <main className={`wrap avec-nav ${classe}`.trim()}>{contenu}<BarreNav langue={langue} /></main>;
 
@@ -324,7 +325,6 @@ export function Espace() {
       {tuiles}
       {finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
     </div>
-    {jardin.total > 0 && <JardinCard realisees={jardin.realisees} total={jardin.total} langue={enr.langue} />}
     {paused && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
     {horsLigne && <p className="muted hors-ligne" role="status">{T.horsLigne(copieDu ? formatDate(copieDu, T.locale) : formatDate(new Date().toISOString(), T.locale))}</p>}
@@ -364,9 +364,6 @@ export function Espace() {
       </ul>
     </section>
 
-    {!horsLigne && <AudioCard key={`audio-${enr.enrollment_id}-${current}`} contentIds={moments.filter(m => m.ouvert).map(m => m.content.content_id)} langue={enr.langue} />}
-    {!horsLigne && <ParoleCard key={`parole-${enr.enrollment_id}-${current}`} programmeId={enr.programme_id} version={Number(enr.version)} langue={enr.langue} jour={current} />}
-
     {action && <section className="today-section" aria-labelledby="titre-action">
       <h2 id="titre-action">{T.action}</h2>
       {carteAction(action, false)}
@@ -381,13 +378,18 @@ export function Espace() {
       </div>)}
     </section>}
 
-    {!horsLigne && <>
+    {/* Écran allégé (19/10/2026) : l'essentiel du jour d'abord (moments, action, journal), le reste replié. */}
+    {!horsLigne && <AudioCard key={`audio-${enr.enrollment_id}-${current}`} contentIds={moments.filter(m => m.ouvert).map(m => m.content.content_id)} langue={enr.langue} />}
+    {!horsLigne && <ParoleCard key={`parole-${enr.enrollment_id}-${current}`} programmeId={enr.programme_id} version={Number(enr.version)} langue={enr.langue} jour={current} />}
+    {!horsLigne && (jourCal >= total || cloture) && <SuiteCard key={`suite-${enr.enrollment_id}`} programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x => x.programme_id)} />}
+    {!horsLigne && <details className="repli">
+      <summary>{T.plusLoin}</summary>
+      {jardin.total > 0 && <JardinCard realisees={jardin.realisees} total={jardin.total} langue={enr.langue} />}
       <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
       <GoalCard langue={enr.langue} />
       <InviteCard langue={enr.langue} />
-      {reglages(enr.langue, true)}
-    </>}
-    {!horsLigne && (jourCal >= total || cloture) && <SuiteCard key={`suite-${enr.enrollment_id}`} programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x => x.programme_id)} />}
+    </details>}
+    {!horsLigne && reglages(enr.langue, true, true)}
     {footer}
   </>);
 }
