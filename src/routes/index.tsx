@@ -29,11 +29,11 @@ function PrototypeButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
 function CheckIcon() {
  return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l4 4 10-10" /></svg>;
 }
-function RootCard({ tag, k, total, language }: { tag: string; k: number; total: number; language: Language }) {
+function RootCard({ tag, k, total, language, explanation }: { tag: string; k: number; total: number; language: Language; explanation: string }) {
  const t = texts[language];
  const root = t.roots[k];
  if (!root) return null;
-  return <div className="card result-hero"><p className="tag">{tag}</p><h2>{root.n}</h2><span className="cat-chip">{categorie(total, language)}</span><p className="quote">{t.quote(root.p)}</p><p className="src">{t.quoteSource}</p></div>;
+  return <div className="card result-hero"><p className="tag">{tag}</p><h2>{root.n}</h2><span className="cat-chip">{categorie(total, language)}</span><p className="muted">{explanation}</p><p className="quote">{t.quote(root.p)}</p><p className="src">{t.quoteSource}</p></div>;
 }
 /** Racine forte (cahier n°4, §11 A) : la ou les racines au total le plus haut, sans note chiffrée.
  * Absente quand les sept racines sont au même niveau, toutes points d'appui, ou toutes à développer. */
@@ -48,7 +48,7 @@ function StrengthCard({ fortes, total, language }: { fortes: number[]; total: nu
   {plusieurs
    ? <ul className="plain strength-list" role="list">{fortes.map(i => <li key={i}>{t.roots[i]?.n}</li>)}</ul>
    : <><h2>{t.roots[k]?.n}</h2><p className="quote">{t.quote(t.roots[k]?.p ?? '')}</p><p className="src">{t.quoteSource}</p></>}
-  <p className="muted">{t.summary}</p>
+  <p className="muted">{t.summary}</p><p className="muted">{t.resultHelp.strength}</p>
  </div>;
 }
 function RootChoices({ indices, chosenRoot, onChoose, language }: { indices: number[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language }) {
@@ -90,7 +90,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
   // puis le détail des 7 racines avec une barre par score, enfin le partage.
   return <>
      {needsChoice && <><p>{message}</p><RootChoices language={language} indices={indices} chosenRoot={chosenRoot} onChoose={onChoose} /></>}
-     {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} />}
+     {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} explanation={needsChoice ? t.resultHelp.chosen : t.resultHelp.suggested} />}
     {root && <div className="card action-card result-action"><p className="tag">{t.firstAction}</p><div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
     {/* Affichée aussi avant le choix d'une racine en cas d'égalité en bas : la racine forte n'en dépend pas. */}
     {!r.same && !allSupport && <StrengthCard language={language} fortes={r.fortes} total={Math.max(...r.t)} />}
@@ -99,6 +99,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
       <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion${language === 'en' ? '?lang=en' : ''}`}>{t.espaceBouton}</a></div>
     </div>}
      <div className="card root-list-card"><p className="tag">{t.rootsTitle}</p><p>{t.summary}</p>
+       <details className="result-method"><summary>{t.resultHelp.method}</summary><p>{t.resultHelp.calculation}</p><p>{t.resultHelp.bands}</p><p>{t.resultHelp.close}</p></details>
        <ul className="root-rows" role="list">{R.map((item, k) => {
          const total = r.t[k] ?? 3;
          return <li key={item.n} className={k === act ? 'root-row is-start' : 'root-row'}>

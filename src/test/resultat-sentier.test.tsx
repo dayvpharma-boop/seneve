@@ -32,6 +32,7 @@ describe('Résultat « Sentier »', () => {
     const share = cardOf('Partager');
     expect(within(hero).getByRole('heading', { name: R[4]?.n ?? '' })).toBeVisible();
     expect(within(hero).getByText('Racine à développer')).toHaveClass('cat-chip');
+    expect(within(hero).getByText(/cette racine a le total le plus bas/)).toBeVisible();
     expect(follows(hero, action) && follows(action, whatsapp) && follows(whatsapp, roots) && follows(roots, share)).toBe(true);
     // Le résultat mène aussi à l'espace du site, sous WhatsApp (15/10/2026).
     const espace = within(whatsapp).getByRole('link', { name: 'Créer mon espace' });
@@ -54,6 +55,9 @@ describe('Résultat « Sentier »', () => {
       expect(parseFloat((bar.querySelector('i') as HTMLElement).style.width)).toBeCloseTo(((totals[k] ?? 0) / 15) * 100);
       expect(row.classList.contains('is-start')).toBe(k === 4);
     });
+    fireEvent.click(screen.getByText('Comment lire tes résultats ?'));
+    expect(screen.getByText('Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15.')).toBeVisible();
+    expect(screen.getByText(/Un petit écart entre deux totaux/)).toBeVisible();
   });
 
   it('en cas d’égalité, la liste reste visible et la racine choisie est mise en avant après le choix', () => {
@@ -63,6 +67,8 @@ describe('Résultat « Sentier »', () => {
     expect(rows().some(row => row.classList.contains('is-start'))).toBe(false);
     fireEvent.click(screen.getByRole('radio', { name: 'Fidélité dans les petites choses' }));
     expect(rows().map(row => row.classList.contains('is-start'))).toEqual([false, false, false, false, false, true, false]);
+    expect(screen.getByText(/Tu as choisi cette racine parmi celles proposées/)).toBeVisible();
+    expect(screen.queryByText(/cette racine a le total le plus bas/)).not.toBeInTheDocument();
   });
 
   it('affiche le titre de la liste en anglais', () => {
@@ -74,6 +80,8 @@ describe('Résultat « Sentier »', () => {
     }
     expect(screen.getByText('Your 7 roots')).toBeVisible();
     expect(screen.queryByText('Tes 7 racines')).not.toBeInTheDocument();
+    expect(screen.getByText('How should I read my results?')).toBeVisible();
+    expect(screen.getByText(/this root has the lowest total/)).toBeVisible();
     // Depuis le 18/10/2026, la page de connexion existe en anglais : le résultat anglais y mène.
     expect(screen.getByRole('link', { name: 'Create my space' })).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion?lang=en`);
   });
@@ -90,6 +98,7 @@ describe('Racine forte (cahier n°4, §11 A)', () => {
     expect(within(forte).getByRole('heading', { name: R[2]?.n ?? '' })).toBeVisible();
     expect(within(forte).getByText(`« ${R[2]?.p} »`)).toBeVisible();
     expect(within(forte).queryByText(/\/ 15/)).not.toBeInTheDocument();
+    expect(within(forte).getByText(/Ce sont les totaux les plus élevés de cette tentative/)).toBeVisible();
     expect(follows(cardOf('Ta première action'), forte) && follows(forte, cardOf('Aller plus loin'))).toBe(true);
   });
 

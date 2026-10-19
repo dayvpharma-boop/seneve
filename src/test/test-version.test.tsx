@@ -25,7 +25,7 @@ it.each(['fr', 'en'] as const)('enregistre sous la version réellement affichée
   expect(rpc).toHaveBeenCalledWith('submit_test_result_versioned', {
     p_langue: langue, p_reponses: Array(21).fill(3), p_source: 'tt', p_version: TEST_VERSIONS[langue],
   });
-  expect(TEST_VERSIONS[langue]).toBe(langue === 'fr' ? 3 : 2);
+  expect(TEST_VERSIONS[langue]).toBe(3);
 });
 
 it('ne réattribue pas une V2 à une ancienne version si le serveur refuse', async () => {

@@ -32,8 +32,8 @@ const frenchQuestions = [
 ];
 
 export type Language = 'fr' | 'en';
-/** Version du questionnaire réellement affiché (FR V3 et EN V2 du 19/10/2026 : questions 2 et 7 reprises du livre, question 13 anglaise adaptée comme en français). */
-export const TEST_VERSIONS: Record<Language, number> = { fr: 3, en: 2 };
+/** Version réellement affichée : FR V3 ; EN V3 traduit les cinq adaptations françaises validées. */
+export const TEST_VERSIONS: Record<Language, number> = { fr: 3, en: 3 };
 export function languageFrom(value: unknown): Language { return value === 'en' ? 'en' : 'fr'; }
 const englishRoots = [
  {n:"Kingdom First", p:"Seek the King, and the miracles will return to their rightful place.", a:"Begin your day with 15 minutes of silence before your phone. Read Matthew 6:25-34.", j:1},
@@ -50,10 +50,10 @@ const englishQuestions = [
  "My relationship with God does not depend on my financial situation of the moment.",
  "My tithe is the first expense I settle as soon as I receive income.",
  "I give with joy and not out of obligation or fear.",
- "I believe that God can protect and multiply my resources.",
+ "When I give, I do so with trust rather than out of fear.",
  "Do I work with the same quality when my boss is not there?",
- "Is my conscience clear of any dishonest practice at work?",
- "Do I believe that God can open doors my diplomas cannot open?",
+ "In my daily activities, I choose honesty, even when no one can check.",
+ "I take practical steps to move forward, rather than waiting for opportunities to come on their own.",
  "Do I pray with the same fervor in abundance as in lack?",
  "Can I sincerely rejoice when a brother prospers more than I do?",
  "Does my life reflect an intentional simplicity?",
@@ -61,7 +61,7 @@ const englishQuestions = [
  "Do I give to the poor in a concrete and regular way?",
  "Do I give in secret, without seeking recognition?",
  "Do I keep an expense notebook that lets me see where my money goes?",
- "Do I regularly set money aside in savings?",
+ "I keep my small everyday commitments, even when they seem unimportant.",
  "Do I carry out small tasks with the same seriousness as big ones?",
  "Do I recognize the difference between the pressure of urgency and the peace of the Spirit?",
  "Do I obey the small impressions of the Spirit day to day?",
@@ -88,6 +88,15 @@ export const texts = {
   minimumTie: 'Plusieurs racines sont au même niveau selon tes réponses. Choisis celle par laquelle tu souhaites commencer.',
   suggested: 'Nous te proposons de commencer par', choose: 'Choisis une racine', chosen: 'La racine que tu as choisie',
   strength: { appui: 'Ton point d’appui', solide: 'Ta racine la plus solide', appuiPlusieurs: 'Tes points d’appui', solidePlusieurs: 'Tes racines les plus solides' },
+  resultHelp: {
+   suggested: 'Selon tes réponses, cette racine a le total le plus bas. Nous te la proposons comme point de départ pour pratiquer.',
+   chosen: 'Tu as choisi cette racine parmi celles proposées. Elle devient ton point de départ pour pratiquer.',
+   method: 'Comment lire tes résultats ?',
+   calculation: 'Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15.',
+   bands: 'De 3 à 6 : racine à développer. De 7 à 11 : racine à consolider. De 12 à 15 : point d’appui à entretenir.',
+   close: 'Un petit écart entre deux totaux n’est pas un classement définitif. Ces repères t’aident à choisir une première pratique ; ils ne mesurent ni ta foi ni ta valeur.',
+   strength: 'Ce sont les totaux les plus élevés de cette tentative. Tu peux t’appuyer sur ces pratiques pour avancer dans la racine que tu souhaites travailler.',
+  },
   quote: (p:string) => `« ${p} »`, quoteSource: 'Phrase du livre, annexe 4', firstAction: 'Ta première action',
   actionSource: (day:number,name:string) => `Livre, annexe 1, jour ${day} · ${name}`,
   further: 'Aller plus loin', furtherText: 'Reçois gratuitement le parcours Découverte de 7 jours sur WhatsApp. Tu écris toi-même le premier message et tu peux arrêter à tout moment en envoyant STOP.',
@@ -113,7 +122,8 @@ export const texts = {
   reassurance: ['No account', '21 questions', 'You can go back'], tapHint: 'Tap a number: the next question appears.',
   start: 'Start', languageLink: 'Français', rootCount: (x:number) => `Root ${x} of 7`, questionCount: (x:number) => `Question ${x} of 21`,
   never: '1 = never', always: '5 = always', answerGroup: 'Your answer, from 1 never to 5 always',
-  answerLabel: (n:number) => `${n} out of 5${n===1 ? ' (never)' : n===5 ? ' (always)' : ''}`,
+  answerOptions: ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'],
+  answerLabel: (n:number) => `${n} out of 5 (${['never', 'rarely', 'sometimes', 'often', 'always'][n - 1]})`,
   back: '← Previous question', resultBrand: 'Your result', resultTitle: 'Your roots today', rootsTitle: 'Your 7 roots', summary: 'According to your answers today',
   categories: ['Root to develop', 'Root to strengthen', 'Strength to maintain'],
   allOne: 'According to your answers, all seven roots are to be developed. Choose the one you want to start with.',
@@ -122,6 +132,15 @@ export const texts = {
   minimumTie: 'According to your answers, several roots are at the same level. Choose the one you want to start with.',
   suggested: 'We suggest you start with', choose: 'Choose a root', chosen: 'The root you chose',
   strength: { appui: 'Your anchor', solide: 'Your strongest root', appuiPlusieurs: 'Your anchors', solidePlusieurs: 'Your strongest roots' },
+  resultHelp: {
+   suggested: 'According to your answers, this root has the lowest total. We suggest it as a starting point for practice.',
+   chosen: 'You chose this root from the options offered. It becomes your starting point for practice.',
+   method: 'How should I read my results?',
+   calculation: 'Each root adds up three answers from 1 to 5, giving a total from 3 to 15.',
+   bands: 'From 3 to 6: root to develop. From 7 to 11: root to strengthen. From 12 to 15: strength to maintain.',
+   close: 'A small gap between two totals is not a definitive ranking. These guides help you choose a first practice; they measure neither your faith nor your worth.',
+   strength: 'These are the highest totals in this attempt. You can draw on these practices as you work on the root you want to develop.',
+  },
   quote: (p:string) => `“${p}”`, quoteSource: 'Phrase from the book, Appendix 4', firstAction: 'Your first action',
   actionSource: (day:number,name:string) => `Book, Appendix 1, Day ${day} · ${name}`,
   further: 'Go further', furtherText: 'Receive the free 7-day Discovery journey on WhatsApp. You write the first message yourself and you can stop at any time by sending STOP.',
