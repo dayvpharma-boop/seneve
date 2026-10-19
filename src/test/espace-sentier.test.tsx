@@ -69,6 +69,13 @@ describe('Espace — écran « Aujourd’hui »', () => {
     expect(screen.getByRole('button', { name: "J'ai réalisé cette action" })).toHaveClass('btn-or');
   });
 
+  it('affiche le critère de réalisation fourni avec une action', async () => {
+    (tables['activities'] as Array<Record<string, unknown>>).find(a => a.activity_id === 'A2')!.critere_realisation = 'Une décision précise et sa priorité sont identifiées.';
+    ouvrir();
+    expect(await screen.findByText('Quand considérer l’action comme réalisée ?')).toBeInTheDocument();
+    expect(screen.getByText('Une décision précise et sa priorité sont identifiées.')).toBeInTheDocument();
+  });
+
   it('tuiles de la semaine : jour du calendrier en doré, jours suivants fermés, nom du jour', async () => {
     tables['activity_state'] = [{ enrollment_id: 'E14', activity_id: 'A1', etat: 'realisee', aide_demandee: false, realisee_le: '2026-10-13T10:00:00Z' }];
     ouvrir();

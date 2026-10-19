@@ -25,7 +25,7 @@ import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
 type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
-type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean };
+type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean; critere_realisation?: string | null };
 type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
 // heures : horaires des moments du jour (message 1, 2, 3), lus dans le programme publié ; absents = tout visible.
 type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
@@ -73,7 +73,7 @@ async function load(): Promise<Data | null> {
   const contents = ((c.data ?? []) as Content[]).filter(ct => enrollments.some(x => x.programme_id === ct.programme_id && String(x.version) === String(ct.version)));
   const ids = contents.map(x => x.content_id);
   const [a, st] = await Promise.all([
-    ids.length ? supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire').in('content_id', ids) : Promise.resolve({ data: [], error: null }),
+    ids.length ? supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire, critere_realisation').in('content_id', ids) : Promise.resolve({ data: [], error: null }),
     supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enrollments.map(x => x.enrollment_id)),
   ]);
   if (a.error) throw a.error;
@@ -196,8 +196,11 @@ export function Espace() {
 
   if (!data.parcours.length) return page('fr', <>{header}
     <div className="card"><p className="tag">Découverte 7 jours</p>
-      <p>Un parcours gratuit de 7 jours, à ton rythme, à partir du livre « Arrête de mendier des miracles ».</p>
-      <button type="button" className="btn" disabled={starting} onClick={() => void start('fr')}>{starting ? 'Un instant…' : 'Commencer la Découverte'}</button>
+      <p>Découvre le premier principe du livre « Arrête de mendier des miracles » : chercher premièrement le Royaume de Dieu.</p>
+      <p>Pendant sept jours, tu recevras un enseignement court, une action à mettre en pratique et une question pour réfléchir. Ce parcours est commun à tous, quelle que soit la racine choisie au test.</p>
+      <p>Le jour 1 s’ouvre dès que tu commences. Une nouvelle journée s’ouvre ensuite chaque jour. Tu peux revenir aux journées déjà ouvertes.</p>
+      <p>Tu n’as pas besoin de tout réussir : tu peux indiquer une action préparée, réalisée en partie ou demander de l’aide. Aucun achat n’est obligatoire.</p>
+      <button type="button" className="btn" disabled={starting} onClick={() => void start('fr')}>{starting ? 'Un instant…' : 'Commencer ma Découverte'}</button>
       <p className="muted lang-alt" lang="en">A free 7-day journey based on the book « Stop Begging for Miracles ».</p>
       <button type="button" className="btn-secondaire" lang="en" disabled={starting} onClick={() => void start('en')}>Start in English</button>
     </div>{reglages('fr', false)}{footer}</>);
@@ -433,6 +436,7 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
   // Consigne dans un encadré doré, bouton doré « J'ai réalisé cette action » (écran validé le 15/10/2026).
   return <div className="card action-card">{titre && <p className="tag">{T.action}</p>}
     <div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{activity.consigne}</p></div>
+    {activity.critere_realisation && <div className="action-critere"><p><strong>{langue === 'en' ? 'When is this action complete?' : 'Quand considérer l’action comme réalisée ?'}</strong></p><p>{activity.critere_realisation}</p></div>}
     {realisee && <p className="success action-faite" role="status"><Icone nom="coche" taille={20} />{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>}
     {!realisee && etat === 'preparee' && <p className="success" role="status">{T.prepareeNotee}</p>}
     {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
