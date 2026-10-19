@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 // Polices hébergées avec le site (et non chez Google) : elles restent disponibles hors connexion.
+import '@fontsource/lora/latin-400.css';
 import '@fontsource/lora/latin-500.css';
 import '@fontsource/lora/latin-600.css';
 import '@fontsource/lora/latin-500-italic.css';
