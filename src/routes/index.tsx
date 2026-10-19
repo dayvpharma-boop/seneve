@@ -48,7 +48,7 @@ function StrengthCard({ fortes, total, language }: { fortes: number[]; total: nu
   {plusieurs
    ? <ul className="plain strength-list" role="list">{fortes.map(i => <li key={i}>{t.roots[i]?.n}</li>)}</ul>
    : <><h2>{t.roots[k]?.n}</h2><p className="quote">{t.quote(t.roots[k]?.p ?? '')}</p><p className="src">{t.quoteSource}</p></>}
-  <p className="muted">{t.summary}</p><p className="muted">{t.resultHelp.strength}</p>
+  <p className="muted">{plusieurs ? t.resultHelp.strengthMany : t.resultHelp.strengthOne}</p>
  </div>;
 }
 function RootChoices({ indices, chosenRoot, onChoose, language }: { indices: number[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language }) {

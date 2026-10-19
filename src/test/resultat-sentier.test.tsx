@@ -98,7 +98,8 @@ describe('Racine forte (cahier n°4, §11 A)', () => {
     expect(within(forte).getByRole('heading', { name: R[2]?.n ?? '' })).toBeVisible();
     expect(within(forte).getByText(`« ${R[2]?.p} »`)).toBeVisible();
     expect(within(forte).queryByText(/\/ 15/)).not.toBeInTheDocument();
-    expect(within(forte).getByText(/Ce sont les totaux les plus élevés de cette tentative/)).toBeVisible();
+    expect(within(forte).getByText(/C’est le total le plus élevé de cette tentative/)).toBeVisible();
+    expect(within(forte).queryByText('Selon tes réponses d’aujourd’hui')).not.toBeInTheDocument();
     expect(follows(cardOf('Ta première action'), forte) && follows(forte, cardOf('Aller plus loin'))).toBe(true);
   });
 
@@ -107,6 +108,7 @@ describe('Racine forte (cahier n°4, §11 A)', () => {
     finishQuiz([12, 7, 12, 9, 6, 8, 10]);
     const forte = cardOf('Tes points d’appui');
     expect(within(forte).getAllByRole('listitem').map(li => li.textContent)).toEqual([R[0]?.n, R[2]?.n]);
+    expect(within(forte).getByText(/Ce sont les totaux les plus élevés de cette tentative/)).toBeVisible();
   });
 
   it('s’affiche dès le résultat, sans attendre le choix quand plusieurs racines sont à égalité en bas', () => {
