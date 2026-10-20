@@ -106,49 +106,71 @@ export function Coach() {
     await refresh();
   }
 
-  const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026).
-  const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titre}</h1></div></header>;
-  if (failed && !data) return <main className="wrap avec-nav">{tete}{back}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div><BarreNav langue={enrollment?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={enrollment?.langue} /></main>;
+  // Mise en page de la maquette validée « Coach » (image app/corrigé/13-ecran) : barre du haut, étiquette et
+  // compteur, présentation encadrée, bulles alignées avec l'heure, points d'attente, saisie fixée en bas.
+  const heure = (iso: string) => new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+  const barre = <header className="cm-barre">
+    <Link className="cm-retour" to="/espace" aria-label={T.retour}><Icone nom="fleche_gauche" taille={22} /></Link>
+    <p className="cm-barre-titre">{T.barre}</p>
+    <span className="cm-pastille" aria-hidden="true"><Icone nom="personne" taille={18} /></span>
+  </header>;
+  const tete = <header className="cm-tete">
+    <div className="cm-ligne"><p className="cm-etiquette">{T.etiquette}</p>
+      {data && enrollment && <p className="cm-compteur"><span className="cm-point" aria-hidden="true" />{data.restants <= 0 ? T.restants(0, data.quota) : T.restants(data.restants, data.quota)}</p>}</div>
+    <h1>{T.titre}</h1>
+    <div className="cm-intro"><p>{T.intro}</p><p className="cm-avertissement">{T.avertissement}</p></div>
+  </header>;
+  const nav = <BarreNav langue={enrollment?.langue ?? data?.langue} />;
+  if (failed && !data) return <main className="wrap avec-nav cm-page">{barre}{tete}<div className="cm-alerte"><Icone nom="sablier" taille={20} /><div><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></div>{nav}</main>;
+  if (!data) return <main className="wrap avec-nav cm-page">{barre}{tete}<p className="muted">{T.chargement}</p>{nav}</main>;
 
   const epuise = data.restants <= 0;
   const trop = texte.trim().length > COACH_MAX;
-  return <main className="wrap avec-nav">
+  const lienAide = enrollment ? `/aide?inscription=${enrollment.enrollment_id}` : '/aide';
+  return <main className="wrap avec-nav cm-page">
+    {barre}
     {tete}
-    <p className="aide-intro">{T.intro}</p>
-    <p className="aide-urgence" role="note"><Icone nom="coach" taille={22} /><span>{T.avertissement} {T.conservation}</span></p>
-    {!enrollment ? <div className="card"><p>{T.sansParcours}</p></div> : <>
-      <p className="muted">{T.surParcours}</p>
+    {!enrollment ? <div className="cm-alerte"><Icone nom="sablier" taille={20} /><div><p>{T.sansParcours}</p><Link className="cm-lien" to="/espace">{T.retour}<Icone nom="fleche" taille={18} /></Link></div></div> : <>
       {data.enrollments.length > 1
         ? <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.surParcours}>
             {data.enrollments.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enrollment.enrollment_id} onClick={() => setChosen(x.enrollment_id)}>{x.nom}</button>)}
           </div>
-        : <p className="today-parcours">{enrollment.nom}</p>}
-      <section className="coach-thread" aria-live="polite">
-        {data.messages.length === 0 && <p className="muted">{T.aucun}</p>}
-        {data.messages.map(m => <div key={m.message_id} className={`coach-msg ${m.role === 'coach' ? 'coach-msg-coach' : 'coach-msg-moi'}`}>
-          <p className="tag">{m.role === 'coach' ? T.coach : T.vous}</p>
-          <p className="day-text">{m.texte}</p>
-          {m.role === 'participant' && m.etat === 'echec' && <p className="error">{T.echec}</p>}
-        </div>)}
-        {attente && <p className="muted" role="status">{T.attente}</p>}
+        : <p className="cm-repere"><span className="sr-only">{T.surParcours} </span>{enrollment.nom}</p>}
+      <section className="cm-fil" aria-live="polite" aria-label={T.barre}>
+        {data.messages.length === 0 && <p className="cm-vide">{T.aucun}</p>}
+        {data.messages.map(m => m.role === 'coach'
+          ? <article key={m.message_id} className="cm-msg cm-msg-coach">
+              <p className="cm-auteur"><Icone nom="graine" taille={15} />{T.coach}</p>
+              <div className="cm-bulle"><p className="day-text">{m.texte}</p></div>
+              <p className="cm-heure">{heure(m.cree_le)}</p>
+            </article>
+          : <article key={m.message_id} className="cm-msg cm-msg-moi">
+              <p className="sr-only">{T.vous}</p>
+              <div className="cm-bulle"><p className="day-text">{m.texte}</p></div>
+              <p className="cm-heure">{heure(m.cree_le)}</p>
+              {m.etat === 'echec' && <div className="cm-alerte"><Icone nom="sablier" taille={20} /><div><p className="error">{T.echec}</p><Link className="cm-lien" to={lienAide}>{T.aideLien}<Icone nom="fleche" taille={18} /></Link></div></div>}
+            </article>)}
+        {attente && <div className="cm-msg cm-msg-coach" role="status">
+          <p className="cm-auteur"><Icone nom="graine" taille={15} />{T.coach}</p>
+          <div className="cm-bulle cm-attente"><span className="cm-points" aria-hidden="true"><i /><i /><i /></span>{T.attente}</div>
+        </div>}
         <div ref={bottom} />
       </section>
-      <form className="card journal-form coach-form" onSubmit={send}>
-        <label className="field"><span className="sr-only">{T.placeholder}</span>
-          <textarea rows={3} value={texte} placeholder={T.placeholder} disabled={epuise} onChange={e => { setTexte(e.target.value); pendingId.current = null; }} />
-        </label>
+      {epuise && <div className="cm-alerte"><Icone nom="sablier" taille={20} /><div><p>{T.quota}</p><Link className="cm-lien" to={lienAide}>{T.aideLien}<Icone nom="fleche" taille={18} /></Link></div></div>}
+      <form className="cm-saisie" onSubmit={send}>
+        <div className="cm-champ">
+          <label className="sr-only" htmlFor="cm-question">{T.placeholder}</label>
+          <textarea id="cm-question" rows={1} value={texte} placeholder={T.placeholder} disabled={epuise} onChange={e => { setTexte(e.target.value); pendingId.current = null; }} />
+          <button type="submit" className="cm-envoyer" aria-label={busy ? T.envoi : T.envoyer} disabled={busy || epuise || attente || !texte.trim() || trop}><Icone nom="fleche_haut" taille={20} /></button>
+        </div>
         {trop && <p className="error" role="alert">{T.trop(COACH_MAX)}</p>}
-        <button type="submit" className="btn action-btn moment-btn" disabled={busy || epuise || attente || !texte.trim() || trop}>{busy ? T.envoi : T.envoyer}</button>
-        <p className="muted">{epuise ? T.quota : T.restants(data.restants, data.quota)}</p>
         {error && <p className="error" role="alert">{error}</p>}
+        <p className="cm-note"><Icone nom="cadenas" taille={13} />{T.conservation}</p>
       </form>
     </>}
-    <p className="muted">{T.aide} <Link className="link" to={enrollment ? `/aide?inscription=${enrollment.enrollment_id}` : '/aide'}>{T.aideLien}</Link></p>
+    <p className="cm-aide">{T.aide} <Link className="link" to={lienAide}>{T.aideLien}</Link></p>
     {data.messages.length > 0 && (confirm
       ? <div className="row-actions"><p>{T.confirmer}</p><button type="button" className="link danger" disabled={busy} onClick={() => void clear()}>{T.oui}</button><button type="button" className="link" onClick={() => setConfirm(false)}>{T.non}</button></div>
-      : <button type="button" className="link" onClick={() => setConfirm(true)}>{T.effacer}</button>)}
-    {back}
-  <BarreNav langue={enrollment?.langue ?? data?.langue} /></main>;
+      : <button type="button" className="link cm-effacer" onClick={() => setConfirm(true)}>{T.effacer}</button>)}
+    {nav}</main>;
 }

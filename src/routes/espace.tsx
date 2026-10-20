@@ -11,6 +11,7 @@ import { ObstacleCard } from '@/components/ObstacleCard';
 import { SuiteCard } from '@/components/SuiteCard';
 import { CodePlaceCard } from '@/components/CodePlaceCard';
 import { JardinCard } from '@/components/JardinCard';
+import { FinParcours, FinParcoursJournal, finParcoursTextes } from '@/components/FinParcours';
 import { InviteCard } from '@/components/InviteCard';
 import { ParoleCard } from '@/components/ParoleCard';
 import { AudioCard } from '@/components/AudioCard';
@@ -322,12 +323,22 @@ export function Espace() {
     if (veille) invitations.push({ jour: current - 1, libelle: `${T.jour(current - 1)} · ${T.hier}`, q: veille });
   }
 
+  // Fin du parcours : écran « Parcours accompli » de la maquette validée (image app/corrigé/14-ecran).
+  const F = finParcoursTextes(enr.langue);
+  const suite = !horsLigne && <SuiteCard key={`suite-${enr.enrollment_id}`} programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x => x.programme_id)} />;
   return page(enr.langue, <>{header}{tabs}
-    {!tabs && <p className="today-parcours">{enr.nom}</p>}
-    <div className="today-progress">
+    {finished && <p className="fp-puce"><Icone nom="graine" taille={15} />{F.puce(total)}</p>}
+    {!tabs && <p className="today-parcours">{finished ? F.acheve(enr.nom) : enr.nom}</p>}
+    {finished && <>
+      <FinParcours nom={enr.nom} total={total} jours={bilanEnr.jours} langue={enr.langue} jourChoisi={selected ?? undefined} onChoisir={choisirJour} nomJour={(n, fait) => fait ? T.jourFait(n) : T.jour(n)} />
+      <p className="fp-relire-jours">{T.termine(total)}</p>
+      {suite}
+      <FinParcoursJournal langue={enr.langue} />
+    </>}
+    {!finished && <div className="today-progress">
       {tuiles}
-      {finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
-    </div>
+      <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>
+    </div>}
     {paused && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
     {horsLigne && <p className="muted hors-ligne" role="status">{T.horsLigne(copieDu ? formatDate(copieDu, T.locale) : formatDate(new Date().toISOString(), T.locale))}</p>}
@@ -384,7 +395,7 @@ export function Espace() {
     {/* Écran allégé (19/10/2026) : l'essentiel du jour d'abord (moments, action, journal), le reste replié. */}
     {!horsLigne && <AudioCard key={`audio-${enr.enrollment_id}-${current}`} contentIds={moments.filter(m => m.ouvert).map(m => m.content.content_id)} langue={enr.langue} />}
     {!horsLigne && <ParoleCard key={`parole-${enr.enrollment_id}-${current}`} programmeId={enr.programme_id} version={Number(enr.version)} langue={enr.langue} jour={current} />}
-    {!horsLigne && (jourCal >= total || cloture) && <SuiteCard key={`suite-${enr.enrollment_id}`} programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x => x.programme_id)} />}
+    {!finished && (jourCal >= total || cloture) && suite}
     {!horsLigne && <details className="repli">
       <summary>{T.plusLoin}</summary>
       {jardin.total > 0 && <JardinCard realisees={jardin.realisees} total={jardin.total} langue={enr.langue} />}

@@ -1,0 +1,78 @@
+/* Fin de parcours, d'après la maquette validée « Parcours accompli » (image app/corrigé/14-ecran) :
+ * mêmes couleurs que la maquette, Outfit pour l'interface, Lora pour la lecture, coins de 4 à 8 px. */
+.fp-carte, .fp-suite, .fp-souvenir, .fp-puce {
+  --fp-blanc:#ffffff; --fp-bas:#f9f3e4; --fp-milieu:#f3edde; --fp-haut:#eee8d9; --fp-variante:#e8e2d3;
+  --fp-encre:#1d1c13; --fp-encre-2:#4a463f; --fp-contour:#7b776f; --fp-noir:#000000; --fp-tige:#1d1b19;
+  --fp-or:#755b00; --fp-or-clair:#ffe08f; --fp-sur-or-clair:#241a00;
+  --fp-ui:Outfit, Poppins, system-ui, sans-serif; --fp-lecture:Lora, Georgia, serif;
+}
+/* En-tête : « Parcours accompli · 7/7 jours » */
+.fp-puce { display:inline-flex; align-items:center; gap:6px; width:fit-content; margin:0 0 6px; padding:4px 10px; border-radius:4px;
+  background:var(--fp-or-clair); color:var(--fp-sur-or-clair); font-family:var(--fp-ui); font-size:12px; font-weight:600; line-height:16px; letter-spacing:.06em; }
+
+/* Carte maîtresse : le jardin du sénevé */
+.fp-carte { display:grid; gap:16px; margin:8px 0 16px; padding:16px; border-radius:8px; background:var(--fp-blanc); color:var(--fp-encre); box-shadow:0 1px 2px rgba(0,0,0,.05); }
+.fp-ligne { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.fp-etiquette { margin:0; font-family:var(--fp-ui); font-size:12px; font-weight:600; line-height:16px; letter-spacing:.06em; color:var(--fp-or); }
+.fp-compte { padding:2px 8px; border-radius:4px; background:var(--fp-milieu); color:var(--fp-encre-2); font-family:var(--fp-ui); font-size:12px; font-weight:600; line-height:16px; }
+.fp-titre { margin:4px 0 0; font-family:var(--fp-ui); font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.01em; color:var(--fp-noir); }
+.fp-scene { display:grid; justify-items:center; gap:8px; padding:16px; border-radius:6px; background:var(--fp-bas); overflow:hidden; }
+.fp-illus { width:100%; max-width:320px; height:auto; }
+.fp-etapes { display:flex; justify-content:space-between; width:100%; max-width:310px; text-align:center; }
+.fp-etapes div { display:grid; gap:2px; }
+.fp-etapes b { font-family:var(--fp-ui); font-size:12px; font-weight:500; color:var(--fp-encre-2); }
+.fp-etapes span { font-family:var(--fp-ui); font-size:11px; color:var(--fp-contour); }
+.fp-etapes .is-fin b { color:var(--fp-noir); font-weight:700; }
+.fp-etapes .is-fin span { color:var(--fp-or); font-weight:600; }
+
+/* Ruban des jours : réalisés en or, faits en partie en or clair, le dernier jour réalisé en noir */
+.fp-ruban { display:grid; gap:6px; }
+.fp-jour { display:grid; justify-items:center; gap:4px; padding:0; border:0; background:transparent; color:var(--fp-encre-2); font:inherit; cursor:pointer; }
+.fp-case { width:100%; height:32px; display:grid; place-items:center; border-radius:4px; background:var(--fp-haut); color:var(--fp-encre-2); }
+.fp-jour.is-realisee .fp-case { background:var(--fp-or); color:#fff; }
+.fp-jour.is-partielle .fp-case, .fp-jour.is-preparee .fp-case { background:var(--fp-or-clair); color:var(--fp-sur-or-clair); }
+.fp-jour.is-dernier .fp-case { background:var(--fp-noir); color:#fff; }
+.fp-jour.is-choisi .fp-case { box-shadow:0 0 0 2px var(--fp-blanc), 0 0 0 4px var(--fp-or); }
+.fp-num { font-family:var(--fp-ui); font-size:11px; }
+.fp-jour.is-dernier .fp-num { color:var(--fp-noir); font-weight:600; }
+.fp-ruban.is-compact .fp-case { height:26px; }
+.fp-legende { display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px 12px; padding:4px 4px 0; font-family:var(--fp-ui); font-size:11px; color:var(--fp-encre-2); }
+.fp-legende span { display:inline-flex; align-items:center; gap:4px; }
+.fp-pastille { width:8px; height:8px; border-radius:50%; display:inline-block; }
+.fp-pastille.is-realisee { background:var(--fp-or); }
+.fp-pastille.is-partielle { background:var(--fp-or-clair); }
+.fp-mot { margin:0; padding:16px; border-radius:4px; background:var(--fp-haut); font-family:var(--fp-lecture); font-style:italic; font-size:18px; line-height:28px; color:var(--fp-encre); }
+.fp-relire-jours { margin:-4px 0 16px; font-family:var(--fp-ui); font-size:13px; color:var(--fp-encre-2); }
+
+/* Étape suivante : offres réelles du catalogue */
+.card.fp-suite { display:grid; gap:14px; margin:0 0 16px; padding:16px; border:0; border-radius:8px; background:var(--fp-blanc); color:var(--fp-encre); box-shadow:0 1px 2px rgba(0,0,0,.05); }
+.fp-suivante { font-family:var(--fp-ui); font-size:12px; font-weight:500; color:var(--fp-or); }
+.fp-suite-intro { margin:0; font-family:var(--fp-lecture); font-size:16px; line-height:26px; color:var(--fp-encre-2); }
+.fp-offres { list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+.fp-offre { display:flex; align-items:flex-start; gap:10px; }
+.fp-offre-icone { width:28px; height:28px; flex:none; display:grid; place-items:center; margin-top:2px; border-radius:4px; background:var(--fp-milieu); color:var(--fp-or); }
+.fp-offre-texte { flex:1; display:grid; gap:8px; }
+.fp-offre-texte p { margin:0; font-family:var(--fp-ui); font-size:14px; line-height:20px; color:var(--fp-encre-2); }
+.fp-offre-texte strong { color:var(--fp-noir); font-weight:600; }
+.btn.fp-voir { min-height:48px; border-radius:4px; background:var(--fp-noir); color:#fff; font-family:var(--fp-ui); font-size:14px; letter-spacing:.04em; text-decoration:none; }
+.fp-bientot { font-style:italic; }
+.fp-libre { margin:0; padding:10px 12px; border-radius:4px; background:var(--fp-milieu); font-family:var(--fp-ui); font-size:13px; color:var(--fp-encre-2); }
+.fp-plus-tard { min-height:48px; border:0; background:transparent; color:var(--fp-encre-2); font-family:var(--fp-ui); font-size:14px; }
+
+/* Rappel du journal */
+.fp-souvenir { display:grid; gap:8px; margin:0 0 24px; padding:16px; border-radius:8px; background:var(--fp-haut); color:var(--fp-encre); }
+.fp-souvenir-titre { display:flex; align-items:center; gap:6px; margin:0; font-family:var(--fp-ui); font-size:16px; font-weight:600; color:var(--fp-noir); }
+.fp-souvenir-titre svg { color:var(--fp-or); }
+.fp-souvenir p:not(.fp-souvenir-titre) { margin:0; font-family:var(--fp-lecture); font-size:16px; line-height:26px; color:var(--fp-encre-2); }
+.fp-relire { display:inline-flex; align-items:center; gap:8px; width:fit-content; min-height:48px; padding:0 16px; border-radius:4px; background:var(--fp-variante);
+  color:var(--fp-noir); font-family:var(--fp-ui); font-size:14px; font-weight:600; text-decoration:none; }
+
+@media (prefers-color-scheme: dark) {
+  .fp-carte, .fp-suite, .fp-souvenir, .fp-puce {
+    --fp-blanc:#1e1c17; --fp-bas:#26231c; --fp-milieu:#2e2a21; --fp-haut:#2a261d; --fp-variante:#38332a;
+    --fp-encre:#f6f0e1; --fp-encre-2:#cac6c1; --fp-contour:#9b968c; --fp-noir:#f6f0e1; --fp-tige:#f6f0e1;
+    --fp-or:#e6c364; --fp-or-clair:#584400; --fp-sur-or-clair:#ffe08f;
+  }
+  .fp-jour.is-realisee .fp-case { color:#1d1c13; }
+  .fp-jour.is-dernier .fp-case, .btn.fp-voir { background:#f6f0e1; color:#1d1c13; }
+}

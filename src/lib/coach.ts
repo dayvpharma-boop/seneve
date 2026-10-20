@@ -19,6 +19,8 @@ export const COACH_TEXTES = {
   fr: {
     locale: 'fr-FR',
     titre: 'Coach SÉNEVÉ',
+    barre: 'Conversation avec le coach',
+    etiquette: 'Accompagnement quotidien',
     retour: 'Retour à mon espace',
     intro: 'Pose une question sur ta journée : comprendre un passage, appliquer l’action, reprendre après une pause.',
     avertissement: 'Le coach est une intelligence artificielle : il peut se tromper. Il s’appuie sur les contenus publiés de ton parcours et ne lit ton journal que pour les notes où tu l’as autorisé. Il ne remplace ni l’équipe ni une aide médicale ou d’urgence.',
@@ -50,6 +52,8 @@ export const COACH_TEXTES = {
   en: {
     locale: 'en-GB',
     titre: 'SÉNEVÉ coach',
+    barre: 'Conversation with the coach',
+    etiquette: 'Daily guidance',
     retour: 'Back to my space',
     intro: 'Ask a question about your day: understand a passage, apply the action, start again after a break.',
     avertissement: 'The coach is an artificial intelligence: it can make mistakes. It relies on your journey’s published content and only reads the journal notes you have allowed. It does not replace the team, medical care or emergency services.',

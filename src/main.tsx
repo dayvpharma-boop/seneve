@@ -18,6 +18,8 @@ import '@fontsource/literata/latin-400-italic.css';
 import '@fontsource/literata/latin-600.css';
 import './styles.css';
 import './styles-questions.css';
+import './styles-coach.css';
+import './styles-fin-parcours.css';
 import { TestPage } from '@/routes/index';
 import { Connexion } from '@/routes/connexion';
 import { Espace } from '@/routes/espace';
