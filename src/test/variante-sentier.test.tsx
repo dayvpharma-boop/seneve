@@ -41,14 +41,14 @@ describe('Variante 1 « Sentier » du Test des 7 Racines', () => {
   it('remplit une part de progression par racine, question par question', () => {
     render(<Index />);
     fireEvent.click(screen.getByRole('button', { name: 'Commencer' }));
-    expect(screen.getByText('Touche un chiffre : la question suivante s’affiche.')).toBeVisible();
+    expect(screen.getByText('Choisis un chiffre, puis confirme pour passer à la suite.')).toBeVisible();
     let w = widths();
     expect(w).toHaveLength(7);
     expect(w[0]).toBeCloseTo(100 / 3);
     expect(w.slice(1).every(x => x === 0)).toBe(true);
     for (let k = 0; k < 3; k++) {
       fireEvent.click(screen.getByRole('button', { name: /^3 sur 5/ }));
-      act(() => vi.advanceTimersByTime(160));
+      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
     }
     expect(screen.getByText('Question 4 sur 21')).toBeVisible();
     expect(screen.getByText('Racine 2 sur 7')).toBeVisible();

@@ -11,7 +11,7 @@ function finishQuiz(totals: number[]) {
     const remainder = total % 3;
     for (const answer of [value, value + Number(remainder > 0), value + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} sur 5`) }));
-      act(() => { vi.advanceTimersByTime(160); });
+      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
     }
   }
 }
@@ -76,7 +76,7 @@ describe('Résultat « Sentier »', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     for (let k = 0; k < 21; k++) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${k < 3 ? 1 : 4} out of 5`) }));
-      act(() => { vi.advanceTimersByTime(160); });
+      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
     }
     expect(screen.getByText('Your 7 roots')).toBeVisible();
     expect(screen.queryByText('Tes 7 racines')).not.toBeInTheDocument();

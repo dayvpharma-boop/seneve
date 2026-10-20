@@ -13,7 +13,7 @@ function answerAll(totals: number[]) {
     const n = Math.floor(total / 3), remainder = total % 3;
     for (const answer of [n, n + Number(remainder > 0), n + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} sur 5`) }));
-      act(() => vi.advanceTimersByTime(160));
+      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
     }
   }
 }

@@ -125,13 +125,11 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  const [answers, setAnswers] = useState<(number | null)[]>(Array(21).fill(null));
  const [i, setI] = useState(0);
   const [chosenRoot, setChosenRoot] = useState<number | null>(null);
- const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
  const question = useRef<HTMLParagraphElement>(null);
  const title = useRef<HTMLHeadingElement>(null);
  const focusNext = useRef(false);
  const visitRecorded = useRef(new Set<Language>());
  const savedResult = useRef<Promise<string | null> | null>(null);
- useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
  // Une ouverture comptée par chargement de la page et par langue affichée : passer au lien « English »
  // compte aussi une visite en anglais, pour que les tests terminés en anglais aient leurs visites.
  useEffect(() => {
@@ -161,17 +159,22 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
   if (focusNext.current) { question.current?.focus(); focusNext.current = false; }
  }, [i]);
  function answer(value: number) {
-  if (timer.current) return;
   setAnswers(previous => previous.map((a,k) => k === i ? value : a));
-  timer.current = setTimeout(() => {
-   timer.current = null;
-   if (i < 20) { focusNext.current = true; setI(i+1); } else setScreen('result');
-  },160);
+ }
+ function confirmAnswer() {
+  if (answers[i] === null || answers[i] === undefined) return;
+  if (i < 20) { focusNext.current = true; setI(i+1); } else setScreen('result');
  }
  function back() {
-  if (timer.current) { clearTimeout(timer.current); timer.current = null; }
   if (i>0) setI(i-1);
  }
+ // Mise en page des maquettes validées le 19/10/2026 (dossier « image app/corrigé », écrans 01, 02 et 03).
+ const en = language === 'en';
+ const racineEnCours = Math.floor(i/3);
+ const barreTest = <header className="barre-haut">
+  <PrototypeButton className="barre-retour" aria-label={en ? 'Back to the test home' : 'Revenir à l’accueil du test'} onClick={() => setScreen('home')}><Icone nom="fleche_gauche" taille={22} /></PrototypeButton>
+  <div className="barre-titre"><span className="barre-marque">SÉNEVÉ</span><span>{t.homeTitle}</span></div>
+ </header>;
  return <main className="wrap">
   <section id="s-home" hidden={screen !== 'home'}>
    <div className="home-head"><p className="brand">{t.brand}</p>{languageLink}</div>
@@ -189,19 +192,33 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite`}>{language === 'en' ? 'Privacy policy (in French)' : 'Confidentialité'}</a></p>
   </section>
   <section id="s-quiz" hidden={screen !== 'quiz'}>
-   <div className="count"><span id="num" className="count-main">{t.questionCount(i+1)}</span><span id="racine">{t.rootCount(Math.floor(i/3)+1)}</span></div>
+   {barreTest}
+   <div className="quiz-nav">
+    {i > 0 ? <PrototypeButton className="link quiz-precedente" id="back" onClick={back}>{t.back}</PrototypeButton> : <span />}
+    <span id="num" className="count-main">{t.questionCount(i+1)}</span>
+   </div>
+   <div className="quiz-racine-entete">
+    <div><p className="quiz-racine-num" id="racine">{t.rootCount(racineEnCours+1)}</p>
+    <h2 className="quiz-racine">{t.roots[racineEnCours]?.n}</h2></div>
+    <span className="quiz-restantes" aria-label={t.remainingInRoot(3 - i % 3)}>{t.remaining(3 - i % 3)}</span>
+   </div>
    {/* Une part par racine : elle se remplit question par question (3 questions par racine). */}
    <div className="segments" aria-hidden="true">
-    {[0,1,2,3,4,5,6].map(k => <span key={k} className="segment"><i style={{ width: `${Math.min(1, Math.max(0, (i + 1 - 3*k) / 3)) * 100}%` }} /></span>)}
+    {[0,1,2,3,4,5,6].map(k => <span key={k} className={k === racineEnCours ? 'segment-bloc is-current' : k < racineEnCours ? 'segment-bloc is-done' : 'segment-bloc'}><span className="segment"><i style={{ width: `${Math.min(1, Math.max(0, (i + 1 - 3*k) / 3)) * 100}%` }} /></span><b>{k+1}</b></span>)}
    </div>
    <div className="quiz-card">
-   <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
+    <div className="quiz-card-haut"><span className="tag">{en ? `Statement ${i+1}` : `Affirmation ${i+1}`}</span><Icone nom="citation" taille={18} /></div>
+    <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
+    <p className="tap-hint"><Icone nom="graine" taille={16} />{t.tapHint}</p>
+   </div>
+   <div className="quiz-echelle"><span>{en ? 'Choose your answer' : 'Positionne ta réponse'}</span><span>{en ? 'Scale from 1 to 5' : 'Échelle de 1 à 5'}</span></div>
    <div className="scale" id="scale" role="group" aria-label={t.answerGroup}>
     {[1,2,3,4,5].map(v => <div className="scale-option" key={v}><PrototypeButton className="scale-button" aria-pressed={answers[i]===v} aria-label={t.answerLabel(v)} onClick={() => answer(v)}>{v}</PrototypeButton>{'answerOptions' in t && <span className="scale-label" aria-hidden="true">{t.answerOptions[v - 1]}</span>}</div>)}
    </div>
    <div className="ends"><span>{t.never}</span><span>{t.always}</span></div>
-   <p className="tap-hint">{t.tapHint}</p>
-      <PrototypeButton className="link" id="back" hidden={i===0} onClick={back}>{t.back}</PrototypeButton>
+   <div className="quiz-validation">
+    <PrototypeButton className="btn btn-fleche" disabled={answers[i] === null || answers[i] === undefined} onClick={confirmAnswer}>{t.confirmNext}<Icone nom="fleche" taille={20} /></PrototypeButton>
+    <p className="quiz-confidentialite"><Icone nom="cadenas" taille={18} /><span>{t.privacyTest} <a className="link-inline" href={`${import.meta.env.BASE_URL}confidentialite`}>{t.privacyLink}</a></span></p>
    </div>
   </section>
   <section id="s-result" hidden={screen !== 'result'}>

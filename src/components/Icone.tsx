@@ -14,6 +14,21 @@ const TRACES = {
   retour: <path d="M15 18l-6-6 6-6" />,
   crayon: <><path d="M4 20h4L19 9l-4-4L4 16z" /><path d="M14 6l4 4" /></>,
   coach: <><path d="M4 5h16v11H9l-5 4z" /><path d="M8 9h8M8 12h5" /></>,
+  // Icônes ajoutées avec la direction visuelle validée le 19/10/2026 (maquettes Stitch corrigées).
+  graine: <g transform="translate(2 0) scale(.085)" stroke="none">
+    <ellipse cx="110" cy="205" rx="36" ry="25" fill="var(--foreground)" transform="rotate(-15 110 205)" />
+    <path d="M92 220C85 240 70 252 56 262" fill="none" stroke="var(--or)" strokeWidth="6" />
+    <path d="M110 185C110 120 135 80 160 50C165 90 145 135 128 165" fill="var(--or)" />
+    <path d="M112 135C88 118 72 90 78 72C104 76 114 105 112 135" fill="var(--foreground)" />
+    <circle cx="160" cy="36" r="9" fill="var(--or)" />
+  </g>,
+  bouclier: <path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z" />,
+  liste: <><path d="M10 6h10M10 12h10M10 18h10" /><path d="M4 5.5l1 .5v3M4 12h2l-2 2.5h2M4 17h2v2H4.5M4 19h2v2H4" /></>,
+  annuler: <><path d="M9 14L4 9l5-5" /><path d="M4 9h11a5 5 0 0 1 0 10h-3" /></>,
+  citation: <path d="M5 11h4v6H4v-4c0-3 1-5 4-6M15 11h4v6h-5v-4c0-3 1-5 4-6" />,
+  horloge: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
+  personne: <><circle cx="12" cy="8" r="4" /><path d="M4 21c1-4 4-6 8-6s7 2 8 6" /></>,
+  fleche_gauche: <path d="M19 12H5M11 6l-6 6 6 6" />,
 } as const;
 
 export type NomIcone = keyof typeof TRACES;

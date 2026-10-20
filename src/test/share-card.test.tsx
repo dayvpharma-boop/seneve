@@ -60,7 +60,7 @@ function finish(totals: number[]) {
     const n = Math.floor(total / 3), r = total % 3;
     for (const v of [n, n + Number(r > 0), n + Number(r > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
-      act(() => vi.advanceTimersByTime(160));
+      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
     }
   }
 }

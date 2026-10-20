@@ -10,7 +10,7 @@ function finish(totals: number[]) {
     const n = Math.floor(total / 3), remainder = total % 3;
     for (const answer of [n, n + Number(remainder > 0), n + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} out of 5`) }));
-      act(() => vi.advanceTimersByTime(160));
+      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
     }
   }
 }
@@ -33,7 +33,7 @@ describe('English test with unchanged rules', () => {
       expect(document.querySelector('#qtext')?.textContent).toBe(question);
       expect(screen.getByText(`Question ${i + 1} of 21`)).toBeVisible();
       fireEvent.click(screen.getByRole('button', { name: '1 out of 5 (never)' }));
-      act(() => vi.advanceTimersByTime(160));
+      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
     });
     expect(screen.getAllByRole('radio').map(radio => radio.textContent)).toEqual(texts.en.roots.map(root => root.n));
     screen.getAllByRole('radio').forEach(radio => expect(radio).toHaveAttribute('aria-checked', 'false'));
@@ -55,7 +55,7 @@ describe('English test with unchanged rules', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Take the test again' }));
     finish(Array(7).fill(3));
     expect(screen.queryByText('Your first action')).not.toBeInTheDocument();
-  });
+  }, 30000); // Deux parcours complets et 84 clics avec la confirmation explicite.
   it.each([
     [[3,3,3,3,3,3,3],7], [[9,9,9,9,9,9,9],7],
     [[15,15,15,15,15,15,15],7], [[14,15,15,15,15,15,15],7],
@@ -69,7 +69,7 @@ describe('English test with unchanged rules', () => {
     rows.forEach((row, i) => expect(within(row).getByText(`${totals[i]} / 15`)).toBeVisible());
     expect(screen.queryByText('Your first action') !== null).toBe(count === 0);
     expect(compute(totals.flatMap(total => { const n = Math.floor(total/3); return [n,n,total-2*n]; }))?.t).toEqual(totals);
-  });
+  }, 15000); // 21 réponses, chacune choisie puis confirmée.
   it('uses fixed distinct WhatsApp messages without participant data', () => {
     expect(new URL(whatsappUrls.en).searchParams.get('text')).toBe('Hello, I have just taken the 7 Roots Test. I would like to discover the free 7-day journey.');
     expect(new URL(whatsappUrls.fr).searchParams.get('text')).toBe('Bonjour, je viens de faire le Test des 7 Racines. Je souhaite découvrir le parcours gratuit de 7 jours.');

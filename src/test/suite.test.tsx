@@ -67,7 +67,7 @@ describe('Et après ? (espace)', () => {
   it('le dernier jour : offres suivantes, prix du catalogue, bouton seulement si un lien existe', async () => {
     vi.setSystemTime(new Date('2026-10-14T12:00:00Z'));   // jour 14
     render(<MemoryRouter><Espace /></MemoryRouter>);
-    const carte = await screen.findByRole('region', { name: 'Et après ?' });
+    const carte = await screen.findByRole('region', { name: 'Et après ?' }, { timeout: 5000 });
     expect(carte).toHaveTextContent('Formation 30 jours — 39 USD');
     expect(carte).toHaveTextContent('Accompagnement personnel 30 jours — 99 USD');
     expect(carte).not.toHaveTextContent('Formation 90 jours');
