@@ -1,4 +1,4 @@
-import {IconeBibliotheque} from './IconeBibliotheque';
+import {IconeRayonnage} from './IconeRayonnage';
 import {IconeEdition} from './IconeEdition';
 import { Link, useLocation } from 'react-router-dom';
 import { Icone, type NomIcone } from '@/components/Icone';
@@ -35,7 +35,7 @@ export function BarreNav({ langue, maquette = false, iconesJournee = false, icon
         const actif = (pathname === e.chemin || (e.cle === 'bibliotheque' && (pathname === '/livre' || pathname.startsWith('/livre/')))) && !(e.cle === 'journal' && ecriture);
         return <li key={e.cle}>
           <Link to={e.vers} className={e.cle === 'bibliotheque' ? 'nav-ecrire' : undefined} aria-current={actif ? 'page' : undefined}>
-            {e.cle === 'bibliotheque' ? <span className="nav-plus"><IconeBibliotheque nom="auto_stories" taille={24}/></span> : iconesAide ? <IconeAide nom={({aujourdhui:"wb_sunny",parcours:"route",journal:"menu_book",aide:"help"} as const)[e.cle]} taille={22} /> : iconesJournal ? <IconeJournal nom={({aujourdhui:"light_mode",parcours:"route",journal:"menu_book",aide:"help"} as const)[e.cle]} taille={24} /> : varianteJournee ? e.cle==='aide'?<IconeEdition nom="support" taille={22}/>:<IconeJournee nom={({aujourdhui:"wb_sunny",parcours:"explore",journal:"auto_stories"} as const)[e.cle]} taille={22}/> : iconesJournee ? <IconeJournee nom={SYMBOLES_JOURNEE[e.cle]} taille={22} /> : maquette ? <IconeMaquette nom={SYMBOLES[e.cle]} taille={22} /> : <Icone nom={e.icone} />}
+            {e.cle === 'bibliotheque' ? <span className="nav-plus"><IconeRayonnage taille={24}/></span> : iconesAide ? <IconeAide nom={({aujourdhui:"wb_sunny",parcours:"route",journal:"menu_book",aide:"help"} as const)[e.cle]} taille={22} /> : iconesJournal ? <IconeJournal nom={({aujourdhui:"light_mode",parcours:"route",journal:"menu_book",aide:"help"} as const)[e.cle]} taille={24} /> : varianteJournee ? e.cle==='aide'?<IconeEdition nom="support" taille={22}/>:<IconeJournee nom={({aujourdhui:"wb_sunny",parcours:"explore",journal:"auto_stories"} as const)[e.cle]} taille={22}/> : iconesJournee ? <IconeJournee nom={SYMBOLES_JOURNEE[e.cle]} taille={22} /> : maquette ? <IconeMaquette nom={SYMBOLES[e.cle]} taille={22} /> : <Icone nom={e.icone} />}
             <span>{T[e.cle]}</span>
           </Link>
         </li>;

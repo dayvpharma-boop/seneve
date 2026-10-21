@@ -1,3 +1,4 @@
+import {IconeRayonnage} from '@/components/IconeRayonnage';
 import {useEffect} from 'react';
 import {Link,useSearchParams} from 'react-router-dom';
 import {IconeBibliotheque as I} from '@/components/IconeBibliotheque';
@@ -23,7 +24,7 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
   </header>
   <div className="bl-contenu">
    {!detail?<>
-    <div className="bl-intro"><p className="bl-label"><I nom="auto_stories" taille={18}/>{en?'The book and its formats':'Le livre et ses formats'}</p><h1>{en?'My library':'Ma bibliothèque'}</h1><p className="bl-soustitre">{en?'Read, listen, and walk a little further.':'Lire, écouter et avancer un peu plus loin.'}</p></div>
+    <div className="bl-intro"><p className="bl-label"><IconeRayonnage taille={18}/>{en?'The book and its formats':'Le livre et ses formats'}</p><h1>{en?'My library':'Ma bibliothèque'}</h1><p className="bl-soustitre">{en?'Read, listen, and walk a little further.':'Lire, écouter et avancer un peu plus loin.'}</p></div>
     <nav className="bl-filtres" aria-label={en?'Book formats':'Formats du livre'}>{(['tous','audio','pdf'] as const).map(f=><button key={f} type="button" aria-pressed={actif===f} onClick={()=>setParams(p=>{const n=new URLSearchParams(p);if(f==='tous')n.delete('format');else n.set('format',f);return n;})}>{f==='tous'?(en?'All titles (1)':'Tous les titres (1)'):f==='audio'?(en?'Audiobooks':'Livres audio'):(en?'Digital books':'Livres numériques')}</button>)}</nav>
     <article className="bl-card"><div className="bl-livre-identite"><Couverture petite/><div><span className="bl-label">{en?'French edition':'Édition française'}</span><h2>{LIVRE.titre}</h2><p>{LIVRE.auteur}</p><span className="bl-statut"><I nom="schedule" taille={16}/>{en?'Formats in preparation':'Formats en préparation'}</span></div></div>
      <div className="bl-liste-formats">{FORMATS_LIVRE.filter(f=>actif==='tous'||f.id===actif).map(f=><Link key={f.id} to={`/livre/${f.id}${suffixe}`}><I nom={f.icone}/><span><strong>{f.id==='audio'?(en?'Audiobook':'Livre audio'):(en?'Digital book · PDF':'Livre numérique · PDF')}</strong><small>{en?'In preparation':'En préparation'}</small></span><I nom="chevron_right"/></Link>)}</div>
@@ -39,6 +40,6 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
    </>}
    <footer className="bl-footer"><I nom="spa" taille={28}/><strong>SÉNEVÉ · {en?'One step every day':'Un pas chaque jour'}</strong><Link to="/confidentialite">{en?'Privacy':'Confidentialité'}</Link><Apparence langue={lang}/></footer>
   </div>
-  <nav className="bl-nav" aria-label={en?'Library navigation':'Navigation de la bibliothèque'}><Link to="/espace"><I nom="home"/>{en?'Today':'Aujourd’hui'}</Link><Link to={`/bibliotheque${suffixe}`} aria-current={!detail?'page':undefined}><I nom="auto_stories"/>{en?'Library':'Bibliothèque'}</Link><Link to="/journal"><I nom="history_edu"/>{en?'Journal':'Journal'}</Link><Link to="/aide"><I nom="help"/>{en?'Help':'Aide'}</Link></nav>
+  <nav className="bl-nav" aria-label={en?'Library navigation':'Navigation de la bibliothèque'}><Link to="/espace"><I nom="home"/>{en?'Today':'Aujourd’hui'}</Link><Link to={`/bibliotheque${suffixe}`} aria-current={!detail?'page':undefined}><IconeRayonnage/>{en?'Library':'Bibliothèque'}</Link><Link to="/journal"><I nom="history_edu"/>{en?'Journal':'Journal'}</Link><Link to="/aide"><I nom="help"/>{en?'Help':'Aide'}</Link></nav>
  </main>;
 }

@@ -3,7 +3,7 @@
  * - Fichiers du site (assets, icônes) : gardés après le premier chargement.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v7-20261021';
+const CACHE = 'seneve-site-v8-20261021';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
 
