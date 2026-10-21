@@ -1,9 +1,11 @@
 /* SÉNEVÉ — consultation hors connexion de l'espace web.
  * - Pages : le réseau d'abord ; sans réseau, la dernière version enregistrée du site.
  * - Fichiers du site (assets, icônes) : gardés après le premier chargement.
+ * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v8-20261021';
+const CACHE = 'seneve-site-v9-20261022';
+const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
 
@@ -42,6 +44,18 @@ self.addEventListener('fetch', e => {
       } catch {
         return (await caches.match(INDEX)) || new Response('Hors connexion', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
       }
+    })());
+    return;
+  }
+
+  if (url.pathname.startsWith(BASE + 'bible/')) {
+    e.respondWith((async () => {
+      const cache = await caches.open(CACHE_BIBLE);
+      const hit = await cache.match(req);
+      if (hit) return hit;
+      const res = await fetch(req);
+      if (res.ok) cache.put(req, res.clone());
+      return res;
     })());
     return;
   }

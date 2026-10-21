@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -219,11 +219,14 @@ describe('Besoin d’aide', () => {
     await waitFor(() => expect(rpcs).toContainEqual({ name: 'cancel_help_request', args: { p_request_id: 'R2' } }));
   });
 
-  it('style de l’écran « Aujourd’hui » : urgence en évidence, coach accessible, « Aide » dans la barre du bas', async () => {
+  it('style de l’écran « Aujourd’hui » : urgence en évidence, coach accessible, barre du bas sans entrée active', async () => {
     at('/aide');
     expect(await screen.findByRole('note')).toHaveClass('aide-urgence');
     expect(screen.getByRole('link', { name: 'Parler au coach' })).toHaveAttribute('href', '/coach');
-    expect(screen.getByRole('link', { name: 'Aide' })).toHaveAttribute('aria-current', 'page');
+    // Depuis les maquettes Bible (22/10/2026), l'aide s'ouvre depuis le profil : la barre du bas n'a plus d'entrée « Aide ».
+    const nav = screen.getByRole('navigation', { name: 'Navigation principale' });
+    expect(within(nav).queryByRole('link', { name: 'Aide' })).toBeNull();
+    expect(within(nav).queryByRole('link', { current: 'page' })).toBeNull();
     expect(screen.getByText('Aucune demande pour le moment.')).toBeInTheDocument();
   });
 

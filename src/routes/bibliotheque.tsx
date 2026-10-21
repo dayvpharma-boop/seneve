@@ -4,6 +4,7 @@ import {Link,useSearchParams} from 'react-router-dom';
 import {IconeBibliotheque as I} from '@/components/IconeBibliotheque';
 import {LIVRE,FORMATS_LIVRE} from '@/lib/livre';
 import {Apparence} from '@/components/Apparence';
+import {BarreNav} from '@/components/BarreNav';
 
 function Couverture({petite=false}:{petite?:boolean}){
  return <div className={`bl-couverture ${petite?'bl-petite':''}`} role="img" aria-label={`${LIVRE.titre}, ${LIVRE.auteur}`}>
@@ -40,6 +41,6 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
    </>}
    <footer className="bl-footer"><I nom="spa" taille={28}/><strong>SÉNEVÉ · {en?'One step every day':'Un pas chaque jour'}</strong><Link to="/confidentialite">{en?'Privacy':'Confidentialité'}</Link><Apparence langue={lang}/></footer>
   </div>
-  <nav className="bl-nav" aria-label={en?'Library navigation':'Navigation de la bibliothèque'}><Link to="/espace"><I nom="home"/>{en?'Today':'Aujourd’hui'}</Link><Link to={`/bibliotheque${suffixe}`} aria-current={!detail?'page':undefined}><IconeRayonnage/>{en?'Library':'Bibliothèque'}</Link><Link to="/journal"><I nom="history_edu"/>{en?'Journal':'Journal'}</Link><Link to="/aide"><I nom="help"/>{en?'Help':'Aide'}</Link></nav>
+  <BarreNav langue={lang} maquette iconesJournee/>
  </main>;
 }

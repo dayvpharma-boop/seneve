@@ -4,7 +4,7 @@ import {suivreApparence} from './lib/apparence';
 import {Offres} from './routes/offres';
 import './styles-offres-acces.css';
 import {Reglages} from './routes/reglages';
-import { StrictMode } from 'react';
+import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // Polices hébergées avec le site (et non chez Google) : elles restent disponibles hors connexion.
@@ -64,6 +64,14 @@ import './styles-tableau-fidele.css';
 import { Confidentialite } from '@/routes/confidentialite';
 import { enregistrerServiceWorker } from '@/lib/hors-ligne';
 
+// La Bible n'est chargée que lorsqu'on l'ouvre : le reste du site reste aussi léger qu'avant.
+const bible = () => import('@/routes/bible');
+const BibleAccueil = lazy(() => bible().then(m => ({ default: m.BibleAccueil })));
+const BibleLivres = lazy(() => bible().then(m => ({ default: m.BibleLivres })));
+const BibleLecture = lazy(() => bible().then(m => ({ default: m.BibleLecture })));
+const BibleRecherche = lazy(() => bible().then(m => ({ default: m.BibleRecherche })));
+const BibleAnnotations = lazy(() => bible().then(m => ({ default: m.BibleAnnotations })));
+
 suivreApparence();
 enregistrerServiceWorker();
 
@@ -71,7 +79,7 @@ const root = document.getElementById('root');
 if (root) createRoot(root).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-      <Routes>
+      <Suspense fallback={null}><Routes>
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
         <Route path="/connexion" element={<Connexion />} />
@@ -79,6 +87,11 @@ if (root) createRoot(root).render(
         <Route path="/livre" element={<Bibliotheque detail/>}/>
         <Route path="/livre/audio" element={<Bibliotheque detail format="audio"/>}/>
         <Route path="/livre/pdf" element={<Bibliotheque detail format="pdf"/>}/>
+        <Route path="/bible" element={<BibleAccueil/>}/>
+        <Route path="/bible/livres" element={<BibleLivres/>}/>
+        <Route path="/bible/recherche" element={<BibleRecherche/>}/>
+        <Route path="/bible/annotations" element={<BibleAnnotations/>}/>
+        <Route path="/bible/:livre/:chapitre" element={<BibleLecture/>}/>
         <Route path="/offres" element={<Offres/>}/><Route path="/acces" element={<Offres mode="acces"/>}/><Route path="/paiement" element={<Offres mode="paiement"/>}/><Route path="/reglages" element={<Reglages/>}/>
         <Route path="/profil" element={<Profil/>}/><Route path="/espace" element={<Espace />} />
         <Route path="/journal" element={<Journal />} />
@@ -90,7 +103,7 @@ if (root) createRoot(root).render(
         <Route path="/nouveau-mot-de-passe" element={<NewPassword />} />
         <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
         <Route path="*" element={<NotFound />} />
-      </Routes>
+      </Routes></Suspense>
     </BrowserRouter>
   </StrictMode>,
 );
@@ -105,3 +118,4 @@ import './styles-journee-nouvelle.css';
 import './styles-profil.css';
 import './styles-mode-sombre.css';
 import './styles-bibliotheque.css';
+import './styles-bible.css';

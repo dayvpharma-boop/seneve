@@ -1,0 +1,9 @@
+Textes bibliques utilisés par SÉNEVÉ (dossier bible/)
+
+- Louis Segond 1910 (bible/lsg) : domaine public. Édition eBible.org, fichier fraLSG_vpl.zip, téléchargé le 21/10/2026.
+  « Cette Bible est dans le domaine public. Il n'est pas protégé par copyright. »
+- World English Bible (bible/web) : domaine public. Édition eBible.org (2020 stable text), fichier eng-web_vpl.zip, téléchargé le 21/10/2026.
+  « World English Bible » est une marque d'eBible.org : le texte n'est pas modifié.
+
+Seule la mise en forme change : un fichier JSON par livre (chapitres → versets), les 66 livres du canon protestant.
+Aucun verset n'est ajouté, retiré, corrigé ou résumé.
