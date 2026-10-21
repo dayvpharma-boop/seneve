@@ -113,7 +113,7 @@
 .connexion .connexion-achat svg { color:#755b00; }
 .connexion-form .moment-btn { min-height:52px; margin-top:0; text-transform:uppercase; letter-spacing:.1em; font-size:14px; }
 .connexion-legal { margin-top:20px; font-size:12px; line-height:1.6; }
-@media (prefers-color-scheme:dark) {
+@media (prefers-color-scheme: dark) {
   .connexion .mdp-voir, .connexion .connexion-achat svg { color:var(--or); }
 }
 
@@ -135,7 +135,7 @@
   font-family:Literata,Georgia,serif; font-size:14px; line-height:22px;
   font-style:italic; margin:0;
 }
-@media(prefers-color-scheme:dark) { .connexion-pensee-icone { color:var(--or); } }
+@media (prefers-color-scheme: dark) { .connexion-pensee-icone { color:var(--or); } }
 
 /* Compléments de bas de formulaire repris de la maquette. */
 .connexion-suite { display:grid; justify-items:center; gap:12px; margin-top:8px; text-align:center; }
@@ -144,7 +144,7 @@
 .connexion-securite { display:flex; justify-content:center; align-items:flex-start; gap:8px; padding-top:8px; margin:0; font-family:Outfit,system-ui,sans-serif; font-size:11px; line-height:18px; color:var(--muted); }
 .connexion-securite svg { flex-shrink:0; margin-top:1px; color:#755b00; }
 .connexion-suite + .connexion-legal { margin-top:12px; }
-@media(prefers-color-scheme:dark) { .connexion-securite svg { color:var(--or); } }
+@media (prefers-color-scheme: dark) { .connexion-securite svg { color:var(--or); } }
 
 .connexion-ouvrage { display:flex; align-items:center; gap:8px; margin:0 0 8px; font-family:Outfit,system-ui,sans-serif; font-size:12px; line-height:18px; font-weight:500; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
 .connexion-ouvrage .point-or { width:6px; height:6px; }

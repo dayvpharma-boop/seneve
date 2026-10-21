@@ -1,3 +1,4 @@
+import {Apparence} from '@/components/Apparence';
 import {ChoixRacines} from '@/components/ChoixRacines';
 import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -163,7 +164,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  </header>;
  return <main className="wrap">
   <section id="s-home" hidden={screen !== 'home'}>
-   <header className="barre-haut home-head"><p className="brand logo-marque"><Icone nom="graine" taille={20} />{t.brand}</p>{languageLink}</header>
+   <header className="barre-haut home-head"><p className="brand logo-marque"><Icone nom="graine" taille={20} />{t.brand}</p>{languageLink}<Apparence langue={language} compact/></header>
    <h1>{t.homeTitle}</h1>
    <p className="home-intro">{t.intro.split(/(Arrête de mendier des miracles|Stop Begging for Miracles)/).map((texte, index) => index % 2 ? <strong className="home-livre" key={index}>{texte}</strong> : texte)}</p>
    <div className="home-image"><img src={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp 720w`} sizes="(max-width:600px) calc(100vw - 40px), 560px" width={720} height={314} alt="" decoding="async" /></div>
@@ -212,7 +213,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    </div>
   </section>
   <section id="s-result" hidden={screen !== 'result'}>
-   {barreTest}
+   <div className="resultat-outils">{barreTest}<Apparence langue={language} compact/></div>
    <p className="resultat-puce">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
     <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} />}</div>
     <p className="muted">{t.final}</p>

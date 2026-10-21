@@ -1,5 +1,6 @@
 /** Consultation hors connexion de l'espace : dernière copie des journées déjà chargées, sur cet appareil. */
 import { useEffect, useState } from 'react';
+import {effacerProfils} from './profil';
 
 const PREFIXE = 'seneve:espace:v1:';
 
@@ -16,6 +17,7 @@ export function lireEspace<T>(userId: string): { le: string; donnees: T } | null
 
 /** À la déconnexion : aucune copie ne reste sur l'appareil. */
 export function effacerEspaces(): void {
+  effacerProfils();
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
       const k = localStorage.key(i);

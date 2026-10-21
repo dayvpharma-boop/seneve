@@ -10,7 +10,7 @@ function dateCourte(iso: string, langue: string) {
 }
 
 /** Carte « Mon objectif » : le participant formule et confirme lui-même son objectif ; il peut le modifier. */
-export function GoalCard({ langue }: { langue: string }) {
+export function GoalCard({ langue, onSaved }: { langue: string; onSaved?:()=>void }) {
   const T = objectifTextes(langue);
   const racines = nomsRacines(langue);
   const [goal, setGoal] = useState<Goal | null | undefined>(undefined);
@@ -39,11 +39,14 @@ export function GoalCard({ langue }: { langue: string }) {
     const t = objectifValide(texte);
     if (!t || busy) return;
     setBusy(true); setError('');
-    const { error } = await supabase.rpc('goal_set', { p_texte: t, p_racine: racine });
-    setBusy(false);
-    if (error) { setError(T.erreur); return; }
-    setEditing(false);
-    await load();
+    try {
+      const { error } = await supabase.rpc('goal_set', { p_texte: t, p_racine: racine });
+      if (error) { setError(T.erreur); return; }
+      onSaved?.();
+      setEditing(false);
+      await load();
+    } catch { setError(T.erreur); }
+    finally { setBusy(false); }
   }
 
   if (goal === undefined) return null;

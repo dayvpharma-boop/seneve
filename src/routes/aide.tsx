@@ -58,9 +58,9 @@ export function Aide() {
   const [params] = useSearchParams();
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
-  const [motif, setMotif] = useState(() => draft.read('aide'));
+  const [motif, setMotif] = useState(() => draft.read('aide') || ({'suppression-compte':'Je souhaite demander la suppression de mon compte SÉNEVÉ.','adresse-email':'Je souhaite modifier l’adresse e-mail de mon compte.','export-donnees':'Je souhaite recevoir une copie de toutes mes données personnelles.'}[params.get('motif')??'']??''));
   const [parcours, setParcours] = useState(params.get('inscription') ?? '');
-  const [sujet,setSujet]=useState(()=>{const v=draft.read('aide:sujet');return CLE_SUJETS.includes(v)?v:'parcours';});
+  const [sujet,setSujet]=useState(()=>{const v=draft.read('aide:sujet');return CLE_SUJETS.includes(v)?v:params.has('motif')?'compte':'parcours';});
   const [notes, setNotes] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');

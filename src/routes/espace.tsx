@@ -1,3 +1,4 @@
+import {Apparence} from '@/components/Apparence';
 import {IconeRegistre} from '@/components/IconeRegistre';
 import {IconeFinitions} from '@/components/IconeFinitions';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
@@ -193,7 +194,7 @@ export function Espace() {
   // Barre du haut des maquettes validées le 19/10/2026 : « SÉNEVÉ · Bonjour Marie » et la pastille de l'initiale.
   const salut = data ? (data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour') : undefined;
   const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
-    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{data?.parcours.find(x => x.enrollment_id === chosen)?.langue === 'en' ? 'Today' : 'Aujourd’hui'}</small></span></p><Link className="today-profil" to="/reglages" aria-label="Mes réglages">{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</Link></div>
+    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{data?.parcours.find(x => x.enrollment_id === chosen)?.langue === 'en' ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><Link className="today-profil" to="/profil" aria-label="Mon profil">{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</Link></div>
     {notice}{repere}
     {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<span className="jn-avatar-grand" aria-hidden="true">{data.prenom.charAt(0).toUpperCase()}</span>}
   </header>;

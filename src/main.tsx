@@ -1,3 +1,5 @@
+import {Profil} from './routes/profil';
+import {suivreApparence} from './lib/apparence';
 import {Offres} from './routes/offres';
 import './styles-offres-acces.css';
 import {Reglages} from './routes/reglages';
@@ -61,6 +63,7 @@ import './styles-tableau-fidele.css';
 import { Confidentialite } from '@/routes/confidentialite';
 import { enregistrerServiceWorker } from '@/lib/hors-ligne';
 
+suivreApparence();
 enregistrerServiceWorker();
 
 const root = document.getElementById('root');
@@ -72,7 +75,7 @@ if (root) createRoot(root).render(
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
         <Route path="/connexion" element={<Connexion />} />
         <Route path="/offres" element={<Offres/>}/><Route path="/acces" element={<Offres mode="acces"/>}/><Route path="/paiement" element={<Offres mode="paiement"/>}/><Route path="/reglages" element={<Reglages/>}/>
-        <Route path="/espace" element={<Espace />} />
+        <Route path="/profil" element={<Profil/>}/><Route path="/espace" element={<Espace />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/aide" element={<Aide />} />
         <Route path="/admin" element={<Admin />} />
@@ -93,3 +96,6 @@ import './styles-registres-fideles.css';
 import './styles-edition-administration.css';
 
 import './styles-journee-nouvelle.css';
+
+import './styles-profil.css';
+import './styles-mode-sombre.css';
