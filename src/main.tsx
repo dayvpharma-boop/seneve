@@ -1,3 +1,4 @@
+import {Bibliotheque} from './routes/bibliotheque';
 import {Profil} from './routes/profil';
 import {suivreApparence} from './lib/apparence';
 import {Offres} from './routes/offres';
@@ -74,6 +75,10 @@ if (root) createRoot(root).render(
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
         <Route path="/connexion" element={<Connexion />} />
+        <Route path="/bibliotheque" element={<Bibliotheque/>}/>
+        <Route path="/livre" element={<Bibliotheque detail/>}/>
+        <Route path="/livre/audio" element={<Bibliotheque detail format="audio"/>}/>
+        <Route path="/livre/pdf" element={<Bibliotheque detail format="pdf"/>}/>
         <Route path="/offres" element={<Offres/>}/><Route path="/acces" element={<Offres mode="acces"/>}/><Route path="/paiement" element={<Offres mode="paiement"/>}/><Route path="/reglages" element={<Reglages/>}/>
         <Route path="/profil" element={<Profil/>}/><Route path="/espace" element={<Espace />} />
         <Route path="/journal" element={<Journal />} />
@@ -99,3 +104,4 @@ import './styles-journee-nouvelle.css';
 
 import './styles-profil.css';
 import './styles-mode-sombre.css';
+import './styles-bibliotheque.css';
