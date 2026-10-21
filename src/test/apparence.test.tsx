@@ -1,5 +1,5 @@
 import {afterEach,beforeEach,it,expect,vi} from 'vitest';
-import {render,screen,fireEvent,cleanup} from '@testing-library/react';
+import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
 import {Apparence} from '@/components/Apparence';
 import {appliquerApparence,lireApparence,suivreApparence} from '@/lib/apparence';
 beforeEach(()=>localStorage.clear());afterEach(()=>{cleanup();delete document.documentElement.dataset.apparence;vi.restoreAllMocks();});
@@ -7,3 +7,4 @@ it('le mode sombre explicite prime sur un téléphone clair et se conserve',()=>
 it('le mode clair explicite prime sur un téléphone sombre',()=>{vi.spyOn(window,'matchMedia').mockReturnValue({matches:true} as MediaQueryList);appliquerApparence('clair');expect(document.documentElement.dataset.apparence).toBe('clair');});
 it('le mode appareil suit ses changements et retire ses écouteurs',()=>{let fn=()=>{};let sombre=false;const retirer=vi.fn();vi.spyOn(window,'matchMedia').mockImplementation(()=>({get matches(){return sombre;},addEventListener:(_e:string,f:()=>void)=>{fn=f;},removeEventListener:retirer}) as unknown as MediaQueryList);const stop=suivreApparence();expect(document.documentElement.dataset.apparence).toBe('clair');sombre=true;fn();expect(document.documentElement.dataset.apparence).toBe('sombre');stop();expect(retirer).toHaveBeenCalled();});
 it('un choix inconnu revient au réglage de l’appareil',()=>{localStorage.setItem('seneve:apparence','inconnu');expect(lireApparence()).toBe('systeme');});
+it('le menu fermé ne participe pas aux choix de racines et reste ouvrable',async()=>{const {container}=render(<Apparence compact/>);const menu=container.querySelector('details')!;expect(screen.queryAllByRole('radio')).toHaveLength(0);menu.open=true;fireEvent(menu,new Event('toggle'));await waitFor(()=>expect(screen.getAllByRole('radio')).toHaveLength(3));fireEvent.click(screen.getByLabelText('Sombre'));expect(document.documentElement.dataset.apparence).toBe('sombre');menu.open=false;fireEvent(menu,new Event('toggle'));await waitFor(()=>expect(screen.queryAllByRole('radio')).toHaveLength(0));});
