@@ -183,12 +183,12 @@ describe('Espace — écran « Aujourd’hui »', () => {
     expect(liens[0]).toHaveAccessibleDescription('Question du jour 2 ?');
   });
 
-  it('barre du bas : Aujourd’hui (page actuelle), Parcours, Écrire, Journal, Aide', async () => {
+  it('barre du bas : Aujourd’hui (page actuelle), Parcours, Bibliothèque, Journal, Aide', async () => {
     ouvrir();
     const nav = await screen.findByRole('navigation', { name: 'Navigation principale' });
     const liens = within(nav).getAllByRole('link');
     expect(liens.map(l => [l.textContent, l.getAttribute('href')])).toEqual([
-      ['Aujourd’hui', '/espace'], ['Parcours', '/progres'], ['Écrire', '/journal?ecrire=1'], ['Journal', '/journal'], ['Aide', '/aide'],
+      ['Aujourd’hui', '/espace'], ['Parcours', '/progres'], ['Bibliothèque', '/bibliotheque'], ['Journal', '/journal'], ['Aide', '/aide'],
     ]);
     expect(within(nav).getByRole('link', { name: 'Aujourd’hui' })).toHaveAttribute('aria-current', 'page');
   });
