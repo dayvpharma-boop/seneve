@@ -91,7 +91,7 @@ describe('Image à partager — page de résultat', () => {
     expect(lastContent()?.strength).toEqual({ label: 'Mon point d’appui', name: 'Dîme et offrande' });
     expect(lastContent()?.start?.name).toBe("Liberté face à l'argent");
     expect(screen.getByRole('img', { name: 'Aperçu de ton image' })).toBeVisible();
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Afficher ma racine forte' }));
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Afficher ma racine d’appui' }));
     await flush();
     expect(lastContent()?.start).toEqual({ label: 'Je commence par', name: 'Liberté face à l\'argent' });
     expect(lastContent()?.strength).toBeUndefined();
