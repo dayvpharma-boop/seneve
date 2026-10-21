@@ -1,3 +1,5 @@
+import {Offres} from './routes/offres';
+import './styles-offres-acces.css';
 import {Reglages} from './routes/reglages';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -69,7 +71,7 @@ if (root) createRoot(root).render(
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
         <Route path="/connexion" element={<Connexion />} />
-        <Route path="/reglages" element={<Reglages/>}/>
+        <Route path="/offres" element={<Offres/>}/><Route path="/acces" element={<Offres mode="acces"/>}/><Route path="/paiement" element={<Offres mode="paiement"/>}/><Route path="/reglages" element={<Reglages/>}/>
         <Route path="/espace" element={<Espace />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/aide" element={<Aide />} />

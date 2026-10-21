@@ -1,3 +1,4 @@
+import {ChoixRacines} from '@/components/ChoixRacines';
 import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { compute, categorie } from '@/lib/racines';
@@ -50,22 +51,6 @@ function StrengthCard({ fortes, total, language }: { fortes: number[]; total: nu
   <p className="muted">{plusieurs ? t.resultHelp.strengthMany : t.resultHelp.strengthOne}</p>
  </div>;
 }
-function RootChoices({ indices, chosenRoot, onChoose, language }: { indices: number[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language }) {
- const t = texts[language];
- return <div className="root-choices" role="radiogroup" aria-label={t.choose}>
-      {indices.map((k,position) => <PrototypeButton key={k} className="root-choice" role="radio" aria-checked={chosenRoot===k} tabIndex={chosenRoot===k || (chosenRoot===null && position===0) ? 0 : -1} onClick={() => onChoose(k)} onKeyDown={event => {
-      const direction = event.key==='ArrowDown' || event.key==='ArrowRight' ? 1 : event.key==='ArrowUp' || event.key==='ArrowLeft' ? -1 : 0;
-      if (!direction && event.key!=='Home' && event.key!=='End') return;
-      event.preventDefault();
-       const next = event.key==='Home' ? 0 : event.key==='End' ? indices.length-1 : (position+direction+indices.length)%indices.length;
-       const nextRoot = indices[next];
-       if (nextRoot === undefined) return;
-       onChoose(nextRoot);
-      const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
-      buttons?.[next]?.focus();
-      }}>{t.roots[k]?.n}</PrototypeButton>)}
-     </div>;
-}
 function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (number | null)[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language }) {
    const t = texts[language];
    const R = t.roots;
@@ -88,11 +73,12 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
   // Ordre « Sentier » (14/10/2026) : d'abord la racine proposée, la première action et la suite WhatsApp,
   // puis le détail des 7 racines avec une barre par score, enfin le partage.
   return <>
-     {needsChoice && <><p>{message}</p><RootChoices language={language} indices={indices} chosenRoot={chosenRoot} onChoose={onChoose} /></>}
+     {needsChoice && <><p>{message}</p><ChoixRacines language={language} indices={indices} totals={r.t} chosenRoot={chosenRoot} onChoose={onChoose} allSupport={allSupport} /></>}
      {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} explanation={needsChoice ? t.resultHelp.chosen : t.resultHelp.suggested} />}
     {root && <div className="card action-card result-action"><p className="result-orientation"><IconeResultat nom="eco" taille={20}/>{language==='en'?'Immediate direction':'Orientation immédiate'}</p><p className="tag">{t.firstAction}</p><div className="action-box"><IconeResultat nom="menu_book" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
     {/* Affichée aussi avant le choix d'une racine en cas d'égalité en bas : la racine forte n'en dépend pas. */}
     {!r.same && !allSupport && <StrengthCard language={language} fortes={r.fortes} total={Math.max(...r.t)} />}
+    {root && needsChoice && <a className="btn btn-link choix-continuer" href={`${import.meta.env.BASE_URL}connexion${language==='en'?'?lang=en':''}`}>{language==='en'?'Continue with this root':'Continuer avec cette racine'}</a>}
     {root && <RepereParcours contexte="resultat" langue={language} />}
      <div className="card root-list-card"><p className="tag">{t.rootsTitle}<IconeResultat nom="analytics" taille={20}/></p><p>{t.summary}</p>
        <details className="result-method"><summary>{t.resultHelp.method}</summary><p>{t.resultHelp.calculation}</p><p>{t.resultHelp.bands}</p><p>{t.resultHelp.close}</p></details>

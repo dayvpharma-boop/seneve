@@ -197,7 +197,7 @@ export function Espace() {
     {notice}{repere}
     {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<span className="jn-avatar-grand" aria-hidden="true">{data.prenom.charAt(0).toUpperCase()}</span>}
   </header>;
-  const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to="/confidentialite">Confidentialité</Link><button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
+  const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to="/offres">Parcours &amp; offres</Link><Link className="link" to="/acces">Mes accès</Link><Link className="link" to="/confidentialite">Confidentialité</Link><button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
   // Repliés sur l'écran « Aujourd'hui » (allègement du 19/10/2026) : on les ouvre quand on en a besoin.
   const reglages = (langue: string, avecEmail: boolean, replie = false) => {

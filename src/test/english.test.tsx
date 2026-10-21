@@ -37,7 +37,7 @@ describe('English test with unchanged rules', () => {
       fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
       act(() => vi.advanceTimersByTime(160));
     });
-    expect(screen.getAllByRole('radio').map(radio => radio.textContent)).toEqual(texts.en.roots.map(root => root.n));
+    expect(screen.getAllByRole('radio').map(radio => radio.getAttribute('aria-label'))).toEqual(texts.en.roots.map(root => root.n));
     screen.getAllByRole('radio').forEach(radio => expect(radio).toHaveAttribute('aria-checked', 'false'));
     expect(screen.queryByText('Your first action')).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Continue on WhatsApp' })).not.toBeInTheDocument();
@@ -65,6 +65,7 @@ describe('English test with unchanged rules', () => {
   ])('preserves selection rules for %j', (totals, count) => {
     render(<Index language="en" />);
     finish(totals);
+    const more=screen.queryByRole('button',{name:'See the other 4 roots'});if(more)fireEvent.click(more);
     expect(screen.queryAllByRole('radio')).toHaveLength(count);
     const rows = within(screen.getByText('Your 7 roots').closest('.card') as HTMLElement).getAllByRole('listitem');
     expect(rows).toHaveLength(7);

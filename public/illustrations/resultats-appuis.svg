@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" color="#755b00">
+<!-- Tige & Colline -->
+<path d="M12 54C22 51 42 51 52 54" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+<path d="M32 52V28" stroke="#333027" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Feuilles symétriques et apaisées -->
+<path d="M32 38C26 36 22 30 24 24C30 24 32 32 32 38Z" fill="#755b00" opacity="0.85"></path>
+<path d="M32 34C38 32 42 26 40 20C34 20 32 28 32 34Z" fill="#584400" opacity="0.9"></path>
+<!-- Rayonnement discret -->
+<circle cx="32" cy="24" fill="#755b00" r="1.5"></circle>
+</svg>

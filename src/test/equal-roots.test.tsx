@@ -31,8 +31,10 @@ describe('Nouveau résultat et choix libres', () => {
     render(<Index />);
     finishQuiz(Array(7).fill(total));
     expect(within(result()).getByText(message)).toBeVisible();
+    const expand=screen.queryByRole('button',{name:'Voir les 4 autres racines disponibles'});
+    if(expand)fireEvent.click(expand);
     const radios = screen.getAllByRole('radio');
-    expect(radios.map(radio => radio.textContent)).toEqual(R.map(root => root.n));
+    expect(radios.map(radio => radio.getAttribute('aria-label'))).toEqual(R.map(root => root.n));
     for (const radio of radios) expect(radio).toHaveAttribute('aria-checked', 'false');
     expect(action()).not.toBeInTheDocument();
     const rows = within(result()).getAllByRole('listitem');
@@ -65,6 +67,8 @@ describe('Nouveau résultat et choix libres', () => {
     render(<Index />);
     finishQuiz([14,15,15,15,15,15,15]);
     expect(screen.getByText('Les sept racines sont des points d’appui selon tes réponses. Choisis celle que tu souhaites approfondir.')).toBeVisible();
+    expect(screen.getAllByRole('radio')).toHaveLength(3);
+    fireEvent.click(screen.getByRole('button',{name:'Voir les 4 autres racines disponibles'}));
     expect(screen.getAllByRole('radio')).toHaveLength(7);
     expect(screen.queryByText('Nous te proposons de commencer par')).not.toBeInTheDocument();
     expect(action()).not.toBeInTheDocument();

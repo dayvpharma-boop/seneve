@@ -26,7 +26,7 @@ describe('Minimum dans le nouveau résultat', () => {
     finishQuiz(totals);
     expect(screen.getByText('Plusieurs racines sont au même niveau selon tes réponses. Choisis celle par laquelle tu souhaites commencer.')).toBeVisible();
     const radios = screen.getAllByRole('radio');
-    expect(radios.map(radio => radio.textContent)).toEqual(['Travail et intégrité', 'Fidélité dans les petites choses']);
+    expect(radios.map(radio => radio.getAttribute('aria-label'))).toEqual(['Travail et intégrité', 'Fidélité dans les petites choses']);
     radios.forEach(radio => expect(radio).toHaveAttribute('aria-checked', 'false'));
     expect(screen.queryByText('Ta première action')).not.toBeInTheDocument();
     const rows = screen.getAllByRole('listitem');

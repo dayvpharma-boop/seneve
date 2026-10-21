@@ -1,0 +1,29 @@
+<svg fill="none" viewBox="0 0 340 80" xmlns="http://www.w3.org/2000/svg" color="#755b00">
+<!-- Ligne de sol douce -->
+<path d="M0 55 C 80 50, 160 58, 240 52 C 290 48, 320 54, 340 53" opacity="0.45" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1.5"></path>
+<path d="M0 64 C 90 62, 180 66, 340 64" fill="#e8e2d3" opacity="0.7"></path>
+<!-- Graine 1 active : Racine choisie -->
+<g transform="translate(60, 52)">
+<circle cx="0" cy="0" fill="#1d1c13" r="5"></circle>
+<path d="M0 0 C -2 10, -6 18, -10 22 M0 0 C 1 12, 5 17, 7 21" stroke="#755b00" stroke-linecap="round" stroke-width="1.5"></path>
+<path d="M0 -3 C -1 -12, -7 -18, -12 -20 C -7 -24, 0 -17, 0 -3" fill="#755b00"></path>
+<path d="M0 -3 C 2 -10, 8 -15, 12 -17 C 8 -21, 1 -14, 0 -3" fill="#755b00"></path>
+<circle cx="0" cy="-24" fill="#fed977" r="2.5"></circle>
+</g>
+<!-- Ligne de transition pointillée -->
+<path d="M75 42 Q 120 28 165 44" stroke="#ccc6bd" stroke-dasharray="2 3" stroke-width="1.2"></path>
+<!-- Graine 2 -->
+<g transform="translate(170, 55)">
+<circle cx="0" cy="0" fill="#4a463f" r="4.5"></circle>
+<path d="M0 0 C -1 8, -4 14, -6 17 M0 0 C 2 9, 3 13, 5 16" stroke="#7b776f" stroke-linecap="round" stroke-width="1.2"></path>
+<path d="M0 -2 C 0 -8, -4 -12, -7 -14 C -4 -16, 0 -11, 0 -2" fill="#7b776f"></path>
+</g>
+<!-- Ligne de transition pointillée -->
+<path d="M185 45 Q 230 32 270 46" stroke="#ccc6bd" stroke-dasharray="2 3" stroke-width="1.2"></path>
+<!-- Graine 3 -->
+<g transform="translate(275, 54)">
+<circle cx="0" cy="0" fill="#4a463f" r="4.5"></circle>
+<path d="M0 0 C -2 7, -3 12, -5 16 M0 0 C 1 8, 4 12, 6 15" stroke="#7b776f" stroke-linecap="round" stroke-width="1.2"></path>
+<path d="M0 -2 C 0 -7, 3 -11, 6 -13 C 3 -15, 0 -10, 0 -2" fill="#7b776f"></path>
+</g>
+</svg>

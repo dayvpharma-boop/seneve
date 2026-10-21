@@ -1,4 +1,4 @@
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -23,6 +23,7 @@ describe('Administration : ce qui freine les participants', () => {
     expect(await within(carte).findByText(/Je n’ai pas eu le temps/)).toHaveTextContent('Je n’ai pas eu le temps : 2');
     expect(carte).toHaveTextContent('Je n’ai pas bien compris l’action : 1');
     expect(carte).toHaveTextContent('Une situation personnelle : 1');
+    fireEvent.click(within(carte).getByText(/personnes qu’il peut être utile de contacter/));
     expect(within(carte).getByRole('link', { name: 'marie@exemple.invalid' })).toHaveAttribute('href', 'mailto:marie@exemple.invalid');
     expect(within(carte).getByRole('link', { name: 'WhatsApp' })).toBeInTheDocument();
   });
