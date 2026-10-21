@@ -1,17 +1,21 @@
+import {IconeRegistre} from '@/components/IconeRegistre';
+import {IconeFinitions} from '@/components/IconeFinitions';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletActif, rawDay, webText } from '@/lib/espace';
+import {ParcoursAVenir,PauseParcours,ProgressionLongue,BilanTermine} from '@/components/VariantesJournee';
+import {IconeJourneeSuite} from '@/components/IconeJourneeSuite';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
 import { GoalCard } from '@/components/GoalCard';
 import { EmailMatinCard } from '@/components/EmailMatinCard';
 import { SeanceCard } from '@/components/SeanceCard';
 import { SemaineCard } from '@/components/SemaineCard';
 import { ObstacleCard } from '@/components/ObstacleCard';
+import { FinParcours } from '@/components/FinParcours';
 import { SuiteCard } from '@/components/SuiteCard';
 import { CodePlaceCard } from '@/components/CodePlaceCard';
 import { JardinCard } from '@/components/JardinCard';
-import { FinParcours, FinParcoursJournal, finParcoursTextes } from '@/components/FinParcours';
 import { InviteCard } from '@/components/InviteCard';
 import { ParoleCard } from '@/components/ParoleCard';
 import { AudioCard } from '@/components/AudioCard';
@@ -19,8 +23,15 @@ import { compteJardin } from '@/lib/jardin';
 import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour, serieObstacle } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
 import { Icone } from '@/components/Icone';
+import { IconeMaquette } from '@/components/IconeMaquette';
+import { IconeJournee } from '@/components/IconeJournee';
+import { EspaceErreur } from '@/components/EspaceErreur';
+import { BrouillonHorsLigne } from '@/components/BrouillonHorsLigne';
+import { RepereParcours } from '@/components/RepereParcours';
 import { Scene, type Periode } from '@/components/Scene';
 import { BarreNav } from '@/components/BarreNav';
+import { AccueilDecouverte } from '@/components/AccueilDecouverte';
+import { IconeLecture } from '@/components/IconeLecture';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
@@ -104,6 +115,7 @@ export function Espace() {
   const location = useLocation();
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
+  const [prenomSession, setPrenomSession] = useState('');
   // Lien direct depuis « Mes progrès » : ?parcours=<inscription>&jour=<n> ; page d'un moment : &moment=<n>.
   const [params] = useSearchParams();
   const jourDemande = Number(params.get('jour'));
@@ -117,6 +129,8 @@ export function Espace() {
   // Tuiles : la semaine du jour affiché par défaut, tous les jours avec « Voir tous les jours ».
   const [tousJours, setTousJours] = useState(false);
   const titreMoment = useRef<HTMLHeadingElement>(null);
+  const parcoursDemande=params.get('parcours');
+  useEffect(()=>{setChosen(parcoursDemande);setSelected(Number.isInteger(jourDemande)&&jourDemande>0?jourDemande:null);setTousJours(false);},[parcoursDemande,jourDemande]);
 
   // Copie hors connexion : date de la copie affichée quand le réseau manque.
   const [copieDu, setCopieDu] = useState<string | null>(null);
@@ -128,6 +142,7 @@ export function Espace() {
     try {
       const { data: s } = await supabase.auth.getSession();
       userId = s.session?.user.id ?? null;
+      setPrenomSession(typeof s.session?.user.user_metadata?.prenom === 'string' ? s.session.user.user_metadata.prenom : '');
       const loaded = await load();
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
       setData(loaded); setCopieDu(null);
@@ -175,10 +190,12 @@ export function Espace() {
   }
 
   // Écran « Aujourd'hui » validé le 15/10/2026 : salutation et initiale en haut, barre du bas, « Se déconnecter » en bas de page.
-  const initiale = (data?.prenom ?? '').trim().charAt(0).toUpperCase();
-  const header = <header className="today-head">
-    <div><p className="brand">SÉNEVÉ</p>{data && <h1>{data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour'}</h1>}</div>
-    {initiale && <span className="avatar" aria-hidden="true">{initiale}</span>}
+  // Barre du haut des maquettes validées le 19/10/2026 : « SÉNEVÉ · Bonjour Marie » et la pastille de l'initiale.
+  const salut = data ? (data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour') : undefined;
+  const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
+    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{data?.parcours.find(x => x.enrollment_id === chosen)?.langue === 'en' ? 'Today' : 'Aujourd’hui'}</small></span></p><Link className="today-profil" to="/reglages" aria-label="Mes réglages">{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</Link></div>
+    {notice}{repere}
+    {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<span className="jn-avatar-grand" aria-hidden="true">{data.prenom.charAt(0).toUpperCase()}</span>}
   </header>;
   const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to="/confidentialite">Confidentialité</Link><button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
@@ -186,35 +203,27 @@ export function Espace() {
   const reglages = (langue: string, avecEmail: boolean, replie = false) => {
     const cartes = <>{avecEmail && <EmailMatinCard langue={langue} />}<WhatsAppLink /><CodePlaceCard langue={langue} onOuvert={refresh} /></>;
     return replie
-      ? <section className="reglages" aria-label={textes(langue).reglages}><details className="repli"><summary>{textes(langue).reglages}</summary>{cartes}</details></section>
+      ? <section className="reglages" aria-label={textes(langue).reglages}><details className="repli"><summary>{textes(langue).reglages}<IconeRegistre nom="expand_more"/></summary><Link className="jn-reglages-lien" to="/reglages">Ouvrir tous mes réglages</Link>{cartes}</details></section>
       : <section className="reglages" aria-label={textes(langue).reglages}><p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>{cartes}</section>;
   };
-  const errorCard = <div className="card"><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>Réessayer</button></div>;
-  const page = (langue: string, contenu: ReactNode, classe = '') => <main className={`wrap avec-nav ${classe}`.trim()}>{contenu}<BarreNav langue={langue} /></main>;
+  const errorCard = <div className="card espace-erreur"><span className="etat-symbole" aria-hidden="true"><IconeJournee nom="wifi_off" taille={32} /></span><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}><IconeJournee nom="sync" taille={20} />Réessayer</button><Link className="etat-journal" to="/journal"><IconeJournee nom="menu_book" taille={20} />Ouvrir mon journal</Link></div>;
+  const page = (langue: string, contenu: ReactNode, classe = '', navigation = true) => <main className={`wrap ${navigation ? 'avec-nav ' : ''}espace-page ${classe}`.trim()}>{contenu}{navigation && <BarreNav langue={langue} maquette iconesJournee varianteJournee={classe==='journee-nouvelle'||/journee-(multiple|pause|longue)/.test(classe)} />}</main>;
 
-  if (failed) return page('fr', <>{header}{errorCard}{footer}</>);
-  if (!data) return page('fr', <>{header}<p className="muted">Chargement…</p>{footer}</>);
+  if (failed) return page('fr', <EspaceErreur prenom={prenomSession} message={LOAD_ERROR} reessayer={() => void refresh()} />, 'erreur-page');
+  if (!data) return page('fr', <>{header()}<section className="espace-chargement" aria-busy="true" aria-label="Préparation de ta journée"><div className="chargement-message"><span className="etat-symbole" aria-hidden="true"><svg width={32} height={32} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M12 22V12" /><path d="M12 12C12 7.5 8 5 8 5C8 5 8 9 12 12Z" fill="currentColor" fillOpacity={.25} /><path d="M12 9C12 5.5 16 3.5 16 3.5C16 3.5 16 7.5 12 9Z" fill="currentColor" fillOpacity={.35} /><circle cx={12} cy={21} fill="currentColor" r={1.5} /></svg></span><p role="status">Chargement…</p><p>Préparation de ta journée</p></div><div className="chargement-maquette" aria-hidden="true"><div className="chargement-jours">{Array.from({ length: 7 }, (_, k) => <span key={k} />)}</div><div className="chargement-carte"><span /><span /><span /></div><div className="chargement-carte"><span /><span /></div></div></section>{footer}</>);
 
-  if (!data.parcours.length) return page('fr', <>{header}
-    <div className="card"><p className="tag">Découverte 7 jours</p>
-      <p>Découvre le premier principe du livre « Arrête de mendier des miracles » : chercher premièrement le Royaume de Dieu.</p>
-      <p>Pendant sept jours, tu recevras un enseignement court, une action à mettre en pratique et une question pour réfléchir. Ce parcours est commun à tous, quelle que soit la racine choisie au test.</p>
-      <p>Le jour 1 s’ouvre dès que tu commences. Une nouvelle journée s’ouvre ensuite chaque jour. Tu peux revenir aux journées déjà ouvertes.</p>
-      <p>Tu n’as pas besoin de tout réussir : tu peux indiquer une action préparée, réalisée en partie ou demander de l’aide. Aucun achat n’est obligatoire.</p>
-      <button type="button" className="btn" disabled={starting} onClick={() => void start('fr')}>{starting ? 'Un instant…' : 'Commencer ma Découverte'}</button>
-      <p className="muted lang-alt" lang="en">A free 7-day journey based on the book « Stop Begging for Miracles ».</p>
-      <button type="button" className="btn-secondaire" lang="en" disabled={starting} onClick={() => void start('en')}>Start in English</button>
-    </div>{reglages('fr', false)}{footer}</>);
+  if (!data.parcours.length) return page('fr', <AccueilDecouverte prenom={data.prenom} starting={starting} commencer={langue => void start(langue)} reglages={reglages('fr', false)} footer={footer} />, 'espace-decouverte');
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
   const T = textes(enr.langue);
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label="Mes parcours">
-    {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}>{x.nom}</button>)}
+    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{dayInfo(x.date_debut,new Date(),x.duree).notStarted?'À venir':x.etat==='en_pause'?'En pause':dayInfo(x.date_debut,new Date(),x.duree).finished?'Terminé':`Jour ${dayInfo(x.date_debut,new Date(),x.duree).day} en cours`}</span>{x.nom}</button>)}
   </div>;
 
   const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);
-  if (notStarted) return page(enr.langue, <>{header}{tabs}
+  if (notStarted && enr.langue!=='en') return page(enr.langue,<ParcoursAVenir prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer}/>, 'journee-nouvelle');
+  if (notStarted) return page(enr.langue, <>{header()}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
     </div><GoalCard langue={enr.langue} />{reglages(enr.langue, true)}{footer}</>);
@@ -248,7 +257,7 @@ export function Espace() {
   // Une action enregistrée met à jour les données de l'espace (le message de reprise disparaît aussitôt).
   const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
   const lienJournal = (q: Activity) => `/journal?inscription=${enr.enrollment_id}&activite=${q.activity_id}`;
-  const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} readOnly={lectureSeule} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;
+  const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} lecture={momentParam > 0} readOnly={lectureSeule} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;
 
   // Page d'un moment (« Lire et agir » / « Lire »).
   if (momentParam > 0) {
@@ -261,27 +270,30 @@ export function Espace() {
     const date = majuscule(new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, jourVu)));
     const { action, question } = activitesDu(jourVu);
     return page(enr.langue, <>
-      <button type="button" className="back-btn" aria-label={T.retour} onClick={fermer}><Icone nom="retour" taille={20} /></button>
+      <header className="lecture-header"><button type="button" className="back-btn" aria-label={T.retour} onClick={fermer}><IconeLecture nom="arrow_back" taille={20} /></button><Icone nom="graine" taille={26} /><span>{enr.langue === 'en' ? 'Today’s reading' : 'Séance du jour'}</span><span className="lecture-avatar" aria-hidden="true">{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</span></header>
       {!m || !m.ouvert
         ? <div className="card"><p role="status">{m?.heure ? T.momentFerme(m.heure) : T.jourFerme(jourVu)}</p></div>
         : <article className="moment-page" aria-labelledby="titre-moment">
-            <p className="moment-date">{date}{m.heure ? ` · ${T.moment(m.n, m.heure)}` : ''}</p>
+            <p className="moment-date"><IconeLecture nom="wb_twilight" taille={16} /><span>{date}{m.heure ? ` · ${T.moment(m.n, m.heure)}` : ''}</span></p>
             <h1 id="titre-moment" ref={titreMoment} tabIndex={-1}>{m.content.theme}</h1>
-            <p className="moment-chips"><span className="time-chip">{T.jour(jourVu)}</span>{m.heure && <span className="time-chip">{T.periodes[m.periode]}</span>}</p>
-            <div className="moment-banniere"><Scene periode={m.periode} largeur={390} hauteur={130} /></div>
+            <p className="moment-chips"><span className="time-chip">{T.jour(jourVu)}</span>{m.heure && <span className="time-chip"><IconeLecture nom="sunny" taille={14} />{T.periodes[m.periode]}</span>}</p>
+            <figure className="lecture-illustration">{m.principal ? <img src={`${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-720.webp 720w`} sizes="(max-width:600px) calc(100vw - 60px), 540px" width={720} height={360} alt="" /> : <Scene periode={m.periode} largeur={390} hauteur={176} />}<figcaption><span>{enr.langue === 'en' ? 'Daily teaching' : 'Enseignement du jour'}</span><span>{total === 7 ? T.parcoursDecouverte : enr.nom}</span></figcaption></figure>
             <p className="day-text moment-texte">{webText(m.content.texte_officiel, data.prenom)}</p>
-            {m.content.reference_livre && <p className="src">{referenceAffichee(m.content.reference_livre, enr.langue)}</p>}
+            {m.content.reference_livre && <p className="src"><IconeLecture nom="menu_book" taille={15} />{referenceAffichee(m.content.reference_livre, enr.langue)}</p>}
             {m.principal && action && carteAction(action, true)}
-            {m.principal && question && <div className="card question-card"><p className="tag">{T.question}</p><p className="action" id="question-moment">{question.consigne}</p>
-              <Link className="prompt-ecrire" to={lienJournal(question)} aria-describedby="question-moment">{T.ecrireReflexion}<Icone nom="crayon" taille={20} /></Link></div>}
+            {m.principal && question && <section className="card question-card"><h2 className="tag"><IconeLecture nom="edit_note" taille={16} />{T.question}</h2><p className="action" id="question-moment">{question.consigne}</p>
+              <Link className="prompt-ecrire" to={lienJournal(question)} aria-describedby="question-moment"><IconeLecture nom="edit" taille={18} />{T.ecrireReflexion}</Link><p className="lecture-confidentialite"><IconeLecture nom="lock" taille={14} /><span>{T.journalPrive}</span></p></section>}
+            <footer className="lecture-navigation"><button type="button" onClick={fermer}><IconeLecture nom="arrow_back" taille={18} />{enr.langue === 'en' ? 'Previous' : 'Précédent'}</button><span><i aria-hidden="true" />{enr.langue === 'en' ? `Step ${jourVu} / ${total}` : `Étape ${jourVu} / ${total}`}</span><button type="button" onClick={() => { window.scrollTo(0, 0); titreMoment.current?.focus(); }}>{enr.langue === 'en' ? 'Top' : 'Sommet'}<IconeLecture nom="arrow_upward" taille={18} /></button></footer>
           </article>}
-    </>, 'moment-vue');
+    </>, 'moment-vue lecture-nouvelle', false);
   }
 
   const moments = momentsDuJour(current);
-  if (!moments.length) return page(enr.langue, <>{header}{tabs}{errorCard}{footer}</>);
+  if (!moments.length) return page(enr.langue, <>{header()}{tabs}{errorCard}{footer}</>);
   const { action, question } = activitesDu(current);
   const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
+  if ((finished || cloture) && selected===null && !params.has('jour') && !horsLigne && enr.langue!=='en') return page(enr.langue,<BilanTermine cloture={cloture} prenom={data.prenom} nom={enr.nom} b={bilanEnr} inscription={enr.enrollment_id} dateFin={new Intl.DateTimeFormat('fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long'}).format(dateDuJour(enr.date_debut,total))} onglets={tabs} suite={<SuiteCard programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x=>x.programme_id)} maquette/>} reglages={reglages(enr.langue,false,true)} footer={footer}/>, 'journee-nouvelle');
+  if ((finished || cloture) && selected === null && !params.has('jour') && !horsLigne) return page(enr.langue, <FinParcours prenom={data.prenom} nom={enr.nom} enrollmentId={enr.enrollment_id} programmeId={enr.programme_id} langue={enr.langue} b={bilanEnr} cloture={cloture} dejaInscrit={data.parcours.map(x=>x.programme_id)} onglets={tabs} reglages={reglages(enr.langue,false,true)} footer={footer}/>, 'fin-page');
   const jourCal = rawDay(enr.date_debut, new Date());
   const jardin = compteJardin(bilanEnr);
   const semaine = semaineDuJour(bilanEnr, jourCal);
@@ -308,9 +320,11 @@ export function Espace() {
       const nom = !ouvert ? T.jourFerme(n) : auj ? T.jourAujourdhui(n) : fait ? T.jourFait(n) : T.jour(n);
       const classe = ['day-tile', auj && 'is-today', fait && 'is-done', !ouvert && 'is-locked', n === current && !auj && 'is-selected'].filter(Boolean).join(' ');
       return <button type="button" key={n} className={classe} aria-label={nom} aria-pressed={ouvert ? n === current : undefined} disabled={!ouvert} onClick={() => choisirJour(n)}>
-        <span className="tile-wd" aria-hidden="true">{jourSemaine(n)}</span>
+        {horsLigne ? <><span className="offline-rond" aria-hidden="true">{!ouvert ? <IconeJournee nom="lock" taille={16} /> : fait ? <IconeJournee nom="check" taille={18} /> : n}</span><span className="offline-jour" aria-hidden="true">{auj ? T.auj : `J${n}`}</span></> : <>
+        <span className="tile-wd" aria-hidden="true">{enr.langue==='en'?jourSemaine(n):`J${n}`}</span>
         <b aria-hidden="true">{n}</b>
-        {auj ? <em aria-hidden="true">{T.auj}</em> : !ouvert ? <Icone nom="cadenas" taille={16} /> : fait ? <Icone nom="coche" taille={16} /> : <span className="tile-vide" aria-hidden="true" />}
+        {auj ? <em aria-hidden="true">{T.auj}</em> : !ouvert ? <IconeJournee nom="lock" taille={16} /> : fait ? <IconeJourneeSuite nom="check_circle_fill" taille={16} /> : <span className="tile-vide" aria-hidden="true" />}
+        </>}
       </button>;
     })}
   </div>;
@@ -323,39 +337,26 @@ export function Espace() {
     if (veille) invitations.push({ jour: current - 1, libelle: `${T.jour(current - 1)} · ${T.hier}`, q: veille });
   }
 
-  // Fin du parcours : écran « Parcours accompli » de la maquette validée (image app/corrigé/14-ecran).
-  const F = finParcoursTextes(enr.langue);
-  const suite = !horsLigne && <SuiteCard key={`suite-${enr.enrollment_id}`} programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x => x.programme_id)} />;
-  return page(enr.langue, <>{header}{tabs}
-    {finished && <p className="fp-puce"><Icone nom="graine" taille={15} />{F.puce(total)}</p>}
-    {!tabs && <p className="today-parcours">{finished ? F.acheve(enr.nom) : enr.nom}</p>}
-    {finished && <>
-      <FinParcours nom={enr.nom} total={total} jours={bilanEnr.jours} langue={enr.langue} jourChoisi={selected ?? undefined} onChoisir={choisirJour} nomJour={(n, fait) => fait ? T.jourFait(n) : T.jour(n)} />
-      <p className="fp-relire-jours">{T.termine(total)}</p>
-      {suite}
-      <FinParcoursJournal langue={enr.langue} />
-    </>}
-    {!finished && <div className="today-progress">
+  const nomRepere = /découverte|decouverte|discovery/i.test(`${enr.programme_id} ${enr.nom}`) ? T.parcoursDecouverte : enr.nom;
+  const joursSemaine = bilanEnr.jours.slice(debutSemaine - 1, Math.min(debutSemaine + 6, total));
+  const actionsSemaine = joursSemaine.filter(j => j.etat !== null).length;
+  const realiseesSemaine = joursSemaine.filter(j => j.ouvert && j.etat === 'realisee').length;
+  const dateCopie = copieDu ? new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(copieDu)) : null;
+  const bandeauHorsLigne = horsLigne && <aside className="offline-bandeau" role="status"><span className="offline-nuage" aria-hidden="true"><IconeJournee nom="cloud_off" taille={18} /></span><div><div className="offline-bandeau-tete"><strong>{enr.langue === 'en' ? 'Offline mode' : 'Mode hors connexion'}</strong><span>{enr.langue === 'en' ? 'Local copy' : 'Copie locale'}</span></div><p>{dateCopie ? <>{enr.langue === 'en' ? 'You are viewing the copy saved on ' : 'Tu consultes la copie enregistrée le '}<strong>{dateCopie}</strong>.</> : (enr.langue === 'en' ? 'You are viewing the days already loaded.' : 'Tu consultes les journées déjà chargées.')}</p><p className="offline-note">{enr.langue === 'en' ? 'You are offline. Your drafts stay on this device.' : 'Tu n’as pas de connexion. Tes brouillons restent sur cet appareil.'}</p></div></aside>;
+  const enteteHorsLigne = <header className="offline-entete"><div className="erreur-header"><div><strong>SÉNEVÉ</strong></div><span className="erreur-avatar" aria-hidden="true">{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</span></div>{bandeauHorsLigne}<div className="offline-profil"><div><small>{enr.langue === 'en' ? 'Daily companion' : 'Compagnon de chemin'}</small><h1>{salut}</h1></div><p><span>{nomRepere}</span><strong>{T.jourSur(current,total)}</strong></p></div></header>;
+  return page(enr.langue, <>{horsLigne ? enteteHorsLigne : header(<><p className="today-date">{new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, current))}</p><p className="today-parcours">{current === 1 ? <IconeJournee nom="explore" taille={18} /> : <IconeMaquette nom="spa" taille={18} />}{`${nomRepere} · ${T.jourSur(current, total)}`}</p></>, bandeauHorsLigne)}{tabs}
+    {!horsLigne && total>14 && enr.langue!=='en' ? <ProgressionLongue b={bilanEnr} current={current} jour={day} choisir={choisirJour}/> : <section className="today-progress" aria-labelledby="progression-semaine">
+      <div className="weekly-head"><h2 id="progression-semaine">{T.progressionHebdomadaire}</h2>{horsLigne ? <p className="offline-copie-prete"><IconeJournee nom="offline_pin" taille={14} />{enr.langue === 'en' ? 'Local copy ready' : 'Copie locale prête'}</p> : <p>{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p>}</div>
       {tuiles}
-      <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>
-    </div>}
-    {paused && <p className="muted" role="status">{T.pause}</p>}
-    {cloture && <p className="muted" role="status">{T.cloture}</p>}
-    {horsLigne && <p className="muted hors-ligne" role="status">{T.horsLigne(copieDu ? formatDate(copieDu, T.locale) : formatDate(new Date().toISOString(), T.locale))}</p>}
-    {reprise !== null && <section className="card reprise-card" aria-label={R.titre(data.prenom)}>
-      <p className="tag">{R.titre(data.prenom)}</p>
-      <p>{R.texte(reprise)}</p>
-      {current !== reprise && <button type="button" className="btn action-btn" onClick={() => setSelected(reprise)}>{R.bouton(reprise)}</button>}
-      <p className="muted">{R.aide}</p>
-      {!horsLigne && <div className="link-row"><Link className="link" to={`/coach?inscription=${enr.enrollment_id}`}>{R.coach}</Link><Link className="link" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
+      {horsLigne ? <p className="offline-progression-compte">{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p> : finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
     </section>}
-    {obstacle && <ObstacleCard key={`obstacle-${enr.enrollment_id}-${obstacle}`} enrollmentId={enr.enrollment_id} cle={obstacle} langue={enr.langue} />}
-    {semaine && <SemaineCard key={`semaine-${enr.enrollment_id}-${semaine.numero}`} semaine={semaine} langue={enr.langue} horsLigne={horsLigne} />}
-
+    {paused && !horsLigne && enr.langue!=='en' && <PauseParcours inscription={enr.enrollment_id}/>}
+    {paused && (horsLigne||enr.langue==='en') && <p className="muted" role="status">{T.pause}</p>}
+    {cloture && <p className="muted" role="status">{T.cloture}</p>}
     <section className="today-section" aria-labelledby="titre-journee">
       <div className="sec-head">
-        <h2 id="titre-journee">{estAujourdhui ? T.taJournee : T.jour(current)}</h2>
-        <button type="button" className="link" aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}>{T.tousLesJours}</button>
+        <div className="sec-titre"><h2 id="titre-journee"><IconeJournee nom="menu_book" taille={22} />{estAujourdhui ? T.taJournee : T.jour(current)}</h2><p className="moment-compte">{enr.langue==='en'?T.nombreMoments(moments.length):`${moments.length} ${moments.length===1?'étape':'étapes'}`}</p></div>
+        <button type="button" className="link" aria-label={T.tousLesJours} aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}>{enr.langue==='en'?T.tousLesJours:<IconeJourneeSuite nom="swap_horiz" taille={18}/>}</button>
       </div>
       {/* Nouvelle liste à chaque jour choisi : elle repart de la carte du matin (et non de la carte vue avant). */}
       <ul key={`rail-${enr.enrollment_id}-${current}`} className={moments.length > 1 ? 'moment-rail' : 'moment-rail is-seul'}>
@@ -364,13 +365,14 @@ export function Espace() {
           return <li key={m.content.content_id}>
             <article className={m.ouvert ? 'moment-tuile' : 'moment-tuile is-closed'} aria-label={`${T.moment(m.n, m.heure)} — ${m.content.theme}`}>
               <div className="moment-head">
-                {(m.heure || moments.length > 1) ? <span className="time-chip">{T.moment(m.n, m.heure)}{m.heure ? ` · ${T.periodes[m.periode]}` : ''}</span> : <span />}
-                <Icone nom={ICONE_PERIODE[m.periode]} taille={22} />
+                {(m.heure || moments.length > 1) ? <span className="time-chip"><IconeJournee nom={m.periode === "matin" ? "wb_sunny" : m.periode === "soir" ? "bedtime" : "schedule"} taille={16} />{enr.langue==='en'?T.moment(m.n,m.heure):m.heure?`${T.periodes[m.periode]} · ${T.moment(m.n,m.heure)}`:T.moment(m.n,null)}</span> : <IconeMaquette nom="menu_book" taille={20} />}
+                {m.ouvert ? <span className="dispo-chip">{enr.langue === 'en' ? 'Available' : 'Disponible'}</span> : <IconeJournee nom="lock_clock" taille={22} />}
               </div>
               <h3 id={id}>{m.content.theme}</h3>
-              <div className="moment-illus"><Scene periode={m.periode} largeur={244} hauteur={110} /></div>
+              <div className="moment-illus">{m.principal ? <IllustrationLecture /> : <Scene periode={m.periode} largeur={244} hauteur={110} />}</div>
+              {!horsLigne && enr.langue!=='en' && <p className="jn-moment-extrait">{m.content.explication || 'Prends un instant pour lire, puis poser un petit geste concret dans ta journée.'}</p>}
               {m.ouvert
-                ? <button type="button" className="btn moment-btn" aria-describedby={id} onClick={() => ouvrirMoment(m.n)}>{m.principal && action ? T.lireEtAgir : T.lire}<Icone nom="fleche" taille={20} /></button>
+                ? <button type="button" className="btn moment-btn" aria-describedby={id} onClick={() => ouvrirMoment(m.n)}>{m.principal && action ? T.lireEtAgir : T.lire}<IconeJournee nom={horsLigne ? "menu_book" : "arrow_forward"} taille={20} /></button>
                 : <p className="moment-ferme">{T.momentFerme(m.heure ?? '')}</p>}
             </article>
           </li>;
@@ -378,39 +380,59 @@ export function Espace() {
       </ul>
     </section>
 
+    {/* Écran allégé (19/10/2026) : l'essentiel du jour d'abord (moments, action, journal), le reste replié. */}
+    {!horsLigne && <AudioCard maquette={enr.langue!=='en'} key={`audio-${enr.enrollment_id}-${current}`} contentIds={moments.filter(m => m.ouvert).map(m => m.content.content_id)} langue={enr.langue} />}
+    {!horsLigne && <ParoleCard key={`parole-${enr.enrollment_id}-${current}`} programmeId={enr.programme_id} version={Number(enr.version)} langue={enr.langue} jour={current} />}
+    {reprise !== null && <section className="card reprise-card" aria-label={R.titre(data.prenom)}>
+      <p className="tag"><IconeJourneeSuite nom="waving_hand"/>{R.titre(data.prenom)}</p>
+      <p>{R.texte(reprise)}</p>
+      {current !== reprise && <button type="button" className="btn action-btn" onClick={() => setSelected(reprise)}>{R.bouton(reprise)}</button>}
+      <p className="muted">{R.aide}</p>
+      {!horsLigne && <div className="link-row"><Link className="link" to={`/coach?inscription=${enr.enrollment_id}`}>{R.coach}</Link><Link className="link" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
+    </section>}
+    {obstacle && <ObstacleCard key={`obstacle-${enr.enrollment_id}-${obstacle}`} enrollmentId={enr.enrollment_id} cle={obstacle} langue={enr.langue} />}
+    {semaine && <SemaineCard key={`semaine-${enr.enrollment_id}-${semaine.numero}`} semaine={semaine} langue={enr.langue} horsLigne={horsLigne} />}
+
+
+    {!horsLigne && (jourCal >= total || cloture) && <SuiteCard key={`suite-${enr.enrollment_id}`} programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x => x.programme_id)} />}
+    {!horsLigne && <div className="jn-compagnons">
+      <GoalCard langue={enr.langue} />
+      {jardin.total > 0 && <JardinCard realisees={jardin.realisees} total={jardin.total} langue={enr.langue} />}
+      <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
+      <InviteCard langue={enr.langue} />
+    </div>}
+
     {action && <section className="today-section" aria-labelledby="titre-action">
-      <h2 id="titre-action">{T.action}</h2>
+      <h2 id="titre-action"><IconeJournee nom={current === 1 ? "self_improvement" : "task_alt"} taille={22} />{T.action}</h2>
       {carteAction(action, false)}
+      {horsLigne && <p className="offline-action-note"><IconeJournee nom="save" taille={20} />{enr.langue === 'en' ? 'Read your action now. A connection is needed to record its completion.' : 'Tu peux relire ton action. Une connexion est nécessaire pour enregistrer sa réalisation.'}</p>}
     </section>}
 
     {invitations.length > 0 && <section className="today-section" aria-labelledby="titre-ecrire">
-      <h2 id="titre-ecrire">{T.ecrireJournal}</h2>
-      {invitations.map((x, k) => <div key={x.q.activity_id} className={k === 0 ? 'prompt-carte' : 'prompt-carte is-passe'}>
+      <h2 id="titre-ecrire"><IconeJournee nom={enr.langue==='en'?(current===1?"history_edu":"stylus_note"):"menu_book"} taille={22} />{T.ecrireJournal}</h2>
+      {horsLigne && question ? <BrouillonHorsLigne key={question.activity_id} activite={question.activity_id} lien={lienJournal(question)} question={question.consigne} langue={enr.langue} /> : invitations.map((x, k) => <div key={x.q.activity_id} className={k === 0 ? 'prompt-carte' : 'prompt-carte is-passe'}>
         <p className="tag">{x.libelle}</p>
         <p className="prompt-question" id={`question-${x.jour}`}>{x.q.consigne}</p>
-        <Link className="prompt-ecrire" to={lienJournal(x.q)} aria-describedby={`question-${x.jour}`}>{T.ecrireReflexion}<Icone nom="crayon" taille={20} /></Link>
+        <Link className="prompt-ecrire" to={lienJournal(x.q)} aria-describedby={`question-${x.jour}`}><span><IconeJournee nom={current === 1 ? "draw" : "edit_note"} taille={18} />{T.ecrireReflexion}</span><IconeMaquette nom="chevron_right" taille={18} /></Link>
       </div>)}
+      <p className="journal-partage"><IconeJournee nom="lock" taille={16} /><span>{T.journalPrive}</span></p>
     </section>}
 
-    {/* Écran allégé (19/10/2026) : l'essentiel du jour d'abord (moments, action, journal), le reste replié. */}
-    {!horsLigne && <AudioCard key={`audio-${enr.enrollment_id}-${current}`} contentIds={moments.filter(m => m.ouvert).map(m => m.content.content_id)} langue={enr.langue} />}
-    {!horsLigne && <ParoleCard key={`parole-${enr.enrollment_id}-${current}`} programmeId={enr.programme_id} version={Number(enr.version)} langue={enr.langue} jour={current} />}
-    {!finished && (jourCal >= total || cloture) && suite}
-    {!horsLigne && <details className="repli">
-      <summary>{T.plusLoin}</summary>
-      {jardin.total > 0 && <JardinCard realisees={jardin.realisees} total={jardin.total} langue={enr.langue} />}
-      <SeanceCard key={`seance-${enr.enrollment_id}`} enrollmentId={enr.enrollment_id} langue={enr.langue} />
-      <GoalCard langue={enr.langue} />
-      <InviteCard langue={enr.langue} />
-    </details>}
-    {!horsLigne && reglages(enr.langue, true, true)}
+    {!horsLigne && <details className="repli"><summary>{T.plusLoin}<IconeRegistre nom="expand_more"/></summary><RepereParcours contexte="journee" langue={enr.langue}/></details>}
+    {!horsLigne && reglages(enr.langue,true,true)}
     {footer}
-  </>);
+  </>, horsLigne ? 'espace-horsligne' : `${enr.langue==='en'?'':'journee-nouvelle'} ${data.parcours.length>1?'journee-multiple':''} ${paused?'journee-pause':''} ${total>14?'journee-longue':''} ${current===1?'espace-premier-jour':''}`);
+}
+
+/** Illustration originale SÉNEVÉ, décorative ; deux formats locaux pour les connexions faibles. */
+function IllustrationLecture({ photographique = false }: { photographique?: boolean }) {
+  const base = `${import.meta.env.BASE_URL}illustrations/${photographique ? 'seneve-pousse-photo-v1-' : 'seneve-livre-photo-v1-'}`;
+  return <img className="illustration-lecture" src={`${base}720.webp`} srcSet={`${base}360.webp 360w, ${base}720.webp 720w`} sizes="(max-width:600px) calc(100vw - 88px), 512px" width={720} height={314} alt="" decoding="async" />;
 }
 
 type Choix = 'realisee' | 'partielle' | 'preparee' | 'aide_demandee';
 
-function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr', titre = true, onEnregistre }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string; titre?: boolean; onEnregistre?: (st: State) => void }) {
+function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr', titre = true, lecture = false, onEnregistre }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string; titre?: boolean; lecture?: boolean; onEnregistre?: (st: State) => void }) {
   const T = textes(langue);
   const [etat, setEtat] = useState<string>(state?.etat ?? 'non_commencee');
   const [aide, setAide] = useState<boolean>(Boolean(state?.aide_demandee));
@@ -445,21 +467,21 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
 
   const realisee = etat === 'realisee';
   // Consigne dans un encadré doré, bouton doré « J'ai réalisé cette action » (écran validé le 15/10/2026).
-  return <div className="card action-card">{titre && <p className="tag">{T.action}</p>}
-    <div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{activity.consigne}</p></div>
+  return <div className={`card action-card${realisee ? ' is-realisee' : ''}`}>{titre && (lecture ? <div className="lecture-action-titre"><p className="tag"><IconeLecture nom="task_alt" taille={16} />{T.action}</p>{activity.obligatoire && <span>{langue === 'en' ? 'Important' : 'Important'}</span>}</div> : <p className="tag">{T.action}</p>)}
+    <div className="action-box"><IconeFinitions nom="favorite" taille={22} /><p className="action">{activity.consigne}</p></div>
     {activity.critere_realisation && <div className="action-critere"><p><strong>{langue === 'en' ? 'When is this action complete?' : 'Quand considérer l’action comme réalisée ?'}</strong></p><p>{activity.critere_realisation}</p></div>}
-    {realisee && <p className="success action-faite" role="status"><Icone nom="coche" taille={20} />{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>}
+    {realisee && <p className="success action-faite" role="status"><IconeJournee nom="verified" taille={20} />{T.realisee}{doneAt ? `${T.le}${formatDate(doneAt, T.locale)}` : ''}</p>}
     {!realisee && etat === 'preparee' && <p className="success" role="status">{T.prepareeNotee}</p>}
     {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
     {!realisee && aide && <div className="aide-notee" role="status"><p>{T.aideNotee}</p>
       <div className="link-row"><Link className="link" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link><Link className="link" to="/coach">{T.demanderCoach}</Link></div></div>}
     {!realisee && !readOnly && <>
-      <button type="button" className="btn btn-or action-btn" disabled={pending !== null} onClick={() => void record('realisee')}><Icone nom="coche" taille={20} />{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
+      <button type="button" className="btn btn-or action-btn" disabled={pending !== null} onClick={() => void record('realisee')}>{lecture ? <IconeLecture nom="done" taille={18} /> : <IconeJournee nom="check" taille={18}/>}{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
       <div className="choix-row">
         {/* « Préparée » ne compte jamais comme réalisée ; proposé seulement tant que rien de plus avancé n'est noté. */}
-        {etat === 'non_commencee' && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('preparee')}>{pending === 'preparee' ? T.enregistrement : T.boutonPrepa}</button>}
-        {etat !== 'partielle' &&<button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('partielle')}>{pending === 'partielle' ? T.enregistrement : T.boutonPartie}</button>}
-        {!aide && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('aide_demandee')}>{pending === 'aide_demandee' ? T.enregistrement : T.boutonAide}</button>}
+        {etat === 'non_commencee' && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('preparee')}>{lecture && <IconeLecture nom="hourglass_top" taille={18} />}{pending === 'preparee' ? T.enregistrement : T.boutonPrepa}</button>}
+        {etat !== 'partielle' &&<button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('partielle')}>{lecture && <IconeLecture nom="timelapse" taille={18} />}{pending === 'partielle' ? T.enregistrement : T.boutonPartie}</button>}
+        {!aide && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('aide_demandee')}>{lecture && <IconeLecture nom="support" taille={18} />}{pending === 'aide_demandee' ? T.enregistrement : T.boutonAide}</button>}
       </div>
       {error && <p className="error" role="alert">{T.erreur}</p>}
     </>}

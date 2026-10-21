@@ -1,0 +1,31 @@
+<svg fill="none" viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg">
+<!-- Horizon ondoyant doux -->
+<path d="M0 102 C80 94, 160 106, 340 98" stroke="#E8E2D3" stroke-linecap="round" stroke-width="2"></path>
+<path d="M0 112 C90 108, 220 116, 340 110" stroke="#DFDACB" stroke-linecap="round" stroke-width="1.5"></path>
+<!-- Ligne de trajectoire pointillée -->
+<path d="M48 94 C90 70, 130 80, 162 82" stroke="#CAC6C1" stroke-dasharray="3 3" stroke-width="1.2"></path>
+<path d="M174 78 C215 60, 240 68, 276 60" stroke="#CAC6C1" stroke-dasharray="3 3" stroke-width="1.2"></path>
+<!-- Étape 1 : Graine enfouie (J1) -->
+<circle cx="48" cy="95" fill="#755B00" r="4.5"></circle>
+<path d="M48 99 V106 M45 104 L48 99 L51 104" stroke="#755B00" stroke-linecap="round" stroke-width="1.2"></path>
+<!-- Étape 2 : Germe timide (J3) -->
+<path d="M168 96 V78" stroke="#584400" stroke-linecap="round" stroke-width="2"></path>
+<path d="M168 84 C163 80, 159 81, 157 85" stroke="#755B00" stroke-linecap="round" stroke-width="1.5"></path>
+<path d="M168 81 C173 78, 177 80, 179 84" stroke="#755B00" stroke-linecap="round" stroke-width="1.5"></path>
+<!-- Racines intermédiaires -->
+<path d="M168 96 L162 107 M168 96 L168 110 M168 96 L174 107" stroke="#755B00" stroke-linecap="round" stroke-width="1.2"></path>
+<!-- Étape 3 : Arbrisseau épanoui & Enraciné (J7) avec halo d'or -->
+<circle cx="284" cy="56" fill="#FED977" fill-opacity="0.32" r="30"></circle>
+<circle cx="284" cy="56" fill="#FED977" fill-opacity="0.45" r="20"></circle>
+<!-- Tige principale -->
+<path d="M284 96 V40" stroke="#1D1B19" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Ramures et feuilles amples -->
+<path d="M284 76 C270 72, 268 62, 275 60 C282 58, 284 72, 284 76 Z" fill="#584400"></path>
+<path d="M284 66 C298 62, 300 52, 293 50 C286 48, 284 62, 284 66 Z" fill="#584400"></path>
+<path d="M284 50 C272 46, 271 38, 278 36 C283 35, 284 46, 284 50 Z" fill="#584400"></path>
+<path d="M284 44 C294 40, 296 32, 290 30 C285 29, 284 40, 284 44 Z" fill="#584400"></path>
+<!-- Petite fleur dorée au sommet -->
+<circle cx="284" cy="36" fill="#755B00" r="2.5"></circle>
+<!-- Racines profondes et sereines -->
+<path d="M284 96 L273 115 M284 96 L280 120 M284 96 L288 120 M284 96 L295 114" stroke="#1D1B19" stroke-linecap="round" stroke-width="1.5"></path>
+</svg>

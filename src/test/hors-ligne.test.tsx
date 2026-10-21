@@ -51,7 +51,7 @@ describe('Espace hors connexion', () => {
 
     reseau = false;
     ouvrir();
-    expect(await screen.findByText(/Tu n’as pas de connexion. Tu peux relire tes journées/)).toBeInTheDocument();
+    expect(await screen.findByText(/Tu n’as pas de connexion. Tes brouillons restent sur cet appareil./)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: "J'ai réalisé cette action" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
     expect(await screen.findByText('Texte du jour 2')).toBeInTheDocument();

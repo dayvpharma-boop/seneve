@@ -37,30 +37,32 @@ it('présente les indicateurs, les contacts et les ventes à examiner', async ()
 it('résume ce qui est à traiter en premier', async () => {
   rpc.mockResolvedValue({ data, error: null });
   render(<PilotageAdmin />);
-  const zone = await screen.findByRole('region', { name: 'À traiter' });
-  expect(zone).toHaveTextContent('1 demande d’aide ouverte depuis plus de 48 h');
+  const zone = await screen.findByRole('region', { name: 'Priorités immédiates' });
+  expect(zone).toHaveTextContent('1 demande d’aide ouverte');
   expect(zone).toHaveTextContent('1 achat sans accès ouvert');
   expect(zone).toHaveTextContent('2 incident(s)');
-  expect(zone).not.toHaveTextContent('coach');
+  expect(zone).toHaveTextContent('Coach');
+  expect(screen.getByRole('link', { name: /Traiter les demandes/ })).toHaveAttribute('href', '#demandes-admin');
+  expect(rpc.mock.calls.every(c=>c[0] === 'staff_dashboard')).toBe(true);
 });
 
 it('montre le parcours d’entrée, les taux entre étapes et l’évolution', async () => {
   rpc.mockResolvedValue({ data, error: null });
   render(<PilotageAdmin />);
-  await screen.findByText('Visites du test');
-  expect(screen.getByText(/\+10 vs période précédente/)).toBeInTheDocument();
+  await screen.findByText('1. Visites du test');
+  expect(screen.getByText('40')).toBeInTheDocument();
   expect(screen.getByText(/50 % de l’étape précédente/)).toBeInTheDocument();
   expect(screen.getByText(/25 % de l’étape précédente/)).toBeInTheDocument();
-  expect(screen.getByText(/tiktok \(25\)/)).toBeInTheDocument();
+  expect(screen.getByText('tiktok')).toBeInTheDocument();expect(screen.getByText('25 visite(s)')).toBeInTheDocument();
   expect(screen.getByText('2 / 3')).toBeInTheDocument();
-  expect(screen.getByText(/compte\(s\) de l’équipe ne sont pas comptés/)).toBeInTheDocument();
+  expect(screen.getByText(/compte\(s\) de l’équipe exclus/)).toBeInTheDocument();
 });
 
 it('change de période sur demande', async () => {
   rpc.mockResolvedValue({ data, error: null });
   render(<PilotageAdmin />);
   await screen.findByText('Marie');
-  fireEvent.click(screen.getByRole('tab', { name: '30 derniers jours' }));
+  fireEvent.click(screen.getByRole('button', { name: '30 jours' }));
   await waitFor(() => expect(rpc).toHaveBeenLastCalledWith('staff_dashboard', { p_jours: 30 }));
 });
 
@@ -68,10 +70,10 @@ it('une panne conserve les chiffres précédents avec un avertissement et permet
   rpc.mockResolvedValueOnce({ data, error: null }).mockRejectedValueOnce(new Error('réseau')).mockResolvedValue({ data: { ...data, participants: 13 }, error: null });
   render(<PilotageAdmin />);
   await screen.findByText('12');
-  fireEvent.click(screen.getByRole('button', { name: 'Actualiser les indicateurs' }));
-  expect(await screen.findByRole('alert')).toHaveTextContent('Indicateurs indisponibles');
+  fireEvent.click(screen.getByRole('button', { name: 'Actualiser' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Derniers chiffres conservés');
   expect(screen.getByText('12')).toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'Actualiser les indicateurs' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Réessayer' }));
   await screen.findByText('13');
   await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument());
 });

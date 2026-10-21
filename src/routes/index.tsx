@@ -5,7 +5,9 @@ import { texts, whatsappUrls, languageFrom, type Language } from '@/lib/test-tex
 import { chooseRoot, cleanSource, recordVisit, submitResult } from '@/lib/suivi-test';
 import { ShareCard } from '@/components/ShareCard';
 import { InviteCard } from '@/components/InviteCard';
+import { IconeResultat } from '@/components/IconeResultat';
 import { Icone } from '@/components/Icone';
+import { PenseeLivre, RepereParcours } from '@/components/RepereParcours';
 import { memoriserRacineTest } from '@/lib/objectif';
 import { strengthKind } from '@/lib/carte-partage';
 
@@ -26,14 +28,11 @@ export function TestPage({ defaultSource = null }: { defaultSource?: string | nu
 function PrototypeButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
  return <button type="button" {...props} />;
 }
-function CheckIcon() {
- return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l4 4 10-10" /></svg>;
-}
 function RootCard({ tag, k, total, language, explanation }: { tag: string; k: number; total: number; language: Language; explanation: string }) {
  const t = texts[language];
  const root = t.roots[k];
  if (!root) return null;
-  return <div className="card result-hero"><p className="tag">{tag}</p><h2>{root.n}</h2><span className="cat-chip">{categorie(total, language)}</span><p className="muted">{explanation}</p><p className="quote">{t.quote(root.p)}</p><p className="src">{t.quoteSource}</p></div>;
+  return <div className="card result-hero"><div className="carte-haut"><p className="tag">{tag}</p><span className="cat-chip">{categorie(total, language)}</span></div><h2>{root.n}</h2><p className="score-grand"><b>{total}</b> / 15</p><p className="muted">{explanation}</p><div className="quote-encart"><p className="result-auteur"><IconeResultat nom="format_quote" taille={18}/>Dr Justin Tshims</p><p className="quote">{t.quote(root.p)}</p><p className="src">{t.quoteSource}</p></div></div>;
 }
 /** Racine forte (cahier n°4, §11 A) : la ou les racines au total le plus haut, sans note chiffrée.
  * Absente quand les sept racines sont au même niveau, toutes points d'appui, ou toutes à développer. */
@@ -44,7 +43,7 @@ function StrengthCard({ fortes, total, language }: { fortes: number[]; total: nu
  if (!kind || k === undefined) return null;
  const plusieurs = fortes.length > 1;
  const tag = kind === 'appui' ? (plusieurs ? t.strength.appuiPlusieurs : t.strength.appui) : (plusieurs ? t.strength.solidePlusieurs : t.strength.solide);
- return <div className="card result-strength"><p className="tag">{tag}</p>
+ return <div className="card result-strength"><p className="tag"><IconeResultat nom="verified" taille={20}/>{tag}</p>
   {plusieurs
    ? <ul className="plain strength-list" role="list">{fortes.map(i => <li key={i}>{t.roots[i]?.n}</li>)}</ul>
    : <><h2>{t.roots[k]?.n}</h2><p className="quote">{t.quote(t.roots[k]?.p ?? '')}</p><p className="src">{t.quoteSource}</p></>}
@@ -91,25 +90,26 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
   return <>
      {needsChoice && <><p>{message}</p><RootChoices language={language} indices={indices} chosenRoot={chosenRoot} onChoose={onChoose} /></>}
      {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} explanation={needsChoice ? t.resultHelp.chosen : t.resultHelp.suggested} />}
-    {root && <div className="card action-card result-action"><p className="tag">{t.firstAction}</p><div className="action-box"><Icone nom="livre" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
+    {root && <div className="card action-card result-action"><p className="result-orientation"><IconeResultat nom="eco" taille={20}/>{language==='en'?'Immediate direction':'Orientation immédiate'}</p><p className="tag">{t.firstAction}</p><div className="action-box"><IconeResultat nom="menu_book" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
     {/* Affichée aussi avant le choix d'une racine en cas d'égalité en bas : la racine forte n'en dépend pas. */}
     {!r.same && !allSupport && <StrengthCard language={language} fortes={r.fortes} total={Math.max(...r.t)} />}
+    {root && <RepereParcours contexte="resultat" langue={language} />}
+     <div className="card root-list-card"><p className="tag">{t.rootsTitle}<IconeResultat nom="analytics" taille={20}/></p><p>{t.summary}</p>
+       <details className="result-method"><summary>{t.resultHelp.method}</summary><p>{t.resultHelp.calculation}</p><p>{t.resultHelp.bands}</p><p>{t.resultHelp.close}</p></details>
+       <ul className="root-rows" role="list">{R.map((item, k) => {
+         const total = r.t[k] ?? 3;
+         return <li key={item.n} className={['root-row',k===act?'is-start':'',!r.same&&!allSupport&&r.fortes.includes(k)&&strengthKind(total)?'is-appui':''].filter(Boolean).join(' ')}>
+           <div className="root-row-top"><span className="root-num" aria-hidden="true">{k + 1}.</span><span className="root-summary-name">{item.n}</span><span className="root-score">{total} / 15</span></div>
+           <span className="root-bar" aria-hidden="true"><i style={{ width: `${(total / 15) * 100}%` }} /></span>
+           <span className="root-category">{k===act?<b>{language==='en'?'Priority':'Priorité'}</b>:null}{categorie(total, language)}</span>
+         </li>;
+       })}</ul>
+     </div>
+    {root && act !== null && act !== undefined && <ShareCard editorial language={language} totals={r.t} startRoot={act} />}
     {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a>
       {/* Accord du 15/10/2026 : le résultat mène aussi à l'espace du site ; en anglais depuis le 18/10/2026 (page de connexion bilingue). */}
       <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion${language === 'en' ? '?lang=en' : ''}`}>{t.espaceBouton}</a></div>
     </div>}
-     <div className="card root-list-card"><p className="tag">{t.rootsTitle}</p><p>{t.summary}</p>
-       <details className="result-method"><summary>{t.resultHelp.method}</summary><p>{t.resultHelp.calculation}</p><p>{t.resultHelp.bands}</p><p>{t.resultHelp.close}</p></details>
-       <ul className="root-rows" role="list">{R.map((item, k) => {
-         const total = r.t[k] ?? 3;
-         return <li key={item.n} className={k === act ? 'root-row is-start' : 'root-row'}>
-           <div className="root-row-top"><span className="root-summary-name">{item.n}</span><span className="root-score">{total} / 15</span></div>
-           <span className="root-bar" aria-hidden="true"><i style={{ width: `${(total / 15) * 100}%` }} /></span>
-           <span className="root-category">{categorie(total, language)}</span>
-         </li>;
-       })}</ul>
-     </div>
-    {root && act !== null && act !== undefined && <ShareCard language={language} totals={r.t} startRoot={act} />}
     {root && <InviteCard langue={language} />}
     {act !== null && act !== undefined && <RememberRoot k={act} />}
  </>;
@@ -177,19 +177,23 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  </header>;
  return <main className="wrap">
   <section id="s-home" hidden={screen !== 'home'}>
-   <div className="home-head"><p className="brand">{t.brand}</p>{languageLink}</div>
+   <header className="barre-haut home-head"><p className="brand logo-marque"><Icone nom="graine" taille={20} />{t.brand}</p>{languageLink}</header>
    <h1>{t.homeTitle}</h1>
-   <p className="home-intro">{t.intro}</p>
-   <div className="home-reassure">{t.reassurance.map(item => <span key={item} className="reassure-chip"><CheckIcon />{item}</span>)}</div>
+   <p className="home-intro">{t.intro.split(/(Arrête de mendier des miracles|Stop Begging for Miracles)/).map((texte, index) => index % 2 ? <strong className="home-livre" key={index}>{texte}</strong> : texte)}</p>
+   <div className="home-image"><img src={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp 720w`} sizes="(max-width:600px) calc(100vw - 40px), 560px" width={720} height={314} alt="" decoding="async" /></div>
+   <div className="home-reassure">{t.reassurance.map((item, k) => <span key={item} className="reassure-chip"><Icone nom={(['bouclier', 'liste', 'annuler'] as const)[k] ?? 'coche'} taille={22} />{item}</span>)}</div>
    <div className="home-card">
-    <p className="home-kicker">{t.discover}</p>
-    <ul className="plain home-steps" role="list">{t.discoveries.map(item => <li key={item}>{item}</li>)}</ul>
+    <p className="home-kicker"><span className="point-or" aria-hidden="true" />{t.discover}</p>
+    <ul className="plain home-steps" role="list" aria-label={t.discover}>{t.discoveries.map(item => <li key={item}>{item}</li>)}</ul>
    </div>
-   <p className="muted home-note">{t.instruction}</p>
+   {screen === 'home' && <details className="test-domaines"><summary>{en ? 'The 7 roots explored' : 'Les 7 racines explorées'}</summary><ol>{t.roots.map(root => <li key={root.n}>{root.n}</li>)}</ol></details>}
+   <RepereParcours contexte="test" langue={language} />
+   <p className="home-note quote-bloc">{t.instruction}</p>
    <div className="home-start">
-    <PrototypeButton className="btn" id="start" onClick={() => setScreen('quiz')}>{t.start}</PrototypeButton>
+    <PrototypeButton className="btn btn-fleche" id="start" onClick={() => setScreen('quiz')}>{t.start}<Icone nom="fleche" taille={20} /></PrototypeButton>
    </div>
-   <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite`}>{language === 'en' ? 'Privacy policy (in French)' : 'Confidentialité'}</a></p>
+   <PenseeLivre langue={language} titre={en ? 'A guide from the book' : 'Un repère du livre'} />
+   <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite`}>{en ? 'Privacy policy (in French)' : 'Confidentialité'}</a></p>
   </section>
   <section id="s-quiz" hidden={screen !== 'quiz'}>
    {barreTest}
@@ -222,7 +226,8 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    </div>
   </section>
   <section id="s-result" hidden={screen !== 'result'}>
-   <p className="brand">{t.brand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
+   {barreTest}
+   <p className="resultat-puce">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
     <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} />}</div>
     <p className="muted">{t.final}</p>
     <PrototypeButton className="link" id="again" onClick={() => { savedResult.current = null; setAnswers(Array(21).fill(null)); setChosenRoot(null); setI(0); setScreen('home'); }}>{t.again}</PrototypeButton>

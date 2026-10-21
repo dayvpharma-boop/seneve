@@ -1,3 +1,4 @@
+import {IconeJournee} from './IconeJournee';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -39,7 +40,7 @@ export function ObstacleCard({ enrollmentId, cle, langue }: { enrollmentId: stri
 
   return <section className="card" aria-label={T.titre}>
     <fieldset className="obstacle-choix" style={{ border: 0, padding: 0, margin: 0 }}>
-      <legend className="tag">{T.titre}</legend>
+      <legend className="tag"><IconeJournee nom="self_improvement"/>{T.titre}</legend>
       {MOTIFS.map(m => <label key={m} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '6px 0' }}>
         <input type="radio" name={`obstacle-${cle}`} value={m} checked={choix === m} onChange={() => setChoix(m)} />{T.motifs[m]}
       </label>)}

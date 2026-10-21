@@ -1,3 +1,4 @@
+import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
@@ -13,8 +14,9 @@ const TEXTES = {
 };
 
 /** Audio publié et validé des contenus du jour. Rien si aucun audio n'est publié (jamais d'audio non validé). */
-export function AudioCard({ contentIds, langue }: { contentIds: string[]; langue?: string }) {
+export function AudioCard({ contentIds, langue,maquette=false }: { contentIds: string[]; langue?: string;maquette?:boolean }) {
   const T = TEXTES[langue === 'en' ? 'en' : 'fr'];
+  const [vitesse,setVitesse]=useState(1);
   const [audios, setAudios] = useState<Ressource[]>([]);
   const cle = contentIds.join(',');
 
@@ -29,14 +31,14 @@ export function AudioCard({ contentIds, langue }: { contentIds: string[]; langue
     return () => { annule = true; };
   }, [cle]);
 
-  if (!audios.length) return null;
+  if (!audios.length) return maquette?<section className="card audio-card" aria-label="Audio du jour"><p className="tag"><IconeJourneeSuite nom="headphones"/>Audio du jour</p><p>Aucun audio publié pour cette journée. Tu peux lire l’enseignement du jour.</p><button className="btn-secondaire" type="button" disabled>Lecture audio indisponible</button></section>:null;
   return <section className="card audio-card" aria-label={T.tag}>
-    <p className="tag">{T.tag}</p>
+    <p className="tag"><IconeJourneeSuite nom="headphones"/>{maquette?'Audio du jour':T.tag}</p>
     <p className="more">{T.texte}</p>
     {audios.map(a => <figure key={a.reference_stockage} className="audio-item">
       {a.titre && <figcaption>{a.titre}</figcaption>}
-      <audio controls preload="none" src={`${MEDIAS_URL}/${a.reference_stockage}`}>{T.nonPris}</audio>
+      <audio ref={el=>{if(el)el.playbackRate=vitesse;}} controls preload="none" src={`${MEDIAS_URL}/${a.reference_stockage}`}>{T.nonPris}</audio>
     </figure>)}
-    <p className="muted audio-note">{T.voix}</p>
+    <button className="jn-vitesse" type="button" aria-label={`Vitesse de lecture : ${vitesse} fois`} onClick={()=>setVitesse(v=>v===1?1.25:v===1.25?1.5:v===1.5?2:1)}>{vitesse}x</button><p className="muted audio-note">{T.voix}</p>
   </section>;
 }

@@ -1,0 +1,11 @@
+import type {Dashboard} from '@/components/PilotageAdmin';
+export type ProgrammeEdition={programme_id:string;nom:string;duree_jours:number;langue?:string;source_livre?:string|null};
+export type VersionEdition={programme_id:string;version:number;etat:string;valide_par:string|null;publiee_le:string|null};
+export type MomentEdition={content_id:string;programme_id:string;version:number;jour:number;numero_message:number;theme:string;texte_officiel:string;reference_livre:string|null;explication?:string|null};
+export type ActiviteEdition={content_id:string;type_activite:string;consigne:string};
+export type EnvoiEdition={id:string;canal:string;etat:string;titre:string;nombre:number;type?:string;date?:string;audience?:number;livres?:number;erreurs?:number;incertains?:number;texte?:string;cause?:string;agregat?:boolean};
+export type IncidentEdition={id:string;type:string;source:string;etat:string;nombre:number;titre:string;date?:string;gravite?:string;description?:string;impact?:string;journal?:{date:string;texte:string}[];note?:string;agregat?:boolean};
+export const libelleCanal=(c:string)=>c==='whatsapp'?'WhatsApp':c==='email'||c==='e-mail'?'E-mail':c;
+export const libelleEtat=(e:string)=>({erreur:'En erreur',incertain:'Incertain',expire:'Expiré',programme:'Programmé',envoye:'Envoyé',livre:'Livré',ouvert:'Ouvert',en_cours:'En cours',resolu:'Résolu',a_examiner:'À examiner'}[e]??e);
+export function envoisDepuisDashboard(d:Dashboard|null):EnvoiEdition[]{return d?.incidents.filter(i=>i.source==='communication').map(i=>({id:[i.source,i.categorie,i.etat].join(':'),canal:i.categorie,etat:i.etat,titre:libelleCanal(i.categorie)+' · '+libelleEtat(i.etat),nombre:Number(i.nombre),erreurs:i.etat==='erreur'?Number(i.nombre):undefined,incertains:i.etat==='incertain'?Number(i.nombre):undefined,agregat:true}))??[];}
+export function incidentsDepuisDashboard(d:Dashboard|null):IncidentEdition[]{return d?.incidents.map(i=>({id:[i.source,i.categorie,i.etat].join(':'),type:i.categorie,source:i.source,etat:i.etat,nombre:Number(i.nombre),titre:(i.source==='communication'?'Envoi ':'Traitement ')+libelleCanal(i.categorie)+' · '+libelleEtat(i.etat),description:'Signalements regroupés par catégorie et état. Les fiches individuelles ne sont pas fournies par le service actuel.',agregat:true}))??[];}

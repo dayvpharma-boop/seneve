@@ -1,0 +1,22 @@
+/* États de la journée : présentations adaptées sans simuler de sauvegarde. */
+.espace-page .etat-symbole { display:grid; place-items:center; width:64px; height:64px; border-radius:50%; background:#e8e2d3; color:#755b00; margin:0 auto 16px; }
+.espace-page .chargement-message { padding:24px 20px; background:#f9f3e4; border-radius:12px; text-align:center; margin:0 0 24px; }
+.espace-page .chargement-message p { margin:4px 0; font:400 16px/26px Lora,Georgia,serif; }
+.espace-page .chargement-message p[role="status"] { font:600 20px/28px Poppins,system-ui,sans-serif; }
+.espace-page .chargement-jours { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin:0 0 24px; }
+.espace-page .chargement-jours span { display:block; height:58px; background:#e8e2d3; border-radius:8px; }
+.espace-page .chargement-carte { padding:24px; background:#fff; border-radius:8px; margin-bottom:24px; }
+.espace-page .chargement-carte span { display:block; height:14px; background:#eee8d9; border-radius:4px; margin:0 0 16px; }
+.espace-page .chargement-carte span:first-child { width:55%; }
+.espace-page .chargement-carte span:last-child { height:48px; margin-bottom:0; }
+.espace-page .espace-erreur { background:#fff; border:0; border-radius:12px; padding:32px 24px; text-align:center; }
+.espace-page .espace-erreur [role="alert"] { font:500 20px/30px Poppins,system-ui,sans-serif; margin:0 0 24px; }
+.espace-page .espace-erreur .btn { min-height:52px; background:#000; color:#fff; width:100%; }
+.espace-page .etat-journal { display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; margin-top:12px; border-radius:8px; background:#f3edde; color:#1d1c13; font:500 16px/24px Poppins,system-ui,sans-serif; }
+.espace-page .hors-ligne { padding:20px; background:#f3edde; color:#1d1c13; border:1px solid #7b776f; border-radius:8px; font:400 16px/27px Lora,Georgia,serif; }
+.espace-page .action-card.is-realisee { border-top:4px solid #755b00; background:#f9f3e4; }
+.espace-page .action-card.is-realisee .action-faite { padding:16px; margin:16px 0 0; background:#fff; border-radius:8px; color:#755b00; font:500 16px/26px Poppins,system-ui,sans-serif; }
+.espace-page.espace-premier-jour .today-parcours { border:1px solid #755b00; }
+.espace-page.espace-premier-jour .today-head h1 { margin-bottom:8px; }
+.espace-page .espace-erreur .action-btn { display:flex; align-items:center; justify-content:center; gap:8px; }
+.espace-page .hors-ligne > svg { vertical-align:middle; margin-right:8px; }

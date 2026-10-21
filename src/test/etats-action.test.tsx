@@ -8,7 +8,7 @@ let reponse: (etat: string) => { data: unknown; error: unknown } = () => ({ data
 function builder(table: string) {
   const rows = () => tables[table] ?? [];
   const b: Record<string, unknown> = {};
-  for (const m of ['select', 'eq', 'neq', 'in', 'order']) b[m] = () => b;
+  for (const m of ['select', 'eq', 'neq', 'in', 'order', 'limit']) b[m] = () => b;
   b['maybeSingle'] = () => Promise.resolve({ data: rows()[0] ?? null, error: null });
   b['then'] = (ok: (v: unknown) => unknown, ko?: (e: unknown) => unknown) => Promise.resolve({ data: rows(), error: null }).then(ok, ko);
   return b;
@@ -126,10 +126,11 @@ describe('Parcours terminé', () => {
     tables['enrollments'] = [{ enrollment_id: 'E7', programme_id: P, version: 1, langue: 'fr', date_debut: '2026-10-11', etat: 'terminee' }];
     ouvrir();
     expect(await screen.findByText(/Ce parcours est terminé : les actions sont fermées/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Voir tous les jours' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Jour 2' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Tout déplier' }));
+    fireEvent.click(screen.getByRole('link', { name: /^Jour 2 ·/ }));
     expect(await screen.findByText('Lis un chapitre.')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: "J'ai réalisé cette action" })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: "J'ai besoin d'aide" })).not.toBeInTheDocument();
   });
 });
+

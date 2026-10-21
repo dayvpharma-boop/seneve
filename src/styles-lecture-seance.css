@@ -1,0 +1,45 @@
+/* Nouvelle maquette de lecture : styles limités à cette vue. */
+.espace-page.lecture-nouvelle { font-family:Literata,Georgia,serif; padding-bottom:32px; }
+.lecture-nouvelle .lecture-header { min-height:64px; margin:0 -20px 8px; padding:0 20px; gap:8px; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.lecture-nouvelle .lecture-header .back-btn { margin-left:-8px; display:grid; place-items:center; color:#1d1c13; }
+.lecture-nouvelle .lecture-header > svg { flex-shrink:0; }
+.lecture-header .lecture-avatar { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; margin-left:auto; border-radius:12px; background:#000; color:#fff; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.espace-page.lecture-nouvelle .moment-date { display:flex; align-items:center; gap:8px; margin:8px 0; font:600 12px/16px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.04em; }
+.lecture-nouvelle .moment-date > svg { flex-shrink:0; color:#755b00; }
+.espace-page.lecture-nouvelle .moment-page h1 { font:600 26px/34px Outfit,system-ui,sans-serif; margin:4px 0 8px; letter-spacing:-.01em; }
+.lecture-nouvelle .moment-chips { display:flex; align-items:center; gap:4px; margin:0 0 24px; }
+.lecture-nouvelle .moment-chips .time-chip { display:flex; align-items:center; gap:4px; padding:4px 10px; border-radius:4px; background:#f3edde; color:#1d1c13; font:600 12px/16px Outfit,system-ui,sans-serif; }
+.lecture-nouvelle .moment-chips .time-chip + .time-chip { background:#eee8d9; color:#4a463f; }
+.lecture-illustration { display:flex; flex-direction:column; align-items:center; margin:0 0 24px; padding:10px; border-radius:8px; background:#f9f3e4; }
+.lecture-illustration > img { display:block; width:100%; height:176px; object-fit:cover; border-radius:4px; }
+.lecture-illustration figcaption { display:flex; justify-content:space-between; align-items:center; gap:8px; width:100%; padding:8px 4px 4px; color:#4a463f; font:500 12px/16px Outfit,system-ui,sans-serif; }
+.espace-page.lecture-nouvelle .moment-texte { font:400 19px/30px Literata,Georgia,serif; margin:0 0 24px; white-space:pre-line; color:#1d1c13; text-align:left; }
+.espace-page.lecture-nouvelle .moment-page .src { display:flex; align-items:center; gap:8px; color:#4a463f; font:italic 400 12px/18px Outfit,system-ui,sans-serif; margin:0 0 24px; }
+.lecture-nouvelle .src > svg { flex-shrink:0; }
+.espace-page.lecture-nouvelle .action-card { margin:16px 0 24px; padding:16px; border-radius:8px; background:#f3edde; }
+.lecture-action-titre { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 12px; }
+.lecture-action-titre .tag { display:flex; align-items:center; gap:8px; margin:0; color:#1d1c13; font:600 16px/24px Outfit,system-ui,sans-serif; text-transform:none; letter-spacing:normal; }
+.lecture-action-titre .tag > svg { box-sizing:content-box; padding:6px; border-radius:12px; background:#755b00; color:#fff; flex-shrink:0; }
+.lecture-action-titre > span { color:#755b00; text-transform:uppercase; font:600 12px/16px Outfit,system-ui,sans-serif; }
+.espace-page.lecture-nouvelle .action-card .action-box { display:block; margin:0 0 16px; padding:16px; border-radius:4px; background:#fff; }
+.espace-page.lecture-nouvelle .action-card .action { font:400 16px/26px Literata,Georgia,serif; }
+.lecture-nouvelle .action-critere { background:#f9f3e4; padding:12px; border-radius:4px; margin:0 0 16px; }
+.lecture-nouvelle .action-critere p { font:400 16px/26px Literata,Georgia,serif; }
+.espace-page.lecture-nouvelle .action-card .action-btn { display:flex; justify-content:center; align-items:center; gap:8px; width:100%; min-height:48px; padding:12px 8px; border:0; border-radius:4px; background:#000; color:#fff; font:500 14px/20px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.04em; }
+.lecture-nouvelle .action-card .choix-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; padding-top:4px; margin-top:8px; }
+.lecture-nouvelle .action-card .choix-row .btn-secondaire { display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px; min-height:64px; padding:8px 4px; border:0; border-radius:4px; background:#f9f3e4; color:#1d1c13; font:600 12px/16px Outfit,system-ui,sans-serif; text-align:center; }
+.lecture-nouvelle .action-faite { display:flex; align-items:center; gap:8px; padding:12px; background:#fed977; color:#785d00; border-radius:4px; font:500 14px/22px Outfit,system-ui,sans-serif; }
+.espace-page.lecture-nouvelle .question-card { background:#f3edde; padding:16px; border-radius:8px; margin-bottom:24px; }
+.lecture-nouvelle .question-card > .tag { display:flex; align-items:center; gap:8px; margin:0 0 8px; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.lecture-nouvelle .question-card > .tag > svg { box-sizing:content-box; flex-shrink:0; padding:6px; border-radius:12px; background:#e8e2d3; }
+.lecture-nouvelle .question-card > .action { margin:0 0 12px; padding:16px; border-radius:4px; background:#fff; font:italic 400 18px/28px Literata,Georgia,serif; }
+.espace-page.lecture-nouvelle .question-card .prompt-ecrire { display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:12px; border-radius:4px; background:#e8e2d3; color:#1d1c13; font:500 14px/20px Outfit,system-ui,sans-serif; letter-spacing:.04em; text-transform:uppercase; }
+.lecture-confidentialite { display:flex; align-items:flex-start; justify-content:center; gap:6px; padding-top:4px; margin:8px 0 0; color:#4a463f; font:500 12px/18px Outfit,system-ui,sans-serif; text-align:center; }
+.lecture-confidentialite > svg { flex-shrink:0; margin-top:2px; }
+.lecture-navigation { display:flex; align-items:center; justify-content:space-between; gap:4px; padding-top:16px; color:#4a463f; font:600 12px/16px Outfit,system-ui,sans-serif; }
+.lecture-nouvelle .lecture-navigation button { display:flex; align-items:center; gap:4px; min-height:48px; border:0; border-radius:4px; background:transparent; color:#4a463f; padding:8px; font:600 12px/16px Outfit,system-ui,sans-serif; }
+.lecture-navigation > span { display:flex; align-items:center; gap:6px; color:#1d1c13; }
+.lecture-navigation i { display:block; width:6px; height:6px; background:#755b00; border-radius:50%; }
+.lecture-nouvelle button:focus-visible,.lecture-nouvelle a:focus-visible { outline:2px solid #755b00; outline-offset:3px; }
+
+.lecture-illustration > svg { display:block; width:100%; height:176px; border-radius:4px; }

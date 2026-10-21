@@ -7,7 +7,7 @@ function dateFr(iso: string) {
 }
 
 /** Places financées (administrateur) : conventions, codes à transmettre, nombre de places utilisées. Aucun nom de participant. */
-export function ConventionsAdmin() {
+export function ConventionsAdmin({compact=false}:{compact?:boolean}={}) {
   const [liste, setListe] = useState<Convention[] | null>(null);
   const [erreur, setErreur] = useState('');
   const [org, setOrg] = useState('');
@@ -71,7 +71,7 @@ export function ConventionsAdmin() {
     URL.revokeObjectURL(a.href);
   }
 
-  return <section className="card" aria-label="Places financées">
+  const outils=<>
     <p className="tag">Places financées</p>
     <p className="muted">Sénevé Continuité offert par une organisation. Chaque code ouvre une place pour une personne. L’organisation ne reçoit que le nombre de places utilisées : aucun nom, aucune progression.</p>
     {erreur && <p className="error" role="alert">{erreur}</p>}
@@ -112,5 +112,7 @@ export function ConventionsAdmin() {
       <button type="submit" className="btn action-btn" disabled={busy || !org.trim() || !jusquau}>{busy ? 'Un instant…' : 'Créer les codes'}</button>
       {info && <p className="success" role="status">{info}</p>}
     </form>
-  </section>;
+</>;
+  if(compact) return <section className="card intervention-places" id="places-admin" aria-label="Places financées"><h2>Gestion des places financées</h2><p className="tableau-note">Conventions Sénevé Continuité · aucun nom de participant.</p>{erreur&&<p role="alert">{erreur}</p>}{liste?<table><thead><tr><th>Organisation</th><th>Utilisées</th><th>Libres</th><th>État</th></tr></thead><tbody>{liste.map(c=><tr key={c.convention_id}><td>{c.organisation}<small>Jusqu’au {dateFr(c.valide_jusqu_au)}</small></td><td>{c.utilisees} / {c.nb_places}</td><td>{c.libres}</td><td>{c.etat==='active'?'Active':'Close'}</td></tr>)}</tbody></table>:!erreur&&<p>Chargement…</p>}{liste?.length===0&&<p>Aucune convention pour le moment.</p>}<details><summary>Gérer les conventions et les codes</summary>{outils}</details></section>;
+  return <section className="card" id="places-admin" aria-label="Places financées">{outils}</section>;
 }

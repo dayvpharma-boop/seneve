@@ -29,11 +29,6 @@ const TRACES = {
   horloge: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
   personne: <><circle cx="12" cy="8" r="4" /><path d="M4 21c1-4 4-6 8-6s7 2 8 6" /></>,
   fleche_gauche: <path d="M19 12H5M11 6l-6 6 6 6" />,
-  fleche_haut: <path d="M12 19V5M6 11l6-6 6 6" />,
-  sablier: <path d="M7 3h10M7 21h10M8 3c0 5 8 6 8 9s-8 4-8 9M16 3c0 5-8 6-8 9s8 4 8 9" />,
-  valide: <path d="M5 12.5l4.5 4.5L19 7.5" />,
-  verifie: <><path d="M12 2.5l2.4 1.8 3-.2.9 2.9 2.4 1.8-1 2.8 1 2.8-2.4 1.8-.9 2.9-3-.2L12 21.5l-2.4-1.8-3 .2-.9-2.9L3.3 15.2l1-2.8-1-2.8 2.4-1.8.9-2.9 3 .2z" /><path d="M8.5 12l2.5 2.5 4.5-5" /></>,
-  souvenir: <><path d="M6 3h9l3 3v15H6z" /><path d="M9 9h6M9 13h6M9 17h3" /></>,
 } as const;
 
 export type NomIcone = keyof typeof TRACES;

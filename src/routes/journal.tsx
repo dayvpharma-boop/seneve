@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
-import { Icone } from '@/components/Icone';
+import { IconeMaquette } from '@/components/IconeMaquette';
 import { eventIdFor } from '@/lib/espace';
 import { NOTE_MAX, draft, formatDateHeure, journalTextes, texteValide } from '@/lib/journal';
+import { Icone } from '@/components/Icone';
+import { IconeJournal } from '@/components/IconeJournal';
 
 type Entry = { entry_id: string; texte: string; usage_ia_autorise: boolean; cree_le: string; modifie_le: string; activity_id: string | null };
-type Loaded = { participantId: string; langue: string; entries: Entry[]; consigne: string | null };
+type Loaded = { participantId: string; prenom: string; langue: string; entries: Entry[]; consigne: string | null };
 
 async function load(activite: string | null): Promise<Loaded | null> {
   const { data: s } = await supabase.auth.getSession();
@@ -15,7 +17,7 @@ async function load(activite: string | null): Promise<Loaded | null> {
   const ep = await supabase.rpc('ensure_participant', { p_prenom: (s.session.user.user_metadata?.['prenom'] as string | undefined) ?? '' });
   if (ep.error) throw ep.error;
   const [p, e, a] = await Promise.all([
-    supabase.from('participants').select('langue').maybeSingle(),
+    supabase.from('participants').select('langue,prenom').maybeSingle(),
     supabase.from('journal_entries').select('entry_id, texte, usage_ia_autorise, cree_le, modifie_le, activity_id').order('cree_le', { ascending: false }),
     activite ? supabase.from('activities').select('consigne').eq('activity_id', activite).maybeSingle() : Promise.resolve({ data: null, error: null }),
   ]);
@@ -23,6 +25,7 @@ async function load(activite: string | null): Promise<Loaded | null> {
   if (e.error) throw e.error;
   return {
     participantId: ep.data as string,
+    prenom: p.data?.prenom ?? s.session.user.user_metadata?.['prenom'] ?? '',
     langue: (p.data?.langue as string | undefined) ?? 'fr',
     entries: (e.data ?? []) as Entry[],
     consigne: a.error ? null : ((a.data as { consigne?: string } | null)?.consigne ?? null),
@@ -47,18 +50,9 @@ export function Journal() {
   // « Écrire » (barre du bas) ou « Écrire ma réflexion » : le champ de la note est prêt à recevoir le texte.
   const champ = useRef<HTMLTextAreaElement>(null);
   const ecrire = params.has('ecrire') || Boolean(activite);
-  // Page « Journal » : les notes d'abord, le formulaire s'ouvre avec « Nouvelle note » (ou tout de suite pour « Écrire »,
-  // une question du jour, ou un brouillon en cours).
-  const [formOuvert, setFormOuvert] = useState(() => ecrire || Boolean(draft.read(draftKey)));
+  // Les nouvelles maquettes gardent l’éditeur visible dans les deux états du journal.
+  const [formOuvert, setFormOuvert] = useState(true);
   const focusDemande = useRef(false);
-  // Passage de « Écrire » à « Journal » (barre du bas) : on revient aux notes, sauf s'il y a un texte en cours.
-  const ecrireAvant = useRef(ecrire);
-  useEffect(() => {
-    if (ecrire) setFormOuvert(true);
-    else if (ecrireAvant.current && !texte.trim()) setFormOuvert(false);
-    ecrireAvant.current = ecrire;
-  }, [ecrire]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const refresh = useCallback(async () => {
     setFailed(false);
     try {
@@ -103,39 +97,43 @@ export function Journal() {
     finally { setBusy(false); }
   }
 
-  // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026).
-  const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titreJournal}</h1></div></header>;
-  const intro = <p className="journal-intro"><Icone nom="cadenas" taille={18} />{T.introJournal}</p>;
+  const en = data?.langue === 'en';
+  const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><span className="journal-profil" aria-hidden="true">{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</span></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
+  const intro = <div className="journal-confidentialite"><IconeJournal nom="lock" taille={20} /><p className="journal-intro">{T.introJournal}</p></div>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} /></main>;
+  if (failed) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} maquette iconesJournal /></main>;
+  if (!data) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} maquette iconesJournal /></main>;
 
   const trop = texte.trim().length > NOTE_MAX;
-  return <main className="wrap avec-nav">
+  return <main className="wrap avec-nav journal-page journal-nouveau">
     {tete}
     {intro}
+    {data.entries.length === 0 && <JournalImage en={en} avecNotes={data.entries.length > 0} />}
     {formOuvert
       ? <form className="card journal-form" onSubmit={save} aria-label={T.nouvelle}>
-          <p className="tag">{T.nouvelle}</p>
-          {data.consigne && <div className="prompt-carte journal-question"><p className="tag">{T.reponseA}</p><p className="prompt-question">{data.consigne}</p></div>}
+          <div className="journal-form-haut"><p className="tag"><span />{en ? "New reflection" : "Nouvelle réflexion"}</p><span>{en ? "Today" : "Aujourd’hui"}</span></div>
+          {data.consigne && <div className="prompt-carte journal-question"><p className="tag"><IconeJournal nom="psychology_alt" taille={16} />{en ? "Guiding question" : "Question guide"}</p><div className="journal-question-ligne"><p className="prompt-question">{data.consigne}</p></div></div>}
           <label className="field"><span className="sr-only">{T.nouvelle}</span>
             <textarea ref={champ} rows={6} value={texte} maxLength={NOTE_MAX + 500} placeholder={T.placeholderNote} onChange={e => change(e.target.value)} />
           </label>
+          <p className="journal-mots" aria-live="off">{texte.trim() ? texte.trim().split(/\s+/u).length : 0} {data.langue === 'en' ? 'words' : (texte.trim().split(/\s+/u).filter(Boolean).length === 1 ? 'mot déposé' : 'mots déposés')} <IconeJournal nom="draw" taille={16} /></p>
           {trop && <p className="error" role="alert">{T.trop(NOTE_MAX)}</p>}
           <label className="share-check"><input type="checkbox" checked={ia} onChange={e => setIa(e.target.checked)} /><span>{T.iaCase}<br /><span className="muted">{T.iaAide}</span></span></label>
-          <button type="submit" className="btn action-btn moment-btn" disabled={busy || !texte.trim() || trop}>{busy ? T.enregistrement : T.enregistrer}</button>
-          {texte.trim() && !busy && <p className="muted">{T.brouillon}</p>}
+          <button type="submit" className="btn action-btn moment-btn" disabled={busy || !texte.trim() || trop}>{busy ? T.enregistrement : T.enregistrer}<IconeJournal nom="arrow_forward" taille={20} /></button>
+          {texte.trim() && !busy && <p className="muted journal-brouillon"><IconeMaquette nom="history" taille={16} />{T.brouillon}</p>}
           {saved && <p className="success" role="status">{T.enregistree}</p>}
           {error && <p className="error" role="alert">{error}</p>}
         </form>
-      : <button type="button" className="btn moment-btn journal-nouvelle" onClick={() => { focusDemande.current = true; setFormOuvert(true); }}><Icone nom="crayon" taille={20} />{T.nouvelle}</button>}
-    <section className="today-section" aria-labelledby="titre-notes">
-      <h2 id="titre-notes">{T.mesNotes}</h2>
+      : <button type="button" className="btn moment-btn journal-nouvelle" onClick={() => { focusDemande.current = true; setFormOuvert(true); }}><IconeMaquette nom="history_edu" taille={22} />{T.nouvelle}</button>}
+    {data.entries.length > 0 && <JournalImage en={en} avecNotes={data.entries.length > 0} />}
+    <section className="today-section journal-historique" aria-labelledby="titre-notes">
+      <div className="journal-historique-tete"><h2 id="titre-notes">{en ? "Previous reflections" : "Mes réflexions précédentes"}</h2><span>{data.entries.length} {data.langue === 'en' ? (data.entries.length === 1 ? 'note' : 'notes') : (data.entries.length === 1 ? 'note' : 'notes')}</span></div>
       {data.entries.length === 0
-        ? <div className="card journal-vide"><Icone nom="journal" taille={28} /><p>{T.aucune}</p></div>
+        ? <div className="card journal-vide"><span className="journal-eco"><IconeJournal nom="eco" taille={28} /></span><p>{en ? 'You haven’t written anything yet. Your first reflection will appear here.' : 'Tu n’as encore rien écrit. Ta première réflexion apparaîtra ici.'}</p><span className="journal-graine"><IconeJournal nom="flare" taille={15} />{en ? 'Like a mustard seed taking root' : 'Comme la graine de sénevé qui prend racine'}</span></div>
         : data.entries.map(x => <EntryCard key={x.entry_id} entry={x} langue={data.langue} onChanged={refresh} />)}
     </section>
-    <BarreNav langue={data.langue} />
+    <footer className="journal-pied"><IconeJournal nom="verified_user" taille={18} />{en ? "Saved notes are kept in your personal space." : "Les notes enregistrées sont conservées dans ton espace."}</footer>
+    <BarreNav langue={data.langue} maquette iconesJournal />
   </main>;
 }
 
@@ -165,7 +163,7 @@ function EntryCard({ entry, langue, onChanged }: { entry: Entry; langue: string;
     {editing
       ? <label className="field"><span className="sr-only">{T.modifier}</span><textarea rows={5} value={texte} onChange={e => setTexte(e.target.value)} /></label>
       : <p className="day-text">{entry.texte}</p>}
-    <p className="note-ia"><span className="time-chip">{entry.usage_ia_autorise ? T.iaOui : T.iaNon}</span></p>
+    <p className="note-ia"><span className="time-chip"><IconeMaquette nom="check_circle" taille={15} />{entry.usage_ia_autorise ? T.iaOui : T.iaNon}</span></p>
     {editing ? <div className="row-actions">
       <button type="button" className="btn action-btn" disabled={busy || !t} onClick={() => void run(() => supabase.from('journal_entries').update({ texte: t }).eq('entry_id', entry.entry_id))}>{busy ? T.enregistrement : T.enregistrer}</button>
       <button type="button" className="link" onClick={() => { setEditing(false); setTexte(entry.texte); }}>{T.annulerModif}</button>
@@ -175,9 +173,11 @@ function EntryCard({ entry, langue, onChanged }: { entry: Entry; langue: string;
       <button type="button" className="link" onClick={() => setConfirm(false)}>{T.non}</button>
     </div> : <div className="row-actions">
       <button type="button" className="link" disabled={busy} onClick={() => void run(() => supabase.from('journal_entries').update({ usage_ia_autorise: !entry.usage_ia_autorise }).eq('entry_id', entry.entry_id))}>{entry.usage_ia_autorise ? T.retirerIa : T.autoriserIa}</button>
-      <button type="button" className="link" onClick={() => setEditing(true)}>{T.modifier}</button>
-      <button type="button" className="link" onClick={() => setConfirm(true)}>{T.supprimer}</button>
+      <button type="button" className="link" onClick={() => setEditing(true)}><IconeJournal nom="edit" taille={16} />{T.modifier}</button>
+      <button type="button" className="link" onClick={() => setConfirm(true)}><IconeJournal nom="delete" taille={16} />{T.supprimer}</button>
     </div>}
     {error && <p className="error" role="alert">{error}</p>}
   </article>;
 }
+
+function JournalImage({en,avecNotes}:{en:boolean;avecNotes:boolean}) { return <figure className="journal-image"><img src={`${import.meta.env.BASE_URL}illustrations/journal-maquette-${avecNotes ? 'notes' : 'vide'}.jpg`} alt={avecNotes ? (en ? 'A quiet courtyard in natural light' : 'Une cour paisible dans la lumière naturelle') : (en ? 'An open journal in natural light' : 'Un journal ouvert dans la lumière naturelle')} width={720} height={400} /><figcaption><IconeJournal nom="spa" taille={20} /><span>{en ? 'A moment to reflect' : 'Un temps pour réfléchir'}</span></figcaption></figure>; }

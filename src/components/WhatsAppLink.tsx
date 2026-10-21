@@ -9,7 +9,9 @@ function time(iso: string) {
 }
 
 /** Carte « Relier mon WhatsApp » : liaison vérifiée par un code à usage unique (15 minutes). */
-export function WhatsAppLink() {
+export function WhatsAppLink({maquette=false}:{maquette?:boolean}) {
+  const [confirmer,setConfirmer]=useState(false);
+  const [copie,setCopie]=useState(false);
   const [link, setLink] = useState<Link | null | undefined>(undefined);
   const [code, setCode] = useState<{ code: string; expire_le: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -47,10 +49,10 @@ export function WhatsAppLink() {
   if (link === undefined) return null;
 
   return <div className="card">
-    <p className="tag">WhatsApp</p>
+    <p className="tag">{maquette?'Relier WhatsApp':'WhatsApp'}</p>{maquette&&<p>Relie ton numéro pour retrouver ton parcours sur WhatsApp. La liaison seule ne t’inscrit à aucun message.</p>}
     {link ? <>
       <p className="success" role="status">Ton WhatsApp {maskPhone(link.identite_canal)} est relié à ton compte.</p>
-      <button type="button" className="link" disabled={busy} onClick={revoke}>Retirer la liaison</button>
+      <button type="button" className="link" disabled={busy} onClick={()=>maquette?setConfirmer(true):void revoke()}>Retirer la liaison</button>{maquette&&confirmer&&<div className="rn-confirmation"><p>Retirer la liaison WhatsApp ? Ton numéro ne sera plus relié à ton compte.</p><button type="button" className="btn" disabled={busy} onClick={()=>void revoke().then(()=>setConfirmer(false))}>Confirmer le retrait</button><button type="button" className="link" onClick={()=>setConfirmer(false)}>Annuler</button></div>}{maquette&&<div className="rn-renouveler"><p>Nouveau numéro ou renouveler ?</p><button type="button" className="btn-secondaire" disabled={busy} onClick={()=>void ask()}>Obtenir mon code</button>{code&&<><p>Code de liaison unique</p><p className="link-code">{linkMessage(code.code)}</p><button onClick={()=>void navigator.clipboard.writeText(linkMessage(code.code)).then(()=>setCopie(true)).catch(()=>setError('Copie impossible. Sélectionne le code pour le copier.'))}>{copie?'Copié':'Copier le code'}</button><p>Valable jusqu’à {time(code.expire_le)}. Envoie ce code au numéro officiel SÉNEVÉ.</p><a className="btn" href={linkUrl(code.code)} target="_blank" rel="noopener noreferrer">Ouvrir WhatsApp</a><button type="button" className="link" onClick={()=>void check()}>J’ai envoyé le message</button></>}</div>}
     </> : code ? <>
       <p>Envoie ce message depuis le WhatsApp que tu veux relier :</p>
       <p className="link-code">{linkMessage(code.code)}</p>

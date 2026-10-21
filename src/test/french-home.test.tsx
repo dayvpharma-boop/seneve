@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Index } from '@/routes/index';
 import { texts } from '@/lib/test-texts';
@@ -13,7 +13,8 @@ function answerAll(totals: number[]) {
     const n = Math.floor(total / 3), remainder = total % 3;
     for (const answer of [n, n + Number(remainder > 0), n + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} sur 5`) }));
-      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
+      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      act(() => vi.advanceTimersByTime(160));
     }
   }
 }
@@ -32,7 +33,7 @@ describe('French home screen wording approved by the author', () => {
   it('shows the three approved discovery lines', () => {
     render(<Index />);
     expect(screen.getByText('À la fin, tu découvres :')).toBeVisible();
-    expect(screen.getAllByRole('listitem').map(item => item.textContent)).toEqual(approved);
+    expect(within(screen.getByRole('list', { name: 'À la fin, tu découvres :' })).getAllByRole('listitem').map(item => item.textContent)).toEqual(approved);
   });
 
   it.each([

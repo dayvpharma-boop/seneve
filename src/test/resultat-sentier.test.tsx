@@ -11,7 +11,8 @@ function finishQuiz(totals: number[]) {
     const remainder = total % 3;
     for (const answer of [value, value + Number(remainder > 0), value + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} sur 5`) }));
-      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
+      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      act(() => { vi.advanceTimersByTime(160); });
     }
   }
 }
@@ -22,7 +23,7 @@ describe('Résultat « Sentier »', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => { cleanup(); vi.useRealTimers(); });
 
-  it('montre d’abord la racine proposée, l’action et WhatsApp, puis les 7 racines, puis le partage', () => {
+  it('montre la racine proposée, l’action, les détails et le partage avant la suite', () => {
     render(<Index />);
     finishQuiz([11, 7, 13, 9, 6, 12, 10]);
     const hero = cardOf('Nous te proposons de commencer par');
@@ -33,7 +34,7 @@ describe('Résultat « Sentier »', () => {
     expect(within(hero).getByRole('heading', { name: R[4]?.n ?? '' })).toBeVisible();
     expect(within(hero).getByText('Racine à développer')).toHaveClass('cat-chip');
     expect(within(hero).getByText(/cette racine a le total le plus bas/)).toBeVisible();
-    expect(follows(hero, action) && follows(action, whatsapp) && follows(whatsapp, roots) && follows(roots, share)).toBe(true);
+    expect(follows(hero, action) && follows(action, roots) && follows(roots, share) && follows(share, whatsapp)).toBe(true);
     // Le résultat mène aussi à l'espace du site, sous WhatsApp (15/10/2026).
     const espace = within(whatsapp).getByRole('link', { name: 'Créer mon espace' });
     expect(espace).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion`);
@@ -76,7 +77,8 @@ describe('Résultat « Sentier »', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     for (let k = 0; k < 21; k++) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${k < 3 ? 1 : 4} out of 5`) }));
-      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
+      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      act(() => { vi.advanceTimersByTime(160); });
     }
     expect(screen.getByText('Your 7 roots')).toBeVisible();
     expect(screen.queryByText('Tes 7 racines')).not.toBeInTheDocument();

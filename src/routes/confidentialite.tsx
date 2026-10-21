@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Icone } from '@/components/Icone';
+import { IconeConfidentialite } from '@/components/IconeConfidentialite';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Politique de confidentialité (texte validé par Dr Justin Tshims le 18/10/2026 : Cabinet Bethesda,
 // Kinshasa, RDC ; contact@drjustintshims.com ; durées de conservation proposées acceptées ; 18 ans).
@@ -43,19 +45,29 @@ const DUREES: [string, string][] = [
 const mail = <a href={`mailto:${CONTACT}`}>{CONTACT}</a>;
 
 export function Confidentialite() {
+  const navigate=useNavigate();
+  const revenir=()=>{if(typeof window.history.state?.idx==='number'&&window.history.state.idx>0)navigate(-1);else navigate('/');};
   useEffect(() => { document.title = 'Confidentialité — SÉNEVÉ'; document.documentElement.lang = 'fr'; }, []);
   return <main className="wrap confidentialite">
-    <p className="brand">SÉNEVÉ</p>
-    <h1>Politique de confidentialité</h1>
+    <header className="conf-entete"><button type="button" onClick={revenir}><IconeConfidentialite nom="arrow_back" taille={20}/><span>Revenir</span></button><p className="brand"><Icone nom="graine" taille={22}/>SÉNEVÉ</p><span className="conf-profil" aria-hidden="true"><IconeConfidentialite nom="person" taille={18}/></span></header>
+    <header className="conf-intro"><p className="conf-repere"><IconeConfidentialite nom="verified_user" taille={16}/>Édition & Éthique</p><h1>Politique de confidentialité</h1>
     <p className="muted">Dernière mise à jour : {DATE_POLITIQUE}</p>
-    <p>SÉNEVÉ est un compagnon de transformation personnelle fondé sur le livre « Arrête de mendier des miracles » du Dr Justin Tshims. Cette page t’explique simplement quelles données nous utilisons, pourquoi, avec qui elles sont partagées, combien de temps nous les gardons et quels sont tes droits.</p>
+    </header>
+    <figure className="conf-photo"><img src={`${import.meta.env.BASE_URL}illustrations/confidentialite-maquette.jpg`} alt="Un carnet relié dans la lumière naturelle" width={512} height={288}/><figcaption>Pas de publicité, pas de revente.</figcaption></figure>
+    <section className="conf-resume" aria-labelledby="conf-resume-titre"><h2 id="conf-resume-titre"><IconeConfidentialite nom="auto_stories" taille={22}/>En un coup d’œil</h2><ol>
+      <li><span className="conf-numero">1</span><div><h3>Ce que nous gardons</h3><p>{DONNEES[1]?.donnees}</p><p>{DONNEES[2]?.donnees}</p></div></li>
+      <li><span className="conf-numero">2</span><div><h3>Ce que nous ne faisons jamais</h3><p>SÉNEVÉ n’utilise aucun outil de mesure publicitaire et ne vend jamais tes données.</p></div></li>
+      <li><span className="conf-numero conf-numero-or"><IconeConfidentialite nom="lock" taille={18}/></span><div><h3>Qui peut lire ton journal</h3><p>Ton journal est privé. Tu choisis les notes autorisées au coach IA et les extraits transmis à l’équipe.</p></div></li>
+      <li><span className="conf-numero">4</span><div><h3>Comment demander l’effacement</h3><p>Pour cela, écris à {mail} depuis l’adresse de ton compte.</p><a href={`mailto:${CONTACT}?subject=Demande%20de%20suppression%20de%20mes%20donn%C3%A9es`}>Demander la suppression de mes données</a></div></li>
+    </ol></section>
+    <p className="conf-presentation">SÉNEVÉ est un compagnon de transformation personnelle fondé sur le livre « Arrête de mendier des miracles » du Dr Justin Tshims. Cette page t’explique simplement quelles données nous utilisons, pourquoi, avec qui elles sont partagées, combien de temps nous les gardons et quels sont tes droits.</p>
 
-    <section aria-labelledby="c1"><h2 id="c1">1. Qui est responsable de tes données ?</h2>
+    <section aria-labelledby="c1"><h2 id="c1"><IconeConfidentialite nom="badge" taille={20}/>1. Qui est responsable de tes données ?</h2>
       <p>Le Cabinet Bethesda du Dr Justin Tshims, à Kinshasa (République démocratique du Congo).</p>
       <p>Pour toute question sur tes données : {mail}.</p>
     </section>
 
-    <section aria-labelledby="c2"><h2 id="c2">2. Quelles données, et pourquoi ?</h2>
+    <section aria-labelledby="c2"><h2 id="c2"><IconeConfidentialite nom="auto_stories" taille={20}/>2. Quelles données, et pourquoi ?</h2>
       {DONNEES.map(d => <div key={d.quoi} className="card conf-carte">
         <h3>{d.quoi}</h3>
         <p><strong>Données :</strong> {d.donnees}</p>
@@ -65,7 +77,7 @@ export function Confidentialite() {
       <p><strong>Pas de publicité, pas de revente.</strong> SÉNEVÉ n’utilise aucun outil de mesure publicitaire et ne vend jamais tes données.</p>
     </section>
 
-    <section aria-labelledby="c3"><h2 id="c3">3. Tes accords pour les messages</h2>
+    <section aria-labelledby="c3"><h2 id="c3"><IconeConfidentialite nom="notifications_active" taille={20}/>3. Tes accords pour les messages</h2>
       <ul className="plain">
         <li>Chaque canal a son propre accord : WhatsApp, e-mail et appels.</li>
         <li>Tu peux retirer ton accord à tout moment : sur WhatsApp, écris <strong>STOP</strong> pour tout arrêter, ou <strong>PAUSE</strong> et <strong>ARRÊTER</strong> pour un seul parcours ; pour l’e-mail du matin, va dans ton espace, rubrique « E-mail du matin » ; dans tous les cas, tu peux écrire à {mail}.</li>
@@ -73,7 +85,7 @@ export function Confidentialite() {
       </ul>
     </section>
 
-    <section aria-labelledby="c4"><h2 id="c4">4. Avec qui tes données sont-elles partagées ?</h2>
+    <section aria-labelledby="c4"><h2 id="c4"><IconeConfidentialite nom="support_agent" taille={20}/>4. Avec qui tes données sont-elles partagées ?</h2>
       <p>Nous travaillons avec des prestataires techniques. Chacun reçoit seulement ce qui est nécessaire à son service.</p>
       <ul className="plain conf-liste">
         {PRESTATAIRES.map(([nom, role, lieu]) => <li key={nom}><strong>{nom}</strong> — {role}. <span className="muted">Lieu : {lieu}.</span></li>)}
@@ -81,13 +93,13 @@ export function Confidentialite() {
       <p>Certains de ces prestataires traitent des données hors de ton pays. Nous ne communiquons tes données à aucune autre personne, sauf si la loi l’exige.</p>
     </section>
 
-    <section aria-labelledby="c5"><h2 id="c5">5. Combien de temps les gardons-nous ?</h2>
+    <section aria-labelledby="c5"><h2 id="c5"><IconeConfidentialite nom="hourglass_empty" taille={20}/>5. Combien de temps les gardons-nous ?</h2>
       <ul className="plain conf-liste">
         {DUREES.map(([quoi, duree]) => <li key={quoi}><strong>{quoi}</strong> : {duree}</li>)}
       </ul>
     </section>
 
-    <section aria-labelledby="c6"><h2 id="c6">6. Comment tes données sont-elles protégées ?</h2>
+    <section aria-labelledby="c6"><h2 id="c6"><IconeConfidentialite nom="verified_user" taille={20}/>6. Comment tes données sont-elles protégées ?</h2>
       <ul className="plain">
         <li>Chaque personne ne peut voir que ses propres données : des règles d’accès le vérifient dans la base.</li>
         <li>Les mots de passe sont chiffrés.</li>
@@ -96,19 +108,21 @@ export function Confidentialite() {
       </ul>
     </section>
 
-    <section aria-labelledby="c7"><h2 id="c7">7. Tes droits</h2>
+    <section aria-labelledby="c7"><h2 id="c7"><IconeConfidentialite nom="lock" taille={20}/>7. Tes droits</h2>
       <p>Tu peux à tout moment demander à voir les données que nous avons sur toi, à les corriger, à les supprimer (ton compte, ton journal, ton historique), à retirer un accord de message, ou à recevoir une copie de tes données.</p>
       <p>Pour cela, écris à {mail} depuis l’adresse de ton compte. Nous répondons dans un délai de 30 jours.</p>
     </section>
 
-    <section aria-labelledby="c8"><h2 id="c8">8. Âge minimum</h2>
+    <section aria-labelledby="c8"><h2 id="c8"><IconeConfidentialite nom="badge" taille={20}/>8. Âge minimum</h2>
       <p>SÉNEVÉ s’adresse aux adultes : il faut avoir au moins 18 ans pour créer un espace.</p>
     </section>
 
-    <section aria-labelledby="c9"><h2 id="c9">9. Changements</h2>
+    <section aria-labelledby="c9"><h2 id="c9"><IconeConfidentialite nom="auto_stories" taille={20}/>9. Changements</h2>
       <p>Si cette politique change, la date en haut de la page est mise à jour. En cas de changement important, nous te prévenons dans ton espace ou par e-mail.</p>
     </section>
 
+    <section className="conf-contact" aria-labelledby="conf-contact-titre"><h2 id="conf-contact-titre"><IconeConfidentialite nom="mail" taille={22}/>Contact</h2><p>{mail}</p><Link to="/aide">Ouvrir le formulaire d’aide</Link><a href={`mailto:${CONTACT}?subject=Demande%20de%20copie%20de%20mes%20donn%C3%A9es`}>Demander une copie de mes données</a></section>
+    <div className="conf-retour"><button className="conf-principal" type="button" onClick={revenir}><IconeConfidentialite nom="check" taille={20}/>J’ai compris</button><button type="button" onClick={revenir}>Revenir à l’application</button></div>
     <div className="today-foot"><Link className="link" to="/">Test des 7 Racines</Link><Link className="link" to="/espace">Mon espace</Link></div>
   </main>;
 }

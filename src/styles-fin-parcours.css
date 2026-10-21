@@ -1,78 +1,55 @@
-/* Fin de parcours, d'après la maquette validée « Parcours accompli » (image app/corrigé/14-ecran) :
- * mêmes couleurs que la maquette, Outfit pour l'interface, Lora pour la lecture, coins de 4 à 8 px. */
-.fp-carte, .fp-suite, .fp-souvenir, .fp-puce {
-  --fp-blanc:#ffffff; --fp-bas:#f9f3e4; --fp-milieu:#f3edde; --fp-haut:#eee8d9; --fp-variante:#e8e2d3;
-  --fp-encre:#1d1c13; --fp-encre-2:#4a463f; --fp-contour:#7b776f; --fp-noir:#000000; --fp-tige:#1d1b19;
-  --fp-or:#755b00; --fp-or-clair:#ffe08f; --fp-sur-or-clair:#241a00;
-  --fp-ui:Outfit, Poppins, system-ui, sans-serif; --fp-lecture:Lora, Georgia, serif;
-}
-/* En-tête : « Parcours accompli · 7/7 jours » */
-.fp-puce { display:inline-flex; align-items:center; gap:6px; width:fit-content; margin:0 0 6px; padding:4px 10px; border-radius:4px;
-  background:var(--fp-or-clair); color:var(--fp-sur-or-clair); font-family:var(--fp-ui); font-size:12px; font-weight:600; line-height:16px; letter-spacing:.06em; }
-
-/* Carte maîtresse : le jardin du sénevé */
-.fp-carte { display:grid; gap:16px; margin:8px 0 16px; padding:16px; border-radius:8px; background:var(--fp-blanc); color:var(--fp-encre); box-shadow:0 1px 2px rgba(0,0,0,.05); }
-.fp-ligne { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-.fp-etiquette { margin:0; font-family:var(--fp-ui); font-size:12px; font-weight:600; line-height:16px; letter-spacing:.06em; color:var(--fp-or); }
-.fp-compte { padding:2px 8px; border-radius:4px; background:var(--fp-milieu); color:var(--fp-encre-2); font-family:var(--fp-ui); font-size:12px; font-weight:600; line-height:16px; }
-.fp-titre { margin:4px 0 0; font-family:var(--fp-ui); font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.01em; color:var(--fp-noir); }
-.fp-scene { display:grid; justify-items:center; gap:8px; padding:16px; border-radius:6px; background:var(--fp-bas); overflow:hidden; }
-.fp-illus { width:100%; max-width:320px; height:auto; }
-.fp-etapes { display:flex; justify-content:space-between; width:100%; max-width:310px; text-align:center; }
-.fp-etapes div { display:grid; gap:2px; }
-.fp-etapes b { font-family:var(--fp-ui); font-size:12px; font-weight:500; color:var(--fp-encre-2); }
-.fp-etapes span { font-family:var(--fp-ui); font-size:11px; color:var(--fp-contour); }
-.fp-etapes .is-fin b { color:var(--fp-noir); font-weight:700; }
-.fp-etapes .is-fin span { color:var(--fp-or); font-weight:600; }
-
-/* Ruban des jours : réalisés en or, faits en partie en or clair, le dernier jour réalisé en noir */
-.fp-ruban { display:grid; gap:6px; }
-.fp-jour { display:grid; justify-items:center; gap:4px; padding:0; border:0; background:transparent; color:var(--fp-encre-2); font:inherit; cursor:pointer; }
-.fp-case { width:100%; height:32px; display:grid; place-items:center; border-radius:4px; background:var(--fp-haut); color:var(--fp-encre-2); }
-.fp-jour.is-realisee .fp-case { background:var(--fp-or); color:#fff; }
-.fp-jour.is-partielle .fp-case, .fp-jour.is-preparee .fp-case { background:var(--fp-or-clair); color:var(--fp-sur-or-clair); }
-.fp-jour.is-dernier .fp-case { background:var(--fp-noir); color:#fff; }
-.fp-jour.is-choisi .fp-case { box-shadow:0 0 0 2px var(--fp-blanc), 0 0 0 4px var(--fp-or); }
-.fp-num { font-family:var(--fp-ui); font-size:11px; }
-.fp-jour.is-dernier .fp-num { color:var(--fp-noir); font-weight:600; }
-.fp-ruban.is-compact .fp-case { height:26px; }
-.fp-legende { display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px 12px; padding:4px 4px 0; font-family:var(--fp-ui); font-size:11px; color:var(--fp-encre-2); }
-.fp-legende span { display:inline-flex; align-items:center; gap:4px; }
-.fp-pastille { width:8px; height:8px; border-radius:50%; display:inline-block; }
-.fp-pastille.is-realisee { background:var(--fp-or); }
-.fp-pastille.is-partielle { background:var(--fp-or-clair); }
-.fp-mot { margin:0; padding:16px; border-radius:4px; background:var(--fp-haut); font-family:var(--fp-lecture); font-style:italic; font-size:18px; line-height:28px; color:var(--fp-encre); }
-.fp-relire-jours { margin:-4px 0 16px; font-family:var(--fp-ui); font-size:13px; color:var(--fp-encre-2); }
-
-/* Étape suivante : offres réelles du catalogue */
-.card.fp-suite { display:grid; gap:14px; margin:0 0 16px; padding:16px; border:0; border-radius:8px; background:var(--fp-blanc); color:var(--fp-encre); box-shadow:0 1px 2px rgba(0,0,0,.05); }
-.fp-suivante { font-family:var(--fp-ui); font-size:12px; font-weight:500; color:var(--fp-or); }
-.fp-suite-intro { margin:0; font-family:var(--fp-lecture); font-size:16px; line-height:26px; color:var(--fp-encre-2); }
-.fp-offres { list-style:none; margin:0; padding:0; display:grid; gap:12px; }
-.fp-offre { display:flex; align-items:flex-start; gap:10px; }
-.fp-offre-icone { width:28px; height:28px; flex:none; display:grid; place-items:center; margin-top:2px; border-radius:4px; background:var(--fp-milieu); color:var(--fp-or); }
-.fp-offre-texte { flex:1; display:grid; gap:8px; }
-.fp-offre-texte p { margin:0; font-family:var(--fp-ui); font-size:14px; line-height:20px; color:var(--fp-encre-2); }
-.fp-offre-texte strong { color:var(--fp-noir); font-weight:600; }
-.btn.fp-voir { min-height:48px; border-radius:4px; background:var(--fp-noir); color:#fff; font-family:var(--fp-ui); font-size:14px; letter-spacing:.04em; text-decoration:none; }
-.fp-bientot { font-style:italic; }
-.fp-libre { margin:0; padding:10px 12px; border-radius:4px; background:var(--fp-milieu); font-family:var(--fp-ui); font-size:13px; color:var(--fp-encre-2); }
-.fp-plus-tard { min-height:48px; border:0; background:transparent; color:var(--fp-encre-2); font-family:var(--fp-ui); font-size:14px; }
-
-/* Rappel du journal */
-.fp-souvenir { display:grid; gap:8px; margin:0 0 24px; padding:16px; border-radius:8px; background:var(--fp-haut); color:var(--fp-encre); }
-.fp-souvenir-titre { display:flex; align-items:center; gap:6px; margin:0; font-family:var(--fp-ui); font-size:16px; font-weight:600; color:var(--fp-noir); }
-.fp-souvenir-titre svg { color:var(--fp-or); }
-.fp-souvenir p:not(.fp-souvenir-titre) { margin:0; font-family:var(--fp-lecture); font-size:16px; line-height:26px; color:var(--fp-encre-2); }
-.fp-relire { display:inline-flex; align-items:center; gap:8px; width:fit-content; min-height:48px; padding:0 16px; border-radius:4px; background:var(--fp-variante);
-  color:var(--fp-noir); font-family:var(--fp-ui); font-size:14px; font-weight:600; text-decoration:none; }
-
-@media (prefers-color-scheme: dark) {
-  .fp-carte, .fp-suite, .fp-souvenir, .fp-puce {
-    --fp-blanc:#1e1c17; --fp-bas:#26231c; --fp-milieu:#2e2a21; --fp-haut:#2a261d; --fp-variante:#38332a;
-    --fp-encre:#f6f0e1; --fp-encre-2:#cac6c1; --fp-contour:#9b968c; --fp-noir:#f6f0e1; --fp-tige:#f6f0e1;
-    --fp-or:#e6c364; --fp-or-clair:#584400; --fp-sur-or-clair:#ffe08f;
-  }
-  .fp-jour.is-realisee .fp-case { color:#1d1c13; }
-  .fp-jour.is-dernier .fp-case, .btn.fp-voir { background:#f6f0e1; color:#1d1c13; }
-}
+/* Fin du parcours — maquette du 20 octobre, données réelles. */
+body:has(.fin-page){background:#fff9ea;color:#1d1c13}
+.espace-page.fin-page{--background:#fff9ea;--surface:#fff;--foreground:#1d1c13;--muted:#4a463f;--chip:#eee8d9;max-width:390px;padding:0 20px 112px;font:400 16px/26px Literata,Georgia,serif}
+.fin-page h1,.fin-page h2,.fin-page h3,.fin-page button,.fin-page .link,.fin-page .barre-nav{font-family:Outfit,system-ui,sans-serif}
+.fin-barre{display:flex;align-items:center;justify-content:space-between;height:64px;margin:0 -20px;padding:0 20px;background:#fff9ea}
+.fin-barre p{display:flex;align-items:center;gap:8px;font:600 16px/24px Outfit,sans-serif;letter-spacing:.1em;margin:0;color:#000}
+.fin-initiale{display:grid;place-items:center;background:#000;color:#fff;width:32px;height:32px;border-radius:12px;font:600 16px/24px Outfit,sans-serif}
+.fin-page .fin-intro{margin:8px 0 24px;display:flex;flex-direction:column;gap:4px}
+.fin-page .fin-badge{display:flex;align-items:center;gap:6px;align-self:flex-start;background:#ffe08f;color:#241a00;padding:4px 10px;border-radius:4px;font:600 12px/16px Outfit,sans-serif;margin:0}
+.fin-page .fin-intro h1{font:600 26px/34px Outfit,sans-serif;letter-spacing:-.5px;margin:0;color:#000}
+.fin-page .fin-intro>p:last-child{font:400 16px/26px Literata,serif;color:#4a463f;margin:0}
+.fin-page .fin-bilan,.fin-page .fin-suite{background:#fff;border-radius:8px;padding:16px;margin:0 0 24px;box-shadow:none;border:0}
+.fin-bilan-tete{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.fin-bilan-tete>span:first-child{font:600 12px/16px Outfit,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#755b00}
+.fin-bilan-tete>span:last-child{font:600 12px/16px Outfit,sans-serif;background:#f3edde;color:#4a463f;border-radius:4px;padding:2px 8px;max-width:50%;text-align:center}
+.fin-page .fin-bilan h2,.fin-page .fin-suite h2,.fin-page .fin-offre h3{font:600 20px/28px Outfit,sans-serif;letter-spacing:-.2px;color:#000;margin:0 0 16px}
+.fin-jardin{padding:16px;background:#f9f3e4;border-radius:4px;margin:0 0 16px}
+.fin-jardin img{display:block;width:100%;height:auto;max-width:320px;margin:auto}
+.fin-jardin figcaption{display:flex;justify-content:space-between;gap:8px;padding-top:8px;color:#4a463f;font:500 12px/16px Outfit,sans-serif}
+.fin-jardin figcaption span:last-child{color:#755b00;font-weight:600}
+.fin-jours{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.fin-jours a{display:flex;flex-direction:column;gap:4px;align-items:center;min-height:48px;font:400 12px/16px Outfit,sans-serif;color:#4a463f;text-decoration:none;min-width:0}
+.fin-case{width:100%;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:#eee8d9;color:#4a463f}
+.fin-page .fin-realisee{background:#755b00;color:#fff}
+.fin-page .fin-realisee svg{color:#fff}
+.fin-page .fin-partielle{background:#ffe08f;color:#241a00}
+.fin-page .fin-preparee{background:#f3edde;color:#584400}
+.fin-page .fin-jours a:last-child .fin-realisee{background:#000;color:#fff}
+.fin-legende{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;font:400 12px/18px Outfit,sans-serif;color:#4a463f;margin:8px 0 16px}
+.fin-page .fin-mot{margin:0;padding:16px;background:#eee8d9;border-radius:4px;font:italic 400 18px/28px Literata,serif;color:#1d1c13}
+.fin-page .fin-secondaire{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:8px 0;color:#4a463f;font:500 14px/20px Outfit,sans-serif;text-decoration:none;text-align:center}
+.fin-suite-repere{display:flex;justify-content:flex-end;font:500 12px/16px Outfit,sans-serif;color:#755b00;margin-bottom:4px}
+.fin-page .fin-suite>p{font:400 16px/26px Literata,serif;color:#4a463f;margin:0 0 16px}
+.fin-page .fin-offre{margin:16px 0}
+.fin-page .fin-offre h3{font-size:18px;line-height:26px;margin-bottom:12px}
+.fin-prix{display:flex;gap:8px;align-items:center;background:#f3edde;padding:12px;border-radius:4px;margin-bottom:16px;font:500 16px/24px Outfit,sans-serif;color:#1d1c13}
+.fin-prix svg{color:#755b00;flex-shrink:0}
+.fin-page .fin-principal{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px;background:#000;color:#fff;border-radius:4px;text-decoration:none;font:600 14px/20px Outfit,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.fin-points{list-style:none;margin:16px 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.fin-points li{display:flex;align-items:center;gap:8px;font:500 14px/22px Outfit,sans-serif;color:#1d1c13}
+.fin-points svg{box-sizing:content-box;padding:5px;border-radius:4px;background:#f3edde;color:#755b00;flex-shrink:0}
+.fin-page .fin-suite .fin-libre{font:400 14px/22px Literata,serif;margin-bottom:4px}
+.fin-journal{background:#eee8d9;border-radius:8px;padding:16px;margin-bottom:24px}
+.fin-page .fin-journal h2{display:flex;align-items:center;gap:4px;font:600 16px/24px Outfit,sans-serif;margin:0 0 8px;color:#000}
+.fin-journal h2 svg{color:#755b00;flex-shrink:0}
+.fin-journal>p{font:400 16px/26px Literata,serif;color:#4a463f;margin:0 0 12px}
+.fin-derniere{padding:12px;background:#fff;border-radius:4px;margin-bottom:8px}
+.fin-derniere>span{font:600 12px/16px Outfit,sans-serif;color:#755b00}
+.fin-derniere>p{font:italic 400 16px/26px Literata,serif;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.fin-page .fin-journal .fin-secondaire{justify-content:flex-start;padding:8px 16px;background:#e8e2d3;border-radius:4px;display:inline-flex;color:#000}
+.fin-page :focus-visible{outline:3px solid #755b00;outline-offset:3px}
+.fin-page .barre-nav{max-width:390px;background:#fff9ea;border:0;box-shadow:none}
+.fin-page .barre-nav a{font:600 12px/16px Outfit,sans-serif;color:#4a463f;min-height:64px;text-decoration:none}
+.fin-page .barre-nav a[aria-current=page]{color:#000;text-decoration:none}
+.fin-page .barre-nav .nav-plus{background:#000;color:#fff;border:0;border-radius:12px;width:48px;height:48px}

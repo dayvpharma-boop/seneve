@@ -82,13 +82,24 @@ describe('Espace — écran « Aujourd’hui »', () => {
     const auj = await screen.findByRole('button', { name: 'Jour 2, aujourd’hui' });
     expect(auj).toHaveClass('is-today');
     expect(auj).toHaveAttribute('aria-pressed', 'true');
-    expect(auj).toHaveTextContent('mer.');
+    expect(auj).toHaveTextContent('J2');
     expect(screen.getByRole('button', { name: 'Jour 1, action réalisée' })).toHaveClass('is-done');
     expect(screen.getByRole('button', { name: 'Jour 3, pas encore ouvert' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Jour 7, pas encore ouvert' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Jour 8, pas encore ouvert' })).not.toBeInTheDocument();
     expect(screen.getByText('Jour 2 sur 14')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Progression hebdomadaire' })).toBeVisible();
+    expect(screen.getByText('1 / 2 actions réalisées')).toBeVisible();
     expect(screen.getByText('Le jour 3 s\'ouvre demain.')).toBeInTheDocument();
+  });
+
+  it('la progression ne compte pas les actions préparées ou partielles comme réalisées', async () => {
+    tables['activity_state'] = [
+      { enrollment_id: 'E14', activity_id: 'A1', etat: 'preparee', aide_demandee: false, realisee_le: null },
+      { enrollment_id: 'E14', activity_id: 'A2', etat: 'partielle', aide_demandee: false, realisee_le: null },
+    ];
+    ouvrir();
+    expect(await screen.findByText('0 / 2 actions réalisées')).toBeVisible();
   });
 
   it('« Voir tous les jours » : les 14 tuiles, puis retour à la semaine après un choix', async () => {
@@ -108,7 +119,7 @@ describe('Espace — écran « Aujourd’hui »', () => {
   it('moments du jour : 8 h et 13 h ouverts, 19 h fermé avec son heure', async () => {
     ouvrir();
     const matin = await screen.findByRole('article', { name: '8 h — Thème 2.1' });
-    expect(within(matin).getByText('8 h · Matin')).toHaveClass('time-chip');
+    expect(within(matin).getByText('Matin · 8 h')).toHaveClass('time-chip');
     expect(within(matin).getByRole('button', { name: 'Lire et agir' })).toBeInTheDocument();
     expect(within(screen.getByRole('article', { name: '13 h — Thème 2.2' })).getByRole('button', { name: 'Lire' })).toBeInTheDocument();
     const soir = screen.getByRole('article', { name: '19 h — Thème 2.3' });
@@ -182,15 +193,18 @@ describe('Espace — écran « Aujourd’hui »', () => {
     expect(within(nav).getByRole('link', { name: 'Aujourd’hui' })).toHaveAttribute('aria-current', 'page');
   });
 
-  it('au-delà de 7 jours : les tuiles montrent la semaine du jour affiché', async () => {
+  it('parcours long : tous les jours sont repérés, seules les journées ouvertes sont sélectionnables', async () => {
     base(30);
-    vi.setSystemTime(new Date('2026-10-22T13:30:00Z')); // jour 10
+    vi.setSystemTime(new Date('2026-10-22T13:30:00Z'));
     tables['contents'] = Array.from({ length: 10 }, (_, k) => content(k + 1, 1));
     ouvrir();
-    expect(await screen.findByText('Jour 10 sur 30')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Jour 8' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Jour 14, pas encore ouvert' })).toBeDisabled();
-    expect(screen.queryByRole('button', { name: 'Jour 7' })).not.toBeInTheDocument();
+    expect(await screen.findByRole('heading',{name:'Progression du parcours'})).toBeInTheDocument();
+    expect(screen.getByLabelText('Jour 14, à venir')).toBeInTheDocument();
+    const choix=screen.getByRole('combobox',{name:'Ouvrir une journée'});
+    expect(within(choix).getAllByRole('option')).toHaveLength(10);
+    expect(within(choix).queryByRole('option',{name:/Jour 14/})).not.toBeInTheDocument();
+    fireEvent.change(choix,{target:{value:'6'}});
+    expect(screen.getByRole('heading',{name:'Jour 6'})).toBeInTheDocument();
   });
 
   it('objectif : un bouton qui ouvre le formulaire à la demande', async () => {

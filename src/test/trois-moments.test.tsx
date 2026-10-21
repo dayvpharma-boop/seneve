@@ -56,6 +56,7 @@ describe('Trois moments par jour dans l’espace', () => {
     base(['08:00', '13:00', '19:00']);
     ouvrir();
     expect(await screen.findByText('Jour 2 sur 14')).toBeInTheDocument();
+    expect(screen.getByText('3 étapes')).toBeVisible();
     expect(screen.getByText('Action du jour 2')).toBeInTheDocument();
     expect(screen.getByText('La perle du jour 2')).toBeInTheDocument();
     expect(screen.getByText('Ce moment s’ouvre à 13 h (heure de Kinshasa).')).toBeInTheDocument();
@@ -78,7 +79,7 @@ describe('Trois moments par jour dans l’espace', () => {
     vi.setSystemTime(new Date('2026-10-14T12:30:00Z'));
     base(['08:00', '13:00', '19:00']);
     ouvrir();
-    expect(await screen.findByText('13 h · Midi')).toBeInTheDocument();
+    expect(await screen.findByText('Midi · 13 h')).toBeInTheDocument();
     expect(screen.getByText('Ce moment s’ouvre à 19 h (heure de Kinshasa).')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Lire' }));
     expect(await screen.findByText('Marie — texte du jour 2, moment 2.')).toBeInTheDocument();
@@ -127,6 +128,8 @@ describe('Trois moments par jour dans l’espace', () => {
     ouvrir();
     expect(await screen.findByRole('button', { name: 'Lire et agir' })).toBeInTheDocument();
     expect(document.querySelector('.moment-rail')).toHaveClass('is-seul');
+    expect(screen.getByText('1 étape')).toBeVisible();
+    expect(screen.queryByText('3 étapes')).not.toBeInTheDocument();
     expect(screen.queryByText(/Moment 1|Moment 2|13 h|Ce moment s’ouvre/)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
     expect(await screen.findByText('Marie — texte du jour 2, moment 1.')).toBeInTheDocument();

@@ -1,0 +1,12 @@
+/* Couleurs du nouveau code reçu ; contenu et fonctionnement conservés. */
+body:has(#s-home:not([hidden])) { background:#fff9ea; color:#0a0907; }
+#s-home { --background:#fff9ea; --surface:#fff9ea; --foreground:#0a0907; --muted:#4a463f; --chip:#f4eedf; --on-chip:#0a0907; --line:#e8e0d0; --primary-fill:#0a0907; --on-primary:#f4eedf; --gold:#755b00; --or:#c9a84c; }
+#s-home .home-head { background:#fff9ea; border-bottom:1px solid #e8e0d0; }
+#s-home h1, #s-home .home-kicker, #s-home .home-livre, #s-home .language-link { color:#0a0907; }
+#s-home .reassure-chip, #s-home .home-card { background:#f4eedf; border-color:#e8e0d0; color:#0a0907; }
+#s-home .reassure-chip svg { color:#0a0907; }
+#s-home .point-or { background:#c9a84c; }
+#s-home .home-steps li::before { background:#0a0907; color:#f4eedf; }
+#s-home #start { background:#0a0907; color:#f4eedf; }
+#s-home .home-image { margin:0 0 24px; overflow:hidden; border-radius:16px; background:#f4eedf; }
+#s-home .home-image img { display:block; width:100%; height:176px; object-fit:cover; object-position:center; }

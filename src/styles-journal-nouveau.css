@@ -1,0 +1,57 @@
+/* Journal — les deux maquettes reçues le 20 octobre. */
+body:has(.journal-nouveau){background:#fff9ea;color:#1d1c13}
+.journal-nouveau{--background:#fff9ea;--surface:#f9f3e4;--foreground:#1d1c13;--muted:#4a463f;--chip:#eee8d9;--gold:#755b00;--or:#fed977;max-width:390px;padding:0 20px 112px;font:400 16px/26px Literata,Georgia,serif}
+.journal-nouveau h1,.journal-nouveau h2,.journal-nouveau button,.journal-nouveau .brand,.journal-nouveau .tag,.journal-nouveau .note-date,.journal-nouveau .time-chip,.journal-nouveau .barre-nav,.journal-nouveau .journal-repere,.journal-nouveau .journal-mots,.journal-nouveau .journal-historique-tete>span{font-family:Outfit,system-ui,sans-serif}
+.journal-nouveau .barre-espace{height:64px;min-height:64px;margin:0 -20px 20px;padding:0 20px;background:#fff9ea}
+.journal-nouveau .logo-marque{gap:8px;font:600 12px/16px Outfit,sans-serif;letter-spacing:.6px;color:#755b00}
+.journal-nouveau .logo-marque>svg{width:24px;height:24px}
+.journal-nouveau .logo-marque small{display:block;color:#1d1c13;font:500 12px/16px Outfit,sans-serif;letter-spacing:0}
+.journal-nouveau .journal-profil{display:grid;place-items:center;width:32px;height:32px;background:#1d1c13;color:#fff;border-radius:12px;font:500 14px Outfit,sans-serif}
+.journal-nouveau .page-tete{margin:0 0 16px}
+.journal-nouveau .page-tete h1{font:600 26px/34px Outfit,sans-serif;letter-spacing:-.5px}
+.journal-nouveau .journal-repere{font-size:12px;line-height:16px;color:#755b00;gap:6px;margin-bottom:8px}
+.journal-nouveau .journal-repere>span,.journal-nouveau .journal-form-haut .tag>span{width:6px;height:6px;display:inline-block;border-radius:50%;background:#755b00;flex-shrink:0}
+.journal-nouveau .journal-confidentialite{display:flex;gap:8px;background:#eee8d9;border-radius:8px;padding:12px;margin-bottom:24px;align-items:flex-start}
+.journal-nouveau .journal-confidentialite>svg{flex-shrink:0;color:#755b00;margin-top:2px}
+.journal-nouveau .journal-intro{font:400 14px/22px Outfit,sans-serif;margin:0;color:#4a463f}
+.journal-nouveau .journal-form{padding:20px;background:#fff;border-radius:12px;gap:16px;margin-bottom:32px}
+.journal-nouveau .journal-form-haut{display:flex;justify-content:space-between;align-items:center;gap:8px;font:400 12px/16px Outfit,sans-serif;color:#4a463f}
+.journal-nouveau .journal-form-haut .tag{display:flex;align-items:center;gap:6px;font:600 16px/24px Outfit,sans-serif;color:#1d1c13;margin:0;letter-spacing:0;text-transform:none}
+.journal-nouveau .journal-question{padding:16px;background:#f9f3e4;border-radius:8px}
+.journal-nouveau .journal-question .tag{display:flex;align-items:center;gap:6px;font:500 12px/16px Outfit,sans-serif;color:#755b00;margin-bottom:8px}
+.journal-nouveau .journal-question .prompt-question{font:italic 400 18px/28px Literata,serif}
+.journal-nouveau .journal-question-ligne{display:block}
+.journal-nouveau .field textarea{background:#f9f3e4;border:0;border-radius:8px;min-height:180px;padding:14px;font:400 16px/26px Literata,serif}
+.journal-nouveau .journal-mots{display:flex;justify-content:space-between;align-items:center;margin:-8px 0 0;font:400 12px/16px Outfit,sans-serif}
+.journal-nouveau .btn{min-height:48px;padding:12px 16px;border-radius:12px;font:600 16px/24px Outfit,sans-serif;background:#1d1c13;color:#fff}
+.journal-nouveau .moment-btn{display:flex;align-items:center;justify-content:center;gap:8px}
+.journal-nouveau .share-check{font:400 14px/22px Outfit,sans-serif;padding:0;gap:8px}
+.journal-nouveau .share-check .muted{font:400 12px/18px Outfit,sans-serif;margin-top:4px}
+.journal-nouveau .journal-brouillon{font:400 12px/18px Outfit,sans-serif!important}
+.journal-nouveau .journal-image{position:relative;height:144px;overflow:hidden;border-radius:8px;margin:0 0 32px;background:#eee8d9}
+.journal-nouveau .journal-image img{width:100%;height:100%;object-fit:cover;display:block}
+.journal-nouveau .journal-image figcaption{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;display:flex;align-items:center;gap:8px;background:#1d1c13cc;color:#fff;font:500 14px/20px Outfit,sans-serif}
+.journal-nouveau:has(.note-carte) .journal-image{height:112px;margin:40px 0}
+.journal-nouveau:has(.note-carte) .journal-form{background:#f9f3e4;padding:16px}
+.journal-nouveau:has(.note-carte) .journal-question{background:#f3edde}
+.journal-nouveau:has(.note-carte) .journal-form textarea{background:#fff}
+.journal-nouveau .journal-historique-tete h2{font:500 18px/26px Outfit,sans-serif}
+.journal-nouveau .journal-historique-tete>span{background:#e8e2d3;border-radius:4px;padding:2px 8px;font-size:12px;line-height:18px}
+.journal-nouveau .note-carte{padding:16px;border-radius:12px;background:#f9f3e4;margin-bottom:16px}
+.journal-nouveau .note-date{padding:0;background:none;margin-bottom:12px;font:500 14px/20px Outfit,sans-serif}
+.journal-nouveau .note-carte .day-text{font:400 16px/26px Literata,serif;background:none;padding:0;margin-bottom:16px}
+.journal-nouveau .time-chip{font-size:12px;line-height:18px;border-radius:4px;padding:4px 8px}
+.journal-nouveau .row-actions{display:flex;flex-wrap:wrap;gap:4px 16px}
+.journal-nouveau .row-actions .link{display:inline-flex;gap:4px;align-items:center;font:500 14px/20px Outfit,sans-serif;min-height:48px;text-decoration:none}
+.journal-nouveau .row-actions .link:first-child{flex-basis:100%}
+.journal-nouveau .journal-vide{text-align:center;background:#f9f3e4;border-radius:12px;padding:24px}
+.journal-nouveau .journal-eco{display:grid;place-items:center;width:56px;height:56px;background:#fed977;color:#1d1c13;border-radius:12px;margin:0 auto 16px}
+.journal-nouveau .journal-vide p{font:400 16px/26px Literata,serif;margin:0 0 24px}
+.journal-nouveau .journal-graine{display:inline-flex;align-items:center;gap:6px;padding:8px;border-radius:8px;background:#eee8d9;font:400 12px/18px Outfit,sans-serif;color:#4a463f}
+.journal-nouveau .journal-pied{display:flex;justify-content:center;align-items:flex-start;gap:6px;color:#4a463f;font:400 12px/18px Outfit,sans-serif;text-align:center;margin:32px 0}
+.journal-nouveau .journal-pied svg{color:#755b00;flex-shrink:0}
+.journal-nouveau .barre-nav{max-width:390px;background:#fff9ea;border:0;height:80px}
+.journal-nouveau .barre-nav a{font:400 12px/16px Outfit,sans-serif;min-height:64px;text-decoration:none;gap:4px}
+.journal-nouveau .barre-nav a[aria-current=page]{font-weight:600;color:#1d1c13;text-decoration:none}
+.journal-nouveau .barre-nav .nav-plus{background:#1d1c13;color:#fff;width:48px;height:48px;border-radius:12px;border:0}
+.journal-nouveau .barre-nav a[aria-current=page]>svg{color:#1d1c13}

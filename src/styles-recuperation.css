@@ -1,0 +1,71 @@
+/* Récupération d’accès : les deux maquettes du 20 octobre. */
+.connexion.recup-page { padding-top:0; }
+.recup-header { display:flex; align-items:center; justify-content:space-between; gap:8px; height:64px; margin:0; }
+.recup-marque { display:flex; flex-direction:column; align-items:center; gap:0; }
+.recup-marque small { color:#4a463f; font:600 10px/14px Outfit,system-ui,sans-serif; letter-spacing:.1em; text-transform:uppercase; }
+.recup-langue { display:flex; align-items:center; justify-content:center; min-height:48px; color:#4a463f; font:600 12px/16px Outfit,system-ui,sans-serif; text-decoration:none; text-transform:uppercase; letter-spacing:.04em; }
+.recup-vignette { display:flex; align-items:center; gap:16px; padding:16px; margin:0 0 24px; background:#f9f3e4; border-radius:8px; }
+.recup-disque { display:grid; place-items:center; flex-shrink:0; width:48px; height:48px; border-radius:12px; background:#ffe08f; color:#241a00; }
+.recup-vignette strong,.recup-kicker { font:600 12px/16px Outfit,system-ui,sans-serif; letter-spacing:.06em; text-transform:uppercase; color:#755b00; }
+.recup-vignette p { margin:0; color:#4a463f; font:400 16px/23px Literata,Georgia,serif; }
+.recup-page .recup-intro { display:flex; flex-direction:column; align-items:flex-start; gap:4px; margin:0 0 40px; }
+.recup-page .recup-intro h1 { margin:4px 0 0; font:600 26px/34px Outfit,system-ui,sans-serif; letter-spacing:-.01em; }
+.recup-page .recup-intro > p:not(.recup-repere) { margin:4px 0 0; font:400 16px/26px Literata,Georgia,serif; color:#4a463f; }
+.recup-page .recup-repere { display:flex; align-items:center; gap:6px; padding:4px 10px; border-radius:4px; margin:0; background:#eee8d9; font:600 12px/16px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.08em; color:#4a463f; }
+.recup-form { display:flex; flex-direction:column; gap:24px; margin:0; }
+.recup-page .auth-field .field { font:500 16px/24px Outfit,system-ui,sans-serif; letter-spacing:normal; text-transform:none; }
+.recup-page .auth-hint { text-transform:uppercase; letter-spacing:.05em; align-self:center; }
+.recup-page .auth-input input { min-height:48px; padding:10px 16px 10px 44px; background:#fff; }
+.recup-page .recup-aide { grid-column:1/-1; margin:0; color:#4a463f; font:500 12px/18px Outfit,system-ui,sans-serif; }
+.recup-page .moment-btn { min-height:48px; margin:0; border-radius:4px; }
+.recup-achat { display:flex; align-items:flex-start; gap:16px; padding:16px; margin:24px 0 16px; background:#fff; border-radius:8px; }
+.recup-achat > span { display:grid; place-items:center; width:36px; height:36px; flex-shrink:0; border-radius:12px; background:#f3edde; color:#4a463f; }
+.recup-achat strong { font:500 16px/24px Outfit,system-ui,sans-serif; }
+.recup-achat p { margin:2px 0 0; font:400 16px/25px Literata,Georgia,serif; color:#4a463f; }
+.recup-retour { display:flex; justify-content:center; align-items:center; gap:8px; min-height:48px; color:#1d1c13; text-decoration:none; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.recup-footer { display:flex; flex-direction:column; align-items:center; gap:4px; margin:40px 0 0; padding:16px 0 0; text-align:center; }
+.recup-footer a { display:flex; align-items:center; gap:8px; min-height:48px; color:#4a463f; font:600 12px/16px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.06em; }
+.recup-footer p { max-width:320px; margin:0; font:400 16px/24px Literata,Georgia,serif; color:#4a463f; }
+.recup-confirmation { display:flex; flex-direction:column; gap:8px; padding:24px; border-radius:8px; background:#f9f3e4; }
+.recup-confirmation > .recup-disque { margin-bottom:8px; }
+.recup-page h2 { margin:0; font:600 20px/28px Outfit,system-ui,sans-serif; }
+.recup-confirmation > p { margin:0; }
+.recup-confirmation > p:not(.recup-kicker) { font:400 16px/26px Literata,Georgia,serif; }
+.recup-conseil { display:flex; align-items:flex-start; gap:10px; padding:16px; border-radius:4px; background:#f3edde; color:#4a463f; margin:8px 0; }
+.recup-conseil > svg { flex-shrink:0; color:#755b00; margin-top:2px; }
+.recup-conseil p { margin:0; font:400 16px/24px Literata,Georgia,serif; }
+.recup-secondaire { display:flex; justify-content:center; align-items:center; gap:8px; min-height:48px; border:0; border-radius:4px; background:#eee8d9; color:#1d1c13; padding:10px 16px; font:500 14px/20px Outfit,system-ui,sans-serif; }
+.recup-secondaire:disabled { opacity:.6; }
+.recup-hero { position:relative; overflow:hidden; height:160px; border-radius:8px; margin-bottom:24px; background:#eee8d9; }
+.recup-hero img { display:block; width:100%; height:100%; object-fit:cover; }
+.recup-hero > div { position:absolute; bottom:16px; left:16px; right:16px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.recup-hero > div > span:first-child { display:flex; align-items:center; gap:4px; padding:4px 10px; background:#e8e2d3; border-radius:4px; color:#4a463f; font:600 12px/16px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.08em; }
+.recup-hero svg { color:#755b00; }
+.recup-hero-cle { display:grid; place-items:center; width:32px; height:32px; border-radius:12px; background:#fff9ea; }
+.recup-nouveau .recup-intro { margin-bottom:24px; }
+.recup-password-carte { padding:16px; border-radius:8px; background:#fff; }
+.recup-nouveau .auth-field .field { font:600 14px/20px Outfit,system-ui,sans-serif; }
+.recup-nouveau .auth-hint { text-transform:none; letter-spacing:normal; }
+.recup-nouveau .auth-input input { padding-right:88px; background:#f9f3e4; }
+.recup-regle { display:flex; align-items:center; gap:8px; margin:12px 0 16px; padding-top:8px; font:600 12px/16px Outfit,system-ui,sans-serif; color:#4a463f; }
+.recup-regle > span { display:grid; place-items:center; width:20px; height:20px; border-radius:12px; background:#e8e2d3; color:#7b776f; }
+.recup-regle.is-valid { color:#755b00; }
+.recup-regle.is-valid > span { background:#755b00; color:#fff; }
+.recup-password-carte .recup-conseil { align-items:center; gap:12px; margin:0; padding:12px; background:#f9f3e4; }
+.recup-petite-graine { display:grid; place-items:center; flex-shrink:0; width:28px; height:28px; border-radius:12px; background:#ffe08f; color:#241a00; }
+.recup-protection { display:flex; align-items:flex-start; gap:12px; padding:16px; margin:40px 0 0; border-radius:8px; background:#f9f3e4; }
+.recup-protection > span { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; border-radius:12px; background:#eee8d9; color:#4a463f; }
+.recup-protection strong { font:600 12px/16px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.08em; color:#4a463f; }
+.recup-protection p { font:400 16px/24px Literata,Georgia,serif; color:#4a463f; margin:2px 0 0; }
+.recup-decor { display:flex; align-items:center; justify-content:center; gap:8px; color:#ccc6bd; margin:24px 0 0; }
+.recup-decor span { width:32px; height:1px; background:#ccc6bd; }
+.recup-succes { display:flex; flex-direction:column; align-items:center; text-align:center; padding:24px; background:#fff; border-radius:8px; }
+.recup-sceau { position:relative; display:grid; place-items:center; width:64px; height:64px; border-radius:12px; margin-bottom:16px; background:#fed977; color:#785d00; }
+.recup-sceau > span { position:absolute; right:-4px; top:-4px; display:grid; place-items:center; width:24px; height:24px; border-radius:12px; background:#000; color:#fff; }
+.recup-succes .recup-kicker { display:flex; align-items:center; gap:6px; border-radius:12px; padding:4px 12px; margin:0 0 4px; background:#f9f3e4; }
+.recup-succes > p[role=status] { font:400 16px/26px Literata,Georgia,serif; margin:4px 0 24px; color:#4a463f; }
+.recup-erreur p { margin:0 0 8px; }
+.recup-erreur a { display:flex; align-items:center; min-height:48px; color:#1d1c13; }
+
+.recup-confirm-field { margin:16px 0; }
+.recup-confirm-erreur { margin:0 0 16px; }

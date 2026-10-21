@@ -1,3 +1,4 @@
+import {GRAIN_PARTAGE,VERIFIED_PARTAGE} from './grain-partage';
 // Image à partager après le Test des 7 Racines, dessinée dans le navigateur (aucune donnée envoyée).
 // Elle ne montre jamais de note chiffrée : seulement le nom des racines.
 
@@ -9,6 +10,7 @@ export const CARD_SIZES: Record<CardFormat, { w: number; h: number }> = {
 export const NOIR = '#0A0907', OR = '#C9A84C', IVOIRE = '#F4EEDF', IVOIRE_DOUX = 'rgba(244,238,223,0.72)';
 
 export interface CardContent {
+  design?: 'editorial';
   brand: string;          // SÉNEVÉ
   title: string;          // Le Test des 7 Racines
   book: string;           // D'après « Arrête de mendier des miracles »
@@ -74,6 +76,7 @@ export function seed(ctx: CanvasRenderingContext2D, cx: number, cy: number, s: n
 
 /** Dessine l'image complète sur un canvas déjà dimensionné. */
 export function drawCard(ctx: CanvasRenderingContext2D, format: CardFormat, c: CardContent) {
+  if(c.design==='editorial'){drawEditorial(ctx,format,c);return;}
   const { w, h } = CARD_SIZES[format];
   const tall = format === 'vertical';
   // Tailles : le vertical est lu en plein écran, le carré dans un fil d'actualité.
@@ -152,7 +155,7 @@ export async function renderCard(format: CardFormat, content: CardContent): Prom
   const { w, h } = CARD_SIZES[format];
   try {
     await Promise.all([
-      document.fonts?.load('600 40px Lora'), document.fonts?.load('italic 500 40px Lora'),
+      document.fonts?.load('600 40px Outfit'), document.fonts?.load('600 40px Lora'), document.fonts?.load('italic 500 40px Lora'),
       document.fonts?.load('600 30px Poppins'), document.fonts?.load('500 30px Poppins'),
     ]);
   } catch { /* polices de secours */ }
@@ -162,4 +165,16 @@ export async function renderCard(format: CardFormat, content: CardContent): Prom
   if (!ctx) return null;
   drawCard(ctx, format, content);
   return new Promise(resolve => canvas.toBlob(b => resolve(b), 'image/png'));
+}
+
+/** Version noir et or de la maquette reçue, sans score ni données personnelles. */
+function drawEditorial(ctx:CanvasRenderingContext2D,format:CardFormat,c:CardContent){
+ const {w,h}=CARD_SIZES[format];const tall=format==='vertical';const gold='#E6C687',ink='#0E0D0B';ctx.fillStyle=ink;ctx.fillRect(0,0,w,h);ctx.strokeStyle='rgba(230,198,135,.28)';ctx.lineWidth=4;ctx.strokeRect(2,2,w-4,h-4);ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.fillStyle=gold;if(typeof Path2D!=='undefined'){ctx.save();ctx.translate(w/2-50,(tall?155:105)-50);ctx.scale(100/960,100/960);ctx.translate(0,960);ctx.fill(new Path2D(GRAIN_PARTAGE));ctx.restore();}else{seed(ctx,w/2,tall?155:105,.52);}
+ ctx.font='600 42px Outfit, sans-serif';spaced(ctx,c.brand,w/2,tall?260:190,8);
+ ctx.fillStyle='#ccc6bd';ctx.font='400 38px Outfit, sans-serif';ctx.fillText(c.title.toUpperCase(),w/2,tall?325:245);
+ const main=c.start??c.strength;if(main){ctx.fillStyle=gold;ctx.font='500 38px Outfit, sans-serif';ctx.fillText(main.label.toUpperCase(),w/2,tall?820:490);let size=tall?72:64;ctx.font=`600 ${size}px Outfit, sans-serif`;let lines=wrap(ctx,main.name,w-180);while(lines.length>3&&size>44){size-=4;ctx.font=`600 ${size}px Outfit, sans-serif`;lines=wrap(ctx,main.name,w-180);}ctx.fillStyle='#fff';lines.forEach((line,i)=>ctx.fillText(line,w/2,(tall?935:590)+i*size*1.3));
+ if(c.start&&c.strength){const y=(tall?935:590)+lines.length*size*1.3+40;const label=`${c.strength.label} : ${c.strength.name}`;let fs=42;ctx.font=`500 ${fs}px Outfit, sans-serif`;while(fs>28&&ctx.measureText(label).width>w-300){fs-=2;ctx.font=`500 ${fs}px Outfit, sans-serif`;}const bw=Math.min(w-150,ctx.measureText(label).width+130),x=(w-bw)/2,top=y-30,bh=88,rad=44;ctx.beginPath();ctx.moveTo(x+rad,top);ctx.lineTo(x+bw-rad,top);ctx.quadraticCurveTo(x+bw,top,x+bw,top+rad);ctx.lineTo(x+bw,top+bh-rad);ctx.quadraticCurveTo(x+bw,top+bh,x+bw-rad,top+bh);ctx.lineTo(x+rad,top+bh);ctx.quadraticCurveTo(x,top+bh,x,top+bh-rad);ctx.lineTo(x,top+rad);ctx.quadraticCurveTo(x,top,x+rad,top);ctx.fillStyle='rgba(230,198,135,.12)';ctx.fill();ctx.strokeStyle='rgba(230,198,135,.25)';ctx.lineWidth=2;ctx.stroke();if(typeof Path2D!=='undefined'){ctx.save();ctx.translate(x+28,top+22);ctx.scale(44/960,44/960);ctx.translate(0,960);ctx.fillStyle=gold;ctx.fill(new Path2D(VERIFIED_PARTAGE));ctx.restore();}ctx.fillStyle='#fff9ea';ctx.fillText(label,w/2+20,top+bh/2);}}
+
+ ctx.strokeStyle='rgba(230,198,135,.15)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(80,h-190);ctx.lineTo(w-80,h-190);ctx.stroke();ctx.fillStyle=gold;let size=42;ctx.font=`500 ${size}px Outfit, sans-serif`;while(size>16&&ctx.measureText(c.address).width>w-150){size--;ctx.font=`500 ${size}px Outfit, sans-serif`;}ctx.fillText(c.address,w/2,h-115);
 }

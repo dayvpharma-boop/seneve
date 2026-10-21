@@ -1,3 +1,6 @@
+import {IconeJourneeSuite} from './IconeJourneeSuite';
+import {IconeJournee} from './IconeJournee';
+import {IconeRegistre} from './IconeRegistre';
 import { useState, type FormEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 import { messageCode, textesPlace, type ResultatCode } from '@/lib/places';
@@ -30,11 +33,11 @@ export function CodePlaceCard({ langue, onOuvert }: { langue: string; onOuvert: 
     <p className="tag">{T.titre}</p>
     <p>{T.intro}</p>
     <form onSubmit={envoyer}>
-      <label className="field"><span>{T.champ}</span>
+      <label className="field"><span><IconeJourneeSuite nom="vpn_key" taille={16}/> {T.champ}</span>
         <input value={code} onChange={e => setCode(e.target.value)} placeholder="SNV-XXXX-XXXX" autoCapitalize="characters" autoComplete="off" spellCheck={false} maxLength={20} />
       </label>
-      <button type="submit" className="btn action-btn" disabled={busy || !code.trim()}>{busy ? T.attente : T.bouton}</button>
+      <button type="submit" className="btn action-btn" disabled={busy || !code.trim()}>{busy ? T.attente : T.bouton}<IconeJournee nom="arrow_forward" taille={18}/></button>
     </form>
-    {msg && <p className={msg.ok ? 'success' : 'error'} role={msg.ok ? 'status' : 'alert'}>{msg.texte}</p>}
+    {msg && <p className={msg.ok ? 'success' : 'error'} role={msg.ok ? 'status' : 'alert'}>{msg.ok?<IconeJournee nom="verified" taille={18}/>:<IconeRegistre nom="info" taille={18}/>} {msg.texte}</p>}
   </section>;
 }

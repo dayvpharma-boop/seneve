@@ -72,8 +72,7 @@ describe('règles', () => {
 describe('Mon journal', () => {
   it('note privée par défaut : le coach IA n’y a pas accès sans accord', async () => {
     at('/journal');
-    expect(await screen.findByText(/toi seul peux le lire/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Nouvelle note' }));
+    expect(await screen.findByText(/Ton journal est privé/)).toBeInTheDocument();
     const box = screen.getByRole('checkbox', { name: /Le coach IA peut lire cette note/ });
     expect(box).not.toBeChecked();
     fireEvent.change(screen.getByPlaceholderText(/Ce que tu as compris/), { target: { value: '  Ma note  ' } });
@@ -108,7 +107,7 @@ describe('Mon journal', () => {
 
   it('le brouillon reste sur l’appareil tant qu’il n’est pas enregistré', async () => {
     at('/journal');
-    fireEvent.click(await screen.findByRole('button', { name: 'Nouvelle note' }));
+    await screen.findByPlaceholderText(/Ce que tu as compris/);
     fireEvent.change(await screen.findByPlaceholderText(/Ce que tu as compris/), { target: { value: 'en cours' } });
     expect(screen.getByText(/Brouillon conservé sur cet appareil/)).toBeInTheDocument();
     cleanup();
@@ -131,14 +130,13 @@ describe('Mon journal', () => {
 });
 
 describe('Mon journal — style de l’écran « Aujourd’hui »', () => {
-  it('« Journal » : les notes d’abord, le formulaire s’ouvre avec « Nouvelle note »', async () => {
+  it('« Journal » : le formulaire et les réflexions sont disponibles ensemble', async () => {
     tables['journal_entries'] = [{ entry_id: 'N1', texte: 'Ancienne note', usage_ia_autorise: false, cree_le: '2026-10-12T08:00:00Z', modifie_le: '2026-10-12T08:00:00Z', activity_id: null }];
     at('/journal');
     expect(await screen.findByText('Ancienne note')).toBeInTheDocument();
-    expect(screen.queryByPlaceholderText(/Ce que tu as compris/)).not.toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Ce que tu as compris/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Journal' })).toHaveAttribute('aria-current', 'page');
-    fireEvent.click(screen.getByRole('button', { name: 'Nouvelle note' }));
-    expect(screen.getByPlaceholderText(/Ce que tu as compris/)).toHaveFocus();
+    expect(screen.getByPlaceholderText(/Ce que tu as compris/)).toBeInTheDocument();
   });
 
   it('« Écrire » (barre du bas) : le champ est ouvert et prêt', async () => {
@@ -147,12 +145,12 @@ describe('Mon journal — style de l’écran « Aujourd’hui »', () => {
     expect(screen.queryByRole('button', { name: 'Nouvelle note' })).not.toBeInTheDocument();
   });
 
-  it('de « Écrire » à « Journal » : retour aux notes quand rien n’est écrit', async () => {
+  it('de « Écrire » à « Journal » : l’éditeur reste disponible', async () => {
     at('/journal?ecrire=1');
     await screen.findByPlaceholderText(/Ce que tu as compris/);
     fireEvent.click(screen.getByRole('link', { name: 'Journal' }));
-    expect(await screen.findByRole('button', { name: 'Nouvelle note' })).toBeInTheDocument();
-    expect(screen.queryByPlaceholderText(/Ce que tu as compris/)).not.toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Ce que tu as compris/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Ce que tu as compris/)).toBeInTheDocument();
   });
 
   it('de « Écrire » à « Journal » avec un texte en cours : le formulaire reste ouvert', async () => {
@@ -164,7 +162,7 @@ describe('Mon journal — style de l’écran « Aujourd’hui »', () => {
 
   it('aucune note : message d’attente', async () => {
     at('/journal');
-    expect(await screen.findByText('Aucune note pour le moment.')).toBeInTheDocument();
+    expect(await screen.findByText('Tu n’as encore rien écrit. Ta première réflexion apparaîtra ici.')).toBeInTheDocument();
   });
 });
 
@@ -192,7 +190,19 @@ describe('Besoin d’aide', () => {
     const calls = rpcs.filter(x => x.name === 'request_help');
     expect(calls).toHaveLength(2);
     expect(calls[0]!.args['p_client_request_id']).toBe(calls[1]!.args['p_client_request_id']);
-    expect(calls[1]!.args).toMatchObject({ p_motif: 'Je bloque', p_entry_ids: ['N2'], p_enrollment_id: null });
+    expect(calls[1]!.args).toMatchObject({ p_motif: 'Sujet : Mon parcours\n\nJe bloque', p_entry_ids: ['N2'], p_enrollment_id: null });
+  });
+
+  it('le sujet sélectionné est transmis avec le message, sans confirmation en cas d’échec', async () => {
+    rpcError={message:'network'};
+    at('/aide');
+    fireEvent.click(await screen.findByRole('button',{name:'Mon achat'}));
+    expect(screen.getByRole('button',{name:'Mon achat'})).toHaveAttribute('aria-pressed','true');
+    fireEvent.change(screen.getByPlaceholderText(/Par exemple/),{target:{value:'Mon accès au livre ne fonctionne pas.'}});
+    fireEvent.click(screen.getByRole('button',{name:'Envoyer ma demande'}));
+    await screen.findByText(/Demande non envoyée/);
+    expect(screen.queryByText(/Demande envoyée\./)).not.toBeInTheDocument();
+    expect(rpcs.find(x=>x.name==='request_help')?.args).toMatchObject({p_motif:'Sujet : Mon achat\n\nMon accès au livre ne fonctionne pas.'});
   });
 
   it('suivi des demandes : état, réponse et annulation', async () => {
@@ -220,6 +230,6 @@ describe('Besoin d’aide', () => {
   it('participant anglophone : page en anglais', async () => {
     tables['participants'] = [{ prenom: 'Mary', langue: 'en' }];
     at('/aide');
-    expect(await screen.findByRole('heading', { name: 'Need help?' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Help & Contact' })).toBeInTheDocument();
   });
 });

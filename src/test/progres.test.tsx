@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -70,12 +70,38 @@ describe('page Mes progrès', () => {
     tables['participants'] = [{ langue: 'fr' }];
     tables['enrollments'] = [{ enrollment_id: 'E7', programme_id: P, version: 1, langue: 'fr', date_debut: '2026-10-11', etat: 'active' }];
     tables['programmes'] = [{ programme_id: P, nom: 'Découverte du livre en français — 7 jours', duree_jours: 7 }];
-    tables['contents'] = contenus;
-    tables['activities'] = activites;
+    tables['contents'] = contenus.map(c => ({ ...c }));
+    tables['activities'] = activites.map(a => ({ ...a }));
     tables['activity_state'] = [{ enrollment_id: 'E7', activity_id: 'A1', etat: 'realisee', aide_demandee: false, realisee_le: '2026-10-11T09:00:00Z' }];
     tables['journal_entries'] = [{ entry_id: 'N1' }, { entry_id: 'N2' }];
   });
   afterEach(() => { cleanup(); vi.useRealTimers(); });
+
+  it('affiche les vraies consignes seulement pour les jours ouverts', async () => {
+    tables['activities'] = activites.map(a => ({ ...a, consigne: `Action réelle ${a.content_id}` }));
+    render(<MemoryRouter><Progres /></MemoryRouter>);
+    expect(await screen.findByText('Action réelle C1')).toBeInTheDocument();
+    expect(screen.getByText('Action réelle C3')).toBeInTheDocument();
+    expect(screen.queryByText('Action réelle C5')).not.toBeInTheDocument();
+    expect(screen.queryByText('Thème 5')).not.toBeInTheDocument();
+  });
+
+  it('changer de parcours remplace ses chiffres et ses consignes', async () => {
+    const autre = 'ACHETEUR_LIVRE_14J_FR_V1';
+    tables['enrollments']!.push({ enrollment_id: 'E14', programme_id: autre, version: 1, langue: 'fr', date_debut: '2026-10-12', etat: 'active' });
+    tables['programmes']!.push({ programme_id: autre, nom: 'Accompagnement du livre', duree_jours: 14 });
+    tables['contents']!.push(...[1,2].map(j => ({ content_id: `D${j}`, programme_id: autre, version: 1, jour: j, numero_message: 1, theme: `Autre thème ${j}` })));
+    tables['activities']!.push(...[1,2].map(j => ({ activity_id: `AD${j}`, content_id: `D${j}`, type_activite: 'action', consigne: `Autre action ${j}` })));
+    tables['activity_state']!.push({ enrollment_id: 'E14', activity_id: 'AD1', etat: 'partielle', aide_demandee: true, realisee_le: null });
+    render(<MemoryRouter><Progres /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole('tab', { name: /Découverte/ }));
+    expect(screen.getByRole('heading', { name: '1 action réalisée sur 3' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab', { name: /Accompagnement/ }));
+    expect(screen.getByRole('heading', { name: '0 action réalisée sur 2' })).toBeInTheDocument();
+    expect(screen.getByText('Autre action 1')).toBeInTheDocument();
+    expect(screen.queryByText('Thème 1')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Réalisée en partie · aide demandée' })).toHaveAttribute('href', '/espace?parcours=E14&jour=1');
+  });
 
   it('bilan factuel, sans jugement, avec reprise', async () => {
     render(<MemoryRouter initialEntries={['/progres']}><Routes><Route path="/progres" element={<Progres />} /></Routes></MemoryRouter>);

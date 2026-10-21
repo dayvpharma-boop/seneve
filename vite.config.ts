@@ -6,9 +6,10 @@ import path from 'node:path';
 // Le site est servi par GitHub Pages sous /seneve/.
 // Pour un nom de domaine propre, lancer la construction avec SENEVE_BASE=/
 export default defineConfig({
+  cacheDir: './.vite-cache',
   base: process.env.SENEVE_BASE ?? '/seneve/',
   plugins: [react(), tailwindcss()],
-  resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+  resolve: { preserveSymlinks: true, alias: { '@': path.resolve(__dirname, './src') } },
   test: {
     environment: 'jsdom',
     globals: true,

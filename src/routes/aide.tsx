@@ -6,11 +6,13 @@ import { Icone } from '@/components/Icone';
 import { eventIdFor } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { MOTIF_MAX, draft, formatDateHeure, journalTextes, peutAnnuler, texteValide } from '@/lib/journal';
+import { IconeAide } from '@/components/IconeAide';
+
 
 type Request = { request_id: string; motif: string; etat: string; reponse: string | null; extraits_partages: string | null; cree_le: string };
 type Note = { entry_id: string; texte: string; cree_le: string };
 type Parcours = { enrollment_id: string; nom: string };
-type Loaded = { langue: string; requests: Request[]; notes: Note[]; parcours: Parcours[] };
+type Loaded = { prenom: string; langue: string; requests: Request[]; notes: Note[]; parcours: Parcours[] };
 
 async function load(): Promise<Loaded | null> {
   const { data: s } = await supabase.auth.getSession();
@@ -18,7 +20,7 @@ async function load(): Promise<Loaded | null> {
   const ep = await supabase.rpc('ensure_participant', { p_prenom: (s.session.user.user_metadata?.['prenom'] as string | undefined) ?? '' });
   if (ep.error) throw ep.error;
   const [p, h, j, e] = await Promise.all([
-    supabase.from('participants').select('langue').maybeSingle(),
+    supabase.from('participants').select('langue,prenom').maybeSingle(),
     supabase.from('help_requests').select('request_id, motif, etat, reponse, extraits_partages, cree_le').order('cree_le', { ascending: false }),
     supabase.from('journal_entries').select('entry_id, texte, cree_le').order('cree_le', { ascending: false }),
     supabase.from('enrollments').select('enrollment_id, programme_id, langue').neq('etat', 'annulee'),
@@ -36,6 +38,7 @@ async function load(): Promise<Loaded | null> {
     });
   }
   return {
+    prenom: p.data?.prenom ?? s.session.user.user_metadata?.['prenom'] ?? '',
     langue: (p.data?.langue as string | undefined) ?? 'fr',
     requests: (h.data ?? []) as Request[],
     notes: (j.data ?? []) as Note[],
@@ -48,6 +51,8 @@ function apercu(texte: string): string {
   return t.length > 90 ? `${t.slice(0, 90)}…` : t;
 }
 
+const SUJETS={fr:['Mon parcours','Mon compte','Mon achat','Autre'],en:['My journey','My account','My purchase','Other']} as const;
+const CLE_SUJETS=['parcours','compte','achat','autre'];
 export function Aide() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -55,6 +60,7 @@ export function Aide() {
   const [failed, setFailed] = useState(false);
   const [motif, setMotif] = useState(() => draft.read('aide'));
   const [parcours, setParcours] = useState(params.get('inscription') ?? '');
+  const [sujet,setSujet]=useState(()=>{const v=draft.read('aide:sujet');return CLE_SUJETS.includes(v)?v:'parcours';});
   const [notes, setNotes] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -72,6 +78,10 @@ export function Aide() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   const T = journalTextes(data?.langue);
+  const en=data?.langue==='en';
+  const sujets=SUJETS[en?'en':'fr'];
+  const prefixe=`${en?'Subject':'Sujet'} : ${sujets[CLE_SUJETS.indexOf(sujet)]}\n\n`;
+  const limite=MOTIF_MAX-prefixe.length;
   useEffect(() => { document.title = `${T.titreAide} — SÉNEVÉ`; document.documentElement.lang = data?.langue === 'en' ? 'en' : 'fr'; }, [T, data?.langue]);
 
   // Toute modification du formulaire en fait une nouvelle demande (nouvel identifiant à l'envoi).
@@ -82,13 +92,13 @@ export function Aide() {
   async function send(e: FormEvent) {
     e.preventDefault();
     if (busy || !data) return;
-    const m = texteValide(motif, MOTIF_MAX);
-    if (!m) { setError(motif.trim() ? T.trop(MOTIF_MAX) : ''); return; }
+    const m = texteValide(motif, limite);
+    if (!m) { setError(motif.trim() ? T.trop(limite) : ''); return; }
     pendingId.current = eventIdFor(pendingId.current);
     setBusy(true); setError('');
     try {
       const enrollment = data.parcours.some(x => x.enrollment_id === parcours) ? parcours : null;
-      const { error } = await supabase.rpc('request_help', { p_client_request_id: pendingId.current, p_motif: m, p_enrollment_id: enrollment, p_entry_ids: notes });
+      const { error } = await supabase.rpc('request_help', { p_client_request_id: pendingId.current, p_motif: prefixe+m, p_enrollment_id: enrollment, p_entry_ids: notes });
       if (error) { setError(error.message.includes('Trop de demandes') ? T.tropDemandes : T.erreurEnvoi); return; }
       pendingId.current = null;
       setMotif(''); draft.write('aide', ''); setNotes([]); setSent(true);
@@ -97,22 +107,23 @@ export function Aide() {
     finally { setBusy(false); }
   }
 
-  // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026).
-  const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titreAide}</h1></div></header>;
+  const tete = <header className="today-head page-tete"><div className="aide-barre"><p className="brand"><Icone nom="graine" taille={24} /><span>SÉNEVÉ</span></p><span className="aide-initiale" aria-hidden="true">{data?.prenom.trim().charAt(0).toUpperCase()}</span></div><p className="aide-repere"><span />{en?'Listening & support':'Écoute & Soutien'}</p><h1>{en?'Help & Contact':'Aide & Contact'}</h1></header>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} /></main>;
+  if (failed) return <main className="wrap avec-nav aide-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} iconesAide /></main>;
+  if (!data) return <main className="wrap avec-nav aide-page">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} iconesAide /></main>;
 
-  const trop = motif.trim().length > MOTIF_MAX;
-  return <main className="wrap avec-nav">
+  const trop = motif.trim().length > limite;
+  return <main className="wrap avec-nav aide-page">
     {tete}
     <p className="aide-intro">{T.introAide}</p>
-    <p className="aide-urgence" role="note"><Icone nom="aide" taille={22} />{T.urgence}</p>
+    <section className="aide-urgence" role="note"><span className="aide-bouclier"><IconeAide nom="shield_with_heart" taille={20} /></span><div><h2>{en?'Important note':'Note importante'}</h2><p>{T.urgence}</p><p>{en?'This help is not an emergency service.':'Cette aide n’est pas un service d’urgence.'}</p></div></section>
     <form className="card aide-form" onSubmit={send}>
+      <div className="aide-form-tete"><h2><IconeAide nom="rate_review" taille={20} />{en?'New request':'Nouvelle demande'}</h2><span>{en?'Direct message':'Écrit direct'}</span></div>
+      <fieldset className="aide-sujets"><legend>{en?'Subject of your message':'Sujet de ton message'}</legend><div>{sujets.map((nom,i)=><button key={CLE_SUJETS[i]} type="button" aria-pressed={sujet===CLE_SUJETS[i]} onClick={()=>{setSujet(CLE_SUJETS[i]!);draft.write('aide:sujet',CLE_SUJETS[i]!);edited();}}><span>{nom}</span>{sujet===CLE_SUJETS[i]&&<IconeAide nom="check" taille={18} />}</button>)}</div></fieldset>
       <label className="field"><span>{T.motif}</span>
-        <textarea rows={5} value={motif} placeholder={T.placeholderMotif} onChange={e => changeMotif(e.target.value)} />
+        <textarea rows={5} value={motif} maxLength={limite+500} placeholder={T.placeholderMotif} onChange={e => changeMotif(e.target.value)} />
       </label>
-      {trop && <p className="error" role="alert">{T.trop(MOTIF_MAX)}</p>}
+      {trop && <p className="error" role="alert">{T.trop(limite)}</p>}
       {data.parcours.length > 0 && <label className="field"><span>{T.parcours}</span>
         <select value={parcours} onChange={e => { setParcours(e.target.value); edited(); }}>
           <option value="">{T.aucunParcours}</option>
@@ -127,18 +138,19 @@ export function Aide() {
           <span>{apercu(n.texte)}<br /><span className="muted">{formatDateHeure(n.cree_le, T.locale)}</span></span>
         </label>)}
       </fieldset>}
-      <button type="submit" className="btn action-btn moment-btn" disabled={busy || !motif.trim() || trop}>{busy ? T.envoi : T.envoyer}</button>
+      <button type="submit" className="btn action-btn moment-btn" disabled={busy || !motif.trim() || trop}>{busy ? T.envoi : T.envoyer}<IconeAide nom="arrow_forward" taille={18} /></button>
       {sent && <p className="success" role="status">{T.envoyee}</p>}
       {error && <p className="error" role="alert">{error}</p>}
     </form>
     {/* Le coach est rangé ici depuis la barre du bas (écran validé le 15/10/2026). */}
     <Link className="btn-secondaire coach-lien" to={`/coach${parcours ? `?inscription=${parcours}` : ''}`}><Icone nom="coach" taille={20} />{T.parlerCoach}</Link>
     <section className="today-section" aria-labelledby="titre-demandes">
-      <h2 id="titre-demandes">{T.mesDemandes}</h2>
+      <div className="aide-historique-tete"><h2 id="titre-demandes">{T.mesDemandes}</h2><span>{data.requests.length} {en?(data.requests.length===1?"request":"requests"):(data.requests.length===1?"demande":"demandes")}</span></div>
       {data.requests.length === 0 ? <div className="card journal-vide"><Icone nom="aide" taille={28} /><p>{T.aucuneDemande}</p></div>
         : data.requests.map(r => <RequestCard key={r.request_id} request={r} langue={data.langue} onChanged={refresh} />)}
     </section>
-    <BarreNav langue={data.langue} />
+    <footer className="aide-pied"><span><IconeAide nom="lock" taille={18} /></span><strong>{en?'Discretion & support':'Discrétion & accompagnement'}</strong><p>{en?'Your request and the excerpts you attach are read by the SÉNEVÉ support team.':'Ta demande et les extraits que tu joins sont lus par l’équipe d’accompagnement SÉNEVÉ.'}</p></footer>
+    <BarreNav langue={data.langue} iconesAide />
   </main>;
 }
 
@@ -157,11 +169,13 @@ function RequestCard({ request, langue, onChanged }: { request: Request; langue:
     finally { setBusy(false); }
   }
 
+  const sujet=request.motif.match(/^(?:Sujet|Subject) : ([^\n]+)\n\n/);
+  const message=sujet?request.motif.slice(sujet[0].length):request.motif;
   return <article className="card note-carte demande-carte">
-    <div className="demande-tete"><p className="note-date">{formatDateHeure(request.cree_le, T.locale)}</p><span className={`time-chip etat-${request.etat}`}>{T.etats[request.etat] ?? request.etat}</span></div>
-    <p className="day-text">{request.motif}</p>
+    <div className="demande-tete"><div><p className="note-date">{formatDateHeure(request.cree_le, T.locale)}</p>{sujet&&<h3 className="demande-sujet">{sujet[1]}</h3>}</div><span className={`time-chip etat-${request.etat}`}>{T.etats[request.etat] ?? request.etat}</span></div>
+    <p className="day-text">{message}</p>
     {request.extraits_partages && <details><summary className="muted">{T.notesJointes}</summary><p className="day-text">{request.extraits_partages}</p></details>}
-    {request.reponse && <div className="prompt-carte demande-reponse"><p className="tag">{T.reponse}</p><p className="day-text">{request.reponse}</p></div>}
+    {request.reponse && <div className="prompt-carte demande-reponse"><p className="tag"><IconeAide nom="history_edu" taille={17} />{T.reponse}</p><p className="day-text">{request.reponse}</p></div>}
     {peutAnnuler(request.etat) && <button type="button" className="link" disabled={busy} onClick={() => void cancel()}>{T.annulerDemande}</button>}
     {error && <p className="error" role="alert">{error}</p>}
   </article>;

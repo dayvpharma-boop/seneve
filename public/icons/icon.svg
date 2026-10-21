@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="appGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#1E1B15"/>
+      <stop offset="100%" stop-color="#0A0907"/>
+    </radialGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E5C875"/>
+      <stop offset="50%" stop-color="#C9A84C"/>
+      <stop offset="100%" stop-color="#9E7F30"/>
+    </linearGradient>
+  </defs>
+  <!-- Carré aux coins arrondis standard app icon (squircle / 22.5%) -->
+  <rect width="512" height="512" rx="115" fill="url(#appGlow)"/>
+  <rect width="504" height="504" x="4" y="4" rx="113" fill="none" stroke="#C9A84C" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Motif central : Graine de sénevé qui germe, optimisée pour très petite taille -->
+  <g transform="translate(146, 120)">
+    <!-- Rayonnement subtil -->
+    <circle cx="110" cy="140" r="130" fill="none" stroke="#C9A84C" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.25"/>
+    
+    <!-- Graine à la base -->
+    <ellipse cx="110" cy="205" rx="36" ry="25" fill="#F4EEDF" transform="rotate(-15 110 205)"/>
+    
+    <!-- Radicelle plongeante -->
+    <path d="M92 220 C85 240 70 252 56 262" stroke="url(#goldGradient)" stroke-width="6" stroke-linecap="round" fill="none"/>
+    
+    <!-- Germe central montant puissant -->
+    <path d="M110 185 C110 120 135 80 160 50 C165 90 145 135 128 165" fill="url(#goldGradient)"/>
+    
+    <!-- Première feuille naissante -->
+    <path d="M112 135 C88 118 72 90 78 72 C104 76 114 105 112 135" fill="#F4EEDF"/>
+    
+    <!-- Goutte de sève / oraison céleste -->
+    <circle cx="160" cy="36" r="9" fill="url(#goldGradient)"/>
+  </g>
+</svg>

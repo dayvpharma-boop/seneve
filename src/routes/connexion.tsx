@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { siteUrl, supabase } from '@/lib/supabase';
+import { IconeConnexion } from '@/components/IconeConnexion';
 import { Icone } from '@/components/Icone';
+import { PenseeLivre } from '@/components/RepereParcours';
 
 const ERREURS = {
   fr: {
@@ -33,7 +35,7 @@ export function authError(message: string | undefined, langue: 'fr' | 'en' = 'fr
 // Textes de la page (anglais validé par Dr Justin Tshims le 18/10/2026).
 const TEXTES = {
   fr: {
-    titre: 'Ton espace', onglet: 'Mon espace', intro: 'Ton parcours du jour, ton journal et tes progrès, au même endroit.',
+    titre: 'Ton espace', onglet: 'Mon espace', intro: 'Tes lectures, tes actions et ton journal pour mettre en pratique les principes du Royaume au quotidien.',
     creer: 'Créer un compte', connecter: 'Se connecter', prenom: 'Ton prénom', email: 'E-mail', mdp: 'Mot de passe',
     achat: 'Tu as acheté le livre ou un parcours\u00A0? Utilise la même adresse e-mail que pour l’achat\u00A0: c’est elle qui ouvre ton accès.',
     afficher: 'Afficher', masquer: 'Masquer', aideMdp: 'Au moins 8 caractères.', patienter: 'Un instant…', oubli: 'Mot de passe oublié ?',
@@ -42,9 +44,10 @@ const TEXTES = {
     oubliEnvoye: "Si un compte existe pour cette adresse, nous t'avons envoyé un e-mail pour choisir un nouveau mot de passe.",
     age: 'En créant un compte, tu confirmes avoir au moins 18\u00A0ans. ', confidentialite: 'Comment nous protégeons tes données',
     autreLangue: 'English', titrePage: 'Mon espace — SÉNEVÉ',
+    pasEncore: 'Pas encore de compte ?', securite: 'Connexion sécurisée · Données privées et préservées',
   },
   en: {
-    titre: 'Your space', onglet: 'Your space', intro: 'Your daily journey, your journal and your progress, all in one place.',
+    titre: 'Your space', onglet: 'Your space', intro: 'Your readings, actions and journal to put Kingdom principles into practice in everyday life.',
     creer: 'Create an account', connecter: 'Sign in', prenom: 'Your first name', email: 'Email', mdp: 'Password',
     achat: 'Did you buy the book or a journey? Use the same email address as for your purchase: it is what opens your access.',
     afficher: 'Show', masquer: 'Hide', aideMdp: 'At least 8 characters.', patienter: 'Just a moment…', oubli: 'Forgot your password?',
@@ -53,6 +56,7 @@ const TEXTES = {
     oubliEnvoye: 'If an account exists for this address, we have sent you an email to choose a new password.',
     age: 'By creating an account, you confirm that you are at least 18 years old. ', confidentialite: 'How we protect your data (in French)',
     autreLangue: 'Français', titrePage: 'Your space — SÉNEVÉ',
+    pasEncore: 'Don’t have an account yet?', securite: 'Secure connection · Your data stays private and protected',
   },
 };
 
@@ -62,7 +66,7 @@ export function Connexion() {
   const langue: 'fr' | 'en' = search.get('lang') === 'en' ? 'en' : 'fr';
   const T = TEXTES[langue];
   useEffect(() => { document.title = T.titrePage; document.documentElement.lang = langue; }, [T, langue]);
-  const [tab, setTab] = useState<'signup' | 'signin'>('signup');
+  const [tab, setTab] = useState<'signup' | 'signin'>(() => search.get('mode') === 'signin' ? 'signin' : 'signup');
   const [prenom, setPrenom] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -95,42 +99,49 @@ export function Connexion() {
     } finally { setBusy(false); }
   }
 
-  async function forgot() {
-    setError(''); setInfo('');
-    if (!email) { setError(T.oubliSansEmail); return; }
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: siteUrl('nouveau-mot-de-passe') });
-      if (error) { setError(authError(error.message, langue)); return; }
-      setInfo(T.oubliEnvoye);
-    } catch { setError(ERREURS[langue].reseau); }
+  function forgot() {
+    navigate(`/mot-de-passe-oublie${langue === 'en' ? '?lang=en' : ''}`, { state: { email } });
   }
 
   function choose(next: 'signup' | 'signin') { setTab(next); setError(''); setInfo(''); }
 
-  // Style de l'écran « Aujourd'hui » (validé le 15/10/2026) : choix en deux parties, champs bien visibles,
-  // rappel « même adresse que pour l'achat » à l'inscription, mot de passe qu'on peut afficher.
-  return <main className="wrap connexion">
-    <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titre}</h1></div><Link className="link language-link" to={langue === 'en' ? '/connexion' : '/connexion?lang=en'}>{T.autreLangue}</Link></header>
-    <p className="connexion-intro">{T.intro}</p>
-    <div className="choix-double" role="tablist" aria-label={T.onglet}>
-      <button type="button" role="tab" aria-selected={tab === 'signup'} onClick={() => choose('signup')}>{T.creer}</button>
-      <button type="button" role="tab" aria-selected={tab === 'signin'} onClick={() => choose('signin')}>{T.connecter}</button>
+  return <main className={`wrap connexion auth-maquette auth-${tab}`}>
+    <header className="auth-header">
+      <Link className="auth-back" to="/" aria-label={langue === 'en' ? 'Back to the test' : 'Revenir au test'}><IconeConnexion nom="arrow_back" taille={22} /></Link>
+      <span className="auth-brand"><Icone nom="graine" taille={22} /><strong>SÉNEVÉ</strong></span>
+      <Link className="auth-language" to={langue === 'en' ? '/connexion' : '/connexion?lang=en'}><IconeConnexion nom="language" taille={16} /><span>{T.autreLangue}</span><IconeConnexion nom="expand_more" taille={16} /></Link>
+    </header>
+    <div className="auth-intro">
+      <p className="auth-repere">{tab === 'signup' ? <IconeConnexion nom="bookmark" taille={14} /> : <span className="auth-point" />}{langue === 'en' ? 'One step each day' : 'Un pas chaque jour'}</p>
+      <h1>{T.titre}</h1><p className="connexion-intro">{T.intro}</p>
     </div>
-    <form className="card form connexion-form" onSubmit={submit}>
-      {tab === 'signup' && <label className="field">{T.prenom}<input value={prenom} onChange={e => setPrenom(e.target.value)} autoComplete="given-name" required /></label>}
-      <label className="field">{T.email}<input type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" inputMode="email" required /></label>
-      {tab === 'signup' && <p className="connexion-achat"><Icone nom="livre" taille={20} />{T.achat}</p>}
-      <label className="field" htmlFor="mot-de-passe">{T.mdp}</label>
-      <div className="champ-mdp">
-        <input id="mot-de-passe" type={voir ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} minLength={8} autoComplete={tab === 'signup' ? 'new-password' : 'current-password'} aria-describedby={tab === 'signup' ? 'aide-mdp' : undefined} required />
-        <button type="button" className="mdp-voir" aria-controls="mot-de-passe" aria-pressed={voir} onClick={() => setVoir(v => !v)}>{voir ? T.masquer : T.afficher}</button>
+    <div className="choix-double" role="tablist" aria-label={T.onglet}>
+      <button id="auth-signup" type="button" role="tab" aria-selected={tab === 'signup'} aria-controls="auth-form" onClick={() => choose('signup')}>{tab === 'signup' && <IconeConnexion nom="person_add" taille={18} />}{T.creer}</button>
+      <button id="auth-signin" type="button" role="tab" aria-selected={tab === 'signin'} aria-controls="auth-form" onClick={() => choose('signin')}>{tab === 'signup' && <IconeConnexion nom="login" taille={18} />}{T.connecter}</button>
+    </div>
+    <form id="auth-form" className="card form connexion-form" onSubmit={submit} aria-labelledby={`auth-${tab}`}>
+      {tab === 'signup' && <div className="auth-field"><label className="field" htmlFor="auth-prenom">{T.prenom}</label><span className="auth-hint">{langue === 'en' ? 'Required' : 'Requis'}</span><div className="auth-input"><IconeConnexion nom="badge" /><input id="auth-prenom" placeholder={langue === 'en' ? 'e.g. Mary' : 'ex. Marie'} value={prenom} onChange={e => setPrenom(e.target.value)} autoComplete="given-name" required /></div></div>}
+      <div className="auth-field"><label className="field" htmlFor="auth-email">{T.email}</label>{tab === 'signup' && <span className="auth-hint">{langue === 'en' ? 'Login ID' : 'Identifiant'}</span>}<div className="auth-input">{tab === 'signup' && <IconeConnexion nom="mail" />}<input id="auth-email" placeholder="marie@exemple.com" type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" inputMode="email" required /></div></div>
+      <div className="connexion-password auth-field">
+        <label className="field" htmlFor="mot-de-passe">{T.mdp}</label>
+        <div className="champ-mdp auth-input">
+          {tab === 'signup' && <IconeConnexion nom="key" />}
+          <input id="mot-de-passe" placeholder="••••••••" type={voir ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} minLength={8} autoComplete={tab === 'signup' ? 'new-password' : 'current-password'} aria-describedby={tab === 'signup' ? 'aide-mdp' : undefined} required />
+          <button type="button" className="mdp-voir" aria-controls="mot-de-passe" aria-pressed={voir} onClick={() => setVoir(v => !v)}>{tab === 'signup' && <IconeConnexion nom={voir ? 'visibility_off' : 'visibility'} taille={18} />}{voir ? T.masquer : T.afficher}</button>
+        </div>
+        {tab === 'signup' && <p className="muted connexion-aide" id="aide-mdp"><IconeConnexion nom="info" taille={15} />{T.aideMdp}</p>}
+        {tab === 'signin' && <button type="button" className="link connexion-oubli" onClick={forgot}>{T.oubli}</button>}
       </div>
-      {tab === 'signup' && <p className="muted connexion-aide" id="aide-mdp">{T.aideMdp}</p>}
+      <p className="connexion-achat"><span className="auth-achat-icon"><IconeConnexion nom={tab === 'signup' ? 'auto_stories_filled' : 'auto_stories'} taille={20} /></span><span>{T.achat}</span></p>
       {error && <p className="error" role="alert">{error}</p>}
       {info && <p className="connexion-info" role="status">{info}</p>}
-      <button className="btn moment-btn" type="submit" disabled={busy}>{busy ? T.patienter : tab === 'signup' ? T.creer : T.connecter}</button>
-      {tab === 'signin' && <button type="button" className="link connexion-oubli" onClick={forgot}>{T.oubli}</button>}
+      <button className="btn moment-btn" type="submit" disabled={busy}>{busy ? T.patienter : tab === 'signup' ? T.creer : T.connecter}{tab === 'signup' ? <IconeConnexion nom="arrow_forward" taille={18} /> : <IconeConnexion nom="east" taille={18} />}</button>
     </form>
-    <p className="muted connexion-legal">{tab === 'signup' ? T.age : ''}<Link className="link-inline" to="/confidentialite">{T.confidentialite}</Link></p>
+    <div className="connexion-suite">
+      {tab === 'signin' && <p className="connexion-inscription"><span>{T.pasEncore}</span><button type="button" onClick={() => choose('signup')}>{T.creer}</button></p>}
+      <p className="connexion-securite"><IconeConnexion nom={tab === 'signup' ? 'shield_lock' : 'verified_user'} taille={16} /><span>{T.securite}</span></p>
+    </div>
+    <p className="muted connexion-legal">{tab === 'signup' ? T.age : ''}<Link className="link-inline" to="/confidentialite">{T.confidentialite}<IconeConnexion nom="open_in_new" taille={14} /></Link></p>
+    {tab === 'signup' ? <aside className="auth-rythme"><span><IconeConnexion nom="spa" taille={20} /></span><div><strong>{langue === 'en' ? 'An unhurried rhythm' : 'Un rythme sans précipitation'}</strong><p>{langue === 'en' ? 'Take time to put each teaching into practice.' : 'Prends le temps de mettre chaque enseignement en pratique.'}</p></div></aside> : <div className="auth-pensee"><span className="auth-pensee-icone"><IconeConnexion nom="bookmark_heart" taille={24} /></span><PenseeLivre langue={langue} /></div>}
   </main>;
 }

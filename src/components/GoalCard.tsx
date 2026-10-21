@@ -1,3 +1,4 @@
+import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 import { OBJECTIF_MAX, OBJECTIF_MIN, nomsRacines, objectifTextes, objectifValide, racineTest } from '@/lib/objectif';
@@ -48,7 +49,7 @@ export function GoalCard({ langue }: { langue: string }) {
   if (goal === undefined) return null;
   // Sans objectif : une invitation courte et un bouton ; le formulaire ne s'ouvre qu'à la demande (15/10/2026).
   if (!goal && !editing) return <div className="card">
-    <p className="tag">{T.titre}</p>
+    <p className="tag"><IconeJourneeSuite nom="flag"/>{T.titre}</p>
     <p>{T.invitation}</p>
     <button type="button" className="btn-secondaire wide" onClick={ouvrir}>{T.choisir}</button>
   </div>;
@@ -56,10 +57,10 @@ export function GoalCard({ langue }: { langue: string }) {
   const longueurOk = texte.trim().length === 0 || objectifValide(texte) !== null;
 
   return <div className="card">
-    <p className="tag">{T.titre}</p>
+    <p className="tag"><IconeJourneeSuite nom="flag"/>{T.titre}</p>
     {!formulaire && goal ? <>
       <p className="action">{goal.texte}</p>
-      {goal.racine && <p className="muted">{racines[goal.racine - 1]}</p>}
+      {goal.racine && <p className="muted"><IconeJourneeSuite nom="psychology" taille={18}/> {racines[goal.racine - 1]}</p>}
       {goal.confirme_le && <p className="muted">{T.depuis} {dateCourte(goal.confirme_le, langue)}</p>}
       <button type="button" className="link" onClick={ouvrir}>{T.modifier}</button>
     </> : <form onSubmit={save}>

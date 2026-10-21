@@ -1,0 +1,58 @@
+/* Accueil avant inscription : carte de la nouvelle maquette, règles du parcours conservées. */
+.espace-page.espace-decouverte { padding-top:0; font-family:Literata,Georgia,serif; }
+.decouverte-marque { display:flex; align-items:center; min-height:64px; margin:0; }
+.decouverte-marque > span { display:flex; align-items:center; gap:6px; }
+.decouverte-marque strong { font:600 16px/24px Outfit,system-ui,sans-serif; letter-spacing:.1em; }
+.decouverte-bienvenue { margin:24px 0; }
+.espace-decouverte .decouverte-bienvenue h1 { font:600 16px/24px Outfit,system-ui,sans-serif; margin:0 0 8px; letter-spacing:.02em; }
+.decouverte-bienvenue p { max-width:340px; font:400 16px/26px Literata,Georgia,serif; color:#4a463f; margin:0; }
+.decouverte-carte { display:flex; flex-direction:column; gap:16px; padding:24px; background:#fff; border-radius:8px; }
+.decouverte-meta { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+.decouverte-meta > span { font:600 12px/16px Outfit,system-ui,sans-serif; letter-spacing:.04em; }
+.decouverte-meta > span:first-child { background:#eee8d9; color:#755b00; border-radius:4px; padding:2px 8px; text-transform:uppercase; }
+.decouverte-meta > span:last-child { display:flex; align-items:center; gap:4px; color:#4a463f; }
+.decouverte-meta svg { color:#755b00; flex-shrink:0; }
+.decouverte-illustration { position:relative; height:144px; overflow:hidden; border-radius:4px; background:#eee8d9; }
+.decouverte-illustration img { display:block; width:100%; height:100%; object-fit:cover; }
+.decouverte-illustration > span { position:absolute; bottom:8px; left:8px; display:flex; align-items:center; gap:6px; padding:4px 8px; border-radius:4px; background:#fff; color:#1d1c13; font:600 12px/16px Outfit,system-ui,sans-serif; }
+.decouverte-illustration svg { color:#755b00; }
+.espace-decouverte .decouverte-description h2 { margin:0 0 4px; font:600 26px/34px Outfit,system-ui,sans-serif; letter-spacing:-.01em; }
+.decouverte-description p { margin:0; color:#4a463f; font:400 16px/26px Literata,Georgia,serif; }
+.decouverte-description p + p { margin-top:8px; }
+.decouverte-piliers { display:flex; flex-direction:column; gap:8px; list-style:none; margin:0; padding:16px; background:#f9f3e4; border-radius:4px; }
+.decouverte-piliers li { display:flex; align-items:flex-start; gap:8px; font:400 16px/26px Literata,Georgia,serif; }
+.decouverte-piliers svg { flex-shrink:0; color:#755b00; margin-top:2px; }
+.decouverte-reperes summary { min-height:48px; display:list-item; align-content:center; font:500 14px/22px Outfit,system-ui,sans-serif; cursor:pointer; }
+.decouverte-reperes p { margin:8px 0; color:#4a463f; font:400 16px/26px Literata,Georgia,serif; }
+.espace-decouverte .decouverte-commencer { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:52px; padding:10px 16px; border:0; border-radius:4px; background:#000; color:#fff; font:600 16px/24px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.03em; text-align:left; }
+.decouverte-commencer > svg { flex-shrink:0; }
+.decouverte-anglais { padding-top:8px; }
+.decouverte-anglais-titre { display:flex; align-items:center; gap:4px; margin:0 0 8px; color:#4a463f; font:600 12px/16px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.05em; }
+.decouverte-anglais > p:not(.decouverte-anglais-titre) { margin:0 0 8px; color:#4a463f; font:italic 400 16px/26px Literata,Georgia,serif; }
+.espace-decouverte .decouverte-anglais button { display:flex; align-items:center; justify-content:center; gap:4px; min-height:48px; width:100%; padding:8px 16px; border:0; border-radius:4px; color:#1d1c13; background:#eee8d9; font:500 14px/20px Outfit,system-ui,sans-serif; }
+.decouverte-citation { display:flex; align-items:flex-start; gap:16px; margin:24px 0; padding:24px; border-radius:8px; background:#f9f3e4; }
+.decouverte-citation > svg { flex-shrink:0; color:#755b00; }
+.decouverte-citation .connexion-pensee { margin:0; padding:0; border:0; background:transparent; }
+.decouverte-citation .connexion-pensee-icone { display:none; }
+.decouverte-citation .connexion-pensee-titre { display:none; }
+.decouverte-citation .connexion-pensee blockquote { margin:0 0 4px; font:italic 400 18px/28px Literata,Georgia,serif; color:#1d1c13; }
+.decouverte-citation .pensee-source { font:500 12px/18px Outfit,system-ui,sans-serif; color:#4a463f; }
+.decouverte-reglages { border-radius:8px; background:#fff; overflow:hidden; margin:24px 0; }
+.decouverte-reglages > summary { display:flex; align-items:center; gap:8px; min-height:56px; padding:16px 24px; cursor:pointer; list-style:none; }
+.decouverte-reglages > summary::-webkit-details-marker { display:none; }
+.decouverte-reglages > summary > svg { flex-shrink:0; color:#4a463f; }
+.decouverte-reglages > summary > svg:last-child { margin-left:auto; }
+.decouverte-reglages[open] > summary > svg:last-child { transform:rotate(180deg); }
+.decouverte-reglages strong { display:block; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.decouverte-reglages small { display:block; color:#4a463f; font:500 12px/16px Outfit,system-ui,sans-serif; }
+.decouverte-reglages > .reglages { padding:0 16px 16px; }
+.decouverte-reglages .section-title { display:none; }
+.espace-decouverte .reglages .card { padding:16px; margin-bottom:8px; border-radius:4px; background:#f9f3e4; }
+.espace-decouverte .reglages p { font-family:Literata,Georgia,serif; }
+.espace-decouverte .reglages .tag,.espace-decouverte .reglages button { font-family:Outfit,system-ui,sans-serif; }
+.espace-decouverte .barre-nav,.espace-decouverte .barre-nav a { font-family:Outfit,system-ui,sans-serif; }
+.espace-decouverte button:disabled { opacity:.55; cursor:default; }
+.espace-decouverte button:focus-visible,.espace-decouverte summary:focus-visible { outline:2px solid #755b00; outline-offset:3px; }
+
+.decouverte-marque { justify-content:space-between; }
+.decouverte-marque > .decouverte-avatar { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; border-radius:12px; background:#000; color:#fff; font:600 16px/24px Outfit,system-ui,sans-serif; }

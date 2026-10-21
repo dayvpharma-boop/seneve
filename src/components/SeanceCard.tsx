@@ -1,3 +1,5 @@
+import {IconeConfidentialite} from './IconeConfidentialite';
+import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -67,12 +69,12 @@ export function SeanceCard({ enrollmentId, langue }: { enrollmentId: string; lan
   }
 
   return <div className="card">
-    <p className="tag">{T.titre}</p>
+    <p className="tag"><IconeConfidentialite nom="person"/>{T.titre}</p>
     <p className="muted">{T.intro(seances.length)}</p>
     {aDemander ? <>
       <p>{T.ouverte(aDemander.numero, aDemander.jour)}</p>
       <p className="muted">{T.explication}</p>
-      <button type="button" className="btn action-btn" disabled={busy} onClick={() => void demander(aDemander.numero)}>{busy ? T.envoi : T.bouton(aDemander.numero)}</button>
+      <button type="button" className="btn action-btn" disabled={busy} onClick={() => void demander(aDemander.numero)}><IconeJourneeSuite nom="calendar_month" taille={18}/>{busy ? T.envoi : T.bouton(aDemander.numero)}</button>
     </> : derniereDemandee?.demande ? <>
       <p className="success" role="status">{T.demandee(derniereDemandee.numero)}</p>
       <p className="muted">{T.etat}{T.etats[derniereDemandee.demande.etat] ?? derniereDemandee.demande.etat}</p>

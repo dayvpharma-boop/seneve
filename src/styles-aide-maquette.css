@@ -1,0 +1,70 @@
+/* Aide & Contact — maquette du 20 octobre, styles limités à cette page. */
+body:has(.aide-page){background:#fff9ea;color:#1d1c13}
+.aide-page{--background:#fff9ea;--surface:#fff;--foreground:#1d1c13;--muted:#4a463f;--chip:#eee8d9;--gold:#755b00;max-width:390px;min-height:100dvh;padding:0 20px 112px;font:400 16px/26px Literata,Georgia,serif}
+.aide-page h1,.aide-page h2,.aide-page button,.aide-page select,.aide-page .brand,.aide-page legend,.aide-page .field>span,.aide-page .note-date,.aide-page .time-chip,.aide-page .barre-nav,.aide-page .tag{font-family:Outfit,system-ui,sans-serif}
+.aide-page .page-tete{margin:0;background:none;padding:0;border:0;box-shadow:none}
+.aide-barre{height:64px;display:flex;align-items:center;justify-content:space-between;margin:0 -20px;padding:0 20px}
+.aide-page .brand{display:flex;align-items:center;gap:6px;color:#1d1c13;font:600 16px/24px Outfit,sans-serif;letter-spacing:.2em;margin:0}
+.aide-initiale{display:grid;place-items:center;width:32px;height:32px;background:#000;color:#fff;border-radius:12px;font:600 12px/16px Outfit,sans-serif}
+.aide-repere{display:flex;align-items:center;gap:4px;font:600 12px/16px Outfit,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#755b00;margin:16px 0 4px}
+.aide-repere>span{width:6px;height:6px;border-radius:50%;background:#755b00;flex-shrink:0}
+.aide-page .page-tete h1{font:600 26px/34px Outfit,sans-serif;letter-spacing:-.5px;margin:0}
+.aide-page .aide-intro{font:400 16px/26px Literata,serif;color:#4a463f;margin:8px 0 24px}
+.aide-page .aide-urgence{display:flex;align-items:flex-start;gap:8px;padding:16px;background:#fdf3e7;border:0;border-radius:8px;box-shadow:none;margin:0 0 40px}
+.aide-page .aide-bouclier{display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;border-radius:4px;background:#eee0c9;color:#755b00;margin-top:2px}
+.aide-page .aide-urgence h2{font:600 16px/24px Outfit,sans-serif;color:#584400;margin:0 0 4px}
+.aide-page .aide-urgence p{font:400 16px/23px Literata,serif;color:#494643;margin:0 0 8px}
+.aide-page .aide-urgence p:last-child{margin:0}
+.aide-page .aide-form{display:flex;flex-direction:column;gap:16px;background:#fff;padding:16px;border:0;border-radius:8px;box-shadow:none;margin:0 0 24px}
+.aide-form-tete{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.aide-form-tete h2{display:flex;align-items:center;gap:4px;font:600 20px/28px Outfit,sans-serif;margin:0}
+.aide-form-tete>span{font:400 12px/16px Outfit,sans-serif;color:#4a463f;white-space:nowrap}
+.aide-page .aide-sujets{border:0;padding:0;margin:0;min-width:0}
+.aide-page .aide-sujets legend,.aide-page .field>span{font:600 12px/16px Outfit,sans-serif;color:#4a463f;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.aide-sujets>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.aide-page .aide-sujets button{display:flex;align-items:center;justify-content:space-between;gap:4px;text-align:left;min-height:48px;padding:10px 8px;border:0;border-radius:4px;background:#f3edde;color:#1d1c13;font:500 14px/20px Outfit,sans-serif;box-shadow:none}
+.aide-page .aide-sujets button[aria-pressed=true]{background:#000;color:#fff}
+.aide-page .field{margin:0;min-width:0}
+.aide-page textarea{font:400 16px/26px Literata,serif;color:#1d1c13;background:#f9f3e4;border:0;border-radius:4px;padding:8px;min-height:120px;box-shadow:none;width:100%;resize:vertical}
+.aide-page textarea::placeholder{color:#4a463f;opacity:1}
+.aide-page select{font-size:16px;min-height:48px;border:1px solid #7b776f;border-radius:4px;background:#f9f3e4;max-width:100%;width:100%}
+.aide-page fieldset.field{padding:12px;border:1px solid #ccc6bd;border-radius:4px}
+.aide-page .field legend{font:500 14px/20px Outfit,sans-serif;color:#4a463f}
+.aide-page .share-check{display:flex;gap:8px;align-items:flex-start;min-height:48px;margin:8px 0;font:400 16px/26px Literata,serif}
+.aide-page .share-check input{width:24px;height:24px;flex-shrink:0;accent-color:#000;margin:2px 0 0}
+.aide-page .muted{font:400 14px/22px Outfit,sans-serif;color:#4a463f}
+.aide-page .btn{display:flex;align-items:center;justify-content:center;gap:4px;border:0;border-radius:4px;background:#000;color:#fff;min-height:52px;padding:12px 16px;font:500 14px/20px Outfit,sans-serif;text-transform:uppercase;letter-spacing:.04em;box-shadow:none}
+.aide-page .btn:disabled{opacity:.65}
+.aide-page :focus-visible{outline:3px solid #755b00;outline-offset:3px}
+.aide-page .coach-lien{display:flex;align-items:center;justify-content:center;gap:8px;font:500 14px/20px Outfit,sans-serif;min-height:48px;padding:12px;background:#eee8d9;color:#1d1c13;border:0;border-radius:8px;margin:0 0 40px;text-decoration:none}
+.aide-page .today-section{margin:0}
+.aide-historique-tete{display:flex;align-items:center;gap:8px;margin:0 0 16px}
+.aide-page .aide-historique-tete h2{font:600 20px/28px Outfit,sans-serif;margin:0}
+.aide-historique-tete>span{font:600 12px/16px Outfit,sans-serif;padding:2px 8px;border-radius:12px;background:#eee8d9}
+.aide-page .demande-carte{padding:16px;border:0;border-radius:8px;background:#fff;box-shadow:none;margin-bottom:16px}
+.aide-page .demande-tete{display:flex;justify-content:space-between;align-items:flex-start;gap:4px}
+.aide-page .note-date{font:400 12px/16px Outfit,sans-serif;color:#4a463f;margin:0}
+.aide-page .demande-sujet{font:600 16px/24px Outfit,sans-serif;margin:4px 0 0}
+.aide-page .time-chip{display:inline-flex;align-items:center;gap:6px;background:#fcf2df;color:#684b12;padding:4px 10px;border-radius:12px;font:600 12px/16px Outfit,sans-serif;white-space:normal}
+.aide-page .time-chip::before{content:'';display:block;width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
+.aide-page .etat-resolue{background:#e7efe0;color:#466332}
+.aide-page .etat-annulee{background:#ede9df;color:#6b655b}
+.aide-page .etat-annulee::before{display:none}
+.aide-page .demande-carte .day-text{font:400 16px/26px Literata,serif;color:#4a463f;background:none;padding:0;margin:12px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.aide-page .demande-carte:has(.etat-annulee)>.day-text{text-decoration:line-through}
+.aide-page .demande-reponse{background:#f9f3e4;border:0;border-radius:4px;padding:8px;margin-top:12px}
+.aide-page .demande-reponse .tag{display:flex;align-items:center;gap:4px;font:600 12px/18px Outfit,sans-serif;text-transform:none;letter-spacing:0;margin:0;color:#1d1c13}
+.aide-page .demande-reponse .tag svg{flex-shrink:0;color:#755b00}
+.aide-page .demande-reponse .day-text{font-style:italic;color:#1d1c13;margin-top:4px;padding-left:4px}
+.aide-page .demande-carte .link,.aide-page summary{font:500 14px/20px Outfit,sans-serif;color:#4a463f;min-height:48px;display:flex;align-items:center;text-decoration:underline}
+.aide-pied{text-align:center;display:flex;align-items:center;flex-direction:column;gap:4px;margin:40px 0 24px;padding:24px 0;color:#4a463f}
+.aide-pied>span{display:grid;place-items:center;width:32px;height:32px;border-radius:12px;background:#f3edde}
+.aide-pied strong{font:600 12px/16px Outfit,sans-serif;text-transform:uppercase;letter-spacing:.12em}
+.aide-pied p{font:400 13px/21px Literata,serif;margin:0;max-width:320px}
+.aide-page .journal-vide{padding:16px;border:0;border-radius:8px;background:#fff;box-shadow:none}
+.aide-page .barre-nav{max-width:390px;background:#fff9ea;border:0;box-shadow:none}
+.aide-page .barre-nav a{font:600 10px/16px Outfit,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#4a463f;text-decoration:none;min-height:64px}
+.aide-page .barre-nav a[aria-current=page]{color:#000;font-weight:700;text-decoration:none}
+.aide-page .barre-nav .nav-plus{display:grid;place-items:center;width:48px;height:48px;background:#000;color:#fff;border-radius:12px;border:0}
+
+.aide-page .aide-bouclier svg{color:#755b00}

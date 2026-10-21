@@ -1,3 +1,4 @@
+import {IconeResultat} from './IconeResultat';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { adresseParole, paroleTextes, renderParole, type Parole } from '@/lib/parole';
@@ -42,7 +43,7 @@ export function ParoleCard({ programmeId, version, langue, jour }: { programmeId
   }
 
   return <section className="card parole-card" aria-label={T.tag}>
-    <p className="tag">{T.tag}</p>
+    <p className="tag"><IconeResultat nom="format_quote"/>{T.tag}</p>
     <blockquote className="parole-citation">« {parole.texte} »</blockquote>
     <p className="src">{T.auteur}, {T.livre} — {parole.reference_livre}</p>
     <button type="button" className="btn-secondaire wide" disabled={etat === 'creation'} onClick={() => void partager()}>{etat === 'creation' ? T.creation : T.partager}</button>

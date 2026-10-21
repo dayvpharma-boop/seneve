@@ -35,7 +35,7 @@ export const JOURNAL_TEXTES = {
     retour: 'Retour à mon espace',
     // Journal
     titreJournal: 'Mon journal',
-    introJournal: 'Ton journal est privé : toi seul peux le lire. Personne de l’équipe n’y a accès.',
+    introJournal: 'Ton journal est privé. Tu choisis les notes autorisées au coach IA et les extraits transmis à l’équipe.',
     nouvelle: 'Nouvelle note',
     reponseA: 'En réponse à :',
     placeholderNote: 'Ce que tu as compris, vécu ou décidé aujourd’hui…',
@@ -105,7 +105,7 @@ export const JOURNAL_TEXTES = {
     locale: 'en-GB',
     retour: 'Back to my space',
     titreJournal: 'My journal',
-    introJournal: 'Your journal is private: only you can read it. Nobody on the team has access.',
+    introJournal: 'Your journal is private. You choose which notes the AI coach may use and which excerpts to send to the team.',
     nouvelle: 'New note',
     reponseA: 'Replying to:',
     placeholderNote: 'What you understood, lived or decided today…',

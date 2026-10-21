@@ -1,3 +1,4 @@
+import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -15,7 +16,7 @@ export function SemaineCard({ semaine, langue, horsLigne = false }: { semaine: S
   }, [horsLigne]);
 
   return <section className="card semaine-card" aria-label={T.titre(semaine.numero)}>
-    <p className="tag">{T.titre(semaine.numero)}</p>
+    <p className="tag"><IconeJourneeSuite nom="insights"/>{T.titre(semaine.numero)}</p>
     <p className="muted">{T.jours(semaine.de, semaine.a)}</p>
     {semaine.applicables === 0 ? <p>{T.nonEvalue}</p> : <ul className="bilan-list">
       <li><strong>{T.realisees(semaine.realisees, semaine.applicables)}</strong></li>

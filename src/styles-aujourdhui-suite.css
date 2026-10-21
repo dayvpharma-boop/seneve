@@ -1,0 +1,18 @@
+/* Nouveau modèle Aujourd’hui ; règles du parcours et illustration validée conservées. */
+.espace-page:not(.moment-vue) .today-progress { background:transparent; border:0; padding:0; margin-bottom:40px; }
+.espace-page:not(.moment-vue) .weekly-head h2 { font-size:12px; line-height:18px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+.espace-page:not(.moment-vue) .weekly-head p { font-size:14px; color:var(--gold); }
+.espace-page:not(.moment-vue) .day-tile.is-today { background:#000; color:#fff; border-color:#000; }
+.espace-page:not(.moment-vue) .day-tile.is-today .day-num { color:#ffe08f; }
+.espace-page:not(.moment-vue) .moment-tuile { border-radius:8px; }
+.espace-page:not(.moment-vue) .moment-tuile.is-closed { background:#f3edde; opacity:1; }
+.espace-page:not(.moment-vue) .dispo-chip { background:#fed977; color:#785d00; border-radius:12px; }
+.espace-page:not(.moment-vue) .moment-btn { border-radius:4px; }
+.espace-page:not(.moment-vue) .action-card { border-radius:8px; }
+.espace-page:not(.moment-vue) .action-card .action-box { border-left:2px solid #755b00; padding-left:16px; margin-bottom:20px; }
+.espace-page:not(.moment-vue) .action-card .action { margin:0; font-size:19px; line-height:30px; }
+.espace-page:not(.moment-vue) .choix-row { display:grid; grid-template-columns:1fr; gap:8px; }
+.espace-page:not(.moment-vue) .action-card .choix-row .btn-secondaire { background:#f3edde; border:0; }
+.espace-page:not(.moment-vue) .prompt-carte { border-radius:8px; }
+.espace-page:not(.moment-vue) .prompt-question { padding:16px; background:#f9f3e4; border-radius:4px; }
+.espace-page:not(.moment-vue) .repli { border-radius:8px; }

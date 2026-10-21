@@ -1,0 +1,41 @@
+import type {ReactNode} from 'react';
+import {Link} from 'react-router-dom';
+import type {Dashboard} from './PilotageAdmin';
+import {ETAT_LIBELLE,type StaffRequest} from '@/lib/admin';
+import {IconeAdministration as I} from './IconeAdministration';
+import {IconeConfidentialite as C} from './IconeConfidentialite';
+import {IconeAdminMobile as M} from './IconeAdminMobile';
+export type PanneauAdministration='demandes'|'participants'|'achats'|'places'|'contenus'|'communications'|'incidents'|'equipe';
+type Props={pageActive?:string;changerPage?:(p:string)=>void;children?:ReactNode;admin:boolean;prenom:string;donnees:Dashboard|null;jours:number;busy:boolean;erreur:string;erreurPlaces:boolean;ouvertes:StaffRequest[];urgentes:number;places:number;utilisees:number;libres:number;conventionsChargees:boolean;ouvrir:(p:PanneauAdministration,id?:string)=>void;periode:(n:number)=>void;actualiser:()=>void};
+const menus=[['demandes','Demandes d’aide'],['participants','Participants'],['achats','Achats et accès'],['places','Places financées'],['contenus','Contenus'],['communications','Communications'],['incidents','Incidents']] as const;
+const heures=(r:StaffRequest)=>Math.max(0,Math.floor((Date.now()-Date.parse(r.cree_le))/3600000));
+export function AdministrationMobile({pageActive,changerPage,children,admin,prenom,donnees,jours,busy,erreur,erreurPlaces,ouvertes,urgentes,places,utilisees,libres,conventionsChargees,ouvrir,periode,actualiser}:Props){
+ const priorites=[...ouvertes].sort((a,b)=>Date.parse(a.cree_le)-Date.parse(b.cree_le)).slice(0,2);
+ const chiffre=(n:number|undefined)=>n===undefined?'—':n.toLocaleString('fr-FR');
+ const p=donnees?.periode_jours??jours,ecart=donnees?donnees.actifs-donnees.actifs_avant:0;
+ const edition=['contenus','communications','incidents'].includes(pageActive??'');
+ return <div className={'am-mobile'+(edition?' am-edition-mobile':'')}>
+  <header className="am-entete"><div className="am-marque"><div className="am-compte"><Link to="/espace"><C nom="arrow_back" taille={16}/>Mon espace</Link>{edition&&pageActive!=='incidents'&&<strong className="am-page-nom">{pageActive==='contenus'?'Contenus':pageActive==='communications'?'Communications':'Incidents'}</strong>}<button onClick={()=>ouvrir(admin?'equipe':'demandes')} aria-label={admin?'Gérer l’équipe':'Mon espace d’accompagnement'}><span><strong>{prenom||'Équipe SÉNEVÉ'}</strong><small>{admin?'Administrateur':'Accompagnateur'}</small></span><b><C nom="person" taille={18}/></b></button></div><div className="am-identite">{pageActive==='incidents'?<><div><strong>Incidents</strong><span>Admin</span></div><small className="am-rubrique">SÉNEVÉ</small></>:<><div><strong>SÉNEVÉ</strong><i>·</i><span>Administration</span></div>{pageActive==='participants'?<small className="am-rubrique">Participants</small>:<small><C nom="verified_user" taille={13}/>Équipe</small>}</>}</div></div><nav aria-label="Administration SÉNEVÉ"><button aria-current={pageActive==='tableau'||pageActive==='intervention'?'page':undefined} className={!pageActive||pageActive==='tableau'||pageActive==='intervention'?"am-actif":""} onClick={()=>changerPage?.('tableau')}>Tableau de bord</button>{menus.filter(([id])=>admin||id==='demandes'||id==='contenus').map(([id,t])=><button key={id} className={pageActive===id?"am-actif":""} aria-current={pageActive===id?'page':undefined} onClick={()=>changerPage&&['demandes','participants','achats','contenus','communications','incidents'].includes(id)?changerPage(id):ouvrir(id)}>{t}{id==='demandes'&&<b>{ouvertes.length}</b>}</button>)}</nav></header>
+  {children??<main className="am-page"><div className="am-contenu">
+   <div className="am-prive"><span><I nom="shield_with_heart" taille={18}/><span title="Journaux privés · extraits partagés au choix du participant">Journaux privés · extraits partagés au choix du participant</span></span><b>Strict</b></div>
+   <div className="am-titre"><div><h1>Poste d’intervention</h1><p>Données de l’accompagnement</p></div><div role="group" aria-label="Période des indicateurs">{[7,30].map(n=><button key={n} disabled={!admin||busy} aria-pressed={jours===n} onClick={()=>periode(n)}>{n} jours</button>)}</div></div>
+   {erreur&&<div className="am-erreur" role="alert">{erreur}{donnees?' Les derniers chiffres sont conservés.':''}<button onClick={actualiser} disabled={busy}>Réessayer</button></div>}
+   <div className="am-compteurs" aria-busy={busy}>
+    <article><header><span>Demandes urgentes</span><i/></header><div><span className="am-rouge">● Urgent &gt; 48 h</span><strong>{urgentes}</strong></div></article>
+    <article><header><span>Blocages d’accès</span><i/></header><div><span className="am-rouge">● À examiner</span><strong>{chiffre(donnees?.achats_attente)}</strong></div></article>
+    <article><header><span>Participants actifs</span><I nom="group" taille={16}/></header><div><span className="am-or">{donnees?`${ecart>0?'+':''}${ecart} (${p}j)`:'—'}</span><strong>{chiffre(donnees?.actifs)}</strong></div></article>
+    <article><header><span>Places financées</span><M nom="handshake" taille={16}/></header><div><span>Sur {conventionsChargees?places:'—'}</span><strong>{conventionsChargees?utilisees:'—'}<small>/{conventionsChargees?places:'—'}</small></strong></div></article>
+   </div>
+   <section className="am-urgences"><header><h2><i/>À traiter sans délai</h2><span>{priorites.length} dossier{priorites.length>1?'s':''}</span></header>{priorites.map((r,n)=><article key={r.request_id}><div className="am-dossier"><div><div><strong>{r.prenom||'Sans prénom'}</strong><small>{r.email||'Sans e-mail'}</small></div><p>{r.programme_id||'Sans parcours joint'}</p></div><div><b>{heures(r)>48?'Urgent':ETAT_LIBELLE[r.etat]||r.etat}</b><small>{heures(r)} h d’attente</small></div></div><div className="am-motif"><strong>Motif du blocage</strong><p>{r.motif}</p></div><div className="am-repondre"><button onClick={()=>ouvrir('demandes',r.request_id)}><I nom="reply" taille={18}/>Répondre à la demande</button><button aria-label={'Détails de la demande de '+(r.prenom||'ce participant')} onClick={()=>ouvrir('demandes',r.request_id)}>{n===0?<M nom="history"/>:<I nom="receipt_long" taille={20}/>}</button></div></article>)}{!priorites.length&&<p>Aucune demande à traiter.</p>}</section>
+   <section className="am-apercu"><header><h2>Vue d’ensemble des sections</h2><span>Suivi SÉNEVÉ</span></header><div>
+    <button onClick={()=>ouvrir('demandes')}><span><I nom="support_agent" taille={20}/><span>Demandes d’aide en cours</span></span><b>{ouvertes.length}<small className="am-rouge"> (dont {urgentes} urgentes)</small></b></button>
+    {admin&&<><button onClick={()=>ouvrir('participants')}><span><M nom="person_celebrate"/><span>Participants inscrits</span></span><b>{chiffre(donnees?.participants)}</b></button>
+    <button onClick={()=>ouvrir('achats')}><span><M nom="verified"/><span>Achats sur {p} jours</span></span><b>{chiffre(donnees?.entree.achats)} <small>commandes</small></b></button>
+    <button onClick={()=>ouvrir('places')}><span><I nom="volunteer_activism" taille={20}/><span>Places financées disponibles</span></span><b className="am-or">{erreurPlaces?'Indisponible':conventionsChargees?`${libres} restantes`:'—'}</b></button>
+    <button onClick={()=>ouvrir('incidents')}><span><M nom="sync_saved_locally"/><span>Incidents enregistrés</span></span><b>{chiffre(donnees?.incidents.reduce((n,i)=>n+Number(i.nombre),0))} <small>signalements</small></b></button></>}
+   </div></section>
+   <button className="am-attente" onClick={()=>ouvrir('demandes')}><span><i/><span><strong>{Math.max(0,ouvertes.length-priorites.length)} autre{ouvertes.length-priorites.length>1?'s':''} demande{ouvertes.length-priorites.length>1?'s':''}</strong><small>Demandes restant à examiner</small></span></span><b>● En attente</b></button>
+   <div className="am-fin"><button onClick={()=>ouvrir(admin?'incidents':'demandes')}><M nom="campaign" taille={18}/>Consulter les incidents d’équipe</button><p>L’accompagnateur s’engage à la stricte discrétion fraternelle. Seuls les extraits joints par le participant sont partagés avec l’équipe autorisée.</p></div>
+  </div></main>}<footer className="am-pied"><C nom="lock" taille={14}/><span>Journaux privés · extraits partagés au choix du participant</span></footer>
+ </div>;
+}

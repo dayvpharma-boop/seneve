@@ -1,3 +1,6 @@
+import {IconeEdition} from './IconeEdition';
+import {IconeConfidentialite} from './IconeConfidentialite';
+import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useState } from 'react';
 import { invitationTextes, lienInvitation, lienWhatsAppInvitation } from '@/lib/invitation';
 
@@ -23,12 +26,12 @@ export function InviteCard({ langue }: { langue?: string }) {
   }
 
   return <section className="card invite-card" aria-label={T.tag}>
-    <p className="tag">{T.tag}</p>
+    <p className="tag"><IconeJourneeSuite nom="diversity_1"/>{T.tag}</p>
     <p className="more">{T.texte}</p>
     <div className="invite-actions">
-      <button type="button" className="btn" onClick={() => void envoyer()}>{T.envoyer}</button>
-      <button type="button" className="btn-secondaire" onClick={() => void copier()} aria-live="polite">{copie ? T.copie : T.copier}</button>
+      <button type="button" className="btn" onClick={() => void envoyer()}><IconeEdition nom="send" taille={18}/>{T.envoyer}</button>
+      <button type="button" className="btn-secondaire" onClick={() => void copier()} aria-live="polite"><IconeJourneeSuite nom="content_copy" taille={18}/>{copie ? T.copie : T.copier}</button>
     </div>
-    <p className="muted invite-note">{T.note}</p>
+    <p className="muted invite-note"><IconeConfidentialite nom="lock" taille={14}/>{T.note}</p>
   </section>;
 }

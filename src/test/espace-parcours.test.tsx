@@ -57,7 +57,7 @@ describe('Espace avec plusieurs parcours', () => {
     expect(await screen.findByText('Jour 2 sur 7')).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Découverte du livre — 7 jours' })).toHaveAttribute('aria-selected', 'true');
     fireEvent.click(screen.getByRole('tab', { name: 'Accompagnement du livre — 14 jours' }));
-    expect(screen.getByText(/Ton accompagnement commence le lundi 19 octobre/)).toBeInTheDocument();
+    expect(screen.getByText(/Ton parcours commence le lundi 19 octobre/)).toBeInTheDocument();
     expect(screen.queryByText(/Thème ACHETEUR/)).not.toBeInTheDocument();
   });
 

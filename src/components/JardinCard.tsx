@@ -1,3 +1,4 @@
+import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { jardinTextes, stadeJardin, type Stade } from '@/lib/jardin';
 
 /** Feuille en goutte, orientée par un angle (degrés), partant de (x, y). */
@@ -45,8 +46,8 @@ export function JardinCard({ realisees, total, langue }: { realisees: number; to
   return <section className="card jardin-card" aria-label={T.titre}>
     <div className="jardin-illus" role="img" aria-label={T.illustration(stade)}><Plante stade={stade} /></div>
     <div className="jardin-texte">
-      <p className="tag">{T.titre}</p>
-      <p className="jardin-message">{T.stades[stade]}</p>
+      <p className="tag"><IconeJourneeSuite nom="potted_plant"/>{T.titre}</p>
+      <p className="jardin-message"><IconeJourneeSuite nom="nest_eco_leaf" taille={32}/>{T.stades[stade]}</p>
       {total > 0 && <p className="jardin-compte">{T.compte(realisees, total)}</p>}
       <p className="muted jardin-note">{T.note}</p>
     </div>

@@ -37,11 +37,11 @@ describe('Connexion', () => {
     expect(champ).toHaveAttribute('type', 'password');
   });
 
-  it('se connecter : pas de prénom ni de rappel d’achat, « Mot de passe oublié ? » proposé', () => {
+  it('se connecter : pas de prénom, rappel d’achat conservé et « Mot de passe oublié ? » proposé', () => {
     ouvrir();
     fireEvent.click(screen.getByRole('tab', { name: 'Se connecter' }));
     expect(screen.queryByLabelText('Ton prénom')).not.toBeInTheDocument();
-    expect(screen.queryByText(/même adresse e-mail que pour l’achat/)).not.toBeInTheDocument();
+    expect(screen.getByText(/même adresse e-mail que pour l’achat/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Mot de passe oublié ?' })).toBeInTheDocument();
   });
 

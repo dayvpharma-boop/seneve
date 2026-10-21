@@ -1,0 +1,79 @@
+/* Journal : structure de la maquette reçue, identité Poppins/Lora demandée.
+   Les données et les commandes restent celles du journal existant. */
+body:has(.journal-page) { background:#F4EEDF; color:#0A0907; }
+.journal-page {
+  --background:#F4EEDF; --surface:#FFFDFA; --foreground:#0A0907;
+  --muted:#514B41; --chip:#EAE2D3; --line:#D5C9B3; --control-line:#857866;
+  --surface-saisie:#F4EEDF; --primary-fill:#0A0907; --on-primary:#FFFDFA;
+  --gold:#514B41; --or:#C9A84C; --r-carte:16px; --r-commande:12px;
+  font-family:Lora,Georgia,serif; font-size:16px; line-height:1.65;
+  padding:16px 20px 124px; min-height:100dvh;
+}
+.journal-page h1, .journal-page h2, .journal-page h3, .journal-page button,
+.journal-page .brand, .journal-page .tag, .journal-page .note-date,
+.journal-page .time-chip, .journal-page .barre-nav, .journal-repere,
+.journal-mots, .journal-historique-tete > span { font-family:Poppins,system-ui,sans-serif; }
+.journal-page .barre-espace { min-height:64px; margin:-16px -20px 24px; padding:0 20px; background:var(--background); border:0; box-shadow:none; }
+.journal-page .logo-marque { font-size:16px; letter-spacing:.08em; }
+.journal-page .logo-marque > svg { width:28px; height:32px; }
+.journal-page .page-tete { margin-bottom:12px; background:transparent; border:0; box-shadow:none; }
+.journal-repere { display:flex; align-items:center; gap:8px; margin:0 0 8px; font-size:14px; font-weight:500; color:var(--foreground); }
+.journal-repere > svg { box-sizing:content-box; padding:6px; border-radius:12px; background:var(--or); color:#0A0907; }
+.journal-page .page-tete h1 { font-size:28px; line-height:36px; letter-spacing:-.02em; margin:0; }
+.journal-page .journal-intro { display:block; font-size:16px; line-height:27px; color:var(--muted); margin:0 0 28px; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.journal-page .journal-intro > svg { display:none; }
+.journal-page .journal-form { display:flex; flex-direction:column; gap:16px; padding:24px; border:0; border-radius:16px; box-shadow:none; margin:0; background:var(--surface); }
+.journal-page .journal-form > .tag { font-size:16px; line-height:24px; font-weight:600; color:var(--foreground); margin:0; text-transform:none; letter-spacing:normal; }
+.journal-page .journal-question { background:var(--background); border:0; padding:16px; border-radius:12px; margin:0; }
+.journal-page .journal-question .tag { font:500 14px/22px Poppins,system-ui,sans-serif; margin:0 0 8px; color:var(--muted); }
+.journal-page .journal-question .prompt-question { font:500 16px/26px Poppins,system-ui,sans-serif; color:var(--foreground); margin:0; padding:0; border:0; background:transparent; }
+.journal-page .journal-form .field { margin:0; }
+.journal-page .field textarea { font:400 17px/29px Lora,Georgia,serif; border:1px solid var(--control-line); border-radius:12px; padding:16px; min-height:232px; background:var(--surface-saisie); color:var(--foreground); box-shadow:none; resize:vertical; }
+.journal-page textarea::placeholder { color:var(--muted); opacity:1; }
+.journal-mots { text-align:right; color:var(--muted); font-size:14px; line-height:22px; margin:-8px 0 0; }
+.journal-page .share-check { display:flex; align-items:flex-start; gap:12px; font:400 16px/25px Lora,Georgia,serif; margin:0; padding:12px 0; min-height:48px; }
+.journal-page .share-check input { flex-shrink:0; width:24px; height:24px; margin:2px 0 0; accent-color:var(--foreground); }
+.journal-page .muted { font-size:16px; line-height:26px; color:var(--muted); }
+.journal-page .share-check .muted { display:block; margin-top:6px; }
+.journal-page .btn { font:600 16px/24px Poppins,system-ui,sans-serif; min-height:52px; padding:14px 16px; border-radius:12px; box-shadow:none; background:var(--primary-fill); color:var(--on-primary); letter-spacing:normal; text-transform:none; }
+.journal-page .journal-nouvelle { display:flex; justify-content:center; align-items:center; gap:10px; }
+.journal-page .btn:disabled { opacity:.65; }
+.journal-page :focus-visible { outline:3px solid var(--foreground); outline-offset:3px; }
+.journal-page .journal-form > .muted, .journal-page .success, .journal-page .error { margin:0; font-size:16px; line-height:26px; }
+.journal-page .success { color:#245139; }
+.journal-separateur { display:flex; align-items:center; justify-content:center; gap:12px; margin:32px 0; color:var(--foreground); }
+.journal-separateur > span { width:48px; height:2px; background:var(--or); }
+.journal-page .journal-historique { margin:0; }
+.journal-historique-tete { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0 0 16px; }
+.journal-historique-tete h2 { font-size:20px; line-height:28px; margin:0; }
+.journal-historique-tete > span { font-size:14px; line-height:22px; color:var(--muted); white-space:nowrap; }
+.journal-page .note-carte { padding:24px; border:0; border-radius:16px; box-shadow:none; margin:0 0 16px; }
+.journal-page .note-date { display:inline-block; font-size:14px; line-height:22px; font-weight:500; color:var(--foreground); background:var(--background); border-radius:8px; padding:6px 10px; margin:0 0 16px; }
+.journal-page .note-carte .day-text { font:italic 400 18px/30px Lora,Georgia,serif; background:var(--background); padding:16px; border-radius:12px; margin:0 0 16px; white-space:pre-wrap; overflow-wrap:anywhere; }
+.journal-page .note-ia { margin:0 0 8px; }
+.journal-page .time-chip { display:inline-flex; max-width:100%; white-space:normal; padding:6px 10px; border-radius:8px; background:var(--chip); color:var(--foreground); font-size:14px; line-height:22px; }
+.journal-page .row-actions { gap:4px 16px; }
+.journal-page .row-actions .link { min-height:48px; font:500 14px/22px Poppins,system-ui,sans-serif; color:var(--foreground); text-decoration:underline; text-underline-offset:3px; padding:12px 0; }
+.journal-page .row-actions .danger { color:#8A271B; }
+.journal-page .journal-vide { padding:24px; box-shadow:none; border:0; border-radius:16px; }
+.journal-page .repere-parcours { padding:20px; border:0; border-radius:16px; margin:24px 0; background:var(--chip); }
+.journal-page .repere-parcours h2 { font:600 16px/24px Poppins,system-ui,sans-serif; }
+.journal-page .repere-parcours p { font:400 16px/27px Lora,Georgia,serif; }
+.journal-page .barre-nav { max-width:600px; background:var(--background); border-top:1px solid var(--line); box-shadow:none; }
+.journal-page .barre-nav a { min-height:64px; font-size:12px; color:var(--muted); }
+.journal-page .barre-nav a[aria-current="page"] { color:var(--foreground); font-weight:600; text-decoration:underline; text-underline-offset:4px; }
+.journal-page .nav-plus { width:48px; height:48px; border-radius:14px; background:var(--foreground); color:var(--surface); box-shadow:none; }
+.journal-page .logo-marque img { flex-shrink:0; border-radius:8px; }
+.journal-page .logo-marque > span { display:flex; flex-direction:column; line-height:22px; }
+.journal-page .logo-marque small { font:500 12px/16px Poppins,system-ui,sans-serif; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+.journal-profil { display:grid; place-items:center; width:32px; height:32px; border-radius:12px; background:var(--foreground); color:var(--on-primary); }
+.journal-form-haut { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.journal-form-haut .tag { margin:0; font:600 16px/24px Poppins,system-ui,sans-serif; color:var(--foreground); }
+.journal-question-ligne { display:flex; align-items:flex-start; gap:8px; }
+.journal-question-ligne > svg { flex-shrink:0; margin-top:2px; }
+.journal-page .journal-form button[type="submit"], .journal-page .row-actions .link { display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+.journal-brouillon { display:flex; align-items:flex-start; gap:6px; }
+.journal-brouillon > svg { flex-shrink:0; margin-top:5px; }
+.journal-page .time-chip { align-items:center; gap:6px; }
+.journal-page .time-chip > svg { flex-shrink:0; }
+@media(max-width:360px) { .journal-page { padding-inline:16px; } .journal-page .journal-form, .journal-page .note-carte { padding:20px; } }

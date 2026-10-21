@@ -1,0 +1,82 @@
+/* Mon parcours : données réelles dans la présentation du modèle fourni. */
+body:has(.parcours-page) { background:#fff9ea; color:#1d1c13; }
+.parcours-page { --background:#fff9ea; --surface:#fff; --foreground:#1d1c13; --muted:#4a463f; --gold:#755b00; --or:#fed977; --brand:#755b00; --chip:#f3edde; --line:#e8e2d3; --primary-fill:#000; --on-primary:#fff; --gold-fill:#fed977; --soft-gold:#f9f3e4; --hill-light:#d3c3a2; --hill-deep:#c2b08b; --sun:#c9a84c; max-width:390px; padding:0 20px 120px; font:400 16px/26px Literata,Georgia,serif; }
+.parcours-marque { display:flex; align-items:center; justify-content:space-between; min-height:64px; margin:0; }
+.parcours-marque > span:first-child { display:flex; align-items:center; gap:6px; }
+.parcours-marque strong { font:600 16px/24px Outfit,system-ui,sans-serif; letter-spacing:.1em; }
+.parcours-avatar { display:grid; place-items:center; width:32px; height:32px; border-radius:12px; background:#000; color:#fff; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.parcours-intro { display:flex; flex-direction:column; gap:4px; margin:16px 0 4px; }
+.parcours-repere { display:flex; align-items:center; gap:4px; font:600 12px/16px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.08em; color:#755b00; margin:0; }
+.parcours-repere > span { width:6px; height:6px; border-radius:50%; background:#755b00; }
+.parcours-page h1 { font:600 26px/34px Outfit,system-ui,sans-serif; margin:0; letter-spacing:-.01em; }
+.parcours-page .progres-intro { margin:0 0 24px; color:#4a463f; font:400 16px/26px Literata,Georgia,serif; }
+.parcours-page .prog-tabs { display:flex; align-items:center; gap:8px; overflow-x:auto; padding:4px 0; margin:0 0 24px; }
+.parcours-page .prog-tab { display:flex; align-items:center; gap:6px; flex-shrink:0; min-height:48px; padding:8px 16px; border:0; border-radius:8px; background:#f3edde; color:#4a463f; font:500 14px/20px Outfit,system-ui,sans-serif; }
+.parcours-page .prog-tab[aria-selected=true] { background:#000; color:#fff; }
+.parcours-page .prog-tab small { padding:2px 6px; border-radius:12px; background:#e1e6c2; color:#191d08; font:600 10px/14px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.04em; }
+.parcours-page .jardin-card { display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px; margin:0 0 24px; border:0; border-radius:8px; background:#f3edde; text-align:center; }
+.parcours-page .jardin-illus { display:grid; place-items:center; flex-shrink:0; width:96px; height:96px; padding:8px; border-radius:12px; background:#eee8d9; overflow:hidden; }
+.parcours-page .jardin-illus svg { width:80px; height:80px; }
+.parcours-page .jardin-message { margin:0 0 4px; font:italic 400 18px/28px Literata,Georgia,serif; color:#1d1c13; }
+.parcours-page .jardin-texte .tag { margin:0 0 4px; font:600 12px/16px Outfit,system-ui,sans-serif; color:#755b00; text-transform:uppercase; letter-spacing:.06em; }
+.parcours-page .jardin-compte,.parcours-page .jardin-note { display:none; }
+.parcours-page .progres-carte { display:flex; flex-direction:column; gap:16px; background:#f9f3e4; padding:16px; margin:0 0 24px; border:0; border-radius:8px; box-shadow:none; }
+.parcours-synthese-titre { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.parcours-synthese-titre h2 { margin:0; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.parcours-synthese-titre > span { flex-shrink:0; padding:2px 8px; border-radius:4px; background:#e8e2d3; color:#4a463f; font:600 12px/16px Outfit,system-ui,sans-serif; }
+.parcours-page .progres-compte { margin:-8px 0 0; color:#4a463f; font:500 12px/16px Outfit,system-ui,sans-serif; }
+.parcours-page .progres-tuiles { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; padding:0; margin:0; overflow:visible; }
+.parcours-page .progres-tuiles .day-tile { display:flex; flex-direction:column; align-items:center; gap:4px; border:0; border-radius:0; padding:0; min-width:0; min-height:60px; background:transparent; color:#1d1c13; box-shadow:none; }
+.parcours-rond { display:grid; place-items:center; width:40px; max-width:100%; height:40px; border-radius:4px; background:#e8e2d3; color:#4a463f; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.parcours-jour { color:#1d1c13; font:600 12px/16px Outfit,system-ui,sans-serif; }
+.parcours-page .is-done .parcours-rond { background:#e1e6c2; color:#191d08; }
+.parcours-page .is-partial .parcours-rond,.parcours-page .is-prepared .parcours-rond { background:#ffe08f; color:#241a00; }
+.parcours-page .is-today .parcours-rond { background:#000; color:#ffe08f; }
+.parcours-page .is-locked .parcours-rond { color:#7b776f; background:#e8e2d3; }
+.parcours-page .progres-chiffres { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; padding:0; margin:0; list-style:none; }
+.parcours-page .progres-chiffres li { display:flex; flex-direction:column; align-items:center; gap:2px; padding:10px; border-radius:4px; background:#f3edde; color:#4a463f; font:500 12px/16px Outfit,system-ui,sans-serif; text-align:center; }
+.progres-chiffres li > div { display:flex; align-items:center; gap:4px; }
+.parcours-page .progres-chiffres svg { color:#755b00; }
+.parcours-page .progres-chiffres strong { color:#1d1c13; font:600 20px/28px Outfit,system-ui,sans-serif; }
+.parcours-notes { display:flex; align-items:center; gap:6px; margin:0; color:#4a463f; font:500 14px/20px Outfit,system-ui,sans-serif; }
+.parcours-notes > svg { color:#755b00; flex-shrink:0; }
+.parcours-page .progres-suite { margin:0; padding:0; border:0; }
+.parcours-page .progres-suite p { margin:0 0 8px; font:400 16px/26px Literata,Georgia,serif; }
+.parcours-page .progres-suite .moment-btn { display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:12px; border:0; border-radius:4px; background:#000; color:#fff; font:500 14px/20px Outfit,system-ui,sans-serif; }
+.parcours-page .parcours-semaines { margin:0 0 40px; padding:16px; background:#e8e2d3; border:0; border-radius:8px; }
+.parcours-semaines h2 { display:flex; align-items:center; gap:4px; margin:0 0 8px; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.parcours-semaines h2 > svg { color:#755b00; }
+.parcours-semaines .bilan-list { padding-left:20px; margin:0; }
+.parcours-semaines li { font:400 16px/26px Literata,Georgia,serif; }
+.parcours-semaines > p { margin:8px 0 0; color:#4a463f; font:500 12px/18px Outfit,system-ui,sans-serif; }
+.parcours-etapes > h2 { margin:0 0 16px; font:600 20px/28px Outfit,system-ui,sans-serif; }
+.parcours-page .bilan-jours { display:flex; flex-direction:column; gap:8px; margin:0 0 24px; padding:0; list-style:none; }
+.parcours-page .bilan-jour { display:grid; grid-template-columns:40px minmax(0,1fr); align-items:start; gap:16px; padding:16px; background:#f9f3e4; border:0; border-radius:8px; }
+.parcours-page .bilan-pastille { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; width:40px; height:40px; grid-row:auto; border-radius:4px; background:#e8e2d3; color:#4a463f; font:600 12px/16px Outfit,system-ui,sans-serif; box-shadow:none; }
+.parcours-page .bilan-jour.is-done .bilan-pastille { background:#e1e6c2; color:#191d08; }
+.parcours-page .bilan-jour.is-partial .bilan-pastille { background:#ffe08f; color:#241a00; }
+.parcours-page .bilan-jour.is-today { background:#e8e2d3; }
+.parcours-page .bilan-jour.is-today .bilan-pastille { background:#000; color:#ffe08f; }
+.parcours-jour-contenu { min-width:0; }
+.parcours-jour-titre { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px; }
+.parcours-page .bilan-num { font:600 12px/16px Outfit,system-ui,sans-serif; color:#4a463f; }
+.parcours-jour-titre small { flex-shrink:0; padding:2px 6px; border-radius:4px; background:#000; color:#ffe08f; font:600 10px/14px Outfit,system-ui,sans-serif; text-transform:uppercase; letter-spacing:.04em; }
+.parcours-jour-titre time { color:#755b00; font:500 12px/16px Outfit,system-ui,sans-serif; }
+.parcours-page .bilan-theme { display:block; margin:0 0 2px; color:#1d1c13; font:600 16px/24px Outfit,system-ui,sans-serif; }
+.parcours-page .bilan-etat { margin:0 0 4px; color:#755b00; font:500 12px/18px Outfit,system-ui,sans-serif; }
+.parcours-page .bilan-etat .link { display:inline-flex; align-items:center; min-height:48px; color:inherit; font:inherit; padding:0; }
+.parcours-consigne { color:#4a463f; margin:0; font:400 16px/26px Literata,Georgia,serif; }
+.parcours-revoir { display:inline-flex; align-items:center; gap:4px; min-height:48px; color:#1d1c13; font:600 14px/20px Outfit,system-ui,sans-serif; text-decoration:none; margin-top:4px; }
+.parcours-page .bilan-jour.bilan-ferme { border:2px dashed #cbb996; background:#f9f3e4; }
+.parcours-page .bilan-ferme .bilan-pastille { background:transparent; border:1px dashed #cbb996; color:#4a463f; }
+.parcours-page .bilan-ferme .bilan-etat { color:#4a463f; }
+.parcours-page .repere-parcours { background:#f9f3e4; border:0; border-radius:8px; }
+.parcours-page .repere-parcours h2 { font-family:Outfit,system-ui,sans-serif; }
+.parcours-confidentialite { display:flex; align-items:flex-start; justify-content:center; gap:4px; margin:40px 0 0; text-align:center; color:#4a463f; font:500 12px/18px Outfit,system-ui,sans-serif; }
+.parcours-confidentialite > svg { color:#755b00; flex-shrink:0; }
+.parcours-confidentialite a { color:inherit; }
+.parcours-page .barre-nav { font-family:Outfit,system-ui,sans-serif; background:#fff9ea; }
+.parcours-page .nav-plus { background:#000; color:#fff; border-radius:12px; }
+.parcours-page a:focus-visible,.parcours-page button:focus-visible { outline:2px solid #755b00; outline-offset:3px; }
+
+.parcours-page .progres-tuiles .parcours-rond > svg { color:inherit; }

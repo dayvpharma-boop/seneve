@@ -1,0 +1,324 @@
+/* Adaptation des détails visuels des maquettes Stitch : aucune copie éditoriale ajoutée. */
+:root {
+  --surface-saisie: color-mix(in srgb, var(--surface) 58%, var(--chip));
+}
+
+/* Identité commune et commandes de langue. */
+.barre-haut { min-height:64px; }
+.logo-marque { gap:10px; }
+.logo-marque > svg { width:24px; height:28px; flex-shrink:0; }
+.barre-espace .language-link {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:44px; min-height:44px; padding:8px 12px;
+  background:var(--chip); border-radius:var(--r-commande);
+}
+.barre-salut { overflow-wrap:anywhere; }
+.barre-espace .avatar { flex-shrink:0; }
+
+/* Champs ivoire : les labels restent visibles au-dessus des valeurs. */
+.field input, .field textarea, .field select, .champ-mdp input {
+  background:var(--surface-saisie); border-color:var(--control-line);
+  font-size:16px; line-height:1.5;
+}
+.field input, .field select, .champ-mdp input { min-height:56px; }
+.field textarea { padding:14px; line-height:1.65; resize:vertical; }
+.field input:focus-visible, .field textarea:focus-visible,
+.field select:focus-visible, .champ-mdp input:focus-visible {
+  outline:2px solid var(--foreground); outline-offset:3px;
+  box-shadow:none;
+}
+.connexion-intro { font-size:18px; line-height:1.65; margin-bottom:24px; }
+.connexion-form { padding:24px; gap:20px; }
+.connexion-form .field { gap:8px; }
+.connexion-form .field input, .connexion-form .champ-mdp input {
+  background:var(--surface-saisie);
+}
+.connexion-form .champ-mdp input { padding-right:104px; }
+.connexion-achat { padding:16px; line-height:1.65; }
+.connexion-aide { margin-top:-8px; }
+.connexion-form .moment-btn { margin-top:8px; min-height:56px; }
+.choix-double { margin-bottom:20px; }
+.choix-double button { min-height:48px; }
+
+/* Le critère se lit après la consigne, avant les commandes de progression. */
+.action-critere { border-top:1px solid var(--line); margin-top:18px; padding-top:16px; }
+.action-critere p:first-child {
+  font-family:Poppins,system-ui,sans-serif; font-size:13px; line-height:1.5;
+  color:var(--foreground); margin-bottom:8px;
+}
+.action-critere p:last-child { font-family:Lora,Georgia,serif; font-size:16px; line-height:1.7; margin-bottom:18px; }
+.action-box { padding:16px; line-height:1.7; }
+.prompt-carte { padding:18px; }
+.prompt-question { line-height:1.65; }
+
+/* Cibles tactiles et états de navigation. */
+.barre-nav a { min-height:56px; padding-top:8px; padding-bottom:6px; }
+.nav-plus { width:52px; height:52px; }
+.barre-nav a[aria-current="page"] > svg { stroke-width:2.4; }
+.btn:disabled, .btn-secondaire:disabled { cursor:default; opacity:.55; transform:none; }
+
+@media (hover:hover) {
+  .btn:not(:disabled):hover { opacity:.9; }
+  .btn-secondaire:not(:disabled):hover, .barre-espace .language-link:hover {
+    background:var(--chip);
+  }
+}
+@media (max-width:380px) {
+  .connexion-form { padding:18px; }
+  .barre-salut { font-size:12px; margin-left:0; }
+  .barre-nav a { font-size:11px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .btn, .btn-secondaire { transition:none; }
+}
+
+/* Connexion : proportions et polices de l'export Stitch 06. */
+@media (prefers-color-scheme:light) {
+  body:has(.connexion) { background:#fff9ea; }
+  .connexion {
+    --background:#fff9ea; --surface:#fff; --foreground:#1d1c13;
+    --muted:#4a463f; --chip:#eee8d9; --soft-gold:#f9f3e4;
+    --surface-saisie:#f9f3e4; --primary-fill:#000; --on-primary:#fff;
+  }
+}
+.connexion { padding-inline:20px; font-family:Literata,Georgia,serif; }
+.connexion h1, .connexion .brand, .connexion button, .connexion label,
+.connexion .language-link, .connexion-legal {
+  font-family:Outfit,system-ui,sans-serif;
+}
+.connexion h1 { font-size:26px; line-height:34px; letter-spacing:-.01em; }
+.connexion-intro { font-family:Literata,Georgia,serif; font-size:16px; line-height:26px; margin:8px 0 20px; }
+.connexion-barre { display:flex; align-items:center; gap:8px; min-height:64px; margin:-16px -20px 24px; padding:0 20px; }
+.connexion-barre .barre-espace { flex:1; min-width:0; margin:0; padding:0; border:0; background:transparent; }
+.connexion-retour { display:grid; place-items:center; width:32px; min-height:44px; flex-shrink:0; color:var(--foreground); }
+.connexion-compte { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; border-radius:12px; background:var(--primary-fill); color:var(--on-primary); }
+.connexion .logo-marque { font-size:16px; letter-spacing:.1em; gap:6px; }
+.connexion .language-link { min-height:44px; padding:8px 12px; font-size:12px; font-weight:500; letter-spacing:.04em; }
+.connexion .choix-double { padding:4px; border-radius:4px; margin-bottom:24px; }
+.connexion .choix-double button { font-family:Outfit,system-ui,sans-serif; font-size:14px; line-height:20px; min-height:44px; }
+.connexion-form { padding:20px; gap:24px; border:0; border-radius:8px; }
+.connexion-form .field { font-size:12px; line-height:16px; letter-spacing:.06em; text-transform:uppercase; gap:8px; }
+.connexion-form .field input, .connexion-form .champ-mdp input {
+  min-height:50px; padding:12px 14px; border:1px solid transparent;
+  font-family:Literata,Georgia,serif; font-size:16px; background:var(--surface-saisie);
+  text-transform:none; letter-spacing:normal; box-shadow:none;
+}
+.connexion-password { display:grid; gap:8px; }
+.connexion-password .field { margin:0; }
+.connexion-form .champ-mdp input { padding-right:94px; }
+.connexion .mdp-voir { text-transform:uppercase; letter-spacing:.06em; text-decoration:none; font-size:12px; color:#755b00; }
+.connexion .connexion-oubli { justify-self:end; text-decoration:none; font-size:12px; margin-top:0; padding:4px 0; min-height:44px; }
+.connexion .connexion-aide { margin:0; }
+.connexion .connexion-achat { gap:12px; padding:14px; border-radius:4px; font-family:Literata,Georgia,serif; font-size:14px; line-height:23px; }
+.connexion .connexion-achat svg { color:#755b00; }
+.connexion-form .moment-btn { min-height:52px; margin-top:0; text-transform:uppercase; letter-spacing:.1em; font-size:14px; }
+.connexion-legal { margin-top:20px; font-size:12px; line-height:1.6; }
+@media (prefers-color-scheme:dark) {
+  .connexion .mdp-voir, .connexion .connexion-achat svg { color:var(--or); }
+}
+
+/* Pensée du jour : bloc de la maquette avec extrait vérifié et référence au livre. */
+.connexion-pensee {
+  display:flex; align-items:center; gap:16px; margin-top:32px; padding:16px;
+  background:var(--chip); border-radius:8px;
+}
+.connexion-pensee-icone {
+  flex-shrink:0; display:grid; place-items:center; width:48px; height:48px;
+  background:color-mix(in srgb,var(--foreground) 5%,var(--chip));
+  border-radius:4px; color:#755b00;
+}
+.connexion-pensee-titre {
+  font-family:Outfit,system-ui,sans-serif; font-size:11px; line-height:16px;
+  text-transform:uppercase; letter-spacing:.06em; margin:0 0 4px;
+}
+.connexion-pensee blockquote {
+  font-family:Literata,Georgia,serif; font-size:14px; line-height:22px;
+  font-style:italic; margin:0;
+}
+@media(prefers-color-scheme:dark) { .connexion-pensee-icone { color:var(--or); } }
+
+/* Compléments de bas de formulaire repris de la maquette. */
+.connexion-suite { display:grid; justify-items:center; gap:12px; margin-top:8px; text-align:center; }
+.connexion-inscription { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:6px; margin:0; font-family:Literata,Georgia,serif; font-size:16px; line-height:26px; }
+.connexion-inscription button { border:0; background:transparent; color:var(--foreground); padding:8px 0; min-height:44px; font-family:Outfit,system-ui,sans-serif; font-size:14px; font-weight:600; text-decoration:underline; text-underline-offset:4px; }
+.connexion-securite { display:flex; justify-content:center; align-items:flex-start; gap:8px; padding-top:8px; margin:0; font-family:Outfit,system-ui,sans-serif; font-size:11px; line-height:18px; color:var(--muted); }
+.connexion-securite svg { flex-shrink:0; margin-top:1px; color:#755b00; }
+.connexion-suite + .connexion-legal { margin-top:12px; }
+@media(prefers-color-scheme:dark) { .connexion-securite svg { color:var(--or); } }
+
+.connexion-ouvrage { display:flex; align-items:center; gap:8px; margin:0 0 8px; font-family:Outfit,system-ui,sans-serif; font-size:12px; line-height:18px; font-weight:500; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+.connexion-ouvrage .point-or { width:6px; height:6px; }
+
+/* Blocs de maquette conservés et adaptés aux règles de pratique et de partage. */
+.pensee-source { display:block; margin-top:8px; font-family:Outfit,system-ui,sans-serif; font-size:11px; line-height:18px; font-style:normal; color:var(--muted); }
+.repere-parcours { display:flex; align-items:flex-start; gap:12px; background:var(--chip); border:1px solid var(--line); border-radius:8px; padding:16px; margin:20px 0; }
+.repere-parcours > svg { flex-shrink:0; margin-top:2px; color:var(--gold); }
+.repere-parcours h2 { margin:0 0 6px; font-family:Outfit,system-ui,sans-serif; font-size:14px; line-height:20px; font-weight:600; letter-spacing:0; }
+.repere-parcours p { margin:0; font-family:Literata,Georgia,serif; font-size:14px; line-height:24px; }
+
+.test-domaines { background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin:20px 0; }
+.test-domaines summary { cursor:pointer; font-family:Outfit,system-ui,sans-serif; font-size:14px; font-weight:600; min-height:32px; }
+.test-domaines ol { margin:12px 0 0; padding-left:24px; }
+.test-domaines li { font-family:Literata,Georgia,serif; font-size:14px; line-height:1.7; padding:3px 0; }
+#s-home .connexion-pensee { margin:22px 0 14px; }
+#s-home .home-intro .home-livre { color:var(--foreground); font-weight:600; font-style:normal; }
+#s-home .repere-parcours { margin-bottom:18px; }
+.repli .repere-parcours { margin-top:12px; }
+
+/* Questions et résultat : proportions et polices des exports Stitch 02 et 03.
+   Les affirmations et les scores restent ceux du test validé. */
+@media (prefers-color-scheme:light) {
+  body:has(#s-quiz:not([hidden])), body:has(#s-result:not([hidden])) { background:#fff9ea; }
+  #s-quiz, #s-result {
+    --background:#fff9ea; --surface:#fff; --foreground:#1d1c13;
+    --muted:#4a463f; --chip:#eee8d9; --soft-gold:#f9f3e4;
+    --gold:#785d00; --line:#e8e2d3; --primary-fill:#000; --on-primary:#fff;
+  }
+}
+#s-quiz, #s-result { font-family:Literata,Georgia,serif; }
+#s-quiz .barre-titre, #s-result .barre-titre,
+#s-quiz h2, #s-result h1, #s-result h2,
+#s-quiz .quiz-nav, #s-quiz .quiz-racine-num, #s-quiz .quiz-echelle,
+#s-quiz .tag, #s-quiz .scale-button, #s-quiz .scale-label, #s-quiz .segment-bloc b,
+#s-result .tag, #s-result .cat-chip, #s-result .score-grand,
+#s-result .root-row, #s-result .resultat-puce, #s-result .btn, #s-result .src {
+  font-family:Outfit,system-ui,sans-serif;
+}
+#s-quiz .barre-haut, #s-result .barre-haut { margin-bottom:20px; }
+#s-quiz .barre-titre, #s-result .barre-titre { font-size:16px; line-height:22px; }
+#s-quiz .barre-marque, #s-result .barre-marque { font-size:12px; letter-spacing:.1em; color:var(--gold); }
+#s-quiz .quiz-nav { min-height:48px; margin-bottom:8px; }
+#s-quiz .quiz-precedente { font-family:Outfit,system-ui,sans-serif; font-size:14px; line-height:20px; font-weight:500; min-height:48px; }
+#s-quiz .count-main { font-family:Outfit,system-ui,sans-serif; font-size:12px; letter-spacing:.04em; }
+#s-quiz .quiz-racine-num { text-transform:uppercase; font-size:12px; letter-spacing:.08em; }
+#s-quiz h2.quiz-racine { font-size:20px; line-height:28px; letter-spacing:-.01em; font-weight:600; margin:4px 0 0; }
+#s-quiz .quiz-racine-entete { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+#s-quiz .quiz-racine-entete > div { min-width:0; flex:1; }
+#s-quiz .quiz-restantes { max-width:128px; padding:2px 8px; background:var(--chip); border-radius:4px; font-family:Outfit,system-ui,sans-serif; font-size:12px; font-weight:600; line-height:16px; }
+#s-quiz .segments { gap:6px; margin:12px 0 0; padding-top:4px; }
+#s-quiz .segment-bloc .segment { height:6px; }
+#s-quiz .segment-bloc.is-current .segment i { background:var(--gold); }
+#s-quiz .quiz-card { background:var(--surface); border:0; border-radius:8px; padding:24px; margin:40px 0; }
+#s-quiz .quiz-card-haut { margin-bottom:16px; }
+#s-quiz .quiz-card-haut .tag { font-size:12px; line-height:16px; letter-spacing:.1em; text-transform:uppercase; }
+#s-quiz .quiz-card .q { font-family:Literata,Georgia,serif; font-size:26px; line-height:1.375; letter-spacing:-.01em; font-weight:600; margin:0 0 16px; }
+#s-quiz .quiz-card .q::before { content:'« '; }
+#s-quiz .quiz-card .q::after { content:' »'; }
+#s-quiz .quiz-card .tap-hint { font-family:Literata,Georgia,serif; font-size:14px; line-height:1.25; letter-spacing:.04em; font-weight:400; font-style:italic; margin:0; }
+#s-quiz .quiz-echelle { font-size:12px; line-height:16px; font-weight:600; gap:12px; margin:0 0 24px; }
+#s-quiz .quiz-echelle span:first-child { text-transform:uppercase; letter-spacing:.04em; }
+#s-quiz .scale { gap:6px; }
+#s-quiz .scale-button { width:56px; max-width:100%; height:56px; min-height:48px; background:var(--soft-gold); font-size:16px; line-height:24px; font-weight:700; border-radius:12px; color:var(--foreground); }
+#s-quiz .scale-button[aria-pressed="true"] { background:var(--primary-fill); color:var(--on-primary); }
+#s-quiz .scale-button:focus-visible { outline:2px solid var(--foreground); outline-offset:3px; }
+#s-quiz .scale-label { font-size:12px; line-height:16px; font-weight:600; letter-spacing:.06em; }
+#s-quiz .scale-option:has([aria-pressed="true"]) .scale-label { color:var(--foreground); font-weight:700; }
+#s-quiz .quiz-validation { margin-top:24px; padding-top:4px; }
+#s-quiz .quiz-validation .btn { width:100%; min-height:48px; border-radius:4px; font-family:Outfit,system-ui,sans-serif; font-size:14px; line-height:20px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+#s-quiz .quiz-confidentialite { display:flex; align-items:flex-start; gap:6px; margin:24px 0 0; padding:4px 0; color:var(--muted); font-family:Outfit,system-ui,sans-serif; font-size:11px; line-height:16px; letter-spacing:normal; }
+#s-quiz .quiz-confidentialite > svg { flex-shrink:0; margin-top:2px; color:var(--gold); }
+#s-result h1 { font-size:26px; line-height:34px; margin-bottom:24px; }
+#s-result .resultat-puce { font-size:11px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; }
+#s-result .card { border:0; border-radius:8px; padding:20px; margin-bottom:20px; }
+#s-result .card .tag { font-size:12px; line-height:18px; letter-spacing:.04em; font-weight:500; }
+#s-result .carte-haut { flex-wrap:wrap; gap:8px; }
+#s-result .result-hero h2 { font-size:20px; line-height:28px; margin:12px 0 4px; }
+#s-result .result-hero .cat-chip { white-space:normal; border-radius:4px; padding:3px 8px; }
+#s-result .score-grand { font-size:14px; margin-bottom:14px; }
+#s-result .score-grand b { font-size:32px; line-height:40px; }
+#s-result .quote-encart { background:var(--soft-gold); padding:16px; margin-top:20px; }
+#s-result .quote-encart .quote { font-family:Literata,Georgia,serif; font-size:16px; line-height:26px; }
+#s-result .src { font-size:11px; line-height:18px; }
+#s-result .action-box { background:var(--soft-gold); border:0; border-radius:4px; }
+#s-result .result-action .action { font-family:Literata,Georgia,serif; font-size:16px; line-height:26px; }
+#s-result .root-rows { gap:8px; margin-top:20px; }
+#s-result .root-row { background:var(--soft-gold); border:1px solid transparent; border-radius:4px; padding:10px 12px; margin:0; }
+#s-result .root-row.is-start { background:var(--chip); border-color:var(--gold); }
+#s-result .root-row-top { gap:4px; align-items:baseline; font-size:14px; line-height:20px; }
+#s-result .root-num { font-family:Outfit,system-ui,sans-serif; }
+#s-result .root-score { flex-shrink:0; font-weight:600; }
+#s-result .root-bar { height:6px; border-radius:2px; }
+#s-result .root-row.is-start .root-bar i { background:var(--gold); }
+#s-result .root-category { font-size:11px; line-height:18px; }
+#s-result .result-next .btn { min-height:52px; font-size:13px; letter-spacing:.04em; text-transform:uppercase; }
+@media (max-width:360px) {
+  #s-result .card { padding:16px; }
+}
+
+/* Mesures de la maquette reçue, sans modifier les textes ni les réponses. */
+.wrap:has(#s-quiz:not([hidden])) { padding:80px 20px 40px; }
+#s-quiz:not([hidden]) { display:flex; flex-direction:column; min-height:calc(max(884px, 100dvh) - 120px); }
+#s-quiz:not([hidden]) > * { flex-shrink:0; }
+#s-quiz .barre-haut { position:fixed; z-index:20; top:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; height:64px; margin:0; padding:0 20px; background:color-mix(in srgb,var(--background) 80%,transparent); backdrop-filter:blur(12px); box-shadow:0 1px 3px rgb(0 0 0 / .06); }
+#s-quiz .barre-retour { min-width:48px; min-height:48px; margin-left:-8px; }
+#s-quiz .barre-titre { font-size:16px; line-height:24px; font-weight:600; letter-spacing:.02em; }
+#s-quiz .quiz-racine-num { line-height:16px; margin:0; font-weight:600; letter-spacing:.1em; }
+#s-quiz .segment-bloc b { font-size:10px; line-height:16px; margin-top:4px; }
+#s-quiz .quiz-echelle { margin-top:0; }
+#s-quiz .count-main { text-transform:uppercase; line-height:16px; }
+@media (prefers-color-scheme:light) { #s-quiz { --gold:#755b00; } }
+
+/* Aujourd'hui : blocs de la maquette 04, avec les données et commandes du parcours. */
+@media (prefers-color-scheme:light) {
+  body:has(.espace-page) { background:#fff9ea; }
+  .espace-page {
+    --background:#fff9ea; --surface:#fff; --foreground:#1d1c13;
+    --muted:#4a463f; --chip:#eee8d9; --soft-gold:#f9f3e4;
+    --gold:#785d00; --line:#e8e2d3; --primary-fill:#000; --on-primary:#fff;
+  }
+}
+.espace-page { font-family:Literata,Georgia,serif; }
+.espace-page h1, .espace-page h2, .espace-page h3,
+.espace-page button, .espace-page .brand, .espace-page .tag,
+.espace-page .day-tile, .espace-page .today-parcours, .espace-page .today-progress,
+.espace-page .time-chip, .espace-page .dispo-chip, .espace-page .prompt-ecrire,
+.espace-page .barre-nav, .espace-page .repli > summary { font-family:Outfit,system-ui,sans-serif; }
+.espace-page .today-head h1 { font-size:26px; line-height:34px; margin-bottom:12px; }
+.espace-page .today-parcours { display:flex; align-items:center; gap:6px; width:fit-content; max-width:100%; padding:4px 8px; border-radius:6px; background:var(--soft-gold); color:var(--gold); font-size:11px; line-height:18px; letter-spacing:.04em; text-transform:uppercase; margin:0 0 8px; }
+.espace-page .today-parcours .point-or { width:6px; height:6px; background:currentColor; }
+.espace-page .weekly-head { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:4px 12px; margin-bottom:10px; }
+.espace-page .weekly-head h2 { font-family:Outfit,system-ui,sans-serif; font-size:11px; line-height:18px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; margin:0; }
+.espace-page .weekly-head p { font-family:Outfit,system-ui,sans-serif; font-size:11px; line-height:18px; color:var(--gold); margin:0; }
+.espace-page .today-progress .count-main { font-family:Outfit,system-ui,sans-serif; font-size:12px; }
+.espace-page .today-progress .count { font-size:12px; line-height:20px; }
+.espace-page .day-tiles { gap:5px; }
+.espace-page .day-tile { min-width:0; min-height:70px; padding:8px 0; border-radius:6px; }
+.espace-page .day-tile b { font-size:16px; }
+.espace-page .day-tile .tile-wd { font-size:11px; }
+.espace-page .today-section { margin:28px 0 20px; }
+.espace-page .today-section > h2, .espace-page .sec-head h2 { font-size:20px; line-height:28px; margin-bottom:12px; }
+.espace-page .sec-head { align-items:flex-start; }
+.espace-page .sec-titre h2 { margin-bottom:0; }
+.espace-page .moment-compte { margin:2px 0 12px; color:var(--muted); font-family:Outfit,system-ui,sans-serif; font-size:12px; line-height:18px; }
+.espace-page .sec-head .link { font-family:Outfit,system-ui,sans-serif; font-size:12px; min-height:44px; padding:10px 0; }
+.espace-page .moment-tuile { border:0; border-radius:8px; padding:20px; }
+.espace-page .moment-tuile h3 { font-size:17px; line-height:25px; margin:12px 0; }
+.espace-page .moment-tuile .time-chip { font-size:11px; line-height:18px; text-transform:uppercase; letter-spacing:.03em; }
+.espace-page .dispo-chip { background:var(--soft-gold); color:var(--gold); font-size:11px; line-height:18px; border-radius:5px; }
+.espace-page .moment-btn { min-height:52px; font-family:Outfit,system-ui,sans-serif; font-size:13px; letter-spacing:.04em; text-transform:uppercase; }
+.espace-page .moment-ferme { font-family:Literata,Georgia,serif; font-size:14px; line-height:24px; }
+.espace-page .action-card { border:0; border-radius:8px; padding:20px; }
+.espace-page .action-card .action-box { background:transparent; border-left:2px solid var(--gold); border-radius:0; padding:0 0 0 14px; }
+.espace-page .action-card .action { font-family:Literata,Georgia,serif; font-size:18px; line-height:30px; }
+.espace-page .action-card .action-btn { min-height:52px; font-family:Outfit,system-ui,sans-serif; font-size:14px; }
+.espace-page .action-card .choix-row { gap:8px; }
+.espace-page .action-card .choix-row .btn-secondaire { background:var(--soft-gold); border-color:var(--line); font-family:Outfit,system-ui,sans-serif; font-size:13px; min-height:48px; }
+.espace-page .action-critere p:first-child { font-family:Outfit,system-ui,sans-serif; }
+.espace-page .action-critere p:last-child { font-family:Literata,Georgia,serif; }
+.espace-page .prompt-carte { background:var(--surface); border:0; padding:20px; border-radius:8px; }
+.espace-page .prompt-carte .tag { font-family:Outfit,system-ui,sans-serif; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+.espace-page .prompt-question { background:var(--soft-gold); border-radius:4px; padding:16px; margin:12px 0 18px; font-family:Literata,Georgia,serif; font-size:17px; font-weight:400; line-height:28px; }
+.espace-page .prompt-ecrire { background:var(--primary-fill); color:var(--on-primary); border:0; min-height:52px; font-family:Outfit,system-ui,sans-serif; font-size:14px; padding:12px 16px; }
+.espace-page .prompt-ecrire svg { color:inherit; }
+.espace-page .journal-partage { display:flex; align-items:flex-start; gap:8px; margin:12px 0 0; font-family:Outfit,system-ui,sans-serif; font-size:12px; line-height:20px; color:var(--muted); }
+.espace-page .journal-partage svg { flex-shrink:0; margin-top:2px; color:var(--gold); }
+.espace-page .repli { background:var(--surface); border:0; border-radius:8px; padding:16px; margin:8px 0; }
+.espace-page .repli > summary { background:transparent; font-size:14px; line-height:22px; min-height:44px; margin:-8px; padding:8px; }
+.espace-page .repli > summary::after { content:''; flex-shrink:0; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); margin:0 4px 4px 12px; }
+.espace-page .repli[open] > summary::after { transform:rotate(225deg); margin-bottom:0; }
+.espace-page .barre-nav { background:var(--background); }
+.espace-page .moment-texte { font-family:Literata,Georgia,serif; font-size:17px; line-height:29px; }
+@media (max-width:360px) {
+  .espace-page .moment-tuile, .espace-page .action-card, .espace-page .prompt-carte { padding:16px; }
+  .espace-page .action-card .action { font-size:17px; line-height:28px; }
+}

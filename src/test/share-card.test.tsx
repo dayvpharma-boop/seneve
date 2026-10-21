@@ -60,7 +60,8 @@ function finish(totals: number[]) {
     const n = Math.floor(total / 3), r = total % 3;
     for (const v of [n, n + Number(r > 0), n + Number(r > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
-      fireEvent.click(screen.getByRole('button', { name: /Confirmer et suivant|Confirm and next/i }));
+      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      act(() => vi.advanceTimersByTime(160));
     }
   }
 }
@@ -75,30 +76,30 @@ describe('Image à partager — page de résultat', () => {
   });
   afterEach(() => { cleanup(); vi.useRealTimers(); });
 
-  it('rien n’est créé avant de toucher « Créer mon image »', () => {
+  it('prépare automatiquement l’aperçu local du résultat', async () => {
     render(<Index />);
     finish([7, 13, 8, 4, 13, 13, 7]);
     expect(screen.getByText('Partager')).toBeVisible();
-    expect(renderCard).not.toHaveBeenCalled();
+    await flush();
+    expect(renderCard).toHaveBeenCalled();
   });
 
-  it('montre le point d’appui seul par défaut, puis la racine de départ si la case est cochée', async () => {
+  it('montre la racine de départ et permet de masquer le point d’appui', async () => {
     render(<Index />);
     finish([7, 15, 8, 4, 13, 12, 7]);
-    fireEvent.click(screen.getByRole('button', { name: 'Créer mon image' }));
     await flush();
     expect(lastContent()?.strength).toEqual({ label: 'Mon point d’appui', name: 'Dîme et offrande' });
-    expect(lastContent()?.start).toBeUndefined();
+    expect(lastContent()?.start?.name).toBe("Liberté face à l'argent");
     expect(screen.getByRole('img', { name: 'Aperçu de ton image' })).toBeVisible();
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Ajouter aussi : je commence par Liberté face à l\'argent' }));
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Afficher ma racine forte' }));
     await flush();
     expect(lastContent()?.start).toEqual({ label: 'Je commence par', name: 'Liberté face à l\'argent' });
+    expect(lastContent()?.strength).toBeUndefined();
   });
 
   it('en cas d’égalité en haut, la personne choisit la racine à montrer', async () => {
     render(<Index />);
     finish([7, 13, 8, 4, 13, 13, 7]);
-    fireEvent.click(screen.getByRole('button', { name: 'Créer mon image' }));
     await flush();
     expect(screen.getByText('Plusieurs racines sont aussi solides. Choisis celle à montrer :')).toBeVisible();
     fireEvent.click(screen.getByRole('button', { name: 'Fidélité dans les petites choses' }));
@@ -109,7 +110,6 @@ describe('Image à partager — page de résultat', () => {
   it('change de format', async () => {
     render(<Index />);
     finish([7, 15, 8, 4, 13, 12, 7]);
-    fireEvent.click(screen.getByRole('button', { name: 'Créer mon image' }));
     await flush();
     expect(vi.mocked(renderCard).mock.calls.at(-1)?.[0]).toBe('vertical');
     fireEvent.click(screen.getByRole('button', { name: /^Carré/ }));
@@ -120,10 +120,11 @@ describe('Image à partager — page de résultat', () => {
   it('sans aucun point d’appui, l’image montre la racine par laquelle on commence', async () => {
     render(<Index />);
     finish([6, 5, 4, 3, 6, 5, 6]);
-    fireEvent.click(screen.getByRole('button', { name: 'Créer mon image' }));
     await flush();
     expect(lastContent()?.strength).toBeUndefined();
     expect(lastContent()?.start?.name).toBe('Liberté face à l\'argent');
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 });
+
+describe('Image noir et or',()=>{it('n’inclut aucun score et affiche les deux noms choisis',()=>{const {ctx,written}=fakeContext();drawCard(ctx,'vertical',{...content,design:'editorial'});const all=written.join(' ');expect(all).toContain('Liberté face à l’argent');expect(all).toContain('Dîme et offrande');expect(all).not.toMatch(/\d+\s*\/\s*15/);});});

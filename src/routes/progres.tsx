@@ -4,11 +4,14 @@ import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
 import { dateDuJour, pickDefault, placerOngletActif } from '@/lib/espace';
 import { Icone } from '@/components/Icone';
-import { nomParcours, textes } from '@/lib/espace-textes';
+import { nomParcours } from '@/lib/espace-textes';
 import { bilan, progresTextes, semaines, semaineTextes, type Bilan } from '@/lib/progres';
+import { JardinCard } from '@/components/JardinCard';
+import { IconeProgres } from '@/components/IconeProgres';
+import { RepereParcours } from '@/components/RepereParcours';
 
 type Parcours = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; duree: number; nom: string };
-type Loaded = { langue: string; parcours: Parcours[]; bilans: Record<string, Bilan>; notes: number };
+type Loaded = { prenom: string; actions: Record<string, Record<number, string>>; langue: string; parcours: Parcours[]; bilans: Record<string, Bilan>; notes: number };
 
 async function load(): Promise<Loaded | null> {
   const { data: s } = await supabase.auth.getSession();
@@ -16,7 +19,7 @@ async function load(): Promise<Loaded | null> {
   const ep = await supabase.rpc('ensure_participant', { p_prenom: (s.session.user.user_metadata?.['prenom'] as string | undefined) ?? '' });
   if (ep.error) throw ep.error;
   const [p, e, j] = await Promise.all([
-    supabase.from('participants').select('langue').maybeSingle(),
+    supabase.from('participants').select('langue, prenom').maybeSingle(),
     supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').neq('etat', 'annulee'),
     supabase.from('journal_entries').select('entry_id'),
   ]);
@@ -24,7 +27,8 @@ async function load(): Promise<Loaded | null> {
   const enr = (e.data ?? []) as Omit<Parcours, 'duree' | 'nom'>[];
   const langue = (p.data?.langue as string | undefined) ?? 'fr';
   const notes = (j.data ?? []).length;
-  if (!enr.length) return { langue, parcours: [], bilans: {}, notes };
+  const prenom = typeof p.data?.prenom === 'string' ? p.data.prenom : (typeof s.session.user.user_metadata?.prenom === 'string' ? s.session.user.user_metadata.prenom : '');
+  if (!enr.length) return { prenom, actions: {}, langue, parcours: [], bilans: {}, notes };
   const progIds = [...new Set(enr.map(x => x.programme_id))];
   const [pr, c, st] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', progIds),
@@ -35,9 +39,9 @@ async function load(): Promise<Loaded | null> {
   const progs = (pr.data ?? []) as { programme_id: string; nom: string; duree_jours: number | null }[];
   const contents = (c.data ?? []) as { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string }[];
   const ids = contents.map(x => x.content_id);
-  const a = ids.length ? await supabase.from('activities').select('activity_id, content_id, type_activite').in('content_id', ids) : { data: [], error: null };
+  const a = ids.length ? await supabase.from('activities').select('activity_id, content_id, type_activite, consigne').in('content_id', ids) : { data: [], error: null };
   if (a.error) throw a.error;
-  const activites = (a.data ?? []) as { activity_id: string; content_id: string; type_activite: string }[];
+  const activites = (a.data ?? []) as { activity_id: string; content_id: string; type_activite: string; consigne?: string }[];
   const etats = (st.data ?? []) as { enrollment_id: string; activity_id: string; etat: string; aide_demandee: boolean; realisee_le: string | null }[];
   const parcours: Parcours[] = enr.map(x => {
     const prog = progs.find(q => q.programme_id === x.programme_id);
@@ -45,11 +49,18 @@ async function load(): Promise<Loaded | null> {
     return { ...x, duree, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, duree) };
   });
   const bilans: Record<string, Bilan> = {};
+  const actions: Record<string, Record<number, string>> = {};
   for (const x of parcours) {
     const cts = contents.filter(ct => ct.programme_id === x.programme_id && String(ct.version) === String(x.version));
     bilans[x.enrollment_id] = bilan(x.date_debut, x.duree, cts, activites, etats.filter(s2 => s2.enrollment_id === x.enrollment_id));
+    actions[x.enrollment_id] = {};
+    for (const jour of bilans[x.enrollment_id]!.jours) {
+      const ids = new Set(cts.filter(ct => ct.jour === jour.jour).map(ct => ct.content_id));
+      const action = activites.find(a => a.type_activite === 'action' && ids.has(a.content_id));
+      if (typeof action?.consigne === 'string') actions[x.enrollment_id]![jour.jour] = action.consigne;
+    }
   }
-  return { langue, parcours, bilans, notes };
+  return { prenom, actions, langue, parcours, bilans, notes };
 }
 
 function dateCourte(iso: string, locale: string) {
@@ -79,78 +90,57 @@ export function Progres() {
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
   const langue = enr?.langue ?? data?.langue;
   // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026) : marque puis titre.
-  const tete = <header className="today-head"><div><p className="brand">SÉNEVÉ</p><h1>{T.titre}</h1></div></header>;
-  if (failed) return <main className="wrap avec-nav">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} /></main>;
-  if (!data) return <main className="wrap avec-nav">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langue} /></main>;
-  if (!enr) return <main className="wrap avec-nav">{tete}<p className="muted">{T.aucun}</p>{back}<BarreNav langue={langue} /></main>;
+  const en = langue === 'en';
+  const tete = <><header className="parcours-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span>{data && <span className="parcours-avatar" aria-hidden="true">{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</span>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header></>;
+  if (failed) return <main className="wrap avec-nav parcours-page">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
+  if (!data) return <main className="wrap avec-nav parcours-page">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langue} maquette iconesJournee /></main>;
+  if (!enr) return <main className="wrap avec-nav parcours-page">{tete}<p className="muted">{T.aucun}</p>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
 
   const b = data.bilans[enr.enrollment_id]!;
-  const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.titre}>
-    {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => setChosen(x.enrollment_id)}>{x.nom}</button>)}
+  const tabs = <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.titre}>
+    {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => setChosen(x.enrollment_id)}><span>{x.nom}</span>{x.enrollment_id === enr.enrollment_id && <small>{x.etat === 'en_pause' ? (en ? 'Paused' : 'En pause') : b.termine ? (en ? 'Completed' : 'Terminé') : b.pasCommence ? (en ? 'Upcoming' : 'À venir') : (en ? 'In progress' : 'En cours')}</small>}</button>)}
   </div>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;
   const aujourdhui = !b.termine && !b.pasCommence ? b.joursOuverts : null;
   const fermes = b.jours.filter(j => !j.ouvert);
-  const jourSemaine = (n: number) => new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'short' }).format(dateDuJour(enr.date_debut, n));
-  // Carte du parcours : une tuile par jour (même dessin que l'écran « Aujourd'hui »). Décorative : la liste des jours, plus bas, porte les liens.
+  const symboleJour = (j: Bilan['jours'][number], taille = 18) => !j.ouvert ? <IconeProgres nom="lock" taille={taille} /> : j.etat === 'realisee' ? <IconeProgres nom="check" taille={taille} /> : j.etat === 'partielle' ? <IconeProgres nom="contrast" taille={taille} /> : j.etat === 'preparee' ? <IconeProgres nom="hourglass_top" taille={taille} /> : j.aide ? <IconeProgres nom="help" taille={taille} /> : <span>{j.jour}</span>;
   const carte = <div className={b.duree > 14 ? 'day-tiles progres-tuiles is-compact' : 'day-tiles progres-tuiles'} aria-hidden="true">
-    {b.jours.map(j => {
-      const fait = j.etat === 'realisee';
-      const auj = j.jour === aujourdhui;
-      const classe = ['day-tile', auj && 'is-today', fait && 'is-done', !j.ouvert && 'is-locked', j.etat === 'partielle' && 'is-partial'].filter(Boolean).join(' ');
-      return <span key={j.jour} className={classe}>
-        <span className="tile-wd">{jourSemaine(j.jour)}</span><b>{j.jour}</b>
-        {auj ? <em>{textes(enr.langue).auj}</em> : !j.ouvert ? <Icone nom="cadenas" taille={16} /> : fait ? <Icone nom="coche" taille={16} /> : <span className="tile-vide" />}
-      </span>;
-    })}
+    {b.jours.map(j => <span key={j.jour} className={['day-tile',j.jour === aujourdhui && 'is-today',j.etat === 'realisee' && 'is-done',!j.ouvert && 'is-locked',j.etat === 'partielle' && 'is-partial',j.etat === 'preparee' && 'is-prepared'].filter(Boolean).join(' ')}><span className="parcours-rond">{symboleJour(j)}</span><span className="parcours-jour">J{j.jour}</span></span>)}
   </div>;
+  const semainesDuParcours = semaines(b);
 
-  return <main className="wrap avec-nav">
-    {tete}
-    <p className="muted progres-intro">{T.intro}</p>
-    {tabs}
-    {!tabs && <p className="today-parcours">{enr.nom}</p>}
-    {!b.pasCommence && <><p className="progres-compte">{b.termine ? T.termine : T.joursOuverts(b.joursOuverts, b.duree)}</p>{carte}</>}
+  return <main className="wrap avec-nav parcours-page">
+    {tete}<p className="progres-intro">{T.intro}</p>{tabs}
+    {!b.pasCommence && <JardinCard realisees={b.realisees} total={b.jours.filter(j => j.etat !== null).length} langue={enr.langue} />}
     <section className="card progres-carte" aria-label={enr.nom}>
       {b.pasCommence ? <p>{T.pasCommence}</p> : <>
+        <div className="parcours-synthese-titre"><h2>{T.realisees(b.realisees, b.actionsOuvertes)}</h2><span>{en ? 'Week' : 'Semaine'} {Math.max(1, Math.ceil(b.joursOuverts / 7))}</span></div>
+        <p className="progres-compte">{b.termine ? T.termine : T.joursOuverts(b.joursOuverts, b.duree)}</p>{carte}
         <ul className="progres-chiffres">
-          <li className="is-principal"><Icone nom="coche" taille={20} /><strong>{T.realisees(b.realisees, b.actionsOuvertes)}</strong></li>
-          {b.partielles > 0 && <li><Icone nom="fleche" taille={20} />{T.partielles(b.partielles)}</li>}
-          {b.preparees > 0 && <li><Icone nom="livre" taille={20} />{T.preparees(b.preparees)}</li>}
-          {b.aides > 0 && <li><Icone nom="aide" taille={20} />{T.aides(b.aides)}</li>}
-          <li><Icone nom="journal" taille={20} />{T.notes(data.notes)}</li>
+          <li><div><IconeProgres nom="check_circle" taille={16} /><strong>{b.realisees}</strong></div><span>{en ? 'Actions completed' : 'Actions réalisées'}</span></li>
+          <li><div><IconeProgres nom="hourglass_bottom" taille={16} /><strong>{b.partielles}</strong></div><span>{en ? 'Partly done' : 'En partie'}</span></li>
+          <li><div><IconeProgres nom="help" taille={16} /><strong>{b.aides}</strong></div><span>{en ? 'Help requested' : 'Aide demandée'}</span></li>
+          {b.preparees > 0 && <li><div><IconeProgres nom="hourglass_top" taille={16} /><strong>{b.preparees}</strong></div><span>{en ? 'Prepared' : 'Préparées'}</span></li>}
         </ul>
-        {b.prochain !== null
-          ? <div className="progres-suite"><p>{T.prochain(b.prochain)}</p><Link className="btn btn-link moment-btn" to={lienJour(b.prochain)}>{T.reprendre}<Icone nom="fleche" taille={20} /></Link></div>
-          : b.actionsOuvertes > 0 && <p className="success">{T.toutFait}</p>}
+        <p className="parcours-notes"><IconeProgres nom="edit_note" taille={18} />{T.notes(data.notes)}</p>
+        {b.prochain !== null ? <div className="progres-suite"><p>{T.prochain(b.prochain)}</p><Link className="btn btn-link moment-btn" to={lienJour(b.prochain)}>{T.reprendre}<IconeProgres nom="arrow_forward" taille={18} /></Link></div> : b.actionsOuvertes > 0 && <p className="success">{T.toutFait}</p>}
       </>}
     </section>
-    {!b.pasCommence && semaines(b).length > 0 && <section className="card">
-      <p className="tag">{semaineTextes(enr.langue).titreListe}</p>
-      <ul className="bilan-list">
-        {semaines(b).map(w => { const S = semaineTextes(enr.langue); return <li key={w.numero}>
-          <strong>{S.titre(w.numero)}</strong>{w.complete ? '' : ` (${S.enCours})`} — {w.applicables === 0 ? S.nonEvalue : S.realisees(w.realisees, w.applicables)}{w.partielles > 0 ? ` · ${S.partielles(w.partielles)}` : ''}{w.aides > 0 ? ` · ${S.aides(w.aides)}` : ''}
-        </li>; })}
-      </ul>
-    </section>}
-    <ol className="bilan-jours">
-      {b.jours.filter(j => j.ouvert).map(j => <li key={j.jour} className={`bilan-jour${j.ouvert ? '' : ' bilan-ferme'}${j.jour === aujourdhui ? ' is-today' : ''}${j.etat === 'realisee' ? ' is-done' : ''}`}>
-        <span className="bilan-pastille" aria-hidden="true">{j.etat === 'realisee' ? <Icone nom="coche" taille={18} /> : !j.ouvert ? <Icone nom="cadenas" taille={16} /> : j.jour}</span>
-        <span className="bilan-num">{T.jour(j.jour)}</span>
-        <span className="bilan-theme">{j.ouvert ? (j.theme ?? '') : ''}</span>
-        <span className={`bilan-etat etat-${j.etat ?? 'aucune'}`}>
-          {!j.ouvert ? T.ferme
-            : j.etat === null ? T.sansAction
-            : <Link className="link" to={lienJour(j.jour)}>{T.etats[j.etat]}{j.etat === 'realisee' && j.realiseeLe ? `${T.le}${dateCourte(j.realiseeLe, T.locale)}` : ''}{j.aide ? ` · ${T.aide}` : ''}</Link>}
-        </span>
+    {!b.pasCommence && semainesDuParcours.length > 0 && <section className="card parcours-semaines"><h2><IconeProgres nom="eco" />{en ? 'Weekly summary' : 'Bilan de la semaine'}</h2><ul className="bilan-list">{semainesDuParcours.map(w => { const S = semaineTextes(enr.langue); return <li key={w.numero}><strong>{S.titre(w.numero)}</strong>{w.complete ? '' : ` (${S.enCours})`} — {w.applicables === 0 ? S.nonEvalue : S.realisees(w.realisees, w.applicables)}{w.partielles > 0 ? ` · ${S.partielles(w.partielles)}` : ''}{w.aides > 0 ? ` · ${S.aides(w.aides)}` : ''}</li>; })}</ul><p>{semaineTextes(enr.langue).note}</p></section>}
+    <section className="parcours-etapes"><h2>{en ? 'Journey steps' : 'Les étapes du parcours'}</h2><ol className="bilan-jours">
+      {b.jours.filter(j => j.ouvert).map(j => <li key={j.jour} className={`bilan-jour${j.jour === aujourdhui ? ' is-today' : ''}${j.etat === 'realisee' ? ' is-done' : ''}${j.etat === 'partielle' ? ' is-partial' : ''}`}>
+        <span className="bilan-pastille" aria-hidden="true"><b>J{j.jour}</b>{symboleJour(j,14)}</span>
+        <div className="parcours-jour-contenu"><div className="parcours-jour-titre"><span className="bilan-num">{T.jour(j.jour)}</span>{j.jour === aujourdhui ? <small>{en ? 'Today' : 'Aujourd’hui'}</small> : <time dateTime={dateDuJour(enr.date_debut,j.jour).toISOString()}>{new Intl.DateTimeFormat(T.locale,{timeZone:'Africa/Kinshasa',day:'numeric',month:'short'}).format(dateDuJour(enr.date_debut,j.jour))}</time>}</div>
+          {j.theme && <h3 className="bilan-theme">{j.theme}</h3>}
+          <p className={`bilan-etat etat-${j.etat ?? 'aucune'}`}>{j.etat === null ? T.sansAction : <Link className="link" to={lienJour(j.jour)}>{T.etats[j.etat]}{j.etat === 'realisee' && j.realiseeLe ? `${T.le}${dateCourte(j.realiseeLe,T.locale)}` : ''}{j.aide ? ` · ${T.aide}` : ''}</Link>}</p>
+          {data.actions[enr.enrollment_id]?.[j.jour] && <p className="parcours-consigne">{data.actions[enr.enrollment_id]![j.jour]}</p>}
+          {j.jour === aujourdhui && <Link className="parcours-revoir" to={lienJour(j.jour)}>{en ? 'Review the day' : 'Revoir la journée'}<IconeProgres nom="arrow_forward" taille={18} /></Link>}
+        </div>
       </li>)}
-      {/* Jours pas encore ouverts : une seule ligne (un parcours de 90 jours en aurait 87). */}
-      {fermes.length > 0 && <li className="bilan-jour bilan-ferme">
-        <span className="bilan-pastille" aria-hidden="true"><Icone nom="cadenas" taille={16} /></span>
-        <span className="bilan-num">{fermes.length === 1 ? T.jour(fermes[0]!.jour) : T.jours(fermes[0]!.jour, fermes[fermes.length - 1]!.jour)}</span>
-        <span className="bilan-etat etat-aucune">{fermes.length === 1 ? T.ferme : T.fermes}</span>
-      </li>}
-    </ol>
-    <BarreNav langue={langue} />
+      {fermes.length > 0 && <li className="bilan-jour bilan-ferme"><span className="bilan-pastille" aria-hidden="true"><IconeProgres nom="lock" taille={16} /></span><div className="parcours-jour-contenu"><span className="bilan-num">{fermes.length === 1 ? T.jour(fermes[0]!.jour) : T.jours(fermes[0]!.jour,fermes[fermes.length-1]!.jour)}</span><p className="bilan-etat etat-aucune">{fermes.length === 1 ? T.ferme : T.fermes}</p></div></li>}
+    </ol></section>
+    <RepereParcours contexte="progres" langue={langue} />
+    <footer className="parcours-confidentialite"><IconeProgres nom="verified_user" taille={16} /><Link to="/confidentialite">{en ? 'Your progress is recorded in your space.' : 'Tes progrès sont enregistrés dans ton espace.'}</Link></footer>
+    <BarreNav langue={langue} maquette iconesJournee />
   </main>;
 }
