@@ -201,15 +201,24 @@ export function morceauxSurlignes(texte: string, mots: string[]): { t: string; t
 }
 
 export type Resultat = { livre: Livre; chapitre: number; verset: number; texte: string };
-/** Cherche des versets contenant tous les mots. Les livres se chargent un par un : `etape` donne l'avancement. */
+/** Livres téléchargés en même temps pendant une recherche (un par un, la première recherche prenait ~35 s). */
+export const RECHERCHE_EN_PARALLELE = 6;
+
+/** Cherche des versets contenant tous les mots. Plusieurs livres se téléchargent à la fois, mais ils sont
+ *  lus dans l'ordre de la Bible pour garder les résultats en ordre : `etape` donne l'avancement. */
 export async function rechercher(version: Version, requete: string, etape: (livresLus: number, resultats: Resultat[]) => void, annule: () => boolean) {
   const mots = motsRecherche(requete);
   const resultats: Resultat[] = [];
   if (mots.length === 0) { etape(LIVRES.length, resultats); return resultats; }
+  const charges: Promise<string[][]>[] = [];
+  const lancer = (i: number) => { if (i < LIVRES.length && !charges[i]) charges[i] = chargerLivre(version, LIVRES[i]!.code); };
+  for (let i = 0; i < RECHERCHE_EN_PARALLELE; i++) lancer(i);
   let lus = 0;
-  for (const livre of LIVRES) {
+  for (const [i, livre] of LIVRES.entries()) {
     if (annule()) return resultats;
-    const chapitres = await chargerLivre(version, livre.code);
+    lancer(i);
+    const chapitres = await charges[i]!;
+    lancer(i + RECHERCHE_EN_PARALLELE);
     chapitres.forEach((versets, c) => versets.forEach((texte, v) => {
       const n = normaliser(texte);
       if (mots.every(m => n.includes(m))) resultats.push({ livre, chapitre: c + 1, verset: v + 1, texte });
