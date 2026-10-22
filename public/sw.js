@@ -71,3 +71,26 @@ self.addEventListener('fetch', e => {
   }
 });
 
+
+/* Rappels sur le téléphone (validés le 22/10/2026) : le serveur n'envoie que le titre, un texte sans rien
+ * de privé et le lien de l'espace. Toucher la notification ouvre (ou ramène) SÉNEVÉ. */
+self.addEventListener('push', e => {
+  let m = {};
+  try { m = e.data ? e.data.json() : {}; } catch { m = {}; }
+  const lien = typeof m.url === 'string' && m.url.startsWith(BASE) ? m.url : BASE + 'espace';
+  e.waitUntil(self.registration.showNotification(m.title || 'SÉNEVÉ', {
+    body: m.body || '', tag: m.tag || 'seneve-rappel', icon: BASE + 'icons/icon-192.png', badge: BASE + 'icons/favicon-48.png', data: { url: lien },
+  }));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const lien = (e.notification.data && e.notification.data.url) || BASE + 'espace';
+  e.waitUntil((async () => {
+    const fenetres = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const f of fenetres) {
+      if (new URL(f.url).pathname.startsWith(BASE)) { await f.focus(); if ('navigate' in f) await f.navigate(lien).catch(() => undefined); return; }
+    }
+    await self.clients.openWindow(lien);
+  })());
+});
