@@ -12,6 +12,7 @@ import {IconePilotage} from '@/components/IconePilotage';
 import { Icone } from '@/components/Icone';
 import { IconeConfidentialite } from '@/components/IconeConfidentialite';
 import { PilotageAdmin } from '@/components/PilotageAdmin';
+import { EchangesDemande } from '@/components/EchangesDemande';
 import { formatDateHeure } from '@/lib/journal';
 import { ETATS_EQUIPE, ETAT_LIBELLE, REPONSE_MAX, erreurAdmin, filtrer, lienWhatsApp, type Filtre, type StaffRequest, type TeamMember } from '@/lib/admin';
 
@@ -115,6 +116,7 @@ function RequestAdmin({ request, admin, team, onSaved,maquette=false }: { maquet
     <p className="tag">{ETAT_LIBELLE[request.etat] ?? request.etat}</p>
     <p className="muted">{formatDateHeure(request.cree_le, 'fr-FR')} · {request.prenom || 'Sans prénom'} · {request.langue === 'en' ? 'anglais' : 'français'}{request.programme_id ? ` · ${request.programme_id}` : ''}</p>
     <p className="day-text">{request.motif}</p>
+    <EchangesDemande messages={request.messages} />
     {request.extraits_partages && <details><summary className="muted">Notes jointes par le participant</summary><p className="day-text">{request.extraits_partages}</p></details>}
     <p className="muted">
       {request.email && <>E-mail : <a href={`mailto:${request.email}`}>{request.email}</a><br /></>}

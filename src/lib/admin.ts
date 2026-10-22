@@ -4,7 +4,10 @@ export type StaffRequest = {
   request_id: string; cree_le: string; modifie_le: string; etat: string; motif: string;
   extraits_partages: string | null; reponse: string | null; affecte_a: string | null; affecte_email: string | null;
   prenom: string | null; langue: string; programme_id: string | null; email: string | null; whatsapp: string | null;
+  /** Échange daté : réponses enregistrées de l'équipe et réponses du participant (migration 042). */
+  messages?: EchangeAide[] | null;
 };
+export type EchangeAide = { auteur: 'participant' | 'equipe'; texte: string; cree_le: string };
 export type TeamMember = { auth_user_id: string; email: string; prenom: string | null; roles: string[] };
 
 export const REPONSE_MAX = 4000;

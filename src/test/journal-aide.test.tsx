@@ -229,6 +229,48 @@ describe('Besoin d’aide', () => {
     await waitFor(() => expect(rpcs).toContainEqual({ name: 'cancel_help_request', args: { p_request_id: 'R2' } }));
   });
 
+  it('répondre à l’équipe dans la même demande, seulement après une réponse de l’équipe', async () => {
+    tables['help_requests'] = [
+      { request_id: 'R1', motif: 'Mon audio ne s’ouvre pas.', etat: 'attente_participant', reponse: 'Quel téléphone utilises-tu ?', extraits_partages: null, cree_le: '2026-10-12T08:00:00Z' },
+      { request_id: 'R2', motif: 'Sans réponse encore', etat: 'recue', reponse: null, extraits_partages: null, cree_le: '2026-10-13T08:00:00Z' },
+    ];
+    tables['help_messages'] = [
+      { request_id: 'R1', auteur: 'equipe', texte: 'Quel téléphone utilises-tu ?', cree_le: '2026-10-12T09:00:00Z' },
+      { request_id: 'R1', auteur: 'participant', texte: 'Un Android.', cree_le: '2026-10-12T10:00:00Z' },
+    ];
+    at('/aide');
+    expect(await screen.findByText('Quel téléphone utilises-tu ?')).toBeInTheDocument();
+    expect(screen.getByText('Un Android.')).toBeInTheDocument();
+    expect(screen.getByText('Ta réponse :')).toBeInTheDocument();
+    // Une seule demande a reçu une réponse de l'équipe : un seul bouton.
+    const boutons = screen.getAllByRole('button', { name: 'Répondre à l’équipe' });
+    expect(boutons).toHaveLength(1);
+    fireEvent.click(boutons[0]!);
+    const champ = screen.getByLabelText('Ta réponse à l’équipe');
+    expect(champ).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Envoyer ma réponse' })).toBeDisabled();
+    fireEvent.change(champ, { target: { value: '  Un Samsung A14.  ' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer ma réponse' }));
+    expect(await screen.findByText('Réponse envoyée. L’équipe va la lire.')).toBeInTheDocument();
+    const appel = rpcs.find(x => x.name === 'reply_help_request');
+    expect(appel?.args).toMatchObject({ p_request_id: 'R1', p_texte: 'Un Samsung A14.' });
+    expect(typeof appel?.args['p_client_message_id']).toBe('string');
+  });
+
+  it('une demande résolue prévient que la réponse la rouvrira ; une demande annulée ne propose pas de répondre', async () => {
+    tables['help_requests'] = [
+      { request_id: 'R1', motif: 'Résolue', etat: 'resolue', reponse: 'Voici une piste.', extraits_partages: null, cree_le: '2026-10-12T08:00:00Z' },
+      { request_id: 'R2', motif: 'Annulée', etat: 'annulee', reponse: 'Réponse avant annulation', extraits_partages: null, cree_le: '2026-10-13T08:00:00Z' },
+    ];
+    tables['help_messages'] = [];
+    at('/aide');
+    expect(await screen.findByText('Voici une piste.')).toBeInTheDocument();
+    const boutons = screen.getAllByRole('button', { name: 'Répondre à l’équipe' });
+    expect(boutons).toHaveLength(1);
+    fireEvent.click(boutons[0]!);
+    expect(screen.getByText('Ta demande sera rouverte et l’équipe la relira.')).toBeInTheDocument();
+  });
+
   it('style de l’écran « Aujourd’hui » : urgence en évidence, coach accessible, barre du bas sans entrée active', async () => {
     at('/aide');
     expect(await screen.findByRole('note')).toHaveClass('aide-urgence');

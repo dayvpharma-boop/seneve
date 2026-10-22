@@ -10,22 +10,24 @@ import { IconeAide } from '@/components/IconeAide';
 
 
 type Request = { request_id: string; motif: string; etat: string; reponse: string | null; extraits_partages: string | null; cree_le: string };
+type Message = { request_id: string; auteur: 'participant' | 'equipe'; texte: string; cree_le: string };
 type Note = { entry_id: string; texte: string; cree_le: string };
 type Parcours = { enrollment_id: string; nom: string };
-type Loaded = { prenom: string; langue: string; requests: Request[]; notes: Note[]; parcours: Parcours[] };
+type Loaded = { prenom: string; langue: string; requests: Request[]; messages: Message[]; notes: Note[]; parcours: Parcours[] };
 
 async function load(): Promise<Loaded | null> {
   const { data: s } = await supabase.auth.getSession();
   if (!s.session) return null;
   const ep = await supabase.rpc('ensure_participant', { p_prenom: (s.session.user.user_metadata?.['prenom'] as string | undefined) ?? '' });
   if (ep.error) throw ep.error;
-  const [p, h, j, e] = await Promise.all([
+  const [p, h, j, e, m] = await Promise.all([
     supabase.from('participants').select('langue,prenom').maybeSingle(),
     supabase.from('help_requests').select('request_id, motif, etat, reponse, extraits_partages, cree_le').order('cree_le', { ascending: false }),
     supabase.from('journal_entries').select('entry_id, texte, cree_le').order('cree_le', { ascending: false }),
     supabase.from('enrollments').select('enrollment_id, programme_id, langue').neq('etat', 'annulee'),
+    supabase.from('help_messages').select('request_id, auteur, texte, cree_le').order('cree_le', { ascending: true }),
   ]);
-  for (const r of [p, h, j, e]) if (r.error) throw r.error;
+  for (const r of [p, h, j, e, m]) if (r.error) throw r.error;
   const enr = (e.data ?? []) as { enrollment_id: string; programme_id: string; langue: string }[];
   let parcours: Parcours[] = [];
   if (enr.length) {
@@ -41,6 +43,7 @@ async function load(): Promise<Loaded | null> {
     prenom: p.data?.prenom ?? s.session.user.user_metadata?.['prenom'] ?? '',
     langue: (p.data?.langue as string | undefined) ?? 'fr',
     requests: (h.data ?? []) as Request[],
+    messages: (m.data ?? []) as Message[],
     notes: (j.data ?? []) as Note[],
     parcours,
   };
@@ -147,14 +150,14 @@ export function Aide() {
     <section className="today-section" aria-labelledby="titre-demandes">
       <div className="aide-historique-tete"><h2 id="titre-demandes">{T.mesDemandes}</h2><span>{data.requests.length} {en?(data.requests.length===1?"request":"requests"):(data.requests.length===1?"demande":"demandes")}</span></div>
       {data.requests.length === 0 ? <div className="card journal-vide"><Icone nom="aide" taille={28} /><p>{T.aucuneDemande}</p></div>
-        : data.requests.map(r => <RequestCard key={r.request_id} request={r} langue={data.langue} onChanged={refresh} />)}
+        : data.requests.map(r => <RequestCard key={r.request_id} request={r} messages={data.messages.filter(x => x.request_id === r.request_id)} langue={data.langue} onChanged={refresh} />)}
     </section>
     <footer className="aide-pied"><span><IconeAide nom="lock" taille={18} /></span><strong>{en?'Discretion & support':'Discrétion & accompagnement'}</strong><p>{en?'Your request and the excerpts you attach are read by the SÉNEVÉ support team.':'Ta demande et les extraits que tu joins sont lus par l’équipe d’accompagnement SÉNEVÉ.'}</p></footer>
     <BarreNav langue={data.langue} iconesAide />
   </main>;
 }
 
-function RequestCard({ request, langue, onChanged }: { request: Request; langue: string; onChanged: () => Promise<void> }) {
+function RequestCard({ request, messages, langue, onChanged }: { request: Request; messages: Message[]; langue: string; onChanged: () => Promise<void> }) {
   const T = journalTextes(langue);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -162,6 +165,30 @@ function RequestCard({ request, langue, onChanged }: { request: Request; langue:
   const [confirmer, setConfirmer] = useState(false);
   const conserver = useRef<HTMLButtonElement>(null);
   useEffect(() => { if (confirmer) conserver.current?.focus(); }, [confirmer]);
+  // Réponse du participant dans la même demande, une fois que l'équipe a répondu.
+  const [repondre, setRepondre] = useState(false);
+  const [texte, setTexte] = useState('');
+  const [envoyee, setEnvoyee] = useState(false);
+  const envoiId = useRef<string | null>(null);
+  const champ = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => { if (repondre) champ.current?.focus(); }, [repondre]);
+  const equipeARepondu = messages.some(x => x.auteur === 'equipe') || Boolean(request.reponse);
+  const peutRepondre = request.etat !== 'annulee' && equipeARepondu;
+
+  async function envoyer(e: FormEvent) {
+    e.preventDefault();
+    const t = texte.trim();
+    if (busy || !t || t.length > MOTIF_MAX) return;
+    setBusy(true); setError('');
+    envoiId.current = eventIdFor(envoiId.current);
+    try {
+      const { error } = await supabase.rpc('reply_help_request', { p_request_id: request.request_id, p_client_message_id: envoiId.current, p_texte: t });
+      if (error) throw error;
+      envoiId.current = null; setTexte(''); setRepondre(false); setEnvoyee(true);
+      await onChanged();
+    } catch { setError(T.erreurAction); }
+    finally { setBusy(false); }
+  }
 
   async function cancel() {
     setBusy(true); setError('');
@@ -179,7 +206,21 @@ function RequestCard({ request, langue, onChanged }: { request: Request; langue:
     <div className="demande-tete"><div><p className="note-date">{formatDateHeure(request.cree_le, T.locale)}</p>{sujet&&<h3 className="demande-sujet">{sujet[1]}</h3>}</div><span className={`time-chip etat-${request.etat}`}>{T.etats[request.etat] ?? request.etat}</span></div>
     <p className="day-text">{message}</p>
     {request.extraits_partages && <details><summary className="muted">{T.notesJointes}</summary><p className="day-text">{request.extraits_partages}</p></details>}
-    {request.reponse && <div className="prompt-carte demande-reponse"><p className="tag"><IconeAide nom="history_edu" taille={17} />{T.reponse}</p><p className="day-text">{request.reponse}</p></div>}
+    {messages.length
+      ? messages.map((x, i) => x.auteur === 'equipe'
+          ? <div key={i} className="prompt-carte demande-reponse"><p className="tag"><IconeAide nom="history_edu" taille={17} />{T.reponse}</p><p className="note-date">{formatDateHeure(x.cree_le, T.locale)}</p><p className="day-text">{x.texte}</p></div>
+          : <div key={i} className="demande-message-participant"><p className="tag">{T.taReponse}</p><p className="note-date">{formatDateHeure(x.cree_le, T.locale)}</p><p className="day-text">{x.texte}</p></div>)
+      : request.reponse && <div className="prompt-carte demande-reponse"><p className="tag"><IconeAide nom="history_edu" taille={17} />{T.reponse}</p><p className="day-text">{request.reponse}</p></div>}
+    {envoyee && <p className="success" role="status">{T.reponseEnvoyee}</p>}
+    {peutRepondre && (repondre
+      ? <form className="demande-repondre" onSubmit={envoyer}>
+          <label className="field" htmlFor={`reponse-${request.request_id}`}>{T.champReponse}</label>
+          <textarea ref={champ} id={`reponse-${request.request_id}`} rows={3} value={texte} maxLength={MOTIF_MAX} onChange={e => { setTexte(e.target.value); envoiId.current = null; }} />
+          {request.etat === 'resolue' && <p className="muted">{T.rouvrir}</p>}
+          <button type="submit" className="btn" disabled={busy || !texte.trim()}>{busy ? T.enregistrement : T.envoyerReponse}</button>
+          <button type="button" className="link" disabled={busy} onClick={() => { setRepondre(false); setTexte(''); }}>{T.annulerReponse}</button>
+        </form>
+      : <button type="button" className="link demande-bouton-repondre" disabled={busy} onClick={() => { setRepondre(true); setEnvoyee(false); }}><IconeAide nom="rate_review" taille={16} />{T.repondre}</button>)}
     {peutAnnuler(request.etat) && (confirmer
       ? <div className="demande-confirmation" role="group" aria-labelledby={`annuler-${request.request_id}`}>
           <p className="demande-confirmation-titre" id={`annuler-${request.request_id}`}>{T.confirmerAnnulTitre}</p>

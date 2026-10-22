@@ -89,6 +89,14 @@ export const JOURNAL_TEXTES = {
     confirmerAnnulTexte: 'Si tu annules cette demande, l’équipe d’accompagnement ne la traitera plus. Tu pourras toujours créer une nouvelle demande plus tard si le problème persiste.',
     conserverDemande: 'Conserver ma demande',
     confirmerAnnul: 'Confirmer l’annulation',
+    // Réponse du participant dans la même demande (maquette corrigée « Partage de notes & Réponse »).
+    repondre: 'Répondre à l’équipe',
+    taReponse: 'Ta réponse :',
+    champReponse: 'Ta réponse à l’équipe',
+    envoyerReponse: 'Envoyer ma réponse',
+    annulerReponse: 'Annuler',
+    reponseEnvoyee: 'Réponse envoyée. L’équipe va la lire.',
+    rouvrir: 'Ta demande sera rouverte et l’équipe la relira.',
     etats: {
       recue: 'Reçue',
       affectee: 'Confiée à un accompagnateur',
@@ -162,6 +170,13 @@ export const JOURNAL_TEXTES = {
     confirmerAnnulTexte: 'If you cancel this request, the support team will no longer handle it. You can always create a new request later if the problem continues.',
     conserverDemande: 'Keep my request',
     confirmerAnnul: 'Confirm cancellation',
+    repondre: 'Reply to the team',
+    taReponse: 'Your reply:',
+    champReponse: 'Your reply to the team',
+    envoyerReponse: 'Send my reply',
+    annulerReponse: 'Cancel',
+    reponseEnvoyee: 'Reply sent. The team will read it.',
+    rouvrir: 'Your request will be reopened and the team will read it again.',
     etats: {
       recue: 'Received',
       affectee: 'Assigned to a companion',
