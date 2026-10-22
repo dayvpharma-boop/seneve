@@ -322,3 +322,16 @@
   .espace-page .moment-tuile, .espace-page .action-card, .espace-page .prompt-carte { padding:16px; }
   .espace-page .action-card .action { font-size:17px; line-height:28px; }
 }
+
+/* Test des 7 Racines V4 (22/10/2026) : question d'ouverture, phrase-seuil, question libre sur le manteau. */
+#s-home .home-ouverture, #s-quiz .quiz-seuil { margin:24px 0 0; padding:14px 16px; border:0; background:var(--soft-gold); border-radius:var(--r-carte); }
+#s-home .home-ouverture .quote, #s-quiz .quiz-seuil .quote { margin:0; font-family:Literata,Georgia,serif; font-size:17px; line-height:27px; color:var(--foreground); }
+#s-home .home-ouverture .src, #s-quiz .quiz-seuil .src { margin:6px 0 0; font-size:13px; color:var(--muted); }
+#s-quiz .quiz-seuil + .quiz-card { margin-top:20px; }
+#s-quiz .quiz-manteau { display:grid; gap:8px; margin:0 0 20px; }
+#s-quiz .quiz-manteau-question { font-family:Literata,Georgia,serif; font-size:17px; line-height:26px; color:var(--foreground); }
+#s-quiz .quiz-manteau textarea { width:100%; box-sizing:border-box; padding:12px; font:inherit; font-size:16px; color:var(--foreground); background:var(--surface); border:1px solid var(--control-line); border-radius:var(--r-commande); resize:vertical; }
+#s-quiz .quiz-manteau textarea:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+#s-quiz .quiz-manteau .muted { margin:0; font-size:13px; }
+#s-result .manteau-resultat .quote { font-family:Literata,Georgia,serif; font-size:17px; line-height:27px; }
+:root[data-apparence="sombre"] :is(#s-home .home-ouverture, #s-quiz .quiz-seuil) { background:#211f1c; }

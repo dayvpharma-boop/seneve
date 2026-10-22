@@ -9,8 +9,9 @@ function finishQuiz(totals: number[]) {
   for (const total of totals) {
     const value = Math.floor(total / 3);
     const remainder = total % 3;
-    for (const answer of [value, value + Number(remainder > 0), value + Number(remainder > 1)]) {
-      fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} sur 5`) }));
+    for (const [j, answer] of [value, value + Number(remainder > 0), value + Number(remainder > 1)].entries()) {
+      // FR V4 : la première affirmation de chaque racine compte à l'envers (6 - réponse) ; on clique donc 6 - valeur voulue.
+      fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${j === 0 ? 6 - answer : answer} sur 5`) }));
       { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
       act(() => { vi.advanceTimersByTime(400); });
     }
@@ -59,7 +60,7 @@ describe('Résultat « Sentier »', () => {
       expect(row.classList.contains('is-start')).toBe(k === 4);
     });
     fireEvent.click(screen.getByText('Comment lire tes résultats ?'));
-    expect(screen.getByText('Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15.')).toBeVisible();
+    expect(screen.getByText(/^Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15\. La première phrase de chaque racine décrit une difficulté/)).toBeVisible();
     expect(screen.getByText(/Un petit écart entre deux totaux/)).toBeVisible();
   });
 

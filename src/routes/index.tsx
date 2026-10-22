@@ -34,7 +34,7 @@ function RootCard({ tag, k, total, language, explanation }: { tag: string; k: nu
  const t = texts[language];
  const root = t.roots[k];
  if (!root) return null;
-  return <div className="card result-hero"><div className="carte-haut"><p className="tag">{tag}</p><span className="cat-chip">{categorie(total, language)}</span></div><h2>{root.n}</h2><p className="score-grand"><b>{total}</b> / 15</p><p className="muted">{explanation}</p><div className="quote-encart"><p className="result-auteur"><IconeResultat nom="format_quote" taille={18}/>Dr Justin Tshims</p><p className="quote">{t.quote(root.p)}</p><p className="src">{t.quoteSource}</p></div></div>;
+  return <div className="card result-hero"><div className="carte-haut"><p className="tag">{tag}</p><span className="cat-chip">{categorie(total, language)}</span></div><h2>{root.n}</h2><p className="score-grand"><b>{total}</b> / 15</p><p className="muted">{explanation}</p><div className="quote-encart"><p className="result-auteur"><IconeResultat nom="format_quote" taille={18}/>Dr Justin Tshims</p><p className="quote">{t.quote(root.o ?? root.p)}</p><p className="src">{root.o && root.c ? t.openingSource(root.c) : t.quoteSource}</p></div></div>;
 }
 /** Racine forte (cahier n°4, §11 A) : la ou les racines au total le plus haut, sans note chiffrée.
  * Absente quand les sept racines sont au même niveau, toutes points d'appui, ou toutes à développer. */
@@ -52,13 +52,14 @@ function StrengthCard({ fortes, total, language }: { fortes: number[]; total: nu
   <p className="muted">{plusieurs ? t.resultHelp.strengthMany : t.resultHelp.strengthOne}</p>
  </div>;
 }
-function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (number | null)[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language }) {
+function ResultBody({ answers, chosenRoot, onChoose, language, mantle = '' }: { answers: (number | null)[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language; mantle?: string }) {
    const t = texts[language];
    const R = t.roots;
   const [partageOuvert, setPartageOuvert] = useState(false);
-  const r = compute(answers);
+  const r = compute(answers, t.reversed);
   if (!r) return null;
-   const allOne = answers.every(value => value === 1);
+   // « Tout à développer » : chaque racine au minimum (3 / 15), après inversion des miroirs en FR V4.
+   const allOne = r.t.every(total => total === 3);
    const allSupport = r.t.every(total => total >= 12);
    const freeChoice = allOne || allSupport || r.same;
    const needsChoice = freeChoice || r.faibles.length > 1;
@@ -81,6 +82,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
      {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} explanation={needsChoice ? t.resultHelp.chosen : t.resultHelp.suggested} />}
     {root && <div className="card action-card result-action"><p className="result-orientation"><IconeResultat nom="eco" taille={20}/>{language==='en'?'Immediate direction':'Orientation immédiate'}</p><p className="tag">{t.firstAction}</p><div className="action-box"><IconeResultat nom="menu_book" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
     {root && needsChoice && <a className="btn btn-link choix-continuer" href={`${import.meta.env.BASE_URL}connexion${language==='en'?'?lang=en':''}`}>{language==='en'?'Continue with this root':'Continuer avec cette racine'}</a>}
+    {t.mantle && mantle.trim() && <div className="card manteau-resultat"><p className="tag">{t.mantle.resultTitle}</p><p className="quote">{t.quote(mantle.trim())}</p><p className="src">{t.mantle.source}</p><p className="muted">{t.mantle.kept}</p></div>}
     {root && <RepereParcours contexte="resultat" langue={language} />}
      <div className="card root-list-card"><p className="tag">{t.rootsTitle}<IconeResultat nom="analytics" taille={20}/></p><p>{t.summary}</p>
        <details className="result-method"><summary>{t.resultHelp.method}</summary><p>{t.resultHelp.calculation}</p><p>{t.resultHelp.bands}</p><p>{t.resultHelp.close}</p></details>
@@ -116,6 +118,8 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  const [answers, setAnswers] = useState<(number | null)[]>(Array(21).fill(null));
  const [i, setI] = useState(0);
   const [chosenRoot, setChosenRoot] = useState<number | null>(null);
+ // Question libre sur le manteau : gardée seulement dans la page (ni enregistrée, ni envoyée).
+ const [mantle, setMantle] = useState('');
  const question = useRef<HTMLParagraphElement>(null);
  const title = useRef<HTMLHeadingElement>(null);
  const focusNext = useRef(false);
@@ -184,6 +188,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    </div>
    {screen === 'home' && <details className="test-domaines"><summary>{en ? 'The 7 roots explored' : 'Les 7 racines explorées'}</summary><ol>{t.roots.map(root => <li key={root.n}>{root.n}</li>)}</ol></details>}
    <RepereParcours contexte="test" langue={language} />
+   {t.opening && <figure className="home-ouverture"><blockquote className="quote">{t.quote(t.opening.text)}</blockquote><figcaption className="src">{t.opening.source}</figcaption></figure>}
    <p className="home-note quote-bloc">{t.instruction}</p>
    <div className="home-start">
     <PrototypeButton className="btn btn-fleche" id="start" onClick={() => setScreen('quiz')}>{t.start}<Icone nom="fleche" taille={20} /></PrototypeButton>
@@ -206,17 +211,19 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    <div className="segments" aria-hidden="true">
     {[0,1,2,3,4,5,6].map(k => <span key={k} className={k === racineEnCours ? 'segment-bloc is-current' : k < racineEnCours ? 'segment-bloc is-done' : 'segment-bloc'}><span className="segment"><i style={{ width: `${Math.min(1, Math.max(0, (i + 1 - 3*k) / 3)) * 100}%` }} /></span><b>{k+1}</b></span>)}
    </div>
+   {i % 3 === 0 && t.roots[racineEnCours]?.s && <figure className="quiz-seuil"><blockquote className="quote">{t.quote(t.roots[racineEnCours]?.s ?? '')}</blockquote><figcaption className="src">{t.thresholdSource}</figcaption></figure>}
    <div className="quiz-card">
     <div className="quiz-card-haut"><span className="tag">{en ? `Statement ${i+1}` : `Affirmation ${i+1}`}</span><Icone nom="citation" taille={18} /></div>
     <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
     <p className="tap-hint"><Icone nom="graine" taille={16} />{t.tapHint}</p>
    </div>
-   <div className="quiz-echelle"><span>{en ? 'Choose your answer' : 'Positionne ta réponse'}</span><span>{en ? 'Scale from 1 to 5' : 'Échelle de 1 à 5'}</span></div>
+   <div className="quiz-echelle"><span>{t.scaleTitle}</span><span>{t.scaleHint}</span></div>
    <div className="scale" id="scale" role="group" aria-label={t.answerGroup}>
     {[1,2,3,4,5].map(v => <div className="scale-option" key={v}><PrototypeButton className="scale-button" aria-pressed={answers[i]===v} aria-label={t.answerLabel(v)} onClick={() => answer(v)}>{v}</PrototypeButton>{'answerOptions' in t && <span className="scale-label" aria-hidden="true">{t.answerOptions[v - 1]}</span>}</div>)}
    </div>
    <div className="ends"><span>{t.never}</span><span>{t.always}</span></div>
    <div className="quiz-validation">
+    {answers.every(a => a !== null) && t.mantle && <div className="quiz-manteau"><label htmlFor="manteau" className="quiz-manteau-question">{t.mantle.question}</label><textarea id="manteau" rows={3} maxLength={500} value={mantle} onChange={e => setMantle(e.target.value)} aria-describedby="manteau-aide" placeholder={t.mantle.label} /><p id="manteau-aide" className="muted">{t.mantle.hint}</p></div>}
     {answers.every(a => a !== null) && <PrototypeButton className="btn btn-fleche" onClick={() => setScreen('result')}>{t.seeResult}<Icone nom="fleche" taille={20} /></PrototypeButton>}
     <p className="quiz-confidentialite"><Icone nom="cadenas" taille={18} /><span>{t.privacyTest} <a className="link-inline" href={`${import.meta.env.BASE_URL}confidentialite${en ? '?lang=en' : ''}`}>{t.privacyLink}</a></span></p>
    </div>
@@ -224,9 +231,9 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
   <section id="s-result" hidden={screen !== 'result'}>
    <div className="resultat-outils">{barreTest}<Apparence langue={language} compact/></div>
    <p className="resultat-puce">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
-    <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} />}</div>
+    <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} mantle={mantle} />}</div>
     <p className="muted">{t.final}</p>
-    <PrototypeButton className="link" id="again" onClick={() => { savedResult.current = null; setAnswers(Array(21).fill(null)); setChosenRoot(null); setI(0); setScreen('home'); }}>{t.again}</PrototypeButton>
+    <PrototypeButton className="link" id="again" onClick={() => { savedResult.current = null; setAnswers(Array(21).fill(null)); setChosenRoot(null); setMantle(''); setI(0); setScreen('home'); }}>{t.again}</PrototypeButton>
   </section>
  </main>;
 }

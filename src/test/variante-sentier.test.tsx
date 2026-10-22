@@ -17,14 +17,14 @@ describe('Variante 1 « Sentier » du Test des 7 Racines', () => {
 
   it('montre les trois repères rassurants sur l’accueil, en français', () => {
     render(<Index />);
-    for (const label of ['Sans compte', '21 questions', 'Retour possible']) expect(screen.getByText(label)).toBeVisible();
+    for (const label of ['Sans compte', '21 affirmations', 'Retour possible']) expect(screen.getByText(label)).toBeVisible();
     expect(screen.getByRole('button', { name: 'Commencer' })).toBeVisible();
   });
 
-  it('garde « 5 = toujours » et le titre du livre groupés sur une ligne (espaces insécables)', () => {
+  it('garde l’échelle et le titre du livre groupés sur une ligne (espaces insécables)', () => {
     render(<Index />);
     expect(document.querySelector('.home-intro')?.textContent).toContain('« Arrête de mendier des miracles »');
-    expect(document.querySelector('.home-note')?.textContent).toContain('(1 = jamais, 5 = toujours)');
+    expect(document.querySelector('.home-note')?.textContent).toContain('de 1 (pas du tout) à 5 (tout à fait)');
   });
 
   it('n’allume pas un chiffre au toucher : l’effet de survol est réservé à la souris', () => {

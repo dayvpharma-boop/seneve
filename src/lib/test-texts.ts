@@ -1,41 +1,55 @@
-const frenchRoots = [
- {n:"Priorité au Royaume", p:"Cherche le Roi, et les miracles retrouveront leur juste place.", a:"Commence ta journée avec 15 minutes de silence avant ton téléphone. Lis Matthieu 6:25-34.", j:1},
- {n:"Dîme et offrande", p:"La dîme n'a jamais enrichi Dieu. Elle a toujours libéré l'homme.", a:"Relis Malachie 3:10-12. Prie sur la promesse divine de protection financière.", j:12},
- {n:"Travail et intégrité", p:"Dieu ne bénit pas l'inaction — Il bénit l'effort consacré.", a:"Accomplis une tâche ordinaire avec une excellence inhabituelle — comme si Dieu l'observait directement.", j:20},
- {n:"Liberté face à l'argent", p:"Le problème n'a jamais été ce que tu as dans la poche. Le problème, c'est ce que la poche a mis dans ton cœur.", a:"Écris dans un carnet tout ce pour quoi tu es reconnaissant aujourd'hui. Minimum 10 choses.", j:4},
- {n:"Compassion et Tsedaka", p:"Dieu t'a béni précisément pour que tu sois un canal, pas un réservoir.", a:"Rends visite à une veuve, un orphelin ou une personne seule dans ton entourage.", j:17},
- {n:"Fidélité dans les petites choses", p:"Dieu n'examine pas tes rêves. Il examine tes habitudes.", a:"Relis Luc 16:10-13. Médite sur ce que signifie la fidélité dans les petites choses pour toi.", j:6},
- {n:"Discernement", p:"L'urgence est la voix du monde. La paix est l'accent de Dieu.", a:"Face à une décision en cours : applique le test de la paix. Ne décide pas si la paix est absente.", j:22}
+/** Une racine du test. s = phrase-seuil (annexe 4), o = phrase d'ouverture du chapitre c (mot pour mot). */
+export type Root = { n: string; p: string; a: string; j: number; s?: string; o?: string; c?: number };
+// FR V4 (validée le 22/10/2026) : premier pas tiré de l'annexe 1 (jours 2, 8, 16, 4, 17, 9, 22), mot pour mot ;
+// phrase-seuil avant chaque racine et phrase d'ouverture du chapitre, mot pour mot du livre.
+const frenchRoots: Root[] = [
+ {n:"Priorité au Royaume", p:"Cherche le Roi, et les miracles retrouveront leur juste place.", a:"Identifie une décision que tu dois prendre cette semaine. Prie spécifiquement dessus avant d'agir.", j:2,
+  s:"Le vrai chrétien ne met pas Dieu dans son agenda — il met son agenda dans les mains de Dieu.", o:"Tant que Dieu n'est pas premier, tout le reste est en désordre — même ce qui semble réussir.", c:1},
+ {n:"Dîme et offrande", p:"La dîme n'a jamais enrichi Dieu. Elle a toujours libéré l'homme.", a:"Calcule exactement ta dîme du mois en cours. Mets-la de côté aujourd'hui.", j:8,
+  s:"Si Dieu ne règne pas sur ton portefeuille, Il ne règne pas vraiment sur ton cœur.", o:"La dîme n'a jamais enrichi Dieu. Elle a toujours libéré l'homme.", c:2},
+ {n:"Travail et intégrité", p:"Dieu ne bénit pas l'inaction — Il bénit l'effort consacré.", a:"Identifie une pratique professionnelle à corriger. Prends la décision de la changer.", j:16,
+  s:"La fidélité dans le petit prépare toujours la promotion dans le grand.", o:"Dieu ne fait pas pleuvoir des pains. Il bénit des mains.", c:3},
+ {n:"Liberté face à l'argent", p:"Le problème n'a jamais été ce que tu as dans la poche. Le problème, c'est ce que la poche a mis dans ton cœur.", a:"Écris dans un carnet tout ce pour quoi tu es reconnaissant aujourd'hui. Minimum 10 choses.", j:4,
+  s:"Mammon n'est pas seulement l'argent. C'est tout ce qui cherche à prendre la place de Dieu dans ta confiance.", o:"On ne déracine pas l'amour de l'argent en vidant ses poches, mais en remplissant son cœur d'un plus grand trésor.", c:4},
+ {n:"Compassion et Tsedaka", p:"Dieu t'a béni précisément pour que tu sois un canal, pas un réservoir.", a:"Rends visite à une veuve, un orphelin ou une personne seule dans ton entourage.", j:17,
+  s:"Tu cherchais Son visage dans tes prières. Il t'attendait dans le regard de la veuve d'à côté.", o:"La compassion n'est pas une œuvre que Dieu te demande. C'est un rendez-vous que le Roi te fixe.", c:5},
+ {n:"Fidélité dans les petites choses", p:"Dieu n'examine pas tes rêves. Il examine tes habitudes.", a:"Écris tous tes revenus et toutes tes dépenses du mois dernier. Regarde où va ton argent sans te juger.", j:9,
+  s:"Si Dieu peut te faire confiance avec un dollar, Il peut te faire confiance avec un million.", o:"Dieu n'examine pas tes rêves. Il examine tes habitudes.", c:6},
+ {n:"Discernement", p:"L'urgence est la voix du monde. La paix est l'accent de Dieu.", a:"Face à une décision en cours : applique le test de la paix. Ne décide pas si la paix est absente.", j:22,
+  s:"La voix de Dieu n'est pas la voix la plus forte dans ta vie. C'est la plus douce — mais c'est aussi la plus vraie.", o:"L'urgence est la voix du monde. La paix est l'accent de Dieu.", c:7}
 ];
+/** FR V4 : 3 affirmations par racine (le miroir, le cœur, le pas). Les miroirs (1, 4, 7, 10, 13, 16, 19) comptent à l'envers. */
 const frenchQuestions = [
- "Je commence chaque journée par un temps de prière avant toute autre activité.",
- "Je consulte Dieu avant de prendre des décisions professionnelles importantes.",
- "Ma relation avec Dieu ne dépend pas de ma situation financière du moment.",
- "Ma dîme est la première dépense que je règle dès que je reçois un revenu.",
- "Je donne avec joie et non par obligation ou par peur.",
- "Quand je donne, je le fais avec confiance plutôt que sous la pression de la peur.",
- "Est-ce que je travaille avec la même qualité quand mon patron n'est pas là ?",
- "Dans mes activités quotidiennes, je choisis l’honnêteté, même lorsque personne ne peut vérifier.",
- "Je pose des démarches concrètes pour avancer, sans attendre que les occasions viennent seules.",
- "Est-ce que je prie avec la même ferveur dans l'abondance que dans le manque ?",
- "Puis-je me réjouir sincèrement quand un frère prospère plus que moi ?",
- "Est-ce que ma vie reflète une simplicité intentionnelle ?",
- "Je prends des nouvelles d’une personne seule ou en difficulté et je lui apporte une aide adaptée à mes possibilités.",
- "Est-ce que je donne aux pauvres de manière concrète et régulière ?",
- "Est-ce que je donne dans le secret, sans chercher la reconnaissance ?",
- "Est-ce que je tiens un carnet de dépenses qui me permet de voir où va mon argent ?",
- "Je tiens mes petits engagements du quotidien, même lorsqu’ils semblent peu importants.",
- "Est-ce que j'accomplis les petites tâches avec le même sérieux que les grandes ?",
- "Est-ce que je reconnais la différence entre la pression de l'urgence et la paix de l'Esprit ?",
- "Est-ce que j'obéis aux petites impressions de l'Esprit au quotidien ?",
- "Est-ce que j'applique le test de la paix avant de m'engager ?"
+ "Je demande à Dieu de bénir mes plans plus souvent que je ne Lui demande quels sont Ses plans.",
+ "Mes décisions réelles (mon temps, mon argent, mon téléphone) montrent que Dieu passe vraiment en premier.",
+ "Ce que Dieu m'a déjà demandé, je l'ai commencé, sans le remettre à plus tard.",
+ "Je donne à Dieu ce qui reste, une fois que j'ai payé tous les autres.",
+ "Quand je donne, ce n'est pas la peur de manquer qui me gouverne.",
+ "Il m'arrive de donner quelque chose qui me coûte vraiment, et pas seulement mon surplus.",
+ "J'attends une « grande porte » et je néglige le travail plus modeste qui est devant moi.",
+ "Dans mon travail ou mon activité, je fais de mon mieux, que quelqu'un me regarde ou non.",
+ "Je refuse un gain, même petit, s'il demande un mensonge.",
+ "Ma paix intérieure monte et descend avec mon argent.",
+ "Je cherche Dieu autant quand tout va bien que lorsque je manque.",
+ "Si Dieu me demandait ce à quoi je tiens le plus, je pourrais ouvrir les mains.",
+ "Je remarque les besoins autour de moi, mais je passe souvent mon chemin.",
+ "Dans la personne en détresse, je vois quelqu'un que le Christ met sur ma route.",
+ "Je donne du temps, une présence ou une aide sans que personne ne le sache.",
+ "Je me dis que je serai fidèle quand j'aurai plus.",
+ "Je sais où va mon argent, jusqu'aux petites dépenses.",
+ "Je prends le temps de remarquer le visage triste de quelqu'un à côté de moi.",
+ "Quand on me presse de décider, je décide vite, de peur de rater.",
+ "Ma journée commence par un moment de silence avec Dieu, avant mon téléphone.",
+ "Quand la paix est absente, je sais attendre, même si les autres ne me comprennent pas."
 ];
+/** Positions (de 0 à 20) des affirmations comptées à l'envers : score = 6 - réponse. Même liste que regles.items_inverses en base. */
+const frenchReversed = [0, 3, 6, 9, 12, 15, 18];
 
 export type Language = 'fr' | 'en';
-/** Version réellement affichée : FR V3 ; EN V3 traduit les cinq adaptations françaises validées. */
-export const TEST_VERSIONS: Record<Language, number> = { fr: 3, en: 3 };
+/** Version réellement affichée : FR V4 (validée le 22/10/2026) ; EN reste en V3 jusqu'à la relecture de sa traduction. */
+export const TEST_VERSIONS: Record<Language, number> = { fr: 4, en: 3 };
 export function languageFrom(value: unknown): Language { return value === 'en' ? 'en' : 'fr'; }
-const englishRoots = [
+const englishRoots: Root[] = [
  {n:"Kingdom First", p:"Seek the King, and the miracles will return to their rightful place.", a:"Begin your day with 15 minutes of silence before your phone. Read Matthew 6:25-34.", j:1},
  {n:"Tithe and Offering", p:"The tithe has never enriched God. It has always set man free.", a:"Reread Malachi 3:10-12. Pray over the divine promise of financial protection.", j:12},
  {n:"Work and Integrity", p:"God does not bless inaction — He blesses consecrated effort.", a:"Carry out an ordinary task with unusual excellence — as if God were watching it directly.", j:20},
@@ -69,22 +83,34 @@ const englishQuestions = [
 ];
 export const texts = {
  fr: {
-  roots: frenchRoots, questions: frenchQuestions,
+  roots: frenchRoots, questions: frenchQuestions, reversed: frenchReversed,
+  /** Question d'ouverture du test, mot pour mot (livre, chapitre 1). */
+  opening: { text: 'Qui est vraiment premier dans ta vie ? Ne réponds pas trop vite.', source: 'Livre, chapitre 1' } as { text: string; source: string } | null,
   tabTitle: 'Test des 7 Racines — SÉNEVÉ', brand: 'Sénevé', homeTitle: 'Le Test des 7 Racines',
   //   = espace insécable : garde « Arrête… », « 5 = toujours » et « ; » / « : » sur la même ligne que le mot voisin.
-  intro: '21 questions courtes, tirées du livre « Arrête de mendier des miracles ».',
+  intro: '21 affirmations courtes, tirées du livre « Arrête de mendier des miracles ».',
   discover: 'À la fin, tu découvres :', discoveries: ['tes sept racines avec leur score ;', 'la racine par laquelle commencer ;', 'une première action simple.'],
-  instruction: "Réponds honnêtement de 1 à 5 (1 = jamais, 5 = toujours). Aucun compte, aucun numéro demandé. Ce test t'oriente vers une pratique ; il ne mesure ni ta foi ni ta valeur.",
-  reassurance: ['Sans compte', '21 questions', 'Retour possible'], tapHint: 'Choisis un chiffre : la question suivante s’affiche aussitôt.',
+  instruction: "Pour chaque phrase, dis honnêtement si elle te ressemble, de 1 (pas du tout) à 5 (tout à fait). Aucun compte, aucun numéro demandé. Ce test t'oriente vers une pratique ; il ne mesure ni ta foi ni ta valeur.",
+  reassurance: ['Sans compte', '21 affirmations', 'Retour possible'], tapHint: 'Choisis un chiffre : la question suivante s’affiche aussitôt.',
   seeResult: 'Voir mon résultat', shareToggle: 'Partager mon résultat en image',
   remaining: (n:number) => `${n} question${n > 1 ? 's' : ''} restante${n > 1 ? 's' : ''}`,
   remainingInRoot: (n:number) => `${n} question${n > 1 ? 's' : ''} restante${n > 1 ? 's' : ''} dans cette racine`,
   privacyTest: 'Tes réponses restent confidentielles. Aucun nom ni e-mail n’est demandé. À la fin du test, tes réponses et ton résultat sont enregistrés pour des statistiques anonymes.',
   privacyLink: 'Confidentialité',
   start: 'Commencer', languageLink: 'English', rootCount: (x:number) => `Racine ${x} sur 7`, questionCount: (x:number) => `Question ${x} sur 21`,
-  never: '1 = jamais', always: '5 = toujours', answerGroup: 'Ta réponse, de 1 jamais à 5 toujours',
-  answerOptions: ['Jamais', 'Rarement', 'Parfois', 'Souvent', 'Toujours'],
-  answerLabel: (n:number) => `${n} sur 5 (${['jamais', 'rarement', 'parfois', 'souvent', 'toujours'][n - 1]})`,
+  never: '1 = pas du tout', always: '5 = tout à fait', answerGroup: 'Cela te ressemble ? De 1 pas du tout à 5 tout à fait',
+  scaleTitle: 'Cela me ressemble…', scaleHint: 'De 1 à 5',
+  answerOptions: ['Pas du tout', 'Un peu', 'À moitié', 'Beaucoup', 'Tout à fait'],
+  answerLabel: (n:number) => `${n} sur 5 (${['pas du tout', 'un peu', 'à moitié', 'beaucoup', 'tout à fait'][n - 1]})`,
+  thresholdSource: 'Livre, annexe 4',
+  openingSource: (chapter:number) => `Livre, ouverture du chapitre ${chapter}`,
+  /** Question libre et facultative, non comptée : la réponse reste dans la page, elle n'est ni enregistrée ni envoyée. */
+  mantle: {
+   question: "Quel est le manteau de mendiant que tu voudrais jeter aujourd'hui ?",
+   hint: 'Facultatif. Ta réponse reste sur cet appareil : elle n’est ni enregistrée ni envoyée.',
+   label: 'Ta réponse (facultative)', resultTitle: 'Le manteau que tu veux jeter', source: 'Livre, conclusion (Bartimée) · annexe 1, jour 30',
+   kept: 'Cette phrase reste sur cet appareil\u00A0: elle n’est ni enregistrée ni envoyée.',
+  } as { question: string; hint: string; label: string; resultTitle: string; source: string; kept: string } | null,
   back: '← Question précédente', resultBrand: 'Bilan de ton introspection', resultTitle: "Tes racines aujourd'hui", rootsTitle: 'Tes 7 racines', summary: 'Selon tes réponses d’aujourd’hui · chaque racine sur 15',
   categories: ['Racine à développer', 'Racine à consolider', 'Point d’appui à entretenir'],
   allOne: 'Les sept racines sont à développer selon tes réponses. Choisis celle par laquelle tu souhaites commencer.',
@@ -97,7 +123,7 @@ export const texts = {
    suggested: 'Selon tes réponses, cette racine a le total le plus bas. Nous te la proposons comme point de départ pour pratiquer.',
    chosen: 'Tu as choisi cette racine parmi celles proposées. Elle devient ton point de départ pour pratiquer.',
    method: 'Comment lire tes résultats ?',
-   calculation: 'Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15.',
+   calculation: 'Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15. La première phrase de chaque racine décrit une difficulté : pour elle, « tout à fait » compte 1 et « pas du tout » compte 5.',
    bands: 'De 3 à 6 : racine à développer. De 7 à 11 : racine à consolider. De 12 à 15 : point d’appui à entretenir.',
    close: 'Un petit écart entre deux totaux n’est pas un classement définitif. Ces repères t’aident à choisir une première pratique ; ils ne mesurent ni ta foi ni ta valeur.',
    strengthOne: 'C’est le total le plus élevé de cette tentative. Tu peux t’appuyer sur cette pratique pour avancer dans la racine que tu souhaites travailler.',
@@ -120,7 +146,8 @@ export const texts = {
   }
  },
  en: {
-  roots: englishRoots, questions: englishQuestions,
+  roots: englishRoots, questions: englishQuestions, reversed: [] as number[],
+  opening: null as { text: string; source: string } | null,
   tabTitle: 'The 7 Roots Test — SÉNEVÉ', brand: 'SÉNEVÉ', homeTitle: 'The 7 Roots Test',
   intro: '21 short questions, drawn from the book “Stop Begging for Miracles”.',
   discover: 'At the end, you discover:', discoveries: ['your seven roots with their score;', 'the root to start with;', 'a simple first action.'],
@@ -133,8 +160,12 @@ export const texts = {
   privacyLink: 'Privacy details',
   start: 'Start', languageLink: 'Français', rootCount: (x:number) => `Root ${x} of 7`, questionCount: (x:number) => `Question ${x} of 21`,
   never: '1 = never', always: '5 = always', answerGroup: 'Your answer, from 1 never to 5 always',
+  scaleTitle: 'Choose your answer', scaleHint: 'Scale from 1 to 5',
   answerOptions: ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'],
   answerLabel: (n:number) => `${n} out of 5 (${['never', 'rarely', 'sometimes', 'often', 'always'][n - 1]})`,
+  thresholdSource: 'Book, Appendix 4',
+  openingSource: (chapter:number) => `Book, opening of Chapter ${chapter}`,
+  mantle: null as { question: string; hint: string; label: string; resultTitle: string; source: string; kept: string } | null,
   back: '← Previous question', resultBrand: 'Your self-review', resultTitle: 'Your roots today', rootsTitle: 'Your 7 roots', summary: 'According to your answers today · each root out of 15',
   categories: ['Root to develop', 'Root to strengthen', 'Strength to maintain'],
   allOne: 'According to your answers, all seven roots are to be developed. Choose the one you want to start with.',
