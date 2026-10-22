@@ -71,14 +71,14 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
        : r.same
          ? t.equal
          : t.minimumTie;
-  // Ordre « Sentier » (14/10/2026) : d'abord la racine proposée, la première action et la suite WhatsApp,
-  // puis le détail des 7 racines avec une barre par score, enfin le partage.
+  // Ordre du cahier n°4, §11 (rétabli le 22/10/2026) : racine forte, racine à fortifier, première action ;
+  // puis le détail des 7 racines avec une barre par score, le partage et la suite.
   return <>
+    {/* La racine forte ne dépend pas du choix fait en cas d'égalité en bas : elle s'affiche d'abord. */}
+    {!r.same && !allSupport && <StrengthCard language={language} fortes={r.fortes} total={Math.max(...r.t)} />}
      {needsChoice && <><p>{message}</p><ChoixRacines language={language} indices={indices} totals={r.t} chosenRoot={chosenRoot} onChoose={onChoose} allSupport={allSupport} /></>}
      {root && act !== null && act !== undefined && <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} explanation={needsChoice ? t.resultHelp.chosen : t.resultHelp.suggested} />}
     {root && <div className="card action-card result-action"><p className="result-orientation"><IconeResultat nom="eco" taille={20}/>{language==='en'?'Immediate direction':'Orientation immédiate'}</p><p className="tag">{t.firstAction}</p><div className="action-box"><IconeResultat nom="menu_book" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>}
-    {/* Affichée aussi avant le choix d'une racine en cas d'égalité en bas : la racine forte n'en dépend pas. */}
-    {!r.same && !allSupport && <StrengthCard language={language} fortes={r.fortes} total={Math.max(...r.t)} />}
     {root && needsChoice && <a className="btn btn-link choix-continuer" href={`${import.meta.env.BASE_URL}connexion${language==='en'?'?lang=en':''}`}>{language==='en'?'Continue with this root':'Continuer avec cette racine'}</a>}
     {root && <RepereParcours contexte="resultat" langue={language} />}
      <div className="card root-list-card"><p className="tag">{t.rootsTitle}<IconeResultat nom="analytics" taille={20}/></p><p>{t.summary}</p>

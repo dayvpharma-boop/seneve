@@ -23,7 +23,7 @@ describe('Résultat « Sentier »', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => { cleanup(); vi.useRealTimers(); });
 
-  it('montre la racine proposée, l’action, les détails et le partage avant la suite', () => {
+  it('montre la racine à fortifier, l’action, les détails et le partage avant la suite', () => {
     render(<Index />);
     finishQuiz([11, 7, 13, 9, 6, 12, 10]);
     const hero = cardOf('Nous te proposons de commencer par');
@@ -102,7 +102,8 @@ describe('Racine forte (cahier n°4, §11 A)', () => {
     expect(within(forte).queryByText(/\/ 15/)).not.toBeInTheDocument();
     expect(within(forte).getByText(/C’est le total le plus élevé de cette tentative/)).toBeVisible();
     expect(within(forte).queryByText('Selon tes réponses d’aujourd’hui')).not.toBeInTheDocument();
-    expect(follows(cardOf('Ta première action'), forte) && follows(forte, cardOf('Aller plus loin'))).toBe(true);
+    // Ordre du cahier n°4, §11 : racine forte, racine à fortifier, première action.
+    expect(follows(forte, cardOf('Nous te proposons de commencer par')) && follows(cardOf('Nous te proposons de commencer par'), cardOf('Ta première action'))).toBe(true);
   });
 
   it('liste les racines à égalité au plus haut', () => {
