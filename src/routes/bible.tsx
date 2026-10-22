@@ -219,12 +219,12 @@ export function BibleAccueil() {
     </section>
     <section className="bb-racines" aria-labelledby="bb-racines-titre">
       <h2 id="bb-racines-titre"><I nom="psychology_alt" taille={20} />{t('Versets de tes racines', 'Verses for your roots')}</h2>
-      <p className="bb-petit">{t('Passages cités dans le Test des 7 Racines. Les autres sont à confirmer avec le livre.', 'Passages cited in the 7 Roots Test. The others are to be confirmed with the book.')}</p>
+      <p className="bb-petit">{t('Passages cités dans le Test des 7 Racines ou en tête des chapitres du livre.', 'Passages cited in the 7 Roots Test or at the head of the book’s chapters.')}</p>
       {racines.map((r, i) => { const p = PASSAGES_RACINES[i]; return p ? <CarteRacine key={r.n} numero={i + 1} nom={r.n} version={reglages.version} passage={p} /> : null; })}
-      <div className="bb-carte bb-autres-racines">
+      {racines.some((_, i) => !PASSAGES_RACINES[i]) && <div className="bb-carte bb-autres-racines">
         <div className="bb-ligne"><strong>{t('Autres racines', 'Other roots')}</strong><span className="bb-petit">{racines.length - Object.keys(PASSAGES_RACINES).length} / 7</span></div>
         <ul>{racines.map((r, i) => PASSAGES_RACINES[i] ? null : <li key={r.n}><span className="bb-numero">{i + 1}</span><span>{r.n}</span><em>{t('Référence à confirmer avec le livre', 'Reference to be confirmed with the book')}</em></li>)}</ul>
-      </div>
+      </div>}
     </section>
     <section className="bb-outils">
       <h2><I nom="bookmark_heart" taille={20} />{t('Outils personnels', 'Personal tools')}</h2>
@@ -240,9 +240,9 @@ function CarteRacine({ numero, nom, version, passage }: { numero: number; nom: s
   const { langue, t, lien } = useLangue();
   const texte = useVerset(version, passage.livre, passage.chapitre, passage.verset ?? 1);
   return <article className="bb-carte bb-racine">
-    <div className="bb-ligne"><span className="bb-puce-claire">{t(`Racine n°${numero}`, `Root ${numero}`)}</span><span className="bb-ref-or">{nomReference(passage.livre, passage.chapitre, passage.verset, langue)}-{passage.fin} ({VERSIONS[version].court})</span></div>
+    <div className="bb-ligne"><span className="bb-puce-claire">{t(`Racine n°${numero}`, `Root ${numero}`)}</span><span className="bb-ref-or">{nomReference(passage.livre, passage.chapitre, passage.verset, langue)}{passage.fin !== passage.verset && `-${passage.fin}`} ({VERSIONS[version].court})</span></div>
     <h3>{nom}</h3>
-    {texte && <blockquote className="bb-citation">{ouvre(version)}{texte} …{ferme(version)}</blockquote>}
+    {texte && <blockquote className="bb-citation">{ouvre(version)}{texte}{passage.fin !== passage.verset && ' …'}{ferme(version)}</blockquote>}
     <Link className="bb-lien-chapitre" to={lien(urlChapitre(passage.livre, passage.chapitre), { v: String(passage.verset) })}>{t('Lire dans le chapitre', 'Read in the chapter')}<I nom="chevron_right" taille={18} /></Link>
   </article>;
 }

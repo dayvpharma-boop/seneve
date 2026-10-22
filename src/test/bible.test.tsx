@@ -85,7 +85,8 @@ describe('écrans de la Bible', () => {
     afficher('/bible');
     for (const r of texts.fr.roots) expect(screen.getByText(r.n)).toBeInTheDocument();
     for (const inventee of ['Agir sans spectateurs', 'Repos dans la promesse', 'Enracinement', 'Obéissance de la foi']) expect(screen.queryByText(inventee)).toBeNull();
-    expect(screen.getAllByText('Référence à confirmer avec le livre')).toHaveLength(4);
+    expect(screen.queryByText('Référence à confirmer avec le livre')).toBeNull();
+    for (const ref of ['2 Thessaloniciens 3:10 (LSG 1910)', '1 Timothée 6:10 (LSG 1910)', 'Matthieu 25:40 (LSG 1910)', 'Romains 8:14 (LSG 1910)', 'Luc 16:10-13 (LSG 1910)']) expect(screen.getByText(ref)).toBeInTheDocument();
     expect(screen.getByText('Matthieu 6:25-34 (LSG 1910)')).toBeInTheDocument();
     expect(screen.queryByText(/médité|%/)).toBeNull();
   });

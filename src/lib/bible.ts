@@ -297,9 +297,14 @@ export function noterLecture(p: Position) {
 }
 export function chapitresLus(): Set<string> { return new Set(lire<string[]>('seneve:bible:lus', [])); }
 
-/** Passages des sept racines cités dans le Test des 7 Racines (index de la racine → passage). Les autres restent à confirmer avec le livre. */
+/** Passages des sept racines (index de la racine → passage) : ceux que cite le Test des 7 Racines, sinon le verset
+ *  imprimé en tête du chapitre du livre (même référence dans les éditions française et anglaise), validé le 22/10/2026. */
 export const PASSAGES_RACINES: Record<number, Reference & { fin: number }> = {
   0: { livre: livreParCode('MAT')!, chapitre: 6, verset: 25, fin: 34 },
   1: { livre: livreParCode('MAL')!, chapitre: 3, verset: 10, fin: 12 },
+  2: { livre: livreParCode('2TH')!, chapitre: 3, verset: 10, fin: 10 },
+  3: { livre: livreParCode('1TI')!, chapitre: 6, verset: 10, fin: 10 },
+  4: { livre: livreParCode('MAT')!, chapitre: 25, verset: 40, fin: 40 },
   5: { livre: livreParCode('LUK')!, chapitre: 16, verset: 10, fin: 13 },
+  6: { livre: livreParCode('ROM')!, chapitre: 8, verset: 14, fin: 14 },
 };
