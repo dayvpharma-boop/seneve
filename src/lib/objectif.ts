@@ -10,9 +10,24 @@ export function nomsRacines(langue: string | null | undefined): string[] {
   return texts[langue === 'en' ? 'en' : 'fr'].roots.map(r => r.n);
 }
 
-/** Racine retenue au Test des 7 Racines sur cet appareil (0 à 6), jamais envoyée sans action du participant. */
+const CLE_TEST_LE = 'seneve:racine_test_le';
+
+/** Racine retenue au Test des 7 Racines sur cet appareil (0 à 6), jamais envoyée sans action du participant.
+ *  La date du choix est gardée à côté ; elle ne change pas quand on revoit le même résultat. */
 export function memoriserRacineTest(k: number): void {
-  try { if (k >= 0 && k <= 6) window.localStorage.setItem(CLE_TEST, String(k)); } catch { /* stockage indisponible */ }
+  try {
+    if (k < 0 || k > 6) return;
+    const avant = window.localStorage.getItem(CLE_TEST);
+    window.localStorage.setItem(CLE_TEST, String(k));
+    if (avant !== String(k) || !window.localStorage.getItem(CLE_TEST_LE)) window.localStorage.setItem(CLE_TEST_LE, new Date().toISOString());
+  } catch { /* stockage indisponible */ }
+}
+/** Date à laquelle la racine a été retenue sur cet appareil (inconnue pour les choix plus anciens). */
+export function dateRacineTest(): string | null {
+  try {
+    const v = window.localStorage.getItem(CLE_TEST_LE);
+    return v && Number.isFinite(Date.parse(v)) ? v : null;
+  } catch { return null; }
 }
 export function racineTest(): number | null {
   try {

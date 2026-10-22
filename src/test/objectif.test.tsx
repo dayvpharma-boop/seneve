@@ -20,7 +20,7 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 import { GoalCard } from '@/components/GoalCard';
-import { memoriserRacineTest, nomsRacines, objectifValide, racineTest } from '@/lib/objectif';
+import { dateRacineTest, memoriserRacineTest, nomsRacines, objectifValide, racineTest } from '@/lib/objectif';
 
 beforeEach(() => {
   for (const k of Object.keys(tables)) delete tables[k];
@@ -46,6 +46,17 @@ describe('règles', () => {
     expect(racineTest()).toBe(5);
     memoriserRacineTest(9);
     expect(racineTest()).toBe(5);
+  });
+  it('la date du choix ne change pas quand on revoit le même résultat', () => {
+    expect(dateRacineTest()).toBeNull();
+    memoriserRacineTest(5);
+    const premiere = dateRacineTest();
+    expect(premiere).not.toBeNull();
+    localStorage.setItem('seneve:racine_test_le', '2026-10-12T09:00:00.000Z');
+    memoriserRacineTest(5);
+    expect(dateRacineTest()).toBe('2026-10-12T09:00:00.000Z');
+    memoriserRacineTest(2);
+    expect(dateRacineTest()).not.toBe('2026-10-12T09:00:00.000Z');
   });
 });
 
