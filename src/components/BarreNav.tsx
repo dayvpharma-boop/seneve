@@ -25,13 +25,11 @@ const ENTREES: Entree[] = [
 
 const SYMBOLES = { aujourdhui: 'wb_twilight', parcours: 'alt_route', journal: 'history_edu' } as const;
 
-const SYMBOLES_JOURNEE = { aujourdhui: 'light_mode', parcours: 'route', journal: 'menu_book' } as const;
+const SYMBOLES_JOURNEE = { aujourdhui: 'light_mode', parcours: 'route', journal: 'edit_note' } as const;
 export function BarreNav({ langue, maquette = false, iconesJournee = false, iconesJournal = false, iconesAide = false, varianteJournee = false }: { langue?: string | null; maquette?: boolean; iconesJournee?: boolean; iconesJournal?: boolean; iconesAide?: boolean;varianteJournee?:boolean }) {
   const T = NAV[langue === 'en' ? 'en' : 'fr'];
   const { pathname, search } = useLocation();
   const ecriture = new URLSearchParams(search).has('ecrire');
-  // La Bible prend le symbole de livre que le Journal n'utilise pas dans cette variante.
-  const symboleBible = iconesAide || iconesJournal || (iconesJournee && !varianteJournee) ? 'auto_stories' : 'menu_book';
   return <nav className="barre-nav" aria-label={T.nom}>
     <ul>
       {ENTREES.map(e => {
@@ -39,7 +37,7 @@ export function BarreNav({ langue, maquette = false, iconesJournee = false, icon
         const cle = e.cle;
         return <li key={cle}>
           <Link to={e.vers} className={cle === 'bibliotheque' ? 'nav-ecrire' : undefined} aria-current={actif ? 'page' : undefined}>
-            {cle === 'bibliotheque' ? <span className="nav-plus"><IconeRayonnage taille={24}/></span> : cle === 'bible' ? <IconeBible nom={symboleBible} taille={22} /> : iconesAide ? <IconeAide nom={({aujourdhui:"wb_sunny",parcours:"route",journal:"menu_book"} as const)[cle]} taille={22} /> : iconesJournal ? <IconeJournal nom={({aujourdhui:"light_mode",parcours:"route",journal:"menu_book"} as const)[cle]} taille={24} /> : varianteJournee ? <IconeJournee nom={({aujourdhui:"wb_sunny",parcours:"explore",journal:"auto_stories"} as const)[cle]} taille={22}/> : iconesJournee ? <IconeJournee nom={SYMBOLES_JOURNEE[cle]} taille={22} /> : maquette ? <IconeMaquette nom={SYMBOLES[cle]} taille={22} /> : <Icone nom={e.icone} />}
+            {cle === 'bibliotheque' ? <span className="nav-plus"><IconeRayonnage taille={24}/></span> : cle === 'bible' ? <IconeBible nom="menu_book" taille={22} /> : iconesAide ? <IconeAide nom={({aujourdhui:"wb_sunny",parcours:"route",journal:"edit_note"} as const)[cle]} taille={22} /> : iconesJournal ? <IconeJournal nom={({aujourdhui:"light_mode",parcours:"route",journal:"stylus_note"} as const)[cle]} taille={24} /> : varianteJournee ? <IconeJournee nom={({aujourdhui:"wb_sunny",parcours:"explore",journal:"edit_note"} as const)[cle]} taille={22}/> : iconesJournee ? <IconeJournee nom={SYMBOLES_JOURNEE[cle]} taille={22} /> : maquette ? <IconeMaquette nom={SYMBOLES[cle]} taille={22} /> : <Icone nom={e.icone} />}
             <span>{T[cle]}</span>
           </Link>
         </li>;
