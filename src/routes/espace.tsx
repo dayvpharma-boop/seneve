@@ -45,7 +45,8 @@ type State = { enrollment_id: string; activity_id: string; etat: string; aide_de
 type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
 type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[] };
 
-const LOAD_ERROR = 'Impossible de charger ta journée pour le moment.';
+const LOAD_ERRORS = { fr: 'Impossible de charger ta journée pour le moment.', en: 'Your day cannot be loaded right now.' } as const;
+const loadError = (langue?: string | null) => LOAD_ERRORS[langue === 'en' ? 'en' : 'fr'];
 
 
 /** Charge les données du participant connecté. Renvoie null s'il n'y a pas de session. */
@@ -207,15 +208,17 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
   // Repliés sur l'écran « Aujourd'hui » (allègement du 19/10/2026) : on les ouvre quand on en a besoin.
   const reglages = (langue: string, avecEmail: boolean, replie = false) => {
-    const cartes = <>{avecEmail && <EmailMatinCard langue={langue} />}<WhatsAppLink /><CodePlaceCard langue={langue} onOuvert={refresh} /></>;
+    const cartes = <>{avecEmail && <EmailMatinCard langue={langue} />}<WhatsAppLink langue={langue} /><CodePlaceCard langue={langue} onOuvert={refresh} /></>;
     return replie
       ? <section className="reglages" aria-label={textes(langue).reglages}><details className="repli"><summary>{textes(langue).reglages}<IconeRegistre nom="expand_more"/></summary><Link className="jn-reglages-lien" to="/reglages">Ouvrir tous mes réglages</Link>{cartes}</details></section>
       : <section className="reglages" aria-label={textes(langue).reglages}><p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>{cartes}</section>;
   };
-  const errorCard = <div className="card espace-erreur"><span className="etat-symbole" aria-hidden="true"><IconeJournee nom="wifi_off" taille={32} /></span><p role="alert">{LOAD_ERROR}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}><IconeJournee nom="sync" taille={20} />Réessayer</button><Link className="etat-journal" to="/journal"><IconeJournee nom="menu_book" taille={20} />Ouvrir mon journal</Link></div>;
+  // Langue de secours tant que le parcours n'est pas chargé : ?lang=en, ou la langue de la page précédente.
+  const langueCourante = params.get('lang') === 'en' || document.documentElement.lang === 'en' ? 'en' : 'fr';
+  const errorCard = <div className="card espace-erreur"><span className="etat-symbole" aria-hidden="true"><IconeJournee nom="wifi_off" taille={32} /></span><p role="alert">{loadError(langueCourante)}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}><IconeJournee nom="sync" taille={20} />{langueCourante === 'en' ? 'Try again' : 'Réessayer'}</button><Link className="etat-journal" to="/journal"><IconeJournee nom="menu_book" taille={20} />{langueCourante === 'en' ? 'Open my journal' : 'Ouvrir mon journal'}</Link></div>;
   const page = (langue: string, contenu: ReactNode, classe = '', navigation = true) => <main className={`wrap ${navigation ? 'avec-nav ' : ''}espace-page ${classe}`.trim()}>{contenu}{navigation && <BarreNav langue={langue} maquette iconesJournee varianteJournee={classe==='journee-nouvelle'||/journee-(multiple|pause|longue)/.test(classe)} />}</main>;
 
-  if (failed) return page('fr', <EspaceErreur prenom={prenomSession} message={LOAD_ERROR} reessayer={() => void refresh()} />, 'erreur-page');
+  if (failed) return page(langueCourante, <EspaceErreur langue={langueCourante} prenom={prenomSession} message={loadError(langueCourante)} reessayer={() => void refresh()} />, 'erreur-page');
   if (!data) return page('fr', <>{header()}<section className="espace-chargement" aria-busy="true" aria-label="Préparation de ta journée"><div className="chargement-message"><span className="etat-symbole" aria-hidden="true"><svg width={32} height={32} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M12 22V12" /><path d="M12 12C12 7.5 8 5 8 5C8 5 8 9 12 12Z" fill="currentColor" fillOpacity={.25} /><path d="M12 9C12 5.5 16 3.5 16 3.5C16 3.5 16 7.5 12 9Z" fill="currentColor" fillOpacity={.35} /><circle cx={12} cy={21} fill="currentColor" r={1.5} /></svg></span><p role="status">Chargement…</p><p>Préparation de ta journée</p></div><div className="chargement-maquette" aria-hidden="true"><div className="chargement-jours">{Array.from({ length: 7 }, (_, k) => <span key={k} />)}</div><div className="chargement-carte"><span /><span /><span /></div><div className="chargement-carte"><span /><span /></div></div></section>{footer}</>);
 
   if (!data.parcours.length) return page('fr', <AccueilDecouverte prenom={data.prenom} starting={starting} commencer={langue => void start(langue)} reglages={reglages('fr', false)} footer={footer} />, 'espace-decouverte');
@@ -228,7 +231,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   </div>;
 
   const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);
-  if (notStarted && enr.langue!=='en') return page(enr.langue,<ParcoursAVenir prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer}/>, 'journee-nouvelle');
+  if (notStarted) return page(enr.langue,<ParcoursAVenir langue={enr.langue} prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer}/>, 'journee-nouvelle');
   if (notStarted) return page(enr.langue, <>{header()}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
@@ -298,7 +301,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   if (!moments.length) return page(enr.langue, <>{header()}{tabs}{errorCard}{footer}</>);
   const { action, question } = activitesDu(current);
   const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
-  if ((finished || cloture) && selected===null && !params.has('jour') && !horsLigne && enr.langue!=='en') return page(enr.langue,<BilanTermine cloture={cloture} prenom={data.prenom} nom={enr.nom} b={bilanEnr} inscription={enr.enrollment_id} dateFin={new Intl.DateTimeFormat('fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long'}).format(dateDuJour(enr.date_debut,total))} onglets={tabs} suite={<SuiteCard programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x=>x.programme_id)} maquette/>} reglages={reglages(enr.langue,false,true)} footer={footer}/>, 'journee-nouvelle');
+  if ((finished || cloture) && selected===null && !params.has('jour') && !horsLigne) return page(enr.langue,<BilanTermine langue={enr.langue} cloture={cloture} prenom={data.prenom} nom={enr.nom} b={bilanEnr} inscription={enr.enrollment_id} dateFin={new Intl.DateTimeFormat(enr.langue==='en'?'en-GB':'fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long'}).format(dateDuJour(enr.date_debut,total))} onglets={tabs} suite={<SuiteCard programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x=>x.programme_id)} maquette/>} reglages={reglages(enr.langue,false,true)} footer={footer}/>, 'journee-nouvelle');
   if ((finished || cloture) && selected === null && !params.has('jour') && !horsLigne) return page(enr.langue, <FinParcours prenom={data.prenom} nom={enr.nom} enrollmentId={enr.enrollment_id} programmeId={enr.programme_id} langue={enr.langue} b={bilanEnr} cloture={cloture} dejaInscrit={data.parcours.map(x=>x.programme_id)} onglets={tabs} reglages={reglages(enr.langue,false,true)} footer={footer}/>, 'fin-page');
   const jourCal = rawDay(enr.date_debut, new Date());
   const jardin = compteJardin(bilanEnr);
@@ -351,12 +354,12 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const bandeauHorsLigne = horsLigne && <aside className="offline-bandeau" role="status"><span className="offline-nuage" aria-hidden="true"><IconeJournee nom="cloud_off" taille={18} /></span><div><div className="offline-bandeau-tete"><strong>{enr.langue === 'en' ? 'Offline mode' : 'Mode hors connexion'}</strong><span>{enr.langue === 'en' ? 'Local copy' : 'Copie locale'}</span></div><p>{dateCopie ? <>{enr.langue === 'en' ? 'You are viewing the copy saved on ' : 'Tu consultes la copie enregistrée le '}<strong>{dateCopie}</strong>.</> : (enr.langue === 'en' ? 'You are viewing the days already loaded.' : 'Tu consultes les journées déjà chargées.')}</p><p className="offline-note">{enr.langue === 'en' ? 'You are offline. Your drafts stay on this device.' : 'Tu n’as pas de connexion. Tes brouillons restent sur cet appareil.'}</p></div></aside>;
   const enteteHorsLigne = <header className="offline-entete"><div className="erreur-header"><div><strong>SÉNEVÉ</strong></div><span className="erreur-avatar" aria-hidden="true">{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</span></div>{bandeauHorsLigne}<div className="offline-profil"><div><small>{enr.langue === 'en' ? 'Daily companion' : 'Compagnon de chemin'}</small><h1>{salut}</h1></div><p><span>{nomRepere}</span><strong>{T.jourSur(current,total)}</strong></p></div></header>;
   return page(enr.langue, <>{horsLigne ? enteteHorsLigne : header(<><p className="today-date">{new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, current))}</p><p className="today-parcours">{current === 1 ? <IconeJournee nom="explore" taille={18} /> : <IconeMaquette nom="spa" taille={18} />}{`${nomRepere} · ${T.jourSur(current, total)}`}</p></>, bandeauHorsLigne)}{tabs}
-    {!horsLigne && total>14 && enr.langue!=='en' ? <ProgressionLongue b={bilanEnr} current={current} jour={day} choisir={choisirJour}/> : <section className="today-progress" aria-labelledby="progression-semaine">
+    {!horsLigne && total>14 ? <ProgressionLongue langue={enr.langue} b={bilanEnr} current={current} jour={day} choisir={choisirJour}/> : <section className="today-progress" aria-labelledby="progression-semaine">
       <div className="weekly-head"><h2 id="progression-semaine">{T.progressionHebdomadaire}</h2>{horsLigne ? <p className="offline-copie-prete"><IconeJournee nom="offline_pin" taille={14} />{enr.langue === 'en' ? 'Local copy ready' : 'Copie locale prête'}</p> : <p>{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p>}</div>
       {tuiles}
       {horsLigne ? <p className="offline-progression-compte">{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p> : finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
     </section>}
-    {paused && !horsLigne && enr.langue!=='en' && <PauseParcours inscription={enr.enrollment_id}/>}
+    {paused && !horsLigne && <PauseParcours langue={enr.langue} inscription={enr.enrollment_id}/>}
     {paused && (horsLigne||enr.langue==='en') && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
     <section className="today-section" aria-labelledby="titre-journee">
@@ -376,7 +379,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
               </div>
               <h3 id={id}>{m.content.theme}</h3>
               <div className="moment-illus">{m.principal ? <IllustrationLecture /> : <Scene periode={m.periode} largeur={244} hauteur={110} />}</div>
-              {!horsLigne && enr.langue!=='en' && <p className="jn-moment-extrait">{m.content.explication || 'Prends un instant pour lire, puis poser un petit geste concret dans ta journée.'}</p>}
+              {!horsLigne && <p className="jn-moment-extrait">{m.content.explication || (enr.langue === 'en' ? 'Take a moment to read, then take a small concrete step in your day.' : 'Prends un instant pour lire, puis poser un petit geste concret dans ta journée.')}</p>}
               {m.ouvert
                 ? <button type="button" className="btn moment-btn" aria-describedby={id} onClick={() => ouvrirMoment(m.n)}>{m.principal && action ? T.lireEtAgir : T.lire}<IconeJournee nom={horsLigne ? "menu_book" : "arrow_forward"} taille={20} /></button>
                 : <p className="moment-ferme">{T.momentFerme(m.heure ?? '')}</p>}
@@ -387,7 +390,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     </section>
 
     {/* Écran allégé (19/10/2026) : l'essentiel du jour d'abord (moments, action, journal), le reste replié. */}
-    {!horsLigne && <AudioCard maquette={enr.langue!=='en'} key={`audio-${enr.enrollment_id}-${current}`} contentIds={moments.filter(m => m.ouvert).map(m => m.content.content_id)} langue={enr.langue} />}
+    {!horsLigne && <AudioCard maquette key={`audio-${enr.enrollment_id}-${current}`} contentIds={moments.filter(m => m.ouvert).map(m => m.content.content_id)} langue={enr.langue} />}
     {!horsLigne && <ParoleCard key={`parole-${enr.enrollment_id}-${current}`} programmeId={enr.programme_id} version={Number(enr.version)} langue={enr.langue} jour={current} />}
     {reprise !== null && <section className="card reprise-card" aria-label={R.titre(data.prenom)}>
       <p className="tag"><IconeJourneeSuite nom="waving_hand"/>{R.titre(data.prenom)}</p>

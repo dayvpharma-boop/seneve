@@ -42,6 +42,6 @@ export function ForgotPassword() {
     {error && <p className="error" role="alert">{error}</p>}
     <div className="recup-achat"><span><IconeConnexion nom="auto_stories" /></span><div><strong>{en ? 'Did you buy the book or a journey?' : 'Tu as acheté le livre ou un parcours ?'}</strong><p>{en ? 'Use the same email address as for your purchase: it is what opens your access.' : 'Utilise la même adresse e-mail que pour l’achat : c’est elle qui ouvre ton accès.'}</p></div></div>
     <Link className="recup-retour" to={lienConnexion(langue)}><IconeConnexion nom="arrow_back" />{en ? 'Back to sign in' : 'Retour à la connexion'}</Link>
-    <footer className="recup-footer"><Link to="/confidentialite"><IconeRecuperation nom="lock" taille={16} />{en ? 'Privacy' : 'Confidentialité'}</Link><p>{en ? 'Find out how SÉNEVÉ protects your personal data and your journal.' : 'Découvre comment SÉNEVÉ protège tes données personnelles et ton journal.'}</p></footer>
+    <footer className="recup-footer"><Link to={en ? '/confidentialite?lang=en' : '/confidentialite'}><IconeRecuperation nom="lock" taille={16} />{en ? 'Privacy' : 'Confidentialité'}</Link><p>{en ? 'Find out how SÉNEVÉ protects your personal data and your journal.' : 'Découvre comment SÉNEVÉ protège tes données personnelles et ton journal.'}</p></footer>
   </main>;
 }

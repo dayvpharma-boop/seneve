@@ -22,7 +22,7 @@ const data = {
   achats: [{ payment_event_id: 'P1', id_evenement: 'VENTE1', offre_id: 'OFFRE1', statut_traitement: 'en_attente_compte', recu_le: '2026-10-16T08:00:00Z' }],
 };
 
-beforeEach(()=>rpc.mockReset());afterEach(cleanup);
+beforeEach(()=>rpc.mockReset());afterEach(()=>{cleanup();vi.restoreAllMocks();});
 it('le nouveau tableau utilise les vrais chiffres et recharge réellement 30 jours',async()=>{
  rpc.mockResolvedValue({data,error:null});render(<PilotageAdmin/>);
  await screen.findByText('Marie');expect(screen.getByText('VENTE1')).toBeInTheDocument();
@@ -41,9 +41,18 @@ it('une première panne affiche une indisponibilité, sans faux chiffres conserv
  expect(await screen.findByRole('alert')).toHaveTextContent('Indicateurs indisponibles');expect(screen.queryByText('Derniers chiffres conservés')).not.toBeInTheDocument();expect(screen.queryByRole('region',{name:'Priorités immédiates'})).not.toBeInTheDocument();
 });
 it('la page introuvable mène au vrai test et à la vraie adresse d’aide',()=>{
+ vi.spyOn(navigator,'language','get').mockReturnValue('fr-FR');
  render(<MemoryRouter initialEntries={['/absent']}><Routes><Route path="/absent" element={<NotFound/>}/><Route path="/p" element={<p>Le test fonctionne</p>}/></Routes></MemoryRouter>);
  expect(screen.getByRole('link',{name:/Écrire à l’équipe/})).toHaveAttribute('href','mailto:contact@drjustintshims.com');
  fireEvent.click(screen.getByRole('link',{name:'Revenir au Test des 7 Racines'}));expect(screen.getByText('Le test fonctionne')).toBeInTheDocument();
+});
+it('la page introuvable passe en anglais avec ?lang=en ou un navigateur anglais',()=>{
+ vi.spyOn(navigator,'language','get').mockReturnValue('en-US');
+ render(<MemoryRouter initialEntries={['/absent']}><Routes><Route path="/absent" element={<NotFound/>}/></Routes></MemoryRouter>);
+ expect(screen.getByRole('heading',{name:'Page not found'})).toBeInTheDocument();expect(screen.getByRole('link',{name:'Back to the 7 Roots Test'})).toHaveAttribute('href','/p?lang=en');
+ cleanup();vi.spyOn(navigator,'language','get').mockReturnValue('fr-FR');
+ render(<MemoryRouter initialEntries={['/absent?lang=en']}><Routes><Route path="/absent" element={<NotFound/>}/></Routes></MemoryRouter>);
+ expect(screen.getByRole('heading',{name:'Page not found'})).toBeInTheDocument();
 });
 it('les interventions ignorent les demandes closes et ne proposent pas les conventions à un accompagnateur',()=>{
  const req={request_id:'demande/1',cree_le:'2026-10-01T08:00:00Z',modifie_le:'2026-10-01T08:00:00Z',etat:'recue',motif:'Aide',extraits_partages:null,reponse:null,affecte_a:null,affecte_email:null,prenom:'Marie',langue:'fr',programme_id:null,email:null,whatsapp:null};

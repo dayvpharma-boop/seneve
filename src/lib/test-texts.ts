@@ -130,7 +130,7 @@ export const texts = {
   remaining: (n:number) => `${n} question${n > 1 ? 's' : ''} remaining`,
   remainingInRoot: (n:number) => `${n} question${n > 1 ? 's' : ''} remaining in this root`,
   privacyTest: 'Your answers remain confidential. No name or email is requested. At the end of the test, your answers and result are recorded for anonymous statistics.',
-  privacyLink: 'Privacy details (in French)',
+  privacyLink: 'Privacy details',
   start: 'Start', languageLink: 'Français', rootCount: (x:number) => `Root ${x} of 7`, questionCount: (x:number) => `Question ${x} of 21`,
   never: '1 = never', always: '5 = always', answerGroup: 'Your answer, from 1 never to 5 always',
   answerOptions: ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'],

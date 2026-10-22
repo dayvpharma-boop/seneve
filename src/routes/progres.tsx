@@ -140,7 +140,7 @@ export function Progres() {
       {fermes.length > 0 && <li className="bilan-jour bilan-ferme"><span className="bilan-pastille" aria-hidden="true"><IconeProgres nom="lock" taille={16} /></span><div className="parcours-jour-contenu"><span className="bilan-num">{fermes.length === 1 ? T.jour(fermes[0]!.jour) : T.jours(fermes[0]!.jour,fermes[fermes.length-1]!.jour)}</span><p className="bilan-etat etat-aucune">{fermes.length === 1 ? T.ferme : T.fermes}</p></div></li>}
     </ol></section>
     <RepereParcours contexte="progres" langue={langue} />
-    <footer className="parcours-confidentialite"><IconeProgres nom="verified_user" taille={16} /><Link to="/confidentialite">{en ? 'Your progress is recorded in your space.' : 'Tes progrès sont enregistrés dans ton espace.'}</Link></footer>
+    <footer className="parcours-confidentialite"><IconeProgres nom="verified_user" taille={16} /><Link to={en ? '/confidentialite?lang=en' : '/confidentialite'}>{en ? 'Your progress is recorded in your space.' : 'Tes progrès sont enregistrés dans ton espace.'}</Link></footer>
     <BarreNav langue={langue} maquette iconesJournee />
   </main>;
 }

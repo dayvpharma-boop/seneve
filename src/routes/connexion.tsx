@@ -56,7 +56,7 @@ const TEXTES = {
     envoye: 'We have sent you an email. Open it and click the link to confirm your address, then come back to sign in.',
     oubliSansEmail: 'Enter your email above, then tap “Forgot your password?”.',
     oubliEnvoye: 'If an account exists for this address, we have sent you an email to choose a new password.',
-    age: 'By creating an account, you confirm that you are at least 18 years old. ', confidentialite: 'How we protect your data (in French)',
+    age: 'By creating an account, you confirm that you are at least 18 years old. ', confidentialite: 'How we protect your data',
     autreLangue: 'Français', titrePage: 'Your space — SÉNEVÉ',
     pasEncore: 'Don’t have an account yet?', securite: 'Secure connection · Your data stays private and protected',
     renvoyer: 'Resend the confirmation email', renvoyerDans: (s: number) => `Resend the confirmation email (${s} s)`,
@@ -173,7 +173,7 @@ export function Connexion() {
       {tab === 'signin' && <p className="connexion-inscription"><span>{T.pasEncore}</span><button type="button" onClick={() => choose('signup')}>{T.creer}</button></p>}
       <p className="connexion-securite"><IconeConnexion nom={tab === 'signup' ? 'shield_lock' : 'verified_user'} taille={16} /><span>{T.securite}</span></p>
     </div>
-    <p className="muted connexion-legal">{tab === 'signup' ? T.age : ''}<Link className="link-inline" to="/confidentialite">{T.confidentialite}<IconeConnexion nom="open_in_new" taille={14} /></Link></p>
+    <p className="muted connexion-legal">{tab === 'signup' ? T.age : ''}<Link className="link-inline" to={langue === 'en' ? '/confidentialite?lang=en' : '/confidentialite'}>{T.confidentialite}<IconeConnexion nom="open_in_new" taille={14} /></Link></p>
     {tab === 'signup' ? <aside className="auth-rythme"><span><IconeConnexion nom="spa" taille={20} /></span><div><strong>{langue === 'en' ? 'An unhurried rhythm' : 'Un rythme sans précipitation'}</strong><p>{langue === 'en' ? 'Take time to put each teaching into practice.' : 'Prends le temps de mettre chaque enseignement en pratique.'}</p></div></aside> : <div className="auth-pensee"><span className="auth-pensee-icone"><IconeConnexion nom="bookmark_heart" taille={24} /></span><PenseeLivre langue={langue} /></div>}
   </main>;
 }

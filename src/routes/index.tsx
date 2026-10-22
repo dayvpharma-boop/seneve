@@ -189,7 +189,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
     <PrototypeButton className="btn btn-fleche" id="start" onClick={() => setScreen('quiz')}>{t.start}<Icone nom="fleche" taille={20} /></PrototypeButton>
    </div>
    <PenseeLivre langue={language} titre={en ? 'A guide from the book' : 'Un repère du livre'} />
-   <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite`}>{en ? 'Privacy policy (in French)' : 'Confidentialité'}</a></p>
+   <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite${en ? '?lang=en' : ''}`}>{en ? 'Privacy policy' : 'Confidentialité'}</a></p>
   </section>
   <section id="s-quiz" hidden={screen !== 'quiz'}>
    {barreTest}
@@ -218,7 +218,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    <div className="ends"><span>{t.never}</span><span>{t.always}</span></div>
    <div className="quiz-validation">
     {answers.every(a => a !== null) && <PrototypeButton className="btn btn-fleche" onClick={() => setScreen('result')}>{t.seeResult}<Icone nom="fleche" taille={20} /></PrototypeButton>}
-    <p className="quiz-confidentialite"><Icone nom="cadenas" taille={18} /><span>{t.privacyTest} <a className="link-inline" href={`${import.meta.env.BASE_URL}confidentialite`}>{t.privacyLink}</a></span></p>
+    <p className="quiz-confidentialite"><Icone nom="cadenas" taille={18} /><span>{t.privacyTest} <a className="link-inline" href={`${import.meta.env.BASE_URL}confidentialite${en ? '?lang=en' : ''}`}>{t.privacyLink}</a></span></p>
    </div>
   </section>
   <section id="s-result" hidden={screen !== 'result'}>
