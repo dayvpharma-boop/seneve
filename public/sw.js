@@ -1,10 +1,10 @@
 /* SÉNEVÉ — consultation hors connexion de l'espace web.
- * - Pages : le réseau d'abord ; sans réseau, la dernière version enregistrée du site.
+ * - Pages : le réseau a 3 secondes pour répondre ; sinon (ou sans réseau), la dernière version enregistrée du site.
  * - Fichiers du site (assets, icônes) : gardés après le premier chargement.
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v10-corrections-20261022';
+const CACHE = 'seneve-site-v11-20261022';
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -23,10 +23,30 @@ async function precache() {
   await Promise.all([...urls].map(u => cache.add(u).catch(() => undefined)));
 }
 
+const ATTENTE_RESEAU = 3000;
+let dernierInventaire = 0;
+/** Garde les fichiers des pages chargées à la demande (sauf l'administration), pour qu'elles s'ouvrent aussi
+ *  hors connexion. Seuls les fichiers absents du téléphone sont téléchargés ; au plus une fois toutes les 10 min. */
+async function garderLesPages() {
+  if (Date.now() - dernierInventaire < 600000) return;
+  dernierInventaire = Date.now();
+  const r = await fetch(BASE + 'asset-manifest.json', { cache: 'no-store' });
+  if (!r.ok) return;
+  const liste = await r.json();
+  const fichiers = new Set();
+  for (const [source, f] of Object.entries(liste)) {
+    if (/routes\/admin/.test(source)) continue;
+    if (f.file) fichiers.add(BASE + f.file);
+    for (const css of f.css || []) fichiers.add(BASE + css);
+  }
+  const cache = await caches.open(CACHE);
+  for (const u of fichiers) if (!(await cache.match(u))) await cache.add(u).catch(() => undefined);
+}
+
 self.addEventListener('install', e => { e.waitUntil(precache().catch(() => undefined).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('seneve-site-') && k !== CACHE).map(k => caches.delete(k))))
-    .then(() => self.clients.claim()));
+    .then(() => self.clients.claim()).then(() => { garderLesPages().catch(() => undefined); }));
 });
 
 self.addEventListener('fetch', e => {
@@ -36,14 +56,19 @@ self.addEventListener('fetch', e => {
   if (url.origin !== self.location.origin || !url.pathname.startsWith(BASE)) return;   // Supabase, n8n, polices : pas touchés
 
   if (req.mode === 'navigate') {
+    // Le réseau a 3 secondes pour répondre ; au-delà, la copie du téléphone s'affiche. La réponse du réseau,
+    // même tardive, remplace la copie pour la visite suivante.
+    const reseau = fetch(req).then(async res => {
+      if (res.ok) { const c = await caches.open(CACHE); await c.put(INDEX, res.clone()); garderLesPages().catch(() => undefined); }
+      return res;
+    });
+    e.waitUntil(reseau.then(() => undefined, () => undefined));
     e.respondWith((async () => {
-      try {
-        const res = await fetch(req);
-        if (res.ok) { const c = await caches.open(CACHE); c.put(INDEX, res.clone()); }
-        return res;
-      } catch {
-        return (await caches.match(INDEX)) || new Response('Hors connexion', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-      }
+      const copie = await caches.match(INDEX);
+      const horsLigne = () => new Response('Hors connexion', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      if (!copie) return reseau.catch(horsLigne);
+      const delai = new Promise(r => setTimeout(() => r(null), ATTENTE_RESEAU));
+      return (await Promise.race([reseau.catch(() => null), delai])) || copie;
     })());
     return;
   }
@@ -51,7 +76,7 @@ self.addEventListener('fetch', e => {
   if (url.pathname.startsWith(BASE + 'bible/')) {
     e.respondWith((async () => {
       const cache = await caches.open(CACHE_BIBLE);
-      const hit = await cache.match(req);
+      const hit = await cache.match(req, { ignoreVary: true });
       if (hit) return hit;
       const res = await fetch(req);
       if (res.ok) cache.put(req, res.clone());
@@ -62,7 +87,7 @@ self.addEventListener('fetch', e => {
 
   if (url.pathname.startsWith(BASE + 'assets/') || url.pathname.startsWith(BASE + 'icons/') || url.pathname.endsWith('manifest.webmanifest')) {
     e.respondWith((async () => {
-      const hit = await caches.match(req);
+      const hit = await caches.match(req, { ignoreVary: true });
       if (hit) return hit;
       const res = await fetch(req);
       if (res.ok) { const c = await caches.open(CACHE); c.put(req, res.clone()); }

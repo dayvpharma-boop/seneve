@@ -9,6 +9,8 @@ export default defineConfig({
   cacheDir: './.vite-cache',
   base: process.env.SENEVE_BASE ?? '/seneve/',
   plugins: [react(), tailwindcss()],
+  // Liste des fichiers construits : le service hors connexion s'en sert pour garder les pages chargées à la demande.
+  build: { manifest: 'asset-manifest.json' },
   resolve: { preserveSymlinks: true, alias: { '@': path.resolve(__dirname, './src') } },
   test: {
     environment: 'jsdom',

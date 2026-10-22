@@ -39,5 +39,16 @@ export function useEnLigne(): boolean {
 export function enregistrerServiceWorker(): void {
   if (typeof navigator === 'undefined' || !('serviceWorker' in navigator) || !import.meta.env.PROD) return;
   const base = import.meta.env.BASE_URL;
+  // Une copie ancienne du site peut demander le fichier d'une page qui n'existe plus depuis une publication :
+  // on recharge une seule fois (au plus toutes les 30 s) pour obtenir la version à jour.
+  window.addEventListener('vite:preloadError', e => {
+    try {
+      const dernier = Number(sessionStorage.getItem('seneve:rechargement') ?? 0);
+      if (Date.now() - dernier < 30000) return;
+      sessionStorage.setItem('seneve:rechargement', String(Date.now()));
+    } catch { return; }
+    e.preventDefault();
+    window.location.reload();
+  });
   window.addEventListener('load', () => { void navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch(() => undefined); });
 }

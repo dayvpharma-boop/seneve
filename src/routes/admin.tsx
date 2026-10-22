@@ -1,3 +1,12 @@
+// Styles de l'administration : chargés avec cette page seulement (les participants ne les téléchargent pas).
+import '@/styles-administration-tableau.css';
+import '@/styles-administration-bureau.css';
+import '@/styles-administration-mobile.css';
+import '@/styles-tableau-fidele.css';
+import '@/styles-registres-administration.css';
+import '@/styles-registres-fideles.css';
+import '@/styles-edition-administration.css';
+import '@/styles-pilotage-maquette.css';
 import {FormulaireDemandeFidele} from '@/components/FormulaireDemandeFidele';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
