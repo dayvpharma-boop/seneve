@@ -67,7 +67,8 @@ describe('Et après ? (espace)', () => {
   it('le dernier jour : offres suivantes, prix du catalogue, bouton seulement si un lien existe', async () => {
     vi.setSystemTime(new Date('2026-10-14T12:00:00Z'));   // jour 14
     render(<MemoryRouter><Espace /></MemoryRouter>);
-    const carte = await screen.findByRole('region', { name: 'Et après ?' });
+    // L'espace charge plusieurs tables simulées : 1 s ne suffit pas quand toute la suite tourne en même temps.
+    const carte = await screen.findByRole('region', { name: 'Et après ?' }, { timeout: 5000 });
     expect(carte).toHaveTextContent('Formation 30 jours — 39 USD');
     expect(carte).toHaveTextContent('Accompagnement personnel 30 jours — 99 USD');
     expect(carte).not.toHaveTextContent('Formation 90 jours');
@@ -79,7 +80,7 @@ describe('Et après ? (espace)', () => {
   it('pas de carte avant le dernier jour', async () => {
     vi.setSystemTime(new Date('2026-10-10T12:00:00Z'));   // jour 10
     render(<MemoryRouter><Espace /></MemoryRouter>);
-    expect((await screen.findAllByText('Thème 10')).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText('Thème 10', {}, { timeout: 5000 })).length).toBeGreaterThan(0);
     expect(screen.queryByRole('region', { name: 'Et après ?' })).not.toBeInTheDocument();
   });
 });
