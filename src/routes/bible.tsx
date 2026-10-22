@@ -47,7 +47,8 @@ function useEnLigne() {
 }
 const urlChapitre = (livre: Livre, chapitre: number) => `/bible/${livre.code.toLowerCase()}/${chapitre}`;
 /** Guillemets de la langue du texte : « … » en français, “…” en anglais. */
-const ouvre = (v: Version) => (v === 'lsg' ? '« ' : '“');
+// Pas de guillemet d’ouverture ajouté quand le verset commence déjà par le sien (ex. Matthew 25:40 dans la WEB).
+const ouvre = (v: Version, texte = '') => (/^[“‘«"]/.test(texte) ? '' : v === 'lsg' ? '« ' : '“');
 const ferme = (v: Version) => (v === 'lsg' ? ' »' : '”');
 const titreLivre = (livre: Livre, langue: Langue) => livre.genre === 'evangile' ? (langue === 'en' ? `Gospel of ${livre.en}` : `Évangile selon ${livre.fr}`) : nomLivre(livre, langue);
 
@@ -208,7 +209,7 @@ export function BibleAccueil() {
       <div className="bb-ligne"><span className="bb-puce-or"><I nom="auto_stories" taille={16} />{derniere ? t('Reprendre la lecture', 'Resume reading') : t('Pour commencer', 'To begin')}</span></div>
       <h2>{nomReference(livreDerniere, chapitreDerniere, undefined, langue)}</h2>
       <span className="bb-sous-ref">{derniere ? t(`Verset ${versetDerniere}`, `Verse ${versetDerniere}`) : t('La parabole du grain de sénevé · versets 31-32', 'The parable of the mustard seed · verses 31-32')}</span>
-      {extrait && <blockquote className="bb-citation">{ouvre(reglages.version)}{extrait}{ferme(reglages.version)}</blockquote>}
+      {extrait && <blockquote className="bb-citation">{ouvre(reglages.version, extrait)}{extrait}{ferme(reglages.version)}</blockquote>}
       <Link className="bb-bouton-noir" to={lien(urlChapitre(livreDerniere, chapitreDerniere), { v: String(versetDerniere) })}>{derniere ? t('Continuer la lecture', 'Continue reading') : t('Ouvrir Matthieu 13', 'Open Matthew 13')}<I nom="arrow_forward" taille={18} /></Link>
     </section>
     <section className="bb-testaments">
@@ -242,7 +243,7 @@ function CarteRacine({ numero, nom, version, passage }: { numero: number; nom: s
   return <article className="bb-carte bb-racine">
     <div className="bb-ligne"><span className="bb-puce-claire">{t(`Racine n°${numero}`, `Root ${numero}`)}</span><span className="bb-ref-or">{nomReference(passage.livre, passage.chapitre, passage.verset, langue)}{passage.fin !== passage.verset && `-${passage.fin}`} ({VERSIONS[version].court})</span></div>
     <h3>{nom}</h3>
-    {texte && <blockquote className="bb-citation">{ouvre(version)}{texte}{passage.fin !== passage.verset && ' …'}{ferme(version)}</blockquote>}
+    {texte && <blockquote className="bb-citation">{ouvre(version, texte)}{texte}{passage.fin !== passage.verset && ' …'}{ferme(version)}</blockquote>}
     <Link className="bb-lien-chapitre" to={lien(urlChapitre(passage.livre, passage.chapitre), { v: String(passage.verset) })}>{t('Lire dans le chapitre', 'Read in the chapter')}<I nom="chevron_right" taille={18} /></Link>
   </article>;
 }
@@ -466,7 +467,7 @@ function Feuille({ titre, etiquette, fermer, enfants, id }: { titre: string; eti
   </>;
 }
 
-function texteACopier(texte: string, reference: string, version: Version) { return `${ouvre(version)}${texte}${ferme(version)}\n${reference} · ${VERSIONS[version].nom}`; }
+function texteACopier(texte: string, reference: string, version: Version) { return `${ouvre(version, texte)}${texte}${ferme(version)}\n${reference} · ${VERSIONS[version].nom}`; }
 
 function FeuilleVerset({ reference, version, texte, annotation, fermer, changer, annoterNote, montrer }: {
   reference: string; version: Version; texte: string; annotation?: Annotation; fermer: () => void;
@@ -489,7 +490,7 @@ function FeuilleVerset({ reference, version, texte, annotation, fermer, changer,
   }
   const couleur = COULEURS.find(c => c.id === annotation?.couleur);
   return <Feuille id="bb-feuille-verset" etiquette={t('Verset', 'Verse')} titre={reference} fermer={fermer} enfants={<>
-    <blockquote className="bb-apercu">{ouvre(version)}{texte.length > 160 ? `${texte.slice(0, 157)}…` : texte}{ferme(version)}</blockquote>
+    <blockquote className="bb-apercu">{ouvre(version, texte)}{texte.length > 160 ? `${texte.slice(0, 157)}…` : texte}{ferme(version)}</blockquote>
     <div className="bb-ligne"><span className="bb-etiquette-grise">{t('Couleur de surlignage', 'Highlight colour')}</span><span className="bb-ref-or">{couleur ? couleur[langue] : t('Aucune', 'None')}</span></div>
     <div className="bb-couleurs">
       {COULEURS.map(c => <button key={c.id} type="button" className={`bb-pastille bb-pastille-${c.id}`} aria-pressed={annotation?.couleur === c.id} aria-label={t(`Surligner en ${c.fr.toLowerCase()}`, `Highlight in ${c.en.toLowerCase()}`)} onClick={() => changer({ couleur: c.id as Couleur })}>{annotation?.couleur === c.id && <I nom="check" taille={22} />}</button>)}
@@ -518,7 +519,7 @@ function EditeurNote({ reference, version, texte, valeur, fermer, enregistrer }:
     </header>
     <form className="bb-contenu bb-note" onSubmit={e => { e.preventDefault(); enregistrer(note); }}>
       <div className="bb-ligne"><span className="bb-puce-claire"><i className="bb-point" />{t('Note personnelle', 'Personal note')}</span><span className="bb-petit"><I nom="offline_pin" taille={16} />{t('Sur ce téléphone', 'On this phone')}</span></div>
-      <section className="bb-carte"><span className="bb-etiquette"><I nom="menu_book" taille={18} />{reference} · {VERSIONS[version].nom}</span><blockquote className="bb-citation">{ouvre(version)}{texte}{ferme(version)}</blockquote></section>
+      <section className="bb-carte"><span className="bb-etiquette"><I nom="menu_book" taille={18} />{reference} · {VERSIONS[version].nom}</span><blockquote className="bb-citation">{ouvre(version, texte)}{texte}{ferme(version)}</blockquote></section>
       <label className="bb-champ"><span className="bb-ligne"><strong>{t('Ta méditation sur ce passage', 'Your reflection on this passage')}</strong><small>{t(`${note.length} caractère${note.length > 1 ? 's' : ''}`, `${note.length} character${note.length > 1 ? 's' : ''}`)}</small></span>
         <textarea ref={champ} rows={7} maxLength={5000} value={note} onChange={e => setNote(e.target.value)} placeholder={t('Note ici ce que ce passage inspire à ton cœur, une décision ou une prière…', 'Write what this passage stirs in your heart, a decision or a prayer…')} />
       </label>
@@ -593,8 +594,8 @@ function ReferenceIntrouvable({ saisie, livre, version, avecRecherche = true }: 
     <Link className="bb-bouton-noir" to={lien('/bible/livres')}><I nom="menu_book" taille={20} />{t('Ouvrir la liste des livres', 'Open the list of books')}</Link>
     <section className="bb-phares">
       <span className="bb-etiquette">{t('Pour commencer', 'To begin')}</span>
-      <Link to={lien(urlChapitre(matt, 13), { v: '31' })}><strong>{nomReference(matt, 13, 31, langue)}-32</strong>{phare && <em>{ouvre(version)}{phare}{ferme(version)}</em>}</Link>
-      <Link to={lien(urlChapitre(matt, 6), { v: '33' })}><strong>{nomReference(matt, 6, 33, langue)}</strong>{phare2 && <em>{ouvre(version)}{phare2}{ferme(version)}</em>}</Link>
+      <Link to={lien(urlChapitre(matt, 13), { v: '31' })}><strong>{nomReference(matt, 13, 31, langue)}-32</strong>{phare && <em>{ouvre(version, phare)}{phare}{ferme(version)}</em>}</Link>
+      <Link to={lien(urlChapitre(matt, 6), { v: '33' })}><strong>{nomReference(matt, 6, 33, langue)}</strong>{phare2 && <em>{ouvre(version, phare2)}{phare2}{ferme(version)}</em>}</Link>
     </section>
   </div>;
 }
@@ -673,7 +674,7 @@ export function BibleRecherche() {
                     else { try { await navigator.clipboard.writeText(texte); montrer(t('Verset copié avec sa référence', 'Verse copied with its reference')); } catch { montrer(t('La copie n’est pas possible sur ce navigateur', 'Copying is not possible in this browser')); } }
                   }}><I nom="share" taille={20} /></button>
                 </span></div>
-              <blockquote className="bb-citation">{ouvre(reglages.version)}{morceauxSurlignes(r.texte, mots).map((m, i) => m.trouve ? <mark key={i}>{m.t}</mark> : <span key={i}>{m.t}</span>)} »</blockquote>
+              <blockquote className="bb-citation">{ouvre(reglages.version, r.texte)}{morceauxSurlignes(r.texte, mots).map((m, i) => m.trouve ? <mark key={i}>{m.t}</mark> : <span key={i}>{m.t}</span>)}{ferme(reglages.version)}</blockquote>
               <Link className="bb-lien-chapitre" to={lien(urlChapitre(r.livre, r.chapitre), { v: String(r.verset) })}>{t('Lire dans le contexte', 'Read in context')}<I nom="arrow_forward" taille={16} /></Link>
             </li>;
           })}
@@ -700,7 +701,7 @@ function AideReference({ exemple, version }: { exemple: string | null; version: 
   const matt = livreParCode('MAT')!;
   return <section className="bb-carte bb-aide-reference">
     <div className="bb-ligne-icone"><span className="bb-icone-or"><I nom="lightbulb" /></span><div><h2>{t('Tu cherches une référence précise ?', 'Looking for a precise reference?')}</h2><p>{t('Tape le nom d’un livre suivi du chapitre et du verset.', 'Type the name of a book followed by the chapter and verse.')}</p></div></div>
-    <div className="bb-tuile"><span><strong>{nomReference(matt, 6, 33, langue)}</strong>{exemple && <em>{ouvre(version)}{exemple.length > 48 ? `${exemple.slice(0, 46)}…` : exemple}{ferme(version)}</em>}</span>
+    <div className="bb-tuile"><span><strong>{nomReference(matt, 6, 33, langue)}</strong>{exemple && <em>{ouvre(version, exemple)}{exemple.length > 48 ? `${exemple.slice(0, 46)}…` : exemple}{ferme(version)}</em>}</span>
       <Link className="bb-bouton-noir bb-petit-bouton" to={lien(urlChapitre(matt, 6), { v: '33' })}>{t('Ouvrir le passage', 'Open the passage')}</Link></div>
   </section>;
 }
@@ -775,7 +776,7 @@ export function BibleAnnotations() {
                 <button type="button" role="menuitem" className="bb-danger" onClick={() => retirer(a)}><I nom="delete" taille={20} />{onglet === 'surlignages' ? t('Retirer le surlignage', 'Remove highlight') : onglet === 'notes' ? t('Supprimer la note', 'Delete the note') : t('Retirer le marque-page', 'Remove bookmark')}</button>
               </div>}
             </span></div>
-          <blockquote className="bb-citation"><mark className={a.couleur ? `bb-fond-${a.couleur}` : 'bb-fond-aucun'}>{ouvre(a.version)}{a.extrait}{ferme(a.version)}</mark></blockquote>
+          <blockquote className="bb-citation"><mark className={a.couleur ? `bb-fond-${a.couleur}` : 'bb-fond-aucun'}>{ouvre(a.version, a.extrait)}{a.extrait}{ferme(a.version)}</mark></blockquote>
           {a.note && <div className="bb-note-perso"><span className="bb-etiquette"><I nom="edit_note" taille={16} />{t('Note personnelle', 'Personal note')}</span><p>{a.note}</p></div>}
           <div className="bb-ligne">{coul ? <span className="bb-petit"><i className={`bb-rond-couleur bb-pastille-${coul.id}`} />{coul[langue]}</span> : <span />}
             <Link className="bb-lien-chapitre" to={lien(urlChapitre(livre, a.chapitre), { v: String(a.verset) })}>{t('Lire le chapitre', 'Read the chapter')}<I nom="arrow_forward" taille={16} /></Link></div>

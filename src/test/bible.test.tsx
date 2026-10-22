@@ -9,13 +9,16 @@ import { texts } from '@/lib/test-texts';
 // Versets réels (Louis Segond 1910, fichier public/bible/lsg/MAT.json) ; les autres versets du faux livre sont du remplissage.
 const MT_13_31 = 'Il leur proposa une autre parabole, et il dit: Le royaume des cieux est semblable à un grain de sénevé qu’un homme a pris et semé dans son champ.';
 const MT_13_32 = 'C’est la plus petite de toutes les semences; mais, quand il a poussé, il est plus grand que les légumes et devient un arbre, de sorte que les oiseaux du ciel viennent habiter dans ses branches.';
+// Matthew 25:40 (WEB, fichier public/bible/web/MAT.json) commence déjà par un guillemet d’ouverture.
+const MT_25_40_WEB = '“The King will answer them, ‘Most certainly I tell you, because you did it to one of the least of these my brothers, you did it to me.’';
 const MT_6_33 = 'Cherchez premièrement le royaume et la justice de Dieu; et toutes ces choses vous seront données par-dessus.';
-function faux(code: string) {
+function faux(code: string, version = 'lsg') {
   const livre = LIVRES.find(l => l.code === code)!;
   return Array.from({ length: livre.chapitres }, (_, c) => Array.from({ length: 40 }, (_, v) => {
     if (code === 'MAT' && c === 12 && v === 30) return MT_13_31;
     if (code === 'MAT' && c === 12 && v === 31) return MT_13_32;
     if (code === 'MAT' && c === 5 && v === 32) return MT_6_33;
+    if (version === 'web' && code === 'MAT' && c === 24 && v === 39) return MT_25_40_WEB;
     return `Remplissage ${code} ${c + 1}:${v + 1}.`;
   }));
 }
@@ -24,7 +27,7 @@ beforeEach(() => {
   window.localStorage.clear();
   vi.stubGlobal('fetch', vi.fn(async (url: string) => {
     const m = /\/bible\/(lsg|web)\/([0-9A-Z]{3})\.json$/.exec(String(url));
-    return m ? new Response(JSON.stringify(faux(m[2]!)), { status: 200 }) : new Response('', { status: 404 });
+    return m ? new Response(JSON.stringify(faux(m[2]!, m[1])), { status: 200 }) : new Response('', { status: 404 });
   }));
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
@@ -89,6 +92,12 @@ describe('écrans de la Bible', () => {
     for (const ref of ['2 Thessaloniciens 3:10 (LSG 1910)', '1 Timothée 6:10 (LSG 1910)', 'Matthieu 25:40 (LSG 1910)', 'Romains 8:14 (LSG 1910)', 'Luc 16:10-13 (LSG 1910)']) expect(screen.getByText(ref)).toBeInTheDocument();
     expect(screen.getByText('Matthieu 6:25-34 (LSG 1910)')).toBeInTheDocument();
     expect(screen.queryByText(/médité|%/)).toBeNull();
+  });
+
+  it('un verset qui a déjà son guillemet n’en reçoit pas un second', async () => {
+    afficher('/bible?lang=en');
+    const citation = await screen.findByText(t => t.startsWith('“The King will answer them'));
+    expect(citation.textContent).toBe(`${MT_25_40_WEB}”`);
   });
 
   it('la barre du bas mène à la Bible et ne contient plus Aide', () => {
