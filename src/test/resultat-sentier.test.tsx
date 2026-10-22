@@ -11,10 +11,12 @@ function finishQuiz(totals: number[]) {
     const remainder = total % 3;
     for (const answer of [value, value + Number(remainder > 0), value + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} sur 5`) }));
-      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
       act(() => { vi.advanceTimersByTime(160); });
     }
   }
+  // L'image de partage est repliée : on ouvre la section comme le ferait la personne.
+  act(() => { const d = document.querySelector('details.partage-repli') as HTMLDetailsElement | null; if (d && !d.open) { d.open = true; d.dispatchEvent(new Event('toggle')); } });
 }
 const follows = (a: Element, b: Element) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
 const cardOf = (text: string) => screen.getByText(text).closest('.card') as HTMLElement;
@@ -77,7 +79,7 @@ describe('Résultat « Sentier »', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     for (let k = 0; k < 21; k++) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${k < 3 ? 1 : 4} out of 5`) }));
-      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
       act(() => { vi.advanceTimersByTime(160); });
     }
     expect(screen.getByText('Your 7 roots')).toBeVisible();

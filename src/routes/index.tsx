@@ -55,6 +55,7 @@ function StrengthCard({ fortes, total, language }: { fortes: number[]; total: nu
 function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (number | null)[]; chosenRoot: number | null; onChoose: (k: number) => void; language: Language }) {
    const t = texts[language];
    const R = t.roots;
+  const [partageOuvert, setPartageOuvert] = useState(false);
   const r = compute(answers);
   if (!r) return null;
    const allOne = answers.every(value => value === 1);
@@ -92,7 +93,8 @@ function ResultBody({ answers, chosenRoot, onChoose, language }: { answers: (num
          </li>;
        })}</ul>
      </div>
-    {root && act !== null && act !== undefined && <ShareCard editorial language={language} totals={r.t} startRoot={act} />}
+    {/* Image de partage repliée : elle ne s'affiche (et ne se dessine) que si la personne ouvre la section. */}
+    {root && act !== null && act !== undefined && <details className="partage-repli" onToggle={e => setPartageOuvert(e.currentTarget.open)}><summary>{t.shareToggle}</summary>{partageOuvert && <ShareCard editorial language={language} totals={r.t} startRoot={act} />}</details>}
     {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a>
       {/* Accord du 15/10/2026 : le résultat mène aussi à l'espace du site ; en anglais depuis le 18/10/2026 (page de connexion bilingue). */}
       <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion${language === 'en' ? '?lang=en' : ''}`}>{t.espaceBouton}</a></div>
@@ -145,12 +147,11 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  useEffect(() => {
   if (focusNext.current) { question.current?.focus(); focusNext.current = false; }
  }, [i]);
+ // Choisir une réponse passe aussitôt à la question suivante ; le bouton « Voir mon résultat » n'apparaît
+ // qu'une fois les 21 réponses choisies (décision du 22/10/2026, remplace « Confirmer et suivant »).
  function answer(value: number) {
   setAnswers(previous => previous.map((a,k) => k === i ? value : a));
- }
- function confirmAnswer() {
-  if (answers[i] === null || answers[i] === undefined) return;
-  if (i < 20) { focusNext.current = true; setI(i+1); } else setScreen('result');
+  if (i < 20) { focusNext.current = true; setI(i+1); }
  }
  function back() {
   if (i>0) setI(i-1);
@@ -208,7 +209,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    </div>
    <div className="ends"><span>{t.never}</span><span>{t.always}</span></div>
    <div className="quiz-validation">
-    <PrototypeButton className="btn btn-fleche" disabled={answers[i] === null || answers[i] === undefined} onClick={confirmAnswer}>{t.confirmNext}<Icone nom="fleche" taille={20} /></PrototypeButton>
+    {answers.every(a => a !== null) && <PrototypeButton className="btn btn-fleche" onClick={() => setScreen('result')}>{t.seeResult}<Icone nom="fleche" taille={20} /></PrototypeButton>}
     <p className="quiz-confidentialite"><Icone nom="cadenas" taille={18} /><span>{t.privacyTest} <a className="link-inline" href={`${import.meta.env.BASE_URL}confidentialite`}>{t.privacyLink}</a></span></p>
    </div>
   </section>

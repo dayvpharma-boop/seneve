@@ -10,7 +10,7 @@ function finish(totals: number[]) {
     const n = Math.floor(total / 3), remainder = total % 3;
     for (const answer of [n, n + Number(remainder > 0), n + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} out of 5`) }));
-      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
       act(() => vi.advanceTimersByTime(160));
     }
   }
@@ -34,7 +34,7 @@ describe('English test with unchanged rules', () => {
       expect(document.querySelector('#qtext')?.textContent).toBe(question);
       expect(screen.getByText(`Question ${i + 1} of 21`)).toBeVisible();
       fireEvent.click(screen.getByRole('button', { name: '1 out of 5 (never)' }));
-      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
       act(() => vi.advanceTimersByTime(160));
     });
     expect(screen.getAllByRole('radio').map(radio => radio.getAttribute('aria-label'))).toEqual(texts.en.roots.map(root => root.n));

@@ -60,15 +60,34 @@ function finish(totals: number[]) {
     const n = Math.floor(total / 3), r = total % 3;
     for (const v of [n, n + Number(r > 0), n + Number(r > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
-      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
       act(() => vi.advanceTimersByTime(160));
     }
   }
+  ouvrirPartage();
+}
+// L'image de partage est repliée : on ouvre la section comme le ferait la personne.
+function ouvrirPartage() {
+  act(() => { const d = document.querySelector('details.partage-repli') as HTMLDetailsElement | null; if (d && !d.open) { d.open = true; d.dispatchEvent(new Event('toggle')); } });
 }
 const lastContent = () => vi.mocked(renderCard).mock.calls.at(-1)?.[1];
 const flush = () => act(async () => { for (let n = 0; n < 5; n++) await Promise.resolve(); });
 
 describe('Image à partager — page de résultat', () => {
+  it('est repliée par défaut et ne se dessine qu’à l’ouverture', () => {
+    render(<Index />);
+    fireEvent.click(screen.getByRole('button', { name: 'Commencer' }));
+    for (const v of [5,5,5, 4,4,4, 2,2,2, 3,3,3, 4,4,3, 1,2,1, 3,4,3]) fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
+    fireEvent.click(screen.getByRole('button', { name: 'Voir mon résultat' }));
+    const repli = document.querySelector('details.partage-repli') as HTMLDetailsElement;
+    expect(repli.open).toBe(false);
+    expect(screen.getByText('Partager mon résultat en image')).toBeVisible();
+    expect(renderCard).not.toHaveBeenCalled();
+    ouvrirPartage();
+    expect(screen.getByText('Partager')).toBeInTheDocument();
+    cleanup();
+  });
+
   beforeEach(() => {
     vi.useFakeTimers(); vi.clearAllMocks();
     URL.createObjectURL = vi.fn(() => 'blob:apercu');

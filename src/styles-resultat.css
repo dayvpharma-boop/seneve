@@ -32,3 +32,15 @@ body:has(#s-result:not([hidden])) { background:#fff9ea; color:#1d1c13; }
 #s-result .result-espace .btn { min-height:48px; background:#eee8d9; color:#1d1c13; }
 #s-result .result-method summary, #s-result #again { min-height:48px; align-content:center; }
 #s-result :focus-visible { outline:3px solid #1d1c13; outline-offset:3px; }
+
+/* Image de partage repliée (22/10/2026) : une ligne à toucher pour l'ouvrir. */
+.partage-repli { margin:0 0 16px; border-radius:8px; background:#fff; color:#1d1c13; }
+.partage-repli > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:12px 16px; cursor:pointer; list-style:none; font:600 15px/1.3 Outfit, Poppins, system-ui, sans-serif; }
+.partage-repli > summary::-webkit-details-marker { display:none; }
+.partage-repli > summary::after { content:''; width:10px; height:10px; flex:none; border-right:2px solid #755b00; border-bottom:2px solid #755b00; transform:rotate(45deg); transition:transform .2s; margin-top:-4px; }
+.partage-repli[open] > summary::after { transform:rotate(-135deg); margin-top:4px; }
+.partage-repli > summary:focus-visible { outline:3px solid #755b00; outline-offset:2px; border-radius:8px; }
+.partage-repli[open] { padding-bottom:4px; }
+.partage-repli[open] > .card { margin:0 8px 8px; box-shadow:none; }
+:root[data-apparence="sombre"] .partage-repli { background:#211f1c; color:#e6e2dc; }
+:root[data-apparence="sombre"] .partage-repli > summary::after { border-color:#ffd482; }

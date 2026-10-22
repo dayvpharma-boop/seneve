@@ -9,7 +9,7 @@ function answerAll(values: number[]) {
   fireEvent.click(screen.getByRole('button', { name: 'Commencer' }));
   for (const v of values) {
     fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
-    fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+    { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
     act(() => vi.advanceTimersByTime(160));
   }
 }
@@ -57,7 +57,7 @@ describe('Suivi anonyme du test', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Commencer' }));
     for (let k = 0; k < 20; k++) {
       fireEvent.click(screen.getByRole('button', { name: /^3 sur 5/ }));
-      fireEvent.click(screen.getByRole('button', { name: /^(Confirmer et suivant|Confirm and next)$/i }));
+      { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
       act(() => vi.advanceTimersByTime(160));
     }
     expect(submitResult).not.toHaveBeenCalled();
