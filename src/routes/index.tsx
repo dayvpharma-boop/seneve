@@ -108,6 +108,8 @@ function RememberRoot({ k }: { k: number }) {
   useEffect(() => { memoriserRacineTest(k); }, [k]);
   return null;
 }
+/** Temps pendant lequel le chiffre choisi reste visible avant la question suivante (ms). */
+export const PAUSE_CHOIX = 350;
 export function Index({ language = 'fr', languageLink, source = null }: { language?: Language; languageLink?: ReactNode; source?: string | null } = {}) {
  const t = texts[language];
  const [screen, setScreen] = useState<'home' | 'quiz' | 'result'>('home');
@@ -117,6 +119,8 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  const question = useRef<HTMLParagraphElement>(null);
  const title = useRef<HTMLHeadingElement>(null);
  const focusNext = useRef(false);
+ const passage = useRef<number | undefined>(undefined);
+ useEffect(() => () => window.clearTimeout(passage.current), []);
  const visitRecorded = useRef(new Set<Language>());
  const savedResult = useRef<Promise<string | null> | null>(null);
  // Une ouverture comptée par chargement de la page et par langue affichée : passer au lien « English »
@@ -149,11 +153,15 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  }, [i]);
  // Choisir une réponse passe aussitôt à la question suivante ; le bouton « Voir mon résultat » n'apparaît
  // qu'une fois les 21 réponses choisies (décision du 22/10/2026, remplace « Confirmer et suivant »).
+ // Le chiffre choisi reste coloré un instant (PAUSE_CHOIX) avant la question suivante ; un autre choix pendant
+ // ce temps remplace le premier et relance la pause.
  function answer(value: number) {
   setAnswers(previous => previous.map((a,k) => k === i ? value : a));
-  if (i < 20) { focusNext.current = true; setI(i+1); }
+  window.clearTimeout(passage.current);
+  if (i < 20) { const suivante = i + 1; passage.current = window.setTimeout(() => { focusNext.current = true; setI(suivante); }, PAUSE_CHOIX); }
  }
  function back() {
+  window.clearTimeout(passage.current);
   if (i>0) setI(i-1);
  }
  // Mise en page des maquettes validées le 19/10/2026 (dossier « image app/corrigé », écrans 01, 02 et 03).

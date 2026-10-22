@@ -12,7 +12,7 @@ function finishQuiz(totals: number[]) {
     for (const answer of [value, value + Number(remainder > 0), value + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} sur 5`) }));
       { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
-      act(() => { vi.advanceTimersByTime(160); });
+      act(() => { vi.advanceTimersByTime(400); });
     }
   }
   // L'image de partage est repliée : on ouvre la section comme le ferait la personne.
@@ -80,7 +80,7 @@ describe('Résultat « Sentier »', () => {
     for (let k = 0; k < 21; k++) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${k < 3 ? 1 : 4} out of 5`) }));
       { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
-      act(() => { vi.advanceTimersByTime(160); });
+      act(() => { vi.advanceTimersByTime(400); });
     }
     expect(screen.getByText('Your 7 roots')).toBeVisible();
     expect(screen.queryByText('Tes 7 racines')).not.toBeInTheDocument();

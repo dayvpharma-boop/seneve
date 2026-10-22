@@ -61,7 +61,7 @@ function finish(totals: number[]) {
     for (const v of [n, n + Number(r > 0), n + Number(r > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
       { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
-      act(() => vi.advanceTimersByTime(160));
+      act(() => vi.advanceTimersByTime(400));
     }
   }
   ouvrirPartage();
@@ -77,7 +77,7 @@ describe('Image à partager — page de résultat', () => {
   it('est repliée par défaut et ne se dessine qu’à l’ouverture', () => {
     render(<Index />);
     fireEvent.click(screen.getByRole('button', { name: 'Commencer' }));
-    for (const v of [5,5,5, 4,4,4, 2,2,2, 3,3,3, 4,4,3, 1,2,1, 3,4,3]) fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
+    for (const v of [5,5,5, 4,4,4, 2,2,2, 3,3,3, 4,4,3, 1,2,1, 3,4,3]) { fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) })); act(() => vi.advanceTimersByTime(400)); }
     fireEvent.click(screen.getByRole('button', { name: 'Voir mon résultat' }));
     const repli = document.querySelector('details.partage-repli') as HTMLDetailsElement;
     expect(repli.open).toBe(false);

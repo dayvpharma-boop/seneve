@@ -49,7 +49,7 @@ describe('Variante 1 « Sentier » du Test des 7 Racines', () => {
     for (let k = 0; k < 3; k++) {
       fireEvent.click(screen.getByRole('button', { name: /^3 sur 5/ }));
       { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
-      act(() => vi.advanceTimersByTime(160));
+      act(() => vi.advanceTimersByTime(400));
     }
     expect(screen.getByText('Question 4 sur 21')).toBeVisible();
     expect(screen.getByText('Racine 2 sur 7')).toBeVisible();

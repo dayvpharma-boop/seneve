@@ -10,7 +10,7 @@ function answerAll(values: number[]) {
   for (const v of values) {
     fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
     { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
-    act(() => vi.advanceTimersByTime(160));
+    act(() => vi.advanceTimersByTime(400));
   }
 }
 const uniqueMin = [5,5,5, 3,3,3, 1,2,1, 4,4,4, 5,4,5, 2,2,2, 3,3,3];
@@ -58,7 +58,7 @@ describe('Suivi anonyme du test', () => {
     for (let k = 0; k < 20; k++) {
       fireEvent.click(screen.getByRole('button', { name: /^3 sur 5/ }));
       { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
-      act(() => vi.advanceTimersByTime(160));
+      act(() => vi.advanceTimersByTime(400));
     }
     expect(submitResult).not.toHaveBeenCalled();
   });

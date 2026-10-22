@@ -1,16 +1,17 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Index } from '@/routes/index';
+import { Index, PAUSE_CHOIX } from '@/routes/index';
 import { submitResult } from '@/lib/suivi-test';
 
 // Décision du 22/10/2026 : choisir une réponse passe aussitôt à la question suivante ;
 // un seul bouton « Voir mon résultat » apparaît quand les 21 réponses sont choisies.
 const voirResultat = () => screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i });
-const repondre = (n: number) => fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${n} sur 5`) }));
+const attendre = () => act(() => { vi.advanceTimersByTime(PAUSE_CHOIX + 50); });
+const repondre = (n: number) => { fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${n} sur 5`) })); attendre(); };
 
 describe('Choisir une réponse passe à la question suivante', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
-  afterEach(cleanup);
+  beforeEach(() => { vi.clearAllMocks(); vi.useFakeTimers(); });
+  afterEach(() => { cleanup(); vi.useRealTimers(); });
 
   it.each(['fr', 'en'] as const)('un choix affiche la question suivante, sans bouton à confirmer (%s)', language => {
     render(<Index language={language} />);
@@ -19,6 +20,10 @@ describe('Choisir une réponse passe à la question suivante', () => {
     expect(voirResultat()).toBeNull();
     const choix = (n: number) => screen.getByRole('button', { name: new RegExp(`^${n} ${language === 'fr' ? 'sur' : 'out of'} 5`) });
     fireEvent.click(choix(4));
+    // Le chiffre choisi reste visible un instant, puis la question suivante s'affiche.
+    expect(choix(4)).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText(language === 'fr' ? 'Question 1 sur 21' : 'Question 1 of 21')).toBeVisible();
+    attendre();
     expect(screen.getByText(language === 'fr' ? 'Question 2 sur 21' : 'Question 2 of 21')).toBeVisible();
     expect(voirResultat()).toBeNull();
     expect(submitResult).not.toHaveBeenCalled();

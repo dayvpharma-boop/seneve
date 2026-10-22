@@ -11,7 +11,7 @@ function finishQuiz(totals: number[]) {
     for (const answer of [value, value + Number(remainder > 0), value + Number(remainder > 1)]) {
       fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${answer} sur 5`) }));
       { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
-      act(() => { vi.advanceTimersByTime(160); });
+      act(() => { vi.advanceTimersByTime(400); });
     }
   }
 }
