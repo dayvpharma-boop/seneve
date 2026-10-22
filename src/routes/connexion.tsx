@@ -123,8 +123,8 @@ export function Connexion() {
           return;
         }
       }
-      const retour = location.state?.retourJournal;
-      navigate(typeof retour === 'string' && /^\/journal(?:\?|$)/.test(retour) ? retour : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
+      const retour = location.state?.retourJournal ?? location.state?.retour;
+      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
     } catch (err) {
       setError(authError(err instanceof Error ? err.message : 'network', langue));
     } finally { setBusy(false); }

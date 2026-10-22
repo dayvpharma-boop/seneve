@@ -3,11 +3,12 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Fausse base : chaque fonction renvoie la valeur prévue ; tous les appels sont enregistrés.
+const sansSession = vi.hoisted(() => ({ actif: false }));
 const results: Record<string, { data: unknown; error: { message: string } | null }> = {};
 const calls: { name: string; args: unknown }[] = [];
 vi.mock('@/lib/supabase', () => ({
   supabase: {
-    auth: { getSession: () => Promise.resolve({ data: { session: { user: { user_metadata: {} } } } }) },
+    auth: { getSession: () => Promise.resolve({ data: { session: sansSession.actif ? null : { user: { user_metadata: {} } } } }) },
     rpc: (name: string, args: unknown) => { calls.push({ name, args }); return Promise.resolve(results[name] ?? { data: null, error: null }); },
   },
   siteUrl: (p: string) => p,
@@ -147,4 +148,15 @@ it('sur ordinateur les priorités ouvrent la fiche sans encombrer le poste d’i
  fireEvent.click(screen.getByRole('button',{name:'Ouvrir la fiche'}));await screen.findByRole('button',{name:'Enregistrer'});expect(document.querySelector('dialog')).toHaveAttribute('open');
  expect(calls.some(c=>c.name==='staff_update_help_request')).toBe(false);
  }finally{Object.defineProperty(window,'matchMedia',{configurable:true,value:precedent});}
+});
+
+describe('Administration sans connexion', () => {
+  afterEach(() => { sansSession.actif = false; cleanup(); });
+  it('demande de se connecter au lieu d’annoncer une session expirée', async () => {
+    sansSession.actif = true;
+    render(<MemoryRouter initialEntries={['/admin']}><Admin /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { name: 'Connexion requise' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Se connecter/ })).toHaveAttribute('href', '/connexion');
+    expect(screen.queryByText('Session expirée')).not.toBeInTheDocument();
+  });
 });

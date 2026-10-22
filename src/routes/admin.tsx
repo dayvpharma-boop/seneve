@@ -8,7 +8,7 @@ import '@/styles-registres-fideles.css';
 import '@/styles-edition-administration.css';
 import '@/styles-pilotage-maquette.css';
 import {FormulaireDemandeFidele} from '@/components/FormulaireDemandeFidele';
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { EtatAdministration } from '@/components/EtatAdministration';
 import { supabase } from '@/lib/supabase';
@@ -48,7 +48,9 @@ export function Admin() {
   const [params,setParams]=useSearchParams();
   const intervention=params.get('vue')==='intervention';
   const [data, setData] = useState<Loaded | null>(null);
-  const [state, setState] = useState<'loading' | 'ok' | 'no-access' | 'failed' | 'expired'>('loading');
+  const [state, setState] = useState<'loading' | 'ok' | 'no-access' | 'failed' | 'expired' | 'signin'>('loading');
+  // « Session expirée » seulement si l’administration a déjà été ouverte ; sinon il faut simplement se connecter.
+  const dejaOuverte = useRef(false);
   const [heureErreur,setHeureErreur]=useState<Date>();
   const [outilsDemandes,setOutilsDemandes]=useState(false);
   const [ordinateur,setOrdinateur]=useState(()=>window.matchMedia?.('(min-width:1024px)').matches??false);
@@ -58,9 +60,9 @@ export function Admin() {
   const refresh = useCallback(async () => {
     try {
       const res = await load();
-      if (res === 'no-session') { setData(null); setState('expired'); return; }
+      if (res === 'no-session') { setData(null); setState(dejaOuverte.current ? 'expired' : 'signin'); return; }
       if (res === 'no-access') { setData(null); setState('no-access'); return; }
-      setData(res); setState('ok');
+      dejaOuverte.current = true; setData(res); setState('ok');
     } catch { setData(null); setHeureErreur(new Date()); setState('failed'); }
   }, []);
   useEffect(() => { void refresh(); }, [refresh]);
