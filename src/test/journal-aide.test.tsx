@@ -217,7 +217,15 @@ describe('Besoin d’aide', () => {
     expect(screen.getByText('Voici une piste.')).toBeInTheDocument();
     const cancels = screen.getAllByRole('button', { name: 'Annuler cette demande' });
     expect(cancels).toHaveLength(1);
+    // L'annulation se confirme : « Conserver » ne change rien.
     fireEvent.click(cancels[0]!);
+    expect(screen.getByText('Annuler cette demande ?')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Conserver ma demande' })).toHaveFocus();
+    fireEvent.click(screen.getByRole('button', { name: 'Conserver ma demande' }));
+    expect(screen.queryByText('Annuler cette demande ?')).not.toBeInTheDocument();
+    expect(rpcs.some(x => x.name === 'cancel_help_request')).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: 'Annuler cette demande' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’annulation' }));
     await waitFor(() => expect(rpcs).toContainEqual({ name: 'cancel_help_request', args: { p_request_id: 'R2' } }));
   });
 

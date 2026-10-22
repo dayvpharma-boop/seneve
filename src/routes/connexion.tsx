@@ -45,6 +45,8 @@ const TEXTES = {
     age: 'En créant un compte, tu confirmes avoir au moins 18\u00A0ans. ', confidentialite: 'Comment nous protégeons tes données',
     autreLangue: 'English', titrePage: 'Mon espace — SÉNEVÉ',
     pasEncore: 'Pas encore de compte ?', securite: 'Connexion sécurisée · Données privées et préservées',
+    renvoyer: "Renvoyer l'e-mail de confirmation", renvoyerDans: (s: number) => `Renvoyer l'e-mail de confirmation (${s} s)`,
+    renvoye: (e: string) => `Nouvel e-mail envoyé à ${e}. Pense à regarder aussi dans les courriers indésirables.`,
   },
   en: {
     titre: 'Your space', onglet: 'Your space', intro: 'Your readings, actions and journal to put Kingdom principles into practice in everyday life.',
@@ -57,6 +59,8 @@ const TEXTES = {
     age: 'By creating an account, you confirm that you are at least 18 years old. ', confidentialite: 'How we protect your data (in French)',
     autreLangue: 'Français', titrePage: 'Your space — SÉNEVÉ',
     pasEncore: 'Don’t have an account yet?', securite: 'Secure connection · Your data stays private and protected',
+    renvoyer: 'Resend the confirmation email', renvoyerDans: (s: number) => `Resend the confirmation email (${s} s)`,
+    renvoye: (e: string) => `New email sent to ${e}. Please also check your spam folder.`,
   },
 };
 
@@ -74,10 +78,31 @@ export function Connexion() {
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [voir, setVoir] = useState(false);
+  // Adresse en attente de confirmation : on peut redemander l'e-mail, une fois par minute au plus.
+  const [aConfirmer, setAConfirmer] = useState<string | null>(null);
+  const [attente, setAttente] = useState(0);
+  const [renvoi, setRenvoi] = useState(false);
+  useEffect(() => {
+    if (attente <= 0) return;
+    const t = window.setTimeout(() => setAttente(a => a - 1), 1000);
+    return () => window.clearTimeout(t);
+  }, [attente]);
+
+  async function renvoyer() {
+    if (!aConfirmer || renvoi || attente > 0) return;
+    setRenvoi(true); setError(''); setInfo('');
+    try {
+      const { error } = await supabase.auth.resend({ type: 'signup', email: aConfirmer, options: { emailRedirectTo: siteUrl('espace') } });
+      if (error) { setError(authError(error.message, langue)); return; }
+      setInfo(T.renvoye(aConfirmer)); setAttente(60);
+    } catch (err) {
+      setError(authError(err instanceof Error ? err.message : 'network', langue));
+    } finally { setRenvoi(false); }
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    setError(''); setInfo('');
+    setError(''); setInfo(''); setAConfirmer(null);
     if (password.length < 8) { setError(ERREURS[langue].mdp); return; }
     setBusy(true);
     try {
@@ -88,10 +113,14 @@ export function Connexion() {
         });
         if (error) { setError(authError(error.message, langue)); return; }
         if (data.user && data.user.identities?.length === 0) { setError(ERREURS[langue].deja); return; }
-        if (!data.session) { setInfo(T.envoye); return; }
+        if (!data.session) { setInfo(T.envoye); setAConfirmer(email); return; }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) { setError(authError(error.message, langue)); return; }
+        if (error) {
+          setError(authError(error.message, langue));
+          if ((error.message ?? '').toLowerCase().includes('email not confirmed')) setAConfirmer(email);
+          return;
+        }
       }
       navigate('/espace');
     } catch (err) {
@@ -103,7 +132,7 @@ export function Connexion() {
     navigate(`/mot-de-passe-oublie${langue === 'en' ? '?lang=en' : ''}`, { state: { email } });
   }
 
-  function choose(next: 'signup' | 'signin') { setTab(next); setError(''); setInfo(''); }
+  function choose(next: 'signup' | 'signin') { setTab(next); setError(''); setInfo(''); setAConfirmer(null); }
 
   return <main className={`wrap connexion auth-maquette auth-${tab}`}>
     <header className="auth-header">
@@ -135,6 +164,7 @@ export function Connexion() {
       <p className="connexion-achat"><span className="auth-achat-icon"><IconeConnexion nom={tab === 'signup' ? 'auto_stories_filled' : 'auto_stories'} taille={20} /></span><span>{T.achat}</span></p>
       {error && <p className="error" role="alert">{error}</p>}
       {info && <p className="connexion-info" role="status">{info}</p>}
+      {aConfirmer && aConfirmer === email && <button type="button" className="link connexion-renvoi" disabled={renvoi || attente > 0} onClick={() => void renvoyer()}><IconeConnexion nom="mail" taille={16} />{attente > 0 ? T.renvoyerDans(attente) : renvoi ? T.patienter : T.renvoyer}</button>}
       <button className="btn moment-btn" type="submit" disabled={busy}>{busy ? T.patienter : tab === 'signup' ? T.creer : T.connecter}{tab === 'signup' ? <IconeConnexion nom="arrow_forward" taille={18} /> : <IconeConnexion nom="east" taille={18} />}</button>
     </form>
     <div className="connexion-suite">

@@ -730,3 +730,5 @@
 .resultat-outils{display:flex;align-items:center;gap:8px}.resultat-outils>.barre-haut{flex:1}.today-profil{min-width:48px;min-height:48px}
 
 :root[data-apparence="clair"]{--background:#F4EEDF;--surface:#FCFAF5;--foreground:#0A0907;--muted:#4A463F;--brand:#0A0907;--gold:#5D6246;--or:#C9A84C;--primary-fill:#0A0907;--on-primary:#FCFAF5;--line:#E5DCBE;--control-line:#8C836D;--chip:#ECE5D3;--on-chip:#0A0907;--gold-fill:#0A0907;--on-gold:#FCFAF5;--tile:#ECE5D3;--soft-gold:#F3EAD0;--prompt-green:#FCFAF5;--prompt-gold:#ECE5D3;--danger:#ba1a1a;--ok:#245139}
+:root[data-apparence="sombre"] .aide-page .demande-confirmation{background:#211f1c;}:root[data-apparence="sombre"] .aide-page .demande-confirmation p{color:#d8d1c2;}:root[data-apparence="sombre"] .aide-page .demande-confirmation .btn-danger{background:#5c1a16;color:#ffdad6;}
+:root[data-apparence="sombre"] .auth-maquette .connexion-renvoi{color:#e6c364;}:root[data-apparence="sombre"] .auth-maquette .connexion-renvoi:disabled{color:#d1c5b3;}

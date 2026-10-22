@@ -62,3 +62,5 @@ body:has(.auth-maquette) { background:#fff9ea; }
 @media(max-width:370px) { .auth-header { gap:4px; } .auth-language { padding:0 6px; } .auth-brand strong { letter-spacing:.03em; } }
 
 body:has(.auth-maquette)::-webkit-scrollbar { display:none; }
+/* Renvoi de l'e-mail de confirmation (maquette corrigée « Adresse non confirmée »). */
+.auth-maquette .connexion-renvoi{grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:48px;margin:0;padding:4px 0;font:500 14px/20px Outfit,system-ui,sans-serif;color:#755b00;text-decoration:underline;text-underline-offset:4px}.auth-maquette .connexion-renvoi:disabled{color:#4a463f;text-decoration:none;opacity:.75}

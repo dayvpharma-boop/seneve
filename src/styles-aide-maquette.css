@@ -68,3 +68,5 @@ body:has(.aide-page){background:#fff9ea;color:#1d1c13}
 .aide-page .barre-nav .nav-plus{display:grid;place-items:center;width:48px;height:48px;background:#000;color:#fff;border-radius:12px;border:0}
 
 .aide-page .aide-bouclier svg{color:#755b00}
+/* Confirmation avant d'annuler une demande (maquette corrigée du 19/10/2026). */
+.aide-page .demande-confirmation{display:grid;gap:8px;margin-top:12px;padding:16px;border-radius:8px;background:#f9f3e4}.aide-page .demande-confirmation p{margin:0;font:400 15px/24px Literata,serif;color:#4a463f}.aide-page .demande-confirmation .demande-confirmation-titre{font:600 16px/24px Outfit,sans-serif;color:var(--foreground)}.aide-page .demande-confirmation .btn{width:100%;min-height:48px;border-radius:4px;font:500 14px/20px Outfit,sans-serif}.aide-page .demande-confirmation .btn-danger{background:#ffdad6;color:#93000a;border:0}

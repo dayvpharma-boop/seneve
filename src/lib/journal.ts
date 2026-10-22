@@ -84,6 +84,11 @@ export const JOURNAL_TEXTES = {
     reponse: 'Réponse de l’équipe :',
     notesJointes: 'Notes jointes :',
     annulerDemande: 'Annuler cette demande',
+    // Confirmation avant l’annulation (maquette corrigée « Aide & Contact — Confirmation d’annulation »).
+    confirmerAnnulTitre: 'Annuler cette demande ?',
+    confirmerAnnulTexte: 'Si tu annules cette demande, l’équipe d’accompagnement ne la traitera plus. Tu pourras toujours créer une nouvelle demande plus tard si le problème persiste.',
+    conserverDemande: 'Conserver ma demande',
+    confirmerAnnul: 'Confirmer l’annulation',
     etats: {
       recue: 'Reçue',
       affectee: 'Confiée à un accompagnateur',
@@ -153,6 +158,10 @@ export const JOURNAL_TEXTES = {
     reponse: 'Team reply:',
     notesJointes: 'Attached notes:',
     annulerDemande: 'Cancel this request',
+    confirmerAnnulTitre: 'Cancel this request?',
+    confirmerAnnulTexte: 'If you cancel this request, the support team will no longer handle it. You can always create a new request later if the problem continues.',
+    conserverDemande: 'Keep my request',
+    confirmerAnnul: 'Confirm cancellation',
     etats: {
       recue: 'Received',
       affectee: 'Assigned to a companion',

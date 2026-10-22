@@ -9,6 +9,7 @@ vi.mock('@/lib/supabase', () => ({
       signUp: () => { appels.push('signUp'); return Promise.resolve({ data: { user: null, session: null }, error: null }); },
       signInWithPassword: () => { appels.push('signIn'); return Promise.resolve({ error: { message: 'Invalid login credentials' } }); },
       resetPasswordForEmail: () => Promise.resolve({ error: null }),
+      resend: (o: { type: string; email: string }) => { appels.push(`resend:${o.type}:${o.email}`); return Promise.resolve({ error: null }); },
     },
   },
   siteUrl: (p: string) => p,
@@ -80,5 +81,25 @@ describe('Connexion en anglais (?lang=en)', () => {
     ouvrirEn();
     fireEvent.click(screen.getByRole('tab', { name: 'Sign in' }));
     expect(screen.getByRole('button', { name: 'Forgot your password?' })).toBeInTheDocument();
+  });
+});
+
+describe('Renvoi de l’e-mail de confirmation', () => {
+  it('après la création du compte, renvoie l’e-mail une fois puis attend une minute', async () => {
+    ouvrir();
+    fireEvent.change(screen.getByLabelText('Ton prénom'), { target: { value: 'Marie' } });
+    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'marie@example.invalid' } });
+    fireEvent.change(screen.getByLabelText('Mot de passe'), { target: { value: 'motdepasse-essai' } });
+    fireEvent.click(screen.getByRole('button', { name: /^Créer un compte/ }));
+    const bouton = await screen.findByRole('button', { name: "Renvoyer l'e-mail de confirmation" });
+    fireEvent.click(bouton);
+    expect(await screen.findByText(/Nouvel e-mail envoyé à marie@example.invalid/)).toBeInTheDocument();
+    expect(appels).toContain('resend:signup:marie@example.invalid');
+    expect(screen.getByRole('button', { name: /Renvoyer l'e-mail de confirmation \(60/ })).toBeDisabled();
+  });
+
+  it('sans adresse en attente, aucun bouton de renvoi', () => {
+    ouvrir();
+    expect(screen.queryByRole('button', { name: /Renvoyer l'e-mail/ })).not.toBeInTheDocument();
   });
 });

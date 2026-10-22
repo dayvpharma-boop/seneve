@@ -158,6 +158,10 @@ function RequestCard({ request, langue, onChanged }: { request: Request; langue:
   const T = journalTextes(langue);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  // Une annulation se confirme d'abord : l'équipe ne traitera plus la demande.
+  const [confirmer, setConfirmer] = useState(false);
+  const conserver = useRef<HTMLButtonElement>(null);
+  useEffect(() => { if (confirmer) conserver.current?.focus(); }, [confirmer]);
 
   async function cancel() {
     setBusy(true); setError('');
@@ -176,7 +180,14 @@ function RequestCard({ request, langue, onChanged }: { request: Request; langue:
     <p className="day-text">{message}</p>
     {request.extraits_partages && <details><summary className="muted">{T.notesJointes}</summary><p className="day-text">{request.extraits_partages}</p></details>}
     {request.reponse && <div className="prompt-carte demande-reponse"><p className="tag"><IconeAide nom="history_edu" taille={17} />{T.reponse}</p><p className="day-text">{request.reponse}</p></div>}
-    {peutAnnuler(request.etat) && <button type="button" className="link" disabled={busy} onClick={() => void cancel()}>{T.annulerDemande}</button>}
+    {peutAnnuler(request.etat) && (confirmer
+      ? <div className="demande-confirmation" role="group" aria-labelledby={`annuler-${request.request_id}`}>
+          <p className="demande-confirmation-titre" id={`annuler-${request.request_id}`}>{T.confirmerAnnulTitre}</p>
+          <p>{T.confirmerAnnulTexte}</p>
+          <button ref={conserver} type="button" className="btn" disabled={busy} onClick={() => setConfirmer(false)}>{T.conserverDemande}</button>
+          <button type="button" className="btn btn-danger" disabled={busy} onClick={() => void cancel()}>{T.confirmerAnnul}</button>
+        </div>
+      : <button type="button" className="link" disabled={busy} onClick={() => setConfirmer(true)}>{T.annulerDemande}</button>)}
     {error && <p className="error" role="alert">{error}</p>}
   </article>;
 }
