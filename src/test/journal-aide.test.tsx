@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,6 +8,12 @@ const writes: { table: string; op: string; value: unknown }[] = [];
 const rpcs: { name: string; args: Record<string, unknown> }[] = [];
 let rpcError: { message: string } | null = null;
 let insertErrors: ({ code: string; message: string } | null)[] = [];
+let authId: string | null = 'U1';
+const authListeners = new Set<(event: string, session: { user: { id: string } } | null) => void>();
+function changerCompte(id: string | null) {
+  authId = id;
+  act(() => { for (const f of authListeners) f(id ? 'SIGNED_IN' : 'SIGNED_OUT', id ? { user: { id } } : null); });
+}
 
 function builder(table: string) {
   const rows = () => tables[table] ?? [];
@@ -22,7 +28,11 @@ function builder(table: string) {
 }
 vi.mock('@/lib/supabase', () => ({
   supabase: {
-    auth: { getSession: () => Promise.resolve({ data: { session: { user: { user_metadata: { prenom: 'Marie' } } } } }), signOut: () => Promise.resolve({}) },
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: authId ? { user: { id: authId, user_metadata: { prenom: 'Marie' } } } : null } }),
+      onAuthStateChange: (f: (event: string, session: { user: { id: string } } | null) => void) => { authListeners.add(f); return { data: { subscription: { unsubscribe: () => authListeners.delete(f) } } }; },
+      signOut: () => Promise.resolve({}),
+    },
     rpc: (name: string, args: Record<string, unknown>) => {
       rpcs.push({ name, args });
       if (name === 'ensure_participant') return Promise.resolve({ data: 'P1', error: null });
@@ -36,11 +46,11 @@ vi.mock('@/lib/supabase', () => ({
 
 import { Journal } from '@/routes/journal';
 import { Aide } from '@/routes/aide';
-import { peutAnnuler, texteValide } from '@/lib/journal';
+import { draft, peutAnnuler, texteValide } from '@/lib/journal';
 
 function at(path: string) {
   return render(<MemoryRouter initialEntries={[path]}><Routes>
-    <Route path="/journal" element={<Journal />} /><Route path="/aide" element={<Aide />} /><Route path="/espace" element={<p>espace</p>} />
+    <Route path="/journal" element={<Journal />} /><Route path="/aide" element={<Aide />} /><Route path="/espace" element={<p>espace</p>} /><Route path="/connexion" element={<p>Connexion requise</p>} />
   </Routes></MemoryRouter>);
 }
 
@@ -48,6 +58,7 @@ beforeEach(() => {
   for (const k of Object.keys(tables)) delete tables[k];
   writes.length = 0; rpcs.length = 0; rpcError = null; insertErrors = [];
   window.localStorage.clear();
+  authId = 'U1'; authListeners.clear();
   tables['participants'] = [{ prenom: 'Marie', langue: 'fr' }];
   tables['journal_entries'] = [];
   tables['help_requests'] = [];
@@ -70,6 +81,49 @@ describe('règles', () => {
 });
 
 describe('Mon journal', () => {
+  it('isole les brouillons de deux comptes et restaure celui du premier après reconnexion', async () => {
+    at('/journal');
+    const champ = await screen.findByPlaceholderText(/Ce que tu as compris/);
+    fireEvent.change(champ, { target: { value: 'Réflexion privée de Marie' } });
+    changerCompte('U2');
+    expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue('');
+    fireEvent.change(screen.getByPlaceholderText(/Ce que tu as compris/), { target: { value: 'Texte du second compte' } });
+    changerCompte('U1');
+    expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue('Réflexion privée de Marie');
+    expect(draft.read('journal:libre', 'U2')).toBe('Texte du second compte');
+    expect(writes).toHaveLength(0);
+  });
+
+  it('ne récupère jamais un ancien brouillon sans propriétaire et le conserve intact', async () => {
+    localStorage.setItem('seneve:journal:libre', 'Ancien texte sans compte identifié');
+    at('/journal');
+    expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue('');
+    expect(localStorage.getItem('seneve:journal:libre')).toBe('Ancien texte sans compte identifié');
+    changerCompte(null);
+    expect(await screen.findByText('Connexion requise')).toBeInTheDocument();
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it('ajoute une citation biblique au seul brouillon du compte courant', async () => {
+    draft.write('journal:libre', 'Mon début de réflexion', 'U1');
+    draft.write('journal:libre', 'Autre compte', 'U2');
+    const citation = 'Le juste vivra par la foi. — Romains 1:17';
+    render(<MemoryRouter initialEntries={[{ pathname: '/journal', state: { citationBiblique: citation } }]}><Routes><Route path="/journal" element={<Journal />} /></Routes></MemoryRouter>);
+    expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue(`Mon début de réflexion\n\n${citation}\n\n`);
+    expect(draft.read('journal:libre', 'U2')).toBe('Autre compte');
+  });
+
+  it('isole aussi le texte et le sujet des demandes d’aide', async () => {
+    at('/aide');
+    fireEvent.change(await screen.findByPlaceholderText(/Par exemple/), { target: { value: 'Demande privée de Marie' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Mon achat' }));
+    changerCompte('U2');
+    expect(await screen.findByPlaceholderText(/Par exemple/)).toHaveValue('');
+    expect(screen.getByRole('button', { name: 'Mon parcours' })).toHaveAttribute('aria-pressed', 'true');
+    changerCompte('U1');
+    expect(await screen.findByPlaceholderText(/Par exemple/)).toHaveValue('Demande privée de Marie');
+    expect(screen.getByRole('button', { name: 'Mon achat' })).toHaveAttribute('aria-pressed', 'true');
+  });
   it('note privée par défaut : le coach IA n’y a pas accès sans accord', async () => {
     at('/journal');
     expect(await screen.findByText(/Ton journal est privé/)).toBeInTheDocument();

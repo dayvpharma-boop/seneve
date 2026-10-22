@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { BarreNav } from '@/components/BarreNav';
 import { IconeBible as I } from '@/components/IconeBible';
-import { draft } from '@/lib/journal';
 import { texts } from '@/lib/test-texts';
 import {
   COULEURS, GENRES, LIVRES, PASSAGES_RACINES, REGLAGES_DEFAUT, TAILLES, VERSIONS, analyserReference, annoter, chapitresLus,
@@ -485,9 +484,8 @@ function FeuilleVerset({ reference, version, texte, annotation, fermer, changer,
     else await copier();
   }
   function versJournal() {
-    const actuel = draft.read('journal:libre');
-    draft.write('journal:libre', `${actuel ? `${actuel}\n\n` : ''}${copie}\n\n`);
-    navigate(langue === 'en' ? '/journal?ecrire=1&lang=en' : '/journal?ecrire=1');
+    // Seule la citation publique voyage entre les pages ; le journal ajoute le brouillon du compte connecté.
+    navigate(langue === 'en' ? '/journal?ecrire=1&lang=en' : '/journal?ecrire=1', { state: { citationBiblique: copie } });
   }
   const couleur = COULEURS.find(c => c.id === annotation?.couleur);
   return <Feuille id="bb-feuille-verset" etiquette={t('Verset', 'Verse')} titre={reference} fermer={fermer} enfants={<>

@@ -3,6 +3,7 @@ import {IconeRegistre} from '@/components/IconeRegistre';
 import {IconeFinitions} from '@/components/IconeFinitions';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { ComptePrive } from '@/components/ComptePrive';
 import { supabase } from '@/lib/supabase';
 import { dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletActif, rawDay, webText } from '@/lib/espace';
 import {ParcoursAVenir,PauseParcours,ProgressionLongue,BilanTermine} from '@/components/VariantesJournee';
@@ -112,6 +113,10 @@ const ICONE_PERIODE = { matin: 'lever', midi: 'midi', soir: 'lune' } as const;
 function majuscule(t: string) { return t.charAt(0).toUpperCase() + t.slice(1); }
 
 export function Espace() {
+  return <ComptePrive enfants={userId => <EspaceDuCompte userId={userId} />} />;
+}
+
+function EspaceDuCompte({ userId }: { userId: string }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [data, setData] = useState<Data | null>(null);
@@ -411,7 +416,7 @@ export function Espace() {
 
     {invitations.length > 0 && <section className="today-section" aria-labelledby="titre-ecrire">
       <h2 id="titre-ecrire"><IconeJournee nom={enr.langue==='en'?(current===1?"history_edu":"stylus_note"):"menu_book"} taille={22} />{T.ecrireJournal}</h2>
-      {horsLigne && question ? <BrouillonHorsLigne key={question.activity_id} activite={question.activity_id} lien={lienJournal(question)} question={question.consigne} langue={enr.langue} /> : invitations.map((x, k) => <div key={x.q.activity_id} className={k === 0 ? 'prompt-carte' : 'prompt-carte is-passe'}>
+      {horsLigne && question ? <BrouillonHorsLigne userId={userId} key={`${userId}:${question.activity_id}`} activite={question.activity_id} lien={lienJournal(question)} question={question.consigne} langue={enr.langue} /> : invitations.map((x, k) => <div key={x.q.activity_id} className={k === 0 ? 'prompt-carte' : 'prompt-carte is-passe'}>
         <p className="tag">{x.libelle}</p>
         <p className="prompt-question" id={`question-${x.jour}`}>{x.q.consigne}</p>
         <Link className="prompt-ecrire" to={lienJournal(x.q)} aria-describedby={`question-${x.jour}`}><span><IconeJournee nom={current === 1 ? "draw" : "edit_note"} taille={18} />{T.ecrireReflexion}</span><IconeMaquette nom="chevron_right" taille={18} /></Link>

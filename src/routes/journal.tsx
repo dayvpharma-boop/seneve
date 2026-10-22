@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { ComptePrive } from '@/components/ComptePrive';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
 import { IconeMaquette } from '@/components/IconeMaquette';
@@ -33,15 +34,22 @@ async function load(activite: string | null): Promise<Loaded | null> {
 }
 
 export function Journal() {
+  return <ComptePrive enfants={userId => <JournalDuCompte userId={userId} />} />;
+}
+
+function JournalDuCompte({ userId }: { userId: string }) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const inscription = params.get('inscription');
   const activite = inscription ? params.get('activite') : null;
   const draftKey = `journal:${activite ?? 'libre'}`;
+  const location = useLocation();
+  const cleChargee = useRef(draftKey);
+  const citationRecue = useRef(false);
 
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
-  const [texte, setTexte] = useState(() => draft.read(draftKey));
+  const [texte, setTexte] = useState(() => draft.read(draftKey, userId));
   const [ia, setIa] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -53,15 +61,30 @@ export function Journal() {
   // Les nouvelles maquettes gardent l’éditeur visible dans les deux états du journal.
   const [formOuvert, setFormOuvert] = useState(true);
   const focusDemande = useRef(false);
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (actif: () => boolean = () => true) => {
     setFailed(false);
     try {
       const loaded = await load(activite);
+      if (!actif()) return;
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
       setData(loaded);
-    } catch { setFailed(true); }
+    } catch { if (actif()) setFailed(true); }
   }, [activite, navigate]);
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => { let actif = true; void refresh(() => actif); return () => { actif = false; }; }, [refresh]);
+  useEffect(() => {
+    if (cleChargee.current !== draftKey) {
+      cleChargee.current = draftKey;
+      setTexte(draft.read(draftKey, userId)); setIa(false); setSaved(false); setError(''); pendingId.current = null;
+    }
+    const citation = location.state?.citationBiblique;
+    if (!citationRecue.current && typeof citation === 'string' && citation) {
+      citationRecue.current = true;
+      const actuel = draft.read(draftKey, userId);
+      const prochain = `${actuel ? actuel + '\n\n' : ''}${citation}\n\n`;
+      draft.write(draftKey, prochain, userId); setTexte(prochain);
+      navigate(location.pathname + location.search, { replace: true, state: null });
+    }
+  }, [draftKey, userId, location, navigate]);
   const pret = data !== null;
   useEffect(() => {
     if (!pret || !formOuvert || !champ.current || !(ecrire || focusDemande.current)) return;
@@ -73,7 +96,7 @@ export function Journal() {
   const T = journalTextes(data?.langue);
   useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = data?.langue === 'en' ? 'en' : 'fr'; }, [T, data?.langue]);
 
-  function change(v: string) { setTexte(v); setSaved(false); draft.write(draftKey, v); }
+  function change(v: string) { setTexte(v); setSaved(false); draft.write(draftKey, v, userId); }
 
   async function save(e: FormEvent) {
     e.preventDefault();
@@ -84,7 +107,8 @@ export function Journal() {
     pendingId.current = eventIdFor(pendingId.current);
     setBusy(true); setError('');
     try {
-      if (!data) throw new Error('session');
+      const { data: session } = await supabase.auth.getSession();
+      if (!data || session.session?.user.id !== userId) throw new Error('session');
       const { error } = await supabase.from('journal_entries').insert({
         entry_id: pendingId.current, participant_id: data.participantId, texte: t, usage_ia_autorise: ia,
         enrollment_id: inscription, activity_id: activite,

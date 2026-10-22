@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MOMENTS, PAR_DEFAUT, RefusNotifications, abonnementActuel, abonner, clesAbonnement, fuseauTelephone, heuresPossibles, possibilite, type Moment, type Moments } from '@/lib/rappels';
 
@@ -44,6 +44,7 @@ export function RappelsCard({ langue }: { langue: string }) {
   const [endpoint, setEndpoint] = useState<string | null>(null);
   const [choix, setChoix] = useState<Moments>({ matin: PAR_DEFAUT.matin, midi: null, soir: null });
   const [busy, setBusy] = useState(false);
+  const verrou = useRef(false);
   const [erreur, setErreur] = useState('');
 
   function appliquer(e: Etat) { setEtat(e); setChoix({ matin: null, midi: null, soir: null, ...e.moments }); }
@@ -65,9 +66,9 @@ export function RappelsCard({ langue }: { langue: string }) {
   const unMoment = MOMENTS.some(m => choix[m]);
 
   async function recevoir() {
-    if (!etat || busy) return;
+    if (!etat || verrou.current) return;
     if (!etat.cle_publique) { setErreur(T.bientot); return; }
-    setBusy(true); setErreur('');
+    verrou.current = true; setBusy(true); setErreur('');
     try {
       const sub = await abonner(etat.cle_publique);
       const k = clesAbonnement(sub);
@@ -75,29 +76,44 @@ export function RappelsCard({ langue }: { langue: string }) {
       if (error || !data) throw error ?? new Error('refus');
       setEndpoint(k.endpoint); appliquer(data as Etat);
     } catch (e) { setErreur(e instanceof RefusNotifications ? T.refus : T.erreur); }
-    finally { setBusy(false); }
+    finally { verrou.current = false; setBusy(false); }
   }
 
   async function regler(suivant: Moments) {
+    if (verrou.current) return;
+    const precedent = choix;
     setChoix(suivant);
-    if (!etat?.actif || !MOMENTS.some(m => suivant[m])) return;
     setErreur('');
-    const { data, error } = await supabase.rpc('rappels_regler', { p_moments: { matin: suivant.matin ?? null, midi: suivant.midi ?? null, soir: suivant.soir ?? null }, p_endpoint: endpoint });
-    if (error || !data) { setErreur(T.erreur); return; }
-    appliquer(data as Etat);
+    if (!etat?.actif) return;
+    verrou.current = true; setBusy(true);
+    try {
+      if (!MOMENTS.some(m => suivant[m])) {
+        await stopper(suivant);
+      } else {
+        const { data, error } = await supabase.rpc('rappels_regler', { p_moments: { matin: suivant.matin ?? null, midi: suivant.midi ?? null, soir: suivant.soir ?? null }, p_endpoint: endpoint });
+        if (error || !data) throw error ?? new Error('refus');
+        appliquer(data as Etat);
+      }
+    } catch { setChoix(precedent); setErreur(T.erreur); }
+    finally { verrou.current = false; setBusy(false); }
+  }
+
+  async function stopper(apres?: Moments) {
+    const { data, error } = await supabase.rpc('rappels_arreter');
+    if (error || !data) throw error ?? new Error('refus');
+    // Le serveur conserve les anciennes heures pour une future activation.
+    setEndpoint(null); appliquer({ ...(data as Etat), ...(apres ? { moments: apres } : {}) });
+    // L’arrêt côté serveur reste effectif même si le navigateur ne peut pas se désabonner.
+    try { const sub = await abonnementActuel(); await sub?.unsubscribe(); } catch { /* serveur déjà arrêté */ }
   }
 
   async function arreter() {
-    if (busy) return;
-    setBusy(true); setErreur('');
+    if (verrou.current) return;
+    verrou.current = true; setBusy(true); setErreur('');
     try {
-      const { data, error } = await supabase.rpc('rappels_arreter');
-      if (error || !data) throw error ?? new Error('refus');
-      const sub = await abonnementActuel().catch(() => null);
-      await sub?.unsubscribe().catch(() => undefined);
-      setEndpoint(null); appliquer(data as Etat);
+      await stopper();
     } catch { setErreur(T.erreur); }
-    finally { setBusy(false); }
+    finally { verrou.current = false; setBusy(false); }
   }
 
   if (!etat) return null;

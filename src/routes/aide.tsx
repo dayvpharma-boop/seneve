@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { ComptePrive } from '@/components/ComptePrive';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
 import { Icone } from '@/components/Icone';
@@ -57,28 +58,33 @@ function apercu(texte: string): string {
 const SUJETS={fr:['Mon parcours','Mon compte','Mon achat','Autre'],en:['My journey','My account','My purchase','Other']} as const;
 const CLE_SUJETS=['parcours','compte','achat','autre'];
 export function Aide() {
+  return <ComptePrive enfants={userId => <AideDuCompte userId={userId} />} />;
+}
+
+function AideDuCompte({ userId }: { userId: string }) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
-  const [motif, setMotif] = useState(() => draft.read('aide') || ({'suppression-compte':'Je souhaite demander la suppression de mon compte SÉNEVÉ.','adresse-email':'Je souhaite modifier l’adresse e-mail de mon compte.','export-donnees':'Je souhaite recevoir une copie de toutes mes données personnelles.'}[params.get('motif')??'']??''));
+  const [motif, setMotif] = useState(() => draft.read('aide', userId) || ({'suppression-compte':'Je souhaite demander la suppression de mon compte SÉNEVÉ.','adresse-email':'Je souhaite modifier l’adresse e-mail de mon compte.','export-donnees':'Je souhaite recevoir une copie de toutes mes données personnelles.'}[params.get('motif')??'']??''));
   const [parcours, setParcours] = useState(params.get('inscription') ?? '');
-  const [sujet,setSujet]=useState(()=>{const v=draft.read('aide:sujet');return CLE_SUJETS.includes(v)?v:params.has('motif')?'compte':'parcours';});
+  const [sujet,setSujet]=useState(()=>{const v=draft.read('aide:sujet', userId);return CLE_SUJETS.includes(v)?v:params.has('motif')?'compte':'parcours';});
   const [notes, setNotes] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [sent, setSent] = useState(false);
   const pendingId = useRef<string | null>(null);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (actif: () => boolean = () => true) => {
     setFailed(false);
     try {
       const loaded = await load();
+      if (!actif()) return;
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
       setData(loaded);
-    } catch { setFailed(true); }
+    } catch { if (actif()) setFailed(true); }
   }, [navigate]);
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => { let actif = true; void refresh(() => actif); return () => { actif = false; }; }, [refresh]);
 
   const T = journalTextes(data?.langue);
   const en=data?.langue==='en';
@@ -89,7 +95,7 @@ export function Aide() {
 
   // Toute modification du formulaire en fait une nouvelle demande (nouvel identifiant à l'envoi).
   function edited() { pendingId.current = null; setSent(false); }
-  function changeMotif(v: string) { setMotif(v); draft.write('aide', v); edited(); }
+  function changeMotif(v: string) { setMotif(v); draft.write('aide', v, userId); edited(); }
   function toggle(id: string) { setNotes(n => n.includes(id) ? n.filter(x => x !== id) : [...n, id]); edited(); }
 
   async function send(e: FormEvent) {
@@ -100,11 +106,13 @@ export function Aide() {
     pendingId.current = eventIdFor(pendingId.current);
     setBusy(true); setError('');
     try {
+      const { data: session } = await supabase.auth.getSession();
+      if (session.session?.user.id !== userId) throw new Error('session');
       const enrollment = data.parcours.some(x => x.enrollment_id === parcours) ? parcours : null;
       const { error } = await supabase.rpc('request_help', { p_client_request_id: pendingId.current, p_motif: prefixe+m, p_enrollment_id: enrollment, p_entry_ids: notes });
       if (error) { setError(error.message.includes('Trop de demandes') ? T.tropDemandes : T.erreurEnvoi); return; }
       pendingId.current = null;
-      setMotif(''); draft.write('aide', ''); setNotes([]); setSent(true);
+      setMotif(''); draft.write('aide', '', userId); setNotes([]); setSent(true);
       await refresh();
     } catch { setError(T.erreurEnvoi); }
     finally { setBusy(false); }
@@ -122,7 +130,7 @@ export function Aide() {
     <section className="aide-urgence" role="note"><span className="aide-bouclier"><IconeAide nom="shield_with_heart" taille={20} /></span><div><h2>{en?'Important note':'Note importante'}</h2><p>{T.urgence}</p><p>{en?'This help is not an emergency service.':'Cette aide n’est pas un service d’urgence.'}</p></div></section>
     <form className="card aide-form" onSubmit={send}>
       <div className="aide-form-tete"><h2><IconeAide nom="rate_review" taille={20} />{en?'New request':'Nouvelle demande'}</h2><span>{en?'Direct message':'Écrit direct'}</span></div>
-      <fieldset className="aide-sujets"><legend>{en?'Subject of your message':'Sujet de ton message'}</legend><div>{sujets.map((nom,i)=><button key={CLE_SUJETS[i]} type="button" aria-pressed={sujet===CLE_SUJETS[i]} onClick={()=>{setSujet(CLE_SUJETS[i]!);draft.write('aide:sujet',CLE_SUJETS[i]!);edited();}}><span>{nom}</span>{sujet===CLE_SUJETS[i]&&<IconeAide nom="check" taille={18} />}</button>)}</div></fieldset>
+      <fieldset className="aide-sujets"><legend>{en?'Subject of your message':'Sujet de ton message'}</legend><div>{sujets.map((nom,i)=><button key={CLE_SUJETS[i]} type="button" aria-pressed={sujet===CLE_SUJETS[i]} onClick={()=>{setSujet(CLE_SUJETS[i]!);draft.write('aide:sujet',CLE_SUJETS[i]!,userId);edited();}}><span>{nom}</span>{sujet===CLE_SUJETS[i]&&<IconeAide nom="check" taille={18} />}</button>)}</div></fieldset>
       <label className="field"><span>{T.motif}</span>
         <textarea rows={5} value={motif} maxLength={limite+500} placeholder={T.placeholderMotif} onChange={e => changeMotif(e.target.value)} />
       </label>

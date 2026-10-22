@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { siteUrl, supabase } from '@/lib/supabase';
 import { IconeConnexion } from '@/components/IconeConnexion';
 import { Icone } from '@/components/Icone';
@@ -66,6 +66,7 @@ const TEXTES = {
 
 export function Connexion() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [search] = useSearchParams();
   const langue: 'fr' | 'en' = search.get('lang') === 'en' ? 'en' : 'fr';
   const T = TEXTES[langue];
@@ -122,7 +123,8 @@ export function Connexion() {
           return;
         }
       }
-      navigate('/espace');
+      const retour = location.state?.retourJournal;
+      navigate(typeof retour === 'string' && /^\/journal(?:\?|$)/.test(retour) ? retour : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
     } catch (err) {
       setError(authError(err instanceof Error ? err.message : 'network', langue));
     } finally { setBusy(false); }

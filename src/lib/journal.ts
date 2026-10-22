@@ -16,15 +16,18 @@ export function texteValide(texte: string, max: number): string | null {
   return t.length >= 1 && t.length <= max ? t : null;
 }
 
-/** Brouillon conservé sur cet appareil uniquement (jamais envoyé tant qu'on n'appuie pas sur Enregistrer). */
+/** Brouillons isolés par compte. Les anciennes clés sans propriétaire restent intactes mais ne sont jamais attribuées à un compte. */
 export const draft = {
-  read(key: string): string {
-    try { return window.localStorage.getItem(`seneve:${key}`) ?? ''; } catch { return ''; }
+  read(key: string, userId: string): string {
+    if (!userId) return '';
+    try { return window.localStorage.getItem(`seneve:compte:${encodeURIComponent(userId)}:${key}`) ?? ''; } catch { return ''; }
   },
-  write(key: string, value: string): void {
+  write(key: string, value: string, userId: string): void {
+    if (!userId) return;
+    const cle = `seneve:compte:${encodeURIComponent(userId)}:${key}`;
     try {
-      if (value) window.localStorage.setItem(`seneve:${key}`, value);
-      else window.localStorage.removeItem(`seneve:${key}`);
+      if (value) window.localStorage.setItem(cle, value);
+      else window.localStorage.removeItem(cle);
     } catch { /* stockage indisponible : le brouillon n'est simplement pas conservé */ }
   },
 };

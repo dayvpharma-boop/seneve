@@ -12,7 +12,7 @@ function builder(table: string) {
 }
 vi.mock('@/lib/supabase', () => ({
   supabase: {
-    auth: { getSession: () => Promise.resolve({ data: { session: { user: { user_metadata: { prenom: 'Marie' } } } } }), signOut: () => Promise.resolve({}) },
+    auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'U1', user_metadata: { prenom: 'Marie' } } } } }), signOut: () => Promise.resolve({}) },
     rpc: (name: string, args: unknown) => { appels.push({ name, args }); return Promise.resolve({ data: null, error: null }); },
     from: (t: string) => builder(t),
   },

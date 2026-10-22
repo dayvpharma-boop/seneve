@@ -15,7 +15,7 @@ function builder(table: string) {
 }
 vi.mock('@/lib/supabase', () => ({
   supabase: {
-    auth: { getSession: () => Promise.resolve({ data: { session: { user: { user_metadata: { prenom: 'Marie' } } } } }), signOut: () => Promise.resolve({}) },
+    auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'U1', user_metadata: { prenom: 'Marie' } } } } }), signOut: () => Promise.resolve({}) },
     rpc: (name: string, args: Record<string, string>) => {
       if (name !== 'record_progress') return Promise.resolve({ data: null, error: null });
       appels.push({ etat: args['p_etat']!, id: args['p_client_event_id']! });

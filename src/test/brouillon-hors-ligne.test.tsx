@@ -5,12 +5,12 @@ import { BrouillonHorsLigne } from '@/components/BrouillonHorsLigne';
 import { draft } from '@/lib/journal';
 
 afterEach(() => { cleanup(); localStorage.clear(); vi.restoreAllMocks(); });
-const ouvrir = () => render(<MemoryRouter><BrouillonHorsLigne activite="Q3" lien="/journal?activite=Q3" question="Ma réflexion ?" langue="fr" /></MemoryRouter>);
+const ouvrir = () => render(<MemoryRouter><BrouillonHorsLigne userId="U1" activite="Q3" lien="/journal?activite=Q3" question="Ma réflexion ?" langue="fr" /></MemoryRouter>);
 it('conserve la réflexion dans le même brouillon que le Journal et la retrouve à la réouverture', () => {
  const vue = ouvrir();
  fireEvent.change(screen.getByLabelText('Ma réflexion ?'), { target: { value: 'Un geste discret aujourd’hui.' } });
  fireEvent.click(screen.getByRole('button', { name: 'Conserver le brouillon' }));
- expect(draft.read('journal:Q3')).toBe('Un geste discret aujourd’hui.');
+ expect(draft.read('journal:Q3', 'U1')).toBe('Un geste discret aujourd’hui.');
  expect(screen.getByRole('status')).toHaveTextContent('Pas encore enregistré dans ton journal');
  vue.unmount(); ouvrir();
  expect(screen.getByLabelText('Ma réflexion ?')).toHaveValue('Un geste discret aujourd’hui.');

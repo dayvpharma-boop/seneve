@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { BibleAccueil, BibleAnnotations, BibleLecture, BibleRecherche } from '@/routes/bible';
 import { BarreNav } from '@/components/BarreNav';
 import { LIVRES, analyserReference, annoter, lireAnnotations, morceauxSurlignes, motsRecherche, normaliser } from '@/lib/bible';
@@ -29,13 +29,15 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
+function JournalRecu() { const l = useLocation(); return <><p>Page du journal</p><pre data-testid="citation">{l.state?.citationBiblique}</pre></>; }
+
 function afficher(chemin: string) {
   return render(<MemoryRouter initialEntries={[chemin]}><Routes>
     <Route path="/bible" element={<BibleAccueil />} />
     <Route path="/bible/recherche" element={<BibleRecherche />} />
     <Route path="/bible/annotations" element={<BibleAnnotations />} />
     <Route path="/bible/:livre/:chapitre" element={<BibleLecture />} />
-    <Route path="/journal" element={<p>Page du journal</p>} />
+    <Route path="/journal" element={<JournalRecu />} />
   </Routes></MemoryRouter>);
 }
 
@@ -107,7 +109,7 @@ describe('écrans de la Bible', () => {
     expect(lireAnnotations()['MAT.13.31']).toMatchObject({ couleur: 'or', extrait: MT_13_31, version: 'lsg' });
     fireEvent.click(within(feuille).getByRole('button', { name: /Écrire dans mon journal/ }));
     expect(screen.getByText('Page du journal')).toBeInTheDocument();
-    const brouillon = window.localStorage.getItem('seneve:journal:libre') ?? '';
+    const brouillon = screen.getByTestId('citation').textContent ?? '';
     expect(brouillon).toContain(MT_13_31);
     expect(brouillon).toContain('Matthieu 13:31 · Louis Segond 1910');
   });
