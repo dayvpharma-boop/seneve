@@ -141,7 +141,9 @@ describe('Mon journal — style de l’écran « Aujourd’hui »', () => {
 
   it('« Écrire » (barre du bas) : le champ est ouvert et prêt', async () => {
     at('/journal?ecrire=1');
-    expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveFocus();
+    // Le curseur se place une fois le journal chargé : attendre ce moment (le test échouait parfois sur GitHub).
+    const champ = await screen.findByPlaceholderText(/Ce que tu as compris/);
+    await waitFor(() => expect(champ).toHaveFocus());
     expect(screen.queryByRole('button', { name: 'Nouvelle note' })).not.toBeInTheDocument();
   });
 
