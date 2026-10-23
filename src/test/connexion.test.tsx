@@ -112,3 +112,11 @@ describe('Renvoi de l’e-mail de confirmation', () => {
     expect(screen.queryByRole('button', { name: /Renvoyer l'e-mail/ })).not.toBeInTheDocument();
   });
 });
+
+describe('Messages d’erreur de Supabase', () => {
+  it('« attends quelques secondes » devient « Trop de tentatives »', async () => {
+    const { authError } = await import('@/routes/connexion');
+    expect(authError('For security purposes, you can only request this after 12 seconds.', 'en')).toBe('Too many attempts. Try again in a few minutes.');
+    expect(authError('For security purposes, you can only request this after 43 seconds.')).toBe('Trop de tentatives. Réessaie dans quelques minutes.');
+  });
+});

@@ -27,7 +27,8 @@ export function authError(message: string | undefined, langue: 'fr' | 'en' = 'fr
   if (m.includes('already registered') || m.includes('already been registered') || m.includes('already exists')) return E.deja;
   if (m.includes('email not confirmed')) return E.confirm;
   if (m.includes('fetch') || m.includes('network')) return E.reseau;
-  if (m.includes('rate limit')) return E.limite;
+  // « For security purposes, you can only request this after N seconds » : envois d'e-mail trop rapprochés.
+  if (m.includes('rate limit') || m.includes('for security purposes') || m.includes('only request this after')) return E.limite;
   if (m.includes('password')) return E.mdp;
   return E.autre;
 }
