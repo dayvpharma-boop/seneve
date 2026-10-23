@@ -6,7 +6,7 @@
 .jardin-accueil #s-home .jardin-hero{display:block;padding:60px 0 0}
 .jardin-accueil #s-home .jardin-message{max-width:680px}
 .jardin-accueil #s-home .jardin-message>h1{font:400 12px/1.5 Outfit,Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:0 0 24px}
-.jardin-accueil #s-home h2.jardin-titre{font:400 clamp(44px,5.5vw,72px)/1.12 Lora,Georgia,serif;letter-spacing:-.05em;margin:0 0 24px;color:var(--foreground)}
+.jardin-accueil #s-home h2.jardin-titre{font:400 clamp(44px,5.5vw,72px)/1.12 Lora,Georgia,serif;letter-spacing:-.02em;margin:0 0 24px -.04em;color:var(--foreground)}
 .jardin-accueil #s-home .jardin-titre em{color:#6d7954;font-weight:400}
 .jardin-accueil #s-home .home-intro{font:400 16px/1.8 Outfit,Arial,sans-serif;color:var(--muted);max-width:390px}
 html[data-apparence=sombre] .jardin-accueil #s-home .jardin-titre em{color:#c5cb9d}
