@@ -1,39 +1,13 @@
-/* Jardin intérieur : uniquement l'accueil ; quiz, résultats et autres pages inchangés. */
-body:has(.jardin-accueil){background:#f7f5ed;color:#253629}
-main.wrap.jardin-accueil{max-width:1200px;width:100%;padding:0 52px 36px;margin:0 auto;color:#253629;--foreground:#253629;--background:#f7f5ed;--surface:#fcfaf5;--muted:#5c6457;--line:#d9ddce;--primary-fill:#354a35;--on-primary:#fffdf4;--gold:#65764e;--brand:#354a35}
-.jardin-accueil #s-home:not([hidden]){padding-top:0}
+/* Jardin intérieur : seulement le haut de l'accueil (en-tête, titre, texte, photo).
+   Tout ce qui est sous la photo garde le style d'origine (demande du 23/10/2026). */
 .jardin-accueil #s-home .home-head{min-height:96px;margin:0;padding:20px 0;border-bottom:1px solid var(--line);gap:20px;background:none;position:relative;top:auto}
 .jardin-accueil #s-home .home-head .brand{margin-right:auto;font-family:Lora,Georgia,serif;font-size:25px;letter-spacing:.15em;text-transform:uppercase;color:var(--foreground)}
 .jardin-accueil #s-home .language-link{font-family:Outfit,Arial,sans-serif;font-size:14px;color:var(--muted)}
-.jardin-accueil #s-home .jardin-hero{display:block;padding:60px 0 32px}
+.jardin-accueil #s-home .jardin-hero{display:block;padding:60px 0 0}
 .jardin-accueil #s-home .jardin-message{max-width:680px}
-.jardin-accueil #s-home .home-image{margin:28px 0 0}
 .jardin-accueil #s-home .jardin-message>h1{font:400 12px/1.5 Outfit,Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:0 0 24px}
 .jardin-accueil #s-home h2.jardin-titre{font:400 clamp(44px,5.5vw,72px)/1.12 Lora,Georgia,serif;letter-spacing:-.05em;margin:0 0 24px;color:var(--foreground)}
 .jardin-accueil #s-home .jardin-titre em{color:#6d7954;font-weight:400}
-.jardin-accueil #s-home .home-intro{font:400 16px/1.8 Outfit,Arial,sans-serif;color:var(--muted);max-width:390px;margin:0 0 28px}
-/* « Commencer » garde son comportement d’avant : collé en bas de l’écran pendant le défilement. */
-.jardin-accueil #s-home .home-start #start{min-height:56px;width:100%;border:1px solid #354a35;border-radius:4px;background:#354a35;color:#fffdf4;padding:16px 26px;display:inline-flex;gap:40px;justify-content:space-between;font:400 17px Outfit,Arial,sans-serif;box-shadow:none}
-.jardin-accueil #s-home .home-start #start:hover{background:#506347}
-.jardin-accueil #s-home .home-reassure{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 0}
-.jardin-accueil #s-home .reassure-chip{display:inline-flex;align-items:center;min-height:0;height:auto;gap:0;padding:0;border:0;background:none;font:400 12px/1.5 Outfit,Arial,sans-serif;color:var(--muted);border-radius:0}
-.jardin-accueil #s-home .reassure-chip svg{display:none}
-.jardin-accueil #s-home .reassure-chip+.reassure-chip:before{content:'·';margin-right:10px}
-.jardin-accueil #s-home .jardin-photo{margin:0;min-width:0}
-.jardin-accueil #s-home .jardin-photo img{width:100%;height:400px;object-fit:cover;border-radius:180px 180px 5px 5px;display:block}
-.jardin-accueil #s-home .jardin-photo figcaption{font:400 23px/1.55 Lora,Georgia,serif;margin-top:20px;color:var(--foreground)}
-.jardin-accueil #s-home .home-card{display:grid;grid-template-columns:1fr 1.3fr;gap:50px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:none;padding:32px 0;margin:0 0 24px;box-shadow:none}
-.jardin-accueil #s-home .home-kicker{font:400 26px/1.5 Lora,Georgia,serif;color:var(--foreground)}
-.jardin-accueil #s-home .home-kicker .point-or{display:none}
-.jardin-accueil #s-home .home-steps{padding:0;margin:0;border:0;background:none;display:grid;gap:12px;font-family:Outfit,Arial,sans-serif}
-.jardin-accueil #s-home .home-steps li{font-size:15px;color:var(--foreground)}
-.jardin-accueil #s-home .home-steps li:before{background:none;color:var(--muted);font-size:12px;border-radius:0;font-weight:400}
-.jardin-accueil #s-home .repere-parcours,.jardin-accueil #s-home .home-ouverture,.jardin-accueil #s-home .connexion-pensee{background:none;border:0;box-shadow:none;padding:20px 0;margin:0;color:var(--foreground)}
-.jardin-accueil #s-home .home-note{color:var(--muted);font:400 14px/1.8 Outfit,Arial,sans-serif}
-.jardin-accueil #s-home .home-legal{border-top:1px solid var(--line);padding-top:22px;font:400 13px Outfit,Arial,sans-serif}
-.jardin-accueil #s-home :is(button,a,summary):focus-visible{outline:3px solid #9a7738;outline-offset:4px}
-html[data-apparence=sombre] body:has(.jardin-accueil){background:#172a23;color:#f5efe1}
-html[data-apparence=sombre] main.wrap.jardin-accueil{color:#f5efe1;--foreground:#f5efe1;--background:#172a23;--surface:#21382d;--muted:#bdcbb8;--line:#435449;--brand:#dbe0c2}
+.jardin-accueil #s-home .home-intro{font:400 16px/1.8 Outfit,Arial,sans-serif;color:var(--muted);max-width:390px}
 html[data-apparence=sombre] .jardin-accueil #s-home .jardin-titre em{color:#c5cb9d}
-html[data-apparence=sombre] .jardin-accueil #s-home .home-start #start{background:#dee4bf;border-color:#dee4bf;color:#213a2b}
-@media(max-width:700px){main.wrap.jardin-accueil{padding:0 24px 24px}.jardin-accueil #s-home .home-head{min-height:78px;gap:12px}.jardin-accueil #s-home .home-head .brand{font-size:21px}.jardin-accueil #s-home .jardin-hero{padding:36px 0 24px}.jardin-accueil #s-home h2.jardin-titre{font-size:46px}.jardin-accueil #s-home .jardin-photo img{height:250px;border-radius:120px 120px 5px 5px}.jardin-accueil #s-home .jardin-photo figcaption{font-size:20px}.jardin-accueil #s-home .home-start #start{width:100%;min-width:0}.jardin-accueil #s-home .home-card{grid-template-columns:1fr;gap:15px;padding:26px 0}.jardin-accueil #s-home .home-kicker{font-size:24px;margin:0}}
+@media(max-width:700px){.jardin-accueil #s-home .home-head{min-height:78px;gap:12px}.jardin-accueil #s-home .home-head .brand{font-size:21px}.jardin-accueil #s-home .jardin-hero{padding-top:36px}.jardin-accueil #s-home h2.jardin-titre{font-size:46px}}
