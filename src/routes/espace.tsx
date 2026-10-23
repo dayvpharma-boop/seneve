@@ -123,6 +123,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
   const [prenomSession, setPrenomSession] = useState('');
+  // Compte créé sur la page anglaise (langue gardée à l'inscription) : accueil en anglais sans ?lang=en.
+  const [langueSession, setLangueSession] = useState<'en' | null>(null);
   // Lien direct depuis « Mes progrès » : ?parcours=<inscription>&jour=<n> ; page d'un moment : &moment=<n>.
   const [params] = useSearchParams();
   const jourDemande = Number(params.get('jour'));
@@ -150,6 +152,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       const { data: s } = await supabase.auth.getSession();
       userId = s.session?.user.id ?? null;
       setPrenomSession(typeof s.session?.user.user_metadata?.prenom === 'string' ? s.session.user.user_metadata.prenom : '');
+      setLangueSession(s.session?.user.user_metadata?.langue === 'en' ? 'en' : null);
       const loaded = await load();
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
       setData(loaded); setCopieDu(null);
@@ -198,8 +201,10 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   // Écran « Aujourd'hui » validé le 15/10/2026 : salutation et initiale en haut, barre du bas, « Se déconnecter » en bas de page.
   // Barre du haut des maquettes validées le 19/10/2026 : « SÉNEVÉ · Bonjour Marie » et la pastille de l'initiale.
   // Langue du parcours affiché (celui choisi, sinon celui retenu par défaut) : salutation, barre du haut, titre de l'onglet.
-  // Pendant le chargement et sans parcours (accueil de la Découverte) : ?lang=en.
-  const enTete = !data || !data.parcours.length ? params.get('lang') === 'en'
+  // Pendant le chargement et sans parcours (accueil de la Découverte) : ?lang=en, ou un compte créé sur la page
+  // anglaise (sauf ?lang=fr).
+  const anglaisDemande = params.get('lang') === 'en' || (params.get('lang') !== 'fr' && langueSession === 'en');
+  const enTete = !data || !data.parcours.length ? anglaisDemande
     : (data?.parcours.find(x => x.enrollment_id === chosen) ?? (data ? pickDefault(data.parcours) : null))?.langue === 'en';
   const salut = data ? `${enTete ? 'Hello' : 'Bonjour'}${data.prenom ? ` ${data.prenom}` : ''}` : undefined;
   const charge = data !== null;
@@ -224,7 +229,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       : <section className="reglages" aria-label={textes(langue).reglages}><p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>{cartes}</section>;
   };
   // Langue de secours tant que le parcours n'est pas chargé : ?lang=en, ou la langue de la page précédente.
-  const langueCourante = params.get('lang') === 'en' || document.documentElement.lang === 'en' ? 'en' : 'fr';
+  const langueCourante = anglaisDemande || document.documentElement.lang === 'en' ? 'en' : 'fr';
   const errorCard = <div className="card espace-erreur"><span className="etat-symbole" aria-hidden="true"><IconeJournee nom="wifi_off" taille={32} /></span><p role="alert">{loadError(langueCourante)}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}><IconeJournee nom="sync" taille={20} />{langueCourante === 'en' ? 'Try again' : 'Réessayer'}</button><Link className="etat-journal" to="/journal"><IconeJournee nom="menu_book" taille={20} />{langueCourante === 'en' ? 'Open my journal' : 'Ouvrir mon journal'}</Link></div>;
   const page = (langue: string, contenu: ReactNode, classe = '', navigation = true) => <main className={`wrap ${navigation ? 'avec-nav ' : ''}espace-page ${classe}`.trim()}>{contenu}{navigation && <BarreNav langue={langue} maquette iconesJournee varianteJournee={classe==='journee-nouvelle'||/journee-(multiple|pause|longue)/.test(classe)} />}</main>;
 

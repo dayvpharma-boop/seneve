@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const appels: { name: string; args: unknown }[] = [];
+let metadata: Record<string, string> = { prenom: 'Marie' };
 function builder(table: string) {
   const b: Record<string, unknown> = {};
   for (const m of ['select', 'eq', 'neq', 'in', 'order']) b[m] = () => b;
@@ -12,7 +13,7 @@ function builder(table: string) {
 }
 vi.mock('@/lib/supabase', () => ({
   supabase: {
-    auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'U1', user_metadata: { prenom: 'Marie' } } } } }), signOut: () => Promise.resolve({}) },
+    auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'U1', user_metadata: metadata } } } }), signOut: () => Promise.resolve({}) },
     rpc: (name: string, args: unknown) => { appels.push({ name, args }); return Promise.resolve({ data: null, error: null }); },
     from: (t: string) => builder(t),
   },
@@ -20,7 +21,7 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 import { Espace } from '@/routes/espace';
-afterEach(() => { cleanup(); appels.length = 0; });
+afterEach(() => { cleanup(); appels.length = 0; metadata = { prenom: 'Marie' }; });
 
 describe('Découverte : choix de la langue', () => {
   it('français par défaut', async () => {
@@ -40,6 +41,13 @@ describe('Découverte : choix de la langue', () => {
     render(<MemoryRouter><Espace /></MemoryRouter>);
     fireEvent.click(await screen.findByRole('button', { name: 'Start in English' }));
     await waitFor(() => expect(appels).toContainEqual({ name: 'start_discovery', args: { p_langue: 'en' } }));
+  });
+
+  it('compte créé sur la page anglaise : accueil en anglais après le lien de confirmation (sans ?lang=en)', async () => {
+    metadata = { prenom: 'Marie', langue: 'en' };
+    render(<MemoryRouter initialEntries={['/espace']}><Espace /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { name: 'Hello Marie' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Start my Discovery' })).toBeInTheDocument();
   });
 
   it('?lang=en (connexion faite en anglais) : accueil en anglais, le français reste proposé', async () => {

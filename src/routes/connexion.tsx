@@ -110,7 +110,9 @@ export function Connexion() {
       if (tab === 'signup') {
         const { data, error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: siteUrl('espace'), data: { prenom: prenom.trim() } },
+          // Inscription sur la page anglaise : la langue est gardée dans le compte, l'espace s'ouvre en anglais
+          // après le lien de confirmation (l'adresse de retour reste celle autorisée dans Supabase).
+          options: { emailRedirectTo: siteUrl('espace'), data: langue === 'en' ? { prenom: prenom.trim(), langue: 'en' } : { prenom: prenom.trim() } },
         });
         if (error) { setError(authError(error.message, langue)); return; }
         if (data.user && data.user.identities?.length === 0) { setError(ERREURS[langue].deja); return; }

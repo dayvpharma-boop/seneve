@@ -1,12 +1,13 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const appels: string[] = [];
+const inscriptions: { options?: { data?: Record<string, string> } }[] = [];
 vi.mock('@/lib/supabase', () => ({
   supabase: {
     auth: {
-      signUp: () => { appels.push('signUp'); return Promise.resolve({ data: { user: null, session: null }, error: null }); },
+      signUp: (o: { options?: { data?: Record<string, string> } }) => { appels.push('signUp'); inscriptions.push(o); return Promise.resolve({ data: { user: null, session: null }, error: null }); },
       signInWithPassword: () => { appels.push('signIn'); return Promise.resolve({ error: { message: 'Invalid login credentials' } }); },
       resetPasswordForEmail: () => Promise.resolve({ error: null }),
       resend: (o: { type: string; email: string }) => { appels.push(`resend:${o.type}:${o.email}`); return Promise.resolve({ error: null }); },
@@ -17,7 +18,7 @@ vi.mock('@/lib/supabase', () => ({
 
 import { Connexion } from '@/routes/connexion';
 const ouvrir = () => render(<MemoryRouter><Connexion /></MemoryRouter>);
-afterEach(() => { cleanup(); appels.length = 0; });
+afterEach(() => { cleanup(); appels.length = 0; inscriptions.length = 0; });
 
 // Connexion dans le style de l'écran « Aujourd'hui » (15/10/2026).
 describe('Connexion', () => {
@@ -76,6 +77,14 @@ describe('Connexion en anglais (?lang=en)', () => {
     fireEvent.submit(screen.getByLabelText('Password').closest('form')!);
     expect(screen.getByRole('alert')).toHaveTextContent('The password must contain at least 8 characters.');
     expect(appels).toHaveLength(0);
+  });
+  it('création de compte en anglais : la langue est gardée dans le compte (e-mail de confirmation)', async () => {
+    ouvrirEn();
+    fireEvent.change(screen.getByLabelText('Your first name'), { target: { value: 'Mary' } });
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'mary@example.invalid' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password-essai' } });
+    fireEvent.submit(screen.getByLabelText('Password').closest('form')!);
+    await waitFor(() => expect(inscriptions[0]?.options?.data).toEqual({ prenom: 'Mary', langue: 'en' }));
   });
   it('se connecter : « Forgot your password? » proposé', () => {
     ouvrirEn();
