@@ -17,7 +17,7 @@ describe('Variante 1 « Sentier » du Test des 7 Racines', () => {
 
   it('montre les trois repères rassurants sur l’accueil, en français', () => {
     render(<Index />);
-    for (const label of ['Sans compte', '21 affirmations', 'Retour possible']) expect(screen.getByText(label)).toBeVisible();
+    for (const label of ['Sans compte', '21 questions', 'Retour possible']) expect(screen.getByText(label)).toBeVisible();
     expect(screen.getByRole('button', { name: 'Commencer' })).toBeVisible();
   });
 

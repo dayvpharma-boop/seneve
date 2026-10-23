@@ -18,36 +18,36 @@ const frenchRoots: Root[] = [
  {n:"Discernement", p:"L'urgence est la voix du monde. La paix est l'accent de Dieu.", a:"Face à une décision en cours : applique le test de la paix. Ne décide pas si la paix est absente.", j:22,
   s:"La voix de Dieu n'est pas la voix la plus forte dans ta vie. C'est la plus douce — mais c'est aussi la plus vraie.", o:"L'urgence est la voix du monde. La paix est l'accent de Dieu.", c:7}
 ];
-/** FR V4 : 3 affirmations par racine (le miroir, le cœur, le pas). Les miroirs (1, 4, 7, 10, 13, 16, 19) comptent à l'envers. */
+/** FR V5 (validée par Dr Justin le 23/10/2026) : 3 questions par racine, toutes dans le même sens (« Tout à fait » = racine forte). */
 const frenchQuestions = [
- "Je demande à Dieu de bénir mes plans plus souvent que je ne Lui demande quels sont Ses plans.",
- "Mes décisions réelles (mon temps, mon argent, mon téléphone) montrent que Dieu passe vraiment en premier.",
- "Ce que Dieu m'a déjà demandé, je l'ai commencé, sans le remettre à plus tard.",
- "Je donne à Dieu ce qui reste, une fois que j'ai payé tous les autres.",
- "Quand je donne, ce n'est pas la peur de manquer qui me gouverne.",
- "Il m'arrive de donner quelque chose qui me coûte vraiment, et pas seulement mon surplus.",
- "J'attends une « grande porte » et je néglige le travail plus modeste qui est devant moi.",
- "Dans mon travail ou mon activité, je fais de mon mieux, que quelqu'un me regarde ou non.",
- "Je refuse un gain, même petit, s'il demande un mensonge.",
- "Ma paix intérieure monte et descend avec mon argent.",
- "Je cherche Dieu autant quand tout va bien que lorsque je manque.",
- "Si Dieu me demandait ce à quoi je tiens le plus, je pourrais ouvrir les mains.",
- "Je remarque les besoins autour de moi, mais je passe souvent mon chemin.",
- "Dans la personne en détresse, je vois quelqu'un que le Christ met sur ma route.",
- "Je donne du temps, une présence ou une aide sans que personne ne le sache.",
- "Je me dis que je serai fidèle quand j'aurai plus.",
- "Je sais où va mon argent, jusqu'aux petites dépenses.",
- "Je prends le temps de remarquer le visage triste de quelqu'un à côté de moi.",
- "Quand on me presse de décider, je décide vite, de peur de rater.",
- "Ma journée commence par un moment de silence avec Dieu, avant mon téléphone.",
- "Quand la paix est absente, je sais attendre, même si les autres ne me comprennent pas."
+ "Je commence chaque journée par un temps de prière avant toute autre activité.",
+ "Je consulte Dieu avant de prendre des décisions importantes.",
+ "Ma relation avec Dieu ne dépend pas de ma situation financière du moment.",
+ "Ma dîme est la première dépense que je règle dès que je reçois un revenu.",
+ "Je donne avec joie et non par obligation ou par peur.",
+ "Je crois que Dieu peut protéger et multiplier mes ressources.",
+ "Est-ce que je travaille avec la même qualité quand personne ne me regarde ?",
+ "Ma conscience est-elle nette de toute pratique malhonnête au travail ?",
+ "Est-ce que je crois que Dieu peut ouvrir des portes que mes diplômes ne peuvent pas ouvrir ?",
+ "Je garde ma paix intérieure même lorsque ma situation financière est difficile.",
+ "Puis-je me réjouir sincèrement quand un frère prospère plus que moi ?",
+ "Est-ce que ma vie reflète une simplicité intentionnelle ?",
+ "Je prends régulièrement soin d'une personne isolée ou dans le besoin, selon mes possibilités.",
+ "J'apporte une aide concrète aux personnes dans le besoin, par mes ressources, mon temps ou mes actions.",
+ "Est-ce que je donne dans le secret, sans chercher la reconnaissance ?",
+ "Est-ce que je tiens un carnet de dépenses qui me permet de voir où va mon argent ?",
+ "Est-ce que je mets régulièrement de l'argent de côté en épargne ?",
+ "Est-ce que j'accomplis les petites tâches avec le même sérieux que les grandes ?",
+ "Lorsque je ressens une pression pour décider rapidement, je prends le temps de prier et de rechercher une paix durable avant d'agir.",
+ "Avant de suivre une impression intérieure, je vérifie qu'elle est cohérente avec la Parole de Dieu.",
+ "Avant une décision importante, je demande conseil à des personnes sages et compétentes."
 ];
-/** Positions (de 0 à 20) des affirmations comptées à l'envers : score = 6 - réponse. Même liste que regles.items_inverses en base. */
-const frenchReversed = [0, 3, 6, 9, 12, 15, 18];
+/** Positions (de 0 à 20) des questions comptées à l'envers : score = 6 - réponse (aucune en V5). Même liste que regles.items_inverses en base. */
+const frenchReversed: number[] = [];
 
 export type Language = 'fr' | 'en';
 /** Version réellement affichée : FR V4 (validée le 22/10/2026) ; EN reste en V3 jusqu'à la relecture de sa traduction. */
-export const TEST_VERSIONS: Record<Language, number> = { fr: 4, en: 3 };
+export const TEST_VERSIONS: Record<Language, number> = { fr: 5, en: 3 };
 export function languageFrom(value: unknown): Language { return value === 'en' ? 'en' : 'fr'; }
 const englishRoots: Root[] = [
  {n:"Kingdom First", p:"Seek the King, and the miracles will return to their rightful place.", a:"Begin your day with 15 minutes of silence before your phone. Read Matthew 6:25-34.", j:1},
@@ -88,10 +88,10 @@ export const texts = {
   opening: { text: 'Qui est vraiment premier dans ta vie ? Ne réponds pas trop vite.', source: 'Livre, chapitre 1' } as { text: string; source: string } | null,
   tabTitle: 'Test des 7 Racines — SÉNEVÉ', brand: 'Sénevé', homeTitle: 'Le Test des 7 Racines',
   //   = espace insécable : garde « Arrête… », « 5 = toujours » et « ; » / « : » sur la même ligne que le mot voisin.
-  intro: '21 affirmations courtes, tirées du livre « Arrête de mendier des miracles ».',
+  intro: '21 questions courtes, tirées du livre « Arrête de mendier des miracles ».',
   discover: 'À la fin, tu découvres :', discoveries: ['tes sept racines avec leur score ;', 'la racine par laquelle commencer ;', 'une première action simple.'],
   instruction: "Pour chaque phrase, dis honnêtement si elle te ressemble, de 1 (pas du tout) à 5 (tout à fait). Aucun compte, aucun numéro demandé. Ce test t'oriente vers une pratique ; il ne mesure ni ta foi ni ta valeur.",
-  reassurance: ['Sans compte', '21 affirmations', 'Retour possible'], tapHint: 'Choisis un chiffre : la question suivante s’affiche aussitôt.',
+  reassurance: ['Sans compte', '21 questions', 'Retour possible'], tapHint: 'Choisis un chiffre : la question suivante s’affiche aussitôt.',
   seeResult: 'Voir mon résultat', shareToggle: 'Partager mon résultat en image',
   remaining: (n:number) => `${n} question${n > 1 ? 's' : ''} restante${n > 1 ? 's' : ''}`,
   remainingInRoot: (n:number) => `${n} question${n > 1 ? 's' : ''} restante${n > 1 ? 's' : ''} dans cette racine`,

@@ -13,10 +13,10 @@ function answerAll(values: number[]) {
     act(() => vi.advanceTimersByTime(400));
   }
 }
-// Réponses brutes FR V4 : la première de chaque racine compte à l'envers (6 - réponse).
+// Réponses FR V5 (23/10/2026) : aucune question comptée à l'envers.
 // Totaux ajustés : uniqueMin → 15, 9, 4, 12, 14, 6, 9 (minimum unique) ; tie → 15, 3, 3, 12, 14, 6, 9 (égalité racines 2 et 3).
-const uniqueMin = [1,5,5, 3,3,3, 5,2,1, 2,4,4, 1,4,5, 4,2,2, 3,3,3];
-const tie = [1,5,5, 5,1,1, 5,1,1, 2,4,4, 1,4,5, 4,2,2, 3,3,3];
+const uniqueMin = [5,5,5, 3,3,3, 1,2,1, 4,4,4, 5,4,5, 2,2,2, 3,3,3];
+const tie = [5,5,5, 1,1,1, 1,1,1, 4,4,4, 5,4,5, 2,2,2, 3,3,3];
 
 describe('Source lue dans l’adresse', () => {
   it.each([

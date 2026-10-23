@@ -213,7 +213,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    </div>
    {i % 3 === 0 && t.roots[racineEnCours]?.s && <figure className="quiz-seuil"><blockquote className="quote">{t.quote(t.roots[racineEnCours]?.s ?? '')}</blockquote><figcaption className="src">{t.thresholdSource}</figcaption></figure>}
    <div className="quiz-card">
-    <div className="quiz-card-haut"><span className="tag">{en ? `Statement ${i+1}` : `Affirmation ${i+1}`}</span><Icone nom="citation" taille={18} /></div>
+    <div className="quiz-card-haut"><span className="tag">{en ? `Statement ${i+1}` : `Question ${i+1}`}</span><Icone nom="citation" taille={18} /></div>
     <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
     <p className="tap-hint"><Icone nom="graine" taille={16} />{t.tapHint}</p>
    </div>

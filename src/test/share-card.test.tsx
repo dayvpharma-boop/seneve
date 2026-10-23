@@ -59,8 +59,8 @@ function finish(totals: number[]) {
   for (const total of totals) {
     const n = Math.floor(total / 3), r = total % 3;
     for (const [j, v] of [n, n + Number(r > 0), n + Number(r > 1)].entries()) {
-      // FR V4 : la première affirmation de chaque racine compte à l'envers (6 - réponse) ; on clique donc 6 - valeur voulue.
-      fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${j === 0 ? 6 - v : v} sur 5`) }));
+      // FR V5 (23/10/2026) : aucune question comptée à l'envers ; on clique la valeur voulue.
+      fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) }));
       { const fin = screen.queryByRole('button', { name: /^(Voir mon résultat|See my result)$/i }); if (fin) fireEvent.click(fin); }
       act(() => vi.advanceTimersByTime(400));
     }
@@ -78,8 +78,8 @@ describe('Image à partager — page de résultat', () => {
   it('est repliée par défaut et ne se dessine qu’à l’ouverture', () => {
     render(<Index />);
     fireEvent.click(screen.getByRole('button', { name: 'Commencer' }));
-    // FR V4 : la première affirmation de chaque racine compte à l'envers (6 - réponse) ; on clique donc 6 - valeur voulue.
-    for (const v of [1,5,5, 2,4,4, 4,2,2, 3,3,3, 2,4,3, 5,2,1, 3,4,3]) { fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) })); act(() => vi.advanceTimersByTime(400)); }
+    // FR V5 (23/10/2026) : aucune question comptée à l'envers ; on clique la valeur voulue.
+    for (const v of [5,5,5, 4,4,4, 2,2,2, 3,3,3, 4,4,3, 1,2,1, 3,4,3]) { fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${v} sur 5`) })); act(() => vi.advanceTimersByTime(400)); }
     fireEvent.click(screen.getByRole('button', { name: 'Voir mon résultat' }));
     const repli = document.querySelector('details.partage-repli') as HTMLDetailsElement;
     expect(repli.open).toBe(false);
