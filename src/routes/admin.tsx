@@ -22,6 +22,7 @@ import { Icone } from '@/components/Icone';
 import { IconeConfidentialite } from '@/components/IconeConfidentialite';
 import { PilotageAdmin } from '@/components/PilotageAdmin';
 import { EchangesDemande } from '@/components/EchangesDemande';
+import { SuppressionCompte } from '@/components/SuppressionCompte';
 import { formatDateHeure } from '@/lib/journal';
 import { ETATS_EQUIPE, ETAT_LIBELLE, REPONSE_MAX, erreurAdmin, filtrer, lienWhatsApp, type Filtre, type StaffRequest, type TeamMember } from '@/lib/admin';
 
@@ -121,7 +122,7 @@ function RequestAdmin({ request, admin, team, onSaved,maquette=false }: { maquet
     await onSaved();
   }
 
-  if(maquette)return <FormulaireDemandeFidele request={request} admin={admin} team={team} etat={etat} reponse={reponse} affecte={affecte} busy={busy} error={error} trop={trop} etatChange={setEtat} reponseChange={setReponse} affecteChange={setAffecte} annuler={()=>{setEtat(request.etat==='annulee'?'recue':request.etat);setReponse(request.reponse??'');setAffecte(request.affecte_a??'');setError('');}} save={save}/>;
+  if(maquette)return <FormulaireDemandeFidele request={request} admin={admin} team={team} etat={etat} reponse={reponse} affecte={affecte} busy={busy} error={error} trop={trop} etatChange={setEtat} reponseChange={setReponse} affecteChange={setAffecte} annuler={()=>{setEtat(request.etat==='annulee'?'recue':request.etat);setReponse(request.reponse??'');setAffecte(request.affecte_a??'');setError('');}} save={save} supprime={onSaved}/>;
 
   return <article className="card admin-demande" id={identifiantDemande(request.request_id)}>
     <p className="tag">{ETAT_LIBELLE[request.etat] ?? request.etat}</p>
@@ -134,6 +135,7 @@ function RequestAdmin({ request, admin, team, onSaved,maquette=false }: { maquet
       {request.whatsapp ? <>WhatsApp vérifié : <a href={lienWhatsApp(request.whatsapp)} target="_blank" rel="noopener noreferrer">{request.whatsapp}</a></> : 'Aucun WhatsApp relié'}
     </p>
     {!admin && request.affecte_email && <p className="muted">Confiée à : {request.affecte_email}</p>}
+    {admin && request.email && <SuppressionCompte email={request.email} onSupprime={onSaved} />}
     {fermee ? <p className="muted">Le participant a annulé cette demande : elle n’est plus modifiable.</p> :
       <form onSubmit={save}>
         {admin && <label className="field"><span>Confier à</span>
