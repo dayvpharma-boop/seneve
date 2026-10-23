@@ -5,13 +5,15 @@ main.wrap.jardin-accueil{max-width:1200px;width:100%;padding:0 52px 36px;margin:
 .jardin-accueil #s-home .home-head{min-height:96px;margin:0;padding:20px 0;border-bottom:1px solid var(--line);gap:20px;background:none;position:relative;top:auto}
 .jardin-accueil #s-home .home-head .brand{margin-right:auto;font-family:Lora,Georgia,serif;font-size:25px;letter-spacing:.15em;text-transform:uppercase;color:var(--foreground)}
 .jardin-accueil #s-home .language-link{font-family:Outfit,Arial,sans-serif;font-size:14px;color:var(--muted)}
-.jardin-accueil #s-home .jardin-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:8%;align-items:center;padding:60px 0}
+.jardin-accueil #s-home .jardin-hero{display:block;padding:60px 0 32px}
+.jardin-accueil #s-home .jardin-message{max-width:680px}
+.jardin-accueil #s-home .home-image{margin:28px 0 0}
 .jardin-accueil #s-home .jardin-message>h1{font:400 12px/1.5 Outfit,Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:0 0 24px}
 .jardin-accueil #s-home h2.jardin-titre{font:400 clamp(44px,5.5vw,72px)/1.12 Lora,Georgia,serif;letter-spacing:-.05em;margin:0 0 24px;color:var(--foreground)}
 .jardin-accueil #s-home .jardin-titre em{color:#6d7954;font-weight:400}
 .jardin-accueil #s-home .home-intro{font:400 16px/1.8 Outfit,Arial,sans-serif;color:var(--muted);max-width:390px;margin:0 0 28px}
-.jardin-accueil #s-home .home-start{position:static;margin:0;padding:0;border:0;background:none}
-.jardin-accueil #s-home .home-start #start{min-height:56px;min-width:245px;width:auto;border:1px solid #354a35;border-radius:4px;background:#354a35;color:#fffdf4;padding:16px 26px;display:inline-flex;gap:40px;justify-content:space-between;font:400 17px Outfit,Arial,sans-serif;box-shadow:none}
+/* « Commencer » garde son comportement d’avant : collé en bas de l’écran pendant le défilement. */
+.jardin-accueil #s-home .home-start #start{min-height:56px;width:100%;border:1px solid #354a35;border-radius:4px;background:#354a35;color:#fffdf4;padding:16px 26px;display:inline-flex;gap:40px;justify-content:space-between;font:400 17px Outfit,Arial,sans-serif;box-shadow:none}
 .jardin-accueil #s-home .home-start #start:hover{background:#506347}
 .jardin-accueil #s-home .home-reassure{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 0}
 .jardin-accueil #s-home .reassure-chip{display:inline-flex;align-items:center;min-height:0;height:auto;gap:0;padding:0;border:0;background:none;font:400 12px/1.5 Outfit,Arial,sans-serif;color:var(--muted);border-radius:0}
@@ -34,4 +36,4 @@ html[data-apparence=sombre] body:has(.jardin-accueil){background:#172a23;color:#
 html[data-apparence=sombre] main.wrap.jardin-accueil{color:#f5efe1;--foreground:#f5efe1;--background:#172a23;--surface:#21382d;--muted:#bdcbb8;--line:#435449;--brand:#dbe0c2}
 html[data-apparence=sombre] .jardin-accueil #s-home .jardin-titre em{color:#c5cb9d}
 html[data-apparence=sombre] .jardin-accueil #s-home .home-start #start{background:#dee4bf;border-color:#dee4bf;color:#213a2b}
-@media(max-width:700px){main.wrap.jardin-accueil{padding:0 24px 24px}.jardin-accueil #s-home .home-head{min-height:78px;gap:12px}.jardin-accueil #s-home .home-head .brand{font-size:21px}.jardin-accueil #s-home .jardin-hero{grid-template-columns:1fr;gap:32px;padding:36px 0}.jardin-accueil #s-home h2.jardin-titre{font-size:46px}.jardin-accueil #s-home .jardin-photo img{height:250px;border-radius:120px 120px 5px 5px}.jardin-accueil #s-home .jardin-photo figcaption{font-size:20px}.jardin-accueil #s-home .home-start #start{width:100%;min-width:0}.jardin-accueil #s-home .home-card{grid-template-columns:1fr;gap:15px;padding:26px 0}.jardin-accueil #s-home .home-kicker{font-size:24px;margin:0}}
+@media(max-width:700px){main.wrap.jardin-accueil{padding:0 24px 24px}.jardin-accueil #s-home .home-head{min-height:78px;gap:12px}.jardin-accueil #s-home .home-head .brand{font-size:21px}.jardin-accueil #s-home .jardin-hero{padding:36px 0 24px}.jardin-accueil #s-home h2.jardin-titre{font-size:46px}.jardin-accueil #s-home .jardin-photo img{height:250px;border-radius:120px 120px 5px 5px}.jardin-accueil #s-home .jardin-photo figcaption{font-size:20px}.jardin-accueil #s-home .home-start #start{width:100%;min-width:0}.jardin-accueil #s-home .home-card{grid-template-columns:1fr;gap:15px;padding:26px 0}.jardin-accueil #s-home .home-kicker{font-size:24px;margin:0}}
