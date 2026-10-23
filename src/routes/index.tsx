@@ -1,3 +1,4 @@
+import '../styles-jardin-accueil.css';
 import {Apparence} from '@/components/Apparence';
 import {ChoixRacines} from '@/components/ChoixRacines';
 import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
@@ -175,13 +176,18 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
   <PrototypeButton className="barre-retour" aria-label={en ? 'Back to the test home' : 'Revenir à l’accueil du test'} onClick={() => setScreen('home')}><Icone nom="fleche_gauche" taille={22} /></PrototypeButton>
   <div className="barre-titre"><span className="barre-marque">SÉNEVÉ</span><span>{t.homeTitle}</span></div>
  </header>;
- return <main className="wrap">
+ return <main className={`wrap${screen === 'home' ? ' jardin-accueil' : ''}`}>
   <section id="s-home" hidden={screen !== 'home'}>
    <header className="barre-haut home-head"><p className="brand logo-marque"><Icone nom="graine" taille={20} />{t.brand}</p>{languageLink}<Apparence langue={language} compact/></header>
+   <div className="jardin-hero"><div className="jardin-message">
    <h1>{t.homeTitle}</h1>
+   <h2 className="jardin-titre">{en ? <>Growth begins<br/><em>within.</em></> : <>Ce qui grandit<br/>commence<br/><em>à l’intérieur.</em></>}</h2>
    <p className="home-intro">{t.intro.split(/(Arrête de mendier des miracles|Stop Begging for Miracles)/).map((texte, index) => index % 2 ? <strong className="home-livre" key={index}>{texte}</strong> : texte)}</p>
-   <div className="home-image"><img src={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp 720w`} sizes="(max-width:600px) calc(100vw - 40px), 560px" width={720} height={314} alt="" decoding="async" /></div>
+   <div className="home-start">
+    <PrototypeButton className="btn btn-fleche" id="start" onClick={() => setScreen('quiz')}>{t.start}<Icone nom="fleche" taille={20} /></PrototypeButton>
+   </div>
    <div className="home-reassure">{t.reassurance.map((item, k) => <span key={item} className="reassure-chip"><Icone nom={(['bouclier', 'liste', 'annuler'] as const)[k] ?? 'coche'} taille={22} />{item}</span>)}</div>
+   </div><figure className="jardin-photo"><img src={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp`} width={720} height={314} alt="" decoding="async"/><figcaption>{en ? <>Nurture your roots.<br/>Let what matters grow.</> : <>Prendre soin des racines.<br/>Laisser grandir l’essentiel.</>}</figcaption></figure></div>
    <div className="home-card">
     <p className="home-kicker"><span className="point-or" aria-hidden="true" />{t.discover}</p>
     <ul className="plain home-steps" role="list" aria-label={t.discover}>{t.discoveries.map(item => <li key={item}>{item}</li>)}</ul>
@@ -190,9 +196,6 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    <RepereParcours contexte="test" langue={language} />
    {t.opening && <figure className="home-ouverture"><blockquote className="quote">{t.quote(t.opening.text)}</blockquote><figcaption className="src">{t.opening.source}</figcaption></figure>}
    <p className="home-note quote-bloc">{t.instruction}</p>
-   <div className="home-start">
-    <PrototypeButton className="btn btn-fleche" id="start" onClick={() => setScreen('quiz')}>{t.start}<Icone nom="fleche" taille={20} /></PrototypeButton>
-   </div>
    <PenseeLivre langue={language} titre={en ? 'A guide from the book' : 'Un repère du livre'} />
    <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite${en ? '?lang=en' : ''}`}>{en ? 'Privacy policy' : 'Confidentialité'}</a></p>
   </section>
