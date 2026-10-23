@@ -3,11 +3,13 @@
  *  n'est transmise : ni nom, ni résultat, ni identifiant. */
 
 export const SOURCE_INVITATION = 'invitation';
+/** Version de l'aperçu WhatsApp : la changer oblige WhatsApp à relire l'image (il garde en mémoire l'aperçu de chaque adresse). */
+export const VERSION_APERCU = '2';
 
 /** Adresse du test à envoyer (avec la langue si anglais). */
 export function lienInvitation(origine: string, base: string, langue: string): string {
   const chemin = base.endsWith('/') ? base : `${base}/`;
-  return `${origine}${chemin}?${langue === 'en' ? 'lang=en&' : ''}src=${SOURCE_INVITATION}`;
+  return `${origine}${chemin}?${langue === 'en' ? 'lang=en&' : ''}src=${SOURCE_INVITATION}&v=${VERSION_APERCU}`;
 }
 
 const TEXTES = {
