@@ -199,18 +199,20 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   // Écran « Aujourd'hui » validé le 15/10/2026 : salutation et initiale en haut, barre du bas, « Se déconnecter » en bas de page.
   // Barre du haut des maquettes validées le 19/10/2026 : « SÉNEVÉ · Bonjour Marie » et la pastille de l'initiale.
   const salut = data ? (data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour') : undefined;
+  const enTete = data?.parcours.find(x => x.enrollment_id === chosen)?.langue === 'en';
   const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
-    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{data?.parcours.find(x => x.enrollment_id === chosen)?.langue === 'en' ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><Link className="today-profil" to="/profil" aria-label="Mon profil">{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</Link></div>
+    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</Link></div>
     {notice}{repere}
     {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<span className="jn-avatar-grand" aria-hidden="true">{data.prenom.charAt(0).toUpperCase()}</span>}
   </header>;
-  const footer = <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to="/offres">Parcours &amp; offres</Link><Link className="link" to="/acces">Mes accès</Link><Link className="link" to="/confidentialite">Confidentialité</Link><button type="button" className="link" onClick={signOut}>Se déconnecter</button></div>;
+  // Pied de page dans la langue du parcours ; les pages publiques reçoivent ?lang=en pour rester en anglais.
+  const footer = (l: string) => { const en = l === 'en', s = en ? '?lang=en' : ''; return <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to={`/offres${s}`}>{en ? 'Journeys & offers' : 'Parcours & offres'}</Link><Link className="link" to={`/acces${s}`}>{en ? 'My access' : 'Mes accès'}</Link><Link className="link" to={`/confidentialite${s}`}>{en ? 'Privacy' : 'Confidentialité'}</Link><button type="button" className="link" onClick={signOut}>{en ? 'Sign out' : 'Se déconnecter'}</button></div>; };
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
   // Repliés sur l'écran « Aujourd'hui » (allègement du 19/10/2026) : on les ouvre quand on en a besoin.
   const reglages = (langue: string, avecEmail: boolean, replie = false) => {
     const cartes = <>{avecEmail && <EmailMatinCard langue={langue} />}<WhatsAppLink langue={langue} /><CodePlaceCard langue={langue} onOuvert={refresh} /></>;
     return replie
-      ? <section className="reglages" aria-label={textes(langue).reglages}><details className="repli"><summary>{textes(langue).reglages}<IconeRegistre nom="expand_more"/></summary><Link className="jn-reglages-lien" to="/reglages">Ouvrir tous mes réglages</Link>{cartes}</details></section>
+      ? <section className="reglages" aria-label={textes(langue).reglages}><details className="repli"><summary>{textes(langue).reglages}<IconeRegistre nom="expand_more"/></summary><Link className="jn-reglages-lien" to={langue === 'en' ? '/reglages?lang=en' : '/reglages'}>{langue === 'en' ? 'Open all my settings' : 'Ouvrir tous mes réglages'}</Link>{cartes}</details></section>
       : <section className="reglages" aria-label={textes(langue).reglages}><p className="section-title" aria-hidden="true">{textes(langue).reglages}</p>{cartes}</section>;
   };
   // Langue de secours tant que le parcours n'est pas chargé : ?lang=en, ou la langue de la page précédente.
@@ -219,9 +221,9 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const page = (langue: string, contenu: ReactNode, classe = '', navigation = true) => <main className={`wrap ${navigation ? 'avec-nav ' : ''}espace-page ${classe}`.trim()}>{contenu}{navigation && <BarreNav langue={langue} maquette iconesJournee varianteJournee={classe==='journee-nouvelle'||/journee-(multiple|pause|longue)/.test(classe)} />}</main>;
 
   if (failed) return page(langueCourante, <EspaceErreur langue={langueCourante} prenom={prenomSession} message={loadError(langueCourante)} reessayer={() => void refresh()} />, 'erreur-page');
-  if (!data) return page('fr', <>{header()}<section className="espace-chargement" aria-busy="true" aria-label="Préparation de ta journée"><div className="chargement-message"><span className="etat-symbole" aria-hidden="true"><svg width={32} height={32} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M12 22V12" /><path d="M12 12C12 7.5 8 5 8 5C8 5 8 9 12 12Z" fill="currentColor" fillOpacity={.25} /><path d="M12 9C12 5.5 16 3.5 16 3.5C16 3.5 16 7.5 12 9Z" fill="currentColor" fillOpacity={.35} /><circle cx={12} cy={21} fill="currentColor" r={1.5} /></svg></span><p role="status">Chargement…</p><p>Préparation de ta journée</p></div><div className="chargement-maquette" aria-hidden="true"><div className="chargement-jours">{Array.from({ length: 7 }, (_, k) => <span key={k} />)}</div><div className="chargement-carte"><span /><span /><span /></div><div className="chargement-carte"><span /><span /></div></div></section>{footer}</>);
+  if (!data) return page('fr', <>{header()}<section className="espace-chargement" aria-busy="true" aria-label="Préparation de ta journée"><div className="chargement-message"><span className="etat-symbole" aria-hidden="true"><svg width={32} height={32} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M12 22V12" /><path d="M12 12C12 7.5 8 5 8 5C8 5 8 9 12 12Z" fill="currentColor" fillOpacity={.25} /><path d="M12 9C12 5.5 16 3.5 16 3.5C16 3.5 16 7.5 12 9Z" fill="currentColor" fillOpacity={.35} /><circle cx={12} cy={21} fill="currentColor" r={1.5} /></svg></span><p role="status">Chargement…</p><p>Préparation de ta journée</p></div><div className="chargement-maquette" aria-hidden="true"><div className="chargement-jours">{Array.from({ length: 7 }, (_, k) => <span key={k} />)}</div><div className="chargement-carte"><span /><span /><span /></div><div className="chargement-carte"><span /><span /></div></div></section>{footer(langueCourante)}</>);
 
-  if (!data.parcours.length) return page('fr', <AccueilDecouverte prenom={data.prenom} starting={starting} commencer={langue => void start(langue)} reglages={reglages('fr', false)} footer={footer} />, 'espace-decouverte');
+  if (!data.parcours.length) return page('fr', <AccueilDecouverte prenom={data.prenom} starting={starting} commencer={langue => void start(langue)} reglages={reglages('fr', false)} footer={footer(langueCourante)} />, 'espace-decouverte');
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
@@ -231,11 +233,11 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   </div>;
 
   const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);
-  if (notStarted) return page(enr.langue,<ParcoursAVenir langue={enr.langue} prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer}/>, 'journee-nouvelle');
+  if (notStarted) return page(enr.langue,<ParcoursAVenir langue={enr.langue} prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer(enr.langue)}/>, 'journee-nouvelle');
   if (notStarted) return page(enr.langue, <>{header()}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
-    </div><GoalCard langue={enr.langue} />{reglages(enr.langue, true)}{footer}</>);
+    </div><GoalCard langue={enr.langue} />{reglages(enr.langue, true)}{footer(enr.langue)}</>);
 
   const maxOpen = finished ? total : day;
   const current = Math.min(selected ?? day, maxOpen);
@@ -298,11 +300,11 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   }
 
   const moments = momentsDuJour(current);
-  if (!moments.length) return page(enr.langue, <>{header()}{tabs}{errorCard}{footer}</>);
+  if (!moments.length) return page(enr.langue, <>{header()}{tabs}{errorCard}{footer(enr.langue)}</>);
   const { action, question } = activitesDu(current);
   const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
-  if ((finished || cloture) && selected===null && !params.has('jour') && !horsLigne) return page(enr.langue,<BilanTermine langue={enr.langue} cloture={cloture} prenom={data.prenom} nom={enr.nom} b={bilanEnr} inscription={enr.enrollment_id} dateFin={new Intl.DateTimeFormat(enr.langue==='en'?'en-GB':'fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long'}).format(dateDuJour(enr.date_debut,total))} onglets={tabs} suite={<SuiteCard programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x=>x.programme_id)} maquette/>} reglages={reglages(enr.langue,false,true)} footer={footer}/>, 'journee-nouvelle');
-  if ((finished || cloture) && selected === null && !params.has('jour') && !horsLigne) return page(enr.langue, <FinParcours prenom={data.prenom} nom={enr.nom} enrollmentId={enr.enrollment_id} programmeId={enr.programme_id} langue={enr.langue} b={bilanEnr} cloture={cloture} dejaInscrit={data.parcours.map(x=>x.programme_id)} onglets={tabs} reglages={reglages(enr.langue,false,true)} footer={footer}/>, 'fin-page');
+  if ((finished || cloture) && selected===null && !params.has('jour') && !horsLigne) return page(enr.langue,<BilanTermine langue={enr.langue} cloture={cloture} prenom={data.prenom} nom={enr.nom} b={bilanEnr} inscription={enr.enrollment_id} dateFin={new Intl.DateTimeFormat(enr.langue==='en'?'en-GB':'fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long'}).format(dateDuJour(enr.date_debut,total))} onglets={tabs} suite={<SuiteCard programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x=>x.programme_id)} maquette/>} reglages={reglages(enr.langue,false,true)} footer={footer(enr.langue)}/>, 'journee-nouvelle');
+  if ((finished || cloture) && selected === null && !params.has('jour') && !horsLigne) return page(enr.langue, <FinParcours prenom={data.prenom} nom={enr.nom} enrollmentId={enr.enrollment_id} programmeId={enr.programme_id} langue={enr.langue} b={bilanEnr} cloture={cloture} dejaInscrit={data.parcours.map(x=>x.programme_id)} onglets={tabs} reglages={reglages(enr.langue,false,true)} footer={footer(enr.langue)}/>, 'fin-page');
   const jourCal = rawDay(enr.date_debut, new Date());
   const jardin = compteJardin(bilanEnr);
   const semaine = semaineDuJour(bilanEnr, jourCal);
@@ -429,7 +431,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
 
     {!horsLigne && <details className="repli"><summary>{T.plusLoin}<IconeRegistre nom="expand_more"/></summary><RepereParcours contexte="journee" langue={enr.langue}/></details>}
     {!horsLigne && reglages(enr.langue,true,true)}
-    {footer}
+    {footer(enr.langue)}
   </>, horsLigne ? 'espace-horsligne' : `${enr.langue==='en'?'':'journee-nouvelle'} ${data.parcours.length>1?'journee-multiple':''} ${paused?'journee-pause':''} ${total>14?'journee-longue':''} ${current===1?'espace-premier-jour':''}`);
 }
 

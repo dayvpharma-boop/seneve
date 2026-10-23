@@ -109,6 +109,13 @@ describe('écrans de la Bible', () => {
     expect(within(nav).getByRole('link', { name: 'Bible' })).toHaveAttribute('aria-current', 'page');
   });
 
+  it('en anglais, la barre du bas garde l’anglais sur chaque page', () => {
+    render(<MemoryRouter initialEntries={['/espace']}><BarreNav langue='en' maquette iconesJournee /></MemoryRouter>);
+    const nav = screen.getByRole('navigation');
+    expect(within(nav).getAllByRole('link').map(a => a.getAttribute('href'))).toEqual(['/espace?lang=en', '/progres?lang=en', '/bibliotheque?lang=en', '/bible?lang=en', '/journal?lang=en']);
+    expect(within(nav).getByRole('link', { name: 'Today' })).toHaveAttribute('aria-current', 'page');
+  });
+
   it('lit un chapitre, surligne un verset et l’envoie dans le brouillon du journal', async () => {
     afficher('/bible/mat/13');
     expect(await screen.findByText(MT_13_31)).toBeInTheDocument();

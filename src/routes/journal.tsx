@@ -93,8 +93,10 @@ function JournalDuCompte({ userId }: { userId: string }) {
     champ.current.focus({ preventScroll: true });
   }, [pret, ecrire, formOuvert]);
 
-  const T = journalTextes(data?.langue);
-  useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = data?.langue === 'en' ? 'en' : 'fr'; }, [T, data?.langue]);
+  // ?lang=en ou ?lang=fr (barre du bas, liens anglais) prime sur la langue du compte.
+  const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (data?.langue ?? 'fr');
+  const T = journalTextes(langueUI);
+  useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = langueUI === 'en' ? 'en' : 'fr'; }, [T, langueUI]);
 
   function change(v: string) { setTexte(v); setSaved(false); draft.write(draftKey, v, userId); }
 
@@ -121,12 +123,12 @@ function JournalDuCompte({ userId }: { userId: string }) {
     finally { setBusy(false); }
   }
 
-  const en = data?.langue === 'en';
+  const en = langueUI === 'en';
   const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><span className="journal-profil" aria-hidden="true">{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</span></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
   const intro = <div className="journal-confidentialite"><IconeJournal nom="lock" taille={20} /><p className="journal-intro">{T.introJournal}</p></div>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} maquette iconesJournal /></main>;
-  if (!data) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} maquette iconesJournal /></main>;
+  if (failed) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;
+  if (!data) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langueUI} maquette iconesJournal /></main>;
 
   const trop = texte.trim().length > NOTE_MAX;
   return <main className="wrap avec-nav journal-page journal-nouveau">
@@ -140,7 +142,7 @@ function JournalDuCompte({ userId }: { userId: string }) {
           <label className="field"><span className="sr-only">{T.nouvelle}</span>
             <textarea ref={champ} rows={6} value={texte} maxLength={NOTE_MAX + 500} placeholder={T.placeholderNote} onChange={e => change(e.target.value)} />
           </label>
-          <p className="journal-mots" aria-live="off">{texte.trim() ? texte.trim().split(/\s+/u).length : 0} {data.langue === 'en' ? 'words' : (texte.trim().split(/\s+/u).filter(Boolean).length === 1 ? 'mot déposé' : 'mots déposés')} <IconeJournal nom="draw" taille={16} /></p>
+          <p className="journal-mots" aria-live="off">{texte.trim() ? texte.trim().split(/\s+/u).length : 0} {langueUI === 'en' ? 'words' : (texte.trim().split(/\s+/u).filter(Boolean).length === 1 ? 'mot déposé' : 'mots déposés')} <IconeJournal nom="draw" taille={16} /></p>
           {trop && <p className="error" role="alert">{T.trop(NOTE_MAX)}</p>}
           <label className="share-check"><input type="checkbox" checked={ia} onChange={e => setIa(e.target.checked)} /><span>{T.iaCase}<br /><span className="muted">{T.iaAide}</span></span></label>
           <button type="submit" className="btn action-btn moment-btn" disabled={busy || !texte.trim() || trop}>{busy ? T.enregistrement : T.enregistrer}<IconeJournal nom="arrow_forward" taille={20} /></button>
@@ -151,13 +153,13 @@ function JournalDuCompte({ userId }: { userId: string }) {
       : <button type="button" className="btn moment-btn journal-nouvelle" onClick={() => { focusDemande.current = true; setFormOuvert(true); }}><IconeMaquette nom="history_edu" taille={22} />{T.nouvelle}</button>}
     {data.entries.length > 0 && <JournalImage en={en} avecNotes={data.entries.length > 0} />}
     <section className="today-section journal-historique" aria-labelledby="titre-notes">
-      <div className="journal-historique-tete"><h2 id="titre-notes">{en ? "Previous reflections" : "Mes réflexions précédentes"}</h2><span>{data.entries.length} {data.langue === 'en' ? (data.entries.length === 1 ? 'note' : 'notes') : (data.entries.length === 1 ? 'note' : 'notes')}</span></div>
+      <div className="journal-historique-tete"><h2 id="titre-notes">{en ? "Previous reflections" : "Mes réflexions précédentes"}</h2><span>{data.entries.length} {langueUI === 'en' ? (data.entries.length === 1 ? 'note' : 'notes') : (data.entries.length === 1 ? 'note' : 'notes')}</span></div>
       {data.entries.length === 0
         ? <div className="card journal-vide"><span className="journal-eco"><IconeJournal nom="eco" taille={28} /></span><p>{en ? 'You haven’t written anything yet. Your first reflection will appear here.' : 'Tu n’as encore rien écrit. Ta première réflexion apparaîtra ici.'}</p><span className="journal-graine"><IconeJournal nom="flare" taille={15} />{en ? 'Like a mustard seed taking root' : 'Comme la graine de sénevé qui prend racine'}</span></div>
-        : data.entries.map(x => <EntryCard key={x.entry_id} entry={x} langue={data.langue} onChanged={refresh} />)}
+        : data.entries.map(x => <EntryCard key={x.entry_id} entry={x} langue={langueUI} onChanged={refresh} />)}
     </section>
     <footer className="journal-pied"><IconeJournal nom="verified_user" taille={18} />{en ? "Saved notes are kept in your personal space." : "Les notes enregistrées sont conservées dans ton espace."}</footer>
-    <BarreNav langue={data.langue} maquette iconesJournal />
+    <BarreNav langue={langueUI} maquette iconesJournal />
   </main>;
 }
 

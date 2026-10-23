@@ -341,4 +341,12 @@ describe('Besoin d’aide', () => {
     at('/aide');
     expect(await screen.findByRole('heading', { name: 'Help & Contact' })).toBeInTheDocument();
   });
+
+  it('?lang=en (barre du bas anglaise) : aide et journal en anglais, même pour un compte français', async () => {
+    at('/aide?lang=en');
+    expect(await screen.findByRole('heading', { name: 'Help & Contact' })).toBeInTheDocument();
+    cleanup();
+    at('/journal?lang=en');
+    expect(await screen.findByRole('heading', { name: 'Previous reflections' })).toBeInTheDocument();
+  });
 });

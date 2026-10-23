@@ -36,7 +36,7 @@ export function BarreNav({ langue, maquette = false, iconesJournee = false, icon
         const actif = (pathname === e.chemin || (e.cle === 'bibliotheque' && (pathname === '/livre' || pathname.startsWith('/livre/'))) || (e.cle === 'bible' && pathname.startsWith('/bible/'))) && !(e.cle === 'journal' && ecriture);
         const cle = e.cle;
         return <li key={cle}>
-          <Link to={e.vers} className={cle === 'bibliotheque' ? 'nav-ecrire' : undefined} aria-current={actif ? 'page' : undefined}>
+          <Link to={langue === 'en' ? `${e.vers}?lang=en` : e.vers} className={cle === 'bibliotheque' ? 'nav-ecrire' : undefined} aria-current={actif ? 'page' : undefined}>
             {cle === 'bibliotheque' ? <span className="nav-plus"><IconeRayonnage taille={24}/></span> : cle === 'bible' ? <IconeBible nom="menu_book" taille={22} /> : iconesAide ? <IconeAide nom={({aujourdhui:"wb_sunny",parcours:"route",journal:"edit_note"} as const)[cle]} taille={22} /> : iconesJournal ? <IconeJournal nom={({aujourdhui:"light_mode",parcours:"route",journal:"stylus_note"} as const)[cle]} taille={24} /> : varianteJournee ? <IconeJournee nom={({aujourdhui:"wb_sunny",parcours:"explore",journal:"edit_note"} as const)[cle]} taille={22}/> : iconesJournee ? <IconeJournee nom={SYMBOLES_JOURNEE[cle]} taille={22} /> : maquette ? <IconeMaquette nom={SYMBOLES[cle]} taille={22} /> : <Icone nom={e.icone} />}
             <span>{T[cle]}</span>
           </Link>

@@ -86,12 +86,14 @@ function AideDuCompte({ userId }: { userId: string }) {
   }, [navigate]);
   useEffect(() => { let actif = true; void refresh(() => actif); return () => { actif = false; }; }, [refresh]);
 
-  const T = journalTextes(data?.langue);
-  const en=data?.langue==='en';
+  // ?lang=en ou ?lang=fr (barre du bas, liens anglais) prime sur la langue du compte.
+  const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (data?.langue ?? 'fr');
+  const T = journalTextes(langueUI);
+  const en=langueUI==='en';
   const sujets=SUJETS[en?'en':'fr'];
   const prefixe=`${en?'Subject':'Sujet'} : ${sujets[CLE_SUJETS.indexOf(sujet)]}\n\n`;
   const limite=MOTIF_MAX-prefixe.length;
-  useEffect(() => { document.title = `${T.titreAide} — SÉNEVÉ`; document.documentElement.lang = data?.langue === 'en' ? 'en' : 'fr'; }, [T, data?.langue]);
+  useEffect(() => { document.title = `${T.titreAide} — SÉNEVÉ`; document.documentElement.lang = langueUI === 'en' ? 'en' : 'fr'; }, [T, langueUI]);
 
   // Toute modification du formulaire en fait une nouvelle demande (nouvel identifiant à l'envoi).
   function edited() { pendingId.current = null; setSent(false); }
@@ -120,8 +122,8 @@ function AideDuCompte({ userId }: { userId: string }) {
 
   const tete = <header className="today-head page-tete"><div className="aide-barre"><p className="brand"><Icone nom="graine" taille={24} /><span>SÉNEVÉ</span></p><span className="aide-initiale" aria-hidden="true">{data?.prenom.trim().charAt(0).toUpperCase()}</span></div><p className="aide-repere"><span />{en?'Listening & support':'Écoute & Soutien'}</p><h1>{en?'Help & Contact':'Aide & Contact'}</h1></header>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav aide-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={data?.langue} iconesAide /></main>;
-  if (!data) return <main className="wrap avec-nav aide-page">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={undefined} iconesAide /></main>;
+  if (failed) return <main className="wrap avec-nav aide-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langueUI} iconesAide /></main>;
+  if (!data) return <main className="wrap avec-nav aide-page">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langueUI} iconesAide /></main>;
 
   const trop = motif.trim().length > limite;
   return <main className="wrap avec-nav aide-page">
@@ -158,10 +160,10 @@ function AideDuCompte({ userId }: { userId: string }) {
     <section className="today-section" aria-labelledby="titre-demandes">
       <div className="aide-historique-tete"><h2 id="titre-demandes">{T.mesDemandes}</h2><span>{data.requests.length} {en?(data.requests.length===1?"request":"requests"):(data.requests.length===1?"demande":"demandes")}</span></div>
       {data.requests.length === 0 ? <div className="card journal-vide"><Icone nom="aide" taille={28} /><p>{T.aucuneDemande}</p></div>
-        : data.requests.map(r => <RequestCard key={r.request_id} request={r} messages={data.messages.filter(x => x.request_id === r.request_id)} langue={data.langue} onChanged={refresh} />)}
+        : data.requests.map(r => <RequestCard key={r.request_id} request={r} messages={data.messages.filter(x => x.request_id === r.request_id)} langue={langueUI} onChanged={refresh} />)}
     </section>
     <footer className="aide-pied"><span><IconeAide nom="lock" taille={18} /></span><strong>{en?'Discretion & support':'Discrétion & accompagnement'}</strong><p>{en?'Your request and the excerpts you attach are read by the SÉNEVÉ support team.':'Ta demande et les extraits que tu joins sont lus par l’équipe d’accompagnement SÉNEVÉ.'}</p></footer>
-    <BarreNav langue={data.langue} iconesAide />
+    <BarreNav langue={langueUI} iconesAide />
   </main>;
 }
 
