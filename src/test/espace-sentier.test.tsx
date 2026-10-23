@@ -63,8 +63,9 @@ describe('Espace — écran « Aujourd’hui »', () => {
     const reglages = screen.getByRole('region', { name: 'Mes réglages' });
     const sortie = screen.getByRole('button', { name: 'Se déconnecter' });
     expect([titre, tuile, journee, action, journal, reglages, sortie].every((x, k, l) => k === 0 || follows(l[k - 1]!, x))).toBe(true);
-    // Le texte du jour se lit sur la page du moment, pas sur l'accueil.
-    expect(screen.queryByText('Texte du jour 2.')).not.toBeInTheDocument();
+    // Sans explication, la carte du moment montre le début du message (décision du 23/10/2026) ;
+    // le texte complet se lit sur la page du moment.
+    expect(screen.getByText('Texte du jour 2.')).toHaveClass('jn-moment-extrait');
     expect(screen.getByText('Action du jour 2')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "J'ai réalisé cette action" })).toHaveClass('btn-or');
   });

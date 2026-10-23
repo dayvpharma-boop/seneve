@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dateDuJour, dayInfo, eventIdFor, fillPrenom, periodeMoment, pickDefault, webText } from '@/lib/espace';
+import { apercuMoment, dateDuJour, dayInfo, eventIdFor, fillPrenom, periodeMoment, pickDefault, webText } from '@/lib/espace';
 
 describe('dayInfo (Africa/Kinshasa)', () => {
   it('jour 1 le jour du début', () => {
@@ -106,5 +106,32 @@ describe('Écran « Aujourd’hui » : période et date d’un jour', () => {
     expect(f(dateDuJour('2026-10-13', 1))).toBe('mardi 13 octobre');
     expect(f(dateDuJour('2026-10-13', 3))).toBe('jeudi 15 octobre');
     expect(f(dateDuJour('2026-10-30', 3))).toBe('dimanche 1 novembre');
+  });
+});
+
+// Débuts de messages réels (base seneve-prod, 23/10/2026).
+describe('apercuMoment : début du vrai message sur la carte du moment', () => {
+  it('retire salutation, « Jour 11/30 — » et la phrase qui répète le titre', () => {
+    const texte = "Bonjour {prenom} 🌱 Jour 11/30 — Le travail, canal divin, Clé 3. Le chapitre 3 rappelle les années de Jésus dans l'atelier de Nazareth.";
+    expect(apercuMoment(texte, 'Le travail, canal divin — Clé 3', 'Justin')).toBe("Le chapitre 3 rappelle les années de Jésus dans l'atelier de Nazareth.");
+  });
+  it('garde la phrase d’ouverture quand elle n’est pas le titre', () => {
+    const texte = 'Hello {prenom} 🌱 Day 4/14 — Chapter 2 begins with a strong sentence: “The tithe has never enriched God.”';
+    expect(apercuMoment(texte, 'Begin Chapter 2 — tithes and offerings', 'Justin')).toBe('Chapter 2 begins with a strong sentence: “The tithe has never enriched God.”');
+  });
+  it('midi et soir : seule la salutation disparaît', () => {
+    expect(apercuMoment('{prenom} ✨ La perle du jour : « Dieu ne bénit pas l’inaction. »', 'La perle du jour', 'Justin')).toBe('La perle du jour : « Dieu ne bénit pas l’inaction. »');
+    expect(apercuMoment('Bonsoir {prenom} 🌙 Ce soir, dans ton carnet : « Où en es-tu ? »', 'Prière et pensée du soir', 'Justin')).toBe('Ce soir, dans ton carnet : « Où en es-tu ? »');
+  });
+  it('Continuité : retire « Continuité — Mois 3, jour 9 — » et le titre', () => {
+    const texte = 'Bonjour {prenom} 🌱 Continuité — Mois 3, jour 9 — Préparer la dîme à l’avance. Parole : Proverbes 3:9.';
+    expect(apercuMoment(texte, 'Préparer la dîme à l’avance', 'Justin')).toBe('Parole : Proverbes 3:9.');
+    expect(apercuMoment('Bonjour {prenom} 🌱 Continuité — Jour 2 — La dîme mise à part. Défi du jour : vérifie ta dîme.', 'La dîme mise à part', 'Justin')).toBe('Défi du jour : vérifie ta dîme.');
+  });
+  it('coupe proprement un long message, sans ponctuation avant les points de suspension', () => {
+    const long = 'Bonjour {prenom} 🌱 Jour 1/7 — ' + 'Une phrase assez longue pour dépasser la limite. '.repeat(6);
+    const a = apercuMoment(long, 'Titre', 'Justin');
+    expect(a.length).toBeLessThanOrEqual(151);
+    expect(a).toMatch(/[^.!?,]…$/);
   });
 });

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ComptePrive } from '@/components/ComptePrive';
 import { supabase } from '@/lib/supabase';
-import { dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletActif, rawDay, webText } from '@/lib/espace';
+import { apercuMoment, dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletActif, rawDay, webText } from '@/lib/espace';
 import {ParcoursAVenir,PauseParcours,ProgressionLongue,BilanTermine} from '@/components/VariantesJournee';
 import {IconeJourneeSuite} from '@/components/IconeJourneeSuite';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
@@ -379,7 +379,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
               </div>
               <h3 id={id}>{m.content.theme}</h3>
               <div className="moment-illus">{m.principal ? <IllustrationLecture /> : <Scene periode={m.periode} largeur={244} hauteur={110} />}</div>
-              {!horsLigne && <p className="jn-moment-extrait">{m.content.explication || (enr.langue === 'en' ? 'Take a moment to read, then take a small concrete step in your day.' : 'Prends un instant pour lire, puis poser un petit geste concret dans ta journée.')}</p>}
+              {!horsLigne && <p className="jn-moment-extrait">{m.content.explication || apercuMoment(m.content.texte_officiel, m.content.theme, data.prenom)}</p>}
               {m.ouvert
                 ? <button type="button" className="btn moment-btn" aria-describedby={id} onClick={() => ouvrirMoment(m.n)}>{m.principal && action ? T.lireEtAgir : T.lire}<IconeJournee nom={horsLigne ? "menu_book" : "arrow_forward"} taille={20} /></button>
                 : <p className="moment-ferme">{T.momentFerme(m.heure ?? '')}</p>}

@@ -48,6 +48,25 @@ export function fillPrenom(text: string, prenom: string | null | undefined): str
  *  la salutation et le jour, on le retire (décision du 15/10/2026 ; 730 contenus sur 1 026 concernés). */
 const ENTETE_MESSAGE = /^(?:Bonjour|Bonsoir|Hello|Hi|Good morning|Good evening)\s+\{prenom\}\s*\S*\s*(?:Jour|Day)\s+\d+\s*\/\s*\d+\s*[—–-]\s*/u;
 
+const SALUTATION = /^(?:(?:Bonjour|Bonsoir|Hello|Hi|Good morning|Good evening)\s+)?\{prenom\}[\s,!]*(?:[\p{Extended_Pictographic}️‍]+\s*)*/u;
+const REPERE_JOUR = /^(?:(?:Jour|Day)\s+\d+(?:\s*\/\s*\d+)?|Continuité|Continuity|(?:Mois|Month)\s+\d+,\s*(?:jour|day)\s+\d+)\s*[—–-]\s*/iu;
+const sansPonctuation = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+
+/**
+ * Début du vrai message d'un moment, affiché sur sa carte quand le contenu n'a pas d'explication
+ * (décision du 23/10/2026) : sans salutation, sans « Jour 11/30 — », sans la phrase qui répète le titre.
+ */
+export function apercuMoment(texte: string, theme: string, prenom: string | null | undefined, max = 150): string {
+  let t = texte.trim().replace(SALUTATION, '');
+  while (REPERE_JOUR.test(t)) t = t.replace(REPERE_JOUR, '');
+  const premiere = /^([^.!?]+)[.!?]\s+/.exec(t);
+  if (premiere && sansPonctuation(premiere[1] ?? '') === sansPonctuation(theme)) t = t.slice(premiere[0].length);
+  t = webText(t, prenom);
+  if (t.length <= max) return t;
+  const coupe = t.slice(0, max);
+  return `${coupe.slice(0, coupe.lastIndexOf(' ') > max * 0.6 ? coupe.lastIndexOf(' ') : max).replace(/[\s,;:.!?—–-]+$/, '')}…`;
+}
+
 /**
  * Texte affiché sur le web : même contenu que le message d'origine, sans l'en-tête de salutation
  * ni l'invitation « Tu peux répondre ici… » qui ne valent que pour WhatsApp.
