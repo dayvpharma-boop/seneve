@@ -1,5 +1,6 @@
 import { Icone, type NomIcone } from '@/components/Icone';
 import { IconeMaquette } from '@/components/IconeMaquette';
+import { entreGuillemets } from '@/lib/parole';
 
 type Contexte = 'journal' | 'aide' | 'coach' | 'progres' | 'test' | 'resultat' | 'journee';
 const LIVRE = {
@@ -34,7 +35,7 @@ export function PenseeLivre({ langue, titre }: { langue?: string | null; titre?:
   const t = LIVRE[langueLivre(langue)];
   return <aside className="connexion-pensee" aria-label={titre ?? t.pensee}>
     <span className="connexion-pensee-icone" aria-hidden="true"><Icone nom="livre" taille={24} /></span>
-    <div><p className="connexion-pensee-titre">{titre ?? t.pensee}</p><blockquote>« {t.citation} »</blockquote><cite className="pensee-source">{t.source}</cite></div>
+    <div><p className="connexion-pensee-titre">{titre ?? t.pensee}</p><blockquote>{entreGuillemets(t.citation, langue)}</blockquote><cite className="pensee-source">{t.source}</cite></div>
   </aside>;
 }
 

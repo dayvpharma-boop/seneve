@@ -13,6 +13,12 @@ export const EMAIL_MATIN_TEXTES = {
     actif: 'Activé. Tu peux l’arrêter à tout moment en décochant la case.',
     inactif: 'Désactivé. Tu ne reçois aucun e-mail du matin.',
     erreur: 'Ton choix n’a pas été enregistré. Vérifie ta connexion et réessaie.',
+    // Variante courte de la page Réglages.
+    statutActif: 'Actif', statutInactif: 'Désactivé',
+    texteCourt: 'Chaque matin, à partir de 7 h, un e-mail te dit que ta journée est ouverte.',
+    actifCourt: 'Activé. Tu peux l’arrêter à tout moment.',
+    nonPropose: 'Cet e-mail n’est pas proposé pour le parcours actuellement suivi.',
+    verification: 'Vérification de ton choix d’e-mail du matin…',
   },
   en: {
     titre: 'Morning e-mail',
@@ -22,6 +28,11 @@ export const EMAIL_MATIN_TEXTES = {
     actif: 'On. You can stop it at any time by unticking the box.',
     inactif: 'Off. You receive no morning e-mail.',
     erreur: 'Your choice was not saved. Check your connection and try again.',
+    statutActif: 'On', statutInactif: 'Off',
+    texteCourt: 'Every morning, from 7 am, an e-mail tells you that your day is open.',
+    actifCourt: 'On. You can stop it at any time.',
+    nonPropose: 'This e-mail is not offered for the journey you are currently following.',
+    verification: 'Checking your morning e-mail choice…',
   },
 } as const;
 
@@ -47,13 +58,13 @@ export function EmailMatinCard({ langue,maquette=false }: { langue: string;maque
     setEtat(data as Etat);
   }
 
-  if (!etat || !etat.concerne) return maquette?<div className="card"><p className="tag">{T.titre}</p><p>{etat?'Cet e-mail n’est pas proposé pour le parcours actuellement suivi.':'Vérification de ton choix d’e-mail du matin…'}</p></div>:null;
+  if (!etat || !etat.concerne) return maquette?<div className="card"><p className="tag">{T.titre}</p><p>{etat?T.nonPropose:T.verification}</p></div>:null;
   return <div className="card" id="email-matin">
-    <p className="tag">{T.titre}{maquette&&<span className="rn-statut">{etat.actif?'Actif':'Désactivé'}</span>}</p>
-    <p>{maquette?'Chaque matin, à partir de 7 h, un e-mail te dit que ta journée est ouverte.':T.texte}</p>
+    <p className="tag">{T.titre}{maquette&&<span className="rn-statut">{etat.actif?T.statutActif:T.statutInactif}</span>}</p>
+    <p>{maquette?T.texteCourt:T.texte}</p>
     <label className="share-check">
       <input type="checkbox" checked={etat.actif} disabled={busy} onChange={e => void changer(e.target.checked)} />
-      <span>{T.case}{maquette&&<small className="rn-email-etat" role="status">{etat.actif?'Activé. Tu peux l’arrêter à tout moment.':T.inactif}</small>}</span>
+      <span>{T.case}{maquette&&<small className="rn-email-etat" role="status">{etat.actif?T.actifCourt:T.inactif}</small>}</span>
     </label>
     {etat.email && <p className="muted rn-email-adresse">{maquette&&<IconeJourneeSuite nom="alternate_email" taille={16}/>} {T.adresse(maquette?etat.email.replace(/^(.{4})[^@]*@/,'$1***@'):etat.email)}</p>}
     {!maquette&&<p className="muted" role="status">{etat.actif ? T.actif : T.inactif}</p>}

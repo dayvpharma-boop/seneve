@@ -17,7 +17,8 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 import { ParoleCard } from '@/components/ParoleCard';
-import { adresseParole } from '@/lib/parole';
+import { adresseParole, entreGuillemets } from '@/lib/parole';
+import { PenseeLivre } from '@/components/RepereParcours';
 import { cleanSource } from '@/lib/suivi-test';
 
 beforeEach(() => { ligne = null; for (const k of Object.keys(filtres)) delete filtres[k]; });
@@ -42,5 +43,16 @@ describe('Parole du jour', () => {
   it('l’image renvoie vers le test avec la provenance « parole »', () => {
     expect(adresseParole('exemple.org', '/seneve/', 'fr')).toBe('exemple.org/seneve/?src=parole');
     expect(cleanSource(new URL(`https://${adresseParole('exemple.org', '/', 'en')}`).searchParams.get('src'))).toBe('parole');
+  });
+});
+
+describe('Guillemets selon la langue', () => {
+  it('français « … », anglais “…”', () => {
+    expect(entreGuillemets('Texte', 'fr')).toBe('« Texte »');
+    expect(entreGuillemets('Text', 'en')).toBe('“Text”');
+  });
+  it('la citation du livre en anglais n’a pas de guillemets français', () => {
+    render(<PenseeLivre langue='en' />);
+    expect(screen.getByText('“Faithfulness in the little things, then, is not only about money. It is about people.”')).toBeInTheDocument();
   });
 });

@@ -57,3 +57,14 @@ describe('Carte E-mail du matin', () => {
     expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 });
+
+describe('Carte E-mail du matin, page Réglages', () => {
+  it('reste entièrement en anglais pour un compte anglophone', async () => {
+    etat = { actif: true, concerne: true, email: 'marie@exemple.org' };
+    render(<EmailMatinCard langue='en' maquette />);
+    expect(await screen.findByText('Every morning, from 7 am, an e-mail tells you that your day is open.')).toBeInTheDocument();
+    expect(screen.getByText('On')).toBeInTheDocument();
+    expect(screen.getByText('On. You can stop it at any time.')).toBeInTheDocument();
+    expect(screen.queryByText(/Chaque matin|Activé|Actif/)).not.toBeInTheDocument();
+  });
+});

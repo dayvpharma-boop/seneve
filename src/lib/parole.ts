@@ -36,7 +36,10 @@ export function adresseParole(host: string, base: string, langue: string): strin
   return `${host}${chemin}?${langue === 'en' ? 'lang=en&' : ''}src=parole`;
 }
 
-export type ContenuImage = { citation: string; reference: string; livre: string; auteur: string; invitation: string; adresse: string };
+/** Guillemets selon la langue : « … » en français, “…” en anglais. */
+export const entreGuillemets = (texte: string, langue?: string | null) => langue === 'en' ? `“${texte}”` : `« ${texte} »`;
+
+export type ContenuImage = { citation: string; reference: string; livre: string; auteur: string; invitation: string; adresse: string; langue?: string };
 
 /** Dessine l'image verticale (1080 × 1920) : graine, citation entre guillemets, source, invitation au test. */
 export function drawParole(ctx: CanvasRenderingContext2D, c: ContenuImage) {
@@ -58,7 +61,7 @@ export function drawParole(ctx: CanvasRenderingContext2D, c: ContenuImage) {
   let lignes: string[] = [];
   for (;;) {
     ctx.font = `italic 500 ${taille}px Lora, serif`;
-    lignes = wrap(ctx, `« ${c.citation} »`, maxW);
+    lignes = wrap(ctx, entreGuillemets(c.citation, c.langue), maxW);
     if (lignes.length * taille * 1.3 <= bas - haut || taille <= 44) break;
     taille -= 4;
   }

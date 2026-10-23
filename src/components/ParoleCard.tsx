@@ -1,7 +1,7 @@
 import {IconeResultat} from './IconeResultat';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { adresseParole, paroleTextes, renderParole, type Parole } from '@/lib/parole';
+import { adresseParole, entreGuillemets, paroleTextes, renderParole, type Parole } from '@/lib/parole';
 
 /** Parole du jour : citation exacte du livre pour ce jour du parcours, partageable en image. Rien si aucune parole publiée. */
 export function ParoleCard({ programmeId, version, langue, jour }: { programmeId: string; version: number; langue?: string; jour: number }) {
@@ -26,7 +26,7 @@ export function ParoleCard({ programmeId, version, langue, jour }: { programmeId
     setEtat('creation');
     const blob = await renderParole({
       citation: parole.texte, reference: parole.reference_livre, livre: T.livre, auteur: T.auteur, invitation: T.invitation,
-      adresse: adresseParole(window.location.host, import.meta.env.BASE_URL, langue ?? 'fr'),
+      adresse: adresseParole(window.location.host, import.meta.env.BASE_URL, langue ?? 'fr'), langue,
     });
     if (!blob) { setEtat('indisponible'); return; }
     setEtat('repos');
@@ -44,7 +44,7 @@ export function ParoleCard({ programmeId, version, langue, jour }: { programmeId
 
   return <section className="card parole-card" aria-label={T.tag}>
     <p className="tag"><IconeResultat nom="format_quote"/>{T.tag}</p>
-    <blockquote className="parole-citation">« {parole.texte} »</blockquote>
+    <blockquote className="parole-citation">{entreGuillemets(parole.texte, langue)}</blockquote>
     <p className="src">{T.auteur}, {T.livre} — {parole.reference_livre}</p>
     <button type="button" className="btn-secondaire wide" disabled={etat === 'creation'} onClick={() => void partager()}>{etat === 'creation' ? T.creation : T.partager}</button>
     {etat === 'indisponible' && <p className="note" role="status">{T.indisponible}</p>}
