@@ -349,4 +349,13 @@ describe('Besoin d’aide', () => {
     at('/journal?lang=en');
     expect(await screen.findByRole('heading', { name: 'Previous reflections' })).toBeInTheDocument();
   });
+
+  it('lien depuis un parcours anglais (?inscription) : journal et aide en anglais, même pour un compte français', async () => {
+    tables['enrollments'] = [{ enrollment_id: 'E1', programme_id: 'PROSPECT_LIVRE_7J_EN_V1', langue: 'en' }];
+    at('/journal?inscription=E1&activite=A1');
+    expect(await screen.findByRole('heading', { name: 'Previous reflections' })).toBeInTheDocument();
+    cleanup();
+    at('/aide?inscription=E1');
+    expect(await screen.findByRole('heading', { name: 'Help & Contact' })).toBeInTheDocument();
+  });
 });

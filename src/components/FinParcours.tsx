@@ -1,5 +1,6 @@
 import {useEffect,useState,type ReactNode} from 'react';
 import {Link} from 'react-router-dom';
+import { avecLangue } from '@/lib/espace';
 import {supabase} from '@/lib/supabase';
 import type {Bilan} from '@/lib/progres';
 import {Icone} from '@/components/Icone';
@@ -22,13 +23,13 @@ export function FinParcours({prenom,nom,enrollmentId,programmeId,langue,b,clotur
    <div className="fin-bilan-tete"><span>{en?'The mustard seed garden':'Le jardin du sénevé'}</span><span>{b.realisees}/{b.actionsOuvertes} {en?'actions completed':'actions réalisées'}</span></div>
    <h2>{cloture&&!b.termine?(en?'This journey is closed.':'Ce parcours est clôturé.'):(en?'You have reached the end of this journey.':'Ton parcours est arrivé à son terme.')}</h2>
    <figure className="fin-jardin"><img src={`${import.meta.env.BASE_URL}illustrations/fin-parcours-jardin.svg`} alt="" width={340} height={130}/><figcaption><span>{en?'Seed':'En terre'}</span><span>{en?'Sprout':'Germe'}</span><span>{en?'Roots':'Enraciné'}</span></figcaption></figure>
-   <div className="fin-jours">{b.jours.map(j=><Link key={j.jour} to={`/espace?parcours=${enrollmentId}&jour=${j.jour}`} aria-label={`${en?'Day':'Jour'} ${j.jour} · ${j.etat?etats[j.etat]:(en?'No action':'Sans action')}`}><span className={`fin-case fin-${j.etat??'sans-action'}`}>{j.etat==='realisee'?<IconeFin nom={j.jour===b.duree?'verified':'check'} taille={16}/>:j.etat==='partielle'?<IconeFin nom="hourglass_bottom" taille={16}/>:j.etat==='preparee'?<span aria-hidden="true">◐</span>:<span aria-hidden="true">—</span>}</span><span>J{j.jour}</span></Link>)}</div>
+   <div className="fin-jours">{b.jours.map(j=><Link key={j.jour} to={`/espace?parcours=${enrollmentId}&jour=${j.jour}`} aria-label={`${en?'Day':'Jour'} ${j.jour} · ${j.etat?etats[j.etat]:(en?'No action':'Sans action')}`}><span className={`fin-case fin-${j.etat??'sans-action'}`}>{j.etat==='realisee'?<IconeFin nom={j.jour===b.duree?'verified':'check'} taille={16}/>:j.etat==='partielle'?<IconeFin nom="hourglass_bottom" taille={16}/>:j.etat==='preparee'?<span aria-hidden="true">◐</span>:<span aria-hidden="true">—</span>}</span><span>{en?"D":"J"}{j.jour}</span></Link>)}</div>
    <p className="fin-legende"><span>{b.realisees} {en?'completed':b.realisees===1?'réalisée':'réalisées'}</span><span>{b.partielles} {en?'partly done':b.partielles===1?'faite en partie':'faites en partie'}</span>{b.preparees>0&&<span>{b.preparees} {en?'prepared':b.preparees===1?'préparée':'préparées'}</span>}</p>
    <p className="fin-mot">{en?'This review reflects what you recorded. It does not measure your faith or your worth.':'Ce bilan reprend ce que tu as enregistré. Il ne mesure ni ta foi ni ta valeur.'}</p>
-   <Link className="fin-secondaire" to="/progres">{en?'See my journey':'Voir mon parcours'}<IconeFin nom="arrow_forward" taille={18}/></Link>
+   <Link className="fin-secondaire" to={avecLangue("/progres",langue)}>{en?'See my journey':'Voir mon parcours'}<IconeFin nom="arrow_forward" taille={18}/></Link>
   </section>
   <SuiteCard programmeId={programmeId} langue={langue} dejaInscrit={dejaInscrit} maquette/>
-  <section className="fin-journal"><h2><IconeFin nom="history_edu" taille={20}/>{en?'Your journey reflections':'Mémoire de ton parcours'}</h2><p>{en?'Saved notes are kept in your personal space. You choose which ones to share.':'Les notes enregistrées sont conservées dans ton espace. Tu choisis celles que tu partages.'}</p>{note&&<div className="fin-derniere"><span>{en?'Latest saved reflection':'Dernière réflexion enregistrée'}</span><p>{note.texte}</p></div>}<Link className="fin-secondaire" to="/journal"><IconeFin nom="menu_book" taille={18}/>{en?'Read your reflections':'Relire tes réflexions'}</Link></section>
+  <section className="fin-journal"><h2><IconeFin nom="history_edu" taille={20}/>{en?'Your journey reflections':'Mémoire de ton parcours'}</h2><p>{en?'Saved notes are kept in your personal space. You choose which ones to share.':'Les notes enregistrées sont conservées dans ton espace. Tu choisis celles que tu partages.'}</p>{note&&<div className="fin-derniere"><span>{en?'Latest saved reflection':'Dernière réflexion enregistrée'}</span><p>{note.texte}</p></div>}<Link className="fin-secondaire" to={avecLangue("/journal",langue)}><IconeFin nom="menu_book" taille={18}/>{en?'Read your reflections':'Relire tes réflexions'}</Link></section>
   {reglages}{footer}
  </>;
 }

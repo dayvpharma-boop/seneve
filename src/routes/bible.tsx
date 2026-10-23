@@ -148,7 +148,7 @@ function CarteTelechargement({ version }: { version: Version }) {
         {encours !== null
           ? <p className="bb-progression" role="status"><span style={{ width: `${(encours / LIVRES.length) * 100}%` }} />{t(`Enregistrement… ${encours}/66 livres`, `Saving… ${encours}/66 books`)}</p>
           : <button type="button" className="bb-bouton-noir" disabled={!enLigne} onClick={() => void lancer()}><I nom="download" taille={20} />{enLigne ? t('Télécharger la Bible', 'Download the Bible') : t('Disponible au retour du réseau', 'Available when you are back online')}</button>}
-        <p className="bb-petit">{t(`Environ ${VERSIONS[version].taille} sur le téléphone`, `About ${VERSIONS[version].taille} on the phone`)}{presents ? t(` · ${presents} livre${presents > 1 ? 's' : ''} déjà enregistré${presents > 1 ? 's' : ''}`, ` · ${presents} book${presents > 1 ? 's' : ''} already saved`) : ''}</p>
+        <p className="bb-petit">{t(`Environ ${VERSIONS[version].taille} sur le téléphone`, `About ${VERSIONS[version].taille.replace(',', '.').replace('Mo', 'MB')} on the phone`)}{presents ? t(` · ${presents} livre${presents > 1 ? 's' : ''} déjà enregistré${presents > 1 ? 's' : ''}`, ` · ${presents} book${presents > 1 ? 's' : ''} already saved`) : ''}</p>
       </>}
     {erreur && <p className="bb-alerte" role="alert">{erreur}</p>}
   </section>;

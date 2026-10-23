@@ -1,6 +1,7 @@
 import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { avecLangue } from '@/lib/espace';
 import { supabase } from '@/lib/supabase';
 import { semaineTextes, type Semaine } from '@/lib/progres';
 
@@ -25,7 +26,7 @@ export function SemaineCard({ semaine, langue, horsLigne = false }: { semaine: S
     </ul>}
     {objectif && <p>{T.objectif(objectif)}</p>}
     <p>{T.journal}</p>
-    {!horsLigne && <Link className="btn btn-link" to="/journal">{T.ouvrirJournal}</Link>}
+    {!horsLigne && <Link className="btn btn-link" to={avecLangue("/journal", langue)}>{T.ouvrirJournal}</Link>}
     <p className="muted">{T.note}</p>
   </section>;
 }

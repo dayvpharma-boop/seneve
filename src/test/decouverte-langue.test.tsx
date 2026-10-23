@@ -41,4 +41,14 @@ describe('Découverte : choix de la langue', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Start in English' }));
     await waitFor(() => expect(appels).toContainEqual({ name: 'start_discovery', args: { p_langue: 'en' } }));
   });
+
+  it('?lang=en (connexion faite en anglais) : accueil en anglais, le français reste proposé', async () => {
+    render(<MemoryRouter initialEntries={['/espace?lang=en']}><Espace /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { name: 'Hello Marie' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Discovery · 7 days' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Start my Discovery' }));
+    await waitFor(() => expect(appels).toContainEqual({ name: 'start_discovery', args: { p_langue: 'en' } }));
+    fireEvent.click(screen.getByRole('button', { name: 'Commencer en français' }));
+    await waitFor(() => expect(appels).toContainEqual({ name: 'start_discovery', args: { p_langue: 'fr' } }));
+  });
 });

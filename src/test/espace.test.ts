@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { apercuMoment, dateDuJour, dayInfo, eventIdFor, fillPrenom, periodeMoment, pickDefault, webText } from '@/lib/espace';
+import { apercuMoment, avecLangue, dateDuJour, dayInfo, eventIdFor, fillPrenom, periodeMoment, pickDefault, webText } from '@/lib/espace';
 
 describe('dayInfo (Africa/Kinshasa)', () => {
   it('jour 1 le jour du début', () => {
@@ -46,6 +46,15 @@ describe('webText', () => {
   it('retire aussi les invitations à répondre en anglais', () => {
     expect(webText('What time of day will you set aside for your book? If you have any trouble accessing it, let us know here.', 'Ann')).toBe('What time of day will you set aside for your book?');
     expect(webText('Question for today: why? You can reply here.', '')).toBe('Question for today: why?');
+  });
+  it('retire la consigne PAUSE / STOP de la Découverte anglaise, propre à WhatsApp', () => {
+    expect(webText('Today, reflect on a recent decision: what priority does it reveal? To pause this journey, reply PAUSE; to stop messages and calls from the program, reply STOP.', 'Ann')).toBe('Today, reflect on a recent decision: what priority does it reveal?');
+    expect(webText('Thank you for taking part in this journey! To pause this journey, reply PAUSE; to stop messages and calls from the program, reply STOP.', '')).toBe('Thank you for taking part in this journey!');
+  });
+  it('avecLangue garde l’anglais dans les liens internes', () => {
+    expect(avecLangue('/journal', 'en')).toBe('/journal?lang=en');
+    expect(avecLangue('/aide?inscription=E1', 'en')).toBe('/aide?inscription=E1&lang=en');
+    expect(avecLangue('/journal', 'fr')).toBe('/journal');
   });
   it('retire « Si tu as un souci d’accès, dis-le-nous ici. », propre à WhatsApp (jour 1 du Livre 14 jours)', () => {
     expect(webText("Quel moment de ta journée réserves-tu à ton livre ? Si tu as un souci d'accès, dis-le-nous ici.", 'Marie')).toBe('Quel moment de ta journée réserves-tu à ton livre ?');

@@ -2,6 +2,7 @@ import {IconeConfidentialite} from './IconeConfidentialite';
 import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { avecLangue } from '@/lib/espace';
 import { supabase } from '@/lib/supabase';
 
 type Seance = { numero: number; jour: number; ouverte: boolean; demande: { etat: string; cree_le: string } | null };
@@ -78,7 +79,7 @@ export function SeanceCard({ enrollmentId, langue }: { enrollmentId: string; lan
     </> : derniereDemandee?.demande ? <>
       <p className="success" role="status">{T.demandee(derniereDemandee.numero)}</p>
       <p className="muted">{T.etat}{T.etats[derniereDemandee.demande.etat] ?? derniereDemandee.demande.etat}</p>
-      <Link className="link" to="/aide">{T.suivre}</Link>
+      <Link className="link" to={avecLangue("/aide", langue)}>{T.suivre}</Link>
     </> : null}
     {!aDemander && (prochaine ? <p className="muted">{T.prochaine(prochaine.numero, prochaine.jour)}</p> : derniereDemandee && seances.every(s => s.demande) ? <p className="muted">{T.toutes}</p> : null)}
     {error && <p className="error" role="alert">{T.erreur}</p>}

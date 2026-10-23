@@ -79,6 +79,10 @@ describe('Espace avec plusieurs parcours', () => {
     expect(screen.getByText('Day 3 opens tomorrow.')).toBeInTheDocument();
     expect(screen.getByText('Your action for today')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'I completed this action' })).toBeInTheDocument();
+    // Barre du haut, salutation et titre de l'onglet suivent le parcours affiché (test du 23/10/2026).
+    expect(screen.getByRole('heading', { level: 1, name: /^Hello\b/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'My profile' })).toHaveAttribute('href', '/profil?lang=en');
+    expect(document.title).toBe('My space — SÉNEVÉ');
   });
 
   it('parcours anglais pas commencé : date en anglais', async () => {

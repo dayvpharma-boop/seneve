@@ -226,7 +226,7 @@ export const PROGRES_TEXTES = {
     partielles: (n: number) => `${n} partly done`,
     preparees: (n: number) => `${n} prepared`,
     aides: (n: number) => `${n} with help requested`,
-    notes: (n: number) => `${n} note${n > 1 ? 's' : ''} in your journal`,
+    notes: (n: number) => `${n} note${n === 1 ? '' : 's'} in your journal`,
     prochain: (j: number) => `Next step: the action of day ${j}, whenever you are ready.`,
     toutFait: 'All open actions are recorded as completed.',
     reprendre: 'Continue in my space',

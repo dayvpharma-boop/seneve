@@ -10,17 +10,19 @@ import { Icone } from '@/components/Icone';
 import { IconeJournal } from '@/components/IconeJournal';
 
 type Entry = { entry_id: string; texte: string; usage_ia_autorise: boolean; cree_le: string; modifie_le: string; activity_id: string | null };
-type Loaded = { participantId: string; prenom: string; langue: string; entries: Entry[]; consigne: string | null };
+type Loaded = { participantId: string; prenom: string; langue: string; langueParcours: string | null; entries: Entry[]; consigne: string | null };
 
-async function load(activite: string | null): Promise<Loaded | null> {
+async function load(activite: string | null, inscription: string | null = null): Promise<Loaded | null> {
   const { data: s } = await supabase.auth.getSession();
   if (!s.session) return null;
   const ep = await supabase.rpc('ensure_participant', { p_prenom: (s.session.user.user_metadata?.['prenom'] as string | undefined) ?? '' });
   if (ep.error) throw ep.error;
-  const [p, e, a] = await Promise.all([
+  const [p, e, a, i] = await Promise.all([
     supabase.from('participants').select('langue,prenom').maybeSingle(),
     supabase.from('journal_entries').select('entry_id, texte, usage_ia_autorise, cree_le, modifie_le, activity_id').order('cree_le', { ascending: false }),
     activite ? supabase.from('activities').select('consigne').eq('activity_id', activite).maybeSingle() : Promise.resolve({ data: null, error: null }),
+    // « Écrire ma réflexion » depuis un parcours : le journal s'affiche dans la langue de ce parcours.
+    inscription ? supabase.from('enrollments').select('langue').eq('enrollment_id', inscription).maybeSingle() : Promise.resolve({ data: null, error: null }),
   ]);
   if (p.error) throw p.error;
   if (e.error) throw e.error;
@@ -28,6 +30,7 @@ async function load(activite: string | null): Promise<Loaded | null> {
     participantId: ep.data as string,
     prenom: p.data?.prenom ?? s.session.user.user_metadata?.['prenom'] ?? '',
     langue: (p.data?.langue as string | undefined) ?? 'fr',
+    langueParcours: i?.error ? null : ((i?.data as { langue?: string } | null)?.langue ?? null),
     entries: (e.data ?? []) as Entry[],
     consigne: a.error ? null : ((a.data as { consigne?: string } | null)?.consigne ?? null),
   };
@@ -64,12 +67,12 @@ function JournalDuCompte({ userId }: { userId: string }) {
   const refresh = useCallback(async (actif: () => boolean = () => true) => {
     setFailed(false);
     try {
-      const loaded = await load(activite);
+      const loaded = await load(activite, inscription);
       if (!actif()) return;
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
       setData(loaded);
     } catch { if (actif()) setFailed(true); }
-  }, [activite, navigate]);
+  }, [activite, inscription, navigate]);
   useEffect(() => { let actif = true; void refresh(() => actif); return () => { actif = false; }; }, [refresh]);
   useEffect(() => {
     if (cleChargee.current !== draftKey) {
@@ -93,8 +96,8 @@ function JournalDuCompte({ userId }: { userId: string }) {
     champ.current.focus({ preventScroll: true });
   }, [pret, ecrire, formOuvert]);
 
-  // ?lang=en ou ?lang=fr (barre du bas, liens anglais) prime sur la langue du compte.
-  const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (data?.langue ?? 'fr');
+  // ?lang=en ou ?lang=fr (barre du bas, liens anglais) prime ; sinon la langue du parcours (?inscription), puis celle du compte.
+  const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (data?.langueParcours ?? data?.langue ?? 'fr');
   const T = journalTextes(langueUI);
   useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = langueUI === 'en' ? 'en' : 'fr'; }, [T, langueUI]);
 

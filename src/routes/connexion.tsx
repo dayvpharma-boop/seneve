@@ -124,7 +124,8 @@ export function Connexion() {
         }
       }
       const retour = location.state?.retourJournal ?? location.state?.retour;
-      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
+      // Connexion faite sur la page anglaise : l'espace s'ouvre en anglais.
+      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
     } catch (err) {
       setError(authError(err instanceof Error ? err.message : 'network', langue));
     } finally { setBusy(false); }

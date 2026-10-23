@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ComptePrive } from '@/components/ComptePrive';
 import { supabase } from '@/lib/supabase';
-import { apercuMoment, dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletActif, rawDay, webText } from '@/lib/espace';
+import { apercuMoment, avecLangue, dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletActif, rawDay, webText } from '@/lib/espace';
 import {ParcoursAVenir,PauseParcours,ProgressionLongue,BilanTermine} from '@/components/VariantesJournee';
 import {IconeJourneeSuite} from '@/components/IconeJourneeSuite';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
@@ -174,7 +174,6 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       setEquipe(Boolean(d && (d.admin || d.roles?.length)));
     }).catch(() => undefined);
   }, []);
-  useEffect(() => { document.title = 'Mon espace — SÉNEVÉ'; document.documentElement.lang = 'fr'; }, []);
   // Page d'un moment : on part du haut, le titre reçoit le focus (lecteurs d'écran).
   useEffect(() => {
     if (!momentParam || !data) return;
@@ -198,8 +197,17 @@ function EspaceDuCompte({ userId }: { userId: string }) {
 
   // Écran « Aujourd'hui » validé le 15/10/2026 : salutation et initiale en haut, barre du bas, « Se déconnecter » en bas de page.
   // Barre du haut des maquettes validées le 19/10/2026 : « SÉNEVÉ · Bonjour Marie » et la pastille de l'initiale.
-  const salut = data ? (data.prenom ? `Bonjour ${data.prenom}` : 'Bonjour') : undefined;
-  const enTete = data?.parcours.find(x => x.enrollment_id === chosen)?.langue === 'en';
+  // Langue du parcours affiché (celui choisi, sinon celui retenu par défaut) : salutation, barre du haut, titre de l'onglet.
+  // Pendant le chargement et sans parcours (accueil de la Découverte) : ?lang=en.
+  const enTete = !data || !data.parcours.length ? params.get('lang') === 'en'
+    : (data?.parcours.find(x => x.enrollment_id === chosen) ?? (data ? pickDefault(data.parcours) : null))?.langue === 'en';
+  const salut = data ? `${enTete ? 'Hello' : 'Bonjour'}${data.prenom ? ` ${data.prenom}` : ''}` : undefined;
+  const charge = data !== null;
+  useEffect(() => {
+    document.title = enTete ? 'My space — SÉNEVÉ' : 'Mon espace — SÉNEVÉ';
+    // Avant le chargement, la langue de la page précédente est gardée (elle sert de langue de secours).
+    if (charge) document.documentElement.lang = enTete ? 'en' : 'fr';
+  }, [charge, enTete]);
   const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
     <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</Link></div>
     {notice}{repere}
@@ -221,9 +229,9 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const page = (langue: string, contenu: ReactNode, classe = '', navigation = true) => <main className={`wrap ${navigation ? 'avec-nav ' : ''}espace-page ${classe}`.trim()}>{contenu}{navigation && <BarreNav langue={langue} maquette iconesJournee varianteJournee={classe==='journee-nouvelle'||/journee-(multiple|pause|longue)/.test(classe)} />}</main>;
 
   if (failed) return page(langueCourante, <EspaceErreur langue={langueCourante} prenom={prenomSession} message={loadError(langueCourante)} reessayer={() => void refresh()} />, 'erreur-page');
-  if (!data) return page('fr', <>{header()}<section className="espace-chargement" aria-busy="true" aria-label="Préparation de ta journée"><div className="chargement-message"><span className="etat-symbole" aria-hidden="true"><svg width={32} height={32} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M12 22V12" /><path d="M12 12C12 7.5 8 5 8 5C8 5 8 9 12 12Z" fill="currentColor" fillOpacity={.25} /><path d="M12 9C12 5.5 16 3.5 16 3.5C16 3.5 16 7.5 12 9Z" fill="currentColor" fillOpacity={.35} /><circle cx={12} cy={21} fill="currentColor" r={1.5} /></svg></span><p role="status">Chargement…</p><p>Préparation de ta journée</p></div><div className="chargement-maquette" aria-hidden="true"><div className="chargement-jours">{Array.from({ length: 7 }, (_, k) => <span key={k} />)}</div><div className="chargement-carte"><span /><span /><span /></div><div className="chargement-carte"><span /><span /></div></div></section>{footer(langueCourante)}</>);
+  if (!data) return page(langueCourante, <>{header()}<section className="espace-chargement" aria-busy="true" aria-label={langueCourante === 'en' ? 'Preparing your day' : 'Préparation de ta journée'}><div className="chargement-message"><span className="etat-symbole" aria-hidden="true"><svg width={32} height={32} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} viewBox="0 0 24 24"><path d="M12 22V12" /><path d="M12 12C12 7.5 8 5 8 5C8 5 8 9 12 12Z" fill="currentColor" fillOpacity={.25} /><path d="M12 9C12 5.5 16 3.5 16 3.5C16 3.5 16 7.5 12 9Z" fill="currentColor" fillOpacity={.35} /><circle cx={12} cy={21} fill="currentColor" r={1.5} /></svg></span><p role="status">{langueCourante === 'en' ? 'Loading…' : 'Chargement…'}</p><p>{langueCourante === 'en' ? 'Preparing your day' : 'Préparation de ta journée'}</p></div><div className="chargement-maquette" aria-hidden="true"><div className="chargement-jours">{Array.from({ length: 7 }, (_, k) => <span key={k} />)}</div><div className="chargement-carte"><span /><span /><span /></div><div className="chargement-carte"><span /><span /></div></div></section>{footer(langueCourante)}</>);
 
-  if (!data.parcours.length) return page('fr', <AccueilDecouverte prenom={data.prenom} starting={starting} commencer={langue => void start(langue)} reglages={reglages('fr', false)} footer={footer(langueCourante)} />, 'espace-decouverte');
+  if (!data.parcours.length) return page(langueCourante, <AccueilDecouverte langue={langueCourante} prenom={data.prenom} starting={starting} commencer={langue => void start(langue)} reglages={reglages(langueCourante, false)} footer={footer(langueCourante)} />, 'espace-decouverte');
 
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
@@ -485,7 +493,7 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
     {!realisee && etat === 'preparee' && <p className="success" role="status">{T.prepareeNotee}</p>}
     {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
     {!realisee && aide && <div className="aide-notee" role="status"><p>{T.aideNotee}</p>
-      <div className="link-row"><Link className="link" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link><Link className="link" to="/coach">{T.demanderCoach}</Link></div></div>}
+      <div className="link-row"><Link className="link" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link><Link className="link" to={avecLangue("/coach", langue)}>{T.demanderCoach}</Link></div></div>}
     {!realisee && !readOnly && <>
       <button type="button" className="btn btn-or action-btn" disabled={pending !== null} onClick={() => void record('realisee')}>{lecture ? <IconeLecture nom="done" taille={18} /> : <IconeJournee nom="check" taille={18}/>}{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
       <div className="choix-row">

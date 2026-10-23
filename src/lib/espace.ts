@@ -76,7 +76,14 @@ export function webText(text: string, prenom: string | null | undefined): string
     .replace(/\s*Tu peux répondre ici[^.!?]*[.!?]/g, '')
     .replace(/\s*Si tu as un souci d[’']accès, dis-le-nous ici[^.!?]*[.!?]/g, '')
     .replace(/\s*(You can reply here|If you have any trouble accessing it, let us know here)[^.!?]*[.!?]/g, '')
+    // Consigne WhatsApp de la Découverte anglaise (7 contenus) : PAUSE et STOP ne se répondent pas sur le site.
+    .replace(/\s*To pause this journey, reply PAUSE[^.!?]*[.!?]/g, '')
     .trim();
+}
+
+/** Lien interne qui reste en anglais : ajoute ?lang=en (ou &lang=en) pour un parcours anglais. */
+export function avecLangue(chemin: string, langue: string | null | undefined): string {
+  return langue === 'en' ? `${chemin}${chemin.includes('?') ? '&' : '?'}lang=en` : chemin;
 }
 
 /** Heure actuelle à Kinshasa, au format HH:MM (même fuseau que le calcul des jours). */

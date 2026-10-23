@@ -25,6 +25,7 @@ export function ComptePrive({ enfants }: { enfants: (userId: string) => ReactNod
   }, [essai]);
   if (erreur) return <main className="wrap"><p role="alert">Impossible de vérifier ta connexion.</p><button className="btn" onClick={() => { setErreur(false); setEssai(n => n + 1); }}>Réessayer</button></main>;
   if (compte === undefined) return <main className="wrap"><p role="status">Chargement…</p></main>;
-  if (!compte) return <Navigate to="/connexion" replace state={location.pathname === '/journal' ? { retourJournal: location.pathname + location.search, citationBiblique: location.state?.citationBiblique } : null} />;
+  // Une page privée ouverte en anglais (?lang=en) mène à la page de connexion anglaise.
+  if (!compte) return <Navigate to={new URLSearchParams(location.search).get('lang') === 'en' ? '/connexion?lang=en' : '/connexion'} replace state={location.pathname === '/journal' ? { retourJournal: location.pathname + location.search, citationBiblique: location.state?.citationBiblique } : null} />;
   return <div key={compte} style={{ display: 'contents' }}>{enfants(compte)}</div>;
 }

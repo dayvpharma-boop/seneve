@@ -316,6 +316,10 @@
 .espace-page .repli > summary { background:transparent; font-size:14px; line-height:22px; min-height:44px; margin:-8px; padding:8px; }
 .espace-page .repli > summary::after { content:''; flex-shrink:0; width:8px; height:8px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg); margin:0 4px 4px 12px; }
 .espace-page .repli[open] > summary::after { transform:rotate(225deg); margin-bottom:0; }
+/* Résumé qui porte déjà sa flèche (icône) : pas de seconde flèche dessinée (parcours anglais, test du 23/10/2026). */
+.espace-page .repli > summary:has(> svg)::after { content:none; }
+.espace-page .repli > summary > svg { margin-left:auto; flex-shrink:0; transition:transform .15s; }
+.espace-page .repli[open] > summary > svg { transform:rotate(180deg); }
 .espace-page .barre-nav { background:var(--background); }
 .espace-page .moment-texte { font-family:Literata,Georgia,serif; font-size:17px; line-height:29px; }
 @media (max-width:360px) {

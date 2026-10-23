@@ -105,7 +105,7 @@ export function Progres() {
   const fermes = b.jours.filter(j => !j.ouvert);
   const symboleJour = (j: Bilan['jours'][number], taille = 18) => !j.ouvert ? <IconeProgres nom="lock" taille={taille} /> : j.etat === 'realisee' ? <IconeProgres nom="check" taille={taille} /> : j.etat === 'partielle' ? <IconeProgres nom="contrast" taille={taille} /> : j.etat === 'preparee' ? <IconeProgres nom="hourglass_top" taille={taille} /> : j.aide ? <IconeProgres nom="help" taille={taille} /> : <span>{j.jour}</span>;
   const carte = <div className={b.duree > 14 ? 'day-tiles progres-tuiles is-compact' : 'day-tiles progres-tuiles'} aria-hidden="true">
-    {b.jours.map(j => <span key={j.jour} className={['day-tile',j.jour === aujourdhui && 'is-today',j.etat === 'realisee' && 'is-done',!j.ouvert && 'is-locked',j.etat === 'partielle' && 'is-partial',j.etat === 'preparee' && 'is-prepared'].filter(Boolean).join(' ')}><span className="parcours-rond">{symboleJour(j)}</span><span className="parcours-jour">J{j.jour}</span></span>)}
+    {b.jours.map(j => <span key={j.jour} className={['day-tile',j.jour === aujourdhui && 'is-today',j.etat === 'realisee' && 'is-done',!j.ouvert && 'is-locked',j.etat === 'partielle' && 'is-partial',j.etat === 'preparee' && 'is-prepared'].filter(Boolean).join(' ')}><span className="parcours-rond">{symboleJour(j)}</span><span className="parcours-jour">{en ? "D" : "J"}{j.jour}</span></span>)}
   </div>;
   const semainesDuParcours = semaines(b);
 
@@ -129,7 +129,7 @@ export function Progres() {
     {!b.pasCommence && semainesDuParcours.length > 0 && <section className="card parcours-semaines"><h2><IconeProgres nom="eco" />{en ? 'Weekly summary' : 'Bilan de la semaine'}</h2><ul className="bilan-list">{semainesDuParcours.map(w => { const S = semaineTextes(enr.langue); return <li key={w.numero}><strong>{S.titre(w.numero)}</strong>{w.complete ? '' : ` (${S.enCours})`} — {w.applicables === 0 ? S.nonEvalue : S.realisees(w.realisees, w.applicables)}{w.partielles > 0 ? ` · ${S.partielles(w.partielles)}` : ''}{w.aides > 0 ? ` · ${S.aides(w.aides)}` : ''}</li>; })}</ul><p>{semaineTextes(enr.langue).note}</p></section>}
     <section className="parcours-etapes"><h2>{en ? 'Journey steps' : 'Les étapes du parcours'}</h2><ol className="bilan-jours">
       {b.jours.filter(j => j.ouvert).map(j => <li key={j.jour} className={`bilan-jour${j.jour === aujourdhui ? ' is-today' : ''}${j.etat === 'realisee' ? ' is-done' : ''}${j.etat === 'partielle' ? ' is-partial' : ''}`}>
-        <span className="bilan-pastille" aria-hidden="true"><b>J{j.jour}</b>{symboleJour(j,14)}</span>
+        <span className="bilan-pastille" aria-hidden="true"><b>{en ? "D" : "J"}{j.jour}</b>{symboleJour(j,14)}</span>
         <div className="parcours-jour-contenu"><div className="parcours-jour-titre"><span className="bilan-num">{T.jour(j.jour)}</span>{j.jour === aujourdhui ? <small>{en ? 'Today' : 'Aujourd’hui'}</small> : <time dateTime={dateDuJour(enr.date_debut,j.jour).toISOString()}>{new Intl.DateTimeFormat(T.locale,{timeZone:'Africa/Kinshasa',day:'numeric',month:'short'}).format(dateDuJour(enr.date_debut,j.jour))}</time>}</div>
           {j.theme && <h3 className="bilan-theme">{j.theme}</h3>}
           <p className={`bilan-etat etat-${j.etat ?? 'aucune'}`}>{j.etat === null ? T.sansAction : <Link className="link" to={lienJour(j.jour)}>{T.etats[j.etat]}{j.etat === 'realisee' && j.realiseeLe ? `${T.le}${dateCourte(j.realiseeLe,T.locale)}` : ''}{j.aide ? ` · ${T.aide}` : ''}</Link>}</p>

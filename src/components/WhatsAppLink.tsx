@@ -89,7 +89,8 @@ export function WhatsAppLink({maquette=false,langue}:{maquette?:boolean;langue?:
       <a className="btn btn-link" href={linkUrl(code.code)} target="_blank" rel="noopener noreferrer">{T.ouvrir}</a>
       <button type="button" className="link" onClick={check}>{T.envoye}</button>
     </> : <>
-      <p>{T.pourquoi}</p>
+      {/* Variante Réglages : l'introduction dit déjà la même chose, on ne la répète pas. */}
+      {!maquette && <p>{T.pourquoi}</p>}
       <button type="button" className="btn" disabled={busy} onClick={ask}>{busy ? T.instant : T.relier}</button>
     </>}
     {error && <p className="error" role="alert">{error}</p>}

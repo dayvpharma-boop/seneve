@@ -13,7 +13,7 @@ import { IconeAide } from '@/components/IconeAide';
 type Request = { request_id: string; motif: string; etat: string; reponse: string | null; extraits_partages: string | null; cree_le: string };
 type Message = { request_id: string; auteur: 'participant' | 'equipe'; texte: string; cree_le: string };
 type Note = { entry_id: string; texte: string; cree_le: string };
-type Parcours = { enrollment_id: string; nom: string };
+type Parcours = { enrollment_id: string; nom: string; langue: string };
 type Loaded = { prenom: string; langue: string; requests: Request[]; messages: Message[]; notes: Note[]; parcours: Parcours[] };
 
 async function load(): Promise<Loaded | null> {
@@ -37,7 +37,7 @@ async function load(): Promise<Loaded | null> {
     const progs = (pr.data ?? []) as { programme_id: string; nom: string; duree_jours: number | null }[];
     parcours = enr.map(x => {
       const prog = progs.find(q => q.programme_id === x.programme_id);
-      return { enrollment_id: x.enrollment_id, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, prog?.duree_jours ?? 7) };
+      return { enrollment_id: x.enrollment_id, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, prog?.duree_jours ?? 7), langue: x.langue };
     });
   }
   return {
@@ -86,8 +86,9 @@ function AideDuCompte({ userId }: { userId: string }) {
   }, [navigate]);
   useEffect(() => { let actif = true; void refresh(() => actif); return () => { actif = false; }; }, [refresh]);
 
-  // ?lang=en ou ?lang=fr (barre du bas, liens anglais) prime sur la langue du compte.
-  const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (data?.langue ?? 'fr');
+  // ?lang=en ou ?lang=fr (barre du bas, liens anglais) prime ; sinon la langue du parcours demandé (?inscription), puis celle du compte.
+  const langueParcours = data?.parcours.find(x => x.enrollment_id === params.get('inscription'))?.langue;
+  const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (langueParcours ?? data?.langue ?? 'fr');
   const T = journalTextes(langueUI);
   const en=langueUI==='en';
   const sujets=SUJETS[en?'en':'fr'];
