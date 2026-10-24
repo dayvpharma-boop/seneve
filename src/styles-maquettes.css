@@ -355,3 +355,7 @@
 :is(.conf-profil,.journal-profil,.jn-avatar-grand,.lecture-avatar,.parcours-avatar,.decouverte-avatar,.erreur-avatar,.introuvable-profil):focus-visible { outline:3px solid var(--gold,#755b00); outline-offset:2px; }
 .confidentialite a.conf-profil { color:#fff; text-decoration:none; }
 :root[data-apparence="sombre"] .confidentialite a.conf-profil { color:#1d1b18; }
+/* Détail de la racine choisie, ouvert juste sous elle (24/10/2026). */
+#s-result .choix-detail { margin:0 0 8px; padding-left:12px; border-left:2px solid var(--gold,#c9a84c); }
+#s-result .choix-detail > .card { margin-top:0; margin-bottom:12px; }
+#s-result .choix-detail .choix-continuer { display:flex; margin:0; }

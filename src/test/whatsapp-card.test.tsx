@@ -36,6 +36,17 @@ describe('Carte « Aller plus loin »', () => {
     expect(screen.queryByText('Ta première action')).not.toBeInTheDocument();
   });
 
+  it('le détail s’ouvre juste sous la racine choisie, avec « Continuer en créant un compte » (24/10/2026)', () => {
+    render(<Index />);
+    finishQuiz([15, 12, 6, 12, 9, 6, 12]);
+    const choix = screen.getByRole('radio', { name: 'Fidélité dans les petites choses' });
+    fireEvent.click(choix);
+    const detail = choix.nextElementSibling as HTMLElement;
+    expect(detail).toHaveClass('choix-detail');
+    expect(within(detail).getByText('Ta première action')).toBeVisible();
+    expect(within(detail).getByRole('link', { name: 'Continuer en créant un compte' })).toHaveAttribute('href', expect.stringMatching(/\/connexion$/));
+  });
+
   it('absente tant qu’aucune action n’est affichée, puis placée entre l’action et la précision finale', () => {
     render(<Index />);
     finishQuiz([15, 12, 6, 12, 9, 6, 12]);
