@@ -113,3 +113,5 @@ import './styles-profil.css';
 import './styles-mode-sombre.css';
 import './styles-bibliotheque.css';
 import './styles-bible.css';
+
+import './styles-resultat-stitch.css';

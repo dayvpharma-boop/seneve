@@ -1,5 +1,6 @@
 import '../styles-jardin-accueil.css';
 import {Apparence} from '@/components/Apparence';
+import {lireTailleResultat} from '@/components/LectureResultat';
 import {ChoixRacines} from '@/components/ChoixRacines';
 import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -37,7 +38,7 @@ function RootCard({ tag, k, total, language, explanation }: { tag: string; k: nu
  const t = texts[language];
  const root = t.roots[k];
  if (!root) return null;
-  return <div className="card result-hero"><div className="carte-haut"><p className="tag">{tag}</p><span className="cat-chip">{categorie(total, language)}</span></div><h2>{root.n}</h2><p className="score-grand"><b>{total}</b> / 15</p><p className="muted">{explanation}</p><div className="quote-encart"><p className="result-auteur"><IconeResultat nom="format_quote" taille={18}/>Dr Justin Tshims</p><p className="quote">{t.quote(root.o ?? root.p)}</p><p className="src">{root.o && root.c ? t.openingSource(root.c) : t.quoteSource}</p></div></div>;
+  return <div className="card result-hero"><div className="result-root-heading"><div><p className="tag">{tag}</p><h2>{root.n}</h2></div><p className="score-grand"><b>{total}</b> / 15</p></div><span className="cat-chip">{categorie(total, language)}</span><p className="muted">{explanation}</p><div className="quote-encart"><p className="result-auteur"><IconeResultat nom="format_quote" taille={18}/>Dr Justin Tshims</p><p className="quote">{t.quote(root.o ?? root.p)}</p><p className="src">{root.o && root.c ? t.openingSource(root.c) : t.quoteSource}</p></div></div>;
 }
 /** Racine forte (cahier n°4, §11 A) : la ou les racines au total le plus haut, sans note chiffrée.
  * Absente quand les sept racines sont au même niveau, toutes points d'appui, ou toutes à développer. */
@@ -48,10 +49,10 @@ function StrengthCard({ fortes, total, language }: { fortes: number[]; total: nu
  if (!kind || k === undefined) return null;
  const plusieurs = fortes.length > 1;
  const tag = kind === 'appui' ? (plusieurs ? t.strength.appuiPlusieurs : t.strength.appui) : (plusieurs ? t.strength.solidePlusieurs : t.strength.solide);
- return <div className="card result-strength"><p className="tag"><IconeResultat nom="verified" taille={20}/>{tag}</p>
+ return <div className="card result-strength"><p className="tag"><IconeResultat nom="psychiatry" taille={20}/>{tag}</p>
   {plusieurs
    ? <ul className="plain strength-list" role="list">{fortes.map(i => <li key={i}>{t.roots[i]?.n}</li>)}</ul>
-   : <><h2>{t.roots[k]?.n}</h2><p className="quote">{t.quote(t.roots[k]?.p ?? '')}</p><p className="src">{t.quoteSource}</p></>}
+   : <><h2>{t.roots[k]?.n}</h2><div className="strength-quote"><p className="quote">{t.quote(t.roots[k]?.p ?? '')}</p><p className="src">{t.quoteSource}</p></div></>}
   <p className="muted">{plusieurs ? t.resultHelp.strengthMany : t.resultHelp.strengthOne}</p>
  </div>;
 }
@@ -79,7 +80,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language, mantle = '' }: { 
   // Racine choisie, première action et, en cas d'égalité, l'inscription : ouverts sous la racine choisie (24/10/2026).
   const detail = root && act !== null && act !== undefined ? <>
     <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} explanation={needsChoice ? t.resultHelp.chosen : t.resultHelp.suggested} />
-    <div className="card action-card result-action"><p className="result-orientation"><IconeResultat nom="eco" taille={20}/>{language==='en'?'Immediate direction':'Orientation immédiate'}</p><p className="tag">{t.firstAction}</p><div className="action-box"><IconeResultat nom="menu_book" taille={22} /><p className="action">{root.a}</p></div><p className="src">{t.actionSource(root.j, root.n)}</p></div>
+    <div className="card action-card result-action"><p className="tag"><IconeResultat nom="task_alt" taille={22}/>{t.firstAction}</p><div className="action-box"><p className="action">{root.a}</p><p className="src">{t.actionSource(root.j, root.n)}</p></div></div>
     {needsChoice && <a className="btn btn-link choix-continuer" href={`${import.meta.env.BASE_URL}connexion${language==='en'?'?lang=en':''}`}>{language==='en'?'Continue by creating an account':'Continuer en créant un compte'}</a>}
   </> : null;
   // Ordre du cahier n°4, §11 (rétabli le 22/10/2026) : racine forte, racine à fortifier, première action ;
@@ -87,29 +88,30 @@ function ResultBody({ answers, chosenRoot, onChoose, language, mantle = '' }: { 
   return <>
     {/* La racine forte ne dépend pas du choix fait en cas d'égalité en bas : elle s'affiche d'abord. */}
     {!r.same && !allSupport && <StrengthCard language={language} fortes={r.fortes} total={Math.max(...r.t)} />}
-     {needsChoice && <><p>{message}</p><ChoixRacines language={language} indices={indices} totals={r.t} chosenRoot={chosenRoot} onChoose={onChoose} allSupport={allSupport} detail={detail} /></>}
+     {needsChoice && <><div className="result-choice-message"><IconeResultat nom={allSupport ? 'military_tech' : r.same ? 'spa' : 'balance'} taille={24}/><p>{message}</p></div><ChoixRacines language={language} indices={indices} totals={r.t} chosenRoot={chosenRoot} onChoose={onChoose} allSupport={allSupport} detail={detail} /></>}
      {!needsChoice && detail}
+     {needsChoice && !root && <div className="result-choice-wait" role="status"><IconeResultat nom="hourglass_empty" taille={32}/><p>{language==='en'?'Choose a root above to discover your first action.':'Choisis une racine ci-dessus pour découvrir ta première action.'}</p></div>}
     {t.mantle && mantle.trim() && <div className="card manteau-resultat"><p className="tag">{t.mantle.resultTitle}</p><p className="quote">{t.quote(mantle.trim())}</p><p className="src">{t.mantle.source}</p><p className="muted">{t.mantle.kept}</p></div>}
     {root && <RepereParcours contexte="resultat" langue={language} />}
      <div className="card root-list-card"><p className="tag">{t.rootsTitle}<IconeResultat nom="analytics" taille={20}/></p><p>{t.summary}</p>
-       <details className="result-method"><summary>{t.resultHelp.method}</summary><p>{t.resultHelp.calculation}</p><p>{t.resultHelp.bands}</p><p>{t.resultHelp.close}</p></details>
+       
        <ul className="root-rows" role="list">{R.map((item, k) => {
          const total = r.t[k] ?? 3;
-         return <li key={item.n} className={['root-row',k===act?'is-start':'',!r.same&&!allSupport&&r.fortes.includes(k)&&strengthKind(total)?'is-appui':''].filter(Boolean).join(' ')}>
+         return <li key={item.n} data-band={total >= 12 ? 'appui' : total <= 6 ? 'developper' : 'consolider'} className={['root-row',k===act?'is-start':'',!r.same&&!allSupport&&r.fortes.includes(k)&&strengthKind(total)?'is-appui':''].filter(Boolean).join(' ')}>
            <div className="root-row-top"><span className="root-num" aria-hidden="true">{k + 1}.</span><span className="root-summary-name">{item.n}</span><span className="root-score">{total} / 15</span></div>
            <span className="root-bar" aria-hidden="true"><i style={{ width: `${(total / 15) * 100}%` }} /></span>
-           <span className="root-category">{k===act?<b>{language==='en'?'Priority':'Priorité'}</b>:null}{categorie(total, language)}</span>
+           <div className="root-row-bottom"><span className="root-category">{k===act?<b>{language==='en'?'Priority':'Priorité'}</b>:null}{categorie(total, language)}</span><span className="root-percent" aria-hidden="true">{Math.round(total / 15 * 100)}%</span></div>
          </li>;
-       })}</ul>
+       })}</ul><div className="result-legend"><p>{language==='en'?'Reading guide':'Repères de lecture'}</p><dl>{t.categories.map((label,k)=><div key={label}><dt><span aria-hidden="true" data-band={k}/><b>{['3–6','7–11','12–15'][k]} :</b></dt><dd>{label}</dd></div>)}</dl></div><details className="result-method"><summary>{t.resultHelp.method}<IconeResultat nom="expand_more" taille={20}/></summary><p>{t.resultHelp.calculation}</p><p>{t.resultHelp.bands}</p><p>{t.resultHelp.close}</p></details>
      </div>
     {/* Image de partage repliée : elle ne s'affiche (et ne se dessine) que si la personne ouvre la section. */}
-    {root && act !== null && act !== undefined && <details className="partage-repli" onToggle={e => setPartageOuvert(e.currentTarget.open)}><summary>{t.shareToggle}</summary>{partageOuvert && <ShareCard editorial language={language} totals={r.t} startRoot={act} />}</details>}
-    {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer">{t.whatsappButton}</a>
+    {root && act !== null && act !== undefined && <details className="partage-repli" onToggle={e => setPartageOuvert(e.currentTarget.open)}><summary><span><IconeResultat nom="share" taille={22}/>{t.shareToggle}</span><IconeResultat nom="expand_more" taille={20}/></summary>{partageOuvert && <ShareCard editorial stitch language={language} totals={r.t} startRoot={act} />}</details>}
+    {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer"><IconeResultat nom="chat" taille={20}/>{t.whatsappButton}</a>
       {/* Accord du 15/10/2026 : le résultat mène aussi à l'espace du site ; en anglais depuis le 18/10/2026 (page de connexion bilingue). */}
-      <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion${language === 'en' ? '?lang=en' : ''}`}>{t.espaceBouton}</a></div>
+      <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion${language === 'en' ? '?lang=en' : ''}`}><IconeResultat nom="person_outline" taille={20}/>{t.espaceBouton}</a></div>
     </div>}
     {/* L'invitation ne dépend pas de la racine : visible même avant le choix en cas d'égalité (demande du 24/10/2026). */}
-    <InviteCard langue={language} />
+    <InviteCard langue={language} resultat />
     {act !== null && act !== undefined && <RememberRoot k={act} />}
  </>;
 }
@@ -123,6 +125,7 @@ export const PAUSE_CHOIX = 350;
 export function Index({ language = 'fr', languageLink, source = null }: { language?: Language; languageLink?: ReactNode; source?: string | null } = {}) {
  const t = texts[language];
  const [screen, setScreen] = useState<'home' | 'quiz' | 'result'>('home');
+ const [tailleLecture]=useState(lireTailleResultat);
  const [answers, setAnswers] = useState<(number | null)[]>(Array(21).fill(null));
  const [i, setI] = useState(0);
   const [chosenRoot, setChosenRoot] = useState<number | null>(null);
@@ -241,11 +244,11 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
     <p className="quiz-confidentialite"><Icone nom="cadenas" taille={18} /><span>{t.privacyTest} <a className="link-inline" href={`${import.meta.env.BASE_URL}confidentialite${en ? '?lang=en' : ''}`}>{t.privacyLink}</a></span></p>
    </div>
   </section>
-  <section id="s-result" hidden={screen !== 'result'}>
-   <div className="resultat-outils">{barreTest}<Apparence langue={language} compact/></div>
+  <section id="s-result" data-lecture={tailleLecture} hidden={screen !== 'result'}>
+   <header className="resultat-outils"><PrototypeButton className="result-retour" aria-label={en ? 'Back to the test home' : 'Revenir à l’accueil du test'} onClick={() => setScreen('home')}><Icone nom="fleche_gauche" taille={22}/></PrototypeButton><p className="result-brand"><Icone nom="graine" taille={24}/>SÉNEVÉ</p><Apparence langue={language} compact contraste/></header>
    <p className="resultat-puce">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
     <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} mantle={mantle} />}</div>
-    <p className="muted">{t.final}</p>
+    <p className="muted result-final">{t.final}</p>
     <PrototypeButton className="link" id="again" onClick={() => { savedResult.current = null; setAnswers(Array(21).fill(null)); setChosenRoot(null); setMantle(''); setI(0); setScreen('home'); }}>{t.again}</PrototypeButton>
   </section>
  </main>;

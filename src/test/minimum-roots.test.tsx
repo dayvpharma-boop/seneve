@@ -66,7 +66,7 @@ describe('Minimum dans le nouveau résultat', () => {
     render(<Index />);
     finishQuiz([...totals]);
     const heading = screen.getByRole('heading', { name });
-    const card = heading.parentElement;
+    const card = heading.closest<HTMLElement>('.result-hero');
     if (!card) throw new Error('Carte de proposition absente');
     expect(within(card).getByText('Nous te proposons de commencer par')).toBeVisible();
     expect(within(card).getByText(category)).toBeVisible();

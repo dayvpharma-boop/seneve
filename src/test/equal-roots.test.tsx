@@ -73,6 +73,8 @@ describe('Nouveau résultat et choix libres', () => {
     expect(screen.getAllByRole('radio')).toHaveLength(7);
     expect(screen.queryByText('Nous te proposons de commencer par')).not.toBeInTheDocument();
     expect(action()).not.toBeInTheDocument();
-    expect(within(result()).getAllByText('Point d’appui à entretenir')).toHaveLength(7);
+    const rows = within(result()).getAllByRole('listitem');
+    expect(rows).toHaveLength(7);
+    rows.forEach(row => expect(within(row).getByText('Point d’appui à entretenir')).toBeVisible());
   });
 });

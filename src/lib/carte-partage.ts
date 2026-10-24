@@ -16,6 +16,7 @@ export interface CardContent {
   book: string;           // D'après « Arrête de mendier des miracles »
   strength?: { label: string; name: string }; // Mon point d'appui : …
   start?: { label: string; name: string };    // Je commence par : …
+  focus?: { label:string; name:string; quote:string; source:string }; // Racine librement choisie pour l’image, sans modifier le test.
   question: string;       // Et toi, quelle est ta racine ?
   address: string;        // adresse du test, sans https://
 }
@@ -76,6 +77,7 @@ export function seed(ctx: CanvasRenderingContext2D, cx: number, cy: number, s: n
 
 /** Dessine l'image complète sur un canvas déjà dimensionné. */
 export function drawCard(ctx: CanvasRenderingContext2D, format: CardFormat, c: CardContent) {
+  if(c.design==='editorial' && c.focus){drawFocusedEditorial(ctx,format,c);return;}
   if(c.design==='editorial'){drawEditorial(ctx,format,c);return;}
   const { w, h } = CARD_SIZES[format];
   const tall = format === 'vertical';
@@ -150,12 +152,57 @@ export function drawCard(ctx: CanvasRenderingContext2D, format: CardFormat, c: C
   ctx.fillText(c.address, w / 2, fy + m.question * 1.35);
 }
 
+/** Carte de la maquette reliée à la racine choisie et à sa citation exacte du livre.
+ * Les seuls contenus reçus sont éditoriaux : aucun score, nom de participant ni note de journal. */
+function drawFocusedEditorial(ctx:CanvasRenderingContext2D, format:CardFormat, c:CardContent) {
+  const focus=c.focus;
+  if(!focus)return;
+  const {w,h}=CARD_SIZES[format], tall=format==='vertical', gold='#E6C687', ivory='#fff9ea', maxWidth=w-160;
+  ctx.fillStyle='#0E0D0B';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(230,198,135,.35)';ctx.lineWidth=4;ctx.strokeRect(24,24,w-48,h-48);
+  ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  seed(ctx,w/2,tall?150:95,.6);
+  ctx.fillStyle=gold;ctx.font='600 42px Outfit, sans-serif';
+  spaced(ctx,c.brand,w/2,tall?285:210,8);
+  ctx.fillStyle=ivory;ctx.font='500 32px Outfit, sans-serif';
+  ctx.fillText(c.title,w/2,tall?350:265);
+  let nameSize=tall?80:60, quoteSize=tall?58:42, nameLines:string[]=[], quoteLines:string[]=[];
+  const top=tall?600:370, bottom=h-(c.strength?300:230);
+  for(let attempt=0;attempt<30;attempt++) {
+    ctx.font=`600 ${nameSize}px Outfit, sans-serif`;nameLines=wrap(ctx,focus.name,maxWidth);
+    ctx.font=`italic 400 ${quoteSize}px Literata, Georgia, serif`;quoteLines=wrap(ctx,focus.quote,maxWidth);
+    const totalHeight=nameLines.length*nameSize*1.18+54+quoteLines.length*quoteSize*1.4+76;
+    if(totalHeight<=bottom-top || (nameSize<=40 && quoteSize<=28))break;
+    nameSize=Math.max(40,nameSize-2);quoteSize=Math.max(28,quoteSize-2);
+  }
+  let y=top;
+  ctx.fillStyle=gold;ctx.font='500 28px Outfit, sans-serif';ctx.fillText(focus.label.toUpperCase(),w/2,y-50);
+  ctx.fillStyle=ivory;ctx.font=`600 ${nameSize}px Outfit, sans-serif`;
+  for(const line of nameLines){ctx.fillText(line,w/2,y);y+=nameSize*1.18;}
+  y+=38;ctx.fillStyle=ivory;ctx.font=`italic 400 ${quoteSize}px Literata, Georgia, serif`;
+  for(const line of quoteLines){ctx.fillText(line,w/2,y);y+=quoteSize*1.4;}
+  y+=20;ctx.fillStyle=gold;ctx.font='400 26px Outfit, sans-serif';
+  for(const line of wrap(ctx,focus.source,maxWidth)){ctx.fillText(line,w/2,y);y+=34;}
+  if(c.strength && c.strength.name!==focus.name){
+    ctx.fillStyle=gold;ctx.font='500 26px Outfit, sans-serif';
+    const lines=wrap(ctx,`${c.strength.label} : ${c.strength.name}`,maxWidth);
+    lines.forEach((line,k)=>ctx.fillText(line,w/2,h-245+k*34));
+  }
+  ctx.strokeStyle='rgba(230,198,135,.25)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(80,h-160);ctx.lineTo(w-80,h-160);ctx.stroke();
+  ctx.fillStyle=ivory;ctx.font='400 24px Outfit, sans-serif';
+  wrap(ctx,c.book,maxWidth).forEach((line,k)=>ctx.fillText(line,w/2,h-115+k*30));
+  let addressSize=28;ctx.font=`500 ${addressSize}px Outfit, sans-serif`;
+  while(addressSize>16 && ctx.measureText(c.address).width>maxWidth){addressSize--;ctx.font=`500 ${addressSize}px Outfit, sans-serif`;}
+  ctx.fillStyle=gold;ctx.fillText(c.address,w/2,h-45);
+}
+
 /** Crée l'image PNG, ou null si le navigateur ne sait pas dessiner. */
 export async function renderCard(format: CardFormat, content: CardContent): Promise<Blob | null> {
   const { w, h } = CARD_SIZES[format];
   try {
     await Promise.all([
-      document.fonts?.load('600 40px Outfit'), document.fonts?.load('600 40px Lora'), document.fonts?.load('italic 500 40px Lora'),
+      document.fonts?.load('600 40px Outfit'), document.fonts?.load('italic 400 40px Literata'), document.fonts?.load('600 40px Lora'), document.fonts?.load('italic 500 40px Lora'),
       document.fonts?.load('600 30px Poppins'), document.fonts?.load('500 30px Poppins'),
     ]);
   } catch { /* polices de secours */ }

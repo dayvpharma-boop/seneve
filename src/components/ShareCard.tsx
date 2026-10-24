@@ -1,22 +1,24 @@
 import { IconeResultat } from '@/components/IconeResultat';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { texts, type Language } from '@/lib/test-texts';
 import { renderCard, shareAddress, strengthKind, type CardContent, type CardFormat } from '@/lib/carte-partage';
 
 interface Props {
   editorial?: boolean;
+  stitch?: boolean;
   language: Language;
   totals: number[];        // totaux des sept racines (3 à 15)
   startRoot: number | null; // racine par laquelle la personne commence (index 0 à 6)
 }
 
 /** Carte « Partager » du résultat : crée une image sans aucune note, à publier sur n'importe quel réseau. */
-export function ShareCard({ language, totals, startRoot, editorial=false }: Props) {
+export function ShareCard({ language, totals, startRoot, editorial=false, stitch=false }: Props) {
   const t = texts[language].share;
   const roots = texts[language].roots;
   const max = Math.max(...totals);
   const kind = strengthKind(max);
   const strongest = totals.map((v, k) => (v === max ? k : -1)).filter(k => k >= 0);
+  const canShowStrength = !stitch || (strongest.length < 7 && !totals.every(v=>v>=12));
 
   const [open, setOpen] = useState(editorial);
   const [withStrength,setWithStrength]=useState(true);
@@ -26,10 +28,13 @@ export function ShareCard({ language, totals, startRoot, editorial=false }: Prop
   const [blob, setBlob] = useState<Blob | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [state, setState] = useState<'idle' | 'making' | 'ready' | 'unavailable'>('idle');
+  const [focusRoot, setFocusRoot] = useState(startRoot ?? strongest[0] ?? 0);
+  const focusId = useId();
+  useEffect(() => { setFocusRoot(startRoot ?? strongest[0] ?? 0); }, [startRoot]);
 
   // Sans point d'appui (toutes les racines à développer), l'image montre la racine par laquelle on commence.
   const showStart = editorial ? startRoot !== null : kind === null ? startRoot !== null : withStart && startRoot !== null && startRoot !== strength;
-  const strengthName = kind && strength !== null && (!editorial || withStrength) ? roots[strength]?.n : undefined;
+  const strengthName = canShowStrength && kind && strength !== null && (!editorial || withStrength) ? roots[strength]?.n : undefined;
   const startName = showStart && startRoot !== null ? roots[startRoot]?.n : undefined;
   const ready = Boolean(strengthName || startName);
 
@@ -43,14 +48,22 @@ export function ShareCard({ language, totals, startRoot, editorial=false }: Prop
       address: shareAddress(window.location.host, import.meta.env.BASE_URL, language),
       strength: strengthName && kind ? { label: t.card[kind], name: strengthName } : undefined,
       start: startName ? { label: t.card.start, name: startName } : undefined,
+      focus: stitch ? {
+        label: focusRoot === startRoot ? t.card.start : language === 'en' ? 'A root to reflect on' : 'Une racine à méditer',
+        name: roots[focusRoot]?.n ?? '',
+        quote: texts[language].quote(roots[focusRoot]?.o ?? roots[focusRoot]?.p ?? ''),
+        source: roots[focusRoot]?.o && roots[focusRoot]?.c ? texts[language].openingSource(roots[focusRoot]!.c!) : texts[language].quoteSource,
+      } : undefined,
     };
     void renderCard(format, content).then(b => {
       if (cancelled) return;
       setBlob(b);
       setState(b ? 'ready' : 'unavailable');
+    }).catch(() => {
+      if (!cancelled) setState('unavailable');
     });
     return () => { cancelled = true; };
-  }, [open, ready, format, strengthName, startName, kind, language, t, editorial]);
+  }, [open, ready, format, strengthName, startName, kind, language, t, editorial, stitch, focusRoot, startRoot, roots]);
 
   useEffect(() => {
     if (!blob) { setPreview(null); return; }
@@ -85,7 +98,7 @@ export function ShareCard({ language, totals, startRoot, editorial=false }: Prop
     <p className="more">{t.text}</p>
     {!open && <button type="button" className="btn" onClick={() => setOpen(true)}>{t.create}</button>}
     {open && <>
-      {kind && strongest.length > 1 && <>
+      {canShowStrength && kind && strongest.length > 1 && <>
         <p className="note share-label">{t.chooseStrength}</p>
         <div className="share-options">
           {strongest.map(k => <button type="button" key={k} className="root-choice" aria-pressed={strength === k} onClick={() => setStrength(k)}>{roots[k]?.n}</button>)}
@@ -95,12 +108,16 @@ export function ShareCard({ language, totals, startRoot, editorial=false }: Prop
         <input type="checkbox" checked={withStart} onChange={e => setWithStart(e.target.checked)} />
         <span>{t.addStart(roots[startRoot]?.n ?? '')}</span>
       </label>}
-      {editorial && kind && <label className="share-check share-strength"><span>{language==='en'?'Show my strongest root':'Afficher ma racine d’appui'}</span><input type="checkbox" checked={withStrength} onChange={e=>setWithStrength(e.target.checked)}/></label>}
+      {editorial && canShowStrength && kind && <label className="share-check share-strength"><span>{language==='en'?'Show my strongest root':'Afficher ma racine d’appui'}</span><input type="checkbox" checked={withStrength} onChange={e=>setWithStrength(e.target.checked)}/></label>}
       <p className="note share-label">{t.formats}</p>
       <div className="tabs" role="group" aria-label={t.formats}>
-        <button type="button" className="tab" aria-pressed={format === 'vertical'} onClick={() => setFormat('vertical')}><IconeResultat nom="stay_current_portrait" taille={18}/>{t.vertical}<span className="tab-hint">{t.verticalHint}</span></button>
-        <button type="button" className="tab" aria-pressed={format === 'carre'} onClick={() => setFormat('carre')}><IconeResultat nom="crop_square" taille={18}/>{t.square}<span className="tab-hint">{t.squareHint}</span></button>
+        <button type="button" className="tab" aria-label={t.vertical} aria-pressed={format === 'vertical'} onClick={() => setFormat('vertical')}><IconeResultat nom={stitch?'crop_portrait':'stay_current_portrait'} taille={18}/>{t.vertical}{stitch&&<span className="share-dimensions" aria-hidden="true">1080 × 1920</span>}<span className="tab-hint">{t.verticalHint}</span></button>
+        <button type="button" className="tab" aria-label={t.square} aria-pressed={format === 'carre'} onClick={() => setFormat('carre')}><IconeResultat nom="crop_square" taille={18}/>{t.square}{stitch&&<span className="share-dimensions" aria-hidden="true">1080 × 1080</span>}<span className="tab-hint">{t.squareHint}</span></button>
       </div>
+      {stitch && <div className="share-root-field"><label htmlFor={focusId}>{language==='en'?'Root in the image':'Racine mise en lumière'}</label>
+        <select id={focusId} value={focusRoot} onChange={e=>setFocusRoot(Number(e.target.value))}>{roots.map((root,k)=><option key={root.n} value={k}>{root.n}</option>)}</select>
+        <p>{language==='en'?'This choice changes only your image. Your starting root stays the same.':'Ce choix modifie seulement ton image. Ta racine de départ reste la même.'}</p>
+      </div>}
       {state === 'making' && <p className="note" aria-live="polite">{t.making}</p>}
       {state === 'unavailable' && <p className="note" aria-live="polite">{t.unavailable}</p>}
       {preview && <img className={`share-preview share-preview-${format}`} src={preview} alt={t.preview} />}
