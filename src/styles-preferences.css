@@ -89,3 +89,23 @@
 @media(forced-colors:active) {
   :root[data-apparence] body,:root[data-apparence] main {background:Canvas;color:CanvasText}
 }
+
+/* Mouvement d'accueil unique et bref : aucun déplacement du texte ni de la mise en page. */
+@keyframes seneve-accueil-respiration {
+  0% { transform:scale(1); }
+  50% { transform:scale(1.035); }
+  100% { transform:scale(1); }
+}
+@media (prefers-reduced-motion:no-preference) {
+  .jardin-accueil #s-home:not([hidden]) .home-image img,
+  .espace-page .accueil-vivant > img {
+    transform-origin:50% 60%;
+    animation:seneve-accueil-respiration 4.8s ease-in-out 1;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  .jardin-accueil #s-home .home-image img,
+  .espace-page .accueil-vivant > img {
+    animation:none;transform:none;
+  }
+}
