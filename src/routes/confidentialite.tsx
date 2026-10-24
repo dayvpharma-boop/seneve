@@ -153,7 +153,7 @@ export function Confidentialite() {
     <header className="conf-entete"><button type="button" onClick={revenir}><IconeConfidentialite nom="arrow_back" taille={20}/><span>{T.revenir}</span></button><p className="brand"><Icone nom="graine" taille={22}/>SÉNEVÉ</p><Link className="conf-profil" to={`/profil${suffixe}`} aria-label={langue==='en'?'My profile':'Mon profil'}><IconeConfidentialite nom="person" taille={18}/></Link></header>
     <header className="conf-intro"><p className="conf-repere"><IconeConfidentialite nom="verified_user" taille={16}/>{T.repere}</p><h1>{T.titre}</h1>
     <p className="muted">{T.maj(langue==='en'?DATE_POLITIQUE_EN:DATE_POLITIQUE)}</p>
-    {T.traduction && <p className="muted">{T.traduction} <Link to="/confidentialite">Version française</Link></p>}
+    {T.traduction && <p className="muted">{T.traduction} <Link to="/confidentialite?lang=fr">Version française</Link></p>}
     </header>
     <figure className="conf-photo"><img src={`${import.meta.env.BASE_URL}illustrations/confidentialite-maquette.jpg`} alt={T.alt} width={512} height={234}/><figcaption>{T.legende}</figcaption></figure>
     <section className="conf-resume" aria-labelledby="conf-resume-titre"><h2 id="conf-resume-titre"><IconeConfidentialite nom="auto_stories" taille={22}/>{T.resume}</h2><ol>
@@ -220,8 +220,8 @@ export function Confidentialite() {
       <p>{T.changements}</p>
     </section>
 
-    <section className="conf-contact" aria-labelledby="conf-contact-titre"><h2 id="conf-contact-titre"><IconeConfidentialite nom="mail" taille={22}/>{T.contact}</h2><p>{mail}</p><Link to="/aide">{T.formulaire}</Link><a href={`mailto:${CONTACT}?subject=${T.sujetCopie}`}>{T.copie}</a></section>
+    <section className="conf-contact" aria-labelledby="conf-contact-titre"><h2 id="conf-contact-titre"><IconeConfidentialite nom="mail" taille={22}/>{T.contact}</h2><p>{mail}</p><Link to={`/aide${suffixe}`}>{T.formulaire}</Link><a href={`mailto:${CONTACT}?subject=${T.sujetCopie}`}>{T.copie}</a></section>
     <div className="conf-retour"><button className="conf-principal" type="button" onClick={revenir}><IconeConfidentialite nom="check" taille={20}/>{T.compris}</button><button type="button" onClick={revenir}>{T.application}</button></div>
-    <div className="today-foot"><Link className="link" to={`/${suffixe}`}>{T.test}</Link><Link className="link" to="/espace">{T.espace}</Link></div>
+    <div className="today-foot"><Link className="link" to={`/${suffixe}`}>{T.test}</Link><Link className="link" to={`/espace${suffixe}`}>{T.espace}</Link></div>
   </main>;
 }

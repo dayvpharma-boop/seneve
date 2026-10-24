@@ -11,6 +11,6 @@ export function EnteteRecuperation({ langue, nouveau = false }: { langue: 'fr' |
   return <header className="recup-header">
     <Link className="auth-back" to={lienConnexion(langue)} aria-label={langue === 'en' ? 'Back to sign in' : 'Retour à la connexion'}><IconeConnexion nom="arrow_back" taille={22} /></Link>
     <div className="recup-marque"><span className="auth-brand"><Icone nom="graine" taille={22} /><strong>SÉNEVÉ</strong></span><small>{nouveau ? (langue === 'en' ? 'New password' : 'Nouveau mot de passe') : (langue === 'en' ? 'Forgot password' : 'Mot de passe oublié')}</small></div>
-    <Link className="recup-langue" to={`${chemin}${langue === 'fr' ? '?lang=en' : ''}`}>{langue === 'en' ? 'Français' : 'English'}</Link>
+    <Link className="recup-langue" to={`${chemin}${langue === 'fr' ? '?lang=en' : '?lang=fr'}`}>{langue === 'en' ? 'Français' : 'English'}</Link>
   </header>;
 }

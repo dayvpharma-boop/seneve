@@ -41,6 +41,7 @@ import '@fontsource/literata/latin-400.css';
 import '@fontsource/literata/latin-400-italic.css';
 import '@fontsource/literata/latin-600.css';
 import { TestPage } from '@/routes/index';
+import { GarderLangue } from '@/components/GarderLangue';
 import { NotFound } from '@/routes/introuvable';
 import './styles-introuvable.css';
 import { enregistrerServiceWorker } from '@/lib/hors-ligne';
@@ -75,6 +76,7 @@ const root = document.getElementById('root');
 if (root) createRoot(root).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+      <GarderLangue />
       <Suspense fallback={null}><Routes>
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />

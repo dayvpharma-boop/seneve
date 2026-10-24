@@ -32,6 +32,6 @@ it('la version anglaise traduit la politique et renvoie au texte français de r�
   expect(screen.getByRole('heading', { level: 1, name: 'Privacy policy' })).toBeInTheDocument();
   expect(screen.getByText('Last updated: 18 October 2026')).toBeInTheDocument();
   expect(screen.getByText(/The French version is the reference/)).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Version française' })).toHaveAttribute('href', '/confidentialite');
+  expect(screen.getByRole('link', { name: 'Version française' })).toHaveAttribute('href', '/confidentialite?lang=fr');
   expect(screen.getByRole('heading', { name: '8. Minimum age' })).toBeInTheDocument();
 });

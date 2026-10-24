@@ -66,7 +66,7 @@ describe('Connexion en anglais (?lang=en)', () => {
     expect(screen.getByRole('tab', { name: 'Create an account' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText(/same email address as for your purchase/)).toBeInTheDocument();
     expect(screen.getByText(/at least 18 years old/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Français' })).toHaveAttribute('href', '/connexion');
+    expect(screen.getByRole('link', { name: 'Français' })).toHaveAttribute('href', '/connexion?lang=fr');
     expect(document.documentElement.lang).toBe('en');
   });
   it('mot de passe trop court : message en anglais, rien n’est envoyé', () => {
