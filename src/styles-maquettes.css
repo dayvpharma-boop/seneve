@@ -350,3 +350,8 @@
 /* Test en anglais : guillemets anglais autour de la question (24/10/2026). */
 #s-quiz .quiz-card .q:lang(en)::before { content:'“'; }
 #s-quiz .quiz-card .q:lang(en)::after { content:'”'; }
+/* Pastilles du profil devenues des liens (24/10/2026) : même apparence, mais cliquables. */
+:is(.conf-profil,.journal-profil,.jn-avatar-grand,.lecture-avatar,.parcours-avatar,.decouverte-avatar,.erreur-avatar,.introuvable-profil) { text-decoration:none; cursor:pointer; }
+:is(.conf-profil,.journal-profil,.jn-avatar-grand,.lecture-avatar,.parcours-avatar,.decouverte-avatar,.erreur-avatar,.introuvable-profil):focus-visible { outline:3px solid var(--gold,#755b00); outline-offset:2px; }
+.confidentialite a.conf-profil { color:#fff; text-decoration:none; }
+:root[data-apparence="sombre"] .confidentialite a.conf-profil { color:#1d1b18; }

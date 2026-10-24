@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { Icone } from './Icone';
 import { IconeJournee } from './IconeJournee';
@@ -38,7 +39,7 @@ export function AccueilDecouverte({ prenom, starting, commencer, reglages, foote
   const l = langue === 'en' ? 'en' : 'fr';
   const t = TEXTES[l];
   return <>
-    <header className="decouverte-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span><span className="decouverte-avatar" aria-hidden="true">{prenom ? prenom.charAt(0).toUpperCase() : 'S'}</span></header>
+    <header className="decouverte-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span><Link className="decouverte-avatar" to={langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={langue === 'en' ? 'My profile' : 'Mon profil'}>{prenom ? prenom.charAt(0).toUpperCase() : 'S'}</Link></header>
     <section className="decouverte-bienvenue"><h1>{prenom ? `${t.bonjour} ${prenom}` : t.bonjour}</h1><p>{t.pret}</p></section>
     <article className="decouverte-carte" aria-labelledby="titre-decouverte">
       <div className="decouverte-meta"><span>{t.recommande}</span><span><IconeJournee nom="schedule" taille={16} />{t.rythme}</span></div>

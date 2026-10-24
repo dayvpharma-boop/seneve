@@ -127,7 +127,7 @@ function JournalDuCompte({ userId }: { userId: string }) {
   }
 
   const en = langueUI === 'en';
-  const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><span className="journal-profil" aria-hidden="true">{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</span></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
+  const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><Link className="journal-profil" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}>{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</Link></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
   const intro = <div className="journal-confidentialite"><IconeJournal nom="lock" taille={20} /><p className="journal-intro">{T.introJournal}</p></div>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
   if (failed) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;

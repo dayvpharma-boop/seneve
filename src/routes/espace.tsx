@@ -216,7 +216,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
     <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</Link></div>
     {notice}{repere}
-    {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<span className="jn-avatar-grand" aria-hidden="true">{data.prenom.charAt(0).toUpperCase()}</span>}
+    {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<Link className="jn-avatar-grand" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}>{data.prenom.charAt(0).toUpperCase()}</Link>}
   </header>;
   // Pied de page dans la langue du parcours ; les pages publiques reçoivent ?lang=en pour rester en anglais.
   const footer = (l: string) => { const en = l === 'en', s = en ? '?lang=en' : ''; return <div className="today-foot">{equipe && <Link className="link" to="/admin">Administration</Link>}<Link className="link" to={`/offres${s}`}>{en ? 'Journeys & offers' : 'Parcours & offres'}</Link><Link className="link" to={`/acces${s}`}>{en ? 'My access' : 'Mes accès'}</Link><Link className="link" to={`/confidentialite${s}`}>{en ? 'Privacy' : 'Confidentialité'}</Link><button type="button" className="link" onClick={signOut}>{en ? 'Sign out' : 'Se déconnecter'}</button></div>; };
@@ -294,7 +294,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const date = majuscule(new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, jourVu)));
     const { action, question } = activitesDu(jourVu);
     return page(enr.langue, <>
-      <header className="lecture-header"><button type="button" className="back-btn" aria-label={T.retour} onClick={fermer}><IconeLecture nom="arrow_back" taille={20} /></button><Icone nom="graine" taille={26} /><span>{enr.langue === 'en' ? 'Today’s reading' : 'Séance du jour'}</span><span className="lecture-avatar" aria-hidden="true">{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</span></header>
+      <header className="lecture-header"><button type="button" className="back-btn" aria-label={T.retour} onClick={fermer}><IconeLecture nom="arrow_back" taille={20} /></button><Icone nom="graine" taille={26} /><span>{enr.langue === 'en' ? 'Today’s reading' : 'Séance du jour'}</span><Link className="lecture-avatar" to={enr.langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={enr.langue === 'en' ? 'My profile' : 'Mon profil'}>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</Link></header>
       {!m || !m.ouvert
         ? <div className="card"><p role="status">{m?.heure ? T.momentFerme(m.heure) : T.jourFerme(jourVu)}</p></div>
         : <article className="moment-page" aria-labelledby="titre-moment">
