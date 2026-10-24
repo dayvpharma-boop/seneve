@@ -104,13 +104,8 @@ export const texts = {
   answerLabel: (n:number) => `${n} sur 5 (${['pas du tout', 'un peu', 'à moitié', 'beaucoup', 'tout à fait'][n - 1]})`,
   thresholdSource: 'Livre, annexe 4',
   openingSource: (chapter:number) => `Livre, ouverture du chapitre ${chapter}`,
-  /** Question libre et facultative, non comptée : la réponse reste dans la page, elle n'est ni enregistrée ni envoyée. */
-  mantle: {
-   question: "Quel est le manteau de mendiant que tu voudrais jeter aujourd'hui ?",
-   hint: 'Facultatif. Ta réponse reste sur cet appareil : elle n’est ni enregistrée ni envoyée.',
-   label: 'Ta réponse (facultative)', resultTitle: 'Le manteau que tu veux jeter', source: 'Livre, conclusion (Bartimée) · annexe 1, jour 30',
-   kept: 'Cette phrase reste sur cet appareil\u00A0: elle n’est ni enregistrée ni envoyée.',
-  } as { question: string; hint: string; label: string; resultTitle: string; source: string; kept: string } | null,
+  /** Question du manteau retirée le 24/10/2026 (Dr Justin Tshims) : posée avant que la personne ait lu le livre. */
+  mantle: null as { question: string; hint: string; label: string; resultTitle: string; source: string; kept: string } | null,
   back: '← Question précédente', resultBrand: 'Bilan de ton introspection', resultTitle: "Tes racines aujourd'hui", rootsTitle: 'Tes 7 racines', summary: 'Selon tes réponses d’aujourd’hui · chaque racine sur 15',
   categories: ['Racine à développer', 'Racine à consolider', 'Point d’appui à entretenir'],
   allOne: 'Les sept racines sont à développer selon tes réponses. Choisis celle par laquelle tu souhaites commencer.',

@@ -60,7 +60,7 @@ it('FR V5 : 21 questions, aucune comptée à l’envers', async () => {
   expect(compute(reponses, texts.en.reversed)?.t).toEqual(Array(7).fill(15));
 });
 
-it('FR V4 : phrase-seuil avant la racine, question libre jamais envoyée', () => {
+it('FR : phrase-seuil avant la racine, sans question du manteau (retirée le 24/10/2026)', () => {
   vi.useFakeTimers();
   render(<Index />);
   expect(screen.getByText(/Qui est vraiment premier dans ta vie/)).toBeVisible();
@@ -70,10 +70,9 @@ it('FR V4 : phrase-seuil avant la racine, question libre jamais envoyée', () =>
     fireEvent.click(screen.getByRole('button', { name: /^3 sur 5/ }));
     act(() => { vi.advanceTimersByTime(400); });
   }
-  const champ = screen.getByRole('textbox', { name: /Quel est le manteau de mendiant que tu voudrais jeter aujourd'hui/ });
-  fireEvent.change(champ, { target: { value: 'La peur de manquer' } });
+  expect(screen.queryByText(/manteau de mendiant/)).not.toBeInTheDocument();
+  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Voir mon résultat' }));
-  expect(screen.getByText(/La peur de manquer/, { selector: '.manteau-resultat .quote' })).toBeVisible();
-  for (const call of rpc.mock.calls) expect(JSON.stringify(call)).not.toContain('La peur de manquer');
+  expect(screen.queryByText(/Le manteau que tu veux jeter/)).not.toBeInTheDocument();
   vi.useRealTimers();
 });
