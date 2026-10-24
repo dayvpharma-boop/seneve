@@ -64,3 +64,14 @@ body:has(.auth-maquette) { background:#fff9ea; }
 body:has(.auth-maquette)::-webkit-scrollbar { display:none; }
 /* Renvoi de l'e-mail de confirmation (maquette corrigée « Adresse non confirmée »). */
 .auth-maquette .connexion-renvoi{grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:48px;margin:0;padding:4px 0;font:500 14px/20px Outfit,system-ui,sans-serif;color:#755b00;text-decoration:underline;text-underline-offset:4px}.auth-maquette .connexion-renvoi:disabled{color:#4a463f;text-decoration:none;opacity:.75}
+/* Connexion avec Google / Facebook (25/10/2026). */
+.auth-social{display:grid;gap:12px;margin:0 0 16px}
+.auth-social-boutons{display:grid;gap:10px}
+.auth-social-bouton{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;width:100%;border:1px solid #e3dccb;border-radius:8px;background:#fff;color:#1d1c13;font:500 16px/24px Outfit,system-ui,sans-serif;cursor:pointer}
+.auth-social-bouton:disabled{opacity:.6;cursor:default}
+.auth-social-bouton:focus-visible{outline:3px solid #755b00;outline-offset:2px}
+.auth-social-ou{display:flex;align-items:center;gap:12px;margin:4px 0 0;font:400 14px/20px Outfit,system-ui,sans-serif;color:#4a463f}
+.auth-social-ou::before,.auth-social-ou::after{content:"";flex:1;height:1px;background:#e3dccb}
+:root[data-apparence="sombre"] .auth-social-bouton{background:#1d1b18;border-color:#4a463f;color:#e6e2dc}
+:root[data-apparence="sombre"] .auth-social-ou{color:#cbc6bc}
+:root[data-apparence="sombre"] .auth-social-ou::before,:root[data-apparence="sombre"] .auth-social-ou::after{background:#4a463f}

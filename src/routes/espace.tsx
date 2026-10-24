@@ -1,4 +1,5 @@
 import {AvatarParticipant} from '@/components/AvatarParticipant';
+import { prenomDuCompte } from '@/lib/connexion-sociale';
 import {Apparence} from '@/components/Apparence';
 import {IconeRegistre} from '@/components/IconeRegistre';
 import {IconeFinitions} from '@/components/IconeFinitions';
@@ -57,7 +58,7 @@ async function load(): Promise<Data | null> {
   const { data: s } = await supabase.auth.getSession();
   if (!s.session) return null;
   const user = s.session.user;
-  const meta = (user.user_metadata?.['prenom'] as string | undefined) ?? '';
+  const meta = prenomDuCompte(user.user_metadata);
   const ep = await supabase.rpc('ensure_participant', { p_prenom: meta });
   if (ep.error) throw ep.error;
   // Achat fait avec la même adresse e-mail (confirmée) : l'accès s'ouvre dès l'arrivée dans l'espace, sans attendre

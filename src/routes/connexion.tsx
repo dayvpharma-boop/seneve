@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { BoutonsConnexionSociale } from '@/components/BoutonsConnexionSociale';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { siteUrl, supabase } from '@/lib/supabase';
 import { IconeConnexion } from '@/components/IconeConnexion';
@@ -154,6 +155,7 @@ export function Connexion() {
       <button id="auth-signup" type="button" role="tab" aria-selected={tab === 'signup'} aria-controls="auth-form" onClick={() => choose('signup')}>{tab === 'signup' && <IconeConnexion nom="person_add" taille={18} />}{T.creer}</button>
       <button id="auth-signin" type="button" role="tab" aria-selected={tab === 'signin'} aria-controls="auth-form" onClick={() => choose('signin')}>{tab === 'signup' && <IconeConnexion nom="login" taille={18} />}{T.connecter}</button>
     </div>
+    <BoutonsConnexionSociale langue={langue === 'en' ? 'en' : 'fr'} />
     <form id="auth-form" className="card form connexion-form" onSubmit={submit} aria-labelledby={`auth-${tab}`}>
       {tab === 'signup' && <div className="auth-field"><label className="field" htmlFor="auth-prenom">{T.prenom}</label><span className="auth-hint">{langue === 'en' ? 'Required' : 'Requis'}</span><div className="auth-input"><IconeConnexion nom="badge" /><input id="auth-prenom" placeholder={langue === 'en' ? 'e.g. Mary' : 'ex. Marie'} value={prenom} onChange={e => setPrenom(e.target.value)} autoComplete="given-name" required /></div></div>}
       <div className="auth-field"><label className="field" htmlFor="auth-email">{T.email}</label>{tab === 'signup' && <span className="auth-hint">{langue === 'en' ? 'Login ID' : 'Identifiant'}</span>}<div className="auth-input">{tab === 'signup' && <IconeConnexion nom="mail" />}<input id="auth-email" placeholder="marie@exemple.com" type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" inputMode="email" required /></div></div>

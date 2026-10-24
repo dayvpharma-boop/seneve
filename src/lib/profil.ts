@@ -1,3 +1,4 @@
+import {prenomDuCompte} from './connexion-sociale';
 import {supabase} from './supabase';
 import {nomParcours} from './espace-textes';
 export type Profil={userId:string;participantId:string;prenom:string;email:string;langue:string;parcours:{id:string;nom:string;debut:string;duree:number;etat:string;langue:string}[];objectif:{texte:string;racine:number|null}|null};
@@ -6,7 +7,7 @@ export function effacerProfils(sauf?:string){try{for(let i=localStorage.length-1
 export function enregistrerProfil(p:Profil){try{effacerProfils(p.userId);localStorage.setItem(PREFIXE+p.userId,JSON.stringify({le:new Date().toISOString(),profil:p}));}catch{/* pas de copie */}}
 export function lireProfil(id:string):{le:string;profil:Profil}|null{try{const brut=localStorage.getItem(PREFIXE+id);if(!brut)return null;const c=JSON.parse(brut);return c?.profil?.userId===id&&typeof c.le==='string'&&Number.isFinite(Date.parse(c.le))&&Array.isArray(c.profil.parcours)?c:null;}catch{return null;}}
 export async function chargerProfil(user:{id:string;email?:string;user_metadata?:Record<string,unknown>}):Promise<Profil>{
- const creation=await supabase.rpc('ensure_participant',{p_prenom:typeof user.user_metadata?.prenom==='string'?user.user_metadata.prenom:''});if(creation.error)throw creation.error;
+ const creation=await supabase.rpc('ensure_participant',{p_prenom:prenomDuCompte(user.user_metadata)});if(creation.error)throw creation.error;
  const[p,e,g]=await Promise.all([supabase.from('participants').select('participant_id,prenom,langue').eq('auth_user_id',user.id).single(),supabase.from('enrollments').select('enrollment_id,programme_id,date_debut,etat,langue').neq('etat','annulee'),supabase.from('goals').select('texte,racine').eq('etat','confirme').maybeSingle()]);
  for(const r of[p,e,g])if(r.error)throw r.error;if(!p.data)throw Error('Profil indisponible');
  const inscriptions=e.data??[];const ids=[...new Set(inscriptions.map(x=>x.programme_id))];const pr=ids.length?await supabase.from('programmes').select('programme_id,nom,duree_jours').in('programme_id',ids):{data:[],error:null};if(pr.error)throw pr.error;
