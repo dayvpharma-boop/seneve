@@ -51,6 +51,29 @@ describe('Trois moments par jour dans l’espace', () => {
   beforeEach(() => { vi.useFakeTimers({ toFake: ['Date'] }); });
   afterEach(() => { cleanup(); vi.useRealTimers(); });
 
+  it.each(['fr', 'en'])('les trois cartes ont une photo et gardent celle du matin (%s)', async langue => {
+    vi.setSystemTime(new Date('2026-10-14T20:00:00Z'));
+    base(['08:00', '13:00', '19:00'], langue);
+    ouvrir();
+    await screen.findByRole('heading', { name: langue === 'en' ? 'Your day' : 'Ta journée' });
+    const photos = [...document.querySelectorAll<HTMLImageElement>('.moment-illus > img')];
+    expect(photos).toHaveLength(3);
+    expect(photos[0]?.getAttribute('src')).toContain('seneve-livre-photo-v1-720.webp');
+    expect(photos[1]?.getAttribute('src')).toContain('lecture-midi-photo-v1-720.webp');
+    expect(photos[2]?.getAttribute('src')).toContain('lecture-soir-photo-v1-720.webp');
+  });
+
+  it.each([['fr', 2, 'midi'], ['fr', 3, 'soir'], ['en', 2, 'midi'], ['en', 3, 'soir']])('la lecture %s du moment %s affiche sa photo de %s', async (langue, numero, periode) => {
+    vi.setSystemTime(new Date('2026-10-14T20:00:00Z'));
+    base(['08:00', '13:00', '19:00'], String(langue));
+    ouvrir(`/espace?jour=2&moment=${numero}`);
+    await screen.findByText(`Marie — texte du jour 2, moment ${numero}.`);
+    const photo = document.querySelector('.lecture-illustration > img');
+    expect(photo?.getAttribute('src')).toContain(`lecture-${periode}-photo-v1-720.webp`);
+    expect(photo?.getAttribute('srcset')).toContain(`lecture-${periode}-photo-v1-360.webp 360w`);
+    expect(document.querySelector('.lecture-illustration > svg')).toBeNull();
+  });
+
   it('jour en cours, 10 h à Kinshasa : seul le message du matin est ouvert', async () => {
     vi.setSystemTime(new Date('2026-10-14T09:00:00Z')); // 10 h à Kinshasa, jour 2
     base(['08:00', '13:00', '19:00']);

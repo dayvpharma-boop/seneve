@@ -30,7 +30,8 @@ import { IconeJournee } from '@/components/IconeJournee';
 import { EspaceErreur } from '@/components/EspaceErreur';
 import { BrouillonHorsLigne } from '@/components/BrouillonHorsLigne';
 import { RepereParcours } from '@/components/RepereParcours';
-import { Scene, type Periode } from '@/components/Scene';
+import type { Periode } from '@/components/Scene';
+import { ImageMoment } from '@/components/ImageMoment';
 import { BarreNav } from '@/components/BarreNav';
 import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
@@ -301,7 +302,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
             <p className="moment-date"><IconeLecture nom="wb_twilight" taille={16} /><span>{date}{m.heure ? ` · ${T.moment(m.n, m.heure)}` : ''}</span></p>
             <h1 id="titre-moment" ref={titreMoment} tabIndex={-1}>{m.content.theme}</h1>
             <p className="moment-chips"><span className="time-chip">{T.jour(jourVu)}</span>{m.heure && <span className="time-chip"><IconeLecture nom="sunny" taille={14} />{T.periodes[m.periode]}</span>}</p>
-            <figure className="lecture-illustration">{m.principal ? <img src={`${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-720.webp 720w`} sizes="(max-width:600px) calc(100vw - 60px), 540px" width={720} height={360} alt="" /> : <Scene periode={m.periode} largeur={390} hauteur={176} />}<figcaption><span>{enr.langue === 'en' ? 'Daily teaching' : 'Enseignement du jour'}</span><span>{total === 7 ? T.parcoursDecouverte : enr.nom}</span></figcaption></figure>
+            <figure className="lecture-illustration">{m.principal ? <img src={`${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-720.webp 720w`} sizes="(max-width:600px) calc(100vw - 60px), 540px" width={720} height={360} alt="" /> : <ImageMoment periode={m.periode} />}<figcaption><span>{enr.langue === 'en' ? 'Daily teaching' : 'Enseignement du jour'}</span><span>{total === 7 ? T.parcoursDecouverte : enr.nom}</span></figcaption></figure>
             <p className="day-text moment-texte">{webText(m.content.texte_officiel, data.prenom)}</p>
             {m.content.reference_livre && <p className="src"><IconeLecture nom="menu_book" taille={15} />{referenceAffichee(m.content.reference_livre, enr.langue)}</p>}
             {m.principal && action && carteAction(action, true)}
@@ -393,7 +394,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
                 {m.ouvert ? <span className="dispo-chip">{enr.langue === 'en' ? 'Available' : 'Disponible'}</span> : <IconeJournee nom="lock_clock" taille={22} />}
               </div>
               <h3 id={id}>{m.content.theme}</h3>
-              <div className="moment-illus">{m.principal ? <IllustrationLecture /> : <Scene periode={m.periode} largeur={244} hauteur={110} />}</div>
+              <div className="moment-illus">{m.principal ? <IllustrationLecture /> : <ImageMoment periode={m.periode} />}</div>
               {!horsLigne && <p className="jn-moment-extrait">{m.content.explication || apercuMoment(m.content.texte_officiel, m.content.theme, data.prenom)}</p>}
               {m.ouvert
                 ? <button type="button" className="btn moment-btn" aria-describedby={id} onClick={() => ouvrirMoment(m.n)}>{m.principal && action ? T.lireEtAgir : T.lire}<IconeJournee nom={horsLigne ? "menu_book" : "arrow_forward"} taille={20} /></button>
