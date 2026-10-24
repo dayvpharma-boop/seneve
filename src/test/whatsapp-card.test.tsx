@@ -28,6 +28,14 @@ describe('Carte « Aller plus loin »', () => {
   beforeEach(() => { vi.useFakeTimers(); });
   afterEach(() => { cleanup(); vi.useRealTimers(); });
 
+  it('l’invitation reste visible avant le choix d’une racine, sans la carte « Aller plus loin » (24/10/2026)', () => {
+    render(<Index />);
+    finishQuiz([15, 12, 6, 12, 9, 6, 12]);
+    expect(screen.getByRole('button', { name: 'Envoyer l’invitation' })).toBeVisible();
+    expect(screen.queryByText('Aller plus loin')).not.toBeInTheDocument();
+    expect(screen.queryByText('Ta première action')).not.toBeInTheDocument();
+  });
+
   it('absente tant qu’aucune action n’est affichée, puis placée entre l’action et la précision finale', () => {
     render(<Index />);
     finishQuiz([15, 12, 6, 12, 9, 6, 12]);

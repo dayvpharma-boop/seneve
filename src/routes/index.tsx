@@ -104,7 +104,8 @@ function ResultBody({ answers, chosenRoot, onChoose, language, mantle = '' }: { 
       {/* Accord du 15/10/2026 : le résultat mène aussi à l'espace du site ; en anglais depuis le 18/10/2026 (page de connexion bilingue). */}
       <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion${language === 'en' ? '?lang=en' : ''}`}>{t.espaceBouton}</a></div>
     </div>}
-    {root && <InviteCard langue={language} />}
+    {/* L'invitation ne dépend pas de la racine : visible même avant le choix en cas d'égalité (demande du 24/10/2026). */}
+    <InviteCard langue={language} />
     {act !== null && act !== undefined && <RememberRoot k={act} />}
  </>;
 }
