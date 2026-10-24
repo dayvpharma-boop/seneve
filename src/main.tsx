@@ -78,6 +78,7 @@ if (root) createRoot(root).render(
       <Suspense fallback={null}><Routes>
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
+        <Route path="/en" element={<TestPage defaultLanguage="en" />} />
         <Route path="/connexion" element={<Connexion />} />
         <Route path="/bibliotheque" element={<Bibliotheque/>}/>
         <Route path="/livre" element={<Bibliotheque detail/>}/>

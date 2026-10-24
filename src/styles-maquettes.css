@@ -347,3 +347,6 @@
 #s-quiz .ecouter-bouton[aria-pressed="true"] { background:var(--chip,#f4eedf); border-color:var(--gold); }
 #s-quiz .ecouter-bouton:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
 #s-quiz .ecouter-erreur { font:400 14px/20px Outfit,system-ui,sans-serif; color:var(--muted); }
+/* Test en anglais : guillemets anglais autour de la question (24/10/2026). */
+#s-quiz .quiz-card .q:lang(en)::before { content:'“'; }
+#s-quiz .quiz-card .q:lang(en)::after { content:'”'; }

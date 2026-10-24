@@ -21,4 +21,9 @@ describe('Adresse du test', () => {
     expect(document.documentElement.lang).toBe('en');
     expect(document.title).toBe('The 7 Roots Test — SÉNEVÉ');
   });
+  it('/en ouvre le test en anglais (adresse partagée avec son aperçu anglais)', () => {
+    render(<MemoryRouter initialEntries={['/en?src=invitation']}><Routes><Route path="/en" element={<TestPage defaultLanguage="en" />} /></Routes></MemoryRouter>);
+    expect(screen.getByRole('button', { name: 'Start' })).toBeVisible();
+    expect(document.documentElement.lang).toBe('en');
+  });
 });

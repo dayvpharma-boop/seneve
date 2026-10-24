@@ -47,39 +47,49 @@ const frenchReversed: number[] = [];
 
 export type Language = 'fr' | 'en';
 /** Version réellement affichée : FR V4 (validée le 22/10/2026) ; EN reste en V3 jusqu'à la relecture de sa traduction. */
-export const TEST_VERSIONS: Record<Language, number> = { fr: 5, en: 3 };
+/** V6 FR et EN identiques (décision du 24/10/2026) : mêmes questions, même échelle Jamais…Toujours / Never…Always. */
+export const TEST_VERSIONS: Record<Language, number> = { fr: 6, en: 6 };
 export function languageFrom(value: unknown): Language { return value === 'en' ? 'en' : 'fr'; }
+// EN V6 (24/10/2026) : mêmes jours de l’annexe 1 qu’en français (2, 8, 16, 4, 17, 9, 22), phrases du livre anglais mot pour mot.
 const englishRoots: Root[] = [
- {n:"Kingdom First", p:"Seek the King, and the miracles will return to their rightful place.", a:"Begin your day with 15 minutes of silence before your phone. Read Matthew 6:25-34.", j:1},
- {n:"Tithe and Offering", p:"The tithe has never enriched God. It has always set man free.", a:"Reread Malachi 3:10-12. Pray over the divine promise of financial protection.", j:12},
- {n:"Work and Integrity", p:"God does not bless inaction — He blesses consecrated effort.", a:"Carry out an ordinary task with unusual excellence — as if God were watching it directly.", j:20},
- {n:"Freedom from the Love of Money", p:"The problem has never been what you have in your pocket. The problem is what the pocket has put into your heart.", a:"Write in a notebook everything you are thankful for today. At least 10 things.", j:4},
- {n:"Compassion and Tzedakah", p:"God has blessed you precisely so that you may be a channel, not a reservoir.", a:"Visit a widow, an orphan, or a lonely person in your circle.", j:17},
- {n:"Faithfulness in the Little Things", p:"God does not examine your dreams. He examines your habits.", a:"Reread Luke 16:10-13. Meditate on what faithfulness in the little things means for you.", j:6},
- {n:"Discernment", p:"Urgency is the voice of the world. Peace is the accent of God.", a:"Facing a current decision: apply the test of peace. Do not decide if peace is absent.", j:22}
+ {n:"Kingdom First", p:"Seek the King, and the miracles will return to their rightful place.", a:"Identify a decision you must make this week. Pray specifically over it before acting.", j:2,
+  s:"The true Christian does not put God into his schedule — he puts his schedule into God’s hands.", o:"As long as God is not first, everything else is in disorder — even what appears to be succeeding.", c:1},
+ {n:"Tithe and Offering", p:"The tithe has never enriched God. It has always set man free.", a:"Calculate your tithe for the current month exactly. Set it aside today.", j:8,
+  s:"If God does not reign over your wallet, He does not truly reign over your heart.", o:"The tithe has never enriched God. It has always set man free.", c:2},
+ {n:"Work and Integrity", p:"God does not bless inaction — He blesses consecrated effort.", a:"Identify one professional practice to correct. Make the decision to change it.", j:16,
+  s:"Faithfulness in the small always prepares promotion in the great.", o:"God does not rain down loaves. He blesses hands.", c:3},
+ {n:"Freedom from the Love of Money", p:"The problem has never been what you have in your pocket. The problem is what the pocket has put into your heart.", a:"Write in a notebook everything you are thankful for today. At least 10 things.", j:4,
+  s:"Mammon is not only money. It is everything that seeks to take God’s place in your trust.", o:"The love of money is not uprooted by emptying your pockets, but by filling your heart with a greater treasure.", c:4},
+ {n:"Compassion and Tzedakah", p:"God has blessed you precisely so that you may be a channel, not a reservoir.", a:"Visit a widow, an orphan, or a lonely person in your circle.", j:17,
+  s:"You were seeking His face in your prayers. He was waiting for you in the eyes of the widow next door.", o:"Compassion is not a work God asks of you. It is an appointment the King sets with you.", c:5},
+ {n:"Faithfulness in the Little Things", p:"God does not examine your dreams. He examines your habits.", a:"Write down all your income and all your expenses from last month. See where your money goes, without judging yourself.", j:9,
+  s:"If God can trust you with a dollar, He can trust you with a million.", o:"God does not examine your dreams. He examines your habits.", c:6},
+ {n:"Discernment", p:"Urgency is the voice of the world. Peace is the accent of God.", a:"Facing a current decision: apply the test of peace. Do not decide if peace is absent.", j:22,
+  s:"God’s voice is not the loudest voice in your life. It is the gentlest — but it is also the truest.", o:"Urgency is the voice of the world. Peace is the accent of God.", c:7}
 ];
+/** EN V6 (24/10/2026) : traduction de FR V6 ; phrases du livre anglais mot pour mot quand elles existent. */
 const englishQuestions = [
  "I begin each day with a time of prayer before any other activity.",
- "I consult God before making important professional decisions.",
+ "I consult God before making important decisions.",
  "My relationship with God does not depend on my financial situation of the moment.",
  "My tithe is the first expense I settle as soon as I receive income.",
  "I give with joy and not out of obligation or fear.",
- "When I give, I do so with trust rather than out of fear.",
- "Do I work with the same quality when my boss is not there?",
- "In my daily activities, I choose honesty, even when no one can check.",
- "I take practical steps to move forward, rather than waiting for opportunities to come on their own.",
- "Do I pray with the same fervor in abundance as in lack?",
+ "I believe that God can protect and multiply my resources.",
+ "Do I work with the same quality when no one is watching me?",
+ "Is my conscience clear of any dishonest practice at work?",
+ "Do I believe that God can open doors my diplomas cannot open?",
+ "I keep my inner peace even when my financial situation is difficult.",
  "Can I sincerely rejoice when a brother prospers more than I do?",
  "Does my life reflect an intentional simplicity?",
- "I check on a lonely person or someone in difficulty and offer help suited to my means.",
- "Do I give to the poor in a concrete and regular way?",
+ "I regularly take care of a lonely person or someone in need, as far as I am able.",
+ "I give concrete help to people in need, through my resources, my time or my actions.",
  "Do I give in secret, without seeking recognition?",
  "Do I keep an expense notebook that lets me see where my money goes?",
- "I keep my small everyday commitments, even when they seem unimportant.",
+ "Do I regularly set money aside in savings?",
  "Do I carry out small tasks with the same seriousness as big ones?",
- "Do I recognize the difference between the pressure of urgency and the peace of the Spirit?",
- "Do I obey the small impressions of the Spirit day to day?",
- "Do I apply the test of peace before committing?"
+ "When I feel pressure to decide quickly, I take time to pray and to seek lasting peace before acting.",
+ "Before following an inner impression, I check that it is consistent with the Word of God.",
+ "Before an important decision, I seek counsel from wise and competent people."
 ];
 export const texts = {
  fr: {
@@ -90,7 +100,7 @@ export const texts = {
   //   = espace insécable : garde « Arrête… », « 5 = toujours » et « ; » / « : » sur la même ligne que le mot voisin.
   intro: '21 questions courtes, tirées du livre « Arrête de mendier des miracles ».',
   discover: 'À la fin, tu découvres :', discoveries: ['tes sept racines avec leur score ;', 'la racine par laquelle commencer ;', 'une première action simple.'],
-  instruction: "Pour chaque phrase, dis honnêtement si elle te ressemble, de 1 (pas du tout) à 5 (tout à fait). Aucun compte, aucun numéro demandé. Ce test t'oriente vers une pratique ; il ne mesure ni ta foi ni ta valeur.",
+  instruction: "Pour chaque phrase, réponds honnêtement de 1 à 5 (1 = jamais, 5 = toujours). Aucun compte, aucun numéro demandé. Ce test t'oriente vers une pratique ; il ne mesure ni ta foi ni ta valeur.",
   reassurance: ['Sans compte', '21 questions', 'Retour possible'], tapHint: 'Choisis un chiffre : la question suivante s’affiche aussitôt.',
   seeResult: 'Voir mon résultat', shareToggle: 'Partager mon résultat en image',
   remaining: (n:number) => `${n} question${n > 1 ? 's' : ''} restante${n > 1 ? 's' : ''}`,
@@ -98,10 +108,10 @@ export const texts = {
   privacyTest: 'Tes réponses restent confidentielles. Aucun nom ni e-mail n’est demandé. À la fin du test, tes réponses et ton résultat sont enregistrés pour des statistiques anonymes.',
   privacyLink: 'Confidentialité',
   start: 'Commencer', languageLink: 'English', rootCount: (x:number) => `Racine ${x} sur 7`, questionCount: (x:number) => `Question ${x} sur 21`,
-  never: '1 = pas du tout', always: '5 = tout à fait', answerGroup: 'Cela te ressemble ? De 1 pas du tout à 5 tout à fait',
-  scaleTitle: 'Cela me ressemble…', scaleHint: 'De 1 à 5',
-  answerOptions: ['Pas du tout', 'Un peu', 'À moitié', 'Beaucoup', 'Tout à fait'],
-  answerLabel: (n:number) => `${n} sur 5 (${['pas du tout', 'un peu', 'à moitié', 'beaucoup', 'tout à fait'][n - 1]})`,
+  never: '1 = jamais', always: '5 = toujours', answerGroup: 'Ta réponse, de 1 jamais à 5 toujours',
+  scaleTitle: 'Choisis ta réponse', scaleHint: 'Échelle de 1 à 5',
+  answerOptions: ['Jamais', 'Rarement', 'Parfois', 'Souvent', 'Toujours'],
+  answerLabel: (n:number) => `${n} sur 5 (${['jamais', 'rarement', 'parfois', 'souvent', 'toujours'][n - 1]})`,
   thresholdSource: 'Livre, annexe 4',
   openingSource: (chapter:number) => `Livre, ouverture du chapitre ${chapter}`,
   /** Audios des 21 questions (voix « Justin pasteur », validés le 24/10/2026) : dossier dans medias-publics. */
@@ -120,7 +130,7 @@ export const texts = {
    suggested: 'Selon tes réponses, cette racine a le total le plus bas. Nous te la proposons comme point de départ pour pratiquer.',
    chosen: 'Tu as choisi cette racine parmi celles proposées. Elle devient ton point de départ pour pratiquer.',
    method: 'Comment lire tes résultats ?',
-   calculation: 'Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15. La première phrase de chaque racine décrit une difficulté : pour elle, « tout à fait » compte 1 et « pas du tout » compte 5.',
+   calculation: 'Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15.',
    bands: 'De 3 à 6 : racine à développer. De 7 à 11 : racine à consolider. De 12 à 15 : point d’appui à entretenir.',
    close: 'Un petit écart entre deux totaux n’est pas un classement définitif. Ces repères t’aident à choisir une première pratique ; ils ne mesurent ni ta foi ni ta valeur.',
    strengthOne: 'C’est le total le plus élevé de cette tentative. Tu peux t’appuyer sur cette pratique pour avancer dans la racine que tu souhaites travailler.',
@@ -144,17 +154,18 @@ export const texts = {
  },
  en: {
   roots: englishRoots, questions: englishQuestions, reversed: [] as number[],
-  opening: null as { text: string; source: string } | null,
-  tabTitle: 'The 7 Roots Test — SÉNEVÉ', brand: 'SÉNEVÉ', homeTitle: 'The 7 Roots Test',
+  /** Opening question, word for word (book, Chapter 1). */
+  opening: { text: 'Who is truly first in your life? Do not answer too quickly.', source: 'Book, Chapter 1' } as { text: string; source: string } | null,
+  tabTitle: 'The 7 Roots Test — SÉNEVÉ', brand: 'Sénevé', homeTitle: 'The 7 Roots Test',
   intro: '21 short questions, drawn from the book “Stop Begging for Miracles”.',
   discover: 'At the end, you discover:', discoveries: ['your seven roots with their score;', 'the root to start with;', 'a simple first action.'],
-  instruction: 'Answer honestly from 1 to 5 (1 = never, 5 = always). No account, no phone number required. This test points you toward a practice; it measures neither your faith nor your worth.',
+  instruction: 'For each statement, answer honestly from 1 to 5 (1 = never, 5 = always). No account, no phone number required. This test points you toward a practice; it measures neither your faith nor your worth.',
   reassurance: ['No account', '21 questions', 'You can go back'], tapHint: 'Choose a number: the next question appears right away.',
   seeResult: 'See my result', shareToggle: 'Share my result as an image',
   remaining: (n:number) => `${n} question${n > 1 ? 's' : ''} remaining`,
   remainingInRoot: (n:number) => `${n} question${n > 1 ? 's' : ''} remaining in this root`,
   privacyTest: 'Your answers remain confidential. No name or email is requested. At the end of the test, your answers and result are recorded for anonymous statistics.',
-  privacyLink: 'Privacy details',
+  privacyLink: 'Privacy',
   start: 'Start', languageLink: 'Français', rootCount: (x:number) => `Root ${x} of 7`, questionCount: (x:number) => `Question ${x} of 21`,
   never: '1 = never', always: '5 = always', answerGroup: 'Your answer, from 1 never to 5 always',
   scaleTitle: 'Choose your answer', scaleHint: 'Scale from 1 to 5',
@@ -162,8 +173,8 @@ export const texts = {
   answerLabel: (n:number) => `${n} out of 5 (${['never', 'rarely', 'sometimes', 'often', 'always'][n - 1]})`,
   thresholdSource: 'Book, Appendix 4',
   openingSource: (chapter:number) => `Book, opening of Chapter ${chapter}`,
-  /** Audios des 21 questions EN V3 (voix « Justin pasteur », validés le 24/10/2026). */
-  audioQuestions: 'test/en/v3' as string | null,
+  /** Audios EN V6 : en attente de validation des 12 nouveaux audios (24/10/2026) ; bouton masqué jusque-là. */
+  audioQuestions: null as string | null,
   mantle: null as { question: string; hint: string; label: string; resultTitle: string; source: string; kept: string } | null,
   back: '← Previous question', resultBrand: 'Your self-review', resultTitle: 'Your roots today', rootsTitle: 'Your 7 roots', summary: 'According to your answers today · each root out of 15',
   categories: ['Root to develop', 'Root to strengthen', 'Strength to maintain'],

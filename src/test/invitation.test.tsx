@@ -8,8 +8,8 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 describe('Lien d’invitation', () => {
   it('ouvre le test avec la provenance « invitation », reconnue par le suivi', () => {
-    expect(lienInvitation('https://exemple.org', '/seneve/', 'fr')).toBe('https://exemple.org/seneve/?src=invitation&v=5');
-    expect(lienInvitation('https://exemple.org', '/seneve/', 'en')).toBe('https://exemple.org/seneve/?lang=en&src=invitation&v=5');
+    expect(lienInvitation('https://exemple.org', '/seneve/', 'fr')).toBe('https://exemple.org/seneve/?src=invitation&v=6');
+    expect(lienInvitation('https://exemple.org', '/seneve/', 'en')).toBe('https://exemple.org/seneve/en?src=invitation&v=6');
     expect(cleanSource(new URL(lienInvitation('https://exemple.org', '/', 'fr')).searchParams.get('src'))).toBe('invitation');
   });
   it('message sans aucune donnée personnelle, avec le lien', () => {
@@ -39,6 +39,16 @@ describe('Carte', () => {
     render(<InviteCard langue="en" />);
     fireEvent.click(screen.getByRole('button', { name: 'Copy the link' }));
     expect(await screen.findByRole('button', { name: 'Link copied' })).toBeInTheDocument();
-    expect(writeText).toHaveBeenCalledWith(expect.stringContaining('lang=en&src=invitation'));
+    expect(writeText).toHaveBeenCalledWith(expect.stringContaining('/en?src=invitation'));
+  });
+});
+
+describe('Invitation en anglais (24/10/2026)', () => {
+  it('message anglais et adresse /en, dont l’aperçu WhatsApp est en anglais', () => {
+    const lien = lienInvitation('https://exemple.org', '/seneve/', 'en');
+    const m = invitationTextes('en').message(lien);
+    expect(m).toMatch(/^I have just taken the 7 Roots Test/);
+    expect(m).not.toMatch(/Racines|livre/);
+    expect(new URL(lien).pathname).toBe('/seneve/en');
   });
 });

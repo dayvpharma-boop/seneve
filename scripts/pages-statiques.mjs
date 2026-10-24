@@ -8,9 +8,29 @@ import { dirname } from 'node:path';
 const main = readFileSync('src/main.tsx', 'utf8');
 const routes = [...new Set([...main.matchAll(/path="\/([^"*:]+)"/g)].map(m => m[1]))];
 const page = readFileSync('dist/index.html', 'utf8');
+// /en : même page, mais aperçu de lien en anglais (WhatsApp, Facebook, X lisent ces balises sans exécuter le site).
+function versionAnglaise(html) {
+  const rempl = [
+    ['<html lang="fr">', '<html lang="en">'],
+    ['<title>Test des 7 Racines — SÉNEVÉ</title>', '<title>The 7 Roots Test — SÉNEVÉ</title>'],
+    ['content="21 questions courtes, tirées du livre « Arrête de mendier des miracles »."', 'content="21 short questions, drawn from the book “Stop Begging for Miracles”."'],
+    ['content="Test des 7 Racines — Ce qui grandit commence à l’intérieur."', 'content="7 Roots Test — Growth begins within."'],
+    ['content="https://dayvpharma-boop.github.io/seneve/"', 'content="https://dayvpharma-boop.github.io/seneve/en"'],
+    ['<meta property="og:locale" content="fr_FR" />', '<meta property="og:locale" content="en_GB" />'],
+    ['<meta property="og:locale:alternate" content="en_GB" />', '<meta property="og:locale:alternate" content="fr_FR" />'],
+    ['/seneve/og-image-v3.jpg', '/seneve/og-image-en-v1.jpg'],
+    ['content="SÉNEVÉ — Test des 7 Racines : Ce qui grandit commence à l’intérieur, avec la photo de racines dans la terre"', 'content="SÉNEVÉ — 7 Roots Test: Growth begins within, with a photo of roots in the soil"'],
+  ];
+  let sortie = html;
+  for (const [avant, apres] of rempl) {
+    if (!sortie.includes(avant)) throw new Error(`Aperçu anglais : balise introuvable dans index.html : ${avant}`);
+    sortie = sortie.split(avant).join(apres);
+  }
+  return sortie;
+}
 for (const route of routes) {
   const fichier = `dist/${route}.html`;
   mkdirSync(dirname(fichier), { recursive: true });
-  writeFileSync(fichier, page);
+  writeFileSync(fichier, route === 'en' ? versionAnglaise(page) : page);
 }
 console.log(`${routes.length} pages fixes : ${routes.join(', ')}`);

@@ -60,7 +60,9 @@ describe('Résultat « Sentier »', () => {
       expect(row.classList.contains('is-start')).toBe(k === 4);
     });
     fireEvent.click(screen.getByText('Comment lire tes résultats ?'));
-    expect(screen.getByText(/^Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15\. La première phrase de chaque racine décrit une difficulté/)).toBeVisible();
+    // V6 (24/10/2026) : plus aucune question comptée à l'envers, l'explication ne parle plus d'inversion.
+    expect(screen.getByText(/^Chaque racine additionne trois réponses de 1 à 5, soit un total de 3 à 15\.$/)).toBeVisible();
+    expect(screen.queryByText(/compte 1 et « pas du tout » compte 5/)).not.toBeInTheDocument();
     expect(screen.getByText(/Un petit écart entre deux totaux/)).toBeVisible();
   });
 

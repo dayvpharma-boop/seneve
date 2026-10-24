@@ -8,11 +8,12 @@ import { TEST_VERSIONS } from '@/lib/test-texts';
 beforeEach(() => { rpc.mockReset(); });
 afterEach(cleanup);
 
-it('affiche l’échelle « Cela me ressemble… » de la V4 sans changer les points proposés', () => {
+// V6 (24/10/2026) : même échelle en français et en anglais, Jamais…Toujours / Never…Always.
+it('V6 FR : échelle « Choisis ta réponse », de Jamais à Toujours', () => {
   render(<Index />);
   fireEvent.click(screen.getByRole('button', { name: 'Commencer' }));
-  expect(screen.getByText('Cela me ressemble…')).toBeVisible();
-  for (const [k, label] of ['pas du tout', 'un peu', 'à moitié', 'beaucoup', 'tout à fait'].entries()) {
+  expect(screen.getByText('Choisis ta réponse')).toBeVisible();
+  for (const [k, label] of ['jamais', 'rarement', 'parfois', 'souvent', 'toujours'].entries()) {
     expect(screen.getByRole('button', { name: `${k + 1} sur 5 (${label})` })).toBeEnabled();
     expect(screen.getByText(label, { exact: true, selector: '.scale-label' , normalizer: s => s.toLowerCase() })).toBeVisible();
   }
@@ -26,8 +27,8 @@ it.each(['fr', 'en'] as const)('enregistre sous la version réellement affichée
   expect(rpc).toHaveBeenCalledWith('submit_test_result_versioned', {
     p_langue: langue, p_reponses: Array(21).fill(3), p_source: 'tt', p_version: TEST_VERSIONS[langue],
   });
-  // FR V5 validée le 23/10/2026 ; l'anglais reste en V3 jusqu'à sa traduction.
-  expect(TEST_VERSIONS[langue]).toBe(langue === 'fr' ? 5 : 3);
+  // V6 identique en français et en anglais (24/10/2026).
+  expect(TEST_VERSIONS[langue]).toBe(6);
 });
 
 it('ne réattribue pas une V2 à une ancienne version si le serveur refuse', async () => {
@@ -37,17 +38,35 @@ it('ne réattribue pas une V2 à une ancienne version si le serveur refuse', asy
   expect(rpc).toHaveBeenCalledTimes(1);
 });
 
-it.each([
-  ['en', 1, 'I consult God before making important professional decisions.'],
-  ['en', 6, 'Do I work with the same quality when my boss is not there?'],
-  ['en', 12, 'I check on a lonely person or someone in difficulty and offer help suited to my means.'],
-] as const)('questions décidées le 19/10/2026 (%s, question %i + 1)', async (langue, index, texte) => {
+it('EN V6 : mêmes questions, mêmes phrases du livre et mêmes premiers pas que le français', async () => {
   const { texts } = await import('@/lib/test-texts');
-  expect(texts[langue].questions[index]).toBe(texte);
+  expect(texts.en.questions).toHaveLength(21);
+  expect(texts.en.questions[1]).toBe('I consult God before making important decisions.');
+  expect(texts.en.questions[5]).toBe('I believe that God can protect and multiply my resources.');
+  expect(texts.en.questions[20]).toBe('Before an important decision, I seek counsel from wise and competent people.');
+  expect(texts.en.reversed).toEqual(texts.fr.reversed);
+  expect(texts.en.roots.map(r => r.j)).toEqual(texts.fr.roots.map(r => r.j));
+  expect(texts.en.roots.map(r => r.c)).toEqual(texts.fr.roots.map(r => r.c));
+  for (const k of [0, 1, 2, 3, 4, 5, 6]) {
+    expect(texts.en.roots[k]?.s).toBeTruthy();
+    expect(texts.en.roots[k]?.o).toBeTruthy();
+  }
+  expect(texts.en.opening?.text).toBe('Who is truly first in your life? Do not answer too quickly.');
+  expect(texts.en.answerOptions).toEqual(['Never', 'Rarely', 'Sometimes', 'Often', 'Always']);
+  expect(texts.fr.answerOptions).toEqual(['Jamais', 'Rarement', 'Parfois', 'Souvent', 'Toujours']);
+});
+
+it('EN V6 : phrase-seuil avant la racine et question d’ouverture, comme en français', () => {
+  render(<Index language="en" />);
+  expect(screen.getByText(/Who is truly first in your life/)).toBeVisible();
+  fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+  expect(screen.getByText(/The true Christian does not put God into his schedule/)).toBeVisible();
+  expect(screen.getByText('Question 1', { selector: '.tag' })).toBeVisible();
+  expect(screen.getByText('Choose your answer')).toBeVisible();
 });
 
 // FR V5, validée par Dr Justin Tshims le 23/10/2026 : 21 questions, toutes dans le même sens.
-it('FR V5 : 21 questions, aucune comptée à l’envers', async () => {
+it('FR V5 puis V6 : 21 questions, aucune comptée à l’envers', async () => {
   const { texts } = await import('@/lib/test-texts');
   const { compute } = await import('@/lib/racines');
   expect(texts.fr.questions).toHaveLength(21);

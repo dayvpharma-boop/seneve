@@ -3,7 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 const { rpc } = vi.hoisted(() => ({ rpc: vi.fn() }));
 vi.mock('@/lib/supabase', () => ({ supabase: { rpc } }));
 import { Index } from '@/routes/index';
-import { audioQuestionUrl } from '@/components/EcouterQuestion';
+import { audioQuestionUrl, EcouterQuestion } from '@/components/EcouterQuestion';
 
 type FauxAudio = { src: string; play: ReturnType<typeof vi.fn>; pause: ReturnType<typeof vi.fn>; currentTime: number; ecouteurs: Record<string, () => void> };
 let audios: FauxAudio[] = [];
@@ -54,11 +54,16 @@ it('FR : message clair si l’audio ne peut pas être lu', async () => {
   expect(await screen.findByRole('status')).toHaveTextContent('Audio indisponible pour le moment. Tu peux lire la question.');
 });
 
-it('EN : bouton anglais, audios du dossier anglais V3', () => {
+it('EN : pas de bouton tant que les 12 nouveaux audios anglais V6 ne sont pas validés', () => {
   render(<Index language="en" />);
   fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+  expect(screen.queryByRole('button', { name: /Listen|Écouter/ })).not.toBeInTheDocument();
+});
+
+it('EN : libellés anglais du bouton (dossier fourni)', () => {
+  render(<EcouterQuestion dossier="test/en/v6" n={0} langue="en" />);
   fireEvent.click(screen.getByRole('button', { name: 'Listen to the question' }));
-  expect(audios[0]?.src).toMatch(/medias-publics\/test\/en\/v3\/question-01\.mp3$/);
+  expect(audios[0]?.src).toMatch(/medias-publics\/test\/en\/v6\/question-01\.mp3$/);
   expect(screen.getByRole('button', { name: 'Stop listening' })).toHaveAttribute('aria-pressed', 'true');
   act(() => { audios[0]?.ecouteurs.error?.(); });
   expect(screen.getByRole('status')).toHaveTextContent('Audio unavailable for now. You can read the question.');

@@ -24,7 +24,7 @@ describe('Variante 1 « Sentier » du Test des 7 Racines', () => {
   it('garde l’échelle et le titre du livre groupés sur une ligne (espaces insécables)', () => {
     render(<Index />);
     expect(document.querySelector('.home-intro')?.textContent).toContain('« Arrête de mendier des miracles »');
-    expect(document.querySelector('.home-note')?.textContent).toContain('de 1 (pas du tout) à 5 (tout à fait)');
+    expect(document.querySelector('.home-note')?.textContent).toContain('de 1 à 5 (1\u00A0=\u00A0jamais, 5\u00A0=\u00A0toujours)');
   });
 
   it('n’allume pas un chiffre au toucher : l’effet de survol est réservé à la souris', () => {

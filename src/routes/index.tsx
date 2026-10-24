@@ -17,9 +17,10 @@ import { strengthKind } from '@/lib/carte-partage';
 
 /** Page du test, reliée à l'adresse : ?lang=en affiche la version anglaise, ?src=tt indique la provenance.
  * L'adresse courte /p, imprimée sur les images partagées, ouvre le test avec la provenance « partage ». */
-export function TestPage({ defaultSource = null }: { defaultSource?: string | null } = {}) {
+export function TestPage({ defaultSource = null, defaultLanguage = 'fr' }: { defaultSource?: string | null; defaultLanguage?: Language } = {}) {
  const [search] = useSearchParams();
- const language = languageFrom(search.get('lang'));
+ // /en ouvre le test en anglais (adresse partagée, avec son aperçu WhatsApp anglais) ; ?lang= reste accepté.
+ const language = languageFrom(search.get('lang') ?? defaultLanguage);
  const source = cleanSource(search.get('src')) ?? cleanSource(defaultSource);
  const next = language === 'fr' ? 'en' : 'fr';
  useEffect(() => {
@@ -219,7 +220,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    </div>
    {i % 3 === 0 && t.roots[racineEnCours]?.s && <figure className="quiz-seuil"><blockquote className="quote">{t.quote(t.roots[racineEnCours]?.s ?? '')}</blockquote><figcaption className="src">{t.thresholdSource}</figcaption></figure>}
    <div className="quiz-card">
-    <div className="quiz-card-haut"><span className="tag">{en ? `Statement ${i+1}` : `Question ${i+1}`}</span><Icone nom="citation" taille={18} /></div>
+    <div className="quiz-card-haut"><span className="tag">{`Question ${i+1}`}</span><Icone nom="citation" taille={18} /></div>
     <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
     {t.audioQuestions && screen === 'quiz' && <EcouterQuestion dossier={t.audioQuestions} n={i} langue={en ? 'en' : 'fr'} />}
     <p className="tap-hint"><Icone nom="graine" taille={16} />{t.tapHint}</p>
