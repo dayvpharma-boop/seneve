@@ -1,0 +1,48 @@
+/* Ivoire conserve les valeurs publiées grâce aux valeurs de secours des styles.
+   Ces variables sont aussi disponibles pour les écrans et cartes chargés plus tard. */
+:root[data-palette="sable"] {
+  --palette-papier:#FAF2E5;--palette-ivoire:#F6EBDC;--palette-surface:#FFFBF4;
+  --palette-doux:#F3E7D5;--palette-carte:#EFE1CB;--palette-haut:#E9D9BF;--palette-ligne:#D8C6A8;
+  --palette-encre:#251B14;--palette-secondaire:#584638;--palette-accent:#73501E;--palette-sur-accent:#49320F;
+  --palette-or:#C2A062;--palette-or-doux:#EBCD94;--palette-or-pale:#F4E5C7;--palette-contour:#8F7B5D;
+  --palette-nuit:#1B1611;--palette-nuit-surface:#252018;--palette-nuit-doux:#2D261C;--palette-nuit-haut:#382F22;
+  --palette-nuit-ligne:#4A3C2A;--palette-nuit-contour:#8F7B5D;--palette-nuit-texte:#F5EBDD;--palette-nuit-secondaire:#D5C6B0;--palette-nuit-accent:#E6C181;
+}
+:root[data-palette="sauge"] {
+  --palette-papier:#F2F3E9;--palette-ivoire:#EDF0E3;--palette-surface:#FCFDF6;
+  --palette-doux:#E8EDDF;--palette-carte:#E2E8D8;--palette-haut:#D9E1CB;--palette-ligne:#C5CFB5;
+  --palette-encre:#171F18;--palette-secondaire:#455044;--palette-accent:#4C623C;--palette-sur-accent:#293D22;
+  --palette-or:#A7B987;--palette-or-doux:#D6DEB5;--palette-or-pale:#E4EBCF;--palette-contour:#77866B;
+  --palette-nuit:#111811;--palette-nuit-surface:#1C251C;--palette-nuit-doux:#243024;--palette-nuit-haut:#303B2B;
+  --palette-nuit-ligne:#46533B;--palette-nuit-contour:#849276;--palette-nuit-texte:#EEF2E7;--palette-nuit-secondaire:#CAD4C2;--palette-nuit-accent:#CCD69E;
+}
+/* Les libellés de navigation peuvent revenir à la ligne quand le texte est agrandi. */
+:root[data-taille-texte="grande"] .barre-nav a > span:last-child,
+:root[data-taille-texte="tres-grande"] .barre-nav a > span:last-child { white-space:normal; overflow-wrap:anywhere; line-height:1.2; text-align:center; }
+:root[data-taille-texte="grande"] .barre-nav,
+:root[data-taille-texte="tres-grande"] .barre-nav { min-height:80px; }
+
+/* Le réglage global remplace l’ancien facteur local de lecture des résultats. */
+:root[data-taille-texte][data-apparence] #s-result[data-lecture]{--lecture-factor:1}
+
+/* Deux palettes supplémentaires : même lisibilité, en clair et en sombre. */
+:root[data-palette="argile"]{
+ --palette-papier:#FAEFE8;--palette-ivoire:#F4E5DB;--palette-surface:#FFF9F5;
+ --palette-doux:#F3E3D8;--palette-carte:#EEDACB;--palette-haut:#E6CDBB;--palette-ligne:#D7BBAB;
+ --palette-encre:#2B1C18;--palette-secondaire:#62473C;--palette-accent:#874629;--palette-sur-accent:#4B281B;
+ --palette-or:#C99170;--palette-or-doux:#E7BFA7;--palette-or-pale:#F3DCCD;--palette-contour:#98735F;
+ --palette-nuit:#201512;--palette-nuit-surface:#2C1F19;--palette-nuit-doux:#38271F;--palette-nuit-haut:#493127;
+ --palette-nuit-ligne:#614336;--palette-nuit-contour:#B18D78;--palette-nuit-texte:#FAE9DD;--palette-nuit-secondaire:#DDC3B1;--palette-nuit-accent:#F0B58F;
+}
+:root[data-palette="ardoise"]{
+ --palette-papier:#EDF2F7;--palette-ivoire:#E5ECF3;--palette-surface:#F9FCFF;
+ --palette-doux:#E1EAF2;--palette-carte:#D8E3EC;--palette-haut:#CEDCE8;--palette-ligne:#B8CAD9;
+ --palette-encre:#17212C;--palette-secondaire:#425568;--palette-accent:#345A78;--palette-sur-accent:#213C52;
+ --palette-or:#8AA8BE;--palette-or-doux:#C2D6E5;--palette-or-pale:#DFEAF2;--palette-contour:#6C8498;
+ --palette-nuit:#111A23;--palette-nuit-surface:#1B2935;--palette-nuit-doux:#243746;--palette-nuit-haut:#304858;
+ --palette-nuit-ligne:#425E72;--palette-nuit-contour:#829EB2;--palette-nuit-texte:#E9F2FA;--palette-nuit-secondaire:#BFCFDC;--palette-nuit-accent:#A9CFEA;
+}
+/* Cinq choix, disposés en trois puis deux cartes sur téléphone. */
+.pf-palette-options{grid-template-columns:repeat(6,minmax(0,1fr))}
+.pf-palette-options>label{grid-column:span 2}
+.pf-palette-options>label:nth-of-type(n+4){grid-column:span 3}

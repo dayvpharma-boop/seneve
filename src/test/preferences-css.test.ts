@@ -1,0 +1,6 @@
+import {it,expect} from 'vitest';
+import postcss from 'postcss';
+import {preferencesCss} from '../../scripts/preferences-css';
+it('agrandit le texte et son interligne en gardant les dimensions de mise en page',async()=>{const r=await postcss([preferencesCss()]).process('.a{font:400 16px/24px Literata;width:390px;padding:20px;line-height:1.5}',{from:undefined});expect(r.css).toContain('calc(16px * var(--texte-echelle, 1))/calc(24px * var(--texte-echelle, 1))');expect(r.css).toContain('width:390px;padding:20px;line-height:1.5');});
+it('préserve exactement la couleur d’origine comme valeur de repli',async()=>{const r=await postcss([preferencesCss()]).process('.a{background:#fff9ea;color:#1d1c13;border:1px solid #ccc6bd}',{from:undefined});expect(r.css).toContain('background:var(--palette-papier, #fff9ea)');expect(r.css).toContain('color:var(--palette-encre, #1d1c13)');expect(r.css).toContain('1px solid var(--palette-contour, #ccc6bd)');});
+it('ne modifie ni les images embarquées, ni les échantillons, ni les couleurs de statut',async()=>{const css='.a{--palette-papier:#fff9ea;--echantillon-or:#c9a84c;content:"#000";background:url("data:image/svg+xml,%23fff");color:#ba1a1a}';const r=await postcss([preferencesCss()]).process(css,{from:undefined});expect(r.css).toBe(css);});

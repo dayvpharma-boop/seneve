@@ -45,22 +45,25 @@ export function RappelsCard({ langue }: { langue: string }) {
   const [choix, setChoix] = useState<Moments>({ matin: PAR_DEFAUT.matin, midi: null, soir: null });
   const [busy, setBusy] = useState(false);
   const verrou = useRef(false);
+  const [revision,setRevision]=useState(0);
+  const [chargement,setChargement]=useState(true);
   const [erreur, setErreur] = useState('');
 
   function appliquer(e: Etat) { setEtat(e); setChoix({ matin: null, midi: null, soir: null, ...e.moments }); }
 
   useEffect(() => {
-    let annule = false;
+    let annule = false;setChargement(true);
     void (async () => {
       try {
         const sub = await abonnementActuel().catch(() => null);
         const { data, error } = await supabase.rpc('rappels_etat', { p_endpoint: sub?.endpoint ?? null });
         if (annule || error || !data) return;
         setEndpoint(sub?.endpoint ?? null); appliquer(data as Etat);
-      } catch { /* la carte reste masquée */ }
+      } catch { /* La reprise reste visible. */ }
+      finally {if(!annule)setChargement(false); }
     })();
     return () => { annule = true; };
-  }, []);
+  }, [revision]);
 
   const moments = (): Record<Moment, string | null> => ({ matin: choix.matin ?? null, midi: choix.midi ?? null, soir: choix.soir ?? null });
   const unMoment = MOMENTS.some(m => choix[m]);
@@ -116,7 +119,7 @@ export function RappelsCard({ langue }: { langue: string }) {
     finally { verrou.current = false; setBusy(false); }
   }
 
-  if (!etat) return null;
+  if (!etat) return <div className="card rappels-carte" id="rappels"><p className="rappels-titre">{T.titre}</p>{chargement?<p role="status">{langue==='en'?'Loading your reminders…':'Chargement de tes rappels…'}</p>:<><p className="muted">{langue==='en'?'Your reminder settings could not be loaded.':'Tes réglages de rappel n’ont pas pu être chargés.'}</p><button type="button" className="link" onClick={()=>setRevision(v=>v+1)}>{langue==='en'?'Try again':'Réessayer les rappels'}</button></>}</div>;
   const actifIci = etat.actif && etat.cet_appareil;
   return <div className="card rappels-carte" id="rappels">
     <p className="rappels-titre">{T.titre}</p>
@@ -128,7 +131,7 @@ export function RappelsCard({ langue }: { langue: string }) {
           {MOMENTS.map(m => <div key={m} className="rappels-moment">
             <label><input type="checkbox" checked={Boolean(choix[m])} onChange={e => void regler({ ...choix, [m]: e.target.checked ? PAR_DEFAUT[m] : null })} /><span>{T.moments[m]}</span></label>
             {choix[m] && <select aria-label={T.heure(T.moments[m])} value={choix[m] ?? ''} onChange={e => void regler({ ...choix, [m]: e.target.value })}>
-              {heuresPossibles(m).map(h => <option key={h} value={h}>{h.replace(':', ' h ')}</option>)}
+              {heuresPossibles(m).map(h => <option key={h} value={h}>{langue==='en'?h:h.replace(':', ' h ')}</option>)}
             </select>}
           </div>)}
         </fieldset>

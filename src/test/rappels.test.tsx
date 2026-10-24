@@ -5,6 +5,7 @@ const m = vi.hoisted(() => ({
   appels: [] as { name: string; args: Record<string, unknown> }[],
   etat: { actif: false, cet_appareil: false, appareils: 0, moments: { matin: '07:30', midi: null, soir: null }, fuseau: 'Africa/Kinshasa', cle_publique: 'CLE' } as Record<string, unknown>,
   possibilite: 'oui' as string,
+  chargementErreur: false,
   refus: false,
   echec: false,
   rejeter: false,
@@ -13,6 +14,7 @@ vi.mock('@/lib/supabase', () => ({
   supabase: {
     rpc: (name: string, args: Record<string, unknown>) => {
       m.appels.push({ name, args });
+      if(name==='rappels_etat'&&m.chargementErreur)return Promise.resolve({data:null,error:Error('réseau')});
       if (name !== 'rappels_etat' && m.rejeter) return Promise.reject(new Error('Hors connexion'));
       if (name !== 'rappels_etat' && m.echec) return Promise.resolve({ data: null, error: { message: 'indisponible' } });
       if (name === 'rappels_activer') return Promise.resolve({ data: { ...m.etat, actif: true, cet_appareil: true, moments: args['p_moments'] }, error: null });
@@ -37,7 +39,7 @@ vi.mock('@/lib/rappels', async (orig) => {
 import { RappelsCard } from '@/components/RappelsCard';
 import { heuresPossibles } from '@/lib/rappels';
 
-beforeEach(() => { m.appels.length = 0; m.possibilite = 'oui'; m.refus = false; m.echec = false; m.rejeter = false; m.etat = { actif: false, cet_appareil: false, appareils: 0, moments: { matin: '07:30', midi: null, soir: null }, fuseau: 'Africa/Kinshasa', cle_publique: 'CLE' }; });
+beforeEach(() => { m.appels.length = 0; m.chargementErreur=false; m.possibilite = 'oui'; m.refus = false; m.echec = false; m.rejeter = false; m.etat = { actif: false, cet_appareil: false, appareils: 0, moments: { matin: '07:30', midi: null, soir: null }, fuseau: 'Africa/Kinshasa', cle_publique: 'CLE' }; });
 afterEach(cleanup);
 
 describe('Rappels sur ce téléphone', () => {
@@ -130,3 +132,7 @@ describe('Rappels sur ce téléphone', () => {
     expect(heuresPossibles('soir').at(-1)).toBe('21:00');
   });
 });
+
+it('une panne de chargement conserve les rappels visibles et permet de réessayer',async()=>{m.chargementErreur=true;render(<RappelsCard langue="fr"/>);expect(await screen.findByText('Tes réglages de rappel n’ont pas pu être chargés.')).toBeInTheDocument();m.chargementErreur=false;fireEvent.click(screen.getByRole('button',{name:'Réessayer les rappels'}));expect(await screen.findByLabelText('Matin')).toBeInTheDocument();});
+
+it('présente les rappels et les heures en anglais',async()=>{render(<RappelsCard langue="en"/>);expect(await screen.findByLabelText('Morning')).toBeChecked();expect(screen.getByRole('option',{name:'07:30'})).toBeInTheDocument();expect(screen.getByLabelText('Midday')).not.toBeChecked();expect(screen.getByRole('button',{name:'Get my reminders'})).toBeInTheDocument();});

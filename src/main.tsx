@@ -1,3 +1,4 @@
+import {suivrePreferencesVisuelles} from './lib/preferences-visuelles';
 import {suivreApparence} from './lib/apparence';
 import './styles-offres-acces.css';
 import { StrictMode, Suspense, lazy } from 'react';
@@ -70,6 +71,7 @@ const BibleRecherche = lazy(() => bible().then(m => ({ default: m.BibleRecherche
 const BibleAnnotations = lazy(() => bible().then(m => ({ default: m.BibleAnnotations })));
 
 suivreApparence();
+suivrePreferencesVisuelles();
 enregistrerServiceWorker();
 
 const root = document.getElementById('root');
@@ -115,3 +117,6 @@ import './styles-bibliotheque.css';
 import './styles-bible.css';
 
 import './styles-resultat-stitch.css';
+
+import './styles-profil-preferences.css';
+import './styles-preferences.css';
