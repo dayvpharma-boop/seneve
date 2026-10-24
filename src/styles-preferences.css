@@ -1,5 +1,17 @@
-/* Ivoire conserve les valeurs publiées grâce aux valeurs de secours des styles.
-   Ces variables sont aussi disponibles pour les écrans et cartes chargés plus tard. */
+/* Palette commune à toutes les routes FR/EN, y compris les feuilles chargées à la demande.
+   Les autres palettes choisies dans le profil gardent leurs propres couleurs. */
+:root[data-palette="ivoire"], :root:not([data-palette]) {
+  --palette-papier:#F2F3EB;--palette-ivoire:#EDF0E4;--palette-surface:#FCFDF7;
+  --palette-doux:#EDF0E7;--palette-carte:#E5EADD;--palette-haut:#DAE2D2;--palette-ligne:#CDD7C5;
+  --palette-encre:#243125;--palette-secondaire:#52604E;--palette-accent:#38523C;--palette-sur-accent:#28402D;
+  --palette-or:#B79755;--palette-or-doux:#DDE6CE;--palette-or-pale:#F3EDDB;--palette-contour:#7D8B76;
+  --palette-nuit:#171E18;--palette-nuit-surface:#222B23;--palette-nuit-doux:#283329;--palette-nuit-haut:#303D30;
+  --palette-nuit-ligne:#40503D;--palette-nuit-contour:#8B9B82;--palette-nuit-texte:#F0F2E9;--palette-nuit-secondaire:#CAD2C4;--palette-nuit-accent:#C6DCB0;
+}
+/* Le fond extérieur rejoint celui des pages, indépendamment de leur langue. */
+:root[data-apparence="clair"] body {background:var(--palette-papier);color:var(--palette-encre)}
+:root[data-apparence="sombre"] body {background:var(--palette-nuit);color:var(--palette-nuit-texte)}
+
 :root[data-palette="sable"] {
   --palette-papier:#FAF2E5;--palette-ivoire:#F6EBDC;--palette-surface:#FFFBF4;
   --palette-doux:#F3E7D5;--palette-carte:#EFE1CB;--palette-haut:#E9D9BF;--palette-ligne:#D8C6A8;
@@ -46,3 +58,34 @@
 .pf-palette-options{grid-template-columns:repeat(6,minmax(0,1fr))}
 .pf-palette-options>label{grid-column:span 2}
 .pf-palette-options>label:nth-of-type(n+4){grid-column:span 3}
+
+/* Navigation et panneaux : mêmes surfaces sur les pages secondaires.
+   Les alertes, couvertures et surlignages gardent leurs couleurs sémantiques. */
+:root[data-apparence] :is(.auth-maquette,.journal-page,.parcours-page,.coach-page,.aide-page,.confidentialite,.pf-page,.oa-page,.bl-page,.rn-page,.admin-maquette,.introuvable-maquette) {
+  --background:var(--vivant-fond);--surface:var(--vivant-surface);--surface-saisie:var(--vivant-surface);
+  --foreground:var(--vivant-encre);--muted:var(--vivant-secondaire);--gold:var(--vivant-vert);
+  --line:var(--vivant-ligne);--chip:var(--vivant-sauge);--soft-gold:var(--vivant-miel);
+  background:var(--vivant-fond);color:var(--vivant-encre);
+}
+:root[data-apparence] body:has(:is(.oa-page,.bl-page,.bb-page,.pf-page,.rn-page,.admin-maquette,.journal-page,.parcours-page,.coach-page,.aide-page,.auth-maquette,.confidentialite,.introuvable-maquette,#s-home,#s-quiz,#s-result)) {
+  background:var(--vivant-fond);color:var(--vivant-encre);
+}
+:root[data-apparence] :is(.journal-page,.parcours-page,.coach-page,.aide-page,.pf-page,.admin-maquette,.confidentialite) .card {
+  background:var(--vivant-surface);border-color:var(--vivant-ligne);
+}
+:root[data-apparence] :is(.barre-nav,.bl-nav) {
+  background:var(--vivant-surface);border-top-color:var(--vivant-ligne);
+}
+:root[data-apparence] :is(.barre-nav,.bl-nav) a[aria-current="page"] {color:var(--vivant-vert)}
+:root[data-apparence] :is(.oa-header,.bl-header,.rn-barre,.pf-header,.admin-maquette-header) {
+  background:var(--vivant-fond);color:var(--vivant-encre);border-color:var(--vivant-ligne);
+}
+/* Les ambiances sépia/nocturne et les quatre couleurs d'annotation de la Bible restent distinctes. */
+:root[data-apparence] .bb-page.bb-ambiance-ivoire {
+  --bb-fond:var(--vivant-fond);--bb-carte:var(--vivant-surface);--bb-bas:var(--vivant-argile);
+  --bb-milieu:var(--vivant-sauge);--bb-haut:var(--vivant-lavande);--bb-encre:var(--vivant-encre);
+  --bb-second:var(--vivant-secondaire);--bb-trait:var(--vivant-ligne);--bb-or:var(--vivant-vert);
+}
+@media(forced-colors:active) {
+  :root[data-apparence] body,:root[data-apparence] main {background:Canvas;color:CanvasText}
+}
