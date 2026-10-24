@@ -8,8 +8,8 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 describe('Lien d’invitation', () => {
   it('ouvre le test avec la provenance « invitation », reconnue par le suivi', () => {
-    expect(lienInvitation('https://exemple.org', '/seneve/', 'fr')).toBe('https://exemple.org/seneve/?src=invitation&v=3');
-    expect(lienInvitation('https://exemple.org', '/seneve/', 'en')).toBe('https://exemple.org/seneve/?lang=en&src=invitation&v=3');
+    expect(lienInvitation('https://exemple.org', '/seneve/', 'fr')).toBe('https://exemple.org/seneve/?src=invitation&v=4');
+    expect(lienInvitation('https://exemple.org', '/seneve/', 'en')).toBe('https://exemple.org/seneve/?lang=en&src=invitation&v=4');
     expect(cleanSource(new URL(lienInvitation('https://exemple.org', '/', 'fr')).searchParams.get('src'))).toBe('invitation');
   });
   it('message sans aucune donnée personnelle, avec le lien', () => {

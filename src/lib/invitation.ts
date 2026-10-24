@@ -4,7 +4,7 @@
 
 export const SOURCE_INVITATION = 'invitation';
 /** Version de l'aperçu WhatsApp : la changer oblige WhatsApp à relire l'image (il garde en mémoire l'aperçu de chaque adresse). */
-export const VERSION_APERCU = '3';
+export const VERSION_APERCU = '4';
 
 /** Adresse du test à envoyer (avec la langue si anglais). */
 export function lienInvitation(origine: string, base: string, langue: string): string {
