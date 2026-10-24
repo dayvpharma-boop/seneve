@@ -1,3 +1,4 @@
+import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { BarreNav } from '@/components/BarreNav';
@@ -75,7 +76,7 @@ function Page({ titre, retour, enfants, classe = '', reglages, droite }: { titre
         : <img className="bb-logo" src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" />}
       <div className="bb-tete-titre"><span>SÉNEVÉ</span><strong>{titre}</strong></div>
       {droite}
-      <Link className="bb-profil" to={lien('/profil')} aria-label={t('Mon profil', 'My profile')}><I nom="person" taille={20} /></Link>
+      <Link className="bb-profil" to={lien('/profil')} aria-label={t('Mon profil', 'My profile')}><AvatarParticipant><I nom="person" taille={20} /></AvatarParticipant></Link>
     </header>
     <div className="bb-contenu">{enfants}</div>
     <BarreNav langue={langue} maquette iconesJournee />

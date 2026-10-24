@@ -1,3 +1,4 @@
+import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useEffect } from 'react';
 import { Icone } from '@/components/Icone';
 import { IconeConfidentialite } from '@/components/IconeConfidentialite';
@@ -150,7 +151,7 @@ export function Confidentialite() {
   useEffect(() => { document.title = `${T.titreOnglet} — SÉNEVÉ`; document.documentElement.lang = langue; }, [T, langue]);
   const donnees = DONNEES[langue];
   return <main className="wrap confidentialite">
-    <header className="conf-entete"><button type="button" onClick={revenir}><IconeConfidentialite nom="arrow_back" taille={20}/><span>{T.revenir}</span></button><p className="brand"><Icone nom="graine" taille={22}/>SÉNEVÉ</p><Link className="conf-profil" to={`/profil${suffixe}`} aria-label={langue==='en'?'My profile':'Mon profil'}><IconeConfidentialite nom="person" taille={18}/></Link></header>
+    <header className="conf-entete"><button type="button" onClick={revenir}><IconeConfidentialite nom="arrow_back" taille={20}/><span>{T.revenir}</span></button><p className="brand"><Icone nom="graine" taille={22}/>SÉNEVÉ</p><Link className="conf-profil" to={`/profil${suffixe}`} aria-label={langue==='en'?'My profile':'Mon profil'}><AvatarParticipant><IconeConfidentialite nom="person" taille={18}/></AvatarParticipant></Link></header>
     <header className="conf-intro"><p className="conf-repere"><IconeConfidentialite nom="verified_user" taille={16}/>{T.repere}</p><h1>{T.titre}</h1>
     <p className="muted">{T.maj(langue==='en'?DATE_POLITIQUE_EN:DATE_POLITIQUE)}</p>
     {T.traduction && <p className="muted">{T.traduction} <Link to="/confidentialite?lang=fr">Version française</Link></p>}

@@ -1,3 +1,4 @@
+import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { Link } from 'react-router-dom';
 import { IconeJournee } from '@/components/IconeJournee';
 
@@ -12,7 +13,7 @@ export function EspaceErreur({ prenom, message, reessayer, langue }: { prenom: s
  const T = TEXTES[en ? 'en' : 'fr'];
  const heure = new Intl.DateTimeFormat(en ? 'en-GB' : 'fr-FR', { timeZone: 'Africa/Kinshasa', hour: '2-digit', minute: '2-digit' }).format(new Date());
  return <>
-  <header className="erreur-header"><div><strong>SÉNEVÉ</strong><span aria-hidden="true">·</span><em>{prenom ? `${T.bonjour} ${prenom}` : T.bonjour}</em></div><Link className="erreur-avatar" to={langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={langue === 'en' ? 'My profile' : 'Mon profil'}>{prenom ? prenom.charAt(0).toUpperCase() : 'S'}</Link></header>
+  <header className="erreur-header"><div><strong>SÉNEVÉ</strong><span aria-hidden="true">·</span><em>{prenom ? `${T.bonjour} ${prenom}` : T.bonjour}</em></div><Link className="erreur-avatar" to={langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={langue === 'en' ? 'My profile' : 'Mon profil'}><AvatarParticipant>{prenom ? prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link></header>
   <div className="erreur-contexte"><span><i aria-hidden="true" />{T.interrompue}</span><time>Kinshasa · {heure}</time></div>
   <section className="erreur-maquette" aria-labelledby="erreur-titre">
    <div className="erreur-reseau" aria-hidden="true"><IconeJournee nom="wifi_off" taille={36} /><span><i /></span></div>

@@ -1,3 +1,4 @@
+import {AvatarParticipant} from '@/components/AvatarParticipant';
 import {useEffect} from 'react';
 import {Link,useNavigate,useSearchParams} from 'react-router-dom';
 import {IconeConfidentialite} from '@/components/IconeConfidentialite';
@@ -18,7 +19,7 @@ export function NotFound(){
   const suffixe=en?'?lang=en':'';
   useEffect(()=>{document.title=`${T.titre} — SÉNEVÉ`;document.documentElement.lang=en?'en':'fr';},[T,en]);
   return <main className="introuvable-maquette">
-    <header><button type="button" aria-label={T.retour} onClick={()=>window.history.state?.idx>0?navigate(-1):navigate('/')}><IconeConfidentialite nom="arrow_back" taille={20}/></button><div><span><Icone nom="graine"/> SÉNEVÉ</span><small>{T.titre}</small></div><Link to={`/profil${suffixe}`} aria-label={en?'My profile':'Mon profil'} className="introuvable-profil"><IconeConfidentialite nom="person" taille={18}/></Link></header>
+    <header><button type="button" aria-label={T.retour} onClick={()=>window.history.state?.idx>0?navigate(-1):navigate('/')}><IconeConfidentialite nom="arrow_back" taille={20}/></button><div><span><Icone nom="graine"/> SÉNEVÉ</span><small>{T.titre}</small></div><Link to={`/profil${suffixe}`} aria-label={en?'My profile':'Mon profil'} className="introuvable-profil"><AvatarParticipant><IconeConfidentialite nom="person" taille={18}/></AvatarParticipant></Link></header>
     <p className="introuvable-folio">Folio 404</p>
     <section className="introuvable-centre"><div className="introuvable-embleme"><img src={`${import.meta.env.BASE_URL}illustrations/page-introuvable-graine.svg`} alt=""/></div><p className="introuvable-etiquette">{T.etiquette}</p><h1>{T.titre}</h1><p>{T.texte}</p>
     <blockquote><p>{T.citation}</p><footer><span>{T.recentrer}</span><IconeAdministration nom="auto_stories" taille={16}/></footer></blockquote></section>

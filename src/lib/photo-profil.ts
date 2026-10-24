@@ -4,6 +4,10 @@ export const PHOTOS_PROFIL='photos-profil';
 export const PHOTO_MAX_SOURCE=10*1024*1024;
 export const PHOTO_MAX_ENVOI=256*1024;
 export class PhotoInvalide extends Error {}
+type EcoutePhoto=(id:string,photo:Blob|null)=>void;
+const ecoutesPhoto=new Set<EcoutePhoto>();
+export function suivrePhoto(ecoute:EcoutePhoto){ecoutesPhoto.add(ecoute);return()=>{ecoutesPhoto.delete(ecoute);};}
+function annoncerPhoto(id:string,photo:Blob|null){for(const ecoute of ecoutesPhoto)ecoute(id,photo);}
 const chemin=(id:string)=>`${id}/avatar.jpg`;
 async function verifier(id:string){
   if(navigator.onLine===false)throw Error('Hors connexion');
@@ -23,12 +27,14 @@ export async function enregistrerPhoto(id:string,photo:Blob){
   const r=await supabase.storage.from(PHOTOS_PROFIL).upload(chemin(id),photo,{contentType:'image/jpeg',upsert:true,cacheControl:'0'});
   if(r.error)throw r.error;
   await verifier(id);
+  annoncerPhoto(id,photo);
 }
 export async function retirerPhoto(id:string){
   await verifier(id);
   const r=await supabase.storage.from(PHOTOS_PROFIL).remove([chemin(id)]);
   if(r.error)throw r.error;
   await verifier(id);
+  annoncerPhoto(id,null);
 }
 /** Recadre au centre et réduit avant l’envoi. Le JPEG produit ne reprend pas les métadonnées du fichier. */
 export async function preparerPhoto(fichier:File):Promise<Blob>{

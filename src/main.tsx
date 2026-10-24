@@ -1,3 +1,4 @@
+import {PhotosParticipant} from '@/components/AvatarParticipant';
 import {suivrePreferencesVisuelles} from './lib/preferences-visuelles';
 import {suivreApparence} from './lib/apparence';
 import './styles-offres-acces.css';
@@ -78,7 +79,7 @@ const root = document.getElementById('root');
 if (root) createRoot(root).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-      <GarderLangue />
+      <PhotosParticipant><GarderLangue />
       <Suspense fallback={null}><Routes>
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
@@ -104,7 +105,7 @@ if (root) createRoot(root).render(
         <Route path="/nouveau-mot-de-passe" element={<NewPassword />} />
         <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
         <Route path="*" element={<NotFound />} />
-      </Routes></Suspense>
+      </Routes></Suspense></PhotosParticipant>
     </BrowserRouter>
   </StrictMode>,
 );
@@ -120,3 +121,5 @@ import './styles-resultat-stitch.css';
 
 import './styles-profil-preferences.css';
 import './styles-preferences.css';
+
+import './styles-avatar-participant.css';

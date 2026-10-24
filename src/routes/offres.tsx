@@ -1,3 +1,4 @@
+import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback,useEffect,useRef,useState,type ReactNode } from 'react';
 import {Link,useSearchParams} from 'react-router-dom';
 import {supabase} from '@/lib/supabase';
@@ -24,7 +25,7 @@ export function Offres({mode='offres'}:{mode?:'offres'|'acces'|'paiement'}){
  useEffect(()=>{if(details&&dialog.current&&!dialog.current.open)typeof dialog.current.showModal==='function'?dialog.current.showModal():dialog.current.setAttribute('open','');},[details]);
  const path=(p:string)=>p+(en?(p.includes('?')?'&':'?')+'lang=en':'');
  const label=(fr:string,english:string)=>en?english:fr;
- const header=<header className="oa-header"><Link to={path('/espace')} aria-label={label('Revenir à mon espace','Back to my space')}><I nom="arrow_back_ios_new" taille={20}/></Link><h1>{label('Offres & Accès','Offers & access')}</h1><Link to={path('/profil')} aria-label={label('Mon profil','My profile')}><I nom="person" taille={20}/></Link></header>;
+ const header=<header className="oa-header"><Link to={path('/espace')} aria-label={label('Revenir à mon espace','Back to my space')}><I nom="arrow_back_ios_new" taille={20}/></Link><h1>{label('Offres & Accès','Offers & access')}</h1><Link to={path('/profil')} aria-label={label('Mon profil','My profile')}><AvatarParticipant><I nom="person" taille={20}/></AvatarParticipant></Link></header>;
  function page(children:ReactNode){return <main className="oa-page">{header}<div className="oa-content">{children}</div></main>;}
  const aide=<Link to={path('/aide')}>{label('Contacter l’aide SÉNEVÉ','Contact SÉNEVÉ support')}<I nom="arrow_forward" taille={18}/></Link>;
  const compte=<section className="oa-card"><I nom="lock"/><h2>{label('Retrouve tes offres et tes accès','Find your offers and access')}</h2><p>{label('Connecte-toi avec la même adresse e-mail que pour ton achat.','Sign in with the email address used for your purchase.')}</p><Link className="oa-primary" to={path('/connexion')}>{label('Se connecter','Sign in')}<I nom="arrow_forward"/></Link></section>;

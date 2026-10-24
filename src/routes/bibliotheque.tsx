@@ -1,3 +1,4 @@
+import {AvatarParticipant} from '@/components/AvatarParticipant';
 import {IconeRayonnage} from '@/components/IconeRayonnage';
 import {useEffect} from 'react';
 import {Link,useSearchParams} from 'react-router-dom';
@@ -22,7 +23,7 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
   <header className="bl-header">
    {detail?<Link to={`/bibliotheque${suffixe}`} aria-label={en?'Back to library':'Revenir à la bibliothèque'}><I nom="arrow_back"/></Link>:<img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt=""/>}
    <div><span>SÉNEVÉ</span><strong>{detail?(en?'The book':'Le livre'):(en?'Library':'Bibliothèque')}</strong></div>
-   <Link className="bl-profil" to={`/profil${suffixe}`} aria-label={en?'My profile':'Mon profil'}><I nom="person" taille={22}/></Link>
+   <Link className="bl-profil" to={`/profil${suffixe}`} aria-label={en?'My profile':'Mon profil'}><AvatarParticipant><I nom="person" taille={22}/></AvatarParticipant></Link>
   </header>
   <div className="bl-contenu">
    {!detail?<>
