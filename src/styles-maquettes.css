@@ -339,3 +339,11 @@
 #s-quiz .quiz-manteau .muted { margin:0; font-size:13px; }
 #s-result .manteau-resultat .quote { font-family:Literata,Georgia,serif; font-size:17px; line-height:27px; }
 :root[data-apparence="sombre"] :is(#s-home .home-ouverture, #s-quiz .quiz-seuil) { background:#211f1c; }
+
+/* Bouton « Écouter la question » (24/10/2026). */
+#s-quiz .ecouter-question { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:0 0 16px; }
+#s-quiz .ecouter-bouton { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:8px 16px; border:1px solid var(--line); border-radius:999px; background:transparent; color:var(--foreground); font:500 15px/20px Outfit,system-ui,sans-serif; cursor:pointer; }
+#s-quiz .ecouter-bouton svg { color:var(--gold); }
+#s-quiz .ecouter-bouton[aria-pressed="true"] { background:var(--chip,#f4eedf); border-color:var(--gold); }
+#s-quiz .ecouter-bouton:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+#s-quiz .ecouter-erreur { font:400 14px/20px Outfit,system-ui,sans-serif; color:var(--muted); }
