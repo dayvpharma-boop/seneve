@@ -186,3 +186,53 @@
 /* Mode sombre : « à développer » en ivoire, pour ne pas se confondre avec l'or des points d'appui. */
 :root[data-apparence="sombre"] #s-result .root-row[data-band="developper"] .root-bar i,
 :root[data-apparence="sombre"] #s-result .result-legend dt > span[data-band="0"] { background:#f6f0e1; }
+
+/* Style premium « Ivoire & or fin » choisi par Dr Justin le 24/10/2026.
+   Cartes claires bordées d'un filet, citations soulignées d'or, barres fines, lettres espacées.
+   Les couleurs passent par --palette-… : la palette Ivoire garde ces valeurs, les autres palettes du profil s'appliquent. */
+:root[data-apparence] #s-result {
+  --bilan-fond:var(--palette-ivoire,#F7F2E8);
+  --bilan-carte:var(--palette-surface,#FFFDF8);
+  --bilan-doux:var(--palette-surface,#FFFDF8);
+  --bilan-haut:var(--palette-doux,#F3ECDD);
+  --bilan-encre:#0a0907;
+  --bilan-secondaire:#4a463f;
+  --bilan-or:var(--palette-accent,#7C6220);
+  --bilan-accent:var(--palette-or-pale,#F1E6CC);
+  --bilan-sur-accent:var(--palette-sur-accent,#5A4612);
+  --bilan-bouton:#0a0907;
+  --bilan-sur-bouton:var(--palette-ivoire,#F7F2E8);
+  --bilan-trait:var(--palette-contour,#A39C8E);
+  --bilan-ligne:var(--palette-ligne,#E6DCC4);
+  --bilan-filet:var(--palette-or,#B8954A);
+}
+:root[data-apparence="sombre"] #s-result {
+  --bilan-fond:var(--palette-nuit,#12100c);
+  --bilan-carte:var(--palette-nuit-surface,#1A1814);
+  --bilan-doux:var(--palette-nuit-surface,#1A1814);
+  --bilan-haut:var(--palette-nuit-doux,#221F1A);
+  --bilan-encre:var(--palette-nuit-texte,#F3EDE0);
+  --bilan-secondaire:var(--palette-nuit-secondaire,#C9C0AE);
+  --bilan-or:var(--palette-nuit-accent,#D4B36A);
+  --bilan-accent:var(--palette-nuit-haut,#2A2418);
+  --bilan-sur-accent:var(--palette-nuit-accent,#E5C77F);
+  --bilan-bouton:var(--palette-nuit-accent,#D4B36A);
+  --bilan-sur-bouton:#14110A;
+  --bilan-trait:#8C8475;
+  --bilan-ligne:var(--palette-nuit-ligne,#2E2A22);
+  --bilan-filet:var(--palette-nuit-accent,#C9A84C);
+}
+:root[data-apparence]:has(#s-result:not([hidden])) body { background:var(--palette-ivoire,#F7F2E8); }
+:root[data-apparence="sombre"]:has(#s-result:not([hidden])) body { background:var(--palette-nuit,#12100c); }
+:root[data-apparence] #s-result :is(.card:not(.result-next),.root-row,.result-legend,.result-method,.partage-repli,.result-choice-message,.repere-parcours,.action-box) { border:1px solid var(--bilan-ligne); box-shadow:none; }
+:root[data-apparence] #s-result :is(.strength-quote,.quote-encart) { border:0; border-left:2px solid var(--bilan-filet); }
+:root[data-apparence] #s-result .result-next { border-top:1px solid var(--bilan-filet); border-radius:0; padding-top:20px; }
+:root[data-apparence] #s-result .root-bar { height:4px; border-radius:2px; }
+:root[data-apparence] #s-result .root-bar i { border-radius:2px; }
+:root[data-apparence] #s-result :is(.btn,.btn-link) { letter-spacing:.1em; }
+:root[data-apparence] #s-result .resultat-puce { letter-spacing:.22em; }
+/* Mode sombre : boutons or champagne, bouton secondaire au simple filet doré.
+   Identifiant et classe doublés : passent devant les anciennes règles jaunes de styles-mode-sombre.css,
+   dont une contient « .home-start #start » et pèse donc deux identifiants. */
+:root[data-apparence="sombre"] #s-result#s-result :is(.result-next > .btn.btn, .invite-actions .btn.btn, .share-actions .btn.btn) { background:var(--bilan-bouton); color:var(--bilan-sur-bouton); }
+:root[data-apparence="sombre"] #s-result#s-result :is(.result-espace .btn.btn, .invite-actions .btn-secondaire.btn-secondaire, .share-actions .link.link) { background:transparent; color:var(--bilan-encre); border:1px solid var(--bilan-filet); }
