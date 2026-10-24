@@ -59,7 +59,7 @@ export function GoalCard({ langue, onSaved }: { langue: string; onSaved?:()=>voi
   const formulaire = editing || !goal;
   const longueurOk = texte.trim().length === 0 || objectifValide(texte) !== null;
 
-  return <div className="card">
+  return <div className="card objectif-card">
     <p className="tag"><IconeJourneeSuite nom="flag"/>{T.titre}</p>
     {!formulaire && goal ? <>
       <p className="action">{goal.texte}</p>

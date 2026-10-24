@@ -123,3 +123,4 @@ import './styles-profil-preferences.css';
 import './styles-preferences.css';
 
 import './styles-avatar-participant.css';
+import './styles-espace-vivant.css';

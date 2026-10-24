@@ -33,6 +33,7 @@ import { BrouillonHorsLigne } from '@/components/BrouillonHorsLigne';
 import { RepereParcours } from '@/components/RepereParcours';
 import type { Periode } from '@/components/Scene';
 import { ImageMoment } from '@/components/ImageMoment';
+import { AccueilVivant } from '@/components/AccueilVivant';
 import { BarreNav } from '@/components/BarreNav';
 import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
@@ -219,6 +220,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div>
     {notice}{repere}
     {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<Link className="jn-avatar-grand" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom.charAt(0).toUpperCase()}</AvatarParticipant></Link>}
+    {data && <AccueilVivant langue={enTete ? 'en' : 'fr'} />}
   </header>;
   // Pied de page dans la langue du parcours ; les pages publiques reçoivent ?lang=en pour rester en anglais.
   const footer = (l: string) => { const en = l === 'en', s = en ? '?lang=en' : ''; return <div className="today-foot"><Link className="link" to={`/acces${s}`}>{en ? 'My access' : 'Mes accès'}</Link><Link className="link" to={`/confidentialite${s}`}>{en ? 'Privacy' : 'Confidentialité'}</Link><button type="button" className="link" onClick={signOut}>{en ? 'Sign out' : 'Se déconnecter'}</button></div>; };
@@ -389,7 +391,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
         {moments.map(m => {
           const id = `moment-${current}-${m.n}`;
           return <li key={m.content.content_id}>
-            <article className={m.ouvert ? 'moment-tuile' : 'moment-tuile is-closed'} aria-label={`${T.moment(m.n, m.heure)} — ${m.content.theme}`}>
+            <article className={m.ouvert ? 'moment-tuile' : 'moment-tuile is-closed'} data-periode={m.periode} aria-label={`${T.moment(m.n, m.heure)} — ${m.content.theme}`}>
               <div className="moment-head">
                 {(m.heure || moments.length > 1) ? <span className="time-chip"><IconeJournee nom={m.periode === "matin" ? "wb_sunny" : m.periode === "soir" ? "bedtime" : "schedule"} taille={16} />{enr.langue==='en'?T.moment(m.n,m.heure):m.heure?`${T.periodes[m.periode]} · ${T.moment(m.n,m.heure)}`:T.moment(m.n,null)}</span> : <IconeMaquette nom="menu_book" taille={20} />}
                 {m.ouvert ? <span className="dispo-chip">{enr.langue === 'en' ? 'Available' : 'Disponible'}</span> : <IconeJournee nom="lock_clock" taille={22} />}
