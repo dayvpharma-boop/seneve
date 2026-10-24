@@ -54,8 +54,12 @@ it('FR : message clair si l’audio ne peut pas être lu', async () => {
   expect(await screen.findByRole('status')).toHaveTextContent('Audio indisponible pour le moment. Tu peux lire la question.');
 });
 
-it('EN : pas de bouton tant que les audios anglais n’existent pas', () => {
+it('EN : bouton anglais, audios du dossier anglais V3', () => {
   render(<Index language="en" />);
   fireEvent.click(screen.getByRole('button', { name: 'Start' }));
-  expect(screen.queryByRole('button', { name: /Écouter|Listen/ })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Listen to the question' }));
+  expect(audios[0]?.src).toMatch(/medias-publics\/test\/en\/v3\/question-01\.mp3$/);
+  expect(screen.getByRole('button', { name: 'Stop listening' })).toHaveAttribute('aria-pressed', 'true');
+  act(() => { audios[0]?.ecouteurs.error?.(); });
+  expect(screen.getByRole('status')).toHaveTextContent('Audio unavailable for now. You can read the question.');
 });
