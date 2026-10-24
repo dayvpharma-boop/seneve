@@ -173,8 +173,8 @@ export const texts = {
   answerLabel: (n:number) => `${n} out of 5 (${['never', 'rarely', 'sometimes', 'often', 'always'][n - 1]})`,
   thresholdSource: 'Book, Appendix 4',
   openingSource: (chapter:number) => `Book, opening of Chapter ${chapter}`,
-  /** Audios EN V6 : en attente de validation des 12 nouveaux audios (24/10/2026) ; bouton masqué jusque-là. */
-  audioQuestions: null as string | null,
+  /** Audios EN V6 (voix « Justin pasteur ») : 12 nouveaux validés le 24/10/2026 à 10:58, 9 repris de la V3 déjà validés. */
+  audioQuestions: 'test/en/v6' as string | null,
   mantle: null as { question: string; hint: string; label: string; resultTitle: string; source: string; kept: string } | null,
   back: '← Previous question', resultBrand: 'Your self-review', resultTitle: 'Your roots today', rootsTitle: 'Your 7 roots', summary: 'According to your answers today · each root out of 15',
   categories: ['Root to develop', 'Root to strengthen', 'Strength to maintain'],

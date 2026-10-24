@@ -54,10 +54,11 @@ it('FR : message clair si l’audio ne peut pas être lu', async () => {
   expect(await screen.findByRole('status')).toHaveTextContent('Audio indisponible pour le moment. Tu peux lire la question.');
 });
 
-it('EN : pas de bouton tant que les 12 nouveaux audios anglais V6 ne sont pas validés', () => {
+it('EN V6 : bouton « Listen to the question », audios du dossier anglais V6', () => {
   render(<Index language="en" />);
   fireEvent.click(screen.getByRole('button', { name: 'Start' }));
-  expect(screen.queryByRole('button', { name: /Listen|Écouter/ })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Listen to the question' }));
+  expect(audios[0]?.src).toMatch(/medias-publics\/test\/en\/v6\/question-01\.mp3$/);
 });
 
 it('EN : libellés anglais du bouton (dossier fourni)', () => {
