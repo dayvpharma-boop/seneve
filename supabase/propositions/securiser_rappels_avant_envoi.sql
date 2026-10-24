@@ -1,4 +1,4 @@
--- Installe sur seneve-test seulement. NE PAS appliquer en production avant validation des essais.
+-- Applique sur seneve-test puis seneve-prod le 24 octobre 2026 apres essais SQL sans envoi.
 -- Controle des rappels push avant reservation. Aucun envoi externe.
 
 CREATE OR REPLACE FUNCTION seneve._push_rappel_eligible(p_communication_id uuid)
