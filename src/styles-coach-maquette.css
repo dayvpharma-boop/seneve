@@ -66,3 +66,11 @@ body:has(.coach-page){background:#fff9ea;color:#1d1c13}
 .coach-bulle cite{display:block;font:500 12px/18px Outfit,sans-serif;color:#755b00;margin-top:4px}
 .coach-msg-moi blockquote{background:#333027;color:#fff9ea}
 .coach-msg-moi cite{color:#ffe08f}
+/* Échanges précédents repliés (24/10/2026) : le dernier échange reste ouvert. */
+.coach-page .coach-anciens{width:100%;margin:0 0 8px}
+.coach-page .coach-anciens>summary{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;list-style:none;cursor:pointer;font:500 14px/20px Outfit,sans-serif;color:var(--muted,#4a463f);border-radius:999px;background:var(--chip,#f3edde);padding:8px 16px;width:max-content;margin:0 auto}
+.coach-page .coach-anciens>summary::-webkit-details-marker{display:none}
+.coach-page .coach-anciens>summary svg{transition:transform .2s}
+.coach-page .coach-anciens[open]>summary svg{transform:rotate(180deg)}
+.coach-page .coach-anciens>summary:focus-visible{outline:3px solid var(--gold,#755b00);outline-offset:2px}
+.coach-page .coach-anciens-liste{display:flex;flex-direction:column;gap:16px;margin-top:16px}

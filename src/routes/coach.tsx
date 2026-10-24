@@ -116,6 +116,10 @@ export function Coach() {
   if (failed && !data) return <main className="wrap coach-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;
   if (!data) return <main className="wrap coach-page">{tete}<p className="muted">{T.chargement}</p></main>;
 
+  // Dernier échange : à partir du dernier message de la personne (ses réponses du coach comprises).
+  const debutRecent = (() => { for (let k = data.messages.length - 1; k >= 0; k--) if (data.messages[k]?.role === 'participant') return k; return Math.max(0, data.messages.length - 1); })();
+  const anciens = data.messages.slice(0, debutRecent);
+  const recents = data.messages.slice(debutRecent);
   const epuise = data.restants <= 0;
   const trop = texte.trim().length > COACH_MAX;
   return <main className="wrap coach-page">
@@ -130,7 +134,14 @@ export function Coach() {
         : <p className="today-parcours">{enrollment.nom}</p>}
       <section className="coach-thread" aria-label={en?"Conversation history":"Historique de discussion"} aria-live="polite">
         {data.messages.length === 0 && <p className="muted">{T.aucun}</p>}
-        {data.messages.map(m => <article key={m.message_id} className={`coach-msg ${m.role === 'coach' ? 'coach-msg-coach' : 'coach-msg-moi'}`}>
+        {/* Demande du 24/10/2026 : les échanges précédents sont repliés ; seul le dernier échange reste ouvert. */}
+        {anciens.length > 0 && <details className="coach-anciens"><summary><span>{en ? `Earlier messages (${anciens.length})` : `Messages précédents (${anciens.length})`}</span><IconeCoach nom="expand_more" taille={20}/></summary><div className="coach-anciens-liste">{anciens.map(m => <article key={m.message_id} className={`coach-msg ${m.role === 'coach' ? 'coach-msg-coach' : 'coach-msg-moi'}`}>
+          {m.role==='coach' && <p className="coach-auteur"><IconeCoach nom="eco" taille={15}/>{T.coach}</p>}
+          <div className="coach-bulle"><MessageCoach texte={m.texte}/></div>
+          <p className="coach-heure">{new Intl.DateTimeFormat(T.locale,{timeZone:'Africa/Kinshasa',hour:'2-digit',minute:'2-digit'}).format(new Date(m.cree_le))}{m.role==='participant'&&m.etat!=='echec'&&<IconeCoach nom="done_all" taille={13}/>}</p>
+          {m.role === 'participant' && m.etat === 'echec' && <p className="error">{T.echec}</p>}
+        </article>)}</div></details>}
+        {recents.map(m => <article key={m.message_id} className={`coach-msg ${m.role === 'coach' ? 'coach-msg-coach' : 'coach-msg-moi'}`}>
           {m.role==='coach' && <p className="coach-auteur"><IconeCoach nom="eco" taille={15}/>{T.coach}</p>}
           <div className="coach-bulle"><MessageCoach texte={m.texte}/></div>
           <p className="coach-heure">{new Intl.DateTimeFormat(T.locale,{timeZone:'Africa/Kinshasa',hour:'2-digit',minute:'2-digit'}).format(new Date(m.cree_le))}{m.role==='participant'&&m.etat!=='echec'&&<IconeCoach nom="done_all" taille={13}/>}</p>

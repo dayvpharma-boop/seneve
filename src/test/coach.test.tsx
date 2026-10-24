@@ -142,4 +142,27 @@ describe('Coach : parcours choisi', () => {
     expect(screen.getByRole('tab', { name: 'Formation 30 jours' })).toHaveAttribute('aria-selected', 'true');
     vi.useRealTimers();
   });
+  // Demande du 24/10/2026 : les messages s'accumulaient ; les échanges précédents sont repliés.
+  it('replie les échanges précédents et garde le dernier échange ouvert', async () => {
+    tables['coach_messages'] = [
+      msg({ message_id: 'Q1', texte: 'Première question', cree_le: '2026-10-13T10:00:00Z' }),
+      msg({ message_id: 'R1', role: 'coach', etat: 'enregistre', texte: 'Première réponse', cree_le: '2026-10-13T10:01:00Z' }),
+      msg({ message_id: 'Q2', texte: 'Deuxième question', cree_le: '2026-10-13T11:00:00Z' }),
+      msg({ message_id: 'R2', role: 'coach', etat: 'enregistre', texte: 'Deuxième réponse', cree_le: '2026-10-13T11:01:00Z' }),
+    ];
+    page();
+    expect(await screen.findByText('Deuxième réponse')).toBeVisible();
+    expect(screen.getByText('Deuxième question')).toBeVisible();
+    const replis = screen.getByText('Messages précédents (2)').closest('details')!;
+    expect(replis.open).toBe(false);
+    expect(replis).toContainElement(screen.getByText('Première réponse'));
+    fireEvent.click(screen.getByText('Messages précédents (2)'));
+    expect(replis.open).toBe(true);
+  });
+  it('rien n’est replié quand il n’y a qu’un échange', async () => {
+    tables['coach_messages'] = [msg({}), msg({ message_id: 'R', role: 'coach', etat: 'enregistre', texte: 'Réponse' })];
+    page();
+    expect(await screen.findByText('Réponse')).toBeVisible();
+    expect(screen.queryByText(/Messages précédents/)).not.toBeInTheDocument();
+  });
 });
