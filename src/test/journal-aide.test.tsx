@@ -1,5 +1,5 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { Link, MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Fausse base : lectures par table, et enregistrement de chaque écriture et appel de fonction.
@@ -77,6 +77,55 @@ describe('règles', () => {
     expect(peutAnnuler('attente_participant')).toBe(true);
     expect(peutAnnuler('resolue')).toBe(false);
     expect(peutAnnuler('annulee')).toBe(false);
+  });
+});
+
+describe('modèles de demande d’aide et langue', () => {
+  it.each(['Mon message personnel', ''])('changer de langue conserve la saisie personnalisée %j, même vide', async saisie => {
+    render(<MemoryRouter initialEntries={['/aide?lang=en&motif=adresse-email']}>
+      <Link to="/aide?lang=fr&motif=adresse-email">Français</Link><Aide />
+    </MemoryRouter>);
+    const champ = await screen.findByRole('textbox');
+    fireEvent.change(champ, { target: { value: saisie } });
+    fireEvent.click(screen.getByRole('link', { name: 'Français' }));
+    expect(await screen.findByRole('heading', { name: 'Aide & Contact' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue(saisie);
+    expect(draft.read('aide', 'U1')).toBe(saisie);
+  });
+  it.each([
+    ['suppression-compte', 'I would like to request the deletion of my SÉNEVÉ account.'],
+    ['adresse-email', 'I would like to change my account’s email address.'],
+    ['export-donnees', 'I would like to receive a copy of all my personal data.'],
+  ])('le modèle %s est en anglais quand la page le demande', async (motif, texte) => {
+    at(`/aide?lang=en&motif=${motif}`);
+    expect(await screen.findByRole('textbox')).toHaveValue(texte);
+    expect(rpcs.some(x => x.name === 'request_help')).toBe(false);
+  });
+  it('le modèle suit le profil anglais chargé après le premier rendu', async () => {
+    tables['participants'] = [{ prenom: 'Mary', langue: 'en' }];
+    at('/aide?motif=suppression-compte');
+    await waitFor(() => expect(screen.getByRole('textbox')).toHaveValue('I would like to request the deletion of my SÉNEVÉ account.'));
+  });
+  it('le français explicite prime sur le profil anglais', async () => {
+    tables['participants'] = [{ prenom: 'Mary', langue: 'en' }];
+    at('/aide?lang=fr&motif=adresse-email');
+    expect(await screen.findByRole('textbox')).toHaveValue('Je souhaite modifier l’adresse e-mail de mon compte.');
+  });
+  it('un brouillon personnel reste intact malgré un modèle proposé en anglais', async () => {
+    draft.write('aide', 'Mon message déjà commencé', 'U1');
+    at('/aide?lang=en&motif=suppression-compte');
+    expect(await screen.findByRole('textbox')).toHaveValue('Mon message déjà commencé');
+  });
+  it('un motif inconnu ne préremplit pas le message', async () => {
+    at('/aide?lang=en&motif=constructor');
+    expect(await screen.findByRole('textbox')).toHaveValue('');
+  });
+  it('envoyer une demande vide le modèle et ne le réinsère pas au rechargement des demandes', async () => {
+    at('/aide?lang=en&motif=adresse-email');
+    await screen.findByRole('textbox');
+    fireEvent.submit(document.querySelector('.aide-form')!);
+    await waitFor(() => expect(rpcs.some(x => x.name === 'request_help')).toBe(true));
+    await waitFor(() => expect(screen.getByRole('textbox')).toHaveValue(''));
   });
 });
 

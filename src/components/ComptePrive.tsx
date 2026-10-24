@@ -9,6 +9,7 @@ export function ComptePrive({ enfants }: { enfants: (userId: string) => ReactNod
   const [essai, setEssai] = useState(0);
   const revision = useRef(0);
   const location = useLocation();
+  const en = new URLSearchParams(location.search).get('lang') === 'en';
   useEffect(() => {
     let actif = true;
     const abonnement = supabase.auth.onAuthStateChange?.((_event, session) => {
@@ -23,9 +24,9 @@ export function ComptePrive({ enfants }: { enfants: (userId: string) => ReactNod
     }).catch(() => { if (actif && revision.current === auDepart) setErreur(true); });
     return () => { actif = false; abonnement?.data.subscription.unsubscribe(); };
   }, [essai]);
-  if (erreur) return <main className="wrap"><p role="alert">Impossible de vérifier ta connexion.</p><button className="btn" onClick={() => { setErreur(false); setEssai(n => n + 1); }}>Réessayer</button></main>;
-  if (compte === undefined) return <main className="wrap"><p role="status">Chargement…</p></main>;
+  if (erreur) return <main className="wrap" lang={en ? 'en' : 'fr'}><p role="alert">{en ? 'Unable to check your connection.' : 'Impossible de vérifier ta connexion.'}</p><button className="btn" onClick={() => { setErreur(false); setEssai(n => n + 1); }}>{en ? 'Try again' : 'Réessayer'}</button></main>;
+  if (compte === undefined) return <main className="wrap" lang={en ? 'en' : 'fr'}><p role="status">{en ? 'Loading…' : 'Chargement…'}</p></main>;
   // Une page privée ouverte en anglais (?lang=en) mène à la page de connexion anglaise.
-  if (!compte) return <Navigate to={new URLSearchParams(location.search).get('lang') === 'en' ? '/connexion?lang=en' : '/connexion'} replace state={location.pathname === '/journal' ? { retourJournal: location.pathname + location.search, citationBiblique: location.state?.citationBiblique } : null} />;
+  if (!compte) return <Navigate to={en ? '/connexion?lang=en' : '/connexion'} replace state={location.pathname === '/journal' ? { retourJournal: location.pathname + location.search, citationBiblique: location.state?.citationBiblique } : null} />;
   return <div key={compte} style={{ display: 'contents' }}>{enfants(compte)}</div>;
 }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
 import { dateDuJour, pickDefault, placerOngletActif } from '@/lib/espace';
@@ -69,6 +69,7 @@ function dateCourte(iso: string, locale: string) {
 
 export function Progres() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
   const [chosen, setChosen] = useState<string | null>(null);
@@ -84,11 +85,13 @@ export function Progres() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   const enr = data ? (data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0] ?? null) : null;
-  const T = progresTextes(enr?.langue ?? data?.langue);
-  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = enr?.langue === 'en' ? 'en' : 'fr'; }, [T, enr?.langue]);
+  // Un choix explicite de langue prime ; sans choix, on suit le parcours, puis le profil.
+  const demande = params.get('lang');
+  const langue = demande === 'en' || demande === 'fr' ? demande : (enr?.langue ?? data?.langue ?? 'fr');
+  const T = progresTextes(langue);
+  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = langue === 'en' ? 'en' : 'fr'; }, [T, langue]);
 
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  const langue = enr?.langue ?? data?.langue;
   // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026) : marque puis titre.
   const en = langue === 'en';
   const tete = <><header className="parcours-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span>{data && <Link className="parcours-avatar" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</Link>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header></>;
@@ -111,7 +114,7 @@ export function Progres() {
 
   return <main className="wrap avec-nav parcours-page">
     {tete}<p className="progres-intro">{T.intro}</p>{tabs}
-    {!b.pasCommence && <JardinCard realisees={b.realisees} total={b.jours.filter(j => j.etat !== null).length} langue={enr.langue} />}
+    {!b.pasCommence && <JardinCard realisees={b.realisees} total={b.jours.filter(j => j.etat !== null).length} langue={langue} />}
     <section className="card progres-carte" aria-label={enr.nom}>
       {b.pasCommence ? <p>{T.pasCommence}</p> : <>
         <div className="parcours-synthese-titre"><h2>{T.realisees(b.realisees, b.actionsOuvertes)}</h2><span>{en ? 'Week' : 'Semaine'} {Math.max(1, Math.ceil(b.joursOuverts / 7))}</span></div>
@@ -126,7 +129,7 @@ export function Progres() {
         {b.prochain !== null ? <div className="progres-suite"><p>{T.prochain(b.prochain)}</p><Link className="btn btn-link moment-btn" to={lienJour(b.prochain)}>{T.reprendre}<IconeProgres nom="arrow_forward" taille={18} /></Link></div> : b.actionsOuvertes > 0 && <p className="success">{T.toutFait}</p>}
       </>}
     </section>
-    {!b.pasCommence && semainesDuParcours.length > 0 && <section className="card parcours-semaines"><h2><IconeProgres nom="eco" />{en ? 'Weekly summary' : 'Bilan de la semaine'}</h2><ul className="bilan-list">{semainesDuParcours.map(w => { const S = semaineTextes(enr.langue); return <li key={w.numero}><strong>{S.titre(w.numero)}</strong>{w.complete ? '' : ` (${S.enCours})`} — {w.applicables === 0 ? S.nonEvalue : S.realisees(w.realisees, w.applicables)}{w.partielles > 0 ? ` · ${S.partielles(w.partielles)}` : ''}{w.aides > 0 ? ` · ${S.aides(w.aides)}` : ''}</li>; })}</ul><p>{semaineTextes(enr.langue).note}</p></section>}
+    {!b.pasCommence && semainesDuParcours.length > 0 && <section className="card parcours-semaines"><h2><IconeProgres nom="eco" />{en ? 'Weekly summary' : 'Bilan de la semaine'}</h2><ul className="bilan-list">{semainesDuParcours.map(w => { const S = semaineTextes(langue); return <li key={w.numero}><strong>{S.titre(w.numero)}</strong>{w.complete ? '' : ` (${S.enCours})`} — {w.applicables === 0 ? S.nonEvalue : S.realisees(w.realisees, w.applicables)}{w.partielles > 0 ? ` · ${S.partielles(w.partielles)}` : ''}{w.aides > 0 ? ` · ${S.aides(w.aides)}` : ''}</li>; })}</ul><p>{semaineTextes(langue).note}</p></section>}
     <section className="parcours-etapes"><h2>{en ? 'Journey steps' : 'Les étapes du parcours'}</h2><ol className="bilan-jours">
       {b.jours.filter(j => j.ouvert).map(j => <li key={j.jour} className={`bilan-jour${j.jour === aujourdhui ? ' is-today' : ''}${j.etat === 'realisee' ? ' is-done' : ''}${j.etat === 'partielle' ? ' is-partial' : ''}`}>
         <span className="bilan-pastille" aria-hidden="true"><b>{en ? "D" : "J"}{j.jour}</b>{symboleJour(j,14)}</span>

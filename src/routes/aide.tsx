@@ -57,6 +57,18 @@ function apercu(texte: string): string {
 
 const SUJETS={fr:['Mon parcours','Mon compte','Mon achat','Autre'],en:['My journey','My account','My purchase','Other']} as const;
 const CLE_SUJETS=['parcours','compte','achat','autre'];
+const MODELES: Record<'fr' | 'en', Record<string, string>> = {
+  fr: {
+    'suppression-compte': 'Je souhaite demander la suppression de mon compte SÉNEVÉ.',
+    'adresse-email': 'Je souhaite modifier l’adresse e-mail de mon compte.',
+    'export-donnees': 'Je souhaite recevoir une copie de toutes mes données personnelles.',
+  },
+  en: {
+    'suppression-compte': 'I would like to request the deletion of my SÉNEVÉ account.',
+    'adresse-email': 'I would like to change my account’s email address.',
+    'export-donnees': 'I would like to receive a copy of all my personal data.',
+  },
+};
 export function Aide() {
   return <ComptePrive enfants={userId => <AideDuCompte userId={userId} />} />;
 }
@@ -66,7 +78,8 @@ function AideDuCompte({ userId }: { userId: string }) {
   const [params] = useSearchParams();
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
-  const [motif, setMotif] = useState(() => draft.read('aide', userId) || ({'suppression-compte':'Je souhaite demander la suppression de mon compte SÉNEVÉ.','adresse-email':'Je souhaite modifier l’adresse e-mail de mon compte.','export-donnees':'Je souhaite recevoir une copie de toutes mes données personnelles.'}[params.get('motif')??'']??''));
+  const [motif, setMotif] = useState(() => draft.read('aide', userId));
+  const motifPersonnalise = useRef(Boolean(motif));
   const [parcours, setParcours] = useState(params.get('inscription') ?? '');
   const [sujet,setSujet]=useState(()=>{const v=draft.read('aide:sujet', userId);return CLE_SUJETS.includes(v)?v:params.has('motif')?'compte':'parcours';});
   const [notes, setNotes] = useState<string[]>([]);
@@ -91,6 +104,11 @@ function AideDuCompte({ userId }: { userId: string }) {
   const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (langueParcours ?? data?.langue ?? 'fr');
   const T = journalTextes(langueUI);
   const en=langueUI==='en';
+  // Le profil et le parcours peuvent arriver après le premier rendu. Seul le modèle intact suit la langue.
+  const modeles = MODELES[en ? 'en' : 'fr'];
+  const cleModele = params.get('motif') ?? '';
+  const modele = Object.hasOwn(modeles, cleModele) ? modeles[cleModele] ?? '' : '';
+  useEffect(() => { if (!motifPersonnalise.current) setMotif(modele); }, [modele]);
   const sujets=SUJETS[en?'en':'fr'];
   const prefixe=`${en?'Subject':'Sujet'} : ${sujets[CLE_SUJETS.indexOf(sujet)]}\n\n`;
   const limite=MOTIF_MAX-prefixe.length;
@@ -98,7 +116,7 @@ function AideDuCompte({ userId }: { userId: string }) {
 
   // Toute modification du formulaire en fait une nouvelle demande (nouvel identifiant à l'envoi).
   function edited() { pendingId.current = null; setSent(false); }
-  function changeMotif(v: string) { setMotif(v); draft.write('aide', v, userId); edited(); }
+  function changeMotif(v: string) { motifPersonnalise.current = true; setMotif(v); draft.write('aide', v, userId); edited(); }
   function toggle(id: string) { setNotes(n => n.includes(id) ? n.filter(x => x !== id) : [...n, id]); edited(); }
 
   async function send(e: FormEvent) {
@@ -115,6 +133,7 @@ function AideDuCompte({ userId }: { userId: string }) {
       const { error } = await supabase.rpc('request_help', { p_client_request_id: pendingId.current, p_motif: prefixe+m, p_enrollment_id: enrollment, p_entry_ids: notes });
       if (error) { setError(error.message.includes('Trop de demandes') ? T.tropDemandes : T.erreurEnvoi); return; }
       pendingId.current = null;
+      motifPersonnalise.current = true;
       setMotif(''); draft.write('aide', '', userId); setNotes([]); setSent(true);
       await refresh();
     } catch { setError(T.erreurEnvoi); }

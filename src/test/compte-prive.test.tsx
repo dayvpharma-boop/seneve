@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
@@ -14,8 +14,8 @@ import { ComptePrive } from '@/components/ComptePrive';
 
 beforeEach(() => { m.session.mockReset(); });
 afterEach(cleanup);
-function ouvrir() {
-  render(<MemoryRouter initialEntries={['/journal']}><Routes>
+function ouvrir(path = '/journal') {
+  render(<MemoryRouter initialEntries={[path]}><Routes>
     <Route path="/journal" element={<ComptePrive enfants={id => <p>Compte {id}</p>} />} />
     <Route path="/connexion" element={<p>Connexion requise</p>} />
   </Routes></MemoryRouter>);
@@ -44,4 +44,17 @@ it('un échec de session garde les écrans privés fermés et permet une nouvell
   ouvrir();
   expect(await screen.findByRole('alert')).toHaveTextContent('Impossible de vérifier ta connexion');
   expect(screen.queryByText(/Compte/)).toBeNull();
+});
+it.each(['fr', 'en'])('chargement, erreur et nouvelle tentative en %s sans ouvrir les données privées', async langue => {
+  let terminer!: (v: unknown) => void;
+  m.session.mockReturnValueOnce(new Promise(resolve => { terminer = resolve; }));
+  m.session.mockResolvedValueOnce({ data: { session: { user: { id: 'A' } } }, error: null });
+  ouvrir(`/journal?lang=${langue}`);
+  expect(screen.getByRole('status')).toHaveTextContent(langue === 'en' ? 'Loading…' : 'Chargement…');
+  expect(screen.getByRole('main')).toHaveAttribute('lang', langue);
+  await act(async () => { terminer({ data: { session: null }, error: { message: 'network' } }); });
+  expect(screen.getByRole('alert')).toHaveTextContent(langue === 'en' ? 'Unable to check your connection.' : 'Impossible de vérifier ta connexion.');
+  expect(screen.queryByText('Compte A')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: langue === 'en' ? 'Try again' : 'Réessayer' }));
+  expect(await screen.findByText('Compte A')).toBeInTheDocument();
 });

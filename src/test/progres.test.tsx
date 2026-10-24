@@ -77,6 +77,32 @@ describe('page Mes progrès', () => {
   });
   afterEach(() => { cleanup(); vi.useRealTimers(); });
 
+  it.each([
+    ['en', 'fr', 'My journey'], ['fr', 'en', 'Mon parcours'],
+  ])('sans parcours : lang=%s prime sur le profil %s et fixe la langue du document', async (choix, profil, titre) => {
+    tables['participants'] = [{ langue: profil }];
+    tables['enrollments'] = [];
+    render(<MemoryRouter initialEntries={[`/progres?lang=${choix}`]}><Progres /></MemoryRouter>);
+    await screen.findByText(choix === 'en' ? 'No journey yet.' : 'Aucun parcours pour le moment.');
+    expect(await screen.findByRole('heading', { name: titre })).toBeInTheDocument();
+    expect(document.documentElement.lang).toBe(choix);
+    expect(screen.getByRole('navigation', { name: choix === 'en' ? 'Main navigation' : 'Navigation principale' })).toBeInTheDocument();
+  });
+
+  it('sans parcours ni choix explicite : le document suit le profil anglais', async () => {
+    tables['participants'] = [{ langue: 'en' }]; tables['enrollments'] = [];
+    render(<MemoryRouter initialEntries={['/progres']}><Progres /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { name: 'My journey' })).toBeInTheDocument();
+    expect(document.documentElement.lang).toBe('en');
+  });
+
+  it('un choix explicite anglais traduit aussi le bilan hebdomadaire d’un parcours français', async () => {
+    render(<MemoryRouter initialEntries={['/progres?lang=en']}><Progres /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { name: 'Weekly summary' })).toBeInTheDocument();
+    expect(screen.queryByText(/Semaine 1/)).toBeNull();
+    expect(document.documentElement.lang).toBe('en');
+  });
+
   it('affiche les vraies consignes seulement pour les jours ouverts', async () => {
     tables['activities'] = activites.map(a => ({ ...a, consigne: `Action réelle ${a.content_id}` }));
     render(<MemoryRouter><Progres /></MemoryRouter>);
