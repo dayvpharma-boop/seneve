@@ -175,3 +175,14 @@
   :root[data-apparence] #s-result .result-root-heading { flex-wrap:wrap; }
   :root[data-apparence] #s-result .result-root-heading > div { flex-basis:100%; }
 }
+
+/* Corrections du 24/10/2026 après vérification en ligne. */
+/* Boutons de l'invitation : la règle générale (flex:1 1 180px) les étirait à 180 px de haut en colonne. */
+:root[data-apparence] #s-result .invite-actions :is(.btn,.btn-secondaire) { flex:none; }
+:root[data-apparence] #s-result .invite-note { display:flex; align-items:flex-start; gap:6px; }
+:root[data-apparence] #s-result .invite-note > svg { flex:none; margin-top:4px; }
+/* Légende : point gris de « Racine à consolider ». */
+:root[data-apparence] #s-result .result-legend dt > span[data-band="1"] { background:var(--bilan-trait); }
+/* Mode sombre : « à développer » en ivoire, pour ne pas se confondre avec l'or des points d'appui. */
+:root[data-apparence="sombre"] #s-result .root-row[data-band="developper"] .root-bar i,
+:root[data-apparence="sombre"] #s-result .result-legend dt > span[data-band="0"] { background:#f6f0e1; }
