@@ -3,11 +3,10 @@
 html[data-apparence=sombre] .bl-page{--bl-fond:#141310;--bl-carte:#211f1c;--bl-encre:#e6e2dc;--bl-second:#d1c5b3;--bl-or:#ffd482;--bl-accent:#ffd482;--bl-doux:#2b2a26;--bl-trait:#49453d}
 @media(min-width:800px){.bl-page{border-inline:1px solid var(--bl-trait)}}
 /* Actions des rubriques Parcours et achats, lisibles dans les deux thèmes. */
-.bl-page .bl-acces{padding:20px;border-radius:16px;background:var(--bl-carte);border:1px solid var(--palette-ligne)}
+.bl-page .bl-acces{padding:20px;border-radius:16px;background:var(--bl-carte);border:1px solid var(--bl-trait)}
 .bl-acces>div{flex:1;min-width:0}
-.bl-page .bl-acces-bouton{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;min-height:52px;padding:12px 16px;border-radius:10px;background:var(--palette-accent);color:var(--palette-surface);font-weight:600;line-height:1.4;text-align:center;text-decoration:none;border:1px solid transparent}
+.bl-page .bl-acces-bouton{display:flex;justify-content:center;align-items:center;gap:10px;width:100%;min-height:52px;padding:12px 16px;border-radius:10px;background:#000;color:#fff;font-weight:600;line-height:1.4;text-align:center;text-decoration:none;border:1px solid transparent}
 .bl-acces-bouton>span{flex:1}
 .bl-page .bl-acces-bouton:hover{filter:brightness(1.1)}
 .bl-page .bl-acces-bouton:active{filter:brightness(.95)}
-:root[data-apparence="sombre"] .bl-page .bl-acces-bouton{background:var(--palette-nuit-accent);color:var(--palette-sur-accent)}
 @media(max-width:420px){.bl-page .bl-acces{padding:16px;gap:10px}.bl-page .bl-acces-bouton{padding:12px;gap:8px}}
