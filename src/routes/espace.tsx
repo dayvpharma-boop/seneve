@@ -1,3 +1,6 @@
+import {habitudesActivees} from '@/lib/habitudes-configuration';
+import {DeclarationHabitude} from '@/components/DeclarationHabitude';
+import {occurrencesDepuisContenus} from '@/lib/habitudes-api';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { prenomDuCompte } from '@/lib/connexion-sociale';
 import {Apparence} from '@/components/Apparence';
@@ -42,12 +45,12 @@ import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
-type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
+type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; langue: string; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
 type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean; critere_realisation?: string | null };
 type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
 // heures : horaires des moments du jour (message 1, 2, 3), lus dans le programme publié ; absents = tout visible.
 type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
-type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[] };
+type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[]; habitudes?: string[] };
 
 const LOAD_ERRORS = { fr: 'Impossible de charger ta journée pour le moment.', en: 'Your day cannot be loaded right now.' } as const;
 const loadError = (langue?: string | null) => LOAD_ERRORS[langue === 'en' ? 'en' : 'fr'];
@@ -87,11 +90,13 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   }
   if (!enrollments.length) return { prenom, parcours: [], contents: [], activities: [], states: [] };
   const progIds = [...new Set(enrollments.map(x => x.programme_id))];
-  const [pr, c] = await Promise.all([
+  const [pr, c, hd] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours, heures_messages').in('programme_id', progIds),
-    supabase.from('contents').select('content_id, programme_id, version, jour, numero_message, theme, explication, texte_officiel, reference_livre')
+    supabase.from('contents').select('content_id, programme_id, version, langue, jour, numero_message, theme, explication, texte_officiel, reference_livre')
       .in('programme_id', progIds).order('jour').order('numero_message'),
+    habitudesActivees() ? supabase.from('hd_programme_links').select('programme_id, version, langue').in('programme_id',progIds) : Promise.resolve({data:[],error:null}),
   ]);
+  if(hd.error)throw hd.error;
   if (pr.error) throw pr.error;
   if (c.error) throw c.error;
   const programmes = (pr.data ?? []) as Programme[];
@@ -109,7 +114,7 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   ]);
   if (a.error) throw a.error;
   if (st.error) throw st.error;
-  return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
+  return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[], habitudes: enrollments.filter(e=>(hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===e.programme_id&&String(h.version)===String(e.version)&&h.langue===e.langue)).map(e=>e.enrollment_id) };
 }
 
 function formatDate(iso: string | null, locale = 'fr-FR') {
@@ -300,6 +305,22 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
   const lienJournal = (q: Activity) => `/journal?inscription=${enr.enrollment_id}&activite=${q.activity_id}`;
   const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} lecture={momentParam > 0} readOnly={lectureSeule} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;
+
+  if(habitudesActivees() && data.habitudes?.includes(enr.enrollment_id)){
+    const en=enr.langue==='en';
+    const date_locale=new Date(Date.UTC(Number(enr.date_debut.slice(0,4)),Number(enr.date_debut.slice(5,7))-1,Number(enr.date_debut.slice(8,10))+current-1)).toISOString().slice(0,10);
+    const duJour=contents.filter(c=>c.jour===current&&c.langue===enr.langue).sort((a,b)=>a.numero_message-b.numero_message);
+    const ctx={enrollment_id:enr.enrollment_id,programme_id:enr.programme_id,version:Number(enr.version),langue:enr.langue,jour:current,date_locale};
+    const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities);
+    return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p><h2>{en?'My activities today':'Mes activités du jour'}</h2>
+      {horsLigne&&<p role="status">{en?'Offline copy — declarations are unavailable here.':'Copie hors connexion — les déclarations sont indisponibles ici.'}</p>}
+      {occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
+      {!horsLigne&&occurrences.map(o=>{const a=data.activities.find(a=>a.activity_id===o.occurrence_id)!;const st=etatDe(a);return <DeclarationHabitude key={`${userId}:${enr.enrollment_id}:${o.occurrence_id}`} userId={userId} occurrence={o} consigne={a.consigne} critere={a.critere_realisation} langue={enr.langue} lectureSeule={lectureSeule||enr.etat!=='active'}
+        etat={st?{...o,etat:st.etat as 'non_commencee'|'preparee'|'partielle'|'realisee',aide_demandee:st.aide_demandee??false,synchronisation:horsLigne?'local':'synchronise'}:undefined}
+        transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onConfirme={e=>surEnregistre({enrollment_id:e.enrollment_id,activity_id:e.occurrence_id,etat:e.etat,aide_demandee:e.aide_demandee,realisee_le:st?.realisee_le??null})}/>;})}
+      <Link className="link" to={en?'/progres?lang=en':'/progres'}>{en?'My progress':'Mon suivi'}</Link>
+    </section>{footer(enr.langue)}</>,'journee-nouvelle');
+  }
 
   // Page d'un moment (« Lire et agir » / « Lire »).
   if (momentParam > 0) {
@@ -532,3 +553,4 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
     </>}
   </div>;
 }
+
