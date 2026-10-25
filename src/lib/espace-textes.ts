@@ -56,6 +56,12 @@ export const ESPACE_TEXTES = {
     jourAujourdhui: (n: number) => `Jour ${n}, aujourd’hui`,
     periodes: { matin: 'Matin', midi: 'Midi', soir: 'Soir' },
     retour: 'Retour',
+    // Onglets des parcours (participant inscrit à plusieurs parcours) — traduits le 25/10/2026.
+    mesParcours: 'Mes parcours',
+    ongletAVenir: 'À venir',
+    ongletPause: 'En pause',
+    ongletTermine: 'Terminé',
+    ongletJour: (n: number) => `Jour ${n} en cours`,
   },
   en: {
     locale: 'en-GB',
@@ -110,6 +116,11 @@ export const ESPACE_TEXTES = {
     jourAujourdhui: (n: number) => `Day ${n}, today`,
     periodes: { matin: 'Morning', midi: 'Midday', soir: 'Evening' },
     retour: 'Back',
+    mesParcours: 'My journeys',
+    ongletAVenir: 'Upcoming',
+    ongletPause: 'Paused',
+    ongletTermine: 'Completed',
+    ongletJour: (n: number) => `Day ${n} in progress`,
   },
 } as const;
 

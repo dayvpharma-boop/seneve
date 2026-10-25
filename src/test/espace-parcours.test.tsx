@@ -85,6 +85,26 @@ describe('Espace avec plusieurs parcours', () => {
     expect(document.title).toBe('My space — SÉNEVÉ');
   });
 
+  it('plusieurs parcours anglais : onglets en anglais (inventaire FR/EN du 25/10/2026)', async () => {
+    tables['programmes'] = [
+      { programme_id: 'PROSPECT_LIVRE_7J_EN_V1', nom: 'Discovery — 7 days', duree_jours: 7 },
+      { programme_id: 'ACHETEUR_LIVRE_14J_EN_V1', nom: 'Book Companion — 14 days', duree_jours: 14 },
+    ];
+    tables['enrollments'] = [
+      { enrollment_id: 'EN14', programme_id: 'ACHETEUR_LIVRE_14J_EN_V1', version: 1, langue: 'en', date_debut: '2026-10-19', etat: 'active' },
+      { enrollment_id: 'EN7', programme_id: 'PROSPECT_LIVRE_7J_EN_V1', version: 1, langue: 'en', date_debut: '2026-10-11', etat: 'active' },
+    ];
+    tables['contents'] = [
+      ...Array.from({ length: 7 }, (_, k) => content('PROSPECT_LIVRE_7J_EN_V1', k + 1)),
+      ...Array.from({ length: 14 }, (_, k) => content('ACHETEUR_LIVRE_14J_EN_V1', k + 1)),
+    ];
+    render(<MemoryRouter><Espace /></MemoryRouter>);
+    const onglets = await screen.findByRole('tablist', { name: 'My journeys' });
+    expect(onglets).toHaveTextContent('Day 2 in progress');
+    expect(onglets).toHaveTextContent('Upcoming');
+    expect(onglets).not.toHaveTextContent(/À venir|en cours|Terminé|En pause/);
+  });
+
   it('parcours anglais pas commencé : date en anglais', async () => {
     tables['programmes'] = [{ programme_id: 'ACHETEUR_LIVRE_14J_EN_V1', nom: 'Accompagnement du livre en anglais — 14 jours', duree_jours: 14 }];
     tables['enrollments'] = [{ enrollment_id: 'EN', programme_id: 'ACHETEUR_LIVRE_14J_EN_V1', version: 1, langue: 'en', date_debut: '2026-11-03', etat: 'active' }];

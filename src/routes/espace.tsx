@@ -259,8 +259,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
   const T = textes(enr.langue);
-  const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label="Mes parcours">
-    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{dayInfo(x.date_debut,new Date(),x.duree).notStarted?'À venir':x.etat==='en_pause'?'En pause':dayInfo(x.date_debut,new Date(),x.duree).finished?'Terminé':`Jour ${dayInfo(x.date_debut,new Date(),x.duree).day} en cours`}</span>{x.nom}</button>)}
+  const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.mesParcours}>
+    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{dayInfo(x.date_debut,new Date(),x.duree).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:dayInfo(x.date_debut,new Date(),x.duree).finished?T.ongletTermine:T.ongletJour(dayInfo(x.date_debut,new Date(),x.duree).day)}</span>{x.nom}</button>)}
   </div>;
 
   const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);

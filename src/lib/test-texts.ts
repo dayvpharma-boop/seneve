@@ -46,7 +46,6 @@ const frenchQuestions = [
 const frenchReversed: number[] = [];
 
 export type Language = 'fr' | 'en';
-/** Version réellement affichée : FR V4 (validée le 22/10/2026) ; EN reste en V3 jusqu'à la relecture de sa traduction. */
 /** V6 FR et EN identiques (décision du 24/10/2026) : mêmes questions, même échelle Jamais…Toujours / Never…Always. */
 export const TEST_VERSIONS: Record<Language, number> = { fr: 6, en: 6 };
 export function languageFrom(value: unknown): Language { return value === 'en' ? 'en' : 'fr'; }
