@@ -430,7 +430,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       <p>{R.texte(reprise)}</p>
       {current !== reprise && <button type="button" className="btn action-btn" onClick={() => setSelected(reprise)}>{R.bouton(reprise)}</button>}
       <p className="muted">{R.aide}</p>
-      {!horsLigne && <div className="link-row"><Link className="link" to={`/coach?inscription=${enr.enrollment_id}`}>{R.coach}</Link><Link className="link" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
+      {/* Vrais boutons (demande du 25/10/2026) : le coach en premier, l’aide de l’équipe en second. */}
+      {!horsLigne && <div className="coach-boutons"><Link className="btn btn-link" to={`/coach?inscription=${enr.enrollment_id}`}><IconeJourneeSuite nom="chat" taille={20}/>{R.coach}</Link><Link className="btn-secondaire" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
     </section>}
     {obstacle && <ObstacleCard key={`obstacle-${enr.enrollment_id}-${obstacle}`} enrollmentId={enr.enrollment_id} cle={obstacle} langue={enr.langue} />}
     {semaine && <SemaineCard key={`semaine-${enr.enrollment_id}-${semaine.numero}`} semaine={semaine} langue={enr.langue} horsLigne={horsLigne} />}
@@ -516,7 +517,7 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
     {!realisee && etat === 'preparee' && <p className="success" role="status">{T.prepareeNotee}</p>}
     {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
     {!realisee && aide && <div className="aide-notee" role="status"><p>{T.aideNotee}</p>
-      <div className="link-row"><Link className="link" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link><Link className="link" to={avecLangue("/coach", langue)}>{T.demanderCoach}</Link></div></div>}
+      <div className="coach-boutons"><Link className="btn btn-link" to={avecLangue("/coach", langue)}><IconeJourneeSuite nom="chat" taille={20}/>{T.demanderCoach}</Link><Link className="btn-secondaire" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link></div></div>}
     {!realisee && !readOnly && <>
       <button type="button" className="btn btn-or action-btn" disabled={pending !== null} onClick={() => void record('realisee')}>{lecture ? <IconeLecture nom="done" taille={18} /> : <IconeJournee nom="check" taille={18}/>}{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
       <div className="choix-row">

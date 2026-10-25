@@ -599,3 +599,8 @@ h2.quiz-racine { font-size:20px; margin:0 0 12px; }
 .dispo-chip { font-family:Poppins,system-ui,sans-serif; font-size:12px; font-weight:600; padding:3px 10px; border-radius:var(--r-commande); background:var(--soft-gold); color:var(--foreground); }
 .moment-tuile .time-chip { background:transparent; padding:0; font-size:13px; }
 .journal-intro { background:var(--chip); border:1px solid var(--line); border-radius:var(--r-carte); padding:12px 14px; color:var(--foreground); }
+
+/* « Parler au coach » et « Demander de l'aide » en vrais boutons sur l'accueil (25/10/2026). */
+.coach-boutons { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.coach-boutons > :is(.btn,.btn-secondaire) { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:48px; flex:none; text-decoration:none; text-align:center; }
+.coach-boutons svg { flex:none; }
