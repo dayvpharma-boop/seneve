@@ -1,3 +1,4 @@
+import {calendrierHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {BilanHabitudes} from '@/components/BilanHabitudes';
 import {joursHabitudesLecture, type JourHabitudesLecture, type EtatLecture} from '@/lib/habitudes-lecture';
@@ -24,7 +25,7 @@ async function load(): Promise<Loaded | null> {
   const ep = await supabase.rpc('ensure_participant', { p_prenom: (s.session.user.user_metadata?.['prenom'] as string | undefined) ?? '' });
   if (ep.error) throw ep.error;
   const [p, e, j] = await Promise.all([
-    supabase.from('participants').select('langue, prenom').maybeSingle(),
+    supabase.from('participants').select('langue, prenom, fuseau, preferences').maybeSingle(),
     supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').neq('etat', 'annulee'),
     supabase.from('journal_entries').select('entry_id'),
   ]);
@@ -61,6 +62,8 @@ async function load(): Promise<Loaded | null> {
     const cts = contents.filter(ct => ct.programme_id === x.programme_id && String(ct.version) === String(x.version));
     bilans[x.enrollment_id] = bilan(x.date_debut, x.duree, cts, activites, etats.filter(s2 => s2.enrollment_id === x.enrollment_id));
     if((hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===x.programme_id&&String(h.version)===String(x.version)&&h.langue===x.langue)){
+      const calendrier=calendrierHabitudes(x.date_debut,x.duree,fuseauHabitudes(p.data??{}));
+      bilans[x.enrollment_id]={...bilans[x.enrollment_id]!,joursOuverts:calendrier.joursOuverts,termine:calendrier.finished,pasCommence:calendrier.notStarted};
       habitudes[x.enrollment_id]=joursHabitudesLecture({...x,version:Number(x.version)},bilans[x.enrollment_id]!.joursOuverts,
         cts.filter(c=>c.langue===x.langue).map(c=>({...c,version:Number(c.version)})),
         activites.map(a=>({...a,consigne:a.consigne??''})),etats as EtatLecture[]);
