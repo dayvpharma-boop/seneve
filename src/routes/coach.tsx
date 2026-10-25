@@ -73,8 +73,9 @@ export function Coach() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   const enrollment = data ? (data.enrollments.find(x => x.enrollment_id === chosen) ?? data.defaut) : null;
-  const T = coachTextes(enrollment?.langue ?? data?.langue);
-  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = (enrollment?.langue ?? data?.langue) === 'en' ? 'en' : 'fr'; }, [T, enrollment?.langue, data?.langue]);
+  const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (enrollment?.langue ?? data?.langue);
+  const T = coachTextes(langueUI);
+  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = langueUI === 'en' ? 'en' : 'fr'; }, [T, langueUI]);
 
   // Tant qu'une réponse est attendue, on relit la conversation toutes les 4 secondes.
   const attente = data ? enAttente(data.messages) : false;
@@ -111,7 +112,7 @@ export function Coach() {
     await refresh();
   }
 
-  const en=(enrollment?.langue ?? data?.langue)==='en';
+  const en=langueUI==='en';
   const aideVers=enrollment ? `/aide?inscription=${enrollment.enrollment_id}` : '/aide';
   const tete=<><header className="coach-entete"><div><Link to="/espace" aria-label={T.retour}><IconeCoach nom="arrow_back_ios_new" taille={20}/></Link><span>{en?'Coach conversation':'Conversation Coach'}</span></div><span className="coach-initiale" aria-hidden="true"><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></header><IllustrationPage theme="coach" langue={en?'en':'fr'} /></>;
   if (failed && !data) return <main className="wrap coach-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;
