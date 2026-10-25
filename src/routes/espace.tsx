@@ -1,3 +1,4 @@
+import {SimulateurDime} from '@/components/SimulateurDime';
 import {calendrierHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
 import {LectureTexteHabitude} from '@/components/LectureTexteHabitude';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
@@ -324,6 +325,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       {!horsLigne&&occurrences.map(o=>{const a=data.activities.find(a=>a.activity_id===o.occurrence_id)!;const st=etatDe(a);return <DeclarationHabitude key={`${userId}:${enr.enrollment_id}:${o.occurrence_id}`} userId={userId} occurrence={o} consigne={a.consigne} critere={a.critere_realisation} langue={enr.langue} lectureSeule={lectureSeule||enr.etat!=='active'}
         etat={st?{...o,etat:st.etat as 'non_commencee'|'preparee'|'partielle'|'realisee',aide_demandee:st.aide_demandee??false,synchronisation:horsLigne?'local':'synchronise'}:undefined}
         transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onConfirme={e=>surEnregistre({enrollment_id:e.enrollment_id,activity_id:e.occurrence_id,etat:e.etat,aide_demandee:e.aide_demandee,realisee_le:st?.realisee_le??null})}/>;})}
+      {!horsLigne&&<SimulateurDime langue={enr.langue}/>}
       <Link className="link" to={en?'/progres?lang=en':'/progres'}>{en?'My progress':'Mon suivi'}</Link>
     </section>{footer(enr.langue)}</>,'journee-nouvelle');
   }
