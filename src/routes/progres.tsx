@@ -120,7 +120,7 @@ export function Progres() {
   </div>;
   if(data.habitudes[enr.enrollment_id]) return <main className="wrap avec-nav parcours-page">
     {tete}<p className="progres-intro">{T.intro}</p>{tabs}
-    <BilanHabitudes jours={data.habitudes[enr.enrollment_id]!} langue={langue}/>
+    <BilanHabitudes jours={data.habitudes[enr.enrollment_id]!} langue={langue} inscription={enr.enrollment_id}/>
     {back}<BarreNav langue={langue} maquette iconesJournee/>
   </main>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;
