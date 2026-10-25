@@ -1,3 +1,4 @@
+import {LectureTexteHabitude} from '@/components/LectureTexteHabitude';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {DeclarationHabitude} from '@/components/DeclarationHabitude';
 import {occurrencesDepuisContenus} from '@/lib/habitudes-api';
@@ -312,9 +313,11 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const duJour=contents.filter(c=>c.jour===current&&c.langue===enr.langue).sort((a,b)=>a.numero_message-b.numero_message);
     const ctx={enrollment_id:enr.enrollment_id,programme_id:enr.programme_id,version:Number(enr.version),langue:enr.langue,jour:current,date_locale};
     const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities);
-    return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p><h2>{en?'My activities today':'Mes activités du jour'}</h2>
-      {horsLigne&&<p role="status">{en?'Offline copy — declarations are unavailable here.':'Copie hors connexion — les déclarations sont indisponibles ici.'}</p>}
+    return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p><h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
+      <label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>
+      {horsLigne&&<p role="status">{en?'Offline copy — reading and declarations are unavailable here.':'Copie hors connexion — la lecture et les déclarations sont indisponibles ici.'}</p>}
       {occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
+      {!horsLigne&&duJour.map(c=><LectureTexteHabitude key={c.content_id} titre={c.theme||(en?`Reading ${c.numero_message}`:`Lecture ${c.numero_message}`)} texte={c.texte_officiel} langue={enr.langue}/>)}
       {!horsLigne&&occurrences.map(o=>{const a=data.activities.find(a=>a.activity_id===o.occurrence_id)!;const st=etatDe(a);return <DeclarationHabitude key={`${userId}:${enr.enrollment_id}:${o.occurrence_id}`} userId={userId} occurrence={o} consigne={a.consigne} critere={a.critere_realisation} langue={enr.langue} lectureSeule={lectureSeule||enr.etat!=='active'}
         etat={st?{...o,etat:st.etat as 'non_commencee'|'preparee'|'partielle'|'realisee',aide_demandee:st.aide_demandee??false,synchronisation:horsLigne?'local':'synchronise'}:undefined}
         transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onConfirme={e=>surEnregistre({enrollment_id:e.enrollment_id,activity_id:e.occurrence_id,etat:e.etat,aide_demandee:e.aide_demandee,realisee_le:st?.realisee_le??null})}/>;})}
