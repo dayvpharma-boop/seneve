@@ -1,3 +1,4 @@
+import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -210,4 +211,4 @@ function EntryCard({ entry, langue, onChanged }: { entry: Entry; langue: string;
   </article>;
 }
 
-function JournalImage({en,avecNotes}:{en:boolean;avecNotes:boolean}) { return <figure className="journal-image"><img src={`${import.meta.env.BASE_URL}illustrations/journal-maquette-${avecNotes ? 'notes' : 'vide'}.jpg`} alt={avecNotes ? (en ? 'A quiet courtyard in natural light' : 'Une cour paisible dans la lumière naturelle') : (en ? 'An open journal in natural light' : 'Un journal ouvert dans la lumière naturelle')} width={720} height={400} /><figcaption><IconeJournal nom="spa" taille={20} /><span>{en ? 'A moment to reflect' : 'Un temps pour réfléchir'}</span></figcaption></figure>; }
+function JournalImage({en,avecNotes}:{en:boolean;avecNotes:boolean}) { return <figure className="journal-image"><IllustrationPage theme="journal" /><figcaption><IconeJournal nom="spa" taille={20} /><span>{en ? 'A moment to reflect' : 'Un temps pour réfléchir'}</span></figcaption></figure>; }

@@ -1,0 +1,103 @@
+{
+  "created": "2026-10-25",
+  "method": "Built-in image generation",
+  "art_direction": "Editorial photography, sage green, warm ivory, natural wood, restrained earthy gold, soft daylight, no text or logos.",
+  "assets": [
+    {
+      "page": "journal",
+      "prompt": "Open blank linen notebook and pen",
+      "files": [
+        "public/illustrations/pages/journal-v1-360.webp",
+        "public/illustrations/pages/journal-v1-720.webp"
+      ]
+    },
+    {
+      "page": "parcours",
+      "prompt": "A winding small stone path through a lush sage-green garden with young plants, leading toward gentle sunrise, metaphor for gradual progress. No grand palace, no people.",
+      "files": [
+        "public/illustrations/pages/parcours-v1-360.webp",
+        "public/illustrations/pages/parcours-v1-720.webp"
+      ]
+    },
+    {
+      "page": "lecture",
+      "prompt": "An open unlettered book on a carved wooden reading stand, beside an olive branch and a ceramic cup, soft window light. Blank indistinct pages with absolutely no readable writing.",
+      "files": [
+        "public/illustrations/pages/lecture-v1-360.webp",
+        "public/illustrations/pages/lecture-v1-720.webp"
+      ]
+    },
+    {
+      "page": "coach",
+      "prompt": "Two inviting sage linen armchairs angled toward each other in a calm warm study, small round table with an open blank notebook between them, gentle sunlight, suggesting thoughtful conversation. No people.",
+      "files": [
+        "public/illustrations/pages/coach-v1-360.webp",
+        "public/illustrations/pages/coach-v1-720.webp"
+      ]
+    },
+    {
+      "page": "aide",
+      "prompt": "Edited to show a white person's fair hands and a mixed-race person's medium tan hands supporting the seedling together.",
+      "files": [
+        "public/illustrations/pages/aide-v1-360.webp",
+        "public/illustrations/pages/aide-v1-720.webp"
+      ]
+    },
+    {
+      "page": "profil",
+      "prompt": "An elegant oval mirror with natural oak frame on an ivory wall, one sprig of leaves in a small ceramic vase, quiet space for personal reflection. Mirror reflects only light and a plain wall, no people.",
+      "files": [
+        "public/illustrations/pages/profil-v1-360.webp",
+        "public/illustrations/pages/profil-v1-720.webp"
+      ]
+    },
+    {
+      "page": "offres",
+      "prompt": "Three refined cream linen-bound unlettered books of different thicknesses, softly staggered on natural wood beside a small plant. Suggest learning programmes, premium restrained still life, not money.",
+      "files": [
+        "public/illustrations/pages/offres-v1-360.webp",
+        "public/illustrations/pages/offres-v1-720.webp"
+      ]
+    },
+    {
+      "page": "securite",
+      "prompt": "A simple small matte brass padlock securely closed on a cream linen journal, an olive branch beside it, warm daylight, privacy and protection. Not a bank vault.",
+      "files": [
+        "public/illustrations/pages/securite-v1-360.webp",
+        "public/illustrations/pages/securite-v1-720.webp"
+      ]
+    },
+    {
+      "page": "connexion",
+      "prompt": "A welcoming open sage-green wooden garden gate with a sunlit path and small young plants beyond, beginning a personal journey. Eye-level, no people, no buildings.",
+      "files": [
+        "public/illustrations/pages/connexion-v1-360.webp",
+        "public/illustrations/pages/connexion-v1-720.webp"
+      ]
+    },
+    {
+      "page": "reglages",
+      "prompt": "A neatly arranged mechanical hourglass with pale sand, a simple unnumbered round clock and a small olive twig on an ivory desk, personal rhythm and preferences. No readable clock numbers.",
+      "files": [
+        "public/illustrations/pages/reglages-v1-360.webp",
+        "public/illustrations/pages/reglages-v1-720.webp"
+      ]
+    },
+    {
+      "page": "administration",
+      "prompt": "A neat wooden desk with organised blank ivory index cards in a shallow wooden tray, a closed sage notebook, a small seedling, calm orderly workspace. No screens, no numbers, no people.",
+      "files": [
+        "public/illustrations/pages/administration-v1-360.webp",
+        "public/illustrations/pages/administration-v1-720.webp"
+      ]
+    },
+    {
+      "page": "reprise",
+      "prompt": "A small young plant growing beside a gently curving stone garden path after light rain, soft morning sunlight, a clear quiet route ahead suggesting starting again, no people.",
+      "files": [
+        "public/illustrations/pages/reprise-v1-360.webp",
+        "public/illustrations/pages/reprise-v1-720.webp"
+      ]
+    }
+  ]
+}

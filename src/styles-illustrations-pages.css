@@ -1,0 +1,7 @@
+/* Même collection sans texte pour les pages FR et EN. */
+img.page-illustration { display:block;width:100%;height:auto;aspect-ratio:2.35;object-fit:cover;object-position:center;margin:20px 0 24px;border-radius:18px;background:var(--vivant-sauge);border:1px solid var(--vivant-ligne); }
+.bb-page > img.page-illustration,.bl-page > img.page-illustration { width:calc(100% - 40px);margin-left:20px;margin-right:20px; }
+.admin-maquette > img.page-illustration { max-height:160px; }
+.coach-page > img.page-illustration { aspect-ratio:3;max-height:150px; }
+.bb-page-lecture > img.page-illustration { display:none; }
+@media(max-width:420px){img.page-illustration{aspect-ratio:2.05;border-radius:14px}}

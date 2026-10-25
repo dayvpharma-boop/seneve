@@ -124,3 +124,5 @@ import './styles-preferences.css';
 
 import './styles-avatar-participant.css';
 import './styles-espace-vivant.css';
+
+import './styles-illustrations-pages.css';
