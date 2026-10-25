@@ -1,6 +1,7 @@
 -- Essai de l'API EXISTANTE sur seneve-test, données fictives exclusivement.
 -- Tout est annulé par rollback ; aucun contenu approuvé ni compte réel conservé.
 begin;
+create temporary table hd_payment_baseline as select count(*) n from seneve.payment_events;
 
 
 create temporary table hd_integration_ids as select
@@ -91,6 +92,7 @@ do $$declare i record;begin select * into i from hd_integration_ids;
 end$$;
 reset role;
 do $$declare i record;begin select * into i from hd_integration_ids;
+ if(select count(*)from seneve.payment_events)<>(select n from hd_payment_baseline)then raise exception 'Événement de paiement créé';end if;
  if(select count(*)from seneve.entitlements where participant_id=i.pa)<>1 then raise exception 'Doublon de droit';end if;
  if(select count(*)from seneve.hd_access_periods where participant_id=i.pa)<>1 then raise exception 'Doublon de période';end if;
 
