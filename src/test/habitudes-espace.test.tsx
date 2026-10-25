@@ -67,3 +67,10 @@ it('le choix de jour ne propose que les journées ouvertes et change les textes'
  expect(select.querySelectorAll('option')).toHaveLength(2);fireEvent.change(select,{target:{value:'1'}});
  await screen.findByRole('heading',{name:'Mes activités — jour 1'});expect(document.querySelectorAll('.hd-lecture')).toHaveLength(3);expect(appels).toHaveLength(0);
 });
+
+it('ouvre la journée selon la préférence du participant plutôt que Kinshasa',async()=>{
+ tables.participants=[{prenom:'RECETTE',fuseau:'Etc/GMT+12',preferences:{rappels:{fuseau:'Pacific/Kiritimati'}}}];
+ (tables.enrollments![0] as Record<string,unknown>).date_debut='2026-10-26';
+ render(<MemoryRouter><Espace/></MemoryRouter>);expect(await screen.findAllByRole('button',{name:'J’ai réalisé cette activité'})).toHaveLength(3);
+ expect(screen.getByRole('combobox',{name:'Jour du parcours'})).toHaveValue('1');
+});
