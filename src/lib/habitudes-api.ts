@@ -36,7 +36,8 @@ export async function enregistrerHabitude(transport: TransportProgression, occur
   if(!data || typeof data!=='object') throw new Error('Confirmation serveur absente');
   const r=data as Record<string,unknown>;
   if(typeof r.event_id!=='string' || !UUID.test(r.event_id) || typeof r.etat!=='string' || !ETATS.has(r.etat) || typeof r.aide_demandee!=='boolean' || typeof r.repetition!=='boolean') throw new Error('Confirmation serveur invalide');
-  const rang:Record<string,number>={non_commencee:0,preparee:1,partielle:2,realisee:3};
-  if(action==='aide_demandee' ? !r.aide_demandee : rang[r.etat]<rang[action]) throw new Error('Action non confirmée par le serveur');
-  return {event_id:r.event_id,repetition:r.repetition,etat:{...occurrence,etat:r.etat as EtatOccurrence['etat'],aide_demandee:r.aide_demandee,synchronisation:'synchronise'}};
+  const rang:Record<EtatOccurrence['etat'],number>={non_commencee:0,preparee:1,partielle:2,realisee:3};
+  const etatConfirme=r.etat as EtatOccurrence['etat'];
+  if(action==='aide_demandee' ? !r.aide_demandee : rang[etatConfirme]<rang[action]) throw new Error('Action non confirmée par le serveur');
+  return {event_id:r.event_id,repetition:r.repetition,etat:{...occurrence,etat:etatConfirme,aide_demandee:r.aide_demandee,synchronisation:'synchronise'}};
 }
