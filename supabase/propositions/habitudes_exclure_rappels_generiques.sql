@@ -33,7 +33,7 @@ SELECT EXISTS (
   WHERE st.enrollment_id=e.enrollment_id AND c.jour=ct.jour AND st.etat IN ('preparee','realisee')
  ))
 );
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION seneve.claim_push_reminders(p_limite integer DEFAULT 50)
  RETURNS TABLE(communication_id uuid, moment text, langue text, appareils jsonb, tentatives integer)
@@ -112,7 +112,7 @@ begin
                      from seneve.push_appareils a where a.participant_id = e.participant_id), '[]'::jsonb),
          pris.tentatives
     from pris join seneve.enrollments e on e.enrollment_id = pris.enrollment_id;
-end $function$
+end $function$;
 
 CREATE OR REPLACE FUNCTION seneve.claim_morning_emails(p_limite integer DEFAULT 20)
  RETURNS TABLE(communication_id uuid, email text, prenom text, langue text, jour integer, duree integer, theme text, programme text, tentatives integer)
@@ -186,4 +186,5 @@ begin
     join auth.users u on u.id = p.auth_user_id
     join seneve.programmes pr on pr.programme_id = e.programme_id
     join seneve.contents c on c.content_id = pris.content_id;
-end $function$
+end $function$;
+
