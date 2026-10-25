@@ -63,7 +63,7 @@ do $$declare i record;r jsonb;r2 jsonb;begin select * into i from hd_integration
  if(r2->>'cree')::boolean or not(r2->>'existant')::boolean or r2->>'entitlement_id'<>r->>'entitlement_id' or r2->>'fin_exclue'<>r->>'fin_exclue' then raise exception 'Rejeu a créé ou prolongé le droit';end if;
 end$$;
 reset role;
-update seneve.enrollments set participant_id=(select pa from hd_integration_ids)where enrollment_id in(select eb from hd_integration_ids);
+update seneve.enrollments set etat='annulee',participant_id=(select pa from hd_integration_ids)where enrollment_id in(select eb from hd_integration_ids);
 set local role service_role;
 do $$declare i record;r jsonb;begin select * into i from hd_integration_ids;
  r:=seneve.hd_open_free_period(i.eb,i.programme||'_FREE');
@@ -78,7 +78,7 @@ do $$declare i record;r jsonb;begin select * into i from hd_integration_ids;
 end$$;
 reset role;
 -- Un deuxième participant ne peut ouvrir à une date de début future.
-update seneve.enrollments set participant_id=(select pb from hd_integration_ids),date_debut=(now()at time zone 'Africa/Kinshasa')::date+1,date_fin_prevue=(now()at time zone 'Africa/Kinshasa')::date+2 where enrollment_id in(select eb from hd_integration_ids);
+update seneve.enrollments set etat='active',participant_id=(select pb from hd_integration_ids),date_debut=(now()at time zone 'Africa/Kinshasa')::date+1,date_fin_prevue=(now()at time zone 'Africa/Kinshasa')::date+2 where enrollment_id in(select eb from hd_integration_ids);
 set local role service_role;
 do $$declare i record;r jsonb;begin select * into i from hd_integration_ids;
  r:=seneve.hd_open_free_period(i.eb,i.programme||'_FREE');
