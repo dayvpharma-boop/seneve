@@ -128,7 +128,7 @@ const TEXTES = {
     telephone: <><strong>On your phone</strong>, the site also keeps a little information: a copy of your day to read without a network, a note draft and the root chosen in the test. It stays on your device and is deleted when you sign out or clear your browser data.</>,
     pub: <><strong>No advertising, no reselling.</strong> SÉNEVÉ uses no advertising tracking tool and never sells your data.</>,
     s3: '3. Your consent to messages', canal: 'Each channel has its own consent: WhatsApp, email and calls.',
-    retirer: (m: React.ReactNode) => <>You can withdraw your consent at any time: on WhatsApp, write <strong>STOP</strong> to stop everything, or <strong>PAUSE</strong> and <strong>ARRÊTER</strong> for a single journey; for the morning email, go to your space, “Morning email” section; in every case, you can write to {m}.</>,
+    retirer: (m: React.ReactNode) => <>You can withdraw your consent at any time: on WhatsApp, write <strong>STOP</strong> to stop everything, or <strong>PAUSE</strong> and <strong>QUIT</strong> for a single journey; for the morning email, go to your space, “Morning email” section; in every case, you can write to {m}.</>,
     apresStop: 'After a STOP, we do not write to you again automatically.',
     s4: '4. Who is your data shared with?', prestataires: 'We work with technical providers. Each receives only what is needed for its service.', lieu: 'Location:',
     horsPays: 'Some of these providers process data outside your country. We do not share your data with anyone else, unless the law requires it.',
