@@ -1,3 +1,4 @@
+import {effacerSaisiesHabitudes} from './habitudes-saisie';
 /** Consultation hors connexion de l'espace : dernière copie des journées déjà chargées, sur cet appareil. */
 import { useEffect, useState } from 'react';
 import {effacerProfils} from './profil';
@@ -18,6 +19,7 @@ export function lireEspace<T>(userId: string): { le: string; donnees: T } | null
 /** À la déconnexion : aucune copie ne reste sur l'appareil. */
 export function effacerEspaces(): void {
   effacerProfils();
+  effacerSaisiesHabitudes();
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
       const k = localStorage.key(i);
@@ -52,3 +54,4 @@ export function enregistrerServiceWorker(): void {
   });
   window.addEventListener('load', () => { void navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch(() => undefined); });
 }
+
