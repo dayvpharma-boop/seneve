@@ -51,5 +51,19 @@ it('le parcours en pause bloque les trois déclarations',async()=>{
 });
 it('une copie hors connexion ne propose pas de déclaration',async()=>{
  vi.spyOn(window.navigator,'onLine','get').mockReturnValue(false);render(<MemoryRouter><Espace/></MemoryRouter>);
- await screen.findByText('Copie hors connexion — les déclarations sont indisponibles ici.');expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();expect(appels).toHaveLength(0);
+ await screen.findByText('Copie hors connexion — la lecture et les déclarations sont indisponibles ici.');expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();expect(appels).toHaveLength(0);
+});
+
+it('ouvrir une lecture conserve le texte entier et ne déclare aucune activité',async()=>{
+ (tables.contents![0] as Record<string,unknown>).texte_officiel='Texte fictif de recette.\n\nIndication de mouvement conservée.\nFin du texte fictif.';
+ render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('heading',{name:'Mes activités du jour'});
+ const lectures=document.querySelectorAll('.hd-lecture');expect(lectures).toHaveLength(3);
+ fireEvent.click(lectures[0]!.querySelector('summary')!);
+ expect(lectures[0]!.querySelector('article')!.textContent).toBe('Texte fictif de recette.\n\nIndication de mouvement conservée.\nFin du texte fictif.');expect(appels).toHaveLength(0);
+});
+it('le choix de jour ne propose que les journées ouvertes et change les textes',async()=>{
+ (tables.enrollments![0] as Record<string,unknown>).date_debut='2026-10-24';
+ render(<MemoryRouter><Espace/></MemoryRouter>);const select=await screen.findByRole('combobox',{name:'Jour du parcours'});
+ expect(select.querySelectorAll('option')).toHaveLength(2);fireEvent.change(select,{target:{value:'1'}});
+ await screen.findByRole('heading',{name:'Mes activités — jour 1'});expect(document.querySelectorAll('.hd-lecture')).toHaveLength(3);expect(appels).toHaveLength(0);
 });
