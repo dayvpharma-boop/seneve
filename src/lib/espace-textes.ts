@@ -62,6 +62,9 @@ export const ESPACE_TEXTES = {
     ongletPause: 'En pause',
     ongletTermine: 'Terminé',
     ongletJour: (n: number) => `Jour ${n} en cours`,
+    // Écran du jour identique en anglais (25/10/2026) : mêmes repères courts qu’en français.
+    jourCourt: (n: number) => `J${n}`,
+    nombreEtapes: (n: number) => n === 1 ? '1 étape' : `${n} étapes`,
   },
   en: {
     locale: 'en-GB',
@@ -121,6 +124,8 @@ export const ESPACE_TEXTES = {
     ongletPause: 'Paused',
     ongletTermine: 'Completed',
     ongletJour: (n: number) => `Day ${n} in progress`,
+    jourCourt: (n: number) => `D${n}`,
+    nombreEtapes: (n: number) => n === 1 ? '1 step' : `${n} steps`,
   },
 } as const;
 

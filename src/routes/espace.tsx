@@ -347,7 +347,6 @@ function EspaceDuCompte({ userId }: { userId: string }) {
 
   const choisirJour = (n: number) => { setSelected(n); setTousJours(false); };
   const ouvrirMoment = (n: number) => navigate(`/espace?parcours=${enr.enrollment_id}&jour=${current}&moment=${n}`, { state: { depuisAujourdhui: true } });
-  const jourSemaine = (n: number) => new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'short' }).format(dateDuJour(enr.date_debut, n));
 
   // Tuiles des jours : la semaine du jour affiché (7 jours), ou tous les jours sur demande.
   const debutSemaine = Math.floor((current - 1) / 7) * 7 + 1;
@@ -363,7 +362,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       const classe = ['day-tile', auj && 'is-today', fait && 'is-done', !ouvert && 'is-locked', n === current && !auj && 'is-selected'].filter(Boolean).join(' ');
       return <button type="button" key={n} className={classe} aria-label={nom} aria-pressed={ouvert ? n === current : undefined} disabled={!ouvert} onClick={() => choisirJour(n)}>
         {horsLigne ? <><span className="offline-rond" aria-hidden="true">{!ouvert ? <IconeJournee nom="lock" taille={16} /> : fait ? <IconeJournee nom="check" taille={18} /> : n}</span><span className="offline-jour" aria-hidden="true">{auj ? T.auj : `J${n}`}</span></> : <>
-        <span className="tile-wd" aria-hidden="true">{enr.langue==='en'?jourSemaine(n):`J${n}`}</span>
+        <span className="tile-wd" aria-hidden="true">{T.jourCourt(n)}</span>
         <b aria-hidden="true">{n}</b>
         {auj ? <em aria-hidden="true">{T.auj}</em> : !ouvert ? <IconeJournee nom="lock" taille={16} /> : fait ? <IconeJourneeSuite nom="check_circle_fill" taille={16} /> : <span className="tile-vide" aria-hidden="true" />}
         </>}
@@ -393,12 +392,12 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       {horsLigne ? <p className="offline-progression-compte">{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p> : finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
     </section>}
     {paused && !horsLigne && <PauseParcours langue={enr.langue} inscription={enr.enrollment_id}/>}
-    {paused && (horsLigne||enr.langue==='en') && <p className="muted" role="status">{T.pause}</p>}
+    {paused && horsLigne && <p className="muted" role="status">{T.pause}</p>}
     {cloture && <p className="muted" role="status">{T.cloture}</p>}
     <section className="today-section" aria-labelledby="titre-journee">
       <div className="sec-head">
-        <div className="sec-titre"><h2 id="titre-journee"><IconeJournee nom="menu_book" taille={22} />{estAujourdhui ? T.taJournee : T.jour(current)}</h2><p className="moment-compte">{enr.langue==='en'?T.nombreMoments(moments.length):`${moments.length} ${moments.length===1?'étape':'étapes'}`}</p></div>
-        <button type="button" className="link" aria-label={T.tousLesJours} aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}>{enr.langue==='en'?T.tousLesJours:<IconeJourneeSuite nom="swap_horiz" taille={18}/>}</button>
+        <div className="sec-titre"><h2 id="titre-journee"><IconeJournee nom="menu_book" taille={22} />{estAujourdhui ? T.taJournee : T.jour(current)}</h2><p className="moment-compte">{T.nombreEtapes(moments.length)}</p></div>
+        <button type="button" className="link" aria-label={T.tousLesJours} aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}><IconeJourneeSuite nom="swap_horiz" taille={18}/></button>
       </div>
       {/* Nouvelle liste à chaque jour choisi : elle repart de la carte du matin (et non de la carte vue avant). */}
       <ul key={`rail-${enr.enrollment_id}-${current}`} className={moments.length > 1 ? 'moment-rail' : 'moment-rail is-seul'}>
@@ -407,7 +406,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
           return <li key={m.content.content_id}>
             <article className={m.ouvert ? 'moment-tuile' : 'moment-tuile is-closed'} data-periode={m.periode} aria-label={`${T.moment(m.n, m.heure)} — ${m.content.theme}`}>
               <div className="moment-head">
-                {(m.heure || moments.length > 1) ? <span className="time-chip"><IconeJournee nom={m.periode === "matin" ? "wb_sunny" : m.periode === "soir" ? "bedtime" : "schedule"} taille={16} />{enr.langue==='en'?T.moment(m.n,m.heure):m.heure?`${T.periodes[m.periode]} · ${T.moment(m.n,m.heure)}`:T.moment(m.n,null)}</span> : <IconeMaquette nom="menu_book" taille={20} />}
+                {(m.heure || moments.length > 1) ? <span className="time-chip"><IconeJournee nom={m.periode === "matin" ? "wb_sunny" : m.periode === "soir" ? "bedtime" : "schedule"} taille={16} />{m.heure?`${T.periodes[m.periode]} · ${T.moment(m.n,m.heure)}`:T.moment(m.n,null)}</span> : <IconeMaquette nom="menu_book" taille={20} />}
                 {m.ouvert ? <span className="dispo-chip">{enr.langue === 'en' ? 'Available' : 'Disponible'}</span> : <IconeJournee nom="lock_clock" taille={22} />}
               </div>
               <h3 id={id}>{m.content.theme}</h3>
@@ -455,7 +454,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     {!horsLigne && <div className="coach-boutons coach-permanent"><Link className="btn btn-link" to={`/coach?inscription=${enr.enrollment_id}`}><IconeJourneeSuite nom="chat" taille={20}/>{R.coach}</Link></div>}
 
     {invitations.length > 0 && <section className="today-section" aria-labelledby="titre-ecrire">
-      <h2 id="titre-ecrire"><IconeJournee nom={enr.langue==='en'?(current===1?"history_edu":"stylus_note"):"menu_book"} taille={22} />{T.ecrireJournal}</h2>
+      <h2 id="titre-ecrire"><IconeJournee nom="menu_book" taille={22} />{T.ecrireJournal}</h2>
       {horsLigne && question ? <BrouillonHorsLigne userId={userId} key={`${userId}:${question.activity_id}`} activite={question.activity_id} lien={lienJournal(question)} question={question.consigne} langue={enr.langue} /> : invitations.map((x, k) => <div key={x.q.activity_id} className={k === 0 ? 'prompt-carte' : 'prompt-carte is-passe'}>
         <p className="tag">{x.libelle}</p>
         <p className="prompt-question" id={`question-${x.jour}`}>{x.q.consigne}</p>
@@ -467,7 +466,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     {!horsLigne && <details className="repli"><summary>{T.plusLoin}<IconeRegistre nom="expand_more"/></summary><RepereParcours contexte="journee" langue={enr.langue}/></details>}
     {!horsLigne && reglages(enr.langue,true,true)}
     {footer(enr.langue)}
-  </>, horsLigne ? 'espace-horsligne' : `${enr.langue==='en'?'':'journee-nouvelle'} ${data.parcours.length>1?'journee-multiple':''} ${paused?'journee-pause':''} ${total>14?'journee-longue':''} ${current===1?'espace-premier-jour':''}`);
+  </>, horsLigne ? 'espace-horsligne' : `journee-nouvelle ${data.parcours.length>1?'journee-multiple':''} ${paused?'journee-pause':''} ${total>14?'journee-longue':''} ${current===1?'espace-premier-jour':''}`);
 }
 
 /** Illustration originale SÉNEVÉ, décorative ; deux formats locaux pour les connexions faibles. */

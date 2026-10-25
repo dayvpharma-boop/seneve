@@ -87,6 +87,9 @@ describe('Espace avec plusieurs parcours', () => {
     expect(document.title).toBe('My space — SÉNEVÉ');
     // Coach permanent dans les deux langues (décision du 25/10/2026).
     expect(screen.getByRole('link', { name: 'Talk to the coach' })).toHaveAttribute('href', '/coach?inscription=EN');
+    // Même présentation qu’en français : le coach se trouve au même endroit dans les deux langues (25/10/2026).
+    expect(document.querySelector('main')).toHaveClass('journee-nouvelle');
+    expect(screen.getByText('D2')).toBeInTheDocument();
   });
 
   it('plusieurs parcours anglais : onglets en anglais (inventaire FR/EN du 25/10/2026)', async () => {
