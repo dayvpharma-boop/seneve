@@ -1,0 +1,15 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+class Element{constructor(){this.children=[];this.value='';this.attrs={};}append(...c){this.children.push(...c)}replaceChildren(...c){this.children=c}setAttribute(k,v){this.attrs[k]=v}reportValidity(){return Boolean(this.value)}}
+const nodes=new Map();const document={documentElement:{lang:'fr'},getElementById(id){if(!nodes.has(id))nodes.set(id,new Element());return nodes.get(id)},createElement(){return new Element()}};
+document.getElementById('date').value='2026-10-25';document.getElementById('timezone').value='Africa/Kinshasa';
+const html=fs.readFileSync(__dirname+'/index.html','utf8'),script=html.match(/<script>([\s\S]*?)<\/script>/)[1],ctx=vm.createContext({document,Date,Map});vm.runInContext(script,ctx);
+function run(code){return vm.runInContext(code,ctx)}
+assert.equal(run('visible().length'),14);run("change(habits.find(h=>h.id==='prayer_am'),3,false)");assert.equal(run("state(habits.find(h=>h.id==='prayer_noon')).step"),0);
+run("change(habits.find(h=>h.id==='prayer_noon'),null,true)");assert.equal(run("state(habits.find(h=>h.id==='prayer_noon')).step"),0);assert.equal(run("state(habits.find(h=>h.id==='prayer_noon')).help"),true);
+run("$('date').value='2026-10-26'; renderCards()");assert.equal(run('visible().length'),13);assert.equal(run('visible().filter(h=>state(h).step===3).length'),0);
+run("$('date').value='2026-10-25'; renderCards()");assert.equal(run('visible().filter(h=>state(h).step===3).length'),1);
+// The DOM adapter does not resolve generated ids: simulate entered time values explicitly.
+run("for(const h of habits)$('schedule_'+h.id).value=h.time; $('schedule_prayer_am').value='07:15'; $('apply').onclick()");assert.equal(run("habits.find(h=>h.id==='prayer_am').time"),'07:15');assert.equal(run('visible().filter(h=>state(h).step===3).length'),1);
+run("lang='en';render()");assert.match(document.getElementById('total').textContent,/1 of 14/);assert.equal(document.documentElement.lang,'en');
+run("$('reset').onclick()");assert.equal(run("habits.find(h=>h.id==='prayer_am').time"),'06:00');assert.equal(run('visible().filter(h=>state(h).step===3).length'),1);
+assert(!/fetch\(|localStorage|sessionStorage|supabase\./.test(script));console.log('PASS: occurrences by weekday; independent prayers; help separate; dates isolated; time edits and reset preserve progress; FR/EN; no persistence/network. DOM adapter only; browser rendering unverified.');
