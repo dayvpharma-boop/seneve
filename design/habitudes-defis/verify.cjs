@@ -4,7 +4,7 @@ const nodes=new Map();const document={documentElement:{lang:'fr'},getElementById
 document.getElementById('date').value='2026-10-25';document.getElementById('timezone').value='Africa/Kinshasa';
 const html=fs.readFileSync(__dirname+'/index.html','utf8'),script=html.match(/<script>([\s\S]*?)<\/script>/)[1],ctx=vm.createContext({document,Date,Map});vm.runInContext(script,ctx);
 function run(code){return vm.runInContext(code,ctx)}
-assert.equal(run('visible().length'),14);run("change(habits.find(h=>h.id==='prayer_am'),3,false)");assert.equal(run("state(habits.find(h=>h.id==='prayer_noon')).step"),0);
+assert.equal(run('visible().length'),14); assert.equal(run('habits.every(h=>activityContent.fr[h.id]?.length===2 && activityContent.en[h.id]?.length===2)'),true); assert.match(document.getElementById('challenge').children[1].textContent,/15 minutes/);run("change(habits.find(h=>h.id==='prayer_am'),3,false)");assert.equal(run("state(habits.find(h=>h.id==='prayer_noon')).step"),0);
 run("change(habits.find(h=>h.id==='prayer_noon'),null,true)");assert.equal(run("state(habits.find(h=>h.id==='prayer_noon')).step"),0);assert.equal(run("state(habits.find(h=>h.id==='prayer_noon')).help"),true);
 run("$('date').value='2026-10-26'; renderCards()");assert.equal(run('visible().length'),13);assert.equal(run('visible().filter(h=>state(h).step===3).length'),0);
 run("$('date').value='2026-10-25'; renderCards()");assert.equal(run('visible().filter(h=>state(h).step===3).length'),1);
