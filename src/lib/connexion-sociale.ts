@@ -6,7 +6,8 @@ import { siteUrl, supabase } from './supabase';
  * tant qu'un fournisseur n'est pas configuré, il reste absent de la page plutôt que d'afficher une erreur.
  */
 export type Fournisseur = 'google' | 'facebook';
-export const FOURNISSEURS_ACTIFS: readonly Fournisseur[] = [];
+// Google activé dans Supabase (seneve-prod) le 25/10/2026, vérifié par /auth/v1/settings ; Facebook pas encore.
+export const FOURNISSEURS_ACTIFS: readonly Fournisseur[] = ['google'];
 
 /** Prénom à partir du compte : prénom saisi à l'inscription, sinon celui transmis par Google ou Facebook. */
 export function prenomDuCompte(meta: Record<string, unknown> | undefined | null): string {

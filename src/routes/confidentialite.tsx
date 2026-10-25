@@ -9,15 +9,16 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 // Kinshasa, RDC ; contact@drjustintshims.com ; durées de conservation proposées acceptées ; 18 ans).
 // Toute modification du texte doit être validée et faire changer la date ci-dessous.
 // Traduction anglaise du 22/10/2026 (?lang=en) : fidèle au texte français, qui fait foi.
-export const DATE_POLITIQUE = '18 octobre 2026';
-const DATE_POLITIQUE_EN = '18 October 2026';
+// 25/10/2026 : ajout de la connexion avec Google (à valider par Dr Justin Tshims).
+export const DATE_POLITIQUE = '25 octobre 2026';
+const DATE_POLITIQUE_EN = '25 October 2026';
 const CONTACT = 'contact@drjustintshims.com';
 
 type Donnee = { quoi: string; donnees: string; pourquoi: string };
 const DONNEES: Record<'fr' | 'en', Donnee[]> = {
   fr: [
     { quoi: 'Test des 7 Racines (sans compte)', donnees: 'Tes réponses, le résultat, la langue et la date. Nous ne te demandons ni nom ni e-mail pour faire le test.', pourquoi: 'Calculer et afficher ton résultat ; compter de façon anonyme combien de personnes font le test.' },
-    { quoi: 'Créer ton espace', donnees: 'Adresse e-mail, mot de passe (chiffré : nous ne le voyons jamais), prénom, langue, fuseau horaire.', pourquoi: 'Te permettre de te connecter et de retrouver ton parcours.' },
+    { quoi: 'Créer ton espace', donnees: 'Adresse e-mail, mot de passe (chiffré : nous ne le voyons jamais), prénom, langue, fuseau horaire. Si tu choisis « Continuer avec Google », Google nous transmet ton nom, ton adresse e-mail et ta photo de profil ; nous ne recevons jamais ton mot de passe Google.', pourquoi: 'Te permettre de te connecter et de retrouver ton parcours.' },
     { quoi: 'Suivre un parcours', donnees: 'Parcours suivi, jour en cours, actions réalisées ou préparées, réponses à « Qu’est-ce qui t’a freiné ? », objectif choisi.', pourquoi: 'Te montrer le bon contenu chaque jour et ta progression.' },
     { quoi: 'Écrire dans ton journal', donnees: 'Le texte de tes notes.', pourquoi: 'Les garder pour toi. Tes notes sont privées : elles ne sont jamais utilisées pour la publicité. Le coach ne les lit que si tu choisis de les partager avec lui.' },
     { quoi: 'Parler au coach IA', donnees: 'Tes questions, les réponses du coach et les notes que tu as choisi de partager.', pourquoi: 'Te répondre. Le coach est une intelligence artificielle, pas une personne.' },
@@ -28,7 +29,7 @@ const DONNEES: Record<'fr' | 'en', Donnee[]> = {
   ],
   en: [
     { quoi: '7 Roots Test (without an account)', donnees: 'Your answers, the result, the language and the date. We do not ask for your name or email to take the test.', pourquoi: 'Calculate and show your result; count anonymously how many people take the test.' },
-    { quoi: 'Creating your space', donnees: 'Email address, password (encrypted: we never see it), first name, language, time zone.', pourquoi: 'Let you sign in and find your journey.' },
+    { quoi: 'Creating your space', donnees: 'Email address, password (encrypted: we never see it), first name, language, time zone. If you choose “Continue with Google”, Google sends us your name, email address and profile photo; we never receive your Google password.', pourquoi: 'Let you sign in and find your journey.' },
     { quoi: 'Following a journey', donnees: 'Journey followed, current day, actions completed or prepared, answers to “What held you back?”, chosen goal.', pourquoi: 'Show you the right content each day and your progress.' },
     { quoi: 'Writing in your journal', donnees: 'The text of your notes.', pourquoi: 'Keep them for you. Your notes are private: they are never used for advertising. The coach only reads them if you choose to share them with it.' },
     { quoi: 'Talking to the AI coach', donnees: 'Your questions, the coach’s answers and the notes you chose to share.', pourquoi: 'Answer you. The coach is an artificial intelligence, not a person.' },
@@ -44,6 +45,7 @@ const PRESTATAIRES: Record<'fr' | 'en', [string, string, string][]> = {
     ['Supabase', 'Base de données et comptes', 'Union européenne (Irlande)'],
     ['n8n, sur un serveur Hostinger', 'Automatisations : messages, paiements, sauvegardes', 'Selon Hostinger'],
     ['Google (Sheets, Drive)', 'Suivi des inscriptions et des messages WhatsApp ; sauvegardes chiffrées', 'Selon Google'],
+    ['Google (connexion)', 'Connexion à ton espace avec ton compte Google, si tu la choisis', 'Selon Google'],
     ['Meta (WhatsApp Business)', 'Envoi et réception des messages WhatsApp', 'Selon Meta'],
     ['Chariow', 'Paiement des achats', 'Selon Chariow'],
     ['OpenAI', 'Réponses du coach IA', 'États-Unis'],
@@ -55,6 +57,7 @@ const PRESTATAIRES: Record<'fr' | 'en', [string, string, string][]> = {
     ['Supabase', 'Database and accounts', 'European Union (Ireland)'],
     ['n8n, on a Hostinger server', 'Automations: messages, payments, backups', 'As set by Hostinger'],
     ['Google (Sheets, Drive)', 'Tracking of sign-ups and WhatsApp messages; encrypted backups', 'As set by Google'],
+    ['Google (sign-in)', 'Signing in to your space with your Google account, if you choose it', 'As set by Google'],
     ['Meta (WhatsApp Business)', 'Sending and receiving WhatsApp messages', 'As set by Meta'],
     ['Chariow', 'Payment for purchases', 'As set by Chariow'],
     ['OpenAI', 'AI coach answers', 'United States'],
