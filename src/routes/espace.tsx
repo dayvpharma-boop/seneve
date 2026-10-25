@@ -54,7 +54,7 @@ const loadError = (langue?: string | null) => LOAD_ERRORS[langue === 'en' ? 'en'
 
 
 /** Charge les données du participant connecté. Renvoie null s'il n'y a pas de session. */
-async function load(): Promise<Data | null> {
+async function load(langueDemandee: string | null): Promise<Data | null> {
   const { data: s } = await supabase.auth.getSession();
   if (!s.session) return null;
   const user = s.session.user;
@@ -66,13 +66,25 @@ async function load(): Promise<Data | null> {
   await Promise.resolve(supabase.rpc('claim_my_purchases')).catch(() => undefined);
   const [p, e] = await Promise.all([
     supabase.from('participants').select('prenom').maybeSingle(),
-    // Un parcours arrêté n'est pas affiché ; son historique reste conservé en base.
-    supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').neq('etat', 'annulee'),
+    // Lire aussi les inscriptions arrêtées pour ne jamais redémarrer un ancien parcours automatiquement.
+    supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat'),
   ]);
   if (p.error) throw p.error;
   if (e.error) throw e.error;
   const prenom = (p.data?.prenom as string | undefined) ?? meta;
-  const enrollments = (e.data ?? []) as Enrollment[];
+  const historique = (e.data ?? []) as Enrollment[];
+  let enrollments = historique.filter(x => x.etat !== 'annulee');
+  if (!historique.length) {
+    // Premier accès après inscription (mot de passe, confirmation e-mail ou Google) :
+    // ouvrir gratuitement la Découverte sans imposer un second bouton de démarrage.
+    // Le RPC serveur est idempotent et conserve la version publiée et les sept jours.
+    const langue = langueDemandee === 'en' || (langueDemandee !== 'fr' && user.user_metadata?.langue === 'en') ? 'en' : 'fr';
+    const debut = await supabase.rpc('start_discovery', { p_langue: langue });
+    if (debut.error) throw debut.error;
+    const inscriptions = await supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').neq('etat', 'annulee');
+    if (inscriptions.error) throw inscriptions.error;
+    enrollments = (inscriptions.data ?? []) as Enrollment[];
+  }
   if (!enrollments.length) return { prenom, parcours: [], contents: [], activities: [], states: [] };
   const progIds = [...new Set(enrollments.map(x => x.programme_id))];
   const [pr, c] = await Promise.all([
@@ -149,6 +161,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const [copieDu, setCopieDu] = useState<string | null>(null);
   const enLigne = useEnLigne();
 
+  const langueDemandee = params.get('lang');
   const refresh = useCallback(async () => {
     setFailed(false);
     let userId: string | null = null;
@@ -157,7 +170,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       userId = s.session?.user.id ?? null;
       setPrenomSession(typeof s.session?.user.user_metadata?.prenom === 'string' ? s.session.user.user_metadata.prenom : '');
       setLangueSession(s.session?.user.user_metadata?.langue === 'en' ? 'en' : null);
-      const loaded = await load();
+      const loaded = await load(langueDemandee);
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
       setData(loaded); setCopieDu(null);
       if (userId) enregistrerEspace(userId, loaded);
@@ -166,7 +179,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       if (copie) { setData(copie.donnees); setCopieDu(copie.le); }
       else setFailed(true);
     }
-  }, [navigate]);
+  }, [navigate, langueDemandee]);
   useEffect(() => { void refresh(); }, [refresh]);
   // Retour du réseau : on recharge les vraies données.
   const etaitHorsLigne = useRef(false);
