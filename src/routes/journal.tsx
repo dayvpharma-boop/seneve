@@ -211,4 +211,4 @@ function EntryCard({ entry, langue, onChanged }: { entry: Entry; langue: string;
   </article>;
 }
 
-function JournalImage({en,avecNotes}:{en:boolean;avecNotes:boolean}) { return <figure className="journal-image"><IllustrationPage theme="journal" /><figcaption><IconeJournal nom="spa" taille={20} /><span>{en ? 'A moment to reflect' : 'Un temps pour réfléchir'}</span></figcaption></figure>; }
+function JournalImage({en,avecNotes}:{en:boolean;avecNotes:boolean}) { return <IllustrationPage theme="journal" langue={en?'en':'fr'} />; }

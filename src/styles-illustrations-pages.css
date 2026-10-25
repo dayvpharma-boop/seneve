@@ -1,7 +1,12 @@
-/* Même collection sans texte pour les pages FR et EN. */
-img.page-illustration { display:block;width:100%;height:auto;aspect-ratio:2.35;object-fit:cover;object-position:center;margin:20px 0 24px;border-radius:18px;background:var(--vivant-sauge);border:1px solid var(--vivant-ligne); }
-.bb-page > img.page-illustration,.bl-page > img.page-illustration { width:calc(100% - 40px);margin-left:20px;margin-right:20px; }
-.admin-maquette > img.page-illustration { max-height:160px; }
-.coach-page > img.page-illustration { aspect-ratio:3;max-height:150px; }
-.bb-page-lecture > img.page-illustration { display:none; }
-@media(max-width:420px){img.page-illustration{aspect-ratio:2.05;border-radius:14px}}
+/* Cartes composées : texte lisible, photo fondue et palette commune en FR/EN. */
+:root[data-apparence] .page-illustration{display:grid;grid-template-columns:1.18fr 1fr;position:relative;isolation:isolate;overflow:hidden;margin:22px 0 28px;border-radius:24px;background:var(--vivant-sauge);border:1px solid var(--vivant-ligne);color:var(--vivant-encre);box-shadow:0 8px 24px #172b180a}
+.page-illustration .page-illustration-texte{z-index:1;padding:28px 4px 26px 24px;min-width:0}
+.page-illustration .page-illustration-repere{display:flex;align-items:center;gap:7px;font:600 10px/1.5 Outfit,sans-serif;letter-spacing:.1em;color:var(--vivant-vert);margin:0 0 18px}
+.page-illustration-repere i{width:6px;height:6px;background:currentColor;border-radius:50%;flex-shrink:0}
+.page-illustration .page-illustration-titre{font:400 clamp(24px,4vw,32px)/1.18 Lora,Georgia,serif;letter-spacing:-.025em;color:var(--vivant-encre);margin:0 0 16px}
+.page-illustration .page-illustration-note{font:400 13px/1.7 Outfit,sans-serif;color:var(--vivant-secondaire);margin:0}
+:root[data-apparence] .page-illustration>img{display:block;width:100%;height:100%;min-height:245px;max-height:none;object-fit:cover;object-position:center;mask-image:linear-gradient(90deg,transparent,#000 28%);border:0;border-radius:0;margin:0}
+:root[data-apparence] :is(.bb-page,.bl-page)>.page-illustration{width:calc(100% - 40px);margin-left:20px;margin-right:20px}
+:root[data-apparence] .bb-page-lecture>.page-illustration{display:none}
+@media(max-width:420px){.page-illustration .page-illustration-texte{padding:24px 0 24px 18px}.page-illustration .page-illustration-repere{font-size:9px;letter-spacing:.06em}.page-illustration .page-illustration-titre{font-size:25px}.page-illustration .page-illustration-note{font-size:12px}}
+@media(forced-colors:active){:root[data-apparence] .page-illustration{background:Canvas;color:CanvasText;border:1px solid CanvasText}.page-illustration :is(p,i){color:CanvasText}}

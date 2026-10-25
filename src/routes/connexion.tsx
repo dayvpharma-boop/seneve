@@ -1,4 +1,3 @@
-import { IllustrationPage } from '@/components/IllustrationPage';
 import { useEffect, useState, type FormEvent } from 'react';
 import { BoutonsConnexionSociale } from '@/components/BoutonsConnexionSociale';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -147,7 +146,7 @@ export function Connexion() {
       <Link className="auth-back" to="/" aria-label={langue === 'en' ? 'Back to the test' : 'Revenir au test'}><IconeConnexion nom="arrow_back" taille={22} /></Link>
       <span className="auth-brand"><Icone nom="graine" taille={22} /><strong>SÉNEVÉ</strong></span>
       <Link className="auth-language" to={langue === 'en' ? '/connexion?lang=fr' : '/connexion?lang=en'}><IconeConnexion nom="language" taille={16} /><span>{T.autreLangue}</span><IconeConnexion nom="expand_more" taille={16} /></Link>
-    </header><IllustrationPage theme="connexion" />
+    </header>
     <div className="auth-intro">
       <p className="auth-repere">{tab === 'signup' ? <IconeConnexion nom="bookmark" taille={14} /> : <span className="auth-point" />}{langue === 'en' ? 'One step each day' : 'Un pas chaque jour'}</p>
       <h1>{T.titre}</h1><p className="connexion-intro">{T.intro}</p>

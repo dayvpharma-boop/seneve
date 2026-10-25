@@ -78,7 +78,7 @@ function Page({ titre, retour, enfants, classe = '', reglages, droite }: { titre
       <div className="bb-tete-titre"><span>SÉNEVÉ</span><strong>{titre}</strong></div>
       {droite}
       <Link className="bb-profil" to={lien('/profil')} aria-label={t('Mon profil', 'My profile')}><AvatarParticipant><I nom="person" taille={20} /></AvatarParticipant></Link>
-    </header><IllustrationPage theme="lecture" />
+    </header>{!retour && <IllustrationPage theme="lecture" langue={langue} />}
     <div className="bb-contenu">{enfants}</div>
     <BarreNav langue={langue} maquette iconesJournee />
   </main>;

@@ -25,7 +25,7 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
    {detail?<Link to={`/bibliotheque${suffixe}`} aria-label={en?'Back to library':'Revenir à la bibliothèque'}><I nom="arrow_back"/></Link>:<img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt=""/>}
    <div><span>SÉNEVÉ</span><strong>{detail?(en?'The book':'Le livre'):(en?'Library':'Bibliothèque')}</strong></div>
    <Link className="bl-profil" to={`/profil${suffixe}`} aria-label={en?'My profile':'Mon profil'}><AvatarParticipant><I nom="person" taille={22}/></AvatarParticipant></Link>
-  </header><IllustrationPage theme="lecture" />
+  </header>{!detail && <IllustrationPage theme="bibliotheque" langue={lang} />}
   <div className="bl-contenu">
    {!detail?<>
     <div className="bl-intro"><p className="bl-label"><IconeRayonnage taille={18}/>{en?'The book and its formats':'Le livre et ses formats'}</p><h1>{en?'My library':'Ma bibliothèque'}</h1><p className="bl-soustitre">{en?'Read, listen, and walk a little further.':'Lire, écouter et avancer un peu plus loin.'}</p></div>

@@ -24,7 +24,7 @@ export function NotFound(){
     <p className="introuvable-folio">Folio 404</p>
     <section className="introuvable-centre"><div className="introuvable-embleme"><img src={`${import.meta.env.BASE_URL}illustrations/page-introuvable-graine.svg`} alt=""/></div><p className="introuvable-etiquette">{T.etiquette}</p><h1>{T.titre}</h1><p>{T.texte}</p>
     <blockquote><p>{T.citation}</p><footer><span>{T.recentrer}</span><IconeAdministration nom="auto_stories" taille={16}/></footer></blockquote></section>
-    <figure><IllustrationPage theme="reprise" /><figcaption>{T.legende}</figcaption></figure>
+    <IllustrationPage theme="reprise" langue={en?'en':'fr'} />
     <div className="introuvable-actions"><Link to={en?'/p?lang=en':'/p'} className="introuvable-principal">{T.test}<IconeAdministration nom="east" taille={20}/></Link><Link to={`/${suffixe}`} className="introuvable-accueil"><IconeAdministration nom="home" taille={18}/>{T.accueil}</Link><a href="mailto:contact@drjustintshims.com"><IconeConfidentialite nom="mail" taille={16}/>{T.aide}</a></div>
     <footer className="introuvable-signature">{T.pied}</footer>
   </main>;

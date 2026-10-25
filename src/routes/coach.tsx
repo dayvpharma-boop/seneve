@@ -113,7 +113,7 @@ export function Coach() {
 
   const en=(enrollment?.langue ?? data?.langue)==='en';
   const aideVers=enrollment ? `/aide?inscription=${enrollment.enrollment_id}` : '/aide';
-  const tete=<><header className="coach-entete"><div><Link to="/espace" aria-label={T.retour}><IconeCoach nom="arrow_back_ios_new" taille={20}/></Link><span>{en?'Coach conversation':'Conversation Coach'}</span></div><span className="coach-initiale" aria-hidden="true"><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></header><IllustrationPage theme="coach" /></>;
+  const tete=<><header className="coach-entete"><div><Link to="/espace" aria-label={T.retour}><IconeCoach nom="arrow_back_ios_new" taille={20}/></Link><span>{en?'Coach conversation':'Conversation Coach'}</span></div><span className="coach-initiale" aria-hidden="true"><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></header><IllustrationPage theme="coach" langue={en?'en':'fr'} /></>;
   if (failed && !data) return <main className="wrap coach-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;
   if (!data) return <main className="wrap coach-page">{tete}<p className="muted">{T.chargement}</p></main>;
 

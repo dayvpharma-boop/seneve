@@ -1,4 +1,3 @@
-import { IllustrationPage } from '@/components/IllustrationPage';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -43,7 +42,6 @@ export function NewPassword() {
 
   return <main className="wrap connexion auth-maquette recup-page recup-nouveau">
     <EnteteRecuperation langue={langue} nouveau />
-    <div className="recup-hero"><IllustrationPage theme="securite" /><div><span><IconeConnexion nom="shield_lock" taille={15} />{en ? 'Account security' : 'Sécurité du compte'}</span><span className="recup-hero-cle"><IconeConnexion nom="key" taille={18} /></span></div></div>
     <header className="recup-intro"><h1>{titre}</h1><p>{en ? 'Choose a new password to return to your space and your journal.' : 'Définis un nouveau mot de passe pour retrouver ton espace et ton journal.'}</p></header>
     {done ? <section className="recup-succes" aria-labelledby="titre-succes"><div className="recup-sceau"><IconeRecuperation nom="spa" taille={32} /><span><IconeRecuperation nom="check" taille={14} /></span></div><p className="recup-kicker"><IconeRecuperation nom="verified" taille={14} />{en ? 'Password updated' : 'Mot de passe modifié'}</p><h2 id="titre-succes">{en ? 'Peace on your path' : 'Paix sur ton chemin'}</h2><p role="status">{en ? 'Your password has been changed.' : 'Ton mot de passe a été modifié.'}</p><button type="button" className="btn moment-btn" onClick={() => navigate('/espace')}>{en ? 'Go to my space' : 'Aller à mon espace'}<IconeConnexion nom="arrow_forward" taille={18} /></button></section>
       : <form className="recup-form" onSubmit={submit}>

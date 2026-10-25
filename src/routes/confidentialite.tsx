@@ -157,7 +157,7 @@ export function Confidentialite() {
     <p className="muted">{T.maj(langue==='en'?DATE_POLITIQUE_EN:DATE_POLITIQUE)}</p>
     {T.traduction && <p className="muted">{T.traduction} <Link to="/confidentialite?lang=fr">Version française</Link></p>}
     </header>
-    <figure className="conf-photo"><IllustrationPage theme="securite" /><figcaption>{T.legende}</figcaption></figure>
+    <IllustrationPage theme="securite" langue={langue} />
     <section className="conf-resume" aria-labelledby="conf-resume-titre"><h2 id="conf-resume-titre"><IconeConfidentialite nom="auto_stories" taille={22}/>{T.resume}</h2><ol>
       <li><span className="conf-numero">1</span><div><h3>{T.gardons}</h3><p>{donnees[1]?.donnees}</p><p>{donnees[2]?.donnees}</p></div></li>
       <li><span className="conf-numero">2</span><div><h3>{T.jamais}</h3><p>{T.jamaisTexte}</p></div></li>
