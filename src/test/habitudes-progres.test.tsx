@@ -54,3 +54,8 @@ it('isole versions, langues, inscriptions et jours futurs',()=>{
  const jours=joursHabitudesLecture(inscription,1,[...contenus,...autres,futur,anglais],acts,[...etats,{enrollment_id:'AUTRE',activity_id:aid(2),etat:'realisee',aide_demandee:false}]);
  expect(jours).toHaveLength(1);expect(jours[0]!.bilan.realisees).toBe(1);expect(jours[0]!.activites).toHaveLength(3);expect(jours[0]!.bilan.journee).toBe('partielle');
 });
+
+it('le bilan ouvre les mêmes jours dans le fuseau personnel que l’espace',async()=>{
+ tables.participants=[{prenom:'RECETTE',langue:'fr',fuseau:'Etc/GMT+12',preferences:{rappels:{fuseau:'Pacific/Kiritimati'}}}];
+ tables.enrollments=[{...inscription,date_debut:'2026-10-26',etat:'active'}];page();expect(await screen.findByText('1 activité réalisée sur 3')).toBeInTheDocument();
+});
