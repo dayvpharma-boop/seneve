@@ -1,3 +1,4 @@
+import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {BilanHabitudes} from '@/components/BilanHabitudes';
 import {joursHabitudesLecture, type JourHabitudesLecture, type EtatLecture} from '@/lib/habitudes-lecture';
 import { IllustrationPage } from '@/components/IllustrationPage';
@@ -38,7 +39,7 @@ async function load(): Promise<Loaded | null> {
     supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', progIds),
     supabase.from('contents').select('content_id, programme_id, version, langue, jour, numero_message, theme').in('programme_id', progIds),
     supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enr.map(x => x.enrollment_id)),
-    import.meta.env.VITE_HABITUDES_DEFIS === 'true' ? supabase.from('hd_programme_links').select('programme_id, version, langue').in('programme_id',progIds) : Promise.resolve({data:[],error:null}),
+    habitudesActivees() ? supabase.from('hd_programme_links').select('programme_id, version, langue').in('programme_id',progIds) : Promise.resolve({data:[],error:null}),
   ]);
   for (const r of [pr, c, st, hd]) if (r.error) throw r.error;
   const progs = (pr.data ?? []) as { programme_id: string; nom: string; duree_jours: number | null }[];
