@@ -51,7 +51,7 @@ Aucun texte de repentance ou engagement supplémentaire n'est déclaré officiel
 
 ## Décisions encore ouvertes dans la source
 Le cahier section 16 mentionne expressément :
-1. Période mensuelle : mois calendaire ou période de 30 jours, et bornes de dates.
+1. Phase gratuite : décision explicite récente de Dr Justin, 30 jours. Les durées et bornes des périodes payantes restent à définir.
 2. Prix, produit et renouvellement des mois 2–6 ; aucun prix en brouillon ne vaut validation.
 3. Contenus, langues, médias et sources autorisées.
 4. Compteur privé : visibilité par défaut, conservation minimale, effacement et correction.
@@ -63,7 +63,7 @@ Le compteur sensible ne doit donc pas être présenté comme développé ou vali
 Le bilan mensuel ne doit pas définir arbitrairement la durée d'un mois.
 
 ## Ordre de travail restant
-- Définir les périodes du module, puis raccorder le bilan mensuel et le catalogue.
+- Appliquer les 30 jours gratuits au futur parcours d'inscription ; préciser les périodes payantes puis raccorder le bilan mensuel et le catalogue.
 - Définir la politique du compteur privé avant son développement et ses tests de confidentialité.
 - Terminer les préférences/horaires et la synchronisation, puis les circuits de publication et d'envoi.
 - Approuver les contenus, langues et droits.
@@ -71,3 +71,7 @@ Le bilan mensuel ne doit pas définir arbitrairement la durée d'un mois.
 - Préparer une version concrète et approuvée avant toute activation.
 
 Le travail préparé peut être relu et poursuivi ; le module complet ne peut pas encore être annoncé disponible.
+
+## Mise à jour après la revue
+Dr Justin a précisé « 30 jours gratuit ». La phase gratuite de 30 jours est enregistrée dans le référentiel brouillon TEST ; aucun droit n'a été créé.
+Le filtre des copies connues HD est préparé et testé, avec ses limites de classification décrites dans CACHE_HABITUDES_EXCLU_PREPARE.md.
