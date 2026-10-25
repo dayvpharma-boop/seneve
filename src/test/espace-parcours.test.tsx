@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -84,7 +84,8 @@ describe('Espace avec plusieurs parcours', () => {
     // Barre du haut, salutation et titre de l'onglet suivent le parcours affiché (test du 23/10/2026).
     expect(screen.getByRole('heading', { level: 1, name: /^Hello\b/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'My profile' })).toHaveAttribute('href', '/profil?lang=en');
-    expect(document.title).toBe('My space — SÉNEVÉ');
+    // Le titre de l’onglet est posé juste après l’affichage : on l’attend (échec ponctuel en CI le 25/10/2026).
+    await waitFor(() => expect(document.title).toBe('My space — SÉNEVÉ'));
     // Coach permanent dans les deux langues (décision du 25/10/2026).
     expect(screen.getByRole('link', { name: 'Talk to the coach' })).toHaveAttribute('href', '/coach?inscription=EN');
     // Même présentation qu’en français : le coach se trouve au même endroit dans les deux langues (25/10/2026).
