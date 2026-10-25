@@ -1,6 +1,7 @@
 -- Service interne TEST : réutilise une inscription HD existante et explicitement configurée.
 -- Aucun catalogue, inscription ou paiement créé par cette migration.
 grant insert on seneve.hd_access_periods to service_role;
+grant select on seneve.hd_modules to service_role;
 create function seneve.hd_open_free_period(p_enrollment_id uuid,p_offre_id text)
 returns jsonb language plpgsql volatile security invoker set search_path='' as $$
 declare e seneve.enrollments%rowtype;ancien seneve.hd_access_periods%rowtype;
