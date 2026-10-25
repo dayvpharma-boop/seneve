@@ -1,3 +1,5 @@
+import {BilanHabitudes} from '@/components/BilanHabitudes';
+import {joursHabitudesLecture, type JourHabitudesLecture, type EtatLecture} from '@/lib/habitudes-lecture';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useState } from 'react';
@@ -13,7 +15,7 @@ import { IconeProgres } from '@/components/IconeProgres';
 import { RepereParcours } from '@/components/RepereParcours';
 
 type Parcours = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; duree: number; nom: string };
-type Loaded = { prenom: string; actions: Record<string, Record<number, string>>; langue: string; parcours: Parcours[]; bilans: Record<string, Bilan>; notes: number };
+type Loaded = { prenom: string; actions: Record<string, Record<number, string>>; langue: string; parcours: Parcours[]; bilans: Record<string, Bilan>; notes: number; habitudes: Record<string,JourHabitudesLecture[]> };
 
 async function load(): Promise<Loaded | null> {
   const { data: s } = await supabase.auth.getSession();
@@ -30,20 +32,21 @@ async function load(): Promise<Loaded | null> {
   const langue = (p.data?.langue as string | undefined) ?? 'fr';
   const notes = (j.data ?? []).length;
   const prenom = typeof p.data?.prenom === 'string' ? p.data.prenom : (typeof s.session.user.user_metadata?.prenom === 'string' ? s.session.user.user_metadata.prenom : '');
-  if (!enr.length) return { prenom, actions: {}, langue, parcours: [], bilans: {}, notes };
+  if (!enr.length) return { prenom, actions: {}, langue, parcours: [], bilans: {}, notes, habitudes: {} };
   const progIds = [...new Set(enr.map(x => x.programme_id))];
-  const [pr, c, st] = await Promise.all([
+  const [pr, c, st, hd] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', progIds),
-    supabase.from('contents').select('content_id, programme_id, version, jour, numero_message, theme').in('programme_id', progIds),
+    supabase.from('contents').select('content_id, programme_id, version, langue, jour, numero_message, theme').in('programme_id', progIds),
     supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enr.map(x => x.enrollment_id)),
+    import.meta.env.VITE_HABITUDES_DEFIS === 'true' ? supabase.from('hd_programme_links').select('programme_id, version, langue').in('programme_id',progIds) : Promise.resolve({data:[],error:null}),
   ]);
-  for (const r of [pr, c, st]) if (r.error) throw r.error;
+  for (const r of [pr, c, st, hd]) if (r.error) throw r.error;
   const progs = (pr.data ?? []) as { programme_id: string; nom: string; duree_jours: number | null }[];
-  const contents = (c.data ?? []) as { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string }[];
+  const contents = (c.data ?? []) as { content_id: string; programme_id: string; version: number | string; langue: string; jour: number; numero_message: number; theme: string }[];
   const ids = contents.map(x => x.content_id);
-  const a = ids.length ? await supabase.from('activities').select('activity_id, content_id, type_activite, consigne').in('content_id', ids) : { data: [], error: null };
+  const a = ids.length ? await supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire').in('content_id', ids) : { data: [], error: null };
   if (a.error) throw a.error;
-  const activites = (a.data ?? []) as { activity_id: string; content_id: string; type_activite: string; consigne?: string }[];
+  const activites = (a.data ?? []) as { activity_id: string; content_id: string; type_activite: string; consigne?: string; obligatoire:boolean }[];
   const etats = (st.data ?? []) as { enrollment_id: string; activity_id: string; etat: string; aide_demandee: boolean; realisee_le: string | null }[];
   const parcours: Parcours[] = enr.map(x => {
     const prog = progs.find(q => q.programme_id === x.programme_id);
@@ -52,9 +55,15 @@ async function load(): Promise<Loaded | null> {
   });
   const bilans: Record<string, Bilan> = {};
   const actions: Record<string, Record<number, string>> = {};
+  const habitudes:Record<string,JourHabitudesLecture[]>={};
   for (const x of parcours) {
     const cts = contents.filter(ct => ct.programme_id === x.programme_id && String(ct.version) === String(x.version));
     bilans[x.enrollment_id] = bilan(x.date_debut, x.duree, cts, activites, etats.filter(s2 => s2.enrollment_id === x.enrollment_id));
+    if((hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===x.programme_id&&String(h.version)===String(x.version)&&h.langue===x.langue)){
+      habitudes[x.enrollment_id]=joursHabitudesLecture({...x,version:Number(x.version)},bilans[x.enrollment_id]!.joursOuverts,
+        cts.filter(c=>c.langue===x.langue).map(c=>({...c,version:Number(c.version)})),
+        activites.map(a=>({...a,consigne:a.consigne??''})),etats as EtatLecture[]);
+    }
     actions[x.enrollment_id] = {};
     for (const jour of bilans[x.enrollment_id]!.jours) {
       const ids = new Set(cts.filter(ct => ct.jour === jour.jour).map(ct => ct.content_id));
@@ -62,7 +71,7 @@ async function load(): Promise<Loaded | null> {
       if (typeof action?.consigne === 'string') actions[x.enrollment_id]![jour.jour] = action.consigne;
     }
   }
-  return { prenom, actions, langue, parcours, bilans, notes };
+  return { prenom, actions, langue, parcours, bilans, notes, habitudes };
 }
 
 function dateCourte(iso: string, locale: string) {
@@ -105,6 +114,11 @@ export function Progres() {
   const tabs = <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.titre}>
     {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => setChosen(x.enrollment_id)}><span>{x.nom}</span>{x.enrollment_id === enr.enrollment_id && <small>{x.etat === 'en_pause' ? (en ? 'Paused' : 'En pause') : b.termine ? (en ? 'Completed' : 'Terminé') : b.pasCommence ? (en ? 'Upcoming' : 'À venir') : (en ? 'In progress' : 'En cours')}</small>}</button>)}
   </div>;
+  if(data.habitudes[enr.enrollment_id]) return <main className="wrap avec-nav parcours-page">
+    {tete}<p className="progres-intro">{T.intro}</p>{tabs}
+    <BilanHabitudes jours={data.habitudes[enr.enrollment_id]!} langue={langue}/>
+    {back}<BarreNav langue={langue} maquette iconesJournee/>
+  </main>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;
   const aujourdhui = !b.termine && !b.pasCommence ? b.joursOuverts : null;
   const fermes = b.jours.filter(j => !j.ouvert);
@@ -149,3 +163,4 @@ export function Progres() {
     <BarreNav langue={langue} maquette iconesJournee />
   </main>;
 }
+
