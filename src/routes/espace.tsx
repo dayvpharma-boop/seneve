@@ -430,8 +430,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       <p>{R.texte(reprise)}</p>
       {current !== reprise && <button type="button" className="btn action-btn" onClick={() => setSelected(reprise)}>{R.bouton(reprise)}</button>}
       <p className="muted">{R.aide}</p>
-      {/* Vrais boutons (demande du 25/10/2026) : le coach en premier, l’aide de l’équipe en second. */}
-      {!horsLigne && <div className="coach-boutons"><Link className="btn btn-link" to={`/coach?inscription=${enr.enrollment_id}`}><IconeJourneeSuite nom="chat" taille={20}/>{R.coach}</Link><Link className="btn-secondaire" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
+      {/* L’aide reste dans la carte de reprise (après 3 jours sans action) ; le coach est désormais permanent, plus bas (décision du 25/10/2026). */}
+      {!horsLigne && <div className="coach-boutons"><Link className="btn-secondaire" to={`/aide?inscription=${enr.enrollment_id}`}>{R.demander}</Link></div>}
     </section>}
     {obstacle && <ObstacleCard key={`obstacle-${enr.enrollment_id}-${obstacle}`} enrollmentId={enr.enrollment_id} cle={obstacle} langue={enr.langue} />}
     {semaine && <SemaineCard key={`semaine-${enr.enrollment_id}-${semaine.numero}`} semaine={semaine} langue={enr.langue} horsLigne={horsLigne} />}
@@ -450,6 +450,9 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       {carteAction(action, false)}
       {horsLigne && <p className="offline-action-note"><IconeJournee nom="save" taille={20} />{enr.langue === 'en' ? 'Read your action now. A connection is needed to record its completion.' : 'Tu peux relire ton action. Une connexion est nécessaire pour enregistrer sa réalisation.'}</p>}
     </section>}
+
+    {/* Bouton coach permanent, en français et en anglais (décision de Dr Justin du 25/10/2026). */}
+    {!horsLigne && <div className="coach-boutons coach-permanent"><Link className="btn btn-link" to={`/coach?inscription=${enr.enrollment_id}`}><IconeJourneeSuite nom="chat" taille={20}/>{R.coach}</Link></div>}
 
     {invitations.length > 0 && <section className="today-section" aria-labelledby="titre-ecrire">
       <h2 id="titre-ecrire"><IconeJournee nom={enr.langue==='en'?(current===1?"history_edu":"stylus_note"):"menu_book"} taille={22} />{T.ecrireJournal}</h2>

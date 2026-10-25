@@ -56,6 +56,8 @@ describe('Espace avec plusieurs parcours', () => {
     render(<MemoryRouter><Espace /></MemoryRouter>);
     expect(await screen.findByText('Jour 2 sur 7')).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Découverte du livre — 7 jours' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('link', { name: 'Parler au coach' })).toHaveAttribute('href', '/coach?inscription=E7');
+    expect(screen.queryByRole('link', { name: 'Demander de l’aide' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('tab', { name: 'Accompagnement du livre — 14 jours' }));
     expect(screen.getByText(/Ton parcours commence le lundi 19 octobre/)).toBeInTheDocument();
     expect(screen.queryByText(/Thème ACHETEUR/)).not.toBeInTheDocument();
@@ -83,6 +85,8 @@ describe('Espace avec plusieurs parcours', () => {
     expect(screen.getByRole('heading', { level: 1, name: /^Hello\b/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'My profile' })).toHaveAttribute('href', '/profil?lang=en');
     expect(document.title).toBe('My space — SÉNEVÉ');
+    // Coach permanent dans les deux langues (décision du 25/10/2026).
+    expect(screen.getByRole('link', { name: 'Talk to the coach' })).toHaveAttribute('href', '/coach?inscription=EN');
   });
 
   it('plusieurs parcours anglais : onglets en anglais (inventaire FR/EN du 25/10/2026)', async () => {
