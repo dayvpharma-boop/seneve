@@ -9,7 +9,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 // Kinshasa, RDC ; contact@drjustintshims.com ; durées de conservation proposées acceptées ; 18 ans).
 // Toute modification du texte doit être validée et faire changer la date ci-dessous.
 // Traduction anglaise du 22/10/2026 (?lang=en) : fidèle au texte français, qui fait foi.
-// 25/10/2026 : ajout de la connexion avec Google (à valider par Dr Justin Tshims).
+// 25/10/2026 : ajout de la connexion avec Google, texte validé par Dr Justin Tshims le 25/10/2026.
 export const DATE_POLITIQUE = '25 octobre 2026';
 const DATE_POLITIQUE_EN = '25 October 2026';
 const CONTACT = 'contact@drjustintshims.com';
