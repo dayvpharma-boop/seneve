@@ -10,3 +10,9 @@ html[data-apparence=sombre] .bl-page{--bl-fond:#141310;--bl-carte:#211f1c;--bl-e
 .bl-page .bl-acces-bouton:hover{filter:brightness(1.1)}
 .bl-page .bl-acces-bouton:active{filter:brightness(.95)}
 @media(max-width:420px){.bl-page .bl-acces{padding:16px;gap:10px}.bl-page .bl-acces-bouton{padding:12px;gap:8px}}
+
+/* La formation a son visuel ; les actions se détachent clairement des cartes. */
+.bl-page .bl-parcours{display:grid;grid-template-columns:24px minmax(0,1fr);gap:16px 12px}
+.bl-formation-image{grid-column:1/-1;display:block;width:100%;height:auto;aspect-ratio:720/314;object-fit:cover;border-radius:10px}
+:root[data-apparence] .bl-page :is(.bl-acces-bouton,.bl-principal){background:var(--palette-encre);color:var(--palette-surface);border:1px solid var(--palette-encre)}
+:root[data-apparence="sombre"] .bl-page :is(.bl-acces-bouton,.bl-principal){background:var(--bl-fond);color:var(--bl-encre);border-color:var(--bl-trait)}
