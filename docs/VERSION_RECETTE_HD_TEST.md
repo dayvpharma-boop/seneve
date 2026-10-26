@@ -1,5 +1,7 @@
 # Version isolée pour la recette Auth Habitudes & Défis
 
+> Mise à jour : version isolée publiée le 26 octobre 2026 sous `/seneve/recette-hd/`, depuis le commit source `37da897aa9808cdcec9d8e3fea2ae6680d543416`. Déploiement principal `7db64582f86a65f25de3a41cff4083840dd81030` réussi. Les 43 tests ciblés passent dans GitHub et les constructions réussissent. Le premier essai de déploiement a échoué sur la résolution du fichier de setup dans un checkout imbriqué ; la configuration de recette fixe désormais les chemins absolus. Vérification navigateur non authentifiée réalisée : page FR, passage à la connexion puis à EN avec maintien de `suite=habitudes`, page EN et mise en page cadrée. Aucun e-mail envoyé ni utilisateur créé par cette étape. TEST contient toujours 0 mapping HD actif. Les deux nouvelles adresses de retour sous `/recette-hd/` sont préparées dans Supabase, sans enregistrement avant accord explicite.
+
 Entrée dédiée `recette-hd.html` / `src/recette-habitudes.tsx` : connexion existante, préinscription HD existante et confidentialité. Bandeau TEST permanent dans les deux langues. Les autres destinations affichent un retour vers la préinscription. Aucun routeur d’achat, coach, administration, journal ou service worker n’est monté.
 
 Construction : `VITE_SUPABASE_URL=https://rlojnuaajeubzlwofwhn.supabase.co VITE_SUPABASE_KEY=<clé publiable TEST> node scripts/recette/habitudes-build-test.mjs`.
