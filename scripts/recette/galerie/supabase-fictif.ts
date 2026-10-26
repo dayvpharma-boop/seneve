@@ -6,3 +6,4 @@ export const supabase:any={
  from:()=>chaine,
  auth:{getSession:async()=>({data:{session:null},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},
 };
+export function siteUrl(path:string):string{return path;}
