@@ -31,3 +31,11 @@ it('mois 2 : le jour 31 reprend la lecture approuvée du jour 1 et annonce le mo
  expect(screen.getByText(/Mois 2 sur 6/)).toBeInTheDocument();expect(screen.getByText(/Lecture 1 reprise/)).toBeInTheDocument();
  expect(screen.queryByText(/30 jours gratuits/)).toBeNull();
 });
+it('affiche le défi approuvé de la semaine, et le même défi au mois 2 avec la reprise',async()=>{
+ mocks.charger.mockResolvedValue({...jour,jour:9});ouvrir();
+ expect(await screen.findByRole('heading',{name:'Prendre soin d’une responsabilité'})).toBeVisible();
+ expect(screen.getByText(/Défi de la semaine · Jours 8 à 14 · facultatif/)).toBeInTheDocument();
+ cleanup();mocks.charger.mockResolvedValue({...jour,jour:59});ouvrir();
+ expect(await screen.findByRole('heading',{name:'Choisir la suite avec clarté'})).toBeVisible();
+ expect(screen.getByText('De quelle aide as-tu encore besoin ?')).toBeInTheDocument();
+});
