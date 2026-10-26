@@ -320,7 +320,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const duJour=contents.filter(c=>c.jour===current&&c.langue===enr.langue).sort((a,b)=>a.numero_message-b.numero_message);
     const ctx={enrollment_id:enr.enrollment_id,programme_id:enr.programme_id,version:Number(enr.version),langue:enr.langue,jour:current,date_locale};
     const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities);
-    return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p><h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
+    return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p>
+      {!horsLigne&&enr.programme_id==='HABITUDES_DEFIS_30J_FR_V1'&&<Link className="btn" to={`/habitudes/aujourdhui${en?'?lang=en':''}`}>{en?'Open my Habits & Challenges screen':'Ouvrir mon écran Habitudes & Défis'}</Link>}<h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
       {!horsLigne&&<Link className="oa-secondary" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>}
       <label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>
       {!horsLigne&&data.participantId&&<PlanningJourHabitudes key={enr.enrollment_id} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue}/>}

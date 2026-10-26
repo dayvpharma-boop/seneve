@@ -27,11 +27,15 @@ jobs:
       - name: Contrôles automatiques
         run: npm test
       - name: Construire le site
+        # Habitudes & Défis : écrans actifs pour les inscrits ; inscription publique fermée jusqu'à décision.
+        env:
+          VITE_HABITUDES_DEFIS: 'true'
+          VITE_HABITUDES_INSCRIPTION: fermee
         run: npm run build
       - name: Charger la version HD de test validée
         uses: actions/checkout@v4
         with:
-          ref: 2325b8919a03ed1b843fe35e9e6bd151379afbf0
+          ref: be1dc0ee593c9de38fbb3dd97bfe05702f6b5d84
           path: _recette-hd
       - name: Installer la recette HD
         working-directory: _recette-hd

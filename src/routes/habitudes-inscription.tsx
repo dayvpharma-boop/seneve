@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {Link,useLocation,useSearchParams} from 'react-router-dom';
 import {supabase} from '@/lib/supabase';
-import {habitudesActivees} from '@/lib/habitudes-configuration';
+import {inscriptionHabitudesOuverte as habitudesActivees} from '@/lib/habitudes-configuration';
 import {chargerCatalogueInscription,type CatalogueInscriptionHabitudes} from '@/lib/habitudes-catalogue-api';
 import {InscriptionHabitudes} from '@/components/InscriptionHabitudes';
 import {prenomDuCompte} from '@/lib/connexion-sociale';
