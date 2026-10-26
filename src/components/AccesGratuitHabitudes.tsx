@@ -17,7 +17,7 @@ export function AccesGratuitHabitudes({droit,periode,inscription,langue,fuseau}:
   return()=>{window.clearTimeout(timer);window.removeEventListener('focus',actualiser);document.removeEventListener('visibilitychange',actualiser);};
  },[now,debut,fin]);
  const path=(p:string)=>p+(en?(p.includes('?')?'&':'?')+'lang=en':'');
- return <section className="oa-access" aria-label={label('Accès gratuit Habitudes & Défis','Free Habits & Challenges access')}>
+ return <section className="oa-access hd-acces" aria-label={label('Accès gratuit Habitudes & Défis','Free Habits & Challenges access')}>
   <div className="oa-status"><span className="oa-badge">{label('30 jours gratuits','30 days free')}</span><h2>{active?label('Ta période gratuite est en cours.','Your free period is in progress.'):status==='expire'?label('Tes 30 jours gratuits sont terminés.','Your 30 free days have ended.'):status==='ferme'?label('Cet accès gratuit est fermé.','This free access is closed.'):label('Ton accès gratuit doit être vérifié.','Your free access needs verification.')}</h2><p>{label('Habitudes & Défis','Habits & Challenges')}</p></div>
   <div className="oa-card">
    {dateFin&&<p>{label('Fin de la période gratuite :','Free period ends:')} <time dateTime={periode.fin_exclue}>{dateFin}</time> ({fuseau}). {label('L’accès se termine à cette heure précise.','Access ends at this exact time.')}</p>}
