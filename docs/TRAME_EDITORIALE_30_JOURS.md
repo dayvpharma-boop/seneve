@@ -11,7 +11,7 @@ Le fichier `editorial/habitudes-defis/30-jours-fr-brouillon.json` prépare le tr
 
 ## Ce qui reste à rédiger et décider
 
-Les objectifs et textes pédagogiques des 30 journées sont vides. La répartition et les contenus des défis restent à définir : aucun défi quotidien obligatoire n’est supposé. Les critères de bilan et le périmètre coach/médias/bilans de l’offre doivent être approuvés. Les statuts obligatoire/adapté des habitudes sont laissés ouverts.
+Les objectifs et textes pédagogiques des 30 journées, initialement laissés vides, sont maintenant rédigés comme propositions. Voir `REDACTION_30_FICHES_FR.md` et le document de relecture associé ; leur approbation reste ouverte. La répartition et les contenus des défis restent à définir : aucun défi quotidien obligatoire n’est supposé. Les critères de bilan et le périmètre coach/médias/bilans de l’offre doivent être approuvés. Les statuts obligatoire/adapté des habitudes sont laissés ouverts.
 
 La prière reste une référence au document remis ; le texte intégral n’est pas recopié dans ce fichier. Le contrôle exige des droits confirmés et une référence au texte autorisé avant de déclarer le dossier prêt. La trame est uniquement française ; elle ne représente ni une traduction EN ni le corpus de six mois. Les cultes ne sont pas fixés sur des jours pédagogiques : leurs jours dépendent du début réel et du planning personnel.
 
@@ -19,7 +19,7 @@ La prière reste une référence au document remis ; le texte intégral n’est 
 
 `python scripts/editorial/verifier_habitudes.py editorial/habitudes-defis/30-jours-fr-brouillon.json`
 
-Résultat observé : structure valide, 30 fiches, 390 identifiants distincts ; **non prêt pour publication**, avec 96 points de contrôle éditoriaux ouverts (plusieurs par fiche, pas 96 documents manquants).
+Résultat initial : structure valide, 30 fiches, 390 identifiants distincts ; non prêt pour publication, avec 96 points ouverts. Après rédaction des textes, 66 points restent ouverts : les validations ne sont pas déduites de la présence d’un texte.
 
 Le même contrôle avec `--publication` retourne un code d’échec tant que des attentes subsistent. Il ne publie rien et n’est pas encore raccordé au pipeline existant : il ne faut pas le présenter comme un verrou de publication serveur. Les champs d’approbation servent à référencer des décisions humaines ; les remplir ne prouve pas à lui seul que la décision est authentique ni que la reproduction est autorisée.
 
