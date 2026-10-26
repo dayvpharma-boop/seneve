@@ -1,13 +1,32 @@
 import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
-import {afterEach,expect,it} from 'vitest';
+import {afterEach,expect,it,vi} from 'vitest';
 import {Habitudes} from '@/routes/habitudes';
-afterEach(cleanup);
+afterEach(()=>{cleanup();vi.restoreAllMocks();});
 it('publie un aperçu explicite et permet de parcourir les trois jours de culte',()=>{
  render(<MemoryRouter><Habitudes/></MemoryRouter>);expect(screen.getByText('Aperçu · module en préparation')).toBeVisible();expect(screen.getByRole('heading',{name:'Habitudes & Défis'})).toBeVisible();expect(screen.getByText('30 jours gratuits')).toBeVisible();
  const liste=screen.getByRole('list');expect(within(liste).getAllByRole('listitem')).toHaveLength(13);fireEvent.change(screen.getByRole('combobox',{name:'Voir un jour de la semaine'}),{target:{value:'3'}});expect(within(liste).getAllByRole('listitem')).toHaveLength(14);expect(within(liste).getByText('Culte en semaine')).toBeVisible();
  expect(screen.queryByRole('button',{name:/Commencer|réalisé|inscrire/i})).toBeNull();
 });
 it('l’aperçu anglais traduit le rythme et le simulateur sans créer de compte',()=>{
- render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><Habitudes/></MemoryRouter>);expect(screen.getByRole('heading',{name:'Habits & Challenges'})).toBeVisible();expect(screen.getByText('Morning prayer')).toBeVisible();expect(screen.getByText('Optional tithe simulator')).toBeVisible();expect(screen.getByRole('link',{name:'Back to my space'})).toHaveAttribute('href','/espace?lang=en');expect(screen.queryByText('Prière du matin')).toBeNull();
+ render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><Habitudes/></MemoryRouter>);expect(screen.getByRole('heading',{name:'Habits & Challenges'})).toBeVisible();expect(within(screen.getByRole('list')).getByText('Morning prayer')).toBeVisible();expect(screen.getByText('Optional tithe simulator')).toBeVisible();expect(screen.getByRole('link',{name:'Back to my space'})).toHaveAttribute('href','/espace?lang=en');expect(screen.queryByText('Prière du matin')).toBeNull();
+});
+
+function ouvrirHoraires(){const r=render(<MemoryRouter><Habitudes/></MemoryRouter>);r.container.querySelector('details')!.open=true;return r;}
+it('l’essai des horaires change la journée sans stockage ni appel réseau',()=>{
+ const stockage=vi.spyOn(Storage.prototype,'setItem'),reseau=vi.spyOn(globalThis,'fetch');ouvrirHoraires();
+ fireEvent.change(screen.getByLabelText('Prière du matin'),{target:{value:'07:15'}});expect(within(screen.getByRole('list')).getByText('07:15')).toBeVisible();expect(screen.getByText(/ne sont pas enregistrés dans ton compte/)).toBeVisible();expect(stockage).not.toHaveBeenCalled();expect(reseau).not.toHaveBeenCalled();
+ fireEvent.change(screen.getByRole('combobox',{name:'Voir un jour de la semaine'}),{target:{value:'3'}});expect(screen.getByLabelText('Prière du matin')).toHaveValue('06:00');fireEvent.change(screen.getByRole('combobox',{name:'Voir un jour de la semaine'}),{target:{value:'1'}});expect(screen.getByLabelText('Prière du matin')).toHaveValue('07:15');
+});
+it('les trois cultes peuvent avoir des heures distinctes dans l’aperçu',()=>{
+ ouvrirHoraires();const jour=screen.getByRole('combobox',{name:'Voir un jour de la semaine'});
+ fireEvent.change(jour,{target:{value:'3'}});fireEvent.change(screen.getByLabelText('Culte en semaine'),{target:{value:'17:45'}});
+ fireEvent.change(jour,{target:{value:'5'}});expect(screen.getByLabelText('Culte en semaine')).toHaveValue('18:30');fireEvent.change(screen.getByLabelText('Culte en semaine'),{target:{value:'19:00'}});
+ fireEvent.change(jour,{target:{value:'7'}});fireEvent.change(screen.getByLabelText('Culte du dimanche'),{target:{value:'10:30'}});fireEvent.change(jour,{target:{value:'3'}});expect(screen.getByLabelText('Culte en semaine')).toHaveValue('17:45');
+});
+it('signale les heures identiques et peut rétablir toutes les propositions',()=>{
+ ouvrirHoraires();fireEvent.change(screen.getByLabelText('Prière du matin'),{target:{value:'06:20'}});expect(screen.getByRole('status')).toHaveTextContent('Plusieurs rendez-vous');fireEvent.click(screen.getByRole('button',{name:'Rétablir tous les horaires proposés'}));expect(screen.getByLabelText('Prière du matin')).toHaveValue('06:00');expect(screen.queryByRole('status')).toBeNull();
+});
+it('les essais sont effacés lorsqu’on quitte la page puis revient',()=>{
+ const r=ouvrirHoraires();fireEvent.change(screen.getByLabelText('Prière du matin'),{target:{value:'07:15'}});r.unmount();ouvrirHoraires();expect(screen.getByLabelText('Prière du matin')).toHaveValue('06:00');
 });
