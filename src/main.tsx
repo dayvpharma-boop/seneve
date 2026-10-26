@@ -58,6 +58,7 @@ const Coach = lazy(() => import('@/routes/coach').then(m => ({ default: m.Coach 
 const Progres = lazy(() => import('@/routes/progres').then(m => ({ default: m.Progres })));
 const Profil = lazy(() => import('@/routes/profil').then(m => ({ default: m.Profil })));
 const Reglages = lazy(() => import('@/routes/reglages').then(m => ({ default: m.Reglages })));
+const Habitudes = lazy(() => import('@/routes/habitudes').then(m => ({ default: m.Habitudes })));
 const Offres = lazy(() => import('@/routes/offres').then(m => ({ default: m.Offres })));
 const Bibliotheque = lazy(() => import('@/routes/bibliotheque').then(m => ({ default: m.Bibliotheque })));
 const Confidentialite = lazy(() => import('@/routes/confidentialite').then(m => ({ default: m.Confidentialite })));
@@ -94,6 +95,7 @@ if (root) createRoot(root).render(
         <Route path="/bible/recherche" element={<BibleRecherche/>}/>
         <Route path="/bible/annotations" element={<BibleAnnotations/>}/>
         <Route path="/bible/:livre/:chapitre" element={<BibleLecture/>}/>
+        <Route path="/habitudes" element={<Habitudes/>}/>
         <Route path="/offres" element={<Offres/>}/><Route path="/acces" element={<Offres mode="acces"/>}/><Route path="/paiement" element={<Offres mode="paiement"/>}/><Route path="/reglages" element={<Reglages/>}/>
         <Route path="/profil" element={<Profil/>}/><Route path="/espace" element={<Espace />} />
         <Route path="/journal" element={<Journal />} />
