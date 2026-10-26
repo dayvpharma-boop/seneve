@@ -15,6 +15,10 @@ import './styles-auth-maquette.css';
 import './styles-offres-acces.css';
 import './styles-recette-habitudes.css';
 import './styles-habitudes-stitch.css';
+import '@fontsource/literata/latin-500.css';
+import '@fontsource/literata/latin-600.css';
+import '@fontsource/literata/latin-400-italic.css';
+import './styles-habitudes-polices.css';
 
 /** Entrée séparée, réservée à la recette de connexion et de préinscription TEST. */
 export function RecetteHabitudes(){
