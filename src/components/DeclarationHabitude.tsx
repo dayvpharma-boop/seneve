@@ -3,8 +3,8 @@ import {enregistrerHabitude,type ActionHabitude,type TransportProgression} from 
 import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import {cleSaisie,lireSaisie,preparerSaisie,type SaisieEnAttente} from '@/lib/habitudes-saisie';
 
-export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,langue,lectureSeule,transport,onConfirme}:{
- userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
+export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true}:{
+ aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
 }){
  const en=langue==='en';const cle=cleSaisie(userId,occurrence.enrollment_id,occurrence.occurrence_id);
  const [attente,setAttente]=useState<SaisieEnAttente|null>(()=>{try{return lireSaisie(sessionStorage,cle);}catch{return null;}});
@@ -37,7 +37,7 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,lan
    {valeur!=='realisee'&&<button type="button" className="btn action-btn" disabled={occupe} onClick={()=>void declarer('realisee')}>{en?'I completed this activity':'J’ai réalisé cette activité'}</button>}
    {valeur==='non_commencee'&&<button type="button" className="btn-secondaire" disabled={occupe} onClick={()=>void declarer('preparee')}>{en?'I prepared it':'Je l’ai préparée'}</button>}
    {['non_commencee','preparee'].includes(valeur)&&<button type="button" className="btn-secondaire" disabled={occupe} onClick={()=>void declarer('partielle')}>{en?'I did part of it':'Je l’ai réalisée en partie'}</button>}
-   {!aide&&<button type="button" className="btn-secondaire" disabled={occupe} onClick={()=>void declarer('aide_demandee')}>{en?'I need help':'J’ai besoin d’aide'}</button>}
+   {aideDisponible&&!aide&&<button type="button" className="btn-secondaire" disabled={occupe} onClick={()=>void declarer('aide_demandee')}>{en?'I need help':'J’ai besoin d’aide'}</button>}
   </div>}
   {erreur&&<p role="alert">{nettoyageIncomplet?(en?'The record is already confirmed. Retry to finish the update.':'L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.'):(en?'Confirmation unavailable. Retry this same declaration when you can.':'Confirmation indisponible. Réessaie cette même déclaration quand tu peux.')}</p>}
  </section>;
