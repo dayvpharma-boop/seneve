@@ -1,3 +1,9 @@
+# Historique du blocage d’installation des horaires
+
+**Statut actualisé : blocage résolu le 26 octobre 2026.** La migration `habitudes_horaires_personnels` est installée sur seneve-test et la recette SQL a réussi avec rollback. Voir [la validation actuelle](HORAIRES_PERSONNELS_INSTALLATION_TEST.md). La production reste inchangée.
+
+La section ci-dessous conserve le compte rendu antérieur au rétablissement de l’appel ; elle ne décrit plus l’état actuel.
+
 # Sauvegarde des horaires : proposition non installée
 
 ## État réel au 26 octobre 2026
