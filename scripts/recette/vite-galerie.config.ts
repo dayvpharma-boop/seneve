@@ -8,6 +8,7 @@ export default {
  ...configuration,
  root:g,
  base:'./',
+ publicDir:path.join(racine,'public'),
  cacheDir:path.join(racine,'.vite-cache-galerie'),
  resolve:{...configuration.resolve,alias:[
   {find:/^(@\/lib|\.)\/supabase$/,replacement:path.join(g,'supabase-fictif.ts')},
