@@ -14,6 +14,7 @@ import './styles-maquettes.css';
 import './styles-auth-maquette.css';
 import './styles-offres-acces.css';
 import './styles-recette-habitudes.css';
+import './styles-habitudes-stitch.css';
 
 /** Entrée séparée, réservée à la recette de connexion et de préinscription TEST. */
 export function RecetteHabitudes(){
