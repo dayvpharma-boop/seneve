@@ -5,6 +5,7 @@ import { siteUrl, supabase } from '@/lib/supabase';
 import { IconeConnexion } from '@/components/IconeConnexion';
 import { Icone } from '@/components/Icone';
 import { PenseeLivre } from '@/components/RepereParcours';
+import {habitudesActivees} from '@/lib/habitudes-configuration';
 
 const ERREURS = {
   fr: {
@@ -71,6 +72,9 @@ export function Connexion() {
   const location = useLocation();
   const [search] = useSearchParams();
   const langue: 'fr' | 'en' = search.get('lang') === 'en' ? 'en' : 'fr';
+  // Intention fermée : aucune URL fournie par la requête n'est utilisée comme destination.
+  const suiteHabitudes=habitudesActivees()&&search.get('suite')==='habitudes';
+  const retourConfirmation = siteUrl(suiteHabitudes ? `habitudes/inscription?lang=${langue}` : 'espace');
   const T = TEXTES[langue];
   useEffect(() => { document.title = T.titrePage; document.documentElement.lang = langue; }, [T, langue]);
   const [tab, setTab] = useState<'signup' | 'signin'>(() => search.get('mode') === 'signin' ? 'signin' : 'signup');
@@ -95,7 +99,7 @@ export function Connexion() {
     if (!aConfirmer || renvoi || attente > 0) return;
     setRenvoi(true); setError(''); setInfo('');
     try {
-      const { error } = await supabase.auth.resend({ type: 'signup', email: aConfirmer, options: { emailRedirectTo: siteUrl('espace') } });
+      const { error } = await supabase.auth.resend({ type: 'signup', email: aConfirmer, options: { emailRedirectTo: retourConfirmation } });
       if (error) { setError(authError(error.message, langue)); return; }
       setInfo(T.renvoye(aConfirmer)); setAttente(60);
     } catch (err) {
@@ -113,8 +117,8 @@ export function Connexion() {
         const { data, error } = await supabase.auth.signUp({
           email, password,
           // Inscription sur la page anglaise : la langue est gardée dans le compte, l'espace s'ouvre en anglais
-          // après le lien de confirmation (l'adresse de retour reste celle autorisée dans Supabase).
-          options: { emailRedirectTo: siteUrl('espace'), data: langue === 'en' ? { prenom: prenom.trim(), langue: 'en' } : { prenom: prenom.trim() } },
+          // après confirmation. Le retour HD doit être autorisé dans Supabase avant activation du module.
+          options: { emailRedirectTo: retourConfirmation, data: langue === 'en' ? { prenom: prenom.trim(), langue: 'en' } : { prenom: prenom.trim() } },
         });
         if (error) { setError(authError(error.message, langue)); return; }
         if (data.user && data.user.identities?.length === 0) { setError(ERREURS[langue].deja); return; }
@@ -129,7 +133,7 @@ export function Connexion() {
       }
       const retour = location.state?.retourJournal ?? location.state?.retour;
       // Connexion faite sur la page anglaise : l'espace s'ouvre en anglais.
-      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
+      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : suiteHabitudes ? `/habitudes/inscription?lang=${langue}` : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
     } catch (err) {
       setError(authError(err instanceof Error ? err.message : 'network', langue));
     } finally { setBusy(false); }
@@ -145,7 +149,7 @@ export function Connexion() {
     <header className="auth-header">
       <Link className="auth-back" to="/" aria-label={langue === 'en' ? 'Back to the test' : 'Revenir au test'}><IconeConnexion nom="arrow_back" taille={22} /></Link>
       <span className="auth-brand"><Icone nom="graine" taille={22} /><strong>SÉNEVÉ</strong></span>
-      <Link className="auth-language" to={langue === 'en' ? '/connexion?lang=fr' : '/connexion?lang=en'}><IconeConnexion nom="language" taille={16} /><span>{T.autreLangue}</span><IconeConnexion nom="expand_more" taille={16} /></Link>
+      <Link className="auth-language" to={(langue === 'en' ? '/connexion?lang=fr' : '/connexion?lang=en')+(suiteHabitudes?`&mode=${tab}&suite=habitudes`:'')}><IconeConnexion nom="language" taille={16} /><span>{T.autreLangue}</span><IconeConnexion nom="expand_more" taille={16} /></Link>
     </header>
     <div className="auth-intro">
       <p className="auth-repere">{tab === 'signup' ? <IconeConnexion nom="bookmark" taille={14} /> : <span className="auth-point" />}{langue === 'en' ? 'One step each day' : 'Un pas chaque jour'}</p>

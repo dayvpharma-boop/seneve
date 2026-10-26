@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { IconeCoach } from '@/components/IconeCoach';
+import {habitudesActivees} from '@/lib/habitudes-configuration';
 
 import { eventIdFor, pickDefault, placerOngletActif } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
@@ -26,7 +27,13 @@ async function load(): Promise<Loaded | null> {
     supabase.rpc('coach_quota'),
   ]);
   for (const r of [p, e, m, q]) if (r.error) throw r.error;
-  const enr = (e.data ?? []) as Omit<Enrollment, 'duree' | 'nom'>[];
+  let enr = (e.data ?? []) as Omit<Enrollment, 'duree' | 'nom'>[];
+  if(habitudesActivees()&&enr.length){
+    const eligibles=await supabase.rpc('coach_eligible_enrollments');
+    if(eligibles.error||!Array.isArray(eligibles.data)||eligibles.data.some((id:unknown)=>typeof id!=='string'))throw eligibles.error??Error('Accès coach non vérifiable');
+    const autorises=new Set(eligibles.data as string[]);
+    enr=enr.filter(x=>autorises.has(x.enrollment_id));
+  }
   let enrollments: Enrollment[] = [];
   if (enr.length) {
     const pr = await supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', [...new Set(enr.map(x => x.programme_id))]);
@@ -73,9 +80,8 @@ export function Coach() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   const enrollment = data ? (data.enrollments.find(x => x.enrollment_id === chosen) ?? data.defaut) : null;
-  const langueUI = params.get('lang') === 'en' ? 'en' : params.get('lang') === 'fr' ? 'fr' : (enrollment?.langue ?? data?.langue);
-  const T = coachTextes(langueUI);
-  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = langueUI === 'en' ? 'en' : 'fr'; }, [T, langueUI]);
+  const T = coachTextes(enrollment?.langue ?? data?.langue);
+  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = (enrollment?.langue ?? data?.langue) === 'en' ? 'en' : 'fr'; }, [T, enrollment?.langue, data?.langue]);
 
   // Tant qu'une réponse est attendue, on relit la conversation toutes les 4 secondes.
   const attente = data ? enAttente(data.messages) : false;
@@ -112,7 +118,7 @@ export function Coach() {
     await refresh();
   }
 
-  const en=langueUI==='en';
+  const en=(enrollment?.langue ?? data?.langue)==='en';
   const aideVers=enrollment ? `/aide?inscription=${enrollment.enrollment_id}` : '/aide';
   const tete=<><header className="coach-entete"><div><Link to="/espace" aria-label={T.retour}><IconeCoach nom="arrow_back_ios_new" taille={20}/></Link><span>{en?'Coach conversation':'Conversation Coach'}</span></div><span className="coach-initiale" aria-hidden="true"><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></header><IllustrationPage theme="coach" langue={en?'en':'fr'} /></>;
   if (failed && !data) return <main className="wrap coach-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;

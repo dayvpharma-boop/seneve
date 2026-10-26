@@ -17,6 +17,113 @@
  --font-sans: Poppins, system-ui, sans-serif;
  --font-serif: Lora, serif;
 }
+/* Habitudes & Défis — jetons des maquettes Stitch (26/10/2026), préfixe hd- pour ne pas toucher au reste du site. */
+@theme inline {
+ --color-hd-secondary-fixed-dim: var(--hdc-secondary-fixed-dim);
+ --color-hd-outline-variant: var(--hdc-outline-variant);
+ --color-hd-primary-container: var(--hdc-primary-container);
+ --color-hd-on-primary-fixed: var(--hdc-on-primary-fixed);
+ --color-hd-surface-container: var(--hdc-surface-container);
+ --color-hd-on-background: var(--hdc-on-background);
+ --color-hd-error-container: var(--hdc-error-container);
+ --color-hd-on-surface: var(--hdc-on-surface);
+ --color-hd-on-error: var(--hdc-on-error);
+ --color-hd-on-secondary-container: var(--hdc-on-secondary-container);
+ --color-hd-on-tertiary-fixed-variant: var(--hdc-on-tertiary-fixed-variant);
+ --color-hd-inverse-on-surface: var(--hdc-inverse-on-surface);
+ --color-hd-on-tertiary-fixed: var(--hdc-on-tertiary-fixed);
+ --color-hd-secondary-container: var(--hdc-secondary-container);
+ --color-hd-on-error-container: var(--hdc-on-error-container);
+ --color-hd-surface-container-low: var(--hdc-surface-container-low);
+ --color-hd-outline: var(--hdc-outline);
+ --color-hd-tertiary-fixed-dim: var(--hdc-tertiary-fixed-dim);
+ --color-hd-tertiary-fixed: var(--hdc-tertiary-fixed);
+ --color-hd-tertiary-container: var(--hdc-tertiary-container);
+ --color-hd-on-tertiary: var(--hdc-on-tertiary);
+ --color-hd-on-surface-variant: var(--hdc-on-surface-variant);
+ --color-hd-surface-container-highest: var(--hdc-surface-container-highest);
+ --color-hd-surface: var(--hdc-surface);
+ --color-hd-on-secondary-fixed-variant: var(--hdc-on-secondary-fixed-variant);
+ --color-hd-background: var(--hdc-background);
+ --color-hd-on-primary: var(--hdc-on-primary);
+ --color-hd-inverse-surface: var(--hdc-inverse-surface);
+ --color-hd-on-tertiary-container: var(--hdc-on-tertiary-container);
+ --color-hd-on-primary-container: var(--hdc-on-primary-container);
+ --color-hd-on-primary-fixed-variant: var(--hdc-on-primary-fixed-variant);
+ --color-hd-error: var(--hdc-error);
+ --color-hd-inverse-primary: var(--hdc-inverse-primary);
+ --color-hd-surface-dim: var(--hdc-surface-dim);
+ --color-hd-surface-container-high: var(--hdc-surface-container-high);
+ --color-hd-surface-bright: var(--hdc-surface-bright);
+ --color-hd-on-secondary: var(--hdc-on-secondary);
+ --color-hd-secondary: var(--hdc-secondary);
+ --color-hd-surface-container-lowest: var(--hdc-surface-container-lowest);
+ --color-hd-primary: var(--hdc-primary);
+ --color-hd-on-secondary-fixed: var(--hdc-on-secondary-fixed);
+ --color-hd-primary-fixed: var(--hdc-primary-fixed);
+ --color-hd-surface-variant: var(--hdc-surface-variant);
+ --color-hd-surface-tint: var(--hdc-surface-tint);
+ --color-hd-secondary-fixed: var(--hdc-secondary-fixed);
+ --color-hd-tertiary: var(--hdc-tertiary);
+ --color-hd-primary-fixed-dim: var(--hdc-primary-fixed-dim);
+ --font-hd-label-lg: "Work Sans", system-ui, sans-serif;
+ --font-hd-headline-lg: "Literata", Georgia, serif;
+ --font-hd-headline-sm: "Literata", Georgia, serif;
+ --font-hd-scripture-verse: "Literata", Georgia, serif;
+ --font-hd-label-md: "Work Sans", system-ui, sans-serif;
+ --font-hd-headline-md: "Literata", Georgia, serif;
+ --font-hd-body-sm: "Work Sans", system-ui, sans-serif;
+ --font-hd-label-sm: "Work Sans", system-ui, sans-serif;
+ --font-hd-label-nav: "Work Sans", system-ui, sans-serif;
+ --font-hd-body-lg: "Literata", Georgia, serif;
+ --font-hd-body-md: "Literata", Georgia, serif;
+ --text-hd-label-lg: 15px;
+ --text-hd-label-lg--line-height: 20px;
+ --text-hd-label-lg--font-weight: 500;
+ --text-hd-headline-lg: 30px;
+ --text-hd-headline-lg--line-height: 38px;
+ --text-hd-headline-lg--font-weight: 600;
+ --text-hd-headline-sm: 20px;
+ --text-hd-headline-sm--line-height: 28px;
+ --text-hd-headline-sm--font-weight: 500;
+ --text-hd-scripture-verse: 19px;
+ --text-hd-scripture-verse--line-height: 34px;
+ --text-hd-scripture-verse--font-weight: 400;
+ --text-hd-scripture-verse--letter-spacing: 0.01em;
+ --text-hd-label-md: 13px;
+ --text-hd-label-md--line-height: 17px;
+ --text-hd-label-md--font-weight: 500;
+ --text-hd-label-md--letter-spacing: 0.02em;
+ --text-hd-headline-md: 24px;
+ --text-hd-headline-md--line-height: 32px;
+ --text-hd-headline-md--font-weight: 600;
+ --text-hd-body-sm: 13px;
+ --text-hd-body-sm--line-height: 19px;
+ --text-hd-body-sm--font-weight: 400;
+ --text-hd-label-sm: 11px;
+ --text-hd-label-sm--line-height: 15px;
+ --text-hd-label-sm--font-weight: 600;
+ --text-hd-label-sm--letter-spacing: 0.05em;
+ --text-hd-label-nav: 10px;
+ --text-hd-label-nav--line-height: 13px;
+ --text-hd-label-nav--font-weight: 500;
+ --text-hd-body-lg: 17px;
+ --text-hd-body-lg--line-height: 29px;
+ --text-hd-body-lg--font-weight: 400;
+ --text-hd-body-md: 15px;
+ --text-hd-body-md--line-height: 25px;
+ --text-hd-body-md--font-weight: 400;
+ --spacing-hd-margin: 1rem;
+ --spacing-hd-gutter: 0.75rem;
+ --spacing-hd-space-xl: 2.25rem;
+ --spacing-hd-space-md: 1rem;
+ --spacing-hd-space-xs: 0.25rem;
+ --spacing-hd-space-lg: 1.5rem;
+ --spacing-hd-space-sm: 0.5rem;
+}
+:root { --hdc-secondary-fixed-dim:#e6c364; --hdc-outline-variant:#d0c5b2; --hdc-primary-container:#755b00; --hdc-on-primary-fixed:#241a00; --hdc-surface-container:#f2eedf; --hdc-on-background:#1d1c13; --hdc-error-container:#ffdad6; --hdc-on-surface:#1d1c13; --hdc-on-error:#ffffff; --hdc-on-secondary-container:#785d00; --hdc-on-tertiary-fixed-variant:#49473e; --hdc-inverse-on-surface:#f5f1e2; --hdc-on-tertiary-fixed:#1d1c15; --hdc-secondary-container:#fed978; --hdc-on-error-container:#93000a; --hdc-surface-container-low:#f8f4e4; --hdc-outline:#7e7665; --hdc-tertiary-fixed-dim:#cac6bb; --hdc-tertiary-fixed:#e7e2d6; --hdc-tertiary-container:#605e55; --hdc-on-tertiary:#ffffff; --hdc-on-surface-variant:#4d4637; --hdc-surface-container-highest:#e7e2d4; --hdc-surface:#fef9ea; --hdc-on-secondary-fixed-variant:#584400; --hdc-background:#fef9ea; --hdc-on-primary:#ffffff; --hdc-inverse-surface:#323127; --hdc-on-tertiary-container:#dcd8cc; --hdc-on-primary-container:#f9d576; --hdc-on-primary-fixed-variant:#584400; --hdc-error:#ba1a1a; --hdc-inverse-primary:#e6c366; --hdc-surface-dim:#dedacb; --hdc-surface-container-high:#ede8d9; --hdc-surface-bright:#fef9ea; --hdc-on-secondary:#ffffff; --hdc-secondary:#755b00; --hdc-surface-container-lowest:#ffffff; --hdc-primary:#584400; --hdc-on-secondary-fixed:#241a00; --hdc-primary-fixed:#ffdf90; --hdc-surface-variant:#e7e2d4; --hdc-surface-tint:#755b00; --hdc-secondary-fixed:#ffe08f; --hdc-tertiary:#48473e; --hdc-primary-fixed-dim:#e6c366; }
+@media (prefers-color-scheme: dark) { :root { --hdc-surface:#16140e; --hdc-background:#16140e; --hdc-surface-bright:#3c392f; --hdc-surface-dim:#16140e; --hdc-surface-container-lowest:#211f17; --hdc-surface-container-low:#1e1c14; --hdc-surface-container:#24221a; --hdc-surface-container-high:#2e2c23; --hdc-surface-container-highest:#39372d; --hdc-surface-variant:#4d4637; --hdc-on-surface:#e8e2d4; --hdc-on-background:#e8e2d4; --hdc-on-surface-variant:#d0c5b2; --hdc-outline:#998f80; --hdc-outline-variant:#4d4637; --hdc-secondary:#e6c364; --hdc-on-secondary:#3d2f00; --hdc-secondary-container:#584400; --hdc-on-secondary-container:#ffe08f; --hdc-primary:#e6c366; --hdc-on-primary:#3d2e00; --hdc-primary-container:#584400; --hdc-on-primary-container:#ffdf90; --hdc-tertiary:#cac6bb; --hdc-on-tertiary:#32312a; --hdc-tertiary-container:#48473e; --hdc-on-tertiary-container:#e7e2d6; --hdc-inverse-surface:#e8e2d4; --hdc-inverse-on-surface:#323127; --hdc-inverse-primary:#755b00; --hdc-surface-tint:#e6c366; --hdc-error:#ffb4ab; --hdc-on-error:#690005; --hdc-error-container:#93000a; --hdc-on-error-container:#ffdad6; } }
+
 :root {
  /* Direction visuelle validée le 19/10/2026 (maquettes Stitch corrigées, guide « Sacred Editorial ») :
     papier ivoire, encre noire, or discret réservé aux repères, olive pour les petites étiquettes. */

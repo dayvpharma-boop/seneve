@@ -1,0 +1,1343 @@
+{
+  "statut": "brouillon_non_publiable",
+  "langue": "fr",
+  "programme_id": null,
+  "version": null,
+  "duree_gratuite_jours": 30,
+  "source_decision": "30 jours gratuits — décision explicite du porteur",
+  "modeles": {
+    "reveil": {
+      "libelle": "Réveil",
+      "consigne_proposee": "Choisis une heure de réveil adaptée à ton quotidien.",
+      "critere_propose": "Déclare ton réveil à partir de ce que tu as réellement vécu.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "gratitude_matin": {
+      "libelle": "Gratitude du matin",
+      "consigne_proposee": "Prends un instant pour nommer ce dont tu es reconnaissant ce matin.",
+      "critere_propose": "Déclare ce temps de reconnaissance après l’avoir vécu.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "priere_matin": {
+      "libelle": "Prière du matin",
+      "consigne_proposee": "Prends ton temps de prière du matin. Tu peux aussi prier avec tes propres mots.",
+      "critere_propose": "Déclare ta prière ; ouvrir le texte seul ne la valide pas.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "bible_matin": {
+      "libelle": "Bible du matin",
+      "consigne_proposee": "Lis un passage biblique et prends un temps pour y réfléchir.",
+      "critere_propose": "Déclare la lecture et la réflexion que tu as réellement faites.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "exercice": {
+      "libelle": "Exercice adapté",
+      "consigne_proposee": "Prévois 10 à 15 minutes de mouvement doux, selon tes capacités.",
+      "critere_propose": "Déclare ce que tu as réalisé, y compris une réalisation partielle.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "lecture_pro": {
+      "libelle": "Lecture professionnelle",
+      "consigne_proposee": "Consacre 30 minutes à une lecture utile à ton métier, à tes études ou à ton activité.",
+      "critere_propose": "Déclare la lecture effectuée ; ouvrir un document ne suffit pas.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "priere_midi": {
+      "libelle": "Prière de midi",
+      "consigne_proposee": "Prends ton temps de prière de midi. Tu peux aussi prier avec tes propres mots.",
+      "critere_propose": "Déclare ta prière indépendamment de celles du matin et du soir.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "predication": {
+      "libelle": "Écoute d’une prédication",
+      "consigne_proposee": "Prévois 30 minutes d’écoute d’une prédication choisie par toi ou proposée après validation éditoriale.",
+      "critere_propose": "Déclare l’écoute réellement effectuée, même partielle ; ouvrir un lien ne suffit pas.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "lecture_personnelle": {
+      "libelle": "Développement personnel",
+      "consigne_proposee": "Consacre 30 minutes à un ouvrage de ton choix ou à une recommandation approuvée.",
+      "critere_propose": "Déclare la lecture réellement effectuée.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "bible_soir": {
+      "libelle": "Bible du soir",
+      "consigne_proposee": "Lis un passage biblique et prends un temps pour y réfléchir ce soir.",
+      "critere_propose": "Déclare la lecture et la réflexion réellement faites.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "gratitude_soir": {
+      "libelle": "Gratitude du soir",
+      "consigne_proposee": "Relis ta journée et nomme un ou plusieurs motifs de reconnaissance.",
+      "critere_propose": "Déclare ce temps de reconnaissance après l’avoir vécu.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "priere_soir": {
+      "libelle": "Prière du soir",
+      "consigne_proposee": "Prends ton temps de prière du soir. Tu peux aussi prier avec tes propres mots.",
+      "critere_propose": "Déclare cette prière séparément des deux autres rendez-vous.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "coucher": {
+      "libelle": "Coucher",
+      "consigne_proposee": "Choisis une heure de coucher adaptée à ton rythme.",
+      "critere_propose": "Déclare ton coucher sans transformer l’horaire proposé en jugement personnel.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "culte_semaine": {
+      "libelle": "Cultes en semaine",
+      "consigne_proposee": "Renseigne deux créneaux réels de ton assemblée et participe selon tes possibilités.",
+      "critere_propose": "Déclare ta participation réelle ; la règle de participation à distance reste à valider.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 5",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "culte_dimanche": {
+      "libelle": "Troisième culte hebdomadaire",
+      "consigne_proposee": "Renseigne le troisième créneau de ton assemblée ; le dimanche à 09 h est une proposition.",
+      "critere_propose": "Déclare ta participation réelle ; aucune présence n’est déduite automatiquement.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 5",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    }
+  },
+  "offre": {
+    "coach": "non_inclus",
+    "medias": "a_definir",
+    "bilans": "a_definir",
+    "validation": {
+      "statut": "a_relire",
+      "relecteur": null,
+      "date": null,
+      "preuve": null
+    },
+    "decision_coach": {
+      "date": "2026-10-26",
+      "portee": "gratuit_sans_coach_mois_abonnement_avec_coach",
+      "decision": "Coach exclu des 30 jours gratuits, inclus dans les mois suivants avec abonnement payant actif.",
+      "preuve": "Précision du porteur : « seulement dans le 30 jours gratuit » ; « dans les mois après abonnement ... accès à coach »."
+    },
+    "coach_mois_payants": "inclus_sous_droit_actif"
+  },
+  "priere": {
+    "reference_document": "PDF Amidah fourni, source hassidout.org",
+    "droits_reproduction": "a_verifier",
+    "reference_texte_autorise": null,
+    "validation": {
+      "statut": "a_relire",
+      "relecteur": null,
+      "date": null,
+      "preuve": null
+    }
+  },
+  "defis": {
+    "rythme": "proposition_4_semaines_et_bilan_jours_29_30",
+    "contenus": [
+      {
+        "defi_editorial_id": "HD_FR_DEFI_S1",
+        "jour_debut": 1,
+        "jour_fin": 7,
+        "titre": "Préparer un rendez-vous fidèle",
+        "racines": [
+          "Royaume",
+          "Fidélité dans les petites choses"
+        ],
+        "objectif": "Choisir un rendez-vous quotidien réaliste et en observer la pratique.",
+        "invitation": "Cette semaine, choisis parmi tes habitudes un rendez-vous que tu veux mieux préparer : prière, lecture ou gratitude. Vérifie son horaire et prévois ce qui peut t’aider à y entrer calmement. À chaque passage, déclare seulement ce que tu as réellement fait. Si tu le manques, prépare le suivant ; tu ne repars pas de zéro.",
+        "adaptation_proposee": "Tu peux déplacer l’horaire, préparer ton support à l’avance ou demander de l’aide pour comprendre l’activité. Une réalisation partielle reste une information utile.",
+        "critere_declaration_propose": "À la fin de la semaine, indique si tu as essayé de préparer ce rendez-vous et ce que tu en retiens. Aucun nombre de jours réussis n’est imposé par cette proposition.",
+        "question_bilan": "Qu’est-ce qui a facilité ce rendez-vous, et quel ajustement veux-tu garder ?",
+        "source": "Livre fourni, chapitre 1, p. imprimées 9–10 ; chapitre 6, p. 117–118 ; cahier Habitudes & Défis, sections 4 et 9",
+        "caractere_propose": "facultatif_a_valider",
+        "nature": "proposition_editoriale_non_citation",
+        "validation": {
+          "statut": "a_relire",
+          "relecteur": null,
+          "date": null,
+          "preuve": null
+        }
+      },
+      {
+        "defi_editorial_id": "HD_FR_DEFI_S2",
+        "jour_debut": 8,
+        "jour_fin": 14,
+        "titre": "Prendre soin d’une responsabilité",
+        "racines": [
+          "Travail",
+          "Fidélité dans les petites choses"
+        ],
+        "objectif": "Mettre de l’attention et de l’honnêteté dans une responsabilité existante.",
+        "invitation": "Choisis une responsabilité déjà présente dans ta vie : travail, étude, tâche familiale ou engagement personnel. Définis une étape concrète que tu peux raisonnablement mener cette semaine. Prends le temps de la préparer et de reconnaître ce qui est terminé ou encore en cours. Il ne s’agit pas d’accumuler des tâches pour obtenir un meilleur score.",
+        "adaptation_proposee": "Si ton emploi du temps change, réduis l’étape ou explique ce qui n’a pas été possible. Ce défi ne conditionne pas ta valeur à un emploi, à un revenu ou à une performance.",
+        "critere_declaration_propose": "Déclare ce que tu as réellement essayé ou réalisé, y compris partiellement. Aucune preuve publique, comparaison ou note de foi n’est demandée.",
+        "question_bilan": "Quelle attention nouvelle as-tu portée à cette responsabilité ?",
+        "source": "Livre fourni, chapitre 3, p. imprimées 58–59 ; chapitre 6, p. 117–120 ; cahier Habitudes & Défis, section 9",
+        "caractere_propose": "facultatif_a_valider",
+        "nature": "proposition_editoriale_non_citation",
+        "validation": {
+          "statut": "a_relire",
+          "relecteur": null,
+          "date": null,
+          "preuve": null
+        }
+      },
+      {
+        "defi_editorial_id": "HD_FR_DEFI_S3",
+        "jour_debut": 15,
+        "jour_fin": 21,
+        "titre": "Exercer une générosité attentive",
+        "racines": [
+          "Dîme et offrande",
+          "Détachement de l’argent",
+          "Aide aux personnes vulnérables"
+        ],
+        "objectif": "Réfléchir à une aide libre, respectueuse et adaptée à ses possibilités.",
+        "invitation": "Observe un besoin autour de toi sans exposer la personne concernée. Si elle le souhaite et si tu le peux, propose une aide adaptée : écouter, rendre un service, consacrer du temps ou choisir un autre geste. Prends aussi un moment pour réfléchir à ce qui motive ta générosité. Aucun versement n’est demandé par ce défi.",
+        "adaptation_proposee": "Tu peux choisir un geste non financier ou garder cette semaine comme un temps d’écoute et de réflexion. Ne note pas de nom, de montant ou de situation privée dans une déclaration de défi.",
+        "critere_declaration_propose": "Indique simplement si tu as réfléchi à une aide ou posé un geste adapté. Une somme donnée ne sert jamais de critère de réussite.",
+        "question_bilan": "Qu’as-tu appris sur une manière respectueuse d’aider ?",
+        "source": "Livre fourni, chapitre 2, p. imprimées 38–39 ; chapitre 4, p. 79–80 ; chapitre 5, p. 100–101 ; cahier Habitudes & Défis, sections 9 et 12",
+        "caractere_propose": "facultatif_a_valider",
+        "nature": "proposition_editoriale_non_citation",
+        "validation": {
+          "statut": "a_relire",
+          "relecteur": null,
+          "date": null,
+          "preuve": null
+        }
+      },
+      {
+        "defi_editorial_id": "HD_FR_DEFI_S4",
+        "jour_debut": 22,
+        "jour_fin": 28,
+        "titre": "Faire une place au discernement",
+        "racines": [
+          "Discernement",
+          "Fidélité dans les petites choses"
+        ],
+        "objectif": "Prendre du recul avant une décision ordinaire.",
+        "invitation": "Choisis une décision ordinaire sur laquelle tu peux prendre un peu de recul. Accorde-lui un temps de prière, distingue les faits connus de la pression ressentie et formule la question qui reste ouverte. Le parcours ne prétend pas recevoir une réponse divine à ta place. Il t’invite à exercer une attention plus paisible.",
+        "adaptation_proposee": "Tu peux garder une question ouverte ou demander un éclairage approprié. Ce défi ne remplace pas une aide professionnelle pour une décision qui en nécessite une.",
+        "critere_declaration_propose": "Déclare que tu as pris ce temps de recul, même si aucune décision finale n’est prise. Aucune réponse spirituelle particulière n’est attendue.",
+        "question_bilan": "Qu’as-tu mieux compris en ralentissant ?",
+        "source": "Livre fourni, chapitre 7, p. imprimées 134–135 et 144–145 ; cahier Habitudes & Défis, sections 9 et 13",
+        "caractere_propose": "facultatif_a_valider",
+        "nature": "proposition_editoriale_non_citation",
+        "validation": {
+          "statut": "a_relire",
+          "relecteur": null,
+          "date": null,
+          "preuve": null
+        }
+      }
+    ],
+    "bilan_final": {
+      "jour_debut": 29,
+      "jour_fin": 30,
+      "titre": "Choisir la suite avec clarté",
+      "invitation": "Relis un apprentissage, une difficulté et une habitude que tu souhaites poursuivre. Choisis un prochain pas réaliste. Ce bilan ne déclenche ni renouvellement ni paiement.",
+      "questions": [
+        "Qu’aimerais-tu conserver ?",
+        "De quelle aide as-tu encore besoin ?",
+        "Quel prochain pas choisis-tu ?"
+      ],
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "validation": {
+      "statut": "a_relire",
+      "relecteur": null,
+      "date": null,
+      "preuve": null
+    }
+  },
+  "validation_globale": {
+    "statut": "a_relire",
+    "relecteur": null,
+    "date": null,
+    "preuve": null
+  },
+  "fiches": [
+    {
+      "jour": 1,
+      "titre": "Commencer avec ce qui est possible",
+      "objectif": "Choisir un premier pas réaliste.",
+      "texte_pedagogique": "Commence avec la journée qui est devant toi. Le chapitre sur la fidélité invite à prendre soin des responsabilités ordinaires. Choisis un rendez-vous que tu peux réellement honorer aujourd’hui, puis garde les autres repères à leur juste place. Le suivi t’aide à nommer tes actions ; il ne mesure ni ta foi ni ta valeur.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J01_REVEIL",
+        "gratitude_matin": "HD_FR_J01_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J01_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J01_BIBLE_MATIN",
+        "exercice": "HD_FR_J01_EXERCICE",
+        "lecture_pro": "HD_FR_J01_LECTURE_PRO",
+        "priere_midi": "HD_FR_J01_PRIERE_MIDI",
+        "predication": "HD_FR_J01_PREDICATION",
+        "lecture_personnelle": "HD_FR_J01_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J01_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J01_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J01_PRIERE_SOIR",
+        "coucher": "HD_FR_J01_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "eba1510b9ad2ba7f3fcf63386b285cbcf606af114dc0d192c05eb46ec0a65212",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel rendez-vous veux-tu préparer en premier ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 2,
+      "titre": "Faire une place à l’essentiel",
+      "objectif": "Relire ses priorités concrètes.",
+      "texte_pedagogique": "Une priorité devient visible dans la manière d’utiliser son temps. Avant de remplir ta journée, regarde la place que tu souhaites donner à la prière, à la lecture et à tes responsabilités. Tu peux ajuster les heures proposées à tes contraintes. Chercher un ordre plus juste commence par une décision concrète, à ta portée.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 1, pages imprimées 9–10 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J02_REVEIL",
+        "gratitude_matin": "HD_FR_J02_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J02_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J02_BIBLE_MATIN",
+        "exercice": "HD_FR_J02_EXERCICE",
+        "lecture_pro": "HD_FR_J02_LECTURE_PRO",
+        "priere_midi": "HD_FR_J02_PRIERE_MIDI",
+        "predication": "HD_FR_J02_PREDICATION",
+        "lecture_personnelle": "HD_FR_J02_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J02_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J02_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J02_PRIERE_SOIR",
+        "coucher": "HD_FR_J02_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "5f938f111789327f39c1f0d91bb38d62033e301bf1ce29734b90147bdb36a09f",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel ajustement rendrait ta journée plus cohérente avec tes priorités ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 3,
+      "titre": "Préparer son rendez-vous de prière",
+      "objectif": "Faciliter un temps de prière personnel.",
+      "texte_pedagogique": "Le livre présente la prière comme une relation qui accompagne les décisions ordinaires. Prépare un endroit ou un moment où tu pourras te recueillir sans précipitation. La prière proposée peut soutenir ce temps ; tu peux aussi prier avec tes propres mots. Déclare ensuite ce que tu as réellement vécu, sans te comparer aux autres.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 144–145 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J03_REVEIL",
+        "gratitude_matin": "HD_FR_J03_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J03_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J03_BIBLE_MATIN",
+        "exercice": "HD_FR_J03_EXERCICE",
+        "lecture_pro": "HD_FR_J03_LECTURE_PRO",
+        "priere_midi": "HD_FR_J03_PRIERE_MIDI",
+        "predication": "HD_FR_J03_PREDICATION",
+        "lecture_personnelle": "HD_FR_J03_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J03_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J03_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J03_PRIERE_SOIR",
+        "coucher": "HD_FR_J03_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "63903543606279edf41c6207181734e240a8bc6c45c08a1c002499fcb5aa763d",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Qu’est-ce qui t’aide à entrer calmement dans la prière ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 4,
+      "titre": "Lire pour comprendre",
+      "objectif": "Associer lecture et réflexion.",
+      "texte_pedagogique": "Accorde une attention réelle à ce que tu lis. Le chapitre sur le discernement relie l’écoute à la vie quotidienne. Pendant ta lecture biblique, prends le temps de repérer une idée que tu souhaites comprendre davantage. Tu n’as pas besoin de produire une longue réponse. Une question honnête peut devenir le point de départ de ta réflexion.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 144–145 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J04_REVEIL",
+        "gratitude_matin": "HD_FR_J04_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J04_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J04_BIBLE_MATIN",
+        "exercice": "HD_FR_J04_EXERCICE",
+        "lecture_pro": "HD_FR_J04_LECTURE_PRO",
+        "priere_midi": "HD_FR_J04_PRIERE_MIDI",
+        "predication": "HD_FR_J04_PREDICATION",
+        "lecture_personnelle": "HD_FR_J04_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J04_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J04_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J04_PRIERE_SOIR",
+        "coucher": "HD_FR_J04_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9768faa39c7fb67d22d5bb286aa009527dc28cc29c7f37ab7d38398d7af810a1",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle idée ou question gardes-tu de ta lecture ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 5,
+      "titre": "Honorer une petite responsabilité",
+      "objectif": "Reconnaître la valeur d’une tâche ordinaire.",
+      "texte_pedagogique": "Le livre illustre la fidélité par des gestes ordinaires : une responsabilité assumée, une parole tenue, un travail poursuivi. Choisis une tâche déjà présente dans ta journée et accorde-lui l’attention qu’elle mérite. Il ne s’agit pas d’ajouter des obligations pour remplir une liste. Observe plutôt comment tu prends soin de ce qui t’est déjà confié.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J05_REVEIL",
+        "gratitude_matin": "HD_FR_J05_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J05_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J05_BIBLE_MATIN",
+        "exercice": "HD_FR_J05_EXERCICE",
+        "lecture_pro": "HD_FR_J05_LECTURE_PRO",
+        "priere_midi": "HD_FR_J05_PRIERE_MIDI",
+        "predication": "HD_FR_J05_PREDICATION",
+        "lecture_personnelle": "HD_FR_J05_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J05_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J05_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J05_PRIERE_SOIR",
+        "coucher": "HD_FR_J05_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9996cf0f78100a989f2cab57e2a2e43a349a34bbd012faf8944910854cf108e8",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle responsabilité ordinaire mérite ton attention aujourd’hui ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 6,
+      "titre": "Prendre soin de son rythme",
+      "objectif": "Adapter les repères à ses capacités.",
+      "texte_pedagogique": "La fidélité se pratique à partir de ce qui t’est confié et de tes possibilités réelles. Le module propose aussi du mouvement doux et un rythme de repos. Adapte ces repères à ta situation, comme le prévoit le cahier des charges. Décrire une réalisation partielle ou demander de l’aide est plus utile que déclarer un effort que tu n’as pas fait.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J06_REVEIL",
+        "gratitude_matin": "HD_FR_J06_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J06_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J06_BIBLE_MATIN",
+        "exercice": "HD_FR_J06_EXERCICE",
+        "lecture_pro": "HD_FR_J06_LECTURE_PRO",
+        "priere_midi": "HD_FR_J06_PRIERE_MIDI",
+        "predication": "HD_FR_J06_PREDICATION",
+        "lecture_personnelle": "HD_FR_J06_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J06_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J06_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J06_PRIERE_SOIR",
+        "coucher": "HD_FR_J06_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9fe20ababeaf6a47e808da2fa21571411fef874b9f9ebdcc1a0d1daf8971e5ef",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel horaire ou effort doit être adapté à ta situation ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 7,
+      "titre": "Relire une première semaine",
+      "objectif": "Observer sans se condamner.",
+      "texte_pedagogique": "Prends un moment pour relire tes premiers jours. Repère un geste que tu as pu répéter et une difficulté qui revient. Le chapitre sur les petites choses invite à regarder la pratique quotidienne plutôt que les apparences. Ton bilan sert à préparer la suite. Un rendez-vous manqué ne supprime ni les actions déjà faites ni la possibilité de reprendre.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J07_REVEIL",
+        "gratitude_matin": "HD_FR_J07_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J07_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J07_BIBLE_MATIN",
+        "exercice": "HD_FR_J07_EXERCICE",
+        "lecture_pro": "HD_FR_J07_LECTURE_PRO",
+        "priere_midi": "HD_FR_J07_PRIERE_MIDI",
+        "predication": "HD_FR_J07_PREDICATION",
+        "lecture_personnelle": "HD_FR_J07_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J07_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J07_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J07_PRIERE_SOIR",
+        "coucher": "HD_FR_J07_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "201e490feeea54b73b85087dece6d94676cb613899565e1cd172e56ca5dbb449",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Que souhaites-tu conserver et qu’aimerais-tu ajuster ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 8,
+      "titre": "Relier prière et action",
+      "objectif": "Préparer une responsabilité concrète.",
+      "texte_pedagogique": "Le chapitre sur le travail rapproche la prière de l’action. Présente ta journée dans la prière, puis identifie une responsabilité concrète à assumer. Selon ta situation, elle peut concerner ton emploi, tes études, une recherche ou une tâche familiale. Une difficulté d’accès au travail ne dit rien de ta valeur. Avance à partir de ce qui est effectivement possible.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 3, pages imprimées 58–59 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J08_REVEIL",
+        "gratitude_matin": "HD_FR_J08_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J08_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J08_BIBLE_MATIN",
+        "exercice": "HD_FR_J08_EXERCICE",
+        "lecture_pro": "HD_FR_J08_LECTURE_PRO",
+        "priere_midi": "HD_FR_J08_PRIERE_MIDI",
+        "predication": "HD_FR_J08_PREDICATION",
+        "lecture_personnelle": "HD_FR_J08_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J08_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J08_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J08_PRIERE_SOIR",
+        "coucher": "HD_FR_J08_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "f4480939145df50198aa72dd7688e0521c2dfd6c7ee8ec111d475fd687133414",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel pas concret accompagne ta prière aujourd’hui ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 9,
+      "titre": "Apprendre pour mieux servir",
+      "objectif": "Donner un sens à la lecture professionnelle.",
+      "texte_pedagogique": "La lecture professionnelle est un rendez-vous pour apprendre quelque chose d’utile à ton activité. Choisis un support en rapport avec ton métier, tes études ou un projet réel. Pendant ce temps, cherche une idée que tu pourrais comprendre ou appliquer. La durée proposée t’aide à t’organiser ; ta déclaration doit refléter la lecture réellement effectuée.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 3, pages imprimées 58–59 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J09_REVEIL",
+        "gratitude_matin": "HD_FR_J09_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J09_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J09_BIBLE_MATIN",
+        "exercice": "HD_FR_J09_EXERCICE",
+        "lecture_pro": "HD_FR_J09_LECTURE_PRO",
+        "priere_midi": "HD_FR_J09_PRIERE_MIDI",
+        "predication": "HD_FR_J09_PREDICATION",
+        "lecture_personnelle": "HD_FR_J09_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J09_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J09_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J09_PRIERE_SOIR",
+        "coucher": "HD_FR_J09_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "c3c9c5131361f8641b7c4e4ac96d58409fb7d66675669827328f9ae52e298721",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle idée utile as-tu retenue ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 10,
+      "titre": "Tenir une parole donnée",
+      "objectif": "Relire un engagement avec honnêteté.",
+      "texte_pedagogique": "Parmi les exemples de fidélité, le livre place la parole donnée. Pense à un engagement concret que tu as déjà pris. Tu peux le respecter, préciser ce qui reste possible ou prévenir honnêtement si tu ne peux pas le tenir. Cette réflexion porte sur un acte précis. Elle ne demande pas de te définir à partir d’un échec.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J10_REVEIL",
+        "gratitude_matin": "HD_FR_J10_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J10_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J10_BIBLE_MATIN",
+        "exercice": "HD_FR_J10_EXERCICE",
+        "lecture_pro": "HD_FR_J10_LECTURE_PRO",
+        "priere_midi": "HD_FR_J10_PRIERE_MIDI",
+        "predication": "HD_FR_J10_PREDICATION",
+        "lecture_personnelle": "HD_FR_J10_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J10_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J10_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J10_PRIERE_SOIR",
+        "coucher": "HD_FR_J10_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "ec99c7108754ca431191d47a6dd16d74c2978d5aa8a2b579831a2797167bd2db",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel engagement mérite une réponse honnête de ta part ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 11,
+      "titre": "Prendre soin de ce qui est confié",
+      "objectif": "Respecter un bien ou une responsabilité partagée.",
+      "texte_pedagogique": "L’exemple de Joseph met en lumière le soin apporté à ce qui appartient à autrui. Regarde une responsabilité ou un bien que l’on t’a confié : du matériel, un document, un espace ou du temps. Réfléchis à la manière de le respecter aujourd’hui. Une attention discrète peut avoir autant de sens qu’une action très visible.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 119–120 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J11_REVEIL",
+        "gratitude_matin": "HD_FR_J11_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J11_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J11_BIBLE_MATIN",
+        "exercice": "HD_FR_J11_EXERCICE",
+        "lecture_pro": "HD_FR_J11_LECTURE_PRO",
+        "priere_midi": "HD_FR_J11_PRIERE_MIDI",
+        "predication": "HD_FR_J11_PREDICATION",
+        "lecture_personnelle": "HD_FR_J11_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J11_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J11_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J11_PRIERE_SOIR",
+        "coucher": "HD_FR_J11_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "a5a2a79c5ed8d8429ff7553ffeae11e61f8a6b99df39b58872ec1c30d495bb6b",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "De quoi es-tu responsable, même si cela ne t’appartient pas ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 12,
+      "titre": "Faire une chose avec attention",
+      "objectif": "Privilégier une action réellement menée.",
+      "texte_pedagogique": "Le travail dont parle le livre appelle un engagement concret. Choisis une étape raisonnable dans une tâche déjà prévue et donne-lui ton attention. Tu peux ensuite reconnaître ce qui est terminé et ce qui reste en cours. Le suivi n’exige pas de transformer une action partielle en réussite complète. Il t’aide à reprendre au bon endroit.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 3, pages imprimées 58–59 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J12_REVEIL",
+        "gratitude_matin": "HD_FR_J12_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J12_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J12_BIBLE_MATIN",
+        "exercice": "HD_FR_J12_EXERCICE",
+        "lecture_pro": "HD_FR_J12_LECTURE_PRO",
+        "priere_midi": "HD_FR_J12_PRIERE_MIDI",
+        "predication": "HD_FR_J12_PREDICATION",
+        "lecture_personnelle": "HD_FR_J12_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J12_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J12_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J12_PRIERE_SOIR",
+        "coucher": "HD_FR_J12_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "d4c21fe4d788f1dc0e32996d2ed187bb340d3bccd878e2f397ce1ec045355590",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle étape as-tu réellement pu mener aujourd’hui ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 13,
+      "titre": "Apprendre sans se comparer",
+      "objectif": "Se concentrer sur ses propres possibilités.",
+      "texte_pedagogique": "La lecture de la parabole des talents proposée dans le livre souligne des capacités différentes. Ton rythme n’a pas à reproduire celui d’une autre personne. Pour tes lectures et tes autres rendez-vous, observe les moyens dont tu disposes et ce que tu peux développer. La comparaison ne remplace pas un regard précis sur ta propre pratique.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J13_REVEIL",
+        "gratitude_matin": "HD_FR_J13_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J13_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J13_BIBLE_MATIN",
+        "exercice": "HD_FR_J13_EXERCICE",
+        "lecture_pro": "HD_FR_J13_LECTURE_PRO",
+        "priere_midi": "HD_FR_J13_PRIERE_MIDI",
+        "predication": "HD_FR_J13_PREDICATION",
+        "lecture_personnelle": "HD_FR_J13_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J13_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J13_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J13_PRIERE_SOIR",
+        "coucher": "HD_FR_J13_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "7fe263340f013c97303c397424f9a7f63f45ea19d911eee1a70d4f4747f6aa8b",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel progrès peux-tu reconnaître sans te comparer ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 14,
+      "titre": "Faire le point sur son organisation",
+      "objectif": "Choisir un ajustement pour la suite.",
+      "texte_pedagogique": "Relis les rendez-vous de cette deuxième semaine. Certaines difficultés viennent d’un horaire peu réaliste ou d’une préparation insuffisante. Choisis un ajustement simple : préparer un livre, déplacer un créneau ou mieux anticiper une contrainte. Tu peux conserver tes réalisations et modifier ton organisation. Le bilan ne te demande pas de recommencer toute ton histoire.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J14_REVEIL",
+        "gratitude_matin": "HD_FR_J14_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J14_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J14_BIBLE_MATIN",
+        "exercice": "HD_FR_J14_EXERCICE",
+        "lecture_pro": "HD_FR_J14_LECTURE_PRO",
+        "priere_midi": "HD_FR_J14_PRIERE_MIDI",
+        "predication": "HD_FR_J14_PREDICATION",
+        "lecture_personnelle": "HD_FR_J14_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J14_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J14_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J14_PRIERE_SOIR",
+        "coucher": "HD_FR_J14_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "e8d1145389128ccba8c67912bba71d92e6fb929d63693110ad85978cf2d6c4fb",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel ajustement simple veux-tu essayer ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 15,
+      "titre": "Reconnaître ce qui est déjà là",
+      "objectif": "Nourrir la gratitude du quotidien.",
+      "texte_pedagogique": "Le chapitre sur l’argent distingue la possession de l’attachement. Pour ta gratitude du matin ou du soir, prends le temps de reconnaître aussi ce qui ne se mesure pas en biens : une relation, un apprentissage, une aide reçue. Reconnaître ces choses n’oblige pas à nier tes difficultés. Cela élargit simplement le regard porté sur ta journée.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 4, pages imprimées 79–80 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J15_REVEIL",
+        "gratitude_matin": "HD_FR_J15_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J15_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J15_BIBLE_MATIN",
+        "exercice": "HD_FR_J15_EXERCICE",
+        "lecture_pro": "HD_FR_J15_LECTURE_PRO",
+        "priere_midi": "HD_FR_J15_PRIERE_MIDI",
+        "predication": "HD_FR_J15_PREDICATION",
+        "lecture_personnelle": "HD_FR_J15_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J15_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J15_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J15_PRIERE_SOIR",
+        "coucher": "HD_FR_J15_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "dff7a9216acbb298851236102898e388bcb1a6f3562876cff29f3fd7dd6d467c",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "De quoi peux-tu être reconnaissant tout en restant honnête sur tes difficultés ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 16,
+      "titre": "Observer une habitude de dépense",
+      "objectif": "Mieux comprendre une pratique personnelle.",
+      "texte_pedagogique": "Le livre propose d’observer ses dépenses pour mieux comprendre ses habitudes. Si tu souhaites explorer ce sujet, relève pour toi un exemple concret et ce qu’il t’apprend. Tu n’as pas à inscrire de montant ni de détail financier dans ce module. Cette réflexion ne remplace pas un conseil adapté à ta situation et ne promet aucun résultat financier.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 128 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J16_REVEIL",
+        "gratitude_matin": "HD_FR_J16_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J16_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J16_BIBLE_MATIN",
+        "exercice": "HD_FR_J16_EXERCICE",
+        "lecture_pro": "HD_FR_J16_LECTURE_PRO",
+        "priere_midi": "HD_FR_J16_PRIERE_MIDI",
+        "predication": "HD_FR_J16_PREDICATION",
+        "lecture_personnelle": "HD_FR_J16_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J16_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J16_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J16_PRIERE_SOIR",
+        "coucher": "HD_FR_J16_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9b33430f8393186e1aed6647bfe67499334d899cfc3e7c7b4268b8f0265a9381",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Qu’as-tu appris en observant cette habitude ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 17,
+      "titre": "Réfléchir à sa générosité",
+      "objectif": "Distinguer réflexion et pression de donner.",
+      "texte_pedagogique": "Le chapitre sur la dîme et l’offrande ouvre une réflexion sur la place du don. Prends le temps d’examiner ta motivation et tes possibilités sans précipitation. Cette fiche ne te demande aucun paiement et ne conditionne pas ta progression à un don. Tu peux garder cette réflexion personnelle et approfondir les questions qui restent ouvertes.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 2, pages imprimées 38–39 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J17_REVEIL",
+        "gratitude_matin": "HD_FR_J17_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J17_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J17_BIBLE_MATIN",
+        "exercice": "HD_FR_J17_EXERCICE",
+        "lecture_pro": "HD_FR_J17_LECTURE_PRO",
+        "priere_midi": "HD_FR_J17_PRIERE_MIDI",
+        "predication": "HD_FR_J17_PREDICATION",
+        "lecture_personnelle": "HD_FR_J17_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J17_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J17_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J17_PRIERE_SOIR",
+        "coucher": "HD_FR_J17_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "b2e877dbb900b1a84a87aa564b41819a4c4eff45e0b0d6b91c42968c700d50f4",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Qu’est-ce qui motive ta générosité aujourd’hui ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 18,
+      "titre": "Choisir avec plus de liberté",
+      "objectif": "Examiner un attachement concret.",
+      "texte_pedagogique": "L’argent peut servir des besoins et des projets ; le livre invite aussi à examiner la place qu’il prend dans le cœur. Observe une envie ou une pression de comparaison qui influence tes choix. Tu peux la nommer sans te juger ni prendre une décision immédiate. Comprendre une habitude est une première étape pour choisir avec davantage de recul.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 4, pages imprimées 79–80 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J18_REVEIL",
+        "gratitude_matin": "HD_FR_J18_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J18_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J18_BIBLE_MATIN",
+        "exercice": "HD_FR_J18_EXERCICE",
+        "lecture_pro": "HD_FR_J18_LECTURE_PRO",
+        "priere_midi": "HD_FR_J18_PRIERE_MIDI",
+        "predication": "HD_FR_J18_PREDICATION",
+        "lecture_personnelle": "HD_FR_J18_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J18_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J18_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J18_PRIERE_SOIR",
+        "coucher": "HD_FR_J18_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9e6a61cf560a78aae45928f10ca47193f2bd07055bdb90ed730474aeab403e9d",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle pression aimerais-tu regarder avec plus de recul ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 19,
+      "titre": "Voir un besoin proche",
+      "objectif": "Porter attention à une personne.",
+      "texte_pedagogique": "Le chapitre sur l’aide aux personnes vulnérables ramène l’attention vers des besoins concrets. Dans ton entourage, sois attentif à une personne qui pourrait avoir besoin d’écoute, de présence ou d’une aide adaptée. N’expose pas sa situation dans le suivi. La compassion commence par un regard respectueux ; elle n’exige pas de te mettre en scène.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 5, pages imprimées 100–101 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J19_REVEIL",
+        "gratitude_matin": "HD_FR_J19_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J19_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J19_BIBLE_MATIN",
+        "exercice": "HD_FR_J19_EXERCICE",
+        "lecture_pro": "HD_FR_J19_LECTURE_PRO",
+        "priere_midi": "HD_FR_J19_PRIERE_MIDI",
+        "predication": "HD_FR_J19_PREDICATION",
+        "lecture_personnelle": "HD_FR_J19_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J19_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J19_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J19_PRIERE_SOIR",
+        "coucher": "HD_FR_J19_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "3acf9a2a8e5de9d51756fc686c971bb71149e2f7221f43a64026aec1c41ac863",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel besoin peux-tu reconnaître avec respect et discrétion ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 20,
+      "titre": "Servir avec discrétion",
+      "objectif": "Envisager une aide adaptée et libre.",
+      "texte_pedagogique": "Après avoir reconnu un besoin, réfléchis à une aide réellement adaptée à tes possibilités et à ce que la personne souhaite. Il peut s’agir de temps, d’écoute ou d’un service. Aucune somme ni preuve publique n’est demandée. Cette piste de réflexion ne devient pas automatiquement une activité obligatoire du parcours.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 5, pages imprimées 100–101 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J20_REVEIL",
+        "gratitude_matin": "HD_FR_J20_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J20_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J20_BIBLE_MATIN",
+        "exercice": "HD_FR_J20_EXERCICE",
+        "lecture_pro": "HD_FR_J20_LECTURE_PRO",
+        "priere_midi": "HD_FR_J20_PRIERE_MIDI",
+        "predication": "HD_FR_J20_PREDICATION",
+        "lecture_personnelle": "HD_FR_J20_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J20_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J20_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J20_PRIERE_SOIR",
+        "coucher": "HD_FR_J20_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "c98666328551b206fc4c1b43e1906a35b59f54cfab08184db9ad6078c1bd198c",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle aide serait utile, souhaitée et à ta portée ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 21,
+      "titre": "Relire gratitude et attention aux autres",
+      "objectif": "Reconnaître ce qui a changé dans son regard.",
+      "texte_pedagogique": "Relis les derniers jours : ta manière de reconnaître ce que tu reçois, de regarder tes habitudes et d’être attentif aux autres. Note mentalement ce qui t’a aidé et ce qui demeure difficile. Le bilan ne transforme pas la générosité en classement. Il t’aide à discerner une attitude que tu aimerais continuer à cultiver.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 4, pages imprimées 79–80 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J21_REVEIL",
+        "gratitude_matin": "HD_FR_J21_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J21_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J21_BIBLE_MATIN",
+        "exercice": "HD_FR_J21_EXERCICE",
+        "lecture_pro": "HD_FR_J21_LECTURE_PRO",
+        "priere_midi": "HD_FR_J21_PRIERE_MIDI",
+        "predication": "HD_FR_J21_PREDICATION",
+        "lecture_personnelle": "HD_FR_J21_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J21_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J21_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J21_PRIERE_SOIR",
+        "coucher": "HD_FR_J21_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "adc0a2fd4b7635a21281a2e4b2c055555d0bb822e18aa994fecd4f5d0d82091e",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle attitude souhaites-tu garder pour la prochaine semaine ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 22,
+      "titre": "Ralentir avant de décider",
+      "objectif": "Faire une place au discernement.",
+      "texte_pedagogique": "Le dernier chapitre décrit la pression des décisions prises dans l’urgence. Pour une décision ordinaire qui te préoccupe, prends un temps de recul et de prière. Distingue les faits connus des pressions que tu ressens. Cette fiche ne prétend pas te transmettre une réponse de Dieu ni décider à ta place.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 134–135 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J22_REVEIL",
+        "gratitude_matin": "HD_FR_J22_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J22_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J22_BIBLE_MATIN",
+        "exercice": "HD_FR_J22_EXERCICE",
+        "lecture_pro": "HD_FR_J22_LECTURE_PRO",
+        "priere_midi": "HD_FR_J22_PRIERE_MIDI",
+        "predication": "HD_FR_J22_PREDICATION",
+        "lecture_personnelle": "HD_FR_J22_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J22_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J22_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J22_PRIERE_SOIR",
+        "coucher": "HD_FR_J22_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "a7a515c8b9fada556f18fd971621b3722f3add29ac2c4992b56b3f12eff90e83",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Qu’as-tu besoin de comprendre avant de décider ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 23,
+      "titre": "Écouter avec attention",
+      "objectif": "Relier l’écoute d’une prédication à la réflexion.",
+      "texte_pedagogique": "Pendant ton temps d’écoute, cherche à comprendre le message et sa relation avec ta vie quotidienne. Une prédication choisie personnellement ou recommandée après validation peut soutenir ta réflexion. Tu peux retenir une idée et une question. Le fait d’ouvrir un lien ou de lancer un audio ne dit pas, à lui seul, que tu as écouté.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 144–145 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J23_REVEIL",
+        "gratitude_matin": "HD_FR_J23_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J23_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J23_BIBLE_MATIN",
+        "exercice": "HD_FR_J23_EXERCICE",
+        "lecture_pro": "HD_FR_J23_LECTURE_PRO",
+        "priere_midi": "HD_FR_J23_PRIERE_MIDI",
+        "predication": "HD_FR_J23_PREDICATION",
+        "lecture_personnelle": "HD_FR_J23_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J23_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J23_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J23_PRIERE_SOIR",
+        "coucher": "HD_FR_J23_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "97736a055c53b2f5a6bb33a0b1bf224f2b7e26a393d94ccd98025196be8221fc",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle idée mérite d’être approfondie après ton écoute ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 24,
+      "titre": "Ne pas confondre vitesse et fidélité",
+      "objectif": "Choisir un rythme soutenable.",
+      "texte_pedagogique": "Une décision rapide n’est pas toujours une décision mieux comprise. Regarde ton agenda et les rendez-vous que tu souhaites conserver. Tu peux distinguer une contrainte réelle d’une urgence ajoutée. Préserver un rythme soutenable aide à rester attentif à ce que tu fais, sans transformer chaque retard en jugement sur toi-même.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 134–135 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J24_REVEIL",
+        "gratitude_matin": "HD_FR_J24_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J24_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J24_BIBLE_MATIN",
+        "exercice": "HD_FR_J24_EXERCICE",
+        "lecture_pro": "HD_FR_J24_LECTURE_PRO",
+        "priere_midi": "HD_FR_J24_PRIERE_MIDI",
+        "predication": "HD_FR_J24_PREDICATION",
+        "lecture_personnelle": "HD_FR_J24_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J24_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J24_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J24_PRIERE_SOIR",
+        "coucher": "HD_FR_J24_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "1f6224c953f9320d53789327051a5a3f319568bee24e78c025cacd045e9d148a",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle urgence mérite d’être réévaluée ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 25,
+      "titre": "Préparer sa participation au culte",
+      "objectif": "Adapter les créneaux à son assemblée.",
+      "texte_pedagogique": "Le module prévoit trois participations hebdomadaires au culte, avec des jours et heures personnalisables. Vérifie que tes créneaux correspondent à la vie réelle de ton assemblée et à tes contraintes. Une participation est déclarée par toi ; elle n’est pas déduite de ta présence dans l’application. Les situations d’impossibilité doivent pouvoir être signalées honnêtement.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J25_REVEIL",
+        "gratitude_matin": "HD_FR_J25_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J25_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J25_BIBLE_MATIN",
+        "exercice": "HD_FR_J25_EXERCICE",
+        "lecture_pro": "HD_FR_J25_LECTURE_PRO",
+        "priere_midi": "HD_FR_J25_PRIERE_MIDI",
+        "predication": "HD_FR_J25_PREDICATION",
+        "lecture_personnelle": "HD_FR_J25_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J25_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J25_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J25_PRIERE_SOIR",
+        "coucher": "HD_FR_J25_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "510d6c52d3bf4f1e941a9d99dfa9a8fe05666eb0dc3a9dc90c5e8229884ce942",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Ton planning de culte correspond-il à tes possibilités réelles ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 26,
+      "titre": "Reprendre après un rendez-vous manqué",
+      "objectif": "Continuer sans effacer le chemin parcouru.",
+      "texte_pedagogique": "Un rendez-vous manqué mérite une réponse concrète plutôt qu’un effacement de tes efforts. Regarde ce qui l’a rendu difficile et prépare le prochain moment accessible. Tu peux déclarer une réalisation partielle ou demander de l’aide. Dans ce suivi, reprendre ne signifie pas supprimer tes lectures, tes prières ou les autres actions déjà confirmées.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J26_REVEIL",
+        "gratitude_matin": "HD_FR_J26_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J26_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J26_BIBLE_MATIN",
+        "exercice": "HD_FR_J26_EXERCICE",
+        "lecture_pro": "HD_FR_J26_LECTURE_PRO",
+        "priere_midi": "HD_FR_J26_PRIERE_MIDI",
+        "predication": "HD_FR_J26_PREDICATION",
+        "lecture_personnelle": "HD_FR_J26_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J26_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J26_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J26_PRIERE_SOIR",
+        "coucher": "HD_FR_J26_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "bf45df86119e6b8135071a0dfab89a4fad9aa787c4f0dcabd3a5fbd0bc6d5f1c",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel prochain rendez-vous peux-tu préparer simplement ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 27,
+      "titre": "Reconnaître un besoin d’aide",
+      "objectif": "Nommer une difficulté sans se réduire à elle.",
+      "texte_pedagogique": "La pratique régulière peut révéler des obstacles que l’on n’avait pas anticipés. Identifie une difficulté précise : horaire, compréhension, fatigue ou organisation. Tu peux demander de l’aide sans prétendre avoir terminé l’activité. La demande d’aide reste distincte de la réalisation et ne remet pas à zéro tes autres actions.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J27_REVEIL",
+        "gratitude_matin": "HD_FR_J27_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J27_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J27_BIBLE_MATIN",
+        "exercice": "HD_FR_J27_EXERCICE",
+        "lecture_pro": "HD_FR_J27_LECTURE_PRO",
+        "priere_midi": "HD_FR_J27_PRIERE_MIDI",
+        "predication": "HD_FR_J27_PREDICATION",
+        "lecture_personnelle": "HD_FR_J27_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J27_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J27_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J27_PRIERE_SOIR",
+        "coucher": "HD_FR_J27_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "c7a7cb30b5fbfcfebcdcd428eac709b6cd617e3a17a96cd79463c1b861aef91a",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Sur quel point une aide te serait-elle utile ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 28,
+      "titre": "Relire quatre semaines",
+      "objectif": "Distinguer les acquis et les ajustements.",
+      "texte_pedagogique": "Prends une vue d’ensemble de ces quatre semaines. Repère les rendez-vous devenus plus faciles à préparer et ceux qui nécessitent encore une adaptation. Appuie-toi sur tes déclarations réelles, sans comparer tes chiffres à ceux d’une autre personne. Le bilan décrit une pratique ; il ne délivre pas un jugement sur ta vie spirituelle.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J28_REVEIL",
+        "gratitude_matin": "HD_FR_J28_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J28_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J28_BIBLE_MATIN",
+        "exercice": "HD_FR_J28_EXERCICE",
+        "lecture_pro": "HD_FR_J28_LECTURE_PRO",
+        "priere_midi": "HD_FR_J28_PRIERE_MIDI",
+        "predication": "HD_FR_J28_PREDICATION",
+        "lecture_personnelle": "HD_FR_J28_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J28_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J28_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J28_PRIERE_SOIR",
+        "coucher": "HD_FR_J28_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "1de2e0855a8fa71cea4277bbcf437fe50d5153ffb19d2ea5cdcf4904e98448fd",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Qu’aimerais-tu continuer et qu’as-tu besoin d’adapter ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 29,
+      "titre": "Préparer la continuité",
+      "objectif": "Choisir ce que l’on souhaite poursuivre.",
+      "texte_pedagogique": "Reviens à tes priorités et aux habitudes qui les rendent concrètes. Choisis ce que tu souhaites poursuivre après cette première période et les moyens nécessaires pour y parvenir. Cette réflexion n’ouvre aucun accès payant et ne vaut pas accord de renouvellement. Les conditions d’une éventuelle suite doivent être présentées séparément et rester explicites.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 1, pages imprimées 9–10 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J29_REVEIL",
+        "gratitude_matin": "HD_FR_J29_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J29_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J29_BIBLE_MATIN",
+        "exercice": "HD_FR_J29_EXERCICE",
+        "lecture_pro": "HD_FR_J29_LECTURE_PRO",
+        "priere_midi": "HD_FR_J29_PRIERE_MIDI",
+        "predication": "HD_FR_J29_PREDICATION",
+        "lecture_personnelle": "HD_FR_J29_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J29_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J29_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J29_PRIERE_SOIR",
+        "coucher": "HD_FR_J29_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "34a0fc0f0966e87a3b706227edf1aa6790335eacdc5557c4c5b0f7ed4d938bcc",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quelle habitude veux-tu soutenir dans la durée ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    },
+    {
+      "jour": 30,
+      "titre": "Faire un bilan honnête et paisible",
+      "objectif": "Reconnaître le chemin parcouru et un prochain pas.",
+      "texte_pedagogique": "Relis le chemin parcouru pendant ces trente jours. Reconnais une action répétée, un apprentissage et une difficulté encore présente. Tu peux remercier pour ce qui a grandi et choisir un prochain pas réaliste. La fin de cette période n’efface pas ton histoire et ne déclenche aucun paiement automatique. Ton bilan reste un point d’appui pour la suite.",
+      "source": "Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13",
+      "activites": {
+        "reveil": "HD_FR_J30_REVEIL",
+        "gratitude_matin": "HD_FR_J30_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J30_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J30_BIBLE_MATIN",
+        "exercice": "HD_FR_J30_EXERCICE",
+        "lecture_pro": "HD_FR_J30_LECTURE_PRO",
+        "priere_midi": "HD_FR_J30_PRIERE_MIDI",
+        "predication": "HD_FR_J30_PREDICATION",
+        "lecture_personnelle": "HD_FR_J30_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J30_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J30_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J30_PRIERE_SOIR",
+        "coucher": "HD_FR_J30_COUCHER"
+      },
+      "validation": {
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "86e531999c0c50e592bd6139b02fdda2d33989162bc25e607db5f9a9d6ee7b31",
+        "portee": "texte_francais_uniquement"
+      },
+      "question_reflexion": "Quel prochain pas choisis-tu avec confiance et réalisme ?",
+      "nature": "adaptation_editoriale_proposee_non_citation"
+    }
+  ],
+  "note_progression": "Ordre pédagogique proposé pour relecture ; ne constitue ni une citation ni un plan officiel de 30 jours du livre. Les habitudes quotidiennes restent distinctes de ces réflexions."
+}

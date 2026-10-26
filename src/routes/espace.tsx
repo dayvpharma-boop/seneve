@@ -1,3 +1,10 @@
+import {PlanningJourHabitudes} from '@/components/PlanningJourHabitudes';
+import {SimulateurDime} from '@/components/SimulateurDime';
+import {calendrierHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
+import {LectureTexteHabitude} from '@/components/LectureTexteHabitude';
+import {habitudesActivees} from '@/lib/habitudes-configuration';
+import {DeclarationHabitude} from '@/components/DeclarationHabitude';
+import {occurrencesDepuisContenus} from '@/lib/habitudes-api';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { prenomDuCompte } from '@/lib/connexion-sociale';
 import {Apparence} from '@/components/Apparence';
@@ -42,12 +49,12 @@ import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
-type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
+type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; langue: string; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
 type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean; critere_realisation?: string | null };
 type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
 // heures : horaires des moments du jour (message 1, 2, 3), lus dans le programme publié ; absents = tout visible.
 type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
-type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[] };
+type Data = { prenom: string; participantId?:string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[]; habitudes?: string[]; classificationCacheVerifiee?: boolean; fuseauHabitudes?:string };
 
 const LOAD_ERRORS = { fr: 'Impossible de charger ta journée pour le moment.', en: 'Your day cannot be loaded right now.' } as const;
 const loadError = (langue?: string | null) => LOAD_ERRORS[langue === 'en' ? 'en' : 'fr'];
@@ -65,7 +72,7 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   // la synchronisation n8n (toutes les 15 minutes), qui reste en secours. Une erreur ici ne bloque jamais l'espace.
   await Promise.resolve(supabase.rpc('claim_my_purchases')).catch(() => undefined);
   const [p, e] = await Promise.all([
-    supabase.from('participants').select('prenom').maybeSingle(),
+    supabase.from('participants').select('participant_id, prenom, fuseau, preferences').maybeSingle(),
     // Lire aussi les inscriptions arrêtées pour ne jamais redémarrer un ancien parcours automatiquement.
     supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat'),
   ]);
@@ -87,11 +94,15 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   }
   if (!enrollments.length) return { prenom, parcours: [], contents: [], activities: [], states: [] };
   const progIds = [...new Set(enrollments.map(x => x.programme_id))];
-  const [pr, c] = await Promise.all([
+  const [pr, c, hd] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours, heures_messages').in('programme_id', progIds),
-    supabase.from('contents').select('content_id, programme_id, version, jour, numero_message, theme, explication, texte_officiel, reference_livre')
+    supabase.from('contents').select('content_id, programme_id, version, langue, jour, numero_message, theme, explication, texte_officiel, reference_livre')
       .in('programme_id', progIds).order('jour').order('numero_message'),
+    // Identifier HD pour le cache même lorsque son interface est désactivée.
+    Promise.resolve(supabase.from('hd_programme_links').select('programme_id, version, langue').in('programme_id',progIds))
+      .catch(() => ({data: null, error: new Error('Identification des parcours indisponible')})),
   ]);
+  if(hd.error && habitudesActivees())throw hd.error;
   if (pr.error) throw pr.error;
   if (c.error) throw c.error;
   const programmes = (pr.data ?? []) as Programme[];
@@ -109,7 +120,8 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   ]);
   if (a.error) throw a.error;
   if (st.error) throw st.error;
-  return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[] };
+  const hdInscrits=enrollments.filter(e=>(hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===e.programme_id&&String(h.version)===String(e.version)&&h.langue===e.langue)).map(e=>e.enrollment_id);
+  return { prenom, participantId:p.data?.participant_id, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[], habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined };
 }
 
 function formatDate(iso: string | null, locale = 'fr-FR') {
@@ -259,11 +271,12 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
   const T = textes(enr.langue);
+  const calendrierDe=(x:Parcours)=>habitudesActivees()&&data.habitudes?.includes(x.enrollment_id)?calendrierHabitudes(x.date_debut,x.duree,data.fuseauHabitudes??'Africa/Kinshasa'):dayInfo(x.date_debut,new Date(),x.duree);
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.mesParcours}>
-    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{dayInfo(x.date_debut,new Date(),x.duree).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:dayInfo(x.date_debut,new Date(),x.duree).finished?T.ongletTermine:T.ongletJour(dayInfo(x.date_debut,new Date(),x.duree).day)}</span>{x.nom}</button>)}
+    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{calendrierDe(x).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:calendrierDe(x).finished?T.ongletTermine:T.ongletJour(calendrierDe(x).day)}</span>{x.nom}</button>)}
   </div>;
 
-  const { day, finished, notStarted } = dayInfo(enr.date_debut, new Date(), total);
+  const { day, finished, notStarted } = calendrierDe(enr);
   if (notStarted) return page(enr.langue,<ParcoursAVenir langue={enr.langue} prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer(enr.langue)}/>, 'journee-nouvelle');
   if (notStarted) return page(enr.langue, <>{header()}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
@@ -300,6 +313,27 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
   const lienJournal = (q: Activity) => `/journal?inscription=${enr.enrollment_id}&activite=${q.activity_id}`;
   const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} lecture={momentParam > 0} readOnly={lectureSeule} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;
+
+  if(habitudesActivees() && data.habitudes?.includes(enr.enrollment_id)){
+    const en=enr.langue==='en';
+    const date_locale=new Date(Date.UTC(Number(enr.date_debut.slice(0,4)),Number(enr.date_debut.slice(5,7))-1,Number(enr.date_debut.slice(8,10))+current-1)).toISOString().slice(0,10);
+    const duJour=contents.filter(c=>c.jour===current&&c.langue===enr.langue).sort((a,b)=>a.numero_message-b.numero_message);
+    const ctx={enrollment_id:enr.enrollment_id,programme_id:enr.programme_id,version:Number(enr.version),langue:enr.langue,jour:current,date_locale};
+    const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities);
+    return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p><h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
+      {!horsLigne&&<Link className="oa-secondary" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>}
+      <label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>
+      {!horsLigne&&data.participantId&&<PlanningJourHabitudes key={enr.enrollment_id} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue}/>}
+      {horsLigne&&<p role="status">{en?'Offline copy — reading and declarations are unavailable here.':'Copie hors connexion — la lecture et les déclarations sont indisponibles ici.'}</p>}
+      {occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
+      {!horsLigne&&duJour.map(c=><LectureTexteHabitude key={c.content_id} titre={c.theme||(en?`Reading ${c.numero_message}`:`Lecture ${c.numero_message}`)} texte={c.texte_officiel} langue={enr.langue}/>)}
+      {!horsLigne&&occurrences.map(o=>{const a=data.activities.find(a=>a.activity_id===o.occurrence_id)!;const st=etatDe(a);return <DeclarationHabitude key={`${userId}:${enr.enrollment_id}:${o.occurrence_id}`} userId={userId} occurrence={o} consigne={a.consigne} critere={a.critere_realisation} langue={enr.langue} lectureSeule={lectureSeule||enr.etat!=='active'}
+        etat={st?{...o,etat:st.etat as 'non_commencee'|'preparee'|'partielle'|'realisee',aide_demandee:st.aide_demandee??false,synchronisation:horsLigne?'local':'synchronise'}:undefined}
+        transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onConfirme={e=>surEnregistre({enrollment_id:e.enrollment_id,activity_id:e.occurrence_id,etat:e.etat,aide_demandee:e.aide_demandee,realisee_le:st?.realisee_le??null})}/>;})}
+      {!horsLigne&&<SimulateurDime langue={enr.langue}/>}
+      <Link className="link" to={en?'/progres?lang=en':'/progres'}>{en?'My progress':'Mon suivi'}</Link>
+    </section>{footer(enr.langue)}</>,'journee-nouvelle');
+  }
 
   // Page d'un moment (« Lire et agir » / « Lire »).
   if (momentParam > 0) {
@@ -532,3 +566,4 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
     </>}
   </div>;
 }
+

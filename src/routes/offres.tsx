@@ -1,3 +1,5 @@
+import {AccesGratuitHabitudes} from '@/components/AccesGratuitHabitudes';
+import {habitudesActivees} from '@/lib/habitudes-configuration';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback,useEffect,useRef,useState,type ReactNode } from 'react';
@@ -27,7 +29,7 @@ export function Offres({mode='offres'}:{mode?:'offres'|'acces'|'paiement'}){
  const path=(p:string)=>p+(en?(p.includes('?')?'&':'?')+'lang=en':'');
  const label=(fr:string,english:string)=>en?english:fr;
  const header=<header className="oa-header"><Link to={path('/espace')} aria-label={label('Revenir à mon espace','Back to my space')}><I nom="arrow_back_ios_new" taille={20}/></Link><h1>{label('Offres & Accès','Offers & access')}</h1><Link to={path('/profil')} aria-label={label('Mon profil','My profile')}><AvatarParticipant><I nom="person" taille={20}/></AvatarParticipant></Link></header>;
- function page(children:ReactNode){return <main className="oa-page">{header}<IllustrationPage theme={mode==='paiement'?'paiement':mode==='acces'?'acces':'offres'} langue={langue} /><div className="oa-content">{children}</div></main>;}
+ function page(children:ReactNode){return <main className="oa-page">{header}<IllustrationPage theme={mode==='paiement'?'paiement':mode==='acces'?'acces':'offres'} langue={langue} /><div className="oa-content">{mode==='offres'&&habitudesActivees()&&<Link className="oa-secondary" to={path('/habitudes/inscription')}>{label('Habitudes & Défis · vérifier mes 30 jours gratuits','Habits & Challenges · check my 30 free days')}</Link>}{children}</div></main>;}
  const aide=<Link to={path('/aide')}>{label('Contacter l’aide SÉNEVÉ','Contact SÉNEVÉ support')}<I nom="arrow_forward" taille={18}/></Link>;
  const compte=<section className="oa-card"><I nom="lock"/><h2>{label('Retrouve tes offres et tes accès','Find your offers and access')}</h2><p>{label('Connecte-toi avec la même adresse e-mail que pour ton achat.','Sign in with the email address used for your purchase.')}</p><Link className="oa-primary" to={path('/connexion')}>{label('Se connecter','Sign in')}<I nom="arrow_forward"/></Link></section>;
  const etatErreur=erreur?<section role="alert" className="oa-card"><I nom="info"/><h2>{label('Vérification indisponible','Verification unavailable')}</h2><p>{erreur}</p><button onClick={()=>void actualiser()} disabled={busy}>{label('Réessayer','Try again')}</button>{aide}</section>:null;
@@ -53,6 +55,8 @@ export function Offres({mode='offres'}:{mode?:'offres'|'acces'|'paiement'}){
 function Features({points}:{points:[SymboleOffres,string][]}){return <ul className="oa-features">{points.map(([icon,text])=><li key={text}><I nom={icon} taille={20}/><span>{text}</span></li>)}</ul>;}
 
 function AccesCard({droit:d,data,langue}:{droit:DroitAcces;data:CatalogueAcces;langue:string}){
+ const periode=habitudesActivees()?data.periodesGratuitesHabitudes?.find(p=>p.entitlement_id===d.entitlement_id):undefined;
+ if(periode)return <AccesGratuitHabitudes droit={d} periode={periode} inscription={data.inscriptions.find(e=>e.enrollment_id===periode.enrollment_id)} langue={langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>;
  const en=langue==='en',label=(fr:string,english:string)=>en?english:fr,status=etatDroit(d),active=status==='actif',offre=data.offres.find(o=>o.offre_id===d.offre_id),inscription=data.inscriptions.find(e=>e.entitlement_id===d.entitlement_id),programme=data.programmes.find(p=>p.programme_id===inscription?.programme_id||p.programme_id===offre?.programme_id);
  const date=(s:string|null)=>s&&Number.isFinite(Date.parse(s))?new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long',year:'numeric'}).format(new Date(s)):null;
  const jour=inscription?Math.min(programme?.duree_jours??1,Math.max(1,rawDay(inscription.date_debut,new Date()))):null,jours=d.fin&&active?Math.max(0,Math.ceil((Date.parse(d.fin)-Date.now())/86400000)):null;

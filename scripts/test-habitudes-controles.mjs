@@ -1,0 +1,17 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {verifierAccesHabitude as access,verifierRappelHabitude as reminder,cleRappelHabitude as key} from '../src/lib/habitudes-controles.ts';
+const cible={participant_id:'p1',enrollment_id:'e1',programme_id:'HD',version:1,langue:'fr',occurrence_id:'matin-25',date_locale:'2026-10-25'};
+const droit={...cible,debut:'2026-10-25T00:00:00Z',fin_exclue:'2026-10-27T00:00:00Z',etat:'actif',origine:'gratuit_valide'};
+const a={cible,droit,participant_authentifie:'p1',inscription_active:true,maintenant:'2026-10-25T06:00:00Z'};
+const r={...a,canal:'web_push',consentement_valide:true,liaison_verifiee:true,creneau_utc:'2026-10-25T06:00:00Z',fin_creneau_utc:'2026-10-25T06:30:00Z',silence:false,etat_serveur:'non_commencee',deja_accepte_fournisseur:false};
+test('gratuit validé et paiement vérifié admis sur leur période explicite',()=>{assert.equal(access(a).autorise,true);assert.equal(access({...a,droit:{...droit,origine:'paiement_verifie'}}).autorise,true)});
+test('borne de fin exclusive et début futur refusés',()=>{assert.equal(access({...a,maintenant:droit.fin_exclue}).autorise,false);assert.equal(access({...a,maintenant:'2026-10-24T23:59:59Z'}).autorise,false)});
+test('pas de droit, révocation, autre compte ou inscription inactive : refus',()=>{for(const change of [{droit:null},{droit:{...droit,etat:'revoque'}},{participant_authentifie:'p2'},{participant_authentifie:null},{inscription_active:false}])assert.equal(access({...a,...change}).autorise,false)});
+test('droit d’une autre inscription, version ou langue refusé',()=>{for(const change of [{enrollment_id:'e2'},{programme_id:'AUTRE'},{version:2},{langue:'en'}])assert.equal(access({...a,droit:{...droit,...change}}).autorise,false)});
+test('dates sans fuseau, période inversée et preuve inconnue refusées',()=>{for(const change of [{debut:'2026-10-25T00:00:00'},{fin_exclue:'2026-10-24T00:00:00Z'},{origine:'retour_navigateur'}])assert.equal(access({...a,droit:{...droit,...change}}).autorise,false)});
+test('préparée et partielle ne suppriment pas leur rappel ; réalisée le bloque',()=>{for(const etat_serveur of ['non_commencee','preparee','partielle'])assert.equal(reminder({...r,etat_serveur}).envoyer,true);assert.equal(reminder({...r,etat_serveur:'realisee'}).motif,'activite_realisee')});
+test('réalisation du matin indépendante du midi',()=>{assert.equal(reminder({...r,etat_serveur:'realisee'}).envoyer,false);assert.equal(reminder({...r,cible:{...cible,occurrence_id:'midi-25'},etat_serveur:'non_commencee'}).envoyer,true)});
+test('consentement, liaison, silence, ancien créneau et acceptation fournisseur : refus',()=>{for(const change of [{consentement_valide:false},{liaison_verifiee:false},{silence:true},{maintenant:r.fin_creneau_utc},{deja_accepte_fournisseur:true}])assert.equal(reminder({...r,...change}).envoyer,false)});
+test('droit expiré bloque aussi le rappel',()=>assert.equal(reminder({...r,droit:{...droit,fin_exclue:r.maintenant}}).envoyer,false));
+test('clés distinctes par activité, inscription, version et canal ; réessai identique stable',()=>{const k=key(cible,'web_push',r.creneau_utc);assert.equal(key(cible,'web_push','2026-10-25T07:00:00+01:00'),k);for(const change of [{occurrence_id:'midi-25'},{enrollment_id:'e2'},{version:2},{langue:'en'}])assert.notEqual(key({...cible,...change},'web_push',r.creneau_utc),k);assert.notEqual(key(cible,'whatsapp',r.creneau_utc),k)});

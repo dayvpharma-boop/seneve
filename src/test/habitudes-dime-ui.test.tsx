@@ -1,9 +1,11 @@
-import {cleanup,fireEvent,render,screen} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
 import {SimulateurDime} from '@/components/SimulateurDime';
 afterEach(()=>{cleanup();vi.restoreAllMocks();});
 function ouvrir(){const r=render(<SimulateurDime langue="fr"/>);r.container.querySelector('details')!.open=true;return r;}
-function situation(value:string){fireEvent.change(screen.getByLabelText('Situation'),{target:{value}});}
+const NOMS:Record<string,string>={commerce:'Commerçant',salaire:'Salarié',don:'Don reçu',pret:'Prêt',offrande:'Offrande',particulier:'Cas à préciser'};
+// Les situations sont des boutons radio (maquette Stitch) ; le mécanisme testé reste le même.
+function situation(value:string){fireEvent.click(within(screen.getByRole('radiogroup',{name:'Situation'})).getByRole('radio',{name:NOMS[value]}));}
 function saisir(label:string,value:string){fireEvent.change(screen.getByLabelText(label),{target:{value}});}
 it('affiche la formule de l’exemple commerce, sans stockage ni appel réseau',()=>{
  const stockage=vi.spyOn(Storage.prototype,'setItem'),reseau=vi.spyOn(globalThis,'fetch');ouvrir();situation('commerce');saisir('Période','semaine');saisir('Ventes encaissées','1000');saisir('Coût des marchandises','650');saisir('Charges professionnelles admissibles','150');fireEvent.click(screen.getByRole('button',{name:'Simuler'}));

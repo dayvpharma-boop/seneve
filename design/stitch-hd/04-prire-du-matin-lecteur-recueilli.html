@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,300..400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed": "#ffe08f", "secondary": "#755b00", "secondary-fixed-dim": "#e6c364", "surface-tint": "#755b00", "on-error-container": "#93000a", "inverse-primary": "#e6c366", "surface-container": "#f2eedf", "on-tertiary-container": "#dcd8cc", "error": "#ba1a1a", "secondary-container": "#fed978", "on-primary-container": "#f9d576", "background": "#fef9ea", "surface-container-low": "#f8f4e4", "on-surface-variant": "#4d4637", "surface-dim": "#dedacb", "on-tertiary-fixed": "#1d1c15", "tertiary-container": "#605e55", "inverse-on-surface": "#f5f1e2", "surface-bright": "#fef9ea", "surface": "#fef9ea", "primary": "#584400", "on-background": "#1d1c13", "on-secondary": "#ffffff", "primary-container": "#755b00", "surface-container-highest": "#e7e2d4", "error-container": "#ffdad6", "on-surface": "#1d1c13", "surface-container-high": "#ede8d9", "outline": "#7e7665", "surface-container-lowest": "#ffffff", "outline-variant": "#d0c5b2", "on-secondary-fixed-variant": "#584400", "on-secondary-container": "#785d00", "on-tertiary": "#ffffff", "on-secondary-fixed": "#241a00", "on-primary-fixed-variant": "#584400", "tertiary-fixed-dim": "#cac6bb", "surface-variant": "#e7e2d4", "on-error": "#ffffff", "tertiary": "#48473e", "on-primary-fixed": "#241a00", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#49473e", "tertiary-fixed": "#e7e2d6", "inverse-surface": "#323127", "primary-fixed": "#ffdf90", "primary-fixed-dim": "#e6c366" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2.25rem", "margin": "1rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "gutter": "0.75rem", "space-sm": "0.5rem", "space-md": "1rem" }, "fontFamily": { "headline-lg": ["Literata"], "headline-sm": ["Literata"], "label-sm": ["Work Sans"], "body-md": ["Literata"], "scripture-verse": ["Literata"], "label-lg": ["Work Sans"], "label-md": ["Work Sans"], "headline-md": ["Literata"], "body-lg": ["Literata"], "body-sm": ["Work Sans"], "label-nav": ["Work Sans"] }, "fontSize": { "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "600" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "15px", "letterSpacing": "0.05em", "fontWeight": "600" }], "body-md": ["15px", { "lineHeight": "25px", "fontWeight": "400" }], "scripture-verse": ["19px", { "lineHeight": "34px", "letterSpacing": "0.01em", "fontWeight": "400" }], "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "500" }], "label-md": ["13px", { "lineHeight": "17px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "body-lg": ["17px", { "lineHeight": "29px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "19px", "fontWeight": "400" }], "label-nav": ["10px", { "lineHeight": "13px", "fontWeight": "500" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Retour" class="w-11 h-11 flex items-center justify-center text-on-surface hover:text-primary transition-colors" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1">Prière du matin</h1></div><div class="flex items-center gap-space-xs"><div aria-label="Taille de police" class="flex items-center bg-surface-container rounded-full px-space-xs py-0.5" role="group"><button aria-label="Diminuer la taille du texte" class="w-11 h-11 flex items-center justify-center font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" type="button">A-</button><button aria-label="Augmenter la taille du texte" class="w-11 h-11 flex items-center justify-center font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" type="button">A+</button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-14 pb-safe bg-surface"><div class="flex flex-col w-full relative pb-28">
+<!-- En-tête contextuel & Métadonnées liturgiques -->
+<div class="px-margin pt-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed/40 text-secondary">
+<span class="material-symbols-outlined text-[14px]">auto_stories</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Amidah · version complète</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+<span>Durée personnelle</span>
+</div>
+</div>
+<!-- Sélecteur de langue liturgique -->
+<div class="flex items-center p-1 rounded-xl bg-surface-container gap-1 mt-1">
+<button class="flex-1 py-1.5 px-2.5 rounded-lg bg-surface-container-lowest shadow-sm text-secondary font-label-md text-label-md text-center transition-colors" type="button">
+        Français
+      </button>
+<div class="flex-1 py-1.5 px-2 rounded-lg text-on-surface-variant/60 font-label-md text-label-md flex items-center justify-center gap-1 cursor-not-allowed">
+<span>Phonétique</span>
+<span class="text-[9px] uppercase font-label-sm px-1 py-0.2 rounded bg-surface-container-highest text-on-surface-variant/80">Bientôt</span>
+</div>
+<div class="flex-1 py-1.5 px-2 rounded-lg text-on-surface-variant/60 font-label-md text-label-md flex items-center justify-center gap-1 cursor-not-allowed">
+<span>English</span>
+<span class="text-[9px] uppercase font-label-sm px-1 py-0.2 rounded bg-surface-container-highest text-on-surface-variant/80">Bientôt</span>
+</div>
+</div>
+<!-- Note d'avertissement éditoriale sobre -->
+<div class="rounded-xl p-3 bg-surface-container-low flex items-start gap-2.5 mt-1">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+        Texte d'exemple — le texte approuvé de l'Amidah sera inséré ici après vérification du texte et des droits.
+      </p>
+</div>
+</div>
+<!-- Conteneur principal du texte avec rail de progression subtil -->
+<div class="relative px-margin mt-space-lg flex">
+<!-- Rail de lecture latéral discret -->
+<div class="absolute right-2 top-0 bottom-0 w-1 flex flex-col items-center pointer-events-none">
+<div class="w-0.5 h-full bg-surface-container-highest rounded-full relative">
+<div class="absolute top-0 w-1.5 -left-0.5 h-10 rounded-full bg-secondary transition-transform duration-100 ease-out" id="scrollProgressPill"></div>
+</div>
+</div>
+<!-- Corps textuel de recueillement -->
+<div class="w-full pr-4 flex flex-col gap-space-xl font-body-lg text-body-lg leading-relaxed text-on-surface" id="prayerContent">
+<!-- Bénédiction 1 -->
+<section class="relative pl-7" id="section-1">
+<span class="absolute left-0 top-1 font-label-md text-label-md text-secondary select-none font-semibold">1</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-serif">Section 1 · titre à insérer</h2>
+<p class="font-body-lg text-body-lg text-on-surface/90 leading-[30px] font-serif">
+          Texte d'exemple. Passage à insérer après validation du texte et des droits.
+        </p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 italic font-serif">
+          Texte d'exemple. Passage à insérer après validation du texte et des droits.
+        </p>
+</section>
+<!-- Bénédiction 2 -->
+<section class="relative pl-7" id="section-2">
+<span class="absolute left-0 top-1 font-label-md text-label-md text-secondary select-none font-semibold">2</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-serif">Section 2 · titre à insérer</h2>
+<p class="font-body-lg text-body-lg text-on-surface/90 leading-[30px] font-serif">
+          Texte d'exemple. Passage à insérer après validation du texte et des droits.
+        </p>
+</section>
+<!-- Signet de reprise interactif ancré avant la section 3 -->
+<div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-surface-container-high text-secondary shadow-sm" id="bookmarkPill">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">bookmark</span>
+<span class="font-label-md text-label-md font-medium">Reprendre ici (dernière pause)</span>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase tracking-wide" onclick="document.getElementById('bookmarkPill').classList.add('opacity-40')" type="button">
+          Placer un repère
+        </button>
+</div>
+<!-- Bénédiction 3 -->
+<section class="relative pl-7" id="section-3">
+<span class="absolute left-0 top-1 font-label-md text-label-md text-secondary select-none font-semibold">3</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-serif">Section 3 · titre à insérer</h2>
+<p class="font-body-lg text-body-lg text-on-surface/90 leading-[30px] font-serif">
+          Texte d'exemple. Passage à insérer après validation du texte et des droits.
+        </p>
+</section>
+<!-- Note liturgique selon la période (Encart saisonnier) -->
+<div class="rounded-xl p-4 bg-surface-container flex flex-col gap-2">
+<div class="flex items-center gap-2 text-secondary font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">event_note</span>
+<span class="font-semibold uppercase tracking-wider text-[11px]">Passage selon la période — règle à venir</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-snug font-serif">
+          Texte d'exemple. Ce passage dépend du calendrier liturgique ; sa règle d'affichage sera validée avant publication.
+        </p>
+<span class="font-label-sm text-label-sm text-on-surface-variant/80 italic">Règle à valider.</span>
+</div>
+<!-- Bénédiction 4 -->
+<section class="relative pl-7" id="section-4">
+<span class="absolute left-0 top-1 font-label-md text-label-md text-secondary select-none font-semibold">4</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-serif">Section 4 · titre à insérer</h2>
+<p class="font-body-lg text-body-lg text-on-surface/90 leading-[30px] font-serif">
+          Texte d'exemple. Passage à insérer après validation du texte et des droits.
+        </p>
+</section>
+<!-- Bénédiction 5 -->
+<section class="relative pl-7 mb-4" id="section-5">
+<span class="absolute left-0 top-1 font-label-md text-label-md text-secondary select-none font-semibold">5</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-serif">Section 5 · titre à insérer</h2>
+<p class="font-body-lg text-body-lg text-on-surface/90 leading-[30px] font-serif">
+          Texte d'exemple. Passage à insérer après validation du texte et des droits.
+        </p>
+</section>
+</div>
+</div>
+<!-- Barre inférieure fixe d'action recueillie (Sticky Dock) -->
+<div class="fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md shadow-[0_-4px_20px_rgba(29,28,19,0.06)] px-margin py-3 pb-safe">
+<div class="max-w-md mx-auto flex items-center justify-between gap-2">
+<!-- Action 1 : Audio (désactivé doucement) -->
+<div class="flex flex-col items-center">
+<button class="h-12 px-3 rounded-xl bg-surface-container-low text-on-surface-variant/40 flex items-center gap-1.5 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-[20px]">headphones</span>
+<span class="font-label-md text-label-md hidden sm:inline">Écouter</span>
+</button>
+<span class="text-[9px] font-label-sm text-on-surface-variant/60 tracking-tight mt-0.5">Indisponible</span>
+</div>
+<!-- Action 2 : Prière libre / Journal personnel -->
+<button class="h-12 flex-1 px-3 rounded-xl bg-surface-container-lowest shadow-sm text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors" id="btnPersonalWords" type="button">
+<span class="material-symbols-outlined text-[19px] text-secondary">edit_note</span>
+<span class="line-clamp-1">Avec mes mots</span>
+</button>
+<!-- Action 3 : Validation de la prière (Bouton or profond sobre) -->
+<button class="h-12 flex-1 px-4 rounded-xl bg-secondary text-on-secondary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 hover:bg-primary transition-all active:scale-[0.99] shadow-sm" id="btnCompletedPrayer" type="button">
+<span class="material-symbols-outlined text-[20px]" id="completeIcon">check</span>
+<span id="completeLabel">J'ai prié</span>
+</button>
+</div>
+</div>
+<!-- Espace modal discret pour « Prier avec mes mots » -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden items-end justify-center pb-safe" id="personalModal">
+<div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-margin flex flex-col gap-3 shadow-xl">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px]">ink_pen</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Prière personnelle</h3>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface" id="closeModal" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Dépose ici une intention ou un remerciement, avec tes propres mots.
+      </p>
+<textarea class="w-full p-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface-container placeholder:italic placeholder:text-on-surface-variant/50 resize-none" id="personalInput" placeholder="Seigneur, en ce jour je Te confie..." rows="4"></textarea>
+<div class="flex justify-end gap-2 pt-1">
+<button class="px-4 py-2 rounded-lg text-on-surface-variant font-label-md text-label-md" id="cancelModalBtn" type="button">
+          Fermer
+        </button>
+<button class="px-4 py-2 rounded-lg bg-secondary text-on-secondary font-label-md text-label-md" id="savePersonalBtn" type="button">
+          Garder dans mon journal
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    // Gestion du défilement et de la barre de progression
+    const progressPill = document.getElementById('scrollProgressPill');
+    window.addEventListener('scroll', () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        const ratio = Math.min(Math.max(window.scrollY / docHeight, 0), 1);
+        const maxTranslation = 240;
+        if (progressPill) {
+          progressPill.style.transform = `translateY(${ratio * maxTranslation}px)`;
+        }
+      }
+    });
+
+    // Validation apaisée de la prière
+    const completeBtn = document.getElementById('btnCompletedPrayer');
+    const completeLabel = document.getElementById('completeLabel');
+    const completeIcon = document.getElementById('completeIcon');
+    let isCompleted = false;
+
+    if (completeBtn) {
+      completeBtn.addEventListener('click', () => {
+        isCompleted = !isCompleted;
+        if (isCompleted) {
+          completeBtn.classList.replace('bg-secondary', 'bg-surface-container');
+          completeBtn.classList.replace('text-on-secondary', 'text-secondary');
+          completeLabel.textContent = 'Fait ce matin';
+          completeIcon.textContent = 'done_all';
+        } else {
+          completeBtn.classList.replace('bg-surface-container', 'bg-secondary');
+          completeBtn.classList.replace('text-secondary', 'text-on-secondary');
+          completeLabel.textContent = "J'ai prié";
+          completeIcon.textContent = 'check';
+        }
+      });
+    }
+
+    // Modal recueillement personnel
+    const modal = document.getElementById('personalModal');
+    const openBtn = document.getElementById('btnPersonalWords');
+    const closeBtn = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelModalBtn');
+    const saveBtn = document.getElementById('savePersonalBtn');
+
+    function toggleModal(show) {
+      if (!modal) return;
+      if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    if (openBtn) openBtn.addEventListener('click', () => toggleModal(true));
+    if (closeBtn) closeBtn.addEventListener('click', () => toggleModal(false));
+    if (cancelBtn) cancelBtn.addEventListener('click', () => toggleModal(false));
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        toggleModal(false);
+        if (openBtn) {
+          openBtn.innerHTML = '<span class="material-symbols-outlined text-[19px] text-secondary">check</span><span class="line-clamp-1">Pensée notée</span>';
+        }
+      });
+    }
+  })();
+</script></main></body></html>
+

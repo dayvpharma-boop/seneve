@@ -1,6 +1,8 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+const hd=vi.hoisted(()=>({actif:false}));
+vi.mock('@/lib/habitudes-configuration',()=>({habitudesActivees:()=>hd.actif}));
 
 const tables: Record<string, unknown[]> = {};
 const rpcResults: Record<string, { data: unknown; error: { message: string } | null }> = {};
@@ -36,6 +38,7 @@ function page() {
 }
 
 beforeEach(() => {
+  hd.actif=false;
   for (const k of Object.keys(tables)) delete tables[k];
   for (const k of Object.keys(rpcResults)) delete rpcResults[k];
   rpcs.length = 0;
@@ -44,6 +47,7 @@ beforeEach(() => {
   tables['programmes'] = [{ programme_id: 'PROSPECT_LIVRE_7J_FR_V1', duree_jours: 7 }];
   tables['coach_messages'] = [];
   rpcResults['coach_quota'] = { data: { quota: 5, restants: 5 }, error: null };
+  rpcResults['coach_eligible_enrollments']={data:['E1'],error:null};
   vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response(null))));
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
@@ -165,4 +169,23 @@ describe('Coach : parcours choisi', () => {
     expect(await screen.findByText('Réponse')).toBeVisible();
     expect(screen.queryByText(/Messages précédents/)).not.toBeInTheDocument();
   });
+});
+
+it('un parcours Habitudes & Défis seul ne propose aucun formulaire de coach',async()=>{
+ hd.actif=true;
+ tables['enrollments']=[{enrollment_id:'HD1',programme_id:'HD_FR',langue:'fr',date_debut:'2026-10-26',etat:'active'}];
+ tables['hd_programme_links']=[{programme_id:'HD_FR'}];
+ rpcResults['coach_quota']={data:{quota:0,restants:0},error:null};
+ rpcResults['coach_eligible_enrollments']={data:[],error:null};
+ page();await screen.findByText(/Le coach t’accompagne pendant un parcours actif/);expect(screen.queryByRole('textbox')).toBeNull();expect(rpcs.some(x=>x.name==='coach_ask')).toBe(false);expect(fetch).not.toHaveBeenCalled();
+});
+it('le coach conserve les autres programmes quand Habitudes & Défis est aussi inscrit',async()=>{
+ hd.actif=true;tables['enrollments']!.push({enrollment_id:'HD1',programme_id:'HD_FR',langue:'fr',date_debut:'2026-10-26',etat:'active'});
+ tables['hd_programme_links']=[{programme_id:'HD_FR'}];page();await screen.findByRole('textbox');expect(screen.queryByRole('tab',{name:'HD_FR'})).toBeNull();expect(fetch).not.toHaveBeenCalled();
+});
+
+it('un mois HD payant autorisé par le serveur ouvre le formulaire de coach',async()=>{
+ hd.actif=true;tables['enrollments']=[{enrollment_id:'HD2',programme_id:'HD_FR',langue:'fr',date_debut:'2026-10-26',etat:'active'}];
+ rpcResults['coach_eligible_enrollments']={data:['HD2'],error:null};
+ page();await screen.findByRole('textbox');expect(rpcs.some(x=>x.name==='coach_ask')).toBe(false);expect(fetch).not.toHaveBeenCalled();
 });

@@ -1,0 +1,16 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {occurrencesDepuisContenus,enregistrerHabitude} from '../src/lib/habitudes-api.ts';
+const id=n=>'00000000-0000-4000-8000-'+String(n).padStart(12,'0');
+const ctx={enrollment_id:id(1),version:1,date_locale:'2026-10-25',programme_id:'HD',langue:'fr',jour:1};
+const c={content_id:id(2),programme_id:'HD',version:1,langue:'fr',jour:1};
+const a={activity_id:id(3),content_id:c.content_id,type_activite:'action',obligatoire:true};
+const o=occurrencesDepuisContenus(ctx,[c],[a])[0];
+const answer={event_id:id(4),etat:'realisee',aide_demandee:false,repetition:false};
+test('conserve plusieurs activités distinctes du même jour',()=>assert.equal(occurrencesDepuisContenus(ctx,[c],[a,{...a,activity_id:id(5)}]).length,2));
+test('exclut autre jour/langue/version/programme et questions',()=>{for(const x of [{jour:2},{langue:'en'},{version:2},{programme_id:'OTHER'}]) assert.equal(occurrencesDepuisContenus(ctx,[{...c,...x}],[a]).length,0);assert.equal(occurrencesDepuisContenus(ctx,[c],[{...a,type_activite:'question'}]).length,0)});
+test('le RPC reçoit les identifiants exacts ; synchronisé après confirmation seulement',async()=>{let call;const transport={rpc:async(...x)=>{call=x;return {data:answer,error:null}}};const r=await enregistrerHabitude(transport,o,id(9),'realisee');assert.equal(call[0],'record_progress');assert.deepEqual(call[1],{p_enrollment_id:id(1),p_activity_id:id(3),p_client_event_id:id(9),p_etat:'realisee',p_canal:'web'});assert.equal(r.etat.synchronisation,'synchronise')});
+test('échec puis réessai conserve l’eventId fourni',async()=>{const ids=[];let n=0;const transport={rpc:async(_,p)=>{ids.push(p.p_client_event_id);if(n++===0)throw Error('réseau');return {data:{...answer,repetition:true},error:null}}};await assert.rejects(enregistrerHabitude(transport,o,id(9),'realisee'),/réseau/);assert.equal((await enregistrerHabitude(transport,o,id(9),'realisee')).repetition,true);assert.deepEqual(ids,[id(9),id(9)])});
+test('erreur serveur, réponse vide et confirmation insuffisante ne deviennent pas synchronisées',async()=>{await assert.rejects(enregistrerHabitude({rpc:async()=>({data:null,error:Error('refus')})},o,id(9),'realisee'),/refus/);await assert.rejects(enregistrerHabitude({rpc:async()=>({data:null,error:null})},o,id(9),'realisee'),/absente/);await assert.rejects(enregistrerHabitude({rpc:async()=>({data:{...answer,etat:'preparee'},error:null})},o,id(9),'realisee'),/non confirmée/)});
+test('aide ne devient pas réalisation',async()=>{const r=await enregistrerHabitude({rpc:async()=>({data:{...answer,etat:'non_commencee',aide_demandee:true},error:null})},o,id(9),'aide_demandee');assert.equal(r.etat.etat,'non_commencee');assert.equal(r.etat.aide_demandee,true)});
+test('identifiant invalide refusé sans appel réseau',async()=>{let calls=0;await assert.rejects(enregistrerHabitude({rpc:async()=>{calls++;return {data:answer,error:null}}},o,'invalide','realisee'),/invalide/);assert.equal(calls,0)});

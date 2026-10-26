@@ -59,6 +59,7 @@ const Progres = lazy(() => import('@/routes/progres').then(m => ({ default: m.Pr
 const Profil = lazy(() => import('@/routes/profil').then(m => ({ default: m.Profil })));
 const Reglages = lazy(() => import('@/routes/reglages').then(m => ({ default: m.Reglages })));
 const Habitudes = lazy(() => import('@/routes/habitudes').then(m => ({ default: m.Habitudes })));
+const HabitudesInscription = lazy(() => import('@/routes/habitudes-inscription').then(m => ({ default: m.HabitudesInscription })));
 const Offres = lazy(() => import('@/routes/offres').then(m => ({ default: m.Offres })));
 const Bibliotheque = lazy(() => import('@/routes/bibliotheque').then(m => ({ default: m.Bibliotheque })));
 const Confidentialite = lazy(() => import('@/routes/confidentialite').then(m => ({ default: m.Confidentialite })));
@@ -86,6 +87,7 @@ if (root) createRoot(root).render(
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
         <Route path="/en" element={<TestPage defaultLanguage="en" />} />
         <Route path="/connexion" element={<Connexion />} />
+        <Route path="/habitudes/inscription" element={<HabitudesInscription />} />
         <Route path="/bibliotheque" element={<Bibliotheque/>}/>
         <Route path="/livre" element={<Bibliotheque detail/>}/>
         <Route path="/livre/audio" element={<Bibliotheque detail format="audio"/>}/>
@@ -128,3 +130,6 @@ import './styles-avatar-participant.css';
 import './styles-espace-vivant.css';
 
 import './styles-illustrations-pages.css';
+import './styles-habitudes-stitch.css';
+import '@fontsource/literata/latin-500.css';
+import './styles-habitudes-polices.css';

@@ -1,0 +1,82 @@
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {MemoryRouter} from 'react-router-dom';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
+const mock=vi.hoisted(()=>({rpc:vi.fn(),profil:vi.fn(),getSession:vi.fn(),actif:true,listener:null as null|((event:string,session:{user:{id:string}}|null)=>void)}));
+vi.mock('@/lib/supabase',()=>({supabase:{rpc:(name:string,args:unknown)=>name==='ensure_participant'?mock.profil(args):mock.rpc(name,args),auth:{getSession:mock.getSession,onAuthStateChange:(f:typeof mock.listener)=>{mock.listener=f;return {data:{subscription:{unsubscribe:vi.fn()}}};}}}}));
+vi.mock('@/lib/habitudes-configuration',()=>({habitudesActivees:()=>mock.actif}));
+import {HabitudesInscription} from '@/routes/habitudes-inscription';
+import {chargerCatalogueInscription} from '@/lib/habitudes-catalogue-api';
+const catalogue={compte_id:'compte-a',fuseau:'Africa/Kinshasa',offres:[{programme_id:'HD_TEST',version:1,langue:'fr',nom:'Parcours fictif',offre_id:'OFFRE_TEST',duree_gratuite_jours:30,planning:[{habit_key:'priere_matin',libelle:'Prière du matin',creneaux:[{creneau_id:'principal',heure_locale:'06:00',jours_iso:[1,2,3,4,5,6,7]}]}]}]};
+beforeEach(()=>{mock.actif=true;mock.listener=null;mock.profil.mockReset();mock.profil.mockResolvedValue({data:'profil-fictif',error:null});mock.rpc.mockReset();mock.getSession.mockReset();mock.getSession.mockResolvedValue({data:{session:{user:{id:'compte-a'}}},error:null});mock.rpc.mockResolvedValue({data:catalogue,error:null});});afterEach(cleanup);
+function ouvrir(){return render(<MemoryRouter initialEntries={['/habitudes/inscription']}><HabitudesInscription/></MemoryRouter>);}
+it('charge le catalogue autorisé et monte le formulaire sans créer une inscription',async()=>{
+ ouvrir();await screen.findByText('Parcours fictif');expect(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'})).toBeDisabled();expect(mock.rpc).toHaveBeenCalledTimes(1);expect(mock.rpc).toHaveBeenCalledWith('hd_free_catalogue',{p_langue:'fr'});
+});
+it('ne consulte ni compte ni catalogue lorsque le module est désactivé',()=>{
+ mock.actif=false;ouvrir();expect(screen.getByText(/L’inscription à ce parcours est en préparation/)).toBeVisible();expect(mock.getSession).not.toHaveBeenCalled();expect(mock.rpc).not.toHaveBeenCalled();
+});
+it('demande la connexion sans consulter le catalogue anonyme',async()=>{
+ mock.getSession.mockResolvedValue({data:{session:null},error:null});ouvrir();expect(await screen.findByRole('link',{name:'Se connecter'})).toHaveAttribute('href','/connexion?lang=fr&mode=signin&suite=habitudes');expect(mock.rpc).not.toHaveBeenCalled();expect(mock.profil).not.toHaveBeenCalled();
+});
+it('une réponse sans offre ne montre aucun bouton de départ',async()=>{
+ mock.rpc.mockResolvedValue({data:{...catalogue,offres:[]},error:null});ouvrir();await screen.findByText(/Aucune offre de 30 jours gratuits/);expect(screen.queryByRole('checkbox')).toBeNull();
+});
+it('un accès gratuit déjà utilisé renvoie aux accès sans nouvelle confirmation',async()=>{
+ mock.rpc.mockResolvedValue({data:{...catalogue,offres:[],motif:'gratuite_deja_utilisee'},error:null});ouvrir();await screen.findByText(/Ton accès gratuit a déjà été utilisé/);expect(screen.getByRole('link',{name:'Consulter mes accès'})).toHaveAttribute('href','/acces?lang=fr');expect(screen.queryByRole('checkbox')).toBeNull();
+});
+it('une erreur ne montre pas de formulaire et se réessaie',async()=>{
+ mock.rpc.mockResolvedValueOnce({data:null,error:{message:'réseau'}});ouvrir();await screen.findByRole('alert');expect(screen.queryByRole('checkbox')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'Réessayer'}));await screen.findByText('Parcours fictif');expect(mock.rpc).toHaveBeenCalledTimes(2);
+});
+it('refuse le catalogue d’un autre compte et une offre de mauvaise durée',async()=>{
+ mock.rpc.mockResolvedValueOnce({data:{...catalogue,compte_id:'compte-b'},error:null});await expect(chargerCatalogueInscription('fr','compte-a')).rejects.toThrow('Catalogue incohérent');
+ mock.rpc.mockResolvedValueOnce({data:{...catalogue,offres:[{...catalogue.offres[0],duree_gratuite_jours:31}]},error:null});await expect(chargerCatalogueInscription('fr','compte-a')).rejects.toThrow('Offre incohérente');
+});
+it('refuse des jours, heures ou fuseau invalides',async()=>{
+ for(const mauvais of [{...catalogue,fuseau:'Inconnu/Inconnu'},{...catalogue,offres:[{...catalogue.offres[0],planning:[{habit_key:'a',libelle:'A',creneaux:[{creneau_id:'principal',heure_locale:'25:00',jours_iso:[1]}]}]}]},{...catalogue,offres:[{...catalogue.offres[0],planning:[{habit_key:'a',libelle:'A',creneaux:[{creneau_id:'principal',heure_locale:'06:00',jours_iso:[1,1]}]}]}]}]){
+  mock.rpc.mockResolvedValueOnce({data:mauvais,error:null});await expect(chargerCatalogueInscription('fr','compte-a')).rejects.toThrow();
+ }
+});
+it('une déconnexion pendant le chargement écarte la réponse tardive',async()=>{
+ let finir!:(v:unknown)=>void;mock.rpc.mockImplementationOnce(()=>new Promise(r=>{finir=r;}));ouvrir();await waitFor(()=>expect(mock.rpc).toHaveBeenCalledTimes(1));act(()=>mock.listener!('SIGNED_OUT',null));await screen.findByRole('link',{name:'Se connecter'});finir({data:catalogue,error:null});await waitFor(()=>expect(screen.queryByText('Parcours fictif')).toBeNull());
+});
+it('un renouvellement de session du même compte ne perd pas le chargement en cours',async()=>{
+ let finir!:(v:unknown)=>void;mock.rpc.mockImplementationOnce(()=>new Promise(r=>{finir=r;}));ouvrir();await waitFor(()=>expect(mock.rpc).toHaveBeenCalledTimes(1));act(()=>mock.listener!('TOKEN_REFRESHED',{user:{id:'compte-a'}}));finir({data:catalogue,error:null});await screen.findByText('Parcours fictif');expect(mock.rpc).toHaveBeenCalledTimes(1);
+});
+it('un changement de compte retire le formulaire avant de lire le nouveau catalogue',async()=>{
+ ouvrir();await screen.findByText('Parcours fictif');mock.rpc.mockResolvedValueOnce({data:{...catalogue,compte_id:'compte-b',offres:[]},error:null});act(()=>mock.listener!('SIGNED_IN',{user:{id:'compte-b'}}));await screen.findByText(/Aucune offre de 30 jours gratuits/);expect(screen.queryByRole('checkbox')).toBeNull();
+});
+it('prépare le profil du compte avant la lecture du catalogue sans démarrer un parcours',async()=>{
+ mock.getSession.mockResolvedValue({data:{session:{user:{id:'compte-a',user_metadata:{prenom:'Recette'}}}},error:null});ouvrir();await screen.findByText('Parcours fictif');expect(mock.profil).toHaveBeenCalledWith({p_prenom:'Recette'});expect(mock.profil.mock.invocationCallOrder[0]).toBeLessThan(mock.rpc.mock.invocationCallOrder[0]!);expect(mock.rpc).toHaveBeenCalledTimes(1);expect(mock.rpc).toHaveBeenCalledWith('hd_free_catalogue',{p_langue:'fr'});
+});
+it('une erreur de création du profil bloque la lecture et tout formulaire',async()=>{
+ mock.profil.mockResolvedValue({data:null,error:{code:'42501'}});ouvrir();await screen.findByRole('alert');expect(mock.rpc).not.toHaveBeenCalled();expect(screen.queryByRole('checkbox')).toBeNull();
+});
+it('présente l’objectif et le lien de confidentialité avant toute inscription',async()=>{
+ mock.getSession.mockResolvedValue({data:{session:null},error:null});ouvrir();expect(screen.getByText(/Tu déclares toi-même les actions réalisées/)).toBeVisible();expect(screen.getByRole('link',{name:'Comprendre la confidentialité de mes données'})).toHaveAttribute('href','/confidentialite?lang=fr');await screen.findByRole('link',{name:'Se connecter'});expect(mock.profil).not.toHaveBeenCalled();expect(mock.rpc).not.toHaveBeenCalled();
+});
+it('conserve le lien de confidentialité en anglais',async()=>{
+ mock.actif=false;render(<MemoryRouter initialEntries={['/habitudes/inscription?lang=en']}><HabitudesInscription/></MemoryRouter>);expect(screen.getByRole('link',{name:'Understand my data privacy'})).toHaveAttribute('href','/confidentialite?lang=en');expect(mock.rpc).not.toHaveBeenCalled();
+});
+
+it.each(['fr','en'])('un lien de confirmation en erreur affiche une reprise sûre en %s sans consulter le compte',async(langue)=>{
+ render(<MemoryRouter initialEntries={[`/habitudes/inscription?lang=${langue}#error=access_denied&error_code=otp_expired&error_description=SECRET_DU_LIEN`]}><HabitudesInscription/></MemoryRouter>);
+ expect(screen.getByRole('alert')).toHaveTextContent(langue==='en'?'This link could not confirm':'Ce lien n’a pas permis');
+ expect(screen.getByRole('link',{name:langue==='en'?'Sign in again':'Se reconnecter'})).toHaveAttribute('href',`/connexion?lang=${langue}&mode=signin&suite=habitudes`);
+ expect(screen.queryByText(/SECRET_DU_LIEN/)).toBeNull();expect(mock.getSession).not.toHaveBeenCalled();expect(mock.profil).not.toHaveBeenCalled();expect(mock.rpc).not.toHaveBeenCalled();
+});
+it('une erreur dans la requête du retour est également bloquée',()=>{
+ render(<MemoryRouter initialEntries={['/habitudes/inscription?error_code=otp_expired']}><HabitudesInscription/></MemoryRouter>);
+ expect(screen.getByRole('alert')).toBeVisible();expect(mock.getSession).not.toHaveBeenCalled();expect(mock.rpc).not.toHaveBeenCalled();
+});
+it('une session arrivée après ouverture du nouvel onglet permet de reprendre sans démarrer l’essai',async()=>{
+ mock.getSession.mockResolvedValue({data:{session:null},error:null});ouvrir();await screen.findByRole('link',{name:'Se connecter'});
+ act(()=>mock.listener!('SIGNED_IN',{user:{id:'compte-a'}}));await screen.findByText('Parcours fictif');
+ expect(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'})).toBeDisabled();
+ expect(mock.profil).toHaveBeenCalledTimes(1);expect(mock.rpc).toHaveBeenCalledTimes(1);expect(mock.rpc).toHaveBeenCalledWith('hd_free_catalogue',{p_langue:'fr'});
+});
+it('une ancienne lecture de session anonyme ne remplace pas la session confirmée',async()=>{
+ let finir!:(v:unknown)=>void;mock.getSession.mockImplementationOnce(()=>new Promise(r=>{finir=r;}));ouvrir();
+ act(()=>mock.listener!('SIGNED_IN',{user:{id:'compte-a'}}));await screen.findByText('Parcours fictif');
+ await act(async()=>{finir({data:{session:null},error:null});});
+ expect(screen.getByText('Parcours fictif')).toBeVisible();expect(screen.queryByRole('link',{name:'Se connecter'})).toBeNull();expect(mock.rpc).toHaveBeenCalledTimes(1);
+});

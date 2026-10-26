@@ -1,0 +1,131 @@
+/* Habitudes & Défis — thème visuel issu des maquettes Stitch validées (26/10/2026).
+ * Apparence seulement : aucun texte, aucune donnée, aucun comportement n'est modifié ici.
+ * Palette crème, encre et or du site SÉNEVÉ ; titres en Literata, interface en Poppins.
+ * Le rouge reste réservé aux erreurs techniques, jamais à un contenu moral ou spirituel.
+ */
+:root{
+ --hd-fond:#fef9ea;--hd-carte:#ffffff;--hd-carte-basse:#f8f4e4;--hd-carte-moy:#f2eedf;--hd-carte-haute:#ede8d9;
+ --hd-encre:#1d1c13;--hd-encre-2:#4d4637;--hd-discret:#605e55;--hd-trait:#d0c5b2;--hd-trait-fort:#7e7665;
+ --hd-or:#755b00;--hd-or-fonce:#584400;--hd-or-pale:#fed978;--hd-or-voile:rgba(254,217,120,.35);
+ --hd-ciel:#dceafe;--hd-ciel-encre:#1f3b63;--hd-erreur:#93000a;--hd-erreur-fond:#ffdad6;
+ --hd-ombre:0 1px 3px rgba(29,28,19,.06),0 1px 2px rgba(29,28,19,.04);
+ --hd-rayon:16px;--hd-rayon-petit:12px;
+ --hd-serif:Literata,Lora,Georgia,serif;--hd-ui:Poppins,Outfit,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{
+ --hd-fond:#141310;--hd-carte:#211f1c;--hd-carte-basse:#1b1a17;--hd-carte-moy:#262420;--hd-carte-haute:#2f2c27;
+ --hd-encre:#ede7dc;--hd-encre-2:#cfc6b5;--hd-discret:#b3ab9c;--hd-trait:#4d4637;--hd-trait-fort:#9a917f;
+ --hd-or:#ffd482;--hd-or-fonce:#ffe08f;--hd-or-pale:#584400;--hd-or-voile:rgba(255,212,130,.14);
+ --hd-ciel:#1f3350;--hd-ciel-encre:#cfe2fe;--hd-erreur:#ffb4ab;--hd-erreur-fond:#5c1a14;
+ --hd-ombre:0 1px 3px rgba(0,0,0,.35);
+}}
+
+/* ---------- Page de recette (TEST) ---------- */
+.recette-hd{background:var(--hd-fond);color:var(--hd-encre);font-family:var(--hd-ui)}
+.recette-hd .rn-page{max-width:560px;padding:0 16px}
+.recette-hd .rn-contenu h1{font:600 clamp(1.75rem,7vw,2.1rem)/1.25 var(--hd-serif);color:var(--hd-encre);letter-spacing:-.01em}
+.recette-hd .rn-contenu>p,.recette-hd .rn-section>p{color:var(--hd-encre-2)}
+.recette-hd .rn-section{background:var(--hd-carte);border:0;border-radius:var(--hd-rayon);box-shadow:var(--hd-ombre);padding:20px}
+.recette-hd .rn-section h2{font:600 1.3rem/1.35 var(--hd-serif);color:var(--hd-encre);margin:0}
+.recette-hd .oa-primary{background:var(--hd-or);color:#fff;border:0;border-radius:var(--hd-rayon-petit);min-height:48px;font:500 .95rem/1.3 var(--hd-ui);box-shadow:var(--hd-ombre)}
+.recette-hd .oa-secondary{background:var(--hd-carte-basse);color:var(--hd-encre);border:1px solid var(--hd-trait);border-radius:var(--hd-rayon-petit);min-height:48px;font:500 .95rem/1.3 var(--hd-ui)}
+.recette-hd a{color:var(--hd-or)}
+.recette-hd .oa-primary,.recette-hd .oa-primary:visited{color:#fff}
+@media (prefers-color-scheme: dark){.recette-hd .oa-primary,.recette-hd .oa-primary:visited{color:#241a00}}
+.recette-hd :is(a,button,input,select,summary):focus-visible{outline:3px solid var(--hd-or);outline-offset:3px}
+
+/* ---------- Petites étiquettes en capitales (repères éditoriaux) ---------- */
+.hd-bilan-repere,.hd-lecture-jour-recette .hd-lecture-jour-repere,.recette-hd-note strong{font:600 .72rem/1.3 var(--hd-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--hd-or)}
+
+/* ---------- Inscription et horaires ---------- */
+.hd-horaires{font-family:var(--hd-ui);color:var(--hd-encre)}
+.hd-horaires>h2{font:600 1.35rem/1.35 var(--hd-serif)}
+.hd-horaires>p{color:var(--hd-encre-2);line-height:1.7}
+.hd-horaires details{margin:0 0 10px;padding:0;border:0;border-radius:var(--hd-rayon-petit);background:var(--hd-carte-basse)}
+.hd-horaires details>summary{display:flex;align-items:center;min-height:52px;padding:12px 16px;font-weight:500;list-style:none;border-radius:var(--hd-rayon-petit)}
+.hd-horaires details>summary::-webkit-details-marker{display:none}
+.hd-horaires details>summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--hd-or);border-bottom:2px solid var(--hd-or);transform:rotate(45deg);transition:transform .2s}
+.hd-horaires details[open]>summary::after{transform:rotate(-135deg)}
+.hd-horaires details[open]{background:var(--hd-carte);box-shadow:var(--hd-ombre)}
+.hd-horaires details>:not(summary){margin-left:16px;margin-right:16px}
+.hd-horaires details>form{margin:0;padding:0 16px 16px}
+.hd-horaires fieldset.hd-horaire-creneau,.hd-horaire-creneau{border:1px solid var(--hd-trait);border-radius:var(--hd-rayon-petit);background:var(--hd-carte);padding:14px}
+.hd-horaires input[type=time]{border:1px solid var(--hd-trait);border-radius:10px;background:var(--hd-carte-basse);color:var(--hd-encre);font:600 1.05rem/1.2 var(--hd-ui);font-variant-numeric:tabular-nums}
+.hd-horaire-jours{gap:6px}
+.hd-horaire-jours label{min-height:40px;padding:0 10px;border:1px solid var(--hd-trait);border-radius:999px;background:var(--hd-carte);font-size:.85rem}
+.hd-horaire-jours label:has(input:checked){background:var(--hd-or-voile);border-color:var(--hd-or);color:var(--hd-encre)}
+.hd-horaire-jours input{accent-color:var(--hd-or)}
+.hd-inscription-accord{padding:14px;border-radius:var(--hd-rayon-petit);background:var(--hd-or-voile)}
+.hd-inscription-accord input{accent-color:var(--hd-or)}
+.hd-horaires [role=alert]{color:var(--hd-erreur)}
+
+/* Semaine avant confirmation */
+.hd-semaine-avant{background:var(--hd-carte)!important;box-shadow:var(--hd-ombre)}
+.hd-semaine-avant details{background:var(--hd-carte-basse)}
+.hd-semaine-avant ol{list-style:none;padding:0;margin:0 16px 12px}
+.hd-semaine-avant li{display:grid;grid-template-columns:3.5rem 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--hd-trait)}
+.hd-semaine-avant li time{font-weight:600;font-variant-numeric:tabular-nums;color:var(--hd-or)}
+.hd-semaine-simultanes{border-left:3px solid var(--hd-or);padding-left:10px}
+
+/* ---------- Mon aujourd'hui : repères horaires ---------- */
+.hd-planning-jour{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre);color:var(--hd-encre);font-family:var(--hd-ui)}
+.hd-planning-jour h3{font:600 1.2rem/1.35 var(--hd-serif)}
+.hd-planning-contexte{color:var(--hd-or);font-weight:500;letter-spacing:.02em}
+.hd-planning-jour ol{display:grid;gap:8px}
+.hd-planning-jour li{grid-template-columns:4.2rem 1fr;align-items:center;padding:12px 14px;border:0;border-radius:var(--hd-rayon-petit);background:var(--hd-carte-basse)}
+.hd-planning-jour li>time{font-weight:600;font-size:1.05rem;color:var(--hd-or)}
+.hd-planning-jour li span{font-weight:500}
+.hd-planning-jour small{color:var(--hd-discret)}
+.hd-planning-note{color:var(--hd-encre-2)}
+.hd-planning-chevauchement{border-left-color:var(--hd-or)}
+.hd-planning-jour button.link{color:var(--hd-or);background:none;border:0;padding:0;font:500 .9rem var(--hd-ui);text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+
+/* ---------- Cartes de déclaration (une par activité) ---------- */
+.hd-declaration{font-family:var(--hd-ui);color:var(--hd-encre)}
+.hd-activites-recette .hd-declaration,.hd-declaration.card{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre);padding:16px}
+.hd-declaration h3{font:500 1.05rem/1.4 var(--hd-ui);color:var(--hd-encre)}
+.hd-declaration>[role=status]:first-of-type{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;padding:4px 12px;border-radius:999px;background:var(--hd-carte-haute);color:var(--hd-encre-2);font:600 .78rem/1.4 var(--hd-ui);letter-spacing:.02em}
+.hd-declaration>[role=status]:first-of-type::before{content:"";width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor}
+.hd-declaration .choix-row{display:flex;flex-wrap:wrap;gap:8px}
+.hd-activites-recette .hd-declaration button,.hd-declaration button{min-height:44px;padding:10px 16px;border-radius:var(--hd-rayon-petit);border:1px solid var(--hd-trait);background:var(--hd-carte-basse);color:var(--hd-encre);font:500 .9rem/1.3 var(--hd-ui)}
+.hd-activites-recette .hd-declaration .action-btn,.hd-declaration .action-btn{background:var(--hd-or);border-color:var(--hd-or);color:#fff}
+@media (prefers-color-scheme: dark){.hd-activites-recette .hd-declaration .action-btn,.hd-declaration .action-btn{color:#241a00}}
+.hd-declaration [role=alert]{color:var(--hd-erreur)}
+.hd-activites-recette progress{accent-color:var(--hd-or);height:8px;border-radius:999px}
+.hd-activite-heure{color:var(--hd-or);font-family:var(--hd-ui)}
+
+/* ---------- Lecture du jour et textes à méditer ---------- */
+.hd-lecture-jour-recette{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte-moy);color:var(--hd-encre)}
+.hd-lecture-jour-recette h3{font-family:var(--hd-serif);color:var(--hd-encre)}
+.hd-lecture-jour-recette blockquote{border-left:3px solid var(--hd-or);font-family:var(--hd-serif);font-style:italic}
+.hd-lecture-jour-recette small{color:var(--hd-discret)}
+.hd-lecture{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre);color:var(--hd-encre)}
+.hd-lecture>summary span{font:600 1.05rem/1.4 var(--hd-serif)}
+.hd-lecture>summary small{color:var(--hd-or);font:500 .8rem var(--hd-ui);margin-left:0}
+.hd-lecture[open]>summary{border-bottom-color:var(--hd-trait)}
+.hd-lecture-texte{font-size:1.15rem;line-height:1.85;color:var(--hd-encre)}
+
+/* ---------- Bilans ---------- */
+.hd-bilan{--hd-bord:var(--hd-trait);color:var(--hd-encre);font-family:var(--hd-ui)}
+.hd-bilan h2{color:var(--hd-encre);font-weight:600}
+.hd-bilan>header>p{color:var(--hd-encre-2)}
+.hd-bilan-total{display:inline-block;padding:6px 14px;border-radius:999px;background:var(--hd-or-voile);color:var(--hd-encre)}
+.hd-bilan-jours>li{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre)}
+.hd-bilan h3{font:600 1.1rem/1.3 var(--hd-serif)}
+.hd-bilan time{color:var(--hd-or)}
+.hd-bilan-activite{border-top-color:var(--hd-trait)}
+.hd-bilan-activite h4{font:500 .98rem/1.4 var(--hd-ui)}
+.hd-bilan-activite small{color:var(--hd-discret)}
+.hd-etat-realisee>div:last-child>p:first-child{color:var(--hd-or);font-weight:600}
+.hd-etat-partielle>div:last-child>p:first-child{color:var(--hd-encre-2);font-weight:600}
+.hd-bilan-aide{color:var(--hd-ciel-encre)}
+.hd-bilan-aide{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--hd-ciel);font-size:.8rem}
+.hd-semaines .card,.hd-historique-recette .hd-semaines .card{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre)}
+.hd-historique-recette{border-top-color:var(--hd-trait)}
+.hd-historique-jour{border-bottom-color:var(--hd-trait)}
+
+/* ---------- Accès gratuit ---------- */
+.hd-acces .oa-badge{background:var(--hd-or-voile);color:var(--hd-or-fonce);border-radius:999px;padding:4px 12px;font:600 .72rem/1.3 var(--hd-ui);letter-spacing:.1em;text-transform:uppercase}
+.hd-acces h2{font-family:var(--hd-serif);color:var(--hd-encre)}
+.hd-acces .oa-card{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre)}
+

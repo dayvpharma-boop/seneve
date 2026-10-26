@@ -1,0 +1,18 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {bilanHabitudes} from '../src/lib/habitudes.ts';
+const ctx={enrollment_id:'inscription-a',version:1,date_locale:'2026-10-25'};
+const plan=['matin','midi','soir'].map(occurrence_id=>({...ctx,occurrence_id,requise:true}));
+const etat=(occurrence_id,extra={})=>({...ctx,occurrence_id,etat:'realisee',aide_demandee:false,synchronisation:'synchronise',...extra});
+test('une prière terminée ne complète pas les trois',()=>{const b=bilanHabitudes(ctx,plan,[etat('matin')]);assert.equal(b.realisees,1);assert.equal(b.total,3);assert.equal(b.journee,'partielle')});
+test('les trois prières confirmées complètent la journée',()=>assert.equal(bilanHabitudes(ctx,plan,plan.map(o=>etat(o.occurrence_id))).journee,'realisee'));
+test('aide indépendante de la réalisation',()=>{const b=bilanHabitudes(ctx,plan,[etat('midi',{etat:'non_commencee',aide_demandee:true})]);assert.equal(b.aides,1);assert.equal(b.realisees,0);assert.equal(b.journee,'non_commencee')});
+test('une déclaration locale reste en attente',()=>{const b=bilanHabitudes(ctx,plan,[etat('matin',{synchronisation:'local'})]);assert.equal(b.realisees,0);assert.equal(b.en_attente,1);assert.equal(b.journee,'non_commencee')});
+test('un état local ne remplace pas la réponse serveur',()=>{const b=bilanHabitudes(ctx,plan,[etat('matin',{etat:'preparee'}),etat('matin',{synchronisation:'local'})]);assert.equal(b.preparees,1);assert.equal(b.realisees,0);assert.equal(b.en_attente,1)});
+test('isole date, inscription et version',()=>{for(const extra of [{date_locale:'2026-10-24'},{enrollment_id:'autre'},{version:2}])assert.equal(bilanHabitudes(ctx,plan,[etat('matin',extra)]).realisees,0)});
+test('doublons identiques sans double comptage',()=>{const b=bilanHabitudes(ctx,[...plan,plan[0]],[etat('matin'),etat('matin')]);assert.equal(b.total,3);assert.equal(b.realisees,1)});
+test('refuse les contradictions et états inconnus',()=>{assert.throws(()=>bilanHabitudes(ctx,plan,[etat('matin'),etat('matin',{etat:'partielle'})]),/contradictoires/);assert.throws(()=>bilanHabitudes(ctx,plan,[etat('absent')]),/sans occurrence/);assert.throws(()=>bilanHabitudes(ctx,plan,[etat('matin',{etat:'lu'})]),/invalide/)});
+test('journée sans activités requises non évaluée',()=>{assert.equal(bilanHabitudes(ctx,[],[]).journee,'non_evaluee');assert.equal(bilanHabitudes(ctx,plan.map(o=>({...o,requise:false})),[etat('matin')]).journee,'non_evaluee')});
+test('activité facultative non terminée ne bloque pas les requises',()=>{const p=[...plan,{...ctx,occurrence_id:'libre',requise:false}];assert.equal(bilanHabitudes(ctx,p,plan.map(o=>etat(o.occurrence_id))).journee,'realisee')});
+test('refuse les dates impossibles',()=>assert.throws(()=>bilanHabitudes({...ctx,date_locale:'2026-02-30'},[],[]),/invalide/));
+test('préparée et partielle restent distinctes',()=>{assert.equal(bilanHabitudes(ctx,plan,[etat('matin',{etat:'preparee'})]).journee,'preparee');assert.equal(bilanHabitudes(ctx,plan,[etat('matin',{etat:'partielle'})]).journee,'partielle')});
