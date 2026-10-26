@@ -10,7 +10,7 @@ export function HabitudesInscription(){
  const [q]=useSearchParams(),langue=q.get('lang')==='en'?'en':'fr';
  const l=(fr:string,en:string)=>langue==='en'?en:fr;
  useEffect(()=>{document.title=l('Inscription · Habitudes & Défis','Enrollment · Habits & Challenges')+' — SÉNEVÉ';document.documentElement.lang=langue;},[langue]);
- return <main className="rn-page"><div className="rn-contenu"><Link to={`/offres?lang=${langue}`}>{l('Revenir aux offres','Back to offers')}</Link><h1>{l('Habitudes & Défis','Habits & Challenges')}</h1>{habitudesActivees()?<CatalogueConnecte langue={langue}/>:<p>{l('L’inscription à ce parcours est en préparation.','Enrollment in this journey is being prepared.')}</p>}</div></main>;
+ return <main className="rn-page"><div className="rn-contenu"><Link to={`/offres?lang=${langue}`}>{l('Revenir aux offres','Back to offers')}</Link><h1>{l('Habitudes & Défis','Habits & Challenges')}</h1><p>{l('Un parcours pour mettre tes habitudes en pratique, pas à pas, avec des horaires adaptés à ton quotidien. Tu déclares toi-même les actions réalisées.','A journey to put your habits into practice, step by step, with a schedule adapted to your daily life. You report completed actions yourself.')}</p><Link className="oa-secondary" to={`/confidentialite?lang=${langue}`}>{l('Comprendre la confidentialité de mes données','Understand my data privacy')}</Link>{habitudesActivees()?<CatalogueConnecte langue={langue}/>:<p>{l('L’inscription à ce parcours est en préparation.','Enrollment in this journey is being prepared.')}</p>}</div></main>;
 }
 function CatalogueConnecte({langue}:{langue:string}){
  const l=(fr:string,en:string)=>langue==='en'?en:fr;

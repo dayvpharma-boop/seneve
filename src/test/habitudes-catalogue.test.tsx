@@ -51,3 +51,9 @@ it('prépare le profil du compte avant la lecture du catalogue sans démarrer un
 it('une erreur de création du profil bloque la lecture et tout formulaire',async()=>{
  mock.profil.mockResolvedValue({data:null,error:{code:'42501'}});ouvrir();await screen.findByRole('alert');expect(mock.rpc).not.toHaveBeenCalled();expect(screen.queryByRole('checkbox')).toBeNull();
 });
+it('présente l’objectif et le lien de confidentialité avant toute inscription',async()=>{
+ mock.getSession.mockResolvedValue({data:{session:null},error:null});ouvrir();expect(screen.getByText(/Tu déclares toi-même les actions réalisées/)).toBeVisible();expect(screen.getByRole('link',{name:'Comprendre la confidentialité de mes données'})).toHaveAttribute('href','/confidentialite?lang=fr');await screen.findByRole('link',{name:'Se connecter'});expect(mock.profil).not.toHaveBeenCalled();expect(mock.rpc).not.toHaveBeenCalled();
+});
+it('conserve le lien de confidentialité en anglais',async()=>{
+ mock.actif=false;render(<MemoryRouter initialEntries={['/habitudes/inscription?lang=en']}><HabitudesInscription/></MemoryRouter>);expect(screen.getByRole('link',{name:'Understand my data privacy'})).toHaveAttribute('href','/confidentialite?lang=en');expect(mock.rpc).not.toHaveBeenCalled();
+});
