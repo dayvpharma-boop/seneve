@@ -1,0 +1,1100 @@
+{
+  "statut": "brouillon_non_publiable",
+  "langue": "fr",
+  "programme_id": null,
+  "version": null,
+  "duree_gratuite_jours": 30,
+  "source_decision": "30 jours gratuits — décision explicite du porteur",
+  "modeles": {
+    "reveil": {
+      "libelle": "Réveil",
+      "consigne_proposee": "Choisis une heure de réveil adaptée à ton quotidien.",
+      "critere_propose": "Déclare ton réveil à partir de ce que tu as réellement vécu.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "gratitude_matin": {
+      "libelle": "Gratitude du matin",
+      "consigne_proposee": "Prends un instant pour nommer ce dont tu es reconnaissant ce matin.",
+      "critere_propose": "Déclare ce temps de reconnaissance après l’avoir vécu.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "priere_matin": {
+      "libelle": "Prière du matin",
+      "consigne_proposee": "Prends ton temps de prière du matin. Tu peux aussi prier avec tes propres mots.",
+      "critere_propose": "Déclare ta prière ; ouvrir le texte seul ne la valide pas.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "bible_matin": {
+      "libelle": "Bible du matin",
+      "consigne_proposee": "Lis un passage biblique et prends un temps pour y réfléchir.",
+      "critere_propose": "Déclare la lecture et la réflexion que tu as réellement faites.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "exercice": {
+      "libelle": "Exercice adapté",
+      "consigne_proposee": "Prévois 10 à 15 minutes de mouvement doux, selon tes capacités.",
+      "critere_propose": "Déclare ce que tu as réalisé, y compris une réalisation partielle.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "lecture_pro": {
+      "libelle": "Lecture professionnelle",
+      "consigne_proposee": "Consacre 30 minutes à une lecture utile à ton métier, à tes études ou à ton activité.",
+      "critere_propose": "Déclare la lecture effectuée ; ouvrir un document ne suffit pas.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "priere_midi": {
+      "libelle": "Prière de midi",
+      "consigne_proposee": "Prends ton temps de prière de midi. Tu peux aussi prier avec tes propres mots.",
+      "critere_propose": "Déclare ta prière indépendamment de celles du matin et du soir.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "predication": {
+      "libelle": "Écoute d’une prédication",
+      "consigne_proposee": "Prévois 30 minutes d’écoute d’une prédication choisie par toi ou proposée après validation éditoriale.",
+      "critere_propose": "Déclare l’écoute réellement effectuée, même partielle ; ouvrir un lien ne suffit pas.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "lecture_personnelle": {
+      "libelle": "Développement personnel",
+      "consigne_proposee": "Consacre 30 minutes à un ouvrage de ton choix ou à une recommandation approuvée.",
+      "critere_propose": "Déclare la lecture réellement effectuée.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "bible_soir": {
+      "libelle": "Bible du soir",
+      "consigne_proposee": "Lis un passage biblique et prends un temps pour y réfléchir ce soir.",
+      "critere_propose": "Déclare la lecture et la réflexion réellement faites.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "gratitude_soir": {
+      "libelle": "Gratitude du soir",
+      "consigne_proposee": "Relis ta journée et nomme un ou plusieurs motifs de reconnaissance.",
+      "critere_propose": "Déclare ce temps de reconnaissance après l’avoir vécu.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "priere_soir": {
+      "libelle": "Prière du soir",
+      "consigne_proposee": "Prends ton temps de prière du soir. Tu peux aussi prier avec tes propres mots.",
+      "critere_propose": "Déclare cette prière séparément des deux autres rendez-vous.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "coucher": {
+      "libelle": "Coucher",
+      "consigne_proposee": "Choisis une heure de coucher adaptée à ton rythme.",
+      "critere_propose": "Déclare ton coucher sans transformer l’horaire proposé en jugement personnel.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 4",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "culte_semaine": {
+      "libelle": "Cultes en semaine",
+      "consigne_proposee": "Renseigne deux créneaux réels de ton assemblée et participe selon tes possibilités.",
+      "critere_propose": "Déclare ta participation réelle ; la règle de participation à distance reste à valider.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 5",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    "culte_dimanche": {
+      "libelle": "Troisième culte hebdomadaire",
+      "consigne_proposee": "Renseigne le troisième créneau de ton assemblée ; le dimanche à 09 h est une proposition.",
+      "critere_propose": "Déclare ta participation réelle ; aucune présence n’est déduite automatiquement.",
+      "obligatoire": null,
+      "source": "Cahier Habitudes & Défis du 25/10/2026, section 5",
+      "nature": "proposition_editoriale_non_citation",
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    }
+  },
+  "offre": {
+    "coach": "a_definir",
+    "medias": "a_definir",
+    "bilans": "a_definir",
+    "validation": {
+      "statut": "a_relire",
+      "relecteur": null,
+      "date": null,
+      "preuve": null
+    }
+  },
+  "priere": {
+    "reference_document": "PDF Amidah fourni, source hassidout.org",
+    "droits_reproduction": "a_verifier",
+    "reference_texte_autorise": null,
+    "validation": {
+      "statut": "a_relire",
+      "relecteur": null,
+      "date": null,
+      "preuve": null
+    }
+  },
+  "defis": {
+    "rythme": null,
+    "contenus": [],
+    "validation": {
+      "statut": "a_relire",
+      "relecteur": null,
+      "date": null,
+      "preuve": null
+    }
+  },
+  "validation_globale": {
+    "statut": "a_relire",
+    "relecteur": null,
+    "date": null,
+    "preuve": null
+  },
+  "fiches": [
+    {
+      "jour": 1,
+      "titre": "Jour 01",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J01_REVEIL",
+        "gratitude_matin": "HD_FR_J01_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J01_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J01_BIBLE_MATIN",
+        "exercice": "HD_FR_J01_EXERCICE",
+        "lecture_pro": "HD_FR_J01_LECTURE_PRO",
+        "priere_midi": "HD_FR_J01_PRIERE_MIDI",
+        "predication": "HD_FR_J01_PREDICATION",
+        "lecture_personnelle": "HD_FR_J01_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J01_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J01_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J01_PRIERE_SOIR",
+        "coucher": "HD_FR_J01_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 2,
+      "titre": "Jour 02",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J02_REVEIL",
+        "gratitude_matin": "HD_FR_J02_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J02_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J02_BIBLE_MATIN",
+        "exercice": "HD_FR_J02_EXERCICE",
+        "lecture_pro": "HD_FR_J02_LECTURE_PRO",
+        "priere_midi": "HD_FR_J02_PRIERE_MIDI",
+        "predication": "HD_FR_J02_PREDICATION",
+        "lecture_personnelle": "HD_FR_J02_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J02_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J02_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J02_PRIERE_SOIR",
+        "coucher": "HD_FR_J02_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 3,
+      "titre": "Jour 03",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J03_REVEIL",
+        "gratitude_matin": "HD_FR_J03_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J03_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J03_BIBLE_MATIN",
+        "exercice": "HD_FR_J03_EXERCICE",
+        "lecture_pro": "HD_FR_J03_LECTURE_PRO",
+        "priere_midi": "HD_FR_J03_PRIERE_MIDI",
+        "predication": "HD_FR_J03_PREDICATION",
+        "lecture_personnelle": "HD_FR_J03_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J03_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J03_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J03_PRIERE_SOIR",
+        "coucher": "HD_FR_J03_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 4,
+      "titre": "Jour 04",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J04_REVEIL",
+        "gratitude_matin": "HD_FR_J04_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J04_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J04_BIBLE_MATIN",
+        "exercice": "HD_FR_J04_EXERCICE",
+        "lecture_pro": "HD_FR_J04_LECTURE_PRO",
+        "priere_midi": "HD_FR_J04_PRIERE_MIDI",
+        "predication": "HD_FR_J04_PREDICATION",
+        "lecture_personnelle": "HD_FR_J04_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J04_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J04_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J04_PRIERE_SOIR",
+        "coucher": "HD_FR_J04_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 5,
+      "titre": "Jour 05",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J05_REVEIL",
+        "gratitude_matin": "HD_FR_J05_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J05_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J05_BIBLE_MATIN",
+        "exercice": "HD_FR_J05_EXERCICE",
+        "lecture_pro": "HD_FR_J05_LECTURE_PRO",
+        "priere_midi": "HD_FR_J05_PRIERE_MIDI",
+        "predication": "HD_FR_J05_PREDICATION",
+        "lecture_personnelle": "HD_FR_J05_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J05_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J05_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J05_PRIERE_SOIR",
+        "coucher": "HD_FR_J05_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 6,
+      "titre": "Jour 06",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J06_REVEIL",
+        "gratitude_matin": "HD_FR_J06_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J06_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J06_BIBLE_MATIN",
+        "exercice": "HD_FR_J06_EXERCICE",
+        "lecture_pro": "HD_FR_J06_LECTURE_PRO",
+        "priere_midi": "HD_FR_J06_PRIERE_MIDI",
+        "predication": "HD_FR_J06_PREDICATION",
+        "lecture_personnelle": "HD_FR_J06_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J06_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J06_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J06_PRIERE_SOIR",
+        "coucher": "HD_FR_J06_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 7,
+      "titre": "Jour 07",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J07_REVEIL",
+        "gratitude_matin": "HD_FR_J07_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J07_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J07_BIBLE_MATIN",
+        "exercice": "HD_FR_J07_EXERCICE",
+        "lecture_pro": "HD_FR_J07_LECTURE_PRO",
+        "priere_midi": "HD_FR_J07_PRIERE_MIDI",
+        "predication": "HD_FR_J07_PREDICATION",
+        "lecture_personnelle": "HD_FR_J07_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J07_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J07_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J07_PRIERE_SOIR",
+        "coucher": "HD_FR_J07_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 8,
+      "titre": "Jour 08",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J08_REVEIL",
+        "gratitude_matin": "HD_FR_J08_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J08_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J08_BIBLE_MATIN",
+        "exercice": "HD_FR_J08_EXERCICE",
+        "lecture_pro": "HD_FR_J08_LECTURE_PRO",
+        "priere_midi": "HD_FR_J08_PRIERE_MIDI",
+        "predication": "HD_FR_J08_PREDICATION",
+        "lecture_personnelle": "HD_FR_J08_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J08_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J08_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J08_PRIERE_SOIR",
+        "coucher": "HD_FR_J08_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 9,
+      "titre": "Jour 09",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J09_REVEIL",
+        "gratitude_matin": "HD_FR_J09_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J09_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J09_BIBLE_MATIN",
+        "exercice": "HD_FR_J09_EXERCICE",
+        "lecture_pro": "HD_FR_J09_LECTURE_PRO",
+        "priere_midi": "HD_FR_J09_PRIERE_MIDI",
+        "predication": "HD_FR_J09_PREDICATION",
+        "lecture_personnelle": "HD_FR_J09_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J09_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J09_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J09_PRIERE_SOIR",
+        "coucher": "HD_FR_J09_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 10,
+      "titre": "Jour 10",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J10_REVEIL",
+        "gratitude_matin": "HD_FR_J10_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J10_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J10_BIBLE_MATIN",
+        "exercice": "HD_FR_J10_EXERCICE",
+        "lecture_pro": "HD_FR_J10_LECTURE_PRO",
+        "priere_midi": "HD_FR_J10_PRIERE_MIDI",
+        "predication": "HD_FR_J10_PREDICATION",
+        "lecture_personnelle": "HD_FR_J10_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J10_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J10_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J10_PRIERE_SOIR",
+        "coucher": "HD_FR_J10_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 11,
+      "titre": "Jour 11",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J11_REVEIL",
+        "gratitude_matin": "HD_FR_J11_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J11_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J11_BIBLE_MATIN",
+        "exercice": "HD_FR_J11_EXERCICE",
+        "lecture_pro": "HD_FR_J11_LECTURE_PRO",
+        "priere_midi": "HD_FR_J11_PRIERE_MIDI",
+        "predication": "HD_FR_J11_PREDICATION",
+        "lecture_personnelle": "HD_FR_J11_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J11_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J11_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J11_PRIERE_SOIR",
+        "coucher": "HD_FR_J11_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 12,
+      "titre": "Jour 12",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J12_REVEIL",
+        "gratitude_matin": "HD_FR_J12_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J12_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J12_BIBLE_MATIN",
+        "exercice": "HD_FR_J12_EXERCICE",
+        "lecture_pro": "HD_FR_J12_LECTURE_PRO",
+        "priere_midi": "HD_FR_J12_PRIERE_MIDI",
+        "predication": "HD_FR_J12_PREDICATION",
+        "lecture_personnelle": "HD_FR_J12_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J12_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J12_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J12_PRIERE_SOIR",
+        "coucher": "HD_FR_J12_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 13,
+      "titre": "Jour 13",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J13_REVEIL",
+        "gratitude_matin": "HD_FR_J13_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J13_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J13_BIBLE_MATIN",
+        "exercice": "HD_FR_J13_EXERCICE",
+        "lecture_pro": "HD_FR_J13_LECTURE_PRO",
+        "priere_midi": "HD_FR_J13_PRIERE_MIDI",
+        "predication": "HD_FR_J13_PREDICATION",
+        "lecture_personnelle": "HD_FR_J13_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J13_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J13_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J13_PRIERE_SOIR",
+        "coucher": "HD_FR_J13_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 14,
+      "titre": "Jour 14",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J14_REVEIL",
+        "gratitude_matin": "HD_FR_J14_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J14_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J14_BIBLE_MATIN",
+        "exercice": "HD_FR_J14_EXERCICE",
+        "lecture_pro": "HD_FR_J14_LECTURE_PRO",
+        "priere_midi": "HD_FR_J14_PRIERE_MIDI",
+        "predication": "HD_FR_J14_PREDICATION",
+        "lecture_personnelle": "HD_FR_J14_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J14_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J14_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J14_PRIERE_SOIR",
+        "coucher": "HD_FR_J14_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 15,
+      "titre": "Jour 15",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J15_REVEIL",
+        "gratitude_matin": "HD_FR_J15_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J15_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J15_BIBLE_MATIN",
+        "exercice": "HD_FR_J15_EXERCICE",
+        "lecture_pro": "HD_FR_J15_LECTURE_PRO",
+        "priere_midi": "HD_FR_J15_PRIERE_MIDI",
+        "predication": "HD_FR_J15_PREDICATION",
+        "lecture_personnelle": "HD_FR_J15_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J15_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J15_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J15_PRIERE_SOIR",
+        "coucher": "HD_FR_J15_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 16,
+      "titre": "Jour 16",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J16_REVEIL",
+        "gratitude_matin": "HD_FR_J16_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J16_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J16_BIBLE_MATIN",
+        "exercice": "HD_FR_J16_EXERCICE",
+        "lecture_pro": "HD_FR_J16_LECTURE_PRO",
+        "priere_midi": "HD_FR_J16_PRIERE_MIDI",
+        "predication": "HD_FR_J16_PREDICATION",
+        "lecture_personnelle": "HD_FR_J16_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J16_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J16_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J16_PRIERE_SOIR",
+        "coucher": "HD_FR_J16_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 17,
+      "titre": "Jour 17",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J17_REVEIL",
+        "gratitude_matin": "HD_FR_J17_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J17_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J17_BIBLE_MATIN",
+        "exercice": "HD_FR_J17_EXERCICE",
+        "lecture_pro": "HD_FR_J17_LECTURE_PRO",
+        "priere_midi": "HD_FR_J17_PRIERE_MIDI",
+        "predication": "HD_FR_J17_PREDICATION",
+        "lecture_personnelle": "HD_FR_J17_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J17_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J17_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J17_PRIERE_SOIR",
+        "coucher": "HD_FR_J17_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 18,
+      "titre": "Jour 18",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J18_REVEIL",
+        "gratitude_matin": "HD_FR_J18_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J18_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J18_BIBLE_MATIN",
+        "exercice": "HD_FR_J18_EXERCICE",
+        "lecture_pro": "HD_FR_J18_LECTURE_PRO",
+        "priere_midi": "HD_FR_J18_PRIERE_MIDI",
+        "predication": "HD_FR_J18_PREDICATION",
+        "lecture_personnelle": "HD_FR_J18_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J18_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J18_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J18_PRIERE_SOIR",
+        "coucher": "HD_FR_J18_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 19,
+      "titre": "Jour 19",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J19_REVEIL",
+        "gratitude_matin": "HD_FR_J19_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J19_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J19_BIBLE_MATIN",
+        "exercice": "HD_FR_J19_EXERCICE",
+        "lecture_pro": "HD_FR_J19_LECTURE_PRO",
+        "priere_midi": "HD_FR_J19_PRIERE_MIDI",
+        "predication": "HD_FR_J19_PREDICATION",
+        "lecture_personnelle": "HD_FR_J19_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J19_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J19_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J19_PRIERE_SOIR",
+        "coucher": "HD_FR_J19_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 20,
+      "titre": "Jour 20",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J20_REVEIL",
+        "gratitude_matin": "HD_FR_J20_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J20_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J20_BIBLE_MATIN",
+        "exercice": "HD_FR_J20_EXERCICE",
+        "lecture_pro": "HD_FR_J20_LECTURE_PRO",
+        "priere_midi": "HD_FR_J20_PRIERE_MIDI",
+        "predication": "HD_FR_J20_PREDICATION",
+        "lecture_personnelle": "HD_FR_J20_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J20_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J20_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J20_PRIERE_SOIR",
+        "coucher": "HD_FR_J20_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 21,
+      "titre": "Jour 21",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J21_REVEIL",
+        "gratitude_matin": "HD_FR_J21_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J21_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J21_BIBLE_MATIN",
+        "exercice": "HD_FR_J21_EXERCICE",
+        "lecture_pro": "HD_FR_J21_LECTURE_PRO",
+        "priere_midi": "HD_FR_J21_PRIERE_MIDI",
+        "predication": "HD_FR_J21_PREDICATION",
+        "lecture_personnelle": "HD_FR_J21_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J21_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J21_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J21_PRIERE_SOIR",
+        "coucher": "HD_FR_J21_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 22,
+      "titre": "Jour 22",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J22_REVEIL",
+        "gratitude_matin": "HD_FR_J22_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J22_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J22_BIBLE_MATIN",
+        "exercice": "HD_FR_J22_EXERCICE",
+        "lecture_pro": "HD_FR_J22_LECTURE_PRO",
+        "priere_midi": "HD_FR_J22_PRIERE_MIDI",
+        "predication": "HD_FR_J22_PREDICATION",
+        "lecture_personnelle": "HD_FR_J22_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J22_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J22_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J22_PRIERE_SOIR",
+        "coucher": "HD_FR_J22_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 23,
+      "titre": "Jour 23",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J23_REVEIL",
+        "gratitude_matin": "HD_FR_J23_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J23_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J23_BIBLE_MATIN",
+        "exercice": "HD_FR_J23_EXERCICE",
+        "lecture_pro": "HD_FR_J23_LECTURE_PRO",
+        "priere_midi": "HD_FR_J23_PRIERE_MIDI",
+        "predication": "HD_FR_J23_PREDICATION",
+        "lecture_personnelle": "HD_FR_J23_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J23_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J23_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J23_PRIERE_SOIR",
+        "coucher": "HD_FR_J23_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 24,
+      "titre": "Jour 24",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J24_REVEIL",
+        "gratitude_matin": "HD_FR_J24_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J24_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J24_BIBLE_MATIN",
+        "exercice": "HD_FR_J24_EXERCICE",
+        "lecture_pro": "HD_FR_J24_LECTURE_PRO",
+        "priere_midi": "HD_FR_J24_PRIERE_MIDI",
+        "predication": "HD_FR_J24_PREDICATION",
+        "lecture_personnelle": "HD_FR_J24_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J24_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J24_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J24_PRIERE_SOIR",
+        "coucher": "HD_FR_J24_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 25,
+      "titre": "Jour 25",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J25_REVEIL",
+        "gratitude_matin": "HD_FR_J25_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J25_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J25_BIBLE_MATIN",
+        "exercice": "HD_FR_J25_EXERCICE",
+        "lecture_pro": "HD_FR_J25_LECTURE_PRO",
+        "priere_midi": "HD_FR_J25_PRIERE_MIDI",
+        "predication": "HD_FR_J25_PREDICATION",
+        "lecture_personnelle": "HD_FR_J25_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J25_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J25_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J25_PRIERE_SOIR",
+        "coucher": "HD_FR_J25_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 26,
+      "titre": "Jour 26",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J26_REVEIL",
+        "gratitude_matin": "HD_FR_J26_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J26_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J26_BIBLE_MATIN",
+        "exercice": "HD_FR_J26_EXERCICE",
+        "lecture_pro": "HD_FR_J26_LECTURE_PRO",
+        "priere_midi": "HD_FR_J26_PRIERE_MIDI",
+        "predication": "HD_FR_J26_PREDICATION",
+        "lecture_personnelle": "HD_FR_J26_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J26_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J26_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J26_PRIERE_SOIR",
+        "coucher": "HD_FR_J26_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 27,
+      "titre": "Jour 27",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J27_REVEIL",
+        "gratitude_matin": "HD_FR_J27_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J27_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J27_BIBLE_MATIN",
+        "exercice": "HD_FR_J27_EXERCICE",
+        "lecture_pro": "HD_FR_J27_LECTURE_PRO",
+        "priere_midi": "HD_FR_J27_PRIERE_MIDI",
+        "predication": "HD_FR_J27_PREDICATION",
+        "lecture_personnelle": "HD_FR_J27_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J27_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J27_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J27_PRIERE_SOIR",
+        "coucher": "HD_FR_J27_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 28,
+      "titre": "Jour 28",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J28_REVEIL",
+        "gratitude_matin": "HD_FR_J28_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J28_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J28_BIBLE_MATIN",
+        "exercice": "HD_FR_J28_EXERCICE",
+        "lecture_pro": "HD_FR_J28_LECTURE_PRO",
+        "priere_midi": "HD_FR_J28_PRIERE_MIDI",
+        "predication": "HD_FR_J28_PREDICATION",
+        "lecture_personnelle": "HD_FR_J28_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J28_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J28_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J28_PRIERE_SOIR",
+        "coucher": "HD_FR_J28_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 29,
+      "titre": "Jour 29",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J29_REVEIL",
+        "gratitude_matin": "HD_FR_J29_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J29_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J29_BIBLE_MATIN",
+        "exercice": "HD_FR_J29_EXERCICE",
+        "lecture_pro": "HD_FR_J29_LECTURE_PRO",
+        "priere_midi": "HD_FR_J29_PRIERE_MIDI",
+        "predication": "HD_FR_J29_PREDICATION",
+        "lecture_personnelle": "HD_FR_J29_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J29_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J29_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J29_PRIERE_SOIR",
+        "coucher": "HD_FR_J29_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
+    {
+      "jour": 30,
+      "titre": "Jour 30",
+      "objectif": null,
+      "texte_pedagogique": null,
+      "source": null,
+      "activites": {
+        "reveil": "HD_FR_J30_REVEIL",
+        "gratitude_matin": "HD_FR_J30_GRATITUDE_MATIN",
+        "priere_matin": "HD_FR_J30_PRIERE_MATIN",
+        "bible_matin": "HD_FR_J30_BIBLE_MATIN",
+        "exercice": "HD_FR_J30_EXERCICE",
+        "lecture_pro": "HD_FR_J30_LECTURE_PRO",
+        "priere_midi": "HD_FR_J30_PRIERE_MIDI",
+        "predication": "HD_FR_J30_PREDICATION",
+        "lecture_personnelle": "HD_FR_J30_LECTURE_PERSONNELLE",
+        "bible_soir": "HD_FR_J30_BIBLE_SOIR",
+        "gratitude_soir": "HD_FR_J30_GRATITUDE_SOIR",
+        "priere_soir": "HD_FR_J30_PRIERE_SOIR",
+        "coucher": "HD_FR_J30_COUCHER"
+      },
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    }
+  ]
+}
