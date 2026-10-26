@@ -23,3 +23,12 @@ Vérification initiale : refus sans configuration TEST, compilation réussie et 
 ## Autorisation des retours de la version isolée
 
 Le 26 octobre 2026, après accord explicite du porteur dans la conversation, les deux adresses exactes sous `/seneve/recette-hd/habitudes/inscription?lang=fr` et `?lang=en` ont été enregistrées dans les Redirect URLs de seneve-test via son tableau de bord. L’état visible après sauvegarde contient 4 adresses : les 2 précédentes et ces 2 nouvelles. Cette vérification remplace les mentions historiques « préparées sans enregistrement » ci-dessus. Le Site URL reste localhost:3000, le modèle par défaut n’est pas modifié, PROD n’est pas modifiée. Aucun e-mail envoyé ; le choix et l’autorisation du destinataire restent nécessaires avant la recette réelle.
+
+
+## Vérification du lien de connexion reçu par e-mail
+
+Le 26 octobre 2026, le porteur a indiqué une adresse et autorisé un seul message pour cette recette. Le compte TEST était déjà confirmé : le test a donc utilisé un lien de connexion (Magic Link), avec `shouldCreateUser:false`, et non une nouvelle inscription. Une seule requête d’envoi a été tentée et acceptée par Supabase, avec le retour français exact de la version isolée. Aucun compte créé, mot de passe modifié ou nouvel accès HD ouvert.
+
+Après le retour « c’est fait » du porteur, une lecture serveur a confirmé que `last_sign_in_at` est postérieur à l’envoi et à sa valeur initiale. La connexion par le lien est donc confirmée côté serveur. L’adresse et les secrets de connexion ne sont pas consignés ici. Aucun deuxième message n’est envoyé.
+
+Limites : cette vérification ne prouve pas la création d’un nouveau compte ni le parcours d’e-mail de confirmation d’inscription. Le navigateur du porteur n’est pas celui de la recette visuelle : l’arrivée sur la bonne page doit encore être confirmée par son observation. Le catalogue HD de TEST reste fermé ; aucune réception du module complet ni publication de l’inscription en production n’est annoncée.
