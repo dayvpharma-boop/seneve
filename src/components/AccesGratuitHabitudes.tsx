@@ -35,6 +35,10 @@ export function AccesGratuitHabitudes({droit,periode,inscription,langue,fuseau}:
     </div>
    </div>
   </div>
+  <div className="bg-hd-surface-container-low rounded-xl px-hd-space-md py-hd-space-sm mb-hd-space-lg flex items-center justify-between gap-2">
+   <div className="flex items-center gap-2"><IconeHD nom="payments" className="text-hd-secondary text-[20px]"/><span className="font-hd-label-md text-hd-label-md text-hd-on-surface">{label('Participation mensuelle','Monthly contribution')}</span></div>
+   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary bg-hd-surface-container-highest px-2.5 py-1 rounded-full uppercase tracking-wider">{label('Tarif à venir','Price to come')}</span>
+  </div>
   <div className="flex flex-col relative pl-2 mb-hd-space-lg">
    <div className="absolute left-[19px] top-4 bottom-8 w-[2px] bg-hd-outline-variant/40"/>
    <div className="flex items-start gap-hd-space-md pb-hd-space-lg relative">
