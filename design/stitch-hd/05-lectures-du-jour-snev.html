@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-surface-variant": "#4d4637", "surface-variant": "#e7e2d4", "tertiary-fixed": "#e7e2d6", "primary-fixed-dim": "#e6c366", "surface": "#fef9ea", "on-background": "#1d1c13", "secondary-container": "#fed978", "inverse-on-surface": "#f5f1e2", "on-secondary": "#ffffff", "secondary-fixed": "#ffe08f", "on-tertiary-fixed": "#1d1c15", "on-tertiary-fixed-variant": "#49473e", "primary-fixed": "#ffdf90", "surface-bright": "#fef9ea", "on-secondary-fixed": "#241a00", "outline": "#7e7665", "surface-dim": "#dedacb", "inverse-surface": "#323127", "on-error": "#ffffff", "on-primary-container": "#f9d576", "tertiary": "#48473e", "on-secondary-container": "#785d00", "surface-container": "#f2eedf", "tertiary-fixed-dim": "#cac6bb", "on-secondary-fixed-variant": "#584400", "on-tertiary": "#ffffff", "secondary-fixed-dim": "#e6c364", "primary": "#584400", "tertiary-container": "#605e55", "background": "#fef9ea", "on-primary-fixed-variant": "#584400", "on-primary": "#ffffff", "surface-container-lowest": "#ffffff", "primary-container": "#755b00", "on-tertiary-container": "#dcd8cc", "surface-container-highest": "#e7e2d4", "surface-container-high": "#ede8d9", "on-error-container": "#93000a", "on-surface": "#1d1c13", "outline-variant": "#d0c5b2", "inverse-primary": "#e6c366", "error-container": "#ffdad6", "surface-tint": "#755b00", "secondary": "#755b00", "surface-container-low": "#f8f4e4", "on-primary-fixed": "#241a00", "error": "#ba1a1a" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-lg": "1.5rem", "space-md": "1rem", "gutter": "0.75rem", "space-xs": "0.25rem", "space-xl": "2.25rem", "margin": "1rem", "space-sm": "0.5rem" }, fontFamily: { "scripture-verse": ["Literata"], "label-md": ["Work Sans"], "label-nav": ["Work Sans"], "body-sm": ["Work Sans"], "body-md": ["Literata"], "label-lg": ["Work Sans"], "body-lg": ["Literata"], "label-sm": ["Work Sans"], "headline-sm": ["Literata"], "headline-lg": ["Literata"], "headline-md": ["Literata"] }, fontSize: { "scripture-verse": ["19px", { lineHeight: "34px", letterSpacing: "0.01em", fontWeight: "400" }], "label-md": ["13px", { lineHeight: "17px", letterSpacing: "0.02em", fontWeight: "500" }], "label-nav": ["10px", { lineHeight: "13px", fontWeight: "500" }], "body-sm": ["13px", { lineHeight: "19px", fontWeight: "400" }], "body-md": ["15px", { lineHeight: "25px", fontWeight: "400" }], "label-lg": ["15px", { lineHeight: "20px", fontWeight: "500" }], "body-lg": ["17px", { lineHeight: "29px", fontWeight: "400" }], "label-sm": ["11px", { lineHeight: "15px", letterSpacing: "0.05em", fontWeight: "600" }], "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "500" }], "headline-lg": ["30px", { lineHeight: "38px", fontWeight: "600" }], "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(117,91,0,0.03)]"><div class="h-14 px-margin flex items-center justify-between"><button aria-label="Retour" class="w-11 h-11 -ml-space-sm flex items-center justify-center text-on-surface hover:text-primary active:opacity-70 transition-colors" onclick="window.history.back()" type="button"><span class="material-symbols-outlined text-[22px]">arrow_back</span></button><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight text-center truncate max-w-[200px]">Lectures du jour</h1><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="flex-1 w-full bg-surface pt-14 pb-20 px-margin flex flex-col"><div class="flex flex-col w-full pb-8">
+<!-- Header / Intro Banner -->
+<header class="mb-6">
+<div class="flex items-center gap-2 mb-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Habitudes &amp; Défis</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Lectures du jour</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 italic">Nourrir l'esprit et la pensée au fil des heures.</p>
+</header>
+<!-- Devotional Horizon Segment (Grace-centered, anti-streak) -->
+<section class="bg-surface-container rounded-xl p-4 mb-6 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-md text-label-md text-on-surface">Rythme d'aujourd'hui</span>
+<span class="font-label-md text-label-md text-secondary" id="progress-summary">1 sur 5 complété</span>
+</div>
+<div class="flex items-center gap-1.5 w-full">
+<div class="h-1.5 flex-1 rounded-full bg-secondary transition-colors duration-300" id="dot-1"></div>
+<div class="h-1.5 flex-1 rounded-full bg-surface-variant transition-colors duration-300" id="dot-2"></div>
+<div class="h-1.5 flex-1 rounded-full bg-surface-variant transition-colors duration-300" id="dot-3"></div>
+<div class="h-1.5 flex-1 rounded-full bg-surface-variant transition-colors duration-300" id="dot-4"></div>
+<div class="h-1.5 flex-1 rounded-full bg-surface-variant transition-colors duration-300" id="dot-5"></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2.5">
+      Chaque lecture est une semence accueillie dans le calme, sans hâte.
+    </p>
+</section>
+<!-- Readings & Audio Track List -->
+<main class="flex flex-col gap-3.5 mb-8">
+<!-- 1. Bible du matin (Completed state) -->
+<article class="bg-surface-container-lowest rounded-xl p-4 shadow-sm transition-all duration-300" id="card-1">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start gap-3 flex-1 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[22px]">menu_book</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<h3 class="font-label-lg text-label-lg text-on-surface">Bible du matin</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant truncate mt-0.5">Passage proposé : texte d'exemple</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                Fait ce matin · 20 min
+              </span>
+</div>
+</div>
+</div>
+<button aria-label="Consulter la méditation" class="min-h-[44px] min-w-[44px] flex items-center justify-center text-on-surface-variant hover:text-secondary rounded-lg active:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</article>
+<!-- 2. Lecture professionnelle (Action ready) -->
+<article class="bg-surface-container-lowest rounded-xl p-4 shadow-sm transition-all duration-300" id="card-2">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start gap-3 flex-1 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[22px]">business_center</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h3 class="font-label-lg text-label-lg text-on-surface">Lecture professionnelle</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Utile à ton métier ou à tes études</p>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">schedule</span>
+                Objectif : 30 min
+              </span>
+<span class="text-outline-variant text-[10px]">•</span>
+<span class="status-badge font-label-sm text-label-sm text-secondary">À faire</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-3.5 pt-3 flex items-center justify-end gap-2">
+<button class="w-full sm:w-auto min-h-[44px] px-5 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 active:bg-primary transition-colors" onclick="openLogSheet('Lecture professionnelle', 2)" type="button">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span>J'ai lu</span>
+</button>
+</div>
+</article>
+<!-- 3. Prédication (Listening) -->
+<article class="bg-surface-container-lowest rounded-xl p-4 shadow-sm transition-all duration-300" id="card-3">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start gap-3 flex-1 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[22px]">headphones</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-label-lg text-label-lg text-on-surface">Prédication</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Écoute d'une prédication</p>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">timer</span>
+                Objectif : 30 min
+              </span>
+<span class="text-outline-variant text-[10px]">•</span>
+<span class="status-badge font-label-sm text-label-sm text-secondary">À faire</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-3.5 pt-3 flex items-center justify-end gap-2">
+<button class="w-full sm:w-auto min-h-[44px] px-5 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 active:bg-primary transition-colors" onclick="openLogSheet('Prédication', 3)" type="button">
+<span class="material-symbols-outlined text-[18px]">hearing</span>
+<span>J'ai écouté</span>
+</button>
+</div>
+</article>
+<!-- 4. Lecture personnelle -->
+<article class="bg-surface-container-lowest rounded-xl p-4 shadow-sm transition-all duration-300" id="card-4">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start gap-3 flex-1 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[22px]">auto_stories</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-label-lg text-label-lg text-on-surface">Lecture personnelle</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Livre de développement personnel</p>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">schedule</span>
+                Objectif : 30 min
+              </span>
+<span class="text-outline-variant text-[10px]">•</span>
+<span class="status-badge font-label-sm text-label-sm text-secondary">À faire</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-3.5 pt-3 flex items-center justify-end gap-2">
+<button class="w-full sm:w-auto min-h-[44px] px-5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 active:bg-surface-variant transition-colors" onclick="openLogSheet('Lecture personnelle', 4)" type="button">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+<span>J'ai lu</span>
+</button>
+</div>
+</article>
+<!-- 5. Bible du soir -->
+<article class="bg-surface-container-lowest rounded-xl p-4 shadow-sm transition-all duration-300" id="card-5">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-start gap-3 flex-1 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[22px]">bedtime</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-label-lg text-label-lg text-on-surface">Bible du soir</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Lecture et réflexion</p>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">dark_mode</span>
+                20:35
+              </span>
+<span class="text-outline-variant text-[10px]">•</span>
+<span class="status-badge font-label-sm text-label-sm text-secondary">À faire</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-3.5 pt-3 flex items-center justify-end gap-2">
+<button class="w-full sm:w-auto min-h-[44px] px-5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 active:bg-surface-variant transition-colors" onclick="openLogSheet('Bible du soir', 5)" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Compléter</span>
+</button>
+</div>
+</article>
+</main>
+<!-- Serene Editorial Scripture Pause -->
+<aside class="bg-surface-container-low rounded-xl p-5 mb-8 flex flex-col gap-2">
+<div class="flex items-center gap-2 text-secondary mb-1">
+<span class="material-symbols-outlined text-[18px]">format_quote</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Pensée contemplative</span>
+</div>
+<blockquote class="font-scripture-verse text-scripture-verse text-on-surface italic">
+      « Ta parole est une lampe à mes pieds, et une lumière sur mon sentier. »
+    </blockquote>
+<span class="font-label-md text-label-md text-on-surface-variant self-end">Psaume 119:105</span>
+</aside>
+<!-- Empty state for recommendations -->
+<section class="bg-surface-container-low/70 rounded-xl p-6 text-center flex flex-col items-center justify-center shadow-none mb-4">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-secondary mb-3">
+<span class="material-symbols-outlined text-[26px]">explore</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Recommandations bientôt disponibles</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-xs">
+      Les livres et prédications conseillés apparaîtront ici après validation.
+    </p>
+<div class="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[15px]">hourglass_empty</span>
+<span>En préparation</span>
+</div>
+</section>
+<!-- Bottom Sheet Modal & Backdrop -->
+<div class="fixed inset-0 bg-on-background/40 z-50 transition-opacity duration-300 opacity-0 pointer-events-none flex flex-col justify-end" id="modal-backdrop" onclick="closeSheetOnBackdrop(event)">
+<section class="w-full bg-surface-container-lowest rounded-t-2xl p-5 pb-8 shadow-2xl transition-transform duration-300 translate-y-full flex flex-col max-h-[751px] overflow-y-auto" id="bottom-sheet">
+<!-- Drag Handle -->
+<div class="w-12 h-1.5 rounded-full bg-surface-variant mx-auto mb-4 shrink-0"></div>
+<!-- Sheet Header -->
+<div class="flex items-center justify-between mb-4">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" id="sheet-discipline-label">Discipline</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mt-0.5">Combien de temps ?</h3>
+</div>
+<button aria-label="Fermer" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface active:bg-surface-container" onclick="closeLogSheet()" type="button">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<!-- Quick Chips for Duration -->
+<div class="mb-5">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">Durée consacrée</label>
+<div class="grid grid-cols-4 gap-2">
+<button class="chip-duration min-h-[44px] rounded-lg bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors" onclick="selectDurationChip(this, '10 min')" type="button">
+            10 min
+          </button>
+<button class="chip-duration min-h-[44px] rounded-lg bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors" onclick="selectDurationChip(this, '20 min')" type="button">
+            20 min
+          </button>
+<button class="chip-duration min-h-[44px] rounded-lg bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center transition-colors" onclick="selectDurationChip(this, '30 min')" type="button">
+            30 min
+          </button>
+<button class="chip-duration min-h-[44px] rounded-lg bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors" onclick="selectDurationChip(this, 'Autre')" type="button">
+            Autre
+          </button>
+</div>
+</div>
+<!-- Optional Input Field -->
+<div class="mb-6">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2" for="book-title-input">Titre (facultatif)</label>
+<div class="relative">
+<input class="w-full min-h-[48px] px-4 rounded-lg bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-secondary transition-all" id="book-title-input" placeholder="Ex. Livre ou passage lu..." type="text"/>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col-reverse sm:flex-row gap-2.5">
+<button class="flex-1 min-h-[48px] rounded-xl bg-surface-container text-on-surface font-label-lg text-label-lg flex items-center justify-center active:bg-surface-variant transition-colors" onclick="submitLog('partiel')" type="button">
+          En partie
+        </button>
+<button class="flex-1 min-h-[48px] rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 active:bg-primary transition-colors" onclick="submitLog('fait')" type="button">
+<span class="material-symbols-outlined text-[20px]">check</span>
+<span>Fait</span>
+</button>
+</div>
+</section>
+</div>
+</div>
+<script>
+  let activeCardId = null;
+  let selectedDuration = '30 min';
+  let completedCount = 1;
+
+  function openLogSheet(disciplineName, cardId) {
+    activeCardId = cardId;
+    document.getElementById('sheet-discipline-label').textContent = disciplineName;
+    document.getElementById('book-title-input').value = '';
+    
+    const backdrop = document.getElementById('modal-backdrop');
+    const sheet = document.getElementById('bottom-sheet');
+    
+    backdrop.classList.remove('pointer-events-none', 'opacity-0');
+    backdrop.classList.add('opacity-100');
+    sheet.classList.remove('translate-y-full');
+    sheet.classList.add('translate-y-0');
+  }
+
+  function closeLogSheet() {
+    const backdrop = document.getElementById('modal-backdrop');
+    const sheet = document.getElementById('bottom-sheet');
+    
+    backdrop.classList.add('opacity-0');
+    backdrop.classList.remove('opacity-100');
+    sheet.classList.add('translate-y-full');
+    sheet.classList.remove('translate-y-0');
+    
+    setTimeout(() => {
+      backdrop.classList.add('pointer-events-none');
+    }, 300);
+  }
+
+  function closeSheetOnBackdrop(e) {
+    if (e.target.id === 'modal-backdrop') {
+      closeLogSheet();
+    }
+  }
+
+  function selectDurationChip(el, duration) {
+    selectedDuration = duration;
+    document.querySelectorAll('.chip-duration').forEach(chip => {
+      chip.classList.remove('bg-primary-container', 'text-on-primary');
+      chip.classList.add('bg-surface-container', 'text-on-surface');
+    });
+    el.classList.remove('bg-surface-container', 'text-on-surface');
+    el.classList.add('bg-primary-container', 'text-on-primary');
+  }
+
+  function submitLog(statusType) {
+    if (activeCardId) {
+      const card = document.getElementById('card-' + activeCardId);
+      const customTitle = document.getElementById('book-title-input').value.trim();
+      const actionArea = card.querySelector('.mt-3\\.5');
+      const statusBadge = card.querySelector('.status-badge');
+
+      if (statusType === 'fait') {
+        completedCount = Math.min(5, completedCount + 1);
+        const dot = document.getElementById('dot-' + activeCardId);
+        if (dot) {
+          dot.classList.remove('bg-surface-variant');
+          dot.classList.add('bg-secondary');
+        }
+
+        if (statusBadge) {
+          statusBadge.textContent = 'Fait';
+          statusBadge.classList.replace('text-secondary', 'text-on-surface-variant');
+        }
+
+        if (actionArea) {
+          actionArea.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm">
+                <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                ${customTitle ? customTitle + ' &middot; ' : ''}Fait &middot; ${selectedDuration}
+              </span>
+            </div>
+          `;
+        }
+      } else {
+        if (actionArea) {
+          actionArea.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">
+                <span class="material-symbols-outlined text-[16px]">timelapse</span>
+                ${customTitle ? customTitle + ' &middot; ' : ''}En partie &middot; ${selectedDuration}
+              </span>
+            </div>
+          `;
+        }
+      }
+
+      document.getElementById('progress-summary').textContent = completedCount + ' sur 5 complété';
+    }
+
+    closeLogSheet();
+  }
+</script></main><nav aria-label="Navigation principale" class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_16px_rgba(117,91,0,0.04)]" data-active-classes="text-secondary font-medium [&amp;_.nav-indicator]:opacity-100"><div class="h-16 px-space-xs flex items-center justify-around"><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-space-xs text-on-surface-variant hover:text-secondary transition-colors group" data-path="aujourdhui" href="#"><span class="material-symbols-outlined text-[22px]">wb_twilight</span><span class="font-label-nav text-label-nav tracking-normal">Aujourd'hui</span><span class="nav-indicator w-1 h-1 rounded-full bg-secondary opacity-0 transition-opacity"></span></a><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-space-xs text-on-surface-variant hover:text-secondary transition-colors group" data-path="parcours" href="#"><span class="material-symbols-outlined text-[22px]">compass_calibration</span><span class="font-label-nav text-label-nav tracking-normal">Parcours</span><span class="nav-indicator w-1 h-1 rounded-full bg-secondary opacity-0 transition-opacity"></span></a><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-space-xs text-on-surface-variant hover:text-secondary transition-colors group" data-path="bibliotheque" href="#"><span class="material-symbols-outlined text-[22px]">auto_stories</span><span class="font-label-nav text-label-nav tracking-normal">Bibliothèque</span><span class="nav-indicator w-1 h-1 rounded-full bg-secondary opacity-0 transition-opacity"></span></a><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-space-xs text-on-surface-variant hover:text-secondary transition-colors group" data-path="bible" href="#"><span class="material-symbols-outlined text-[22px]">menu_book</span><span class="font-label-nav text-label-nav tracking-normal">Bible</span><span class="nav-indicator w-1 h-1 rounded-full bg-secondary opacity-0 transition-opacity"></span></a><a class="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-space-xs text-on-surface-variant hover:text-secondary transition-colors group" data-path="journal" href="#"><span class="material-symbols-outlined text-[22px]">edit_note</span><span class="font-label-nav text-label-nav tracking-normal">Journal</span><span class="nav-indicator w-1 h-1 rounded-full bg-secondary opacity-0 transition-opacity"></span></a></div></nav></body></html>
+

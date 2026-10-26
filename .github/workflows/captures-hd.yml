@@ -1,0 +1,39 @@
+name: Captures Habitudes & Défis (sans mise en ligne)
+
+# Produit des captures 390 px des maquettes Stitch et des vrais composants HD,
+# pour les comparer. Ne publie rien : les images vont dans la branche captures/hd-stitch.
+on:
+  push:
+    branches: [design/habitudes-stitch-fidele]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: captures-hd
+  cancel-in-progress: true
+
+jobs:
+  captures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Installer
+        run: npm install --no-audit --no-fund && npm install --no-save --no-audit --no-fund playwright@1.49.1 && npx playwright install --with-deps chromium
+      - name: Construire la galerie des composants
+        run: node scripts/recette/habitudes-visuel-stitch.mjs _galerie
+      - name: Capturer
+        run: node scripts/recette/captures-hd.mjs _galerie _captures
+      - name: Envoyer les captures dans captures/hd-stitch
+        run: |
+          cd _captures
+          git init -q -b captures/hd-stitch
+          git config user.name "captures-hd"
+          git config user.email "captures-hd@users.noreply.github.com"
+          echo "Source : ${GITHUB_SHA}" > SOURCE.txt
+          git add -A && git commit -q -m "Captures HD pour ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" HEAD:captures/hd-stitch
