@@ -15,7 +15,7 @@ export function HabitudesInscription(){
  const erreurConfirmation=['error','error_code','error_description'].some(cle=>q.has(cle)||fragment.has(cle));
  const l=(fr:string,en:string)=>langue==='en'?en:fr;
  useEffect(()=>{document.title=l('Inscription · Habitudes & Défis','Enrollment · Habits & Challenges')+' — SÉNEVÉ';document.documentElement.lang=langue;},[langue]);
- return <CadreHabitudes titre={l('Habitudes & Défis','Habits & Challenges')} langue={langue} retour={`/offres?lang=${langue}`} retourLibelle={l('Revenir aux offres','Back to offers')} avecNavigation={false}><div className="flex flex-col w-full px-hd-margin pt-hd-space-md pb-hd-space-lg">
+ return <CadreHabitudes titre="Sénevé" sousTitreCentre={l('Habitudes & Défis','Habits & Challenges')} langue={langue} retour={`/offres?lang=${langue}`} retourLibelle={l('Revenir aux offres','Back to offers')} avecNavigation={false}><div className="flex flex-col w-full px-hd-margin pt-hd-space-md pb-hd-space-lg">
   <div className="flex flex-col gap-1.5 mb-hd-space-md">
    <span className="font-hd-label-sm text-hd-label-sm uppercase tracking-widest text-hd-secondary">{l('Nouveau parcours','New journey')}</span>
    <h1 className="font-hd-headline-lg text-hd-headline-lg text-hd-on-surface tracking-tight">{l('Habitudes & Défis','Habits & Challenges')}</h1>

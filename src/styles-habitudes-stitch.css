@@ -129,15 +129,3 @@
 .hd-acces h2{font-family:var(--hd-serif);color:var(--hd-encre)}
 .hd-acces .oa-card{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre)}
 
-/* ---------- Simulateur de dîme ---------- */
-.hd-simulateur{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre);color:var(--hd-encre);font-family:var(--hd-ui);padding:16px}
-.hd-simulateur>summary{font:600 1.1rem/1.4 var(--hd-serif)}
-.hd-simulateur>p{color:var(--hd-encre-2);line-height:1.65}
-.hd-simulateur input,.hd-simulateur select{border-color:var(--hd-trait);background:var(--hd-carte-basse);color:var(--hd-encre);border-radius:10px}
-.hd-simulateur output{border:1.5px solid var(--hd-or);background:var(--hd-or-voile);border-radius:var(--hd-rayon-petit)}
-.hd-simulateur output strong{font:600 1.15rem/1.4 var(--hd-serif);color:var(--hd-encre)}
-.hd-simulateur button{min-height:44px;padding:10px 16px;border-radius:var(--hd-rayon-petit);font:500 .9rem var(--hd-ui)}
-.hd-simulateur button[type=submit]{background:var(--hd-or);border:0;color:#fff}
-@media (prefers-color-scheme: dark){.hd-simulateur button[type=submit]{color:#241a00}}
-.hd-simulateur .btn-secondaire{background:var(--hd-carte-basse);border:1px solid var(--hd-trait);color:var(--hd-encre)}
-.hd-simulateur [role=alert]{color:var(--hd-erreur)}

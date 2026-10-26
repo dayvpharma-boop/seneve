@@ -34,13 +34,15 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
   }finally{verrou.current=false;setOccupe(false);}
  }
  const priere=(k:string)=>k.startsWith('priere_');
+ const ville=c.fuseau.split('/').pop()!.replaceAll('_',' ');
+ const joursLongs=en?['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']:['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
  const sousTitre:Record<string,[string,string]>={priere_matin:['Temps réservé','Set-apart time'],priere_midi:['Pause sanctifiée','Midday pause'],priere_soir:['Repose en Dieu','Rest in God']};
  const culte=(k:string)=>k.startsWith('culte_');
  const resume=(h:PlanningInscription[number])=>h.creneaux.map(s=>s.heure_locale||'--:--').join(' · ');
  const carteHabitude=(h:PlanningInscription[number],i:number)=>{const fort=priere(h.habit_key);
   return <details key={h.habit_key} className={`group w-full bg-hd-surface-container-lowest rounded-xl ${fort?'shadow-[0_2px_8px_rgba(117,91,0,0.06)] relative overflow-hidden':'shadow-[0_1px_4px_rgba(29,28,19,0.03)]'}`}>
-   {fort&&<span aria-hidden="true" className="absolute left-0 top-0 bottom-0 w-1 bg-hd-secondary rounded-l-xl"/>}
-   <summary className={`list-none [&::-webkit-details-marker]:hidden cursor-pointer p-3 flex items-center justify-between gap-3 min-h-[56px] ${fort?'pl-4.5':''}`}>
+   <summary className={`relative list-none [&::-webkit-details-marker]:hidden cursor-pointer p-3 flex items-center justify-between gap-3 min-h-[56px] ${fort?'pl-4.5':''}`}>
+    {fort&&<span aria-hidden="true" className="absolute left-0 top-0 bottom-0 w-1 bg-hd-secondary rounded-l-xl"/>}
     <span className="flex items-center gap-3 min-w-0">
      <span className={`px-2.5 py-1.5 rounded-lg ${fort?'bg-hd-surface-container text-hd-secondary':'bg-hd-surface-container-low text-hd-on-surface'} font-hd-label-md text-hd-label-md tracking-wide flex items-center gap-1.5 shrink-0`}><span className={fort?'font-semibold':''}>{culte(h.habit_key)?h.creneaux.map(s=>s.jours_iso.map(j=>jours[j-1]).join(', ')).join(' · '):resume(h)}</span><IconeHD nom="edit" className={`text-[14px] ${fort?'text-hd-secondary':'text-hd-outline'}`}/></span>
      <span className="flex flex-col min-w-0"><span className={`font-hd-label-lg text-hd-label-lg text-hd-on-surface truncate ${fort?'font-medium':''}`}>{h.libelle}</span>{culte(h.habit_key)?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">{resume(h)}</span>:sousTitre[h.habit_key]&&<span className="font-hd-label-sm text-[10px] text-hd-secondary tracking-wider uppercase">{l(...sousTitre[h.habit_key]!)}</span>}</span>
@@ -61,11 +63,12 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
  return <section className="hd-inscription-stitch flex flex-col w-full">
   <div className="flex flex-col mb-5">
    <div className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-hd-surface-container-high text-hd-secondary mb-2"><IconeHD nom="schedule" className="text-[14px]"/><span className="font-hd-label-sm text-hd-label-sm uppercase tracking-wider">{l('Rythme quotidien','Daily rhythm')}</span></div>
-   <h2 className="font-hd-headline-md text-hd-headline-md text-hd-on-surface tracking-tight mb-1.5">{l('Commencer mes 30 jours gratuits','Start my 30 free days')}</h2>
-   <div className="flex items-start gap-1.5 text-hd-on-surface-variant font-hd-body-sm text-hd-body-sm"><IconeHD nom="public" className="text-[16px] text-hd-outline mt-0.5"/><span>{l(`Tes horaires sont proposés par défaut et modifiables. Fuseau : ${c.fuseau}.`,`Your times are suggested and can be changed. Time zone: ${c.fuseau}.`)}</span></div>
+   <h2 className="font-hd-headline-md text-hd-headline-md text-hd-on-surface tracking-tight mb-1.5">{l('Tes horaires','Your schedule')}</h2>
+   <div className="flex items-start gap-1.5 text-hd-on-surface-variant font-hd-body-sm text-hd-body-sm"><IconeHD nom="public" className="text-[16px] text-hd-outline mt-0.5"/><span>{l(`Proposés par défaut, modifiables à tout moment. Fuseau : ${ville}.`,`Suggested by default, editable at any time. Time zone: ${ville}.`)}</span></div>
   </div>
-  <div className="p-3.5 mb-4 rounded-xl bg-hd-surface-container-low flex items-start gap-3"><IconeHD nom="spa" className="text-hd-secondary text-[20px] mt-0.5 shrink-0"/><div className="flex flex-col gap-2">
-   <p className="font-hd-body-md text-hd-body-md text-hd-on-surface-variant italic leading-relaxed">{l('Les 30 jours gratuits n’incluent pas de coach IA. Il est prévu dans les mois d’abonnement payants, selon les conditions de l’offre.','The 30 free days do not include an AI coach. It is planned for paid subscription months, under the offer’s terms.')}</p>
+  <div className="p-3.5 mb-3 rounded-xl bg-hd-surface-container-low flex items-start gap-3"><IconeHD nom="spa" className="text-hd-secondary text-[20px] mt-0.5 shrink-0"/><p className="font-hd-body-md text-hd-body-md text-hd-on-surface-variant italic leading-relaxed">{l('Un cadre pour organiser ta journée. Adapte-le à ta santé, à ton travail et à tes disponibilités.','A framework to organise your day. Adapt it to your health, work and availability.')}</p></div>
+  <div className="p-3.5 mb-4 rounded-xl bg-hd-secondary-container/25 flex items-start gap-3"><IconeHD nom="info" className="text-hd-secondary text-[20px] mt-0.5 shrink-0"/><div className="flex flex-col gap-2">
+   <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface font-medium">{l('Les 30 jours gratuits n’incluent pas de coach IA. Il est prévu dans les mois d’abonnement payants, selon les conditions de l’offre.','The 30 free days do not include an AI coach. It is planned for paid subscription months, under the offer’s terms.')}</p>
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Les 30 jours commencent dès la confirmation de ton inscription par le serveur. Cet accès gratuit est accordé une seule fois par participant. Aucun paiement automatique ne suit cette période.','The 30 days begin when the server confirms your enrollment. This free access is granted once per participant. No automatic payment follows this period.')}</p>
   </div></div>
   {resultat?<div role="status" className="bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col gap-hd-space-sm">{'motif'in resultat?<p className="font-hd-body-md text-hd-body-md">{l('Ton accès gratuit a déjà été utilisé. Consulte tes accès pour retrouver ton parcours.','Your free access has already been used. Check your access page to find your journey.')}</p>:<>
@@ -75,13 +78,16 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
   </>}<a className={bouton} href={`${import.meta.env.BASE_URL}acces?lang=${en?'en':'fr'}`}>{l('Consulter mes accès','View my access')}<IconeHD nom="arrow_forward" className="text-[20px]"/></a></div>:<form onSubmit={e=>void soumettre(e)} className="flex flex-col">
    <fieldset disabled={occupe||attente||refus} className="min-w-0 border-0 p-0 m-0 flex flex-col disabled:opacity-70"><legend className="mb-2 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant uppercase tracking-wider">{l('Mes horaires','My schedule')} ({c.fuseau})</legend>
     <div className="flex flex-col gap-2.5 mb-5">{planning.map((h,i)=>culte(h.habit_key)?null:carteHabitude(h,i))}</div>
-    {planning.some(h=>culte(h.habit_key))&&<div className="bg-hd-surface-container-lowest rounded-2xl overflow-hidden shadow-[0_2px_10px_rgba(29,28,19,0.04)] mb-5">
-     <div className="px-4 py-3 bg-hd-surface-container-low flex items-center gap-2"><IconeHD nom="church" className="text-[20px] text-hd-secondary"/><h3 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Mes cultes','My worship services')}</h3></div>
-     <div className="p-3 flex flex-col gap-2.5">{planning.map((h,i)=>culte(h.habit_key)?carteHabitude(h,i):null)}
-      <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant flex items-center gap-1.5 px-1"><IconeHD nom="info" className="text-[16px] text-hd-outline"/>{l('Selon les horaires de ton église.','Following your church’s times.')}</p></div>
-    </div>}
+    {planning.some(h=>culte(h.habit_key))&&<details className="group bg-hd-surface-container-lowest rounded-2xl shadow-[0_2px_10px_rgba(29,28,19,0.04)] mb-5">
+     <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer p-4 flex flex-col gap-3">
+      <span className="flex items-center justify-between gap-2"><span className="flex items-center gap-2.5"><span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center"><IconeHD nom="church" className="text-[18px]"/></span><span className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Mes cultes','My worship services')}</span></span><span className="inline-flex items-center gap-1 font-hd-label-sm text-hd-label-sm text-hd-secondary"><IconeHD nom="edit" className="text-[14px]"/>{l('Modifier','Edit')}</span></span>
+      <span className="grid grid-cols-3 gap-2">{planning.filter(h=>culte(h.habit_key)).flatMap(h=>h.creneaux.flatMap(s=>s.jours_iso.map(j=>({j,h:s.heure_locale,k:h.habit_key+s.creneau_id+j})))).sort((a,b)=>a.j-b.j).map(t=><span key={t.k} className="flex flex-col items-center justify-center gap-0.5 py-2.5 rounded-xl bg-hd-surface-container-low"><span className="font-hd-label-sm text-hd-label-sm uppercase tracking-wider text-hd-on-surface-variant">{joursLongs[t.j-1]}</span><span className="font-hd-label-lg text-hd-label-lg text-hd-on-surface font-semibold">{t.h||'--:--'}</span></span>)}</span>
+      <span className="flex items-center justify-center gap-1.5 font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant italic"><IconeHD nom="menu_book" className="text-[16px] text-hd-secondary"/>{l('Selon les horaires de ton église.','Following your church’s times.')}</span>
+     </summary>
+     <div className="px-3 pb-3 flex flex-col gap-2.5">{planning.map((h,i)=>culte(h.habit_key)?carteHabitude(h,i):null)}</div>
+    </details>}
     <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant flex items-start gap-1.5 mb-4"><IconeHD nom="notifications_off" className="text-[16px] text-hd-outline mt-0.5"/>{l('Adapte les jours et les heures à ton rythme. Ces horaires n’activent aucun rappel.','Adjust days and times to your rhythm. These times do not enable reminders.')}</p>
-    <div className="hd-classique mb-4"><SemaineAvantInscription planning={planning} frequences={Object.fromEntries(c.planning.map((h,i)=>[h.habit_key,frequence(i)]))} fuseau={c.fuseau} langue={c.langue}/></div>
+    <div className="mb-4"><SemaineAvantInscription planning={planning} frequences={Object.fromEntries(c.planning.map((h,i)=>[h.habit_key,frequence(i)]))} fuseau={c.fuseau} langue={c.langue}/></div>
     <label className="flex items-start gap-3 p-3.5 rounded-xl bg-hd-secondary-container/30 cursor-pointer min-h-[44px]"><input type="checkbox" className="mt-0.5 w-5 h-5 accent-hd-secondary shrink-0" checked={accord} onChange={e=>setAccord(e.target.checked)}/><span className="font-hd-body-sm text-hd-body-sm text-hd-on-surface">{l('Je confirme mon inscription aux 30 jours gratuits à partir de maintenant.','I confirm my enrollment in the 30 free days starting now.')}</span></label>
    </fieldset>
    {erreur&&<p role="alert" className="mt-3 font-hd-body-sm text-hd-body-sm text-hd-error">{erreur}</p>}
