@@ -8,6 +8,7 @@ import {HistoriqueRecetteHabitudes} from './HistoriqueRecetteHabitudes';
 import {DeclarationHabitude} from './DeclarationHabitude';
 import {IconeHD} from './IconeHabitudes';
 import {lectureReprise,moisHabitudes} from '@/lib/habitudes-calendrier';
+import {SuiviDefisHabitudes} from './SuiviDefisHabitudes';
 import {defiDuJour} from '@/data/habitudes-defis-fr';
 
 /** Heure locale « HH:MM » du participant ; null si le fuseau est invalide. */
@@ -112,6 +113,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    {defi.adapter&&<details className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant"><summary className="min-h-[44px] flex items-center cursor-pointer font-hd-label-md text-hd-label-md text-hd-secondary">Adapter</summary><p>{defi.adapter}</p></details>}
    {defi.relire&&<p className="font-hd-scripture-verse text-hd-scripture-verse text-hd-on-surface italic">Pour relire la semaine : {defi.relire}</p>}
   </section>}
+  <SuiviDefisHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} jour={data.jour} langue={langue}/>
   {/* Note de bas de page */}
   <footer className="mt-hd-space-md pt-hd-space-sm pb-hd-space-sm flex flex-col items-center text-center gap-2">
    <div className="inline-flex items-center gap-1.5 text-hd-on-surface-variant px-3 py-1 rounded-full bg-hd-surface-container/50"><IconeHD nom="cloud_done" className="text-[16px] text-hd-secondary"/><span className="font-hd-label-sm text-hd-label-sm">{l('Ta progression est conservée.','Your progress is saved.')}</span></div>
