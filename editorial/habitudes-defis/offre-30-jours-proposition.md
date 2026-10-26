@@ -1,6 +1,6 @@
 # Offre des 30 jours gratuits — présentation proposée
 
-Document de décision pour le porteur du projet. Mise à jour du 26 octobre 2026 : le coach IA est exclu de tout le programme Habitudes & Défis, par décision du porteur. Ce texte n’est pas une offre publiée et ne modifie aucun droit d’accès. Les éléments proposés ci-dessous restent à valider comme périmètre commercial.
+Document de décision pour le porteur du projet. Mise à jour du 26 octobre 2026 : le coach IA est exclu des 30 jours gratuits et inclus dans les mois d’abonnement payants, selon la précision du porteur. Ce texte n’est pas une offre publiée et ne modifie aucun droit d’accès. Les éléments proposés ci-dessous restent à valider comme périmètre commercial.
 
 ## Texte proposé pour la future présentation
 
@@ -19,7 +19,7 @@ Tu peux adapter tes créneaux, signaler une difficulté et reprendre après un r
 
 Le texte de prière, les éventuelles traductions et les médias seront accessibles dans les versions dont la diffusion est autorisée et approuvée. Aucune phonétique, traduction anglaise ou version audio non approuvée n’est promise ici.
 
-Ce programme ne comprend pas de coach IA.
+Les 30 jours gratuits ne comprennent pas de coach IA. Le coach est prévu dans les mois d’abonnement payants, avec un droit actif et selon les conditions validées de l’offre.
 
 ### Comment commencer
 
@@ -44,11 +44,11 @@ Consulte les règles de confidentialité et vérifie que les horaires te convien
 | Habitudes, fiches FR et horaires | Inclus dans le socle proposé | Valider le périmètre du catalogue |
 | Défis | Quatre défis proposés, textes à relire | Valider contenu, rythme et critères |
 | Bilans | Inclure les bilans du suivi et le bilan final | Confirmer cette inclusion et les modalités |
-| Coach IA | Exclu de tout le programme, y compris des 30 jours gratuits | Décision prise par le porteur le 26 octobre 2026 |
+| Coach IA | Exclu du gratuit ; inclus dans les mois d’abonnement payants | Précision du porteur le 26 octobre 2026 ; quotas et offre payante à configurer |
 | Médias téléchargeables et audios | Aucun ensemble ou quota promis | Définir les médias inclus après validation des droits et des fichiers |
 | Anglais | Aucun corpus anglais ajouté par cette étape | Valider séparément les contenus EN avant disponibilité |
 
-Proposition de départ : ouvrir un périmètre clairement défini autour des habitudes, fiches, défis et bilans. Le coach IA est exclu par décision explicite du porteur. Le périmètre des médias reste à définir séparément.
+Proposition de départ : ouvrir un périmètre clairement défini autour des habitudes, fiches, défis et bilans. Le coach IA est exclu du gratuit et prévu dans les mois payants, par décision explicite du porteur. Le périmètre des médias reste à définir séparément.
 
 ## Références et portée technique
 

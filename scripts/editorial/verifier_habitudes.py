@@ -61,7 +61,9 @@ def verifier(d):
             attentes.append(f'{cle} : proposition à relire.')
     offre = d.get('offre', {})
     if offre.get('coach') != 'non_inclus':
-        structure.append('Coach IA : exclu de ce programme par décision du porteur.')
+        structure.append('Coach IA : exclu des 30 jours gratuits par décision du porteur.')
+    if offre.get('coach_mois_payants') != 'inclus_sous_droit_actif':
+        structure.append('Coach IA : prévu dans les mois payants sous droit actif.')
     if any(offre.get(k) not in ['inclus', 'non_inclus'] for k in ['medias', 'bilans']):
         attentes.append('Offre gratuite : périmètre médias et bilans à définir.')
     if not approuve(offre.get('validation')):

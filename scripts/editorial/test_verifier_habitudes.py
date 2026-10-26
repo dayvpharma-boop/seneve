@@ -73,7 +73,7 @@ class ReceptionTrame(unittest.TestCase):
         self.assertTrue(any('période' in x for x in erreurs))
         self.assertTrue(any('identifiant' in x for x in erreurs))
 
-    def test_coach_ne_peut_pas_etre_reintroduit_dans_ce_programme(self):
+    def test_coach_ne_peut_pas_etre_reintroduit_dans_le_gratuit(self):
         self.assertEqual(self.d['offre']['coach'], 'non_inclus')
         self.d['offre']['coach'] = 'inclus'
         self.assertTrue(any('Coach IA' in x for x in verifier(self.d)['erreurs_structure']))

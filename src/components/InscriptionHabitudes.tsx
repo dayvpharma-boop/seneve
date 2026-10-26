@@ -33,7 +33,7 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
   }finally{verrou.current=false;setOccupe(false);}
  }
  return <section className="rn-section hd-horaires"><h2>{l('Commencer mes 30 jours gratuits','Start my 30 free days')}</h2>
-  <p>{l('Ce programme n’inclut pas de coach IA.','This programme does not include an AI coach.')}</p>
+  <p>{l('Les 30 jours gratuits n’incluent pas de coach IA. Il est prévu dans les mois d’abonnement payants, selon les conditions de l’offre.','The 30 free days do not include an AI coach. It is planned for paid subscription months, under the offer’s terms.')}</p>
   <p>{l('Les 30 jours commencent dès la confirmation de ton inscription par le serveur. Cet accès gratuit est accordé une seule fois par participant. Aucun paiement automatique ne suit cette période.','The 30 days begin when the server confirms your enrollment. This free access is granted once per participant. No automatic payment follows this period.')}</p>
   {resultat?<div role="status">{'motif'in resultat?<p>{l('Ton accès gratuit a déjà été utilisé. Consulte tes accès pour retrouver ton parcours.','Your free access has already been used. Check your access page to find your journey.')}</p>:<>
    <p>{resultat.cree?l('Inscription confirmée. Tes horaires ont été enregistrés.','Enrollment confirmed. Your schedule has been saved.'):l('Une inscription existe déjà. Ses dates et ses horaires ont été conservés.','An enrollment already exists. Its dates and schedule have been preserved.')}</p>

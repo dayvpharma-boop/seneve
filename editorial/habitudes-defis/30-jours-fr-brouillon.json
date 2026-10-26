@@ -229,10 +229,11 @@
     },
     "decision_coach": {
       "date": "2026-10-26",
-      "portee": "programme_habitudes_defis_toutes_periodes",
-      "decision": "Coach IA exclu de ce programme, y compris des 30 jours gratuits.",
-      "preuve": "Décision du porteur : « Pas le coach dans cette programme cela vas me coûter l’argent »."
-    }
+      "portee": "gratuit_sans_coach_mois_abonnement_avec_coach",
+      "decision": "Coach exclu des 30 jours gratuits, inclus dans les mois suivants avec abonnement payant actif.",
+      "preuve": "Précision du porteur : « seulement dans le 30 jours gratuit » ; « dans les mois après abonnement ... accès à coach »."
+    },
+    "coach_mois_payants": "inclus_sous_droit_actif"
   },
   "priere": {
     "reference_document": "PDF Amidah fourni, source hassidout.org",
