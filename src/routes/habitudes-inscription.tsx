@@ -4,6 +4,7 @@ import {supabase} from '@/lib/supabase';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {chargerCatalogueInscription,type CatalogueInscriptionHabitudes} from '@/lib/habitudes-catalogue-api';
 import {InscriptionHabitudes} from '@/components/InscriptionHabitudes';
+import {prenomDuCompte} from '@/lib/connexion-sociale';
 
 export function HabitudesInscription(){
  const [q]=useSearchParams(),langue=q.get('lang')==='en'?'en':'fr';
@@ -15,17 +16,22 @@ function CatalogueConnecte({langue}:{langue:string}){
  const l=(fr:string,en:string)=>langue==='en'?en:fr;
  const [compte,setCompte]=useState<string|null|undefined>(undefined),[erreurSession,setErreurSession]=useState(false),[tour,setTour]=useState(0);
  const [charge,setCharge]=useState<{contexte:string;catalogue?:CatalogueInscriptionHabitudes;erreur?:boolean}|null>(null);
- const sequence=useRef(0),compteCourant=useRef<string|null|undefined>(undefined);
+ const sequence=useRef(0),compteCourant=useRef<string|null|undefined>(undefined),prenomCourant=useRef('');
  useEffect(()=>{
   let actif=true,revision=0;setCompte(undefined);setErreurSession(false);
-  const auth=supabase.auth.onAuthStateChange((_event,session)=>{revision++;if(actif){const id=session?.user.id??null;if(compteCourant.current!==id){compteCourant.current=id;sequence.current++;setCharge(null);setCompte(id);}setErreurSession(false);}});
-  const n=revision;void supabase.auth.getSession().then(({data,error})=>{if(actif&&n===revision){if(error)setErreurSession(true);else{compteCourant.current=data.session?.user.id??null;setCompte(compteCourant.current);}}}).catch(()=>{if(actif&&n===revision)setErreurSession(true);});
+  const auth=supabase.auth.onAuthStateChange((_event,session)=>{revision++;if(actif){const id=session?.user.id??null;if(compteCourant.current!==id){compteCourant.current=id;prenomCourant.current=prenomDuCompte(session?.user.user_metadata);sequence.current++;setCharge(null);setCompte(id);}setErreurSession(false);}});
+  const n=revision;void supabase.auth.getSession().then(({data,error})=>{if(actif&&n===revision){if(error)setErreurSession(true);else{compteCourant.current=data.session?.user.id??null;prenomCourant.current=prenomDuCompte(data.session?.user.user_metadata);setCompte(compteCourant.current);}}}).catch(()=>{if(actif&&n===revision)setErreurSession(true);});
   return()=>{actif=false;sequence.current++;auth.data.subscription.unsubscribe();};
  },[]);
  const contexte=JSON.stringify([compte,langue,tour]);
- useEffect(()=>{const n=++sequence.current;setCharge(null);if(!compte)return;void chargerCatalogueInscription(langue,compte).then(catalogue=>{if(n===sequence.current)setCharge({contexte,catalogue});}).catch(()=>{if(n===sequence.current)setCharge({contexte,erreur:true});});return()=>{sequence.current++;};},[compte,langue,tour,contexte]);
+ useEffect(()=>{const n=++sequence.current;setCharge(null);if(!compte)return;
+  void (async()=>{
+   const profil=await supabase.rpc('ensure_participant',{p_prenom:prenomCourant.current||null});if(profil.error)throw profil.error;
+   if(n!==sequence.current)return;
+   const catalogue=await chargerCatalogueInscription(langue,compte);if(n===sequence.current)setCharge({contexte,catalogue});
+  })().catch(()=>{if(n===sequence.current)setCharge({contexte,erreur:true});});return()=>{sequence.current++;};},[compte,langue,tour,contexte]);
  if(erreurSession)return <p role="alert">{l('Ton compte ne peut pas être vérifié. Recharge la page.','Your account cannot be verified. Reload the page.')}</p>;
- if(compte===null)return <section className="rn-section"><p>{l('Connecte-toi pour vérifier la disponibilité de tes 30 jours gratuits.','Sign in to check the availability of your 30 free days.')}</p><Link className="oa-primary" to={`/connexion?lang=${langue}`}>{l('Se connecter','Sign in')}</Link></section>;
+ if(compte===null)return <section className="rn-section"><p>{l('Connecte-toi pour vérifier la disponibilité de tes 30 jours gratuits.','Sign in to check the availability of your 30 free days.')}</p><Link className="oa-primary" to={`/connexion?lang=${langue}&mode=signin&suite=habitudes`}>{l('Se connecter','Sign in')}</Link></section>;
  if(compte===undefined||charge?.contexte!==contexte)return <p role="status">{l('Vérification de ton accès…','Checking your access…')}</p>;
  if(charge.erreur)return <section className="rn-section"><p role="alert">{l('L’offre ne peut pas être vérifiée pour le moment.','The offer cannot be verified right now.')}</p><button type="button" onClick={()=>setTour(t=>t+1)}>{l('Réessayer','Try again')}</button></section>;
  const c=charge.catalogue!;
