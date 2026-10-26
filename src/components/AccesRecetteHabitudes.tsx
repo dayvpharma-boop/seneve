@@ -1,5 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {Link,useSearchParams} from 'react-router-dom';
+import {PlanningJourHabitudes} from './PlanningJourHabitudes';
+import {calendrierHabitudes} from '@/lib/habitudes-calendrier';
 import {supabase} from '@/lib/supabase';
 import {chargerCatalogueAcces,etatDroit,type CatalogueAcces} from '@/lib/offres-acces';
 
@@ -30,11 +32,14 @@ export function AccesRecetteHabitudes(){
   let fin:string|null=null;
   const coherent=p&&d&&Date.parse(p.fin_exclue)-Date.parse(p.debut)===720*3600000&&p.debut===d.debut&&p.fin_exclue===d.fin;
   try{if(coherent&&data.fuseauHabitudes)fin=new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:data.fuseauHabitudes,dateStyle:'long',timeStyle:'short'}).format(new Date(p.fin_exclue));}catch{/* Ne pas annoncer de date trompeuse. */}
+  let dateLocale:string|null=null;
+  try{if(data.fuseauHabitudes)dateLocale=calendrierHabitudes('2000-01-01',1,data.fuseauHabitudes,new Date(maintenant)).date_locale;}catch{/* Planning fermé si le fuseau est invalide. */}
   const etat=coherent&&fin&&d?etatDroit(d,maintenant):'attente';
   return <section className="rn-section" key={e.enrollment_id}><h2>{l('Habitudes & Défis — essai technique','Habits & Challenges — technical test')}</h2><p>{etat==='actif'&&e.etat==='active'?l('Tes 30 jours de test sont en cours.','Your 30 test days are in progress.'):etat==='expire'?l('Tes 30 jours de test sont terminés.','Your 30 test days have ended.'):etat==='ferme'?l('Cet accès de test est fermé.','This test access is closed.'):e.etat==='en_pause'?l('Ton inscription de test est en pause.','Your test enrollment is paused.'):l('Ton accès doit être vérifié.','Your access needs verification.')}</p>
    {fin&&p&&<p>{l('Fin de la période :','Period ends:')} <time dateTime={p.fin_exclue}>{fin}</time> ({data.fuseauHabitudes}).</p>}
    <p>{l('Cet essai ne comprend pas de coach IA et ne déclenche aucun paiement automatique.','This test does not include an AI coach and does not trigger an automatic payment.')}</p>
-   <p>{l('Cette version vérifie l’inscription et les horaires. Le suivi quotidien des activités n’y est pas encore disponible.','This version checks enrollment and schedules. Daily activity tracking is not available here yet.')}</p>
+   <p>{l('La validation des activités n’est pas encore disponible dans cet essai.','Activity completion is not yet available in this test.')}</p>
+   {etat==='actif'&&e.etat==='active'&&data.participantIdHabitudes&&dateLocale&&<div><h2>{l('Ma journée','My day')}</h2><PlanningJourHabitudes key={`${e.enrollment_id}:${data.participantIdHabitudes}`} enrollmentId={e.enrollment_id} participantId={data.participantIdHabitudes} dateLocale={dateLocale} langue={langue}/></div>}
   </section>;
  })}</>}
  <Link to={`/habitudes/inscription?lang=${langue}`}>{l('Revenir à l’inscription de test','Back to test enrollment')}</Link>

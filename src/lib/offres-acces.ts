@@ -7,7 +7,7 @@ export type ProgrammeCatalogue={programme_id:string;nom:string;description:strin
 export type DroitAcces={entitlement_id:string;offre_id:string;etat:string;debut:string;fin:string|null};
 export type InscriptionAcces={enrollment_id:string;entitlement_id:string|null;programme_id:string;date_debut:string;etat:string};
 export type PeriodeGratuiteHabitudes={enrollment_id:string;entitlement_id:string;debut:string;fin_exclue:string};
-export type CatalogueAcces={connecte:boolean;offres:OffreCatalogue[];programmes:ProgrammeCatalogue[];publies:string[];droits:DroitAcces[];inscriptions:InscriptionAcces[];periodesGratuitesHabitudes?:PeriodeGratuiteHabitudes[];fuseauHabitudes?:string};
+export type CatalogueAcces={connecte:boolean;offres:OffreCatalogue[];programmes:ProgrammeCatalogue[];publies:string[];droits:DroitAcces[];inscriptions:InscriptionAcces[];periodesGratuitesHabitudes?:PeriodeGratuiteHabitudes[];fuseauHabitudes?:string;participantIdHabitudes?:string};
 export function lienAchatSur(lien:string|null){if(!lien)return null;try{const u=new URL(lien);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null;}catch{return null;}}
 export function etatDroit(d:DroitAcces,now=Date.now()):'actif'|'expire'|'ferme'|'attente'{
  if(d.etat==='revoque'||d.etat==='annule')return 'ferme';
@@ -28,8 +28,8 @@ export async function chargerCatalogueAcces(langue:string):Promise<CatalogueAcce
   supabase.from('entitlements').select('entitlement_id, offre_id, etat, debut, fin').order('cree_le',{ascending:false}),
   supabase.from('enrollments').select('enrollment_id, entitlement_id, programme_id, date_debut, etat').neq('etat','annulee'),
   habitudesActivees()?supabase.from('hd_access_periods').select('enrollment_id, entitlement_id, debut, fin_exclue').eq('mois',1):Promise.resolve({data:[],error:null}),
-  habitudesActivees()?supabase.from('participants').select('fuseau, preferences'):Promise.resolve({data:[],error:null}),
+  habitudesActivees()?supabase.from('participants').select('participant_id, fuseau, preferences'):Promise.resolve({data:[],error:null}),
  ]);
  for(const r of [o,p,v,d,e,h,profil])if(r.error)throw r.error;
- return{connecte:true,offres:(o.data??[]) as OffreCatalogue[],programmes:(p.data??[]) as ProgrammeCatalogue[],publies:[...new Set((v.data??[]).map(x=>String(x.programme_id)))],droits:(d.data??[]) as DroitAcces[],inscriptions:(e.data??[]) as InscriptionAcces[],periodesGratuitesHabitudes:(h.data??[]) as PeriodeGratuiteHabitudes[],fuseauHabitudes:habitudesActivees()?fuseauHabitudes(profil.data?.[0]??{}):undefined};
+ return{connecte:true,offres:(o.data??[]) as OffreCatalogue[],programmes:(p.data??[]) as ProgrammeCatalogue[],publies:[...new Set((v.data??[]).map(x=>String(x.programme_id)))],droits:(d.data??[]) as DroitAcces[],inscriptions:(e.data??[]) as InscriptionAcces[],periodesGratuitesHabitudes:(h.data??[]) as PeriodeGratuiteHabitudes[],participantIdHabitudes:habitudesActivees()?profil.data?.[0]?.participant_id:undefined,fuseauHabitudes:habitudesActivees()?fuseauHabitudes(profil.data?.[0]??{}):undefined};
 }
