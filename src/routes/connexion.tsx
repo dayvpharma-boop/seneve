@@ -74,6 +74,7 @@ export function Connexion() {
   const langue: 'fr' | 'en' = search.get('lang') === 'en' ? 'en' : 'fr';
   // Intention fermée : aucune URL fournie par la requête n'est utilisée comme destination.
   const suiteHabitudes=habitudesActivees()&&search.get('suite')==='habitudes';
+  const retourConfirmation = siteUrl(suiteHabitudes ? `habitudes/inscription?lang=${langue}` : 'espace');
   const T = TEXTES[langue];
   useEffect(() => { document.title = T.titrePage; document.documentElement.lang = langue; }, [T, langue]);
   const [tab, setTab] = useState<'signup' | 'signin'>(() => search.get('mode') === 'signin' ? 'signin' : 'signup');
@@ -98,7 +99,7 @@ export function Connexion() {
     if (!aConfirmer || renvoi || attente > 0) return;
     setRenvoi(true); setError(''); setInfo('');
     try {
-      const { error } = await supabase.auth.resend({ type: 'signup', email: aConfirmer, options: { emailRedirectTo: siteUrl('espace') } });
+      const { error } = await supabase.auth.resend({ type: 'signup', email: aConfirmer, options: { emailRedirectTo: retourConfirmation } });
       if (error) { setError(authError(error.message, langue)); return; }
       setInfo(T.renvoye(aConfirmer)); setAttente(60);
     } catch (err) {
@@ -116,8 +117,8 @@ export function Connexion() {
         const { data, error } = await supabase.auth.signUp({
           email, password,
           // Inscription sur la page anglaise : la langue est gardée dans le compte, l'espace s'ouvre en anglais
-          // après le lien de confirmation (l'adresse de retour reste celle autorisée dans Supabase).
-          options: { emailRedirectTo: siteUrl('espace'), data: langue === 'en' ? { prenom: prenom.trim(), langue: 'en' } : { prenom: prenom.trim() } },
+          // après confirmation. Le retour HD doit être autorisé dans Supabase avant activation du module.
+          options: { emailRedirectTo: retourConfirmation, data: langue === 'en' ? { prenom: prenom.trim(), langue: 'en' } : { prenom: prenom.trim() } },
         });
         if (error) { setError(authError(error.message, langue)); return; }
         if (data.user && data.user.identities?.length === 0) { setError(ERREURS[langue].deja); return; }
