@@ -22,16 +22,29 @@ export async function chargerJourRecette(enrollmentId:string,participantId:strin
  const modele=horaires.modeles[0];if(!modele)throw Error('Planning absent');
  const planning=planningHabitudesPourDate({participant_id:participantId,module_id:modele.module_id,version:modele.version,langue:modele.langue,date_locale:dateLocale,fuseau:horaires.fuseau},horaires.modeles,horaires.horaires);
  const quotidien=horaires.modeles.filter(m=>m.jours_iso.length===7).map(m=>m.habit_key);
- if(quotidien.length!==13||a.data?.length!==13)throw Error('Catalogue quotidien incomplet');
+ if(quotidien.length!==13||!a.data)throw Error('Catalogue quotidien incomplet');
  const vus=new Set<string>();
- const activites=(a.data??[]).map(row=>{
-  if(!row.note_source?.startsWith(PREFIXE))throw Error('Activité non identifiée');
-  const habit=row.note_source.slice(PREFIXE.length),rdv=planning.rendezVous.filter(r=>r.habit_key===habit);
-  if(!quotidien.includes(habit)||vus.has(habit)||rdv.length!==1)throw Error('Correspondance horaire ambiguë');vus.add(habit);
+ const lignes=a.data??[];
+ const quotidiennes=lignes.filter(row=>row.note_source?.startsWith(PREFIXE));
+ const cultes=lignes.filter(row=>row.note_source?.startsWith('RECETTE_HD_CULTE_V1:'));
+ if(quotidiennes.length!==13||cultes.length!==3||lignes.length!==16)throw Error('Catalogue de cultes incomplet');
+ const activites=lignes.flatMap(row=>{
+  const source=row.note_source??'';
+  const culte=/^RECETTE_HD_CULTE_V1:(culte_semaine|culte_dimanche):([12])$/.exec(source);
+  const habit=culte?culte[1]!:source.startsWith(PREFIXE)?source.slice(PREFIXE.length):'';
+  if(!habit||(!culte&&!quotidien.includes(habit)))throw Error('Activité non identifiée');
+  const rang=culte?Number(culte[2]):1;
+  if(habit==='culte_dimanche'&&rang!==1)throw Error('Rang de culte invalide');
+  const identite=`${habit}:${rang}`;if(vus.has(identite))throw Error('Correspondance horaire ambiguë');vus.add(identite);
+  const rdv=planning.rendezVous.filter(r=>r.habit_key===habit);
+  if(culte&&rdv.length>(habit==='culte_semaine'?2:1))throw Error('Trop de créneaux');
+  if(!culte&&rdv.length!==1)throw Error('Correspondance horaire ambiguë');
+  if(culte&&!rdv[rang-1])return [];
+  const rendezVous=rdv[rang-1]!;
   const occurrence={occurrence_id:row.activity_id,enrollment_id:enrollmentId,version:1,date_locale:dateLocale,requise:row.obligatoire};
   const st=s.data?.find(x=>x.activity_id===row.activity_id);
   if(st&&!['non_commencee','preparee','partielle','realisee'].includes(st.etat))throw Error('État invalide');
-  return {occurrence,consigne:row.consigne,critere:row.critere_realisation,heure:rdv[0]!.heure_locale,etat:st?{...occurrence,etat:st.etat,aide_demandee:st.aide_demandee,synchronisation:'synchronise'} as EtatOccurrence:undefined};
+  return [{occurrence,consigne:culte?`${row.consigne}${rdv.length>1?' — '+rang:''}`:row.consigne,critere:row.critere_realisation,heure:rendezVous.heure_locale,etat:st?{...occurrence,etat:st.etat,aide_demandee:st.aide_demandee,synchronisation:'synchronise'} as EtatOccurrence:undefined}];
  }).sort((a,b)=>a.heure.localeCompare(b.heure)||a.consigne.localeCompare(b.consigne));
  return {userId:session.data.session.user.id,date:dateLocale,jour:jourCivil,activites};
 }
