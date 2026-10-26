@@ -60,8 +60,10 @@ def verifier(d):
         if not approuve(modele.get('validation')):
             attentes.append(f'{cle} : proposition à relire.')
     offre = d.get('offre', {})
-    if any(offre.get(k) not in ['inclus', 'non_inclus'] for k in ['coach', 'medias', 'bilans']):
-        attentes.append('Offre gratuite : périmètre coach, médias et bilans à définir.')
+    if offre.get('coach') != 'non_inclus':
+        structure.append('Coach IA : exclu de ce programme par décision du porteur.')
+    if any(offre.get(k) not in ['inclus', 'non_inclus'] for k in ['medias', 'bilans']):
+        attentes.append('Offre gratuite : périmètre médias et bilans à définir.')
     if not approuve(offre.get('validation')):
         attentes.append('Offre gratuite : catalogue à approuver.')
     priere = d.get('priere', {})

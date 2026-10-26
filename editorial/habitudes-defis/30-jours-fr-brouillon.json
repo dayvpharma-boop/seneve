@@ -218,7 +218,7 @@
     }
   },
   "offre": {
-    "coach": "a_definir",
+    "coach": "non_inclus",
     "medias": "a_definir",
     "bilans": "a_definir",
     "validation": {
@@ -226,6 +226,12 @@
       "relecteur": null,
       "date": null,
       "preuve": null
+    },
+    "decision_coach": {
+      "date": "2026-10-26",
+      "portee": "programme_habitudes_defis_toutes_periodes",
+      "decision": "Coach IA exclu de ce programme, y compris des 30 jours gratuits.",
+      "preuve": "Décision du porteur : « Pas le coach dans cette programme cela vas me coûter l’argent »."
     }
   },
   "priere": {

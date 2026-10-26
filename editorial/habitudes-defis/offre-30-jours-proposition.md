@@ -1,6 +1,6 @@
 # Offre des 30 jours gratuits — présentation proposée
 
-Document de décision pour le porteur du projet. Ce texte n’est pas une offre publiée et ne modifie aucun droit d’accès. Les éléments proposés ci-dessous restent à valider comme périmètre commercial.
+Document de décision pour le porteur du projet. Mise à jour du 26 octobre 2026 : le coach IA est exclu de tout le programme Habitudes & Défis, par décision du porteur. Ce texte n’est pas une offre publiée et ne modifie aucun droit d’accès. Les éléments proposés ci-dessous restent à valider comme périmètre commercial.
 
 ## Texte proposé pour la future présentation
 
@@ -18,6 +18,8 @@ Tu peux adapter tes créneaux, signaler une difficulté et reprendre après un r
 - La consultation du suivi des actions déclarées et des bilans compris dans cette offre.
 
 Le texte de prière, les éventuelles traductions et les médias seront accessibles dans les versions dont la diffusion est autorisée et approuvée. Aucune phonétique, traduction anglaise ou version audio non approuvée n’est promise ici.
+
+Ce programme ne comprend pas de coach IA.
 
 ### Comment commencer
 
@@ -42,14 +44,14 @@ Consulte les règles de confidentialité et vérifie que les horaires te convien
 | Habitudes, fiches FR et horaires | Inclus dans le socle proposé | Valider le périmètre du catalogue |
 | Défis | Quatre défis proposés, textes à relire | Valider contenu, rythme et critères |
 | Bilans | Inclure les bilans du suivi et le bilan final | Confirmer cette inclusion et les modalités |
-| Coach IA | Non annoncé dans le texte participant ci-dessus | Décider s’il entre dans les 30 jours gratuits ; si oui, définir disponibilité et limites |
+| Coach IA | Exclu de tout le programme, y compris des 30 jours gratuits | Décision prise par le porteur le 26 octobre 2026 |
 | Médias téléchargeables et audios | Aucun ensemble ou quota promis | Définir les médias inclus après validation des droits et des fichiers |
 | Anglais | Aucun corpus anglais ajouté par cette étape | Valider séparément les contenus EN avant disponibilité |
 
-Proposition de départ : ouvrir un périmètre clairement défini autour des habitudes, fiches, défis et bilans. Le coach et les médias peuvent être ajoutés au catalogue lorsqu’un périmètre précis est décidé et que leur fonctionnement est vérifié. Cette proposition ne doit pas être enregistrée comme exclusion définitive sans décision du porteur.
+Proposition de départ : ouvrir un périmètre clairement défini autour des habitudes, fiches, défis et bilans. Le coach IA est exclu par décision explicite du porteur. Le périmètre des médias reste à définir séparément.
 
 ## Références et portée technique
 
 Sources : cahier Habitudes & Défis fourni, section 3 (accès gratuit et périmètre à définir), sections 9–10 (défis, bilans et présentation) ; cahier n°10 « Offres et accompagnement » fourni (catalogue, droits et limites explicites) ; décision du porteur « 30 jours gratuit ». Les règles de durée immédiate, unicité et absence de paiement ont été testées dans TEST aux étapes précédentes.
 
-La proposition est sauvegardée pour décision. Aucun prix, quota IA, délai de grâce, accès à une bibliothèque complète, conservation nouvelle de données ou renouvellement n’est inventé. Le JSON éditorial conserve son offre « à définir » : cette rédaction ne modifie ni le catalogue serveur ni les données d’inscription. Les préalables de droits, contenu et recette visuelle restent applicables.
+La proposition est sauvegardée pour décision. Aucun prix, quota IA, délai de grâce, accès à une bibliothèque complète, conservation nouvelle de données ou renouvellement n’est inventé. Le JSON éditorial consigne le coach comme « non inclus » et conserve les autres points ouverts de l’offre : cette rédaction ne modifie ni le catalogue serveur ni les données d’inscription. Les préalables de droits, contenu et recette visuelle restent applicables.
