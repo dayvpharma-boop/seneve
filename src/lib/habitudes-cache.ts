@@ -4,6 +4,8 @@
 export function retirerHabitudesDuCache<T>(donnees:T):T|null{
  if(!donnees||typeof donnees!=='object')return donnees;
  const d=donnees as Record<string,unknown>;
+ // Une identification échouée ne doit pas devenir une autorisation de copie.
+ if(d.classificationCacheVerifiee===false)return null;
  if(!Array.isArray(d.habitudes)||d.habitudes.length===0)return donnees;
  if(!['parcours','contents','activities','states'].every(k=>Array.isArray(d[k])))return null;
  const hd=new Set(d.habitudes),parcours=(d.parcours as Record<string,unknown>[]).filter(p=>!hd.has(p.enrollment_id));
