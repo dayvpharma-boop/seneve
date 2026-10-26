@@ -18,6 +18,7 @@ vi.mock('@/lib/supabase', () => ({
   supabase: {
     auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: '10000000-0000-4000-8000-000000000001', user_metadata: { prenom: 'Marie' } } } } }), signOut: () => Promise.resolve({}) },
     rpc: (name: string, args: Record<string, string>) => {
+      if(name==='hd_schedule_settings')return Promise.resolve({data:{enrollment_id:args['p_enrollment_id'],fuseau:'Africa/Kinshasa',date_locale:'2026-10-25',modifications_a_partir_du:'2026-10-26',modeles:[{module_id:'HABITUDES_DEFIS',version:1,langue:'fr',habit_key:'priere_matin',libelle:'Prière du matin — planning',heure_proposee:'06:00',jours_iso:[1,2,3,4,5,6,7]}],horaires:[{participant_id:'PA',module_id:'HABITUDES_DEFIS',version:1,langue:'fr',habit_key:'priere_matin',creneau_id:'matin',heure_locale:'07:15:00',fuseau:'Africa/Kinshasa',jours_iso:[1,2,3,4,5,6,7],valide_du:'2026-10-01',valide_au:null}],revisions:[]},error:null});
       if (name !== 'record_progress') return Promise.resolve({ data: null, error: null });
       appels.push({ etat: args['p_etat']!, id: args['p_client_event_id']! });
       return Promise.resolve(reponse(args['p_etat']!));
@@ -34,7 +35,7 @@ const aid=(n:number)=>`20000000-0000-4000-8000-00000000000${n}`;
 beforeEach(()=>{
  vi.stubEnv('VITE_HABITUDES_DEFIS','true');vi.useFakeTimers({toFake:['Date']});vi.setSystemTime(new Date('2026-10-25T12:00:00Z'));sessionStorage.clear();localStorage.clear();erreurRegistre=false;appels.length=0;
  for(const k of Object.keys(tables))delete tables[k];
- tables.participants=[{prenom:'RECETTE'}];tables.programmes=[{programme_id:'HD_FICTIF',nom:'Habitudes & Défis',duree_jours:180}];
+ tables.participants=[{participant_id:'PA',prenom:'RECETTE'}];tables.programmes=[{programme_id:'HD_FICTIF',nom:'Habitudes & Défis',duree_jours:180}];
  tables.enrollments=[{enrollment_id:eid,programme_id:'HD_FICTIF',version:1,langue:'fr',date_debut:'2026-10-25',etat:'active'}];
  tables.contents=[1,2,3].map(n=>({content_id:`c${n}`,programme_id:'HD_FICTIF',version:1,langue:'fr',jour:1,numero_message:n,theme:'Fixture',texte_officiel:'Fixture'}));
  tables.activities=['Prière du matin','Prière de midi','Prière du soir'].map((consigne,k)=>({activity_id:aid(k+1),content_id:`c${k+1}`,type_activite:'action',consigne,obligatoire:true}));
@@ -91,4 +92,11 @@ it('conserve la copie du parcours ordinaire après vérification sans correspond
  vi.stubEnv('VITE_HABITUDES_DEFIS','false');tables.hd_programme_links=[];
  render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('button',{name:'Se déconnecter'});
  expect(JSON.parse(localStorage.getItem(cleCache)!).donnees.parcours).toHaveLength(1);
+});
+
+it('la date de planning suit la journée choisie et affiche les horaires personnels',async()=>{
+ (tables.enrollments![0] as Record<string,unknown>).date_debut='2026-10-24';
+ render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByText('07:15');expect(screen.getByText('Horaire personnel')).toBeVisible();
+ fireEvent.change(screen.getByRole('combobox',{name:'Jour du parcours'}),{target:{value:'1'}});
+ expect(document.querySelector('.hd-planning-jour time[datetime="2026-10-24"]')).not.toBeNull();expect(appels).toHaveLength(0);
 });

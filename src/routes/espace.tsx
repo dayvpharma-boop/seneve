@@ -1,3 +1,4 @@
+import {PlanningJourHabitudes} from '@/components/PlanningJourHabitudes';
 import {SimulateurDime} from '@/components/SimulateurDime';
 import {calendrierHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
 import {LectureTexteHabitude} from '@/components/LectureTexteHabitude';
@@ -53,7 +54,7 @@ type Activity = { activity_id: string; content_id: string; type_activite: 'actio
 type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
 // heures : horaires des moments du jour (message 1, 2, 3), lus dans le programme publié ; absents = tout visible.
 type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
-type Data = { prenom: string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[]; habitudes?: string[]; classificationCacheVerifiee?: boolean; fuseauHabitudes?:string };
+type Data = { prenom: string; participantId?:string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[]; habitudes?: string[]; classificationCacheVerifiee?: boolean; fuseauHabitudes?:string };
 
 const LOAD_ERRORS = { fr: 'Impossible de charger ta journée pour le moment.', en: 'Your day cannot be loaded right now.' } as const;
 const loadError = (langue?: string | null) => LOAD_ERRORS[langue === 'en' ? 'en' : 'fr'];
@@ -71,7 +72,7 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   // la synchronisation n8n (toutes les 15 minutes), qui reste en secours. Une erreur ici ne bloque jamais l'espace.
   await Promise.resolve(supabase.rpc('claim_my_purchases')).catch(() => undefined);
   const [p, e] = await Promise.all([
-    supabase.from('participants').select('prenom, fuseau, preferences').maybeSingle(),
+    supabase.from('participants').select('participant_id, prenom, fuseau, preferences').maybeSingle(),
     // Lire aussi les inscriptions arrêtées pour ne jamais redémarrer un ancien parcours automatiquement.
     supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat'),
   ]);
@@ -120,7 +121,7 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   if (a.error) throw a.error;
   if (st.error) throw st.error;
   const hdInscrits=enrollments.filter(e=>(hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===e.programme_id&&String(h.version)===String(e.version)&&h.langue===e.langue)).map(e=>e.enrollment_id);
-  return { prenom, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[], habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined };
+  return { prenom, participantId:p.data?.participant_id, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[], habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined };
 }
 
 function formatDate(iso: string | null, locale = 'fr-FR') {
@@ -322,6 +323,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p><h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
       {!horsLigne&&<Link className="oa-secondary" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>}
       <label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>
+      {!horsLigne&&data.participantId&&<PlanningJourHabitudes key={enr.enrollment_id} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue}/>}
       {horsLigne&&<p role="status">{en?'Offline copy — reading and declarations are unavailable here.':'Copie hors connexion — la lecture et les déclarations sont indisponibles ici.'}</p>}
       {occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
       {!horsLigne&&duJour.map(c=><LectureTexteHabitude key={c.content_id} titre={c.theme||(en?`Reading ${c.numero_message}`:`Lecture ${c.numero_message}`)} texte={c.texte_officiel} langue={enr.langue}/>)}
