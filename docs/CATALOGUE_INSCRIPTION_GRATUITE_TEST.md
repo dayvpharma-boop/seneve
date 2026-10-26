@@ -1,5 +1,7 @@
 # Raccordement de la préinscription — TEST uniquement
 
+Complément ultérieur : une recette authentifiée avec de vraies requêtes Auth/PostgREST a depuis réussi. Voir `RECETTE_AUTH_HTTP_HABITUDES_TEST.md`. Les limites de recette ci-dessous décrivent l’état à la fin du raccordement initial.
+
 L’écran est désormais monté dans `/habitudes/inscription` sur la branche de développement. Un lien depuis les offres et tout appel au catalogue restent derrière `VITE_HABITUDES_DEFIS=true`, désactivé par défaut. Cette branche n’est pas publiée ; le site public et la base PROD ne changent pas.
 
 ## Catalogue autorisé par le serveur
