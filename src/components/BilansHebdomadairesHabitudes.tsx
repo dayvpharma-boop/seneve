@@ -22,16 +22,17 @@ export function BilansHebdomadairesHabitudes({jours,langue,inscription}:{jours:r
    return <li key={s.numero} className="bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col gap-hd-space-md">
     <div className="flex items-baseline justify-between gap-2"><h4 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{en?'Week':'Semaine'} {s.numero}</h4><p className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant px-2.5 py-1 rounded-full bg-hd-surface-container">{en?'Days':'Jours'} {s.de} {en?'to':'à'} {s.a}</p></div>
     {familles.length>0&&<div aria-hidden="true" className="flex flex-col gap-2">
-     <div className="grid items-center gap-1" style={{gridTemplateColumns:`5.5rem repeat(${jSem.length},minmax(0,1fr))`}}>
-      <span className="font-hd-label-sm text-hd-label-sm uppercase tracking-wider text-hd-on-surface-variant">{en?'Habit':'Discipline'}</span>
-      {jSem.map(j=><span key={j.date_locale} className="text-center font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant uppercase">{initiale(j.date_locale)}</span>)}
-      {familles.map(([fr,english,re])=>[<span key={fr} className="font-hd-label-md text-hd-label-md text-hd-on-surface py-1.5">{en?english:fr}</span>,...jSem.map(j=>{const p=point(j.activites.filter(a=>re.test(a.consigne)).map(a=>a.etat));
-       return <span key={fr+j.date_locale} className="flex justify-center py-1.5">{p==='fait'?<span className="w-3.5 h-3.5 rounded-full bg-hd-secondary"/>:p==='partiel'?<span className="w-3.5 h-3.5 rounded-full border-2 border-hd-secondary bg-[linear-gradient(90deg,var(--hdc-secondary)_50%,transparent_50%)]"/>:p==='vide'?<span className="w-3.5 h-3.5 rounded-full border-2 border-hd-outline-variant"/>:<span className="w-3.5 h-3.5"/>}</span>;})])}
+     <div className="flex items-center justify-between"><span className="flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="potted_plant" className="text-[20px] text-hd-secondary"/>{en?'Rhythm and presence':'Rythme et présences'}</span><span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">{en?`${jSem.length} days observed`:`${jSem.length} jours observés`}</span></div>
+     <div className="grid items-center" style={{gridTemplateColumns:`5.5rem repeat(${jSem.length},minmax(0,1fr))`}}>
+      <span className="py-2 pl-1 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">{en?'Habit':'Discipline'}</span>
+      {jSem.map(j=><span key={j.date_locale} className="py-2 text-center font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant uppercase">{initiale(j.date_locale)}</span>)}
+      {familles.map(([fr,english,re],r)=>{const fond=r%2===0?'bg-hd-surface-container-low':'';return [<span key={fr} className={`font-hd-label-md text-hd-label-md text-hd-on-surface py-3 pl-1 rounded-l-lg ${fond}`}>{en?english:fr}</span>,...jSem.map((j,c)=>{const p=point(j.activites.filter(a=>re.test(a.consigne)).map(a=>a.etat));
+       return <span key={fr+j.date_locale} className={`flex justify-center py-3 ${fond} ${c===jSem.length-1?'rounded-r-lg':''}`}>{p==='fait'?<span className="w-4 h-4 rounded-full bg-hd-secondary"/>:p==='partiel'?<span className="w-4 h-4 rounded-full bg-[linear-gradient(90deg,var(--hdc-secondary)_50%,var(--hdc-surface-container-highest)_50%)]"/>:p==='vide'?<span className="w-4 h-4 rounded-full bg-hd-surface-container-highest"/>:<span className="w-4 h-4"/>}</span>;})];})}
      </div>
      <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">
       <span className="inline-flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-hd-secondary"/>{en?'Done':'Fait'}</span>
-      <span className="inline-flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full border-2 border-hd-secondary bg-[linear-gradient(90deg,var(--hdc-secondary)_50%,transparent_50%)]"/>{en?'Partly':'En partie'}</span>
-      <span className="inline-flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full border-2 border-hd-outline-variant"/>{en?'Not recorded':'Non déclaré'}</span>
+      <span className="inline-flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[linear-gradient(90deg,var(--hdc-secondary)_50%,var(--hdc-surface-container-highest)_50%)]"/>{en?'Partly':'En partie'}</span>
+      <span className="inline-flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-hd-surface-container-highest"/>{en?'Not recorded':'Non déclaré'}</span>
      </div>
     </div>}
     <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 rounded-xl bg-hd-surface-container-low p-3">

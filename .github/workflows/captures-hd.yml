@@ -30,7 +30,7 @@ jobs:
         run: |
           python3 -m http.server 4173 --directory dist-galerie-hd >/dev/null 2>&1 &
           sleep 2
-          node scripts/recette/captures-hd.mjs http://localhost:4173/galerie-hd.html _captures aujourdhui,horaires,dime,bilan
+          node scripts/recette/captures-hd.mjs http://localhost:4173/galerie-hd.html _captures aujourdhui,horaires,dime,bilan,acces,presentation
       - name: Envoyer les captures dans captures/hd-stitch
         run: |
           cd _captures

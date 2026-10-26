@@ -16,6 +16,8 @@ import {ActivitesJourRecette} from '@/components/ActivitesJourRecette';
 import {InscriptionHabitudes} from '@/components/InscriptionHabitudes';
 import {SimulateurDime} from '@/components/SimulateurDime';
 import {HistoriqueRecetteHabitudes} from '@/components/HistoriqueRecetteHabitudes';
+import {AccesGratuitHabitudes} from '@/components/AccesGratuitHabitudes';
+import {HabitudesInscription} from '@/routes/habitudes-inscription';
 import {IconeHD} from '@/components/IconeHabitudes';
 import {rythmeProposeHabitudes} from '@/lib/habitudes-rythme-propose';
 const configuration={compteId:'GALERIE',programmeId:'GALERIE',version:1,langue:'fr',offreId:'GALERIE',fuseau:'Africa/Kinshasa',planning:rythmeProposeHabitudes.map(h=>({habit_key:h.habit_key,libelle:h.libelle,creneaux:[{creneau_id:'principal',heure_locale:h.heure_proposee!.slice(0,5),jours_iso:[...h.jours_iso]}]}))};
@@ -23,6 +25,9 @@ const T=Date.parse('2026-10-26T11:45:00Z');Date.now=()=>T;
 const E='11111111-1111-4111-8111-111111111111',P='33333333-3333-4333-8333-333333333333';
 const ecrans:Record<string,()=>ReactElement>={
  horaires:()=><CadreHabitudes titre="Sénevé" sousTitreCentre="Habitudes & Défis" langue="fr" retour="/" retourLibelle="Revenir aux offres" avecNavigation={false}><div className="flex flex-col w-full px-hd-margin pt-hd-space-md pb-hd-space-lg"><InscriptionHabitudes configuration={configuration}/></div></CadreHabitudes>,
+ presentation:()=><HabitudesInscription/>,
+ acces:()=>{const debut=new Date(T-11*864e5),fin=new Date(+debut+720*3600000);const D='22222222-2222-4222-8222-222222222222';
+  return <CadreHabitudes titre="Mes accès" langue="fr" actif="parcours" liens={{parcours:'/'}}><div className="flex flex-col w-full px-hd-margin pt-hd-space-md pb-hd-space-lg"><AccesGratuitHabitudes droit={{entitlement_id:D,offre_id:'GALERIE',etat:'actif',debut:debut.toISOString(),fin:fin.toISOString()}} periode={{enrollment_id:E,entitlement_id:D,debut:debut.toISOString(),fin_exclue:fin.toISOString()}} inscription={{enrollment_id:E,entitlement_id:D,programme_id:'GALERIE',date_debut:debut.toISOString().slice(0,10),etat:'active'}} langue="fr" fuseau="Africa/Kinshasa"/></div></CadreHabitudes>;},
  bilan:()=><CadreHabitudes titre="Bilan" langue="fr" actif="aujourdhui" liens={{aujourdhui:'/'}}><div className="flex flex-col w-full px-hd-margin pb-hd-space-lg"><HistoriqueRecetteHabitudes enrollmentId={E} participantId={P} dateLocale="2026-10-26" langue="fr" revision={0}/></div></CadreHabitudes>,
  dime:()=><CadreHabitudes titre="Dîme et offrande" langue="fr" actif="aujourdhui" liens={{aujourdhui:'/'}}><div className="flex flex-col w-full px-hd-margin pt-hd-space-md pb-hd-space-lg gap-hd-space-md">
   <div className="flex flex-col gap-1"><span className="font-hd-label-sm text-hd-label-sm uppercase tracking-widest text-hd-secondary">Habitudes &amp; Défis · Gestion fidèle</span><h1 className="font-hd-headline-lg text-hd-headline-lg text-hd-on-surface">Dîme et offrande</h1><p className="font-hd-body-md text-hd-body-md text-hd-on-surface-variant">Comprendre et calculer, sans obligation ni paiement.</p></div>
