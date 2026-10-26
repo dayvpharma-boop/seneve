@@ -28,3 +28,7 @@ it('ne restitue pas une copie HD si la suppression est refusée',()=>{
 it('une copie HD mal formée ne passe pas dans le cache',()=>{
  expect(retirerHabitudesDuCache({habitudes:['HD'],parcours:[]})).toBeNull();
 });
+
+it('supprime une ancienne copie lorsque la classification des parcours a échoué',()=>{
+ localStorage.setItem(key,'ancienne copie');enregistrerEspace('U1',{...data(),habitudes:[],classificationCacheVerifiee:false});expect(localStorage.getItem(key)).toBeNull();
+});
