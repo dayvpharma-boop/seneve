@@ -129,3 +129,5 @@ import './styles-espace-vivant.css';
 
 import './styles-illustrations-pages.css';
 import './styles-habitudes-stitch.css';
+import '@fontsource/literata/latin-500.css';
+import './styles-habitudes-polices.css';

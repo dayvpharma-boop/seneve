@@ -1,9 +1,9 @@
 // Captures de comparaison Habitudes & Défis : maquettes Stitch (référence) et vrais composants.
-// Usage (GitHub Actions) : node scripts/recette/captures-hd.mjs dossier-galerie dossier-sortie
+// Usage (GitHub Actions) : node scripts/recette/captures-hd.mjs http://localhost:4173/galerie-hd.html dossier-sortie ecran1,ecran2
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {chromium} from 'playwright';
-const [galerie,sortie]=process.argv.slice(2).map(p=>path.resolve(p));
+const [galerie,sortieBrute,liste='']=process.argv.slice(2);const sortie=path.resolve(sortieBrute);
 await fs.mkdir(sortie,{recursive:true});
 const b=await chromium.launch();
 const rapport=[];
@@ -17,10 +17,10 @@ for(const f of (await fs.readdir('design/stitch-hd')).filter(n=>n.endsWith('.htm
  rapport.push(`stitch ${f} : ${e.length?e.join(' | '):'ok'}`);await p.close();
 }
 // 2. Vrais composants, un écran par adresse (#nom)
-const ecrans=JSON.parse(await fs.readFile(path.join(galerie,'ecrans.json'),'utf8'));
+const ecrans=liste.split(',').filter(Boolean);
 for(const mode of ['light','dark'])for(const nom of ecrans){
  const [p,e]=await page(mode);
- await p.goto('file://'+path.join(galerie,'galerie.html')+'#'+nom,{waitUntil:'networkidle'});
+ await p.goto(galerie+'#'+nom,{waitUntil:'networkidle'});
  await p.waitForSelector('body[data-pret="1"]',{timeout:10000}).catch(()=>e.push('page non prête'));
  await p.waitForTimeout(800);
  await p.screenshot({path:path.join(sortie,`site-${nom}-${mode}.png`),fullPage:true});

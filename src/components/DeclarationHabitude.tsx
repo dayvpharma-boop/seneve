@@ -2,8 +2,11 @@ import {useEffect,useRef,useState} from 'react';
 import {enregistrerHabitude,type ActionHabitude,type TransportProgression} from '@/lib/habitudes-api';
 import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import {cleSaisie,lireSaisie,preparerSaisie,type SaisieEnAttente} from '@/lib/habitudes-saisie';
+import {IconeHD} from './IconeHabitudes';
 
-export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true}:{
+export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true,variante,heure,attenue=false}:{
+ /** « stitch » : carte des maquettes Stitch HD (même mécanisme d'enregistrement). */
+ variante?:'stitch';heure?:string;attenue?:boolean;
  aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
 }){
  const en=langue==='en';const cle=cleSaisie(userId,occurrence.enrollment_id,occurrence.occurrence_id);
@@ -27,6 +30,8 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,lan
    catch{setNettoyageIncomplet(true);}
   }catch{setErreur(true);}finally{verrou.current=false;setOccupe(false);}
  }
+ const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
+ if(variante==='stitch')return <CarteStitch {...{en,consigne,critere,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
  return <section className="card hd-declaration" aria-label={consigne} aria-busy={occupe}>
   <h3>{consigne}</h3>{critere&&<p>{critere}</p>}
@@ -41,4 +46,59 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,lan
   </div>}
   {erreur&&<p role="alert">{nettoyageIncomplet?(en?'The record is already confirmed. Retry to finish the update.':'L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.'):(en?'Confirmation unavailable. Retry this same declaration when you can.':'Confirmation indisponible. Réessaie cette même déclaration quand tu peux.')}</p>}
  </section>;
+}
+
+type ValeurEtat='non_commencee'|'preparee'|'partielle'|'realisee';
+/** Rendu Stitch : mêmes actions, mêmes messages d'attente et d'erreur que la carte d'origine. */
+function CarteStitch(p:{en:boolean;consigne:string;critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
+ const {en,consigne,critere,heure,valeur,aide}=p,l=(fr:string,english:string)=>en?english:fr;
+ const etatTexte={non_commencee:l('Pas encore enregistrée','Not recorded yet'),preparee:l('Préparée','Prepared'),partielle:l('Réalisée en partie','Partly done'),realisee:l('Réalisée','Completed')}[valeur]+(p.synchronise?l(' · Synchronisée',' · Synchronised'):'');
+ const heureEl=heure?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0"><time dateTime={heure}>{heure}</time></span>:null;
+ const statut=<p role="status" className="sr-only">{etatTexte}</p>;
+ if(p.attenue)return <article aria-label={consigne} className="relative bg-hd-surface-container/60 rounded-xl px-hd-space-md py-2.5 flex items-center justify-between">
+  {statut}<div className="flex items-center gap-3 min-w-0">
+   <IconeHD nom="radio_button_unchecked" className="text-[18px] text-hd-outline"/>
+   <div className="flex items-baseline gap-2 truncate">{heureEl}<h3 className="font-hd-label-md text-hd-label-md text-hd-on-surface truncate">{consigne}</h3><span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">{l('À faire','To do')}</span></div>
+  </div>
+  <button type="button" onClick={p.deplier} aria-expanded={false} aria-label={l(`Déclarer : ${consigne}`,`Record: ${consigne}`)} className="absolute inset-0 rounded-xl"/>
+ </article>;
+ if(valeur==='realisee'&&!aide&&!p.attente&&!p.erreur)return <article aria-label={consigne} className="bg-hd-surface-container-lowest rounded-2xl px-hd-space-md py-3 shadow-[0_1px_6px_rgba(29,28,19,0.03)] flex items-center justify-between">
+  {statut}<div className="flex items-center gap-3 min-w-0">
+   <span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="done" className="text-[17px]"/></span>
+   <div className="flex items-baseline gap-2 min-w-0 truncate">{heureEl}<h3 className="font-hd-label-lg text-hd-label-lg text-hd-on-surface truncate">{consigne}</h3></div>
+  </div>
+  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-secondary shrink-0"><IconeHD nom="verified" className="text-[15px]"/><span className="font-hd-label-sm text-hd-label-sm">{l('Fait','Done')}</span></div>
+ </article>;
+ const cercle=aide?<span className="w-7 h-7 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center shrink-0"><IconeHD nom="support_agent" className="text-[18px]"/></span>
+  :valeur==='realisee'?<span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="done" className="text-[17px]"/></span>
+  :valeur==='partielle'?<span className="w-7 h-7 rounded-full bg-hd-secondary-container/30 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="pie_chart" className="text-[18px]"/></span>
+  :valeur==='preparee'?<span className="w-7 h-7 rounded-full bg-hd-secondary-container/30 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="check" className="text-[18px]"/></span>
+  :<span className="w-7 h-7 rounded-full bg-hd-surface-container text-hd-outline flex items-center justify-center shrink-0"><IconeHD nom="radio_button_unchecked" className="text-[18px]"/></span>;
+ const pastille=aide?<span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E0F2FE] text-[#0369A1] font-hd-label-sm text-hd-label-sm font-medium shrink-0"><IconeHD nom="info" className="text-[14px]"/>{l('Aide demandée','Help requested')}</span>
+  :valeur==='realisee'?<span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-secondary font-hd-label-sm text-hd-label-sm shrink-0"><IconeHD nom="verified" className="text-[15px]"/>{l('Fait','Done')}</span>
+  :valeur==='partielle'?<span className="font-hd-label-sm text-hd-label-sm text-hd-secondary bg-hd-secondary-container/40 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0"><IconeHD nom="timelapse" className="text-[14px]"/>{l('En partie','Partly done')}</span>
+  :valeur==='preparee'?<span className="font-hd-label-sm text-hd-label-sm text-hd-secondary bg-hd-secondary-container/40 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0"><IconeHD nom="check" className="text-[14px]"/>{l('Prête','Prepared')}</span>
+  :<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant px-2 py-0.5 rounded-full bg-hd-surface-container flex items-center gap-1 shrink-0"><IconeHD nom="hourglass_empty" className="text-[14px]"/>{l('À faire','To do')}</span>;
+ const nomFait=l('J’ai réalisé cette activité','I completed this activity');
+ const principal=p.lectureSeule?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">{l('Lecture seule','Read only')}</span>
+  :p.attente?<button type="button" disabled={p.occupe} onClick={p.rejouer} className="min-h-[44px] px-3.5 rounded-xl bg-hd-secondary text-hd-on-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60"><IconeHD nom="refresh" className="text-[16px]"/><span>{p.occupe?l('Enregistrement…','Saving…'):l('Réessayer cette déclaration','Retry this declaration')}</span></button>
+  :valeur==='realisee'?null
+  :valeur==='partielle'?<button type="button" aria-label={nomFait} disabled={p.occupe} onClick={()=>p.declarer('realisee')} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-on-surface font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60"><IconeHD nom="edit_calendar" className="text-[16px]"/><span>{l('Compléter','Complete')}</span></button>
+  :<button type="button" aria-label={nomFait} disabled={p.occupe} onClick={()=>p.declarer('realisee')} className="min-h-[44px] px-3.5 rounded-xl bg-hd-secondary hover:bg-hd-on-secondary-fixed-variant text-hd-on-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60"><IconeHD nom="done" className="text-[16px]"/><span>{l('Fait','Done')}</span></button>;
+ const choix=[valeur==='non_commencee'&&{a:'preparee' as const,t:l('Je l’ai préparée','I prepared it')},['non_commencee','preparee'].includes(valeur)&&{a:'partielle' as const,t:l('Je l’ai réalisée en partie','I did part of it')},p.aideDisponible&&!aide&&{a:'aide_demandee' as const,t:l('J’ai besoin d’aide','I need help')}].filter(Boolean) as {a:ActionHabitude;t:string}[];
+ return <article aria-label={consigne} aria-busy={p.occupe} className="bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col gap-2.5">
+  {statut}
+  <div className="flex items-center justify-between gap-2">
+   <div className="flex items-center gap-2.5 min-w-0">{cercle}<div className="flex items-baseline gap-2 min-w-0">{heureEl}<h3 className="font-hd-label-lg text-hd-label-lg font-medium text-hd-on-surface truncate">{consigne}</h3></div></div>
+   {pastille}
+  </div>
+  {aide?<div className="flex items-center justify-between text-hd-on-surface-variant pl-9"><span className="font-hd-body-sm text-hd-body-sm italic">{l('Demande envoyée à l’équipe','Request sent to the team')}</span><IconeHD nom="mark_email_read" className="text-[16px] text-[#0369A1]"/></div>
+  :(critere||principal)&&<div className="flex items-center justify-between gap-hd-space-sm pt-1"><p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant min-w-0">{critere}</p>{principal}</div>}
+  {p.attente&&<p role="status" className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{p.nettoyageIncomplet?l('Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.','Record confirmed. Retry to finish updating this device.'):l('En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.','Waiting for server confirmation. This declaration is not confirmed yet.')}</p>}
+  {!p.lectureSeule&&!p.attente&&choix.length>0&&<div className="flex flex-col gap-2">
+   <button type="button" aria-expanded={p.autres} onClick={()=>p.setAutres(!p.autres)} className="self-start font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4 min-h-[44px]">{l('Autres choix','Other choices')}</button>
+   {p.autres&&<div className="flex flex-wrap gap-2">{choix.map(c=><button key={c.a} type="button" disabled={p.occupe} onClick={()=>p.declarer(c.a)} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium disabled:opacity-60">{c.t}</button>)}</div>}
+  </div>}
+  {p.erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{p.nettoyageIncomplet?l('L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.','The record is already confirmed. Retry to finish the update.'):l('Confirmation indisponible. Réessaie cette même déclaration quand tu peux.','Confirmation unavailable. Retry this same declaration when you can.')}</p>}
+ </article>;
 }

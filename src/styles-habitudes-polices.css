@@ -1,0 +1,17 @@
+/* Habitudes & Défis — polices et utilitaires de base des maquettes Stitch (26/10/2026).
+ * Work Sans : Google Fonts, licence SIL OFL 1.1 (src/assets/fonts/WorkSans-OFL.txt), sous-ensemble latin.
+ */
+@font-face{font-family:"Work Sans";font-style:normal;font-weight:100 900;font-display:swap;src:url("./assets/fonts/WorkSans-latin-wght.woff") format("woff")}
+.pt-safe{padding-top:env(safe-area-inset-top,0px)}
+.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px)}
+.hd-ecran{min-height:100dvh;-webkit-font-smoothing:antialiased}
+.hd-ecran ::-webkit-scrollbar{display:none}
+/* Les styles globaux historiques du site (non classés en couche) l'emporteraient sur les classes Stitch.
+ * Dans les écrans HD uniquement, on rend la main aux couches Tailwind (préflight + utilitaires), comme dans Stitch.
+ * Un bloc marqué .hd-classique garde son ancien style tant qu'il n'est pas redessiné. */
+.hd-ecran :is(h1,h2,h3,h4,h5,h6,p,a,button,label,input,select,textarea,small,time,blockquote,summary,ol,ul,li,figure,article,section,header,footer,nav,main,aside,details,span,div,img,svg):not(.hd-classique,.hd-classique *){
+ font-family:revert-layer;font-size:revert-layer;font-weight:revert-layer;line-height:revert-layer;letter-spacing:revert-layer;
+ margin:revert-layer;padding:revert-layer;color:revert-layer;background:revert-layer;border:revert-layer;border-radius:revert-layer;
+ text-wrap:revert-layer;text-transform:revert-layer;text-decoration:revert-layer;min-height:revert-layer;max-width:revert-layer;
+ width:revert-layer;height:revert-layer;display:revert-layer;gap:revert-layer;box-shadow:revert-layer;justify-content:revert-layer;
+}
