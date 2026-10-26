@@ -1,5 +1,7 @@
 # Coach : gratuit exclu, abonnement payant inclus
 
+Complément de recette : `RECETTE_COACH_FILE_ET_ROLES_TEST.md` décrit désormais un test réussi avec rôle authenticated pour les demandes et vérification du blocage des tâches après révocation/expiration. Le signalement ci-dessous de la recette étendue non aboutie reste historique ; il ne représente plus un manque de preuve pour ce scénario de file dans TEST.
+
 La précision du porteur remplace l’interprétation précédente : seul l’accès des 30 jours gratuits exclut le coach. Les mois suivants d’abonnement payant doivent permettre l’accès au coach. La décision est consignée le 26 octobre 2026 ; aucun tarif, quota nouveau ou durée des mois payants n’en est déduit.
 
 ## Correction réalisée dans TEST
