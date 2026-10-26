@@ -4,6 +4,7 @@ import {calendrierHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
 import {LectureTexteHabitude} from '@/components/LectureTexteHabitude';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {DeclarationHabitude} from '@/components/DeclarationHabitude';
+import {ActivitesJourRecette} from '@/components/ActivitesJourRecette';
 import {occurrencesDepuisContenus} from '@/lib/habitudes-api';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { prenomDuCompte } from '@/lib/connexion-sociale';
@@ -273,7 +274,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const T = textes(enr.langue);
   const calendrierDe=(x:Parcours)=>habitudesActivees()&&data.habitudes?.includes(x.enrollment_id)?calendrierHabitudes(x.date_debut,x.duree,data.fuseauHabitudes??'Africa/Kinshasa'):dayInfo(x.date_debut,new Date(),x.duree);
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.mesParcours}>
-    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{calendrierDe(x).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:calendrierDe(x).finished?T.ongletTermine:T.ongletJour(calendrierDe(x).day)}</span>{x.nom}</button>)}
+    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{calendrierDe(x).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:calendrierDe(x).finished?T.ongletTermine:T.ongletJour(calendrierDe(x).day)}</span>{' '}{x.nom}</button>)}
   </div>;
 
   const { day, finished, notStarted } = calendrierDe(enr);
@@ -320,8 +321,17 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const duJour=contents.filter(c=>c.jour===current&&c.langue===enr.langue).sort((a,b)=>a.numero_message-b.numero_message);
     const ctx={enrollment_id:enr.enrollment_id,programme_id:enr.programme_id,version:Number(enr.version),langue:enr.langue,jour:current,date_locale};
     const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities);
+    // Programme réel, journée du jour et en ligne : l'écran « Aujourd'hui » des maquettes Stitch, directement.
+    if(!horsLigne&&enr.programme_id==='HABITUDES_DEFIS_30J_FR_V1'&&current===day&&data.participantId&&enr.etat==='active')
+      return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
+        <ActivitesJourRecette key={`${enr.enrollment_id}:${date_locale}`} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>
+        <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2">
+          <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aujourdhui${en?'?lang=en':''}`}>{en?'My access and schedule':'Mon accès et mes horaires'}</Link>
+          <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>
+        </div>
+      </div>{footer(enr.langue)}</>,'journee-nouvelle');
     return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p>
-      {!horsLigne&&enr.programme_id==='HABITUDES_DEFIS_30J_FR_V1'&&<Link className="btn" to={`/habitudes/aujourdhui${en?'?lang=en':''}`}>{en?'Open my Habits & Challenges screen':'Ouvrir mon écran Habitudes & Défis'}</Link>}<h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
+<h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
       {!horsLigne&&<Link className="oa-secondary" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>}
       <label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>
       {!horsLigne&&data.participantId&&<PlanningJourHabitudes key={enr.enrollment_id} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue}/>}
