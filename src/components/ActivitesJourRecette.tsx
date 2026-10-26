@@ -77,9 +77,9 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    <div className="flex items-baseline justify-between mb-1">
     <div>
      <h3 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Ma journée','My day')}</h3>
-     <p role="status" className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant uppercase tracking-wider">{l('Rythme du jour','Today’s rhythm')} · {bilan!.realisees} / {bilan!.total} {l('réalisées','completed')} · {bilan!.partielles} {l('en partie','partly done')}</p>
+     <p role="status" className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant uppercase tracking-wider">{bilan!.realisees} / {bilan!.total} {l('réalisées','completed')} · {bilan!.partielles} {l('en partie','partly done')}</p>
     </div>
-    <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant italic">{l('Sans hâte ni retard','No rush, no delay')}</span>
+    <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant italic whitespace-nowrap">{l('Sans hâte ni retard','No rush, no delay')}</span>
    </div>
    <progress className="sr-only" aria-label={l('Activités réalisées aujourd’hui','Activities completed today')} value={bilan!.realisees} max={bilan!.total}/>
    <div className="flex flex-col gap-2.5">
