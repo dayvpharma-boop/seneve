@@ -18,3 +18,8 @@ Les retours vers la version isolée seront :
 Ces deux adresses diffèrent des retours à la racine déjà autorisés sur TEST. Elles doivent être autorisées avant une recette e-mail réelle. Aucun consentement à envoyer un e-mail ni destinataire de recette n’est présumé. L’envoi/confirmation réel reste à effectuer avec une adresse explicitement autorisée.
 
 Vérification initiale : refus sans configuration TEST, compilation réussie et TypeScript réussi. Pas de recette visuelle locale : le navigateur distant ne peut pas joindre le serveur local, comme documenté précédemment.
+
+
+## Autorisation des retours de la version isolée
+
+Le 26 octobre 2026, après accord explicite du porteur dans la conversation, les deux adresses exactes sous `/seneve/recette-hd/habitudes/inscription?lang=fr` et `?lang=en` ont été enregistrées dans les Redirect URLs de seneve-test via son tableau de bord. L’état visible après sauvegarde contient 4 adresses : les 2 précédentes et ces 2 nouvelles. Cette vérification remplace les mentions historiques « préparées sans enregistrement » ci-dessus. Le Site URL reste localhost:3000, le modèle par défaut n’est pas modifié, PROD n’est pas modifiée. Aucun e-mail envoyé ; le choix et l’autorisation du destinataire restent nécessaires avant la recette réelle.
