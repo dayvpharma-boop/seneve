@@ -42,3 +42,20 @@ it('permet de lire les trente textes sans réponse enregistrée ni appel réseau
  expect(screen.getByText(/30 jours gratuits n’incluent pas le coach IA/)).toBeVisible();
  expect(reseau).not.toHaveBeenCalled();expect(stockage).not.toHaveBeenCalled();
 });
+it('propose trente lectures en anglais et conserve le jour choisi lors du changement de langue',()=>{
+ render(<MemoryRouter initialEntries={['/habitudes']}><Habitudes/></MemoryRouter>);
+ fireEvent.change(screen.getByRole('combobox',{name:'Choisir une lecture'}),{target:{value:'17'}});
+ fireEvent.click(screen.getByRole('link',{name:'English'}));
+ const choix=screen.getByRole('combobox',{name:'Choose a reading'});
+ expect(choix).toHaveValue('17');expect(within(choix).getAllByRole('option')).toHaveLength(30);
+ const article=screen.getByRole('article');
+ expect(article).toHaveAttribute('lang','en');
+ expect(article).toHaveTextContent('Reflect on your generosity');
+ expect(article).toHaveTextContent('does not make your progress depend on a donation');
+ expect(article).toHaveTextContent('No answer is requested or recorded.');
+ fireEvent.change(choix,{target:{value:'30'}});
+ expect(article).toHaveTextContent('Day 30 / 30');
+ expect(article).toHaveTextContent('does not erase your history or trigger an automatic payment');
+ fireEvent.click(screen.getByRole('link',{name:'Français'}));
+ expect(article).toHaveAttribute('lang','fr');expect(article).toHaveTextContent('Faire un bilan honnête et paisible');
+});
