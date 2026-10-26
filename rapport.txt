@@ -1,0 +1,28 @@
+stitch 01-prsentation-habitudes-dfis-snev.html : ok
+stitch 02-configuration-tes-horaires-tape-2-sur-3.html : ok
+stitch 03-habitudes-dfis-aujourd-hui-lundi-26-octobre.html : ok
+stitch 04-prire-du-matin-lecteur-recueilli.html : ok
+stitch 05-lectures-du-jour-snev.html : ok
+stitch 06-mes-cultes-de-la-semaine-snev.html : ok
+stitch 07-mes-engagements-snev.html : ok
+stitch 08-dme-et-offrande-snev.html : ok
+stitch 09-bilan-hebdomadaire-snev.html : ok
+stitch 10-accs-et-achats-habitudes-dfis.html : ok
+stitch 11-aide-et-confidentialit-habitudes-dfis.html : ok
+stitch 12-aide-et-confidentialit-chargement.html : ok
+stitch 13-aide-et-confidentialit-erreur-de-connexion.html : ok
+stitch 14-aide-et-confidentialit-aucune-donne.html : ok
+stitch 15-aide-et-confidentialit-hors-connexion.html : ok
+stitch 16-aide-et-confidentialit-accs-non-ouvert.html : ok
+site aujourdhui light : ok
+site horaires light : ok
+site dime light : ok
+site bilan light : ok
+site acces light : ok
+site presentation light : ok
+site aujourdhui dark : ok
+site horaires dark : ok
+site dime dark : ok
+site bilan dark : ok
+site acces dark : ok
+site presentation dark : ok
