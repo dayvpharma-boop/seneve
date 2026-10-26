@@ -30,3 +30,15 @@ it('signale les heures identiques et peut rétablir toutes les propositions',()=
 it('les essais sont effacés lorsqu’on quitte la page puis revient',()=>{
  const r=ouvrirHoraires();fireEvent.change(screen.getByLabelText('Prière du matin'),{target:{value:'07:15'}});r.unmount();ouvrirHoraires();expect(screen.getByLabelText('Prière du matin')).toHaveValue('06:00');
 });
+it('permet de lire les trente textes sans réponse enregistrée ni appel réseau',()=>{
+ const reseau=vi.spyOn(globalThis,'fetch'),stockage=vi.spyOn(Storage.prototype,'setItem');
+ render(<MemoryRouter><Habitudes/></MemoryRouter>);
+ const choix=screen.getByRole('combobox',{name:'Choisir une lecture'});
+ expect(within(choix).getAllByRole('option')).toHaveLength(30);
+ expect(screen.getByRole('article')).toHaveTextContent('Commencer avec ce qui est possible');
+ fireEvent.change(choix,{target:{value:'30'}});
+ expect(screen.getByRole('article')).toHaveTextContent('Jour 30 / 30');
+ expect(screen.getByRole('article')).not.toHaveTextContent('Commencer avec ce qui est possible');
+ expect(screen.getByText(/30 jours gratuits n’incluent pas le coach IA/)).toBeVisible();
+ expect(reseau).not.toHaveBeenCalled();expect(stockage).not.toHaveBeenCalled();
+});
