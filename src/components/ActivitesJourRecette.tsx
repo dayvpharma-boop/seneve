@@ -2,6 +2,7 @@ import {useEffect,useState} from 'react';
 import {chargerJourRecette,type JourRecette} from '@/lib/habitudes-jour-recette';
 import {bilanHabitudes,type EtatOccurrence} from '@/lib/habitudes';
 import {supabase} from '@/lib/supabase';
+import {LectureJourRecette} from './LectureJourRecette';
 import {HistoriqueRecetteHabitudes} from './HistoriqueRecetteHabitudes';
 import {DeclarationHabitude} from './DeclarationHabitude';
 
@@ -19,6 +20,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   <p>{l('Tes déclarations décrivent ta pratique. Elles ne mesurent ni ta foi ni ta valeur.','Your records describe your practice. They do not measure your faith or worth.')}</p>
   {erreur?<><p role="alert">{l('Les activités ne peuvent pas être vérifiées. Actualise avant de déclarer une action.','Activities cannot be verified. Refresh before recording an action.')}</p><button className="oa-primary" onClick={()=>setTour(t=>t+1)}>{l('Actualiser les activités','Refresh activities')}</button></>:!data?<p role="status">{l('Chargement des activités…','Loading activities…')}</p>:<>
    <p>{l('Jour','Day')} {data.jour} · <time dateTime={dateLocale}>{new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:'UTC',dateStyle:'long'}).format(new Date(dateLocale+'T12:00:00Z'))}</time></p>
+   <LectureJourRecette jour={data.jour} langue={langue}/>
    <p role="status">{bilan!.realisees} / {bilan!.total} {l('activités réalisées','activities completed')} · {bilan!.partielles} {l('en partie','partly done')}</p>
    <progress aria-label={l('Activités réalisées aujourd’hui','Activities completed today')} value={bilan!.realisees} max={bilan!.total}/>
    {data.activites.map(a=><div key={a.occurrence.occurrence_id}><p className="hd-activite-heure"><time dateTime={a.heure}>{a.heure}</time></p><DeclarationHabitude userId={data.userId} occurrence={a.occurrence} consigne={a.consigne} critere={a.critere} etat={a.etat} langue={langue} lectureSeule={false} aideDisponible={false} transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onConfirme={confirmer}/></div>)}

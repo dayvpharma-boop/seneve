@@ -10,7 +10,7 @@ const jour={userId:utilisateur,date:'2026-10-26',jour:1,activites:[{occurrence,c
 function ouvrir(){return render(<ActivitesJourRecette enrollmentId={enrollment} participantId="P1" dateLocale="2026-10-26" langue="fr"/>);}
 beforeEach(()=>{sessionStorage.clear();mocks.charger.mockReset().mockResolvedValue(jour);mocks.rpc.mockReset();});afterEach(cleanup);
 it('ne compte rien au chargement et ne propose aucune aide ou coach',async()=>{
- ouvrir();await screen.findByRole('heading',{name:'Gratitude du matin'});expect(screen.getByRole('progressbar')).toHaveAttribute('value','0');expect(mocks.rpc).not.toHaveBeenCalled();expect(screen.queryByRole('button',{name:/aide|coach/i})).toBeNull();
+ ouvrir();await screen.findByRole('heading',{name:'Gratitude du matin'});expect(screen.getByRole('progressbar')).toHaveAttribute('value','0');expect(screen.getByRole('heading',{name:'Commencer avec ce qui est possible'})).toBeVisible();expect(mocks.rpc).not.toHaveBeenCalled();expect(screen.queryByRole('button',{name:/aide|coach/i})).toBeNull();
 });
 it('attend une confirmation serveur avant de compter une activité',async()=>{
  let finir!:(r:unknown)=>void;mocks.rpc.mockReturnValue(new Promise(r=>{finir=r;}));ouvrir();fireEvent.click(await screen.findByRole('button',{name:'J’ai réalisé cette activité'}));expect(screen.getByRole('progressbar')).toHaveAttribute('value','0');
