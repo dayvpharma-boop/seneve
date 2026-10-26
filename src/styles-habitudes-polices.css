@@ -9,7 +9,7 @@
 /* Les styles globaux historiques du site (non classés en couche) l'emporteraient sur les classes Stitch.
  * Dans les écrans HD uniquement, on rend la main aux couches Tailwind (préflight + utilitaires), comme dans Stitch.
  * Un bloc marqué .hd-classique garde son ancien style tant qu'il n'est pas redessiné. */
-.hd-stitch :is(h1,h2,h3,h4,h5,h6,p,a,button,label,input,select,textarea,small,time,blockquote,summary,ol,ul,li,figure,article,section,header,footer,nav,main,aside,details,span,div,img,svg):not(.hd-classique,.hd-classique *){
+.hd-stitch :is(h1,h2,h3,h4,h5,h6,p,a,button,label,input,select,textarea,small,time,blockquote,summary,ol,ul,li,figure,article,section,header,footer,nav,main,aside,details,span,div,img,svg,output,strong,em,form,fieldset,legend,dl,dt,dd,option,progress,table,tr,td,th):not(.hd-classique,.hd-classique *){
  font-family:revert-layer;font-size:revert-layer;font-weight:revert-layer;line-height:revert-layer;letter-spacing:revert-layer;
  margin:revert-layer;padding:revert-layer;color:revert-layer;background:revert-layer;border:revert-layer;border-radius:revert-layer;
  text-wrap:revert-layer;text-transform:revert-layer;text-decoration:revert-layer;min-height:revert-layer;max-width:revert-layer;

@@ -27,12 +27,13 @@ export function SimulateurDime({langue,ouvert=false}:{langue:string;ouvert?:bool
  return <details open={ouvert||undefined} className="hd-simulateur hd-stitch bg-hd-surface-container-lowest rounded-xl shadow-sm text-hd-on-surface">
   <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer p-hd-space-md flex items-center justify-between gap-hd-space-xs min-h-[56px]">
    <span className="flex items-center gap-hd-space-xs"><IconeHD nom="calculate" className="text-hd-secondary text-[22px]"/><span className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Simulateur de dîme facultatif','Optional tithe simulator')}</span></span>
-   <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant bg-hd-surface-container px-2 py-0.5 rounded-full">10 %</span>
+   <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant bg-hd-surface-container px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">10 %</span>
   </summary>
   <div className="px-hd-space-md pb-hd-space-md flex flex-col gap-hd-space-md">
    <div className="bg-hd-surface-container-low rounded-xl p-hd-space-md flex flex-col gap-hd-space-sm">
     <span className="self-start inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-hd-surface-container text-hd-secondary font-hd-label-sm text-hd-label-sm"><IconeHD nom="auto_stories" className="text-[14px]"/><span>{l('Enseignement complémentaire','Supplementary teaching')}</span></span>
-    <p className="font-hd-body-md text-hd-body-md text-hd-on-surface leading-relaxed">{l('Règles pédagogiques enseignées dans SÉNEVÉ. Ce n’est ni un conseil fiscal individuel ni une obligation légale.','Educational rules taught in SÉNEVÉ. This is not an individual tax assessment or a legal obligation.')}</p>
+    <p className="font-hd-body-md text-hd-body-md text-hd-on-surface leading-relaxed">{l('Enseignement complémentaire validé par Dr Justin Tshims (ce n’est pas une citation du livre) : la dîme est de 10 % du revenu ou du bénéfice réel, avant les dépenses personnelles et les remboursements de dettes. L’offrande est libre.','Supplementary teaching approved by Dr Justin Tshims (not a quotation from the book): the tithe is 10% of actual income or profit, before personal spending and debt repayments. The offering is free.')}</p>
+    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Règles pédagogiques enseignées dans SÉNEVÉ. Ce n’est ni un conseil fiscal individuel ni une obligation légale.','Educational rules taught in SÉNEVÉ. This is not an individual tax assessment or a legal obligation.')}</p>
    </div>
    <div role="radiogroup" aria-label={l('Situation','Situation')} className="flex flex-col gap-2">
     <div className="grid grid-cols-4 gap-1 p-1 bg-hd-surface-container rounded-lg">{principaux.map(([v,f,e])=>segment(v,f,e))}</div>
@@ -69,7 +70,7 @@ export function SimulateurDime({langue,ouvert=false}:{langue:string;ouvert?:bool
    </div>
    <div className="flex flex-col items-center gap-hd-space-sm pt-hd-space-xs">
     <div className="flex items-center gap-1.5 text-hd-on-surface-variant"><IconeHD nom="lock" className="text-[16px] text-hd-secondary"/><span className="font-hd-body-sm text-hd-body-sm">{l('Aucun historique des montants n’est enregistré. Ce simulateur ne réalise aucun paiement.','No amount history is saved. This simulator does not make payments.')}</span></div>
-    <button type="button" className="btn-secondaire min-h-[44px] px-4 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium flex items-center gap-1.5" onClick={effacer}><IconeHD nom="restart_alt" className="text-[18px]"/>{l('Effacer les montants','Clear amounts')}</button>
+    <button type="button" className="min-h-[44px] px-4 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium flex items-center gap-1.5" onClick={effacer}><IconeHD nom="restart_alt" className="text-[18px]"/>{l('Effacer les montants','Clear amounts')}</button>
    </div>
   </div>
  </details>;
