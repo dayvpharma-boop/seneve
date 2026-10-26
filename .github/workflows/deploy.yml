@@ -31,14 +31,14 @@ jobs:
       - name: Charger la version HD de test validée
         uses: actions/checkout@v4
         with:
-          ref: 92da48c7c5bde6c5a5f6c55ca58055f0b1a3958b
+          ref: 4a376c1d7f01db14d5a716866557ba00bcaa0102
           path: _recette-hd
       - name: Installer la recette HD
         working-directory: _recette-hd
         run: npm install --no-audit --no-fund
       - name: Vérifier la connexion et la préinscription HD
         working-directory: _recette-hd
-        run: npx vitest run src/test/habitudes-catalogue.test.tsx src/test/habitudes-retour-connexion.test.tsx src/test/connexion.test.tsx
+        run: npx vitest run --config scripts/recette/vite-habitudes.config.ts src/test/habitudes-catalogue.test.tsx src/test/habitudes-retour-connexion.test.tsx src/test/connexion.test.tsx
       - name: Construire la recette isolée seneve-test
         working-directory: _recette-hd
         env:
