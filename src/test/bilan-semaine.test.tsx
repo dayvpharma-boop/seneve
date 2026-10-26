@@ -6,7 +6,7 @@ import { bilan, semaineDuJour, semaines } from '@/lib/progres';
 const tables: Record<string, unknown[]> = {};
 function builder(table: string) {
   const b: Record<string, unknown> = {};
-  for (const m of ['select', 'eq', 'neq', 'in', 'order']) b[m] = () => b;
+  for (const m of ['select', 'eq', 'neq', 'in', 'order', 'range']) b[m] = () => b;
   b['maybeSingle'] = () => Promise.resolve({ data: (tables[table] ?? [])[0] ?? null, error: null });
   b['then'] = (ok: (v: unknown) => unknown, ko?: (e: unknown) => unknown) => Promise.resolve({ data: tables[table] ?? [], error: null }).then(ok, ko);
   return b;

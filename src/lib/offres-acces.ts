@@ -6,7 +6,8 @@ export type OffreCatalogue=Offre&{actif:boolean;duree_acces_jours:number|null};
 export type ProgrammeCatalogue={programme_id:string;nom:string;description:string|null;duree_jours:number|null};
 export type DroitAcces={entitlement_id:string;offre_id:string;etat:string;debut:string;fin:string|null};
 export type InscriptionAcces={enrollment_id:string;entitlement_id:string|null;programme_id:string;date_debut:string;etat:string};
-export type PeriodeGratuiteHabitudes={enrollment_id:string;entitlement_id:string;debut:string;fin_exclue:string};
+/** Périodes d'accès Habitudes & Défis : mois 1 gratuit, mois 2 à 6 ouverts par l'abonnement Continuité. */
+export type PeriodeGratuiteHabitudes={enrollment_id:string;entitlement_id:string;debut:string;fin_exclue:string;mois?:number};
 export type CatalogueAcces={connecte:boolean;offres:OffreCatalogue[];programmes:ProgrammeCatalogue[];publies:string[];droits:DroitAcces[];inscriptions:InscriptionAcces[];periodesGratuitesHabitudes?:PeriodeGratuiteHabitudes[];fuseauHabitudes?:string;participantIdHabitudes?:string};
 export function lienAchatSur(lien:string|null){if(!lien)return null;try{const u=new URL(lien);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null;}catch{return null;}}
 export function etatDroit(d:DroitAcces,now=Date.now()):'actif'|'expire'|'ferme'|'attente'{
@@ -27,7 +28,7 @@ export async function chargerCatalogueAcces(langue:string):Promise<CatalogueAcce
   supabase.from('programme_versions').select('programme_id').eq('etat','publiee'),
   supabase.from('entitlements').select('entitlement_id, offre_id, etat, debut, fin').order('cree_le',{ascending:false}),
   supabase.from('enrollments').select('enrollment_id, entitlement_id, programme_id, date_debut, etat').neq('etat','annulee'),
-  habitudesActivees()?supabase.from('hd_access_periods').select('enrollment_id, entitlement_id, debut, fin_exclue').eq('mois',1):Promise.resolve({data:[],error:null}),
+  habitudesActivees()?supabase.from('hd_access_periods').select('enrollment_id, entitlement_id, debut, fin_exclue, mois'):Promise.resolve({data:[],error:null}),
   habitudesActivees()?supabase.from('participants').select('participant_id, fuseau, preferences'):Promise.resolve({data:[],error:null}),
  ]);
  for(const r of [o,p,v,d,e,h,profil])if(r.error)throw r.error;

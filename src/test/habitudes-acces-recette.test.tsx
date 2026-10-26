@@ -38,3 +38,13 @@ it('ne monte pas le planning lorsque le droit est expiré',async()=>{
 it('ne suppose aucun participant lorsque son profil manque',async()=>{
  mock.charger.mockResolvedValue({...catalogue,participantIdHabitudes:undefined});ouvrir();await screen.findByText('Tes 30 jours de test sont en cours.');expect(screen.queryByTestId('planning')).toBeNull();
 });
+it('site réel : un mois payé en cours prime sur le mois gratuit terminé',async()=>{
+ const maintenant=Date.now(),iso=(h:number)=>new Date(maintenant+h*3600000).toISOString();
+ const gratuit={enrollment_id:'E1',entitlement_id:'D1',debut:iso(-730),fin_exclue:iso(-10),mois:1},paye={enrollment_id:'E1',entitlement_id:'D2',debut:iso(-10),fin_exclue:iso(710),mois:2};
+ mock.charger.mockResolvedValue({...catalogue,droits:[{entitlement_id:'D1',offre_id:'O1',etat:'actif',debut:gratuit.debut,fin:gratuit.fin_exclue},{entitlement_id:'D2',offre_id:'CONTINUITE_MENSUEL_FR',etat:'actif',debut:paye.debut,fin:paye.fin_exclue}],
+  inscriptions:[{...catalogue.inscriptions[0]!,programme_id:'HABITUDES_DEFIS_30J_FR_V1'}],periodesGratuitesHabitudes:[gratuit,paye]});
+ render(<MemoryRouter><AccesRecetteHabitudes reel/></MemoryRouter>);
+ expect(await screen.findByText('Ton mois 2 sur 6 est en cours.')).toBeInTheDocument();
+ expect(screen.getByText('Ce mois est inclus dans ton abonnement Continuité.')).toBeInTheDocument();
+ expect(screen.queryByText(/30 jours gratuits sont terminés/)).toBeNull();
+});

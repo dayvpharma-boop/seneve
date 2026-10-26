@@ -7,7 +7,7 @@ let rpcError: { message: string } | null = null;
 function builder(table: string) {
   const rows = () => tables[table] ?? [];
   const b: Record<string, unknown> = {};
-  for (const m of ['select', 'eq', 'neq', 'in', 'order']) b[m] = () => b;
+  for (const m of ['select', 'eq', 'neq', 'in', 'order', 'range']) b[m] = () => b;
   b['maybeSingle'] = () => Promise.resolve({ data: rows()[0] ?? null, error: null });
   return b;
 }

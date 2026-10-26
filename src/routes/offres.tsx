@@ -57,7 +57,7 @@ export function Offres({mode='offres'}:{mode?:'offres'|'acces'|'paiement'}){
 function Features({points}:{points:[SymboleOffres,string][]}){return <ul className="oa-features">{points.map(([icon,text])=><li key={text}><I nom={icon} taille={20}/><span>{text}</span></li>)}</ul>;}
 
 function AccesCard({droit:d,data,langue}:{droit:DroitAcces;data:CatalogueAcces;langue:string}){
- const periode=habitudesActivees()?data.periodesGratuitesHabitudes?.find(p=>p.entitlement_id===d.entitlement_id):undefined;
+ const periode=habitudesActivees()?data.periodesGratuitesHabitudes?.find(p=>(p.mois??1)===1&&p.entitlement_id===d.entitlement_id):undefined;
  if(periode)return <AccesGratuitHabitudes droit={d} periode={periode} inscription={data.inscriptions.find(e=>e.enrollment_id===periode.enrollment_id)} langue={langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>;
  const en=langue==='en',label=(fr:string,english:string)=>en?english:fr,status=etatDroit(d),active=status==='actif',offre=data.offres.find(o=>o.offre_id===d.offre_id),inscription=data.inscriptions.find(e=>e.entitlement_id===d.entitlement_id),programme=data.programmes.find(p=>p.programme_id===inscription?.programme_id||p.programme_id===offre?.programme_id);
  const date=(s:string|null)=>s&&Number.isFinite(Date.parse(s))?new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long',year:'numeric'}).format(new Date(s)):null;

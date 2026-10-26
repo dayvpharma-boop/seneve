@@ -1,6 +1,7 @@
 import {PlanningJourHabitudes} from '@/components/PlanningJourHabitudes';
 import {SimulateurDime} from '@/components/SimulateurDime';
-import {calendrierHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
+import {calendrierHabitudes,dureeHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
+import {lignesPaginees,parPaquets} from '@/lib/lignes-paginees';
 import {LectureTexteHabitude} from '@/components/LectureTexteHabitude';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {DeclarationHabitude} from '@/components/DeclarationHabitude';
@@ -48,7 +49,7 @@ import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
 
-type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string };
+type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
 type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; langue: string; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
 type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean; critere_realisation?: string | null };
@@ -75,7 +76,7 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   const [p, e] = await Promise.all([
     supabase.from('participants').select('participant_id, prenom, fuseau, preferences').maybeSingle(),
     // Lire aussi les inscriptions arrêtées pour ne jamais redémarrer un ancien parcours automatiquement.
-    supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat'),
+    supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat, date_fin_prevue'),
   ]);
   if (p.error) throw p.error;
   if (e.error) throw e.error;
@@ -89,7 +90,7 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
     const langue = langueDemandee === 'en' || (langueDemandee !== 'fr' && user.user_metadata?.langue === 'en') ? 'en' : 'fr';
     const debut = await supabase.rpc('start_discovery', { p_langue: langue });
     if (debut.error) throw debut.error;
-    const inscriptions = await supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').neq('etat', 'annulee');
+    const inscriptions = await supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat, date_fin_prevue').neq('etat', 'annulee');
     if (inscriptions.error) throw inscriptions.error;
     enrollments = (inscriptions.data ?? []) as Enrollment[];
   }
@@ -107,22 +108,24 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   if (pr.error) throw pr.error;
   if (c.error) throw c.error;
   const programmes = (pr.data ?? []) as Programme[];
+  const estHabitudes = (e: Enrollment) => (hd.data ?? []).some((h: {programme_id: string; version: number | string; langue: string}) => h.programme_id === e.programme_id && String(h.version) === String(e.version) && h.langue === e.langue);
   const parcours: Parcours[] = enrollments.map(x => {
     const prog = programmes.find(q => q.programme_id === x.programme_id);
-    const duree = prog?.duree_jours ?? 7;
-    return { ...x, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, duree), duree, heures: prog?.heures_messages ?? null };
+    const dureeProgramme = prog?.duree_jours ?? 7;
+    // Habitudes & Défis : le parcours dure jusqu'à la fin prévue par le serveur (mois payés), le nom garde sa durée.
+    const duree = estHabitudes(x) ? dureeHabitudes(x.date_debut, x.date_fin_prevue, dureeProgramme) : dureeProgramme;
+    return { ...x, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, dureeProgramme), duree, heures: prog?.heures_messages ?? null };
   });
   // Chaque inscription garde sa version : on ne retient que les contenus de cette version.
   const contents = ((c.data ?? []) as Content[]).filter(ct => enrollments.some(x => x.programme_id === ct.programme_id && String(x.version) === String(ct.version)));
   const ids = contents.map(x => x.content_id);
-  const [a, st] = await Promise.all([
-    ids.length ? supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire, critere_realisation').in('content_id', ids) : Promise.resolve({ data: [], error: null }),
-    supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enrollments.map(x => x.enrollment_id)),
+  // Lecture complète : six mois d'Habitudes & Défis dépassent la limite de 1 000 lignes d'une réponse.
+  const [activites, etats] = await Promise.all([
+    parPaquets(ids, paquet => lignesPaginees<Activity>((de, fin) => supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire, critere_realisation').in('content_id', paquet).order('activity_id').range(de, fin))),
+    lignesPaginees<State>((de, fin) => supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enrollments.map(x => x.enrollment_id)).order('enrollment_id').order('activity_id').range(de, fin)),
   ]);
-  if (a.error) throw a.error;
-  if (st.error) throw st.error;
   const hdInscrits=enrollments.filter(e=>(hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===e.programme_id&&String(h.version)===String(e.version)&&h.langue===e.langue)).map(e=>e.enrollment_id);
-  return { prenom, participantId:p.data?.participant_id, parcours, contents, activities: (a.data ?? []) as Activity[], states: (st.data ?? []) as State[], habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined };
+  return { prenom, participantId:p.data?.participant_id, parcours, contents, activities: activites, states: etats, habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined };
 }
 
 function formatDate(iso: string | null, locale = 'fr-FR') {

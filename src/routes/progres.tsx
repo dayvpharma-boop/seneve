@@ -1,4 +1,5 @@
-import {calendrierHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
+import {calendrierHabitudes,dureeHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
+import {lignesPaginees,parPaquets} from '@/lib/lignes-paginees';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {BilanHabitudes} from '@/components/BilanHabitudes';
 import {joursHabitudesLecture, type JourHabitudesLecture, type EtatLecture} from '@/lib/habitudes-lecture';
@@ -16,7 +17,7 @@ import { JardinCard } from '@/components/JardinCard';
 import { IconeProgres } from '@/components/IconeProgres';
 import { RepereParcours } from '@/components/RepereParcours';
 
-type Parcours = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; duree: number; nom: string };
+type Parcours = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null; duree: number; nom: string };
 type Loaded = { prenom: string; actions: Record<string, Record<number, string>>; langue: string; parcours: Parcours[]; bilans: Record<string, Bilan>; notes: number; habitudes: Record<string,JourHabitudesLecture[]> };
 
 async function load(): Promise<Loaded | null> {
@@ -26,7 +27,7 @@ async function load(): Promise<Loaded | null> {
   if (ep.error) throw ep.error;
   const [p, e, j] = await Promise.all([
     supabase.from('participants').select('langue, prenom, fuseau, preferences').maybeSingle(),
-    supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat').neq('etat', 'annulee'),
+    supabase.from('enrollments').select('enrollment_id, programme_id, version, langue, date_debut, etat, date_fin_prevue').neq('etat', 'annulee'),
     supabase.from('journal_entries').select('entry_id'),
   ]);
   for (const r of [p, e, j]) if (r.error) throw r.error;
@@ -39,21 +40,23 @@ async function load(): Promise<Loaded | null> {
   const [pr, c, st, hd] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', progIds),
     supabase.from('contents').select('content_id, programme_id, version, langue, jour, numero_message, theme').in('programme_id', progIds),
-    supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enr.map(x => x.enrollment_id)),
+    // Lecture complète : six mois d'Habitudes & Défis dépassent la limite de 1 000 lignes d'une réponse.
+    lignesPaginees<{ enrollment_id: string; activity_id: string; etat: string; aide_demandee: boolean; realisee_le: string | null }>((de, fin) => supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enr.map(x => x.enrollment_id)).order('enrollment_id').order('activity_id').range(de, fin)).then(data => ({ data, error: null }), (error: unknown) => ({ data: null, error })),
     habitudesActivees() ? supabase.from('hd_programme_links').select('programme_id, version, langue').in('programme_id',progIds) : Promise.resolve({data:[],error:null}),
   ]);
   for (const r of [pr, c, st, hd]) if (r.error) throw r.error;
   const progs = (pr.data ?? []) as { programme_id: string; nom: string; duree_jours: number | null }[];
   const contents = (c.data ?? []) as { content_id: string; programme_id: string; version: number | string; langue: string; jour: number; numero_message: number; theme: string }[];
   const ids = contents.map(x => x.content_id);
-  const a = ids.length ? await supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire').in('content_id', ids) : { data: [], error: null };
-  if (a.error) throw a.error;
-  const activites = (a.data ?? []) as { activity_id: string; content_id: string; type_activite: string; consigne?: string; obligatoire:boolean }[];
+  const activites = (await parPaquets(ids, paquet => lignesPaginees((de, fin) => supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire').in('content_id', paquet).order('activity_id').range(de, fin)))) as { activity_id: string; content_id: string; type_activite: string; consigne?: string; obligatoire:boolean }[];
   const etats = (st.data ?? []) as { enrollment_id: string; activity_id: string; etat: string; aide_demandee: boolean; realisee_le: string | null }[];
   const parcours: Parcours[] = enr.map(x => {
     const prog = progs.find(q => q.programme_id === x.programme_id);
-    const duree = prog?.duree_jours ?? 7;
-    return { ...x, duree, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, duree) };
+    const dureeProgramme = prog?.duree_jours ?? 7;
+    const estHd = (hd.data ?? []).some((h: {programme_id: string; version: number | string; langue: string}) => h.programme_id === x.programme_id && String(h.version) === String(x.version) && h.langue === x.langue);
+    // Habitudes & Défis : jusqu'à la fin prévue par le serveur (mois payés) ; le nom garde la durée du programme.
+    const duree = estHd ? dureeHabitudes(x.date_debut, x.date_fin_prevue, dureeProgramme) : dureeProgramme;
+    return { ...x, duree, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, dureeProgramme) };
   });
   const bilans: Record<string, Bilan> = {};
   const actions: Record<string, Record<number, string>> = {};

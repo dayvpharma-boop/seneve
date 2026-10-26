@@ -1,7 +1,7 @@
 import {beforeEach,expect,it,vi} from 'vitest';
 const mocks=vi.hoisted(()=>({tables:{} as Record<string,unknown[]>,horaires:vi.fn()}));
 vi.mock('@/lib/habitudes-horaires-api',()=>({chargerHorairesHabitudes:mocks.horaires}));
-vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:async()=>({data:{session:{user:{id:'U1'}}},error:null})},from:(table:string)=>{const b:any={};b.select=()=>b;b.eq=(col:string,value:unknown)=>{b.filtres=[...(b.filtres??[]),[col,value]];return b;};b.lte=(col:string,value:number)=>{b.max=[col,value];return b;};b.in=(col:string,values:unknown[])=>{b.liste=[col,values];return b;};const rows=()=> (mocks.tables[table]??[]).filter((r:any)=>(b.filtres??[]).every(([k,v]:[string,unknown])=>r[k]===v)&&(!b.max||r[b.max[0]]<=b.max[1])&&(!b.liste||b.liste[1].includes(r[b.liste[0]])));b.single=async()=>({data:rows()[0],error:null});b.then=(ok:any,ko:any)=>Promise.resolve({data:rows(),error:null}).then(ok,ko);return b;}}}));
+vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:async()=>({data:{session:{user:{id:'U1'}}},error:null})},from:(table:string)=>{const b:any={};b.select=()=>b;b.eq=(col:string,value:unknown)=>{b.filtres=[...(b.filtres??[]),[col,value]];return b;};b.lte=(col:string,value:number)=>{b.max=[col,value];return b;};b.gte=(col:string,value:number)=>{b.min=[col,value];return b;};b.order=()=>b;b.range=(de:number,fin:number)=>{b.tranche=[de,fin+1];return b;};b.in=(col:string,values:unknown[])=>{b.liste=[col,values];return b;};const rows=()=> (mocks.tables[table]??[]).filter((r:any)=>(b.filtres??[]).every(([k,v]:[string,unknown])=>r[k]===v)&&(!b.max||r[b.max[0]]<=b.max[1])&&(!b.min||r[b.min[0]]>=b.min[1])&&(!b.liste||b.liste[1].includes(r[b.liste[0]])));b.single=async()=>({data:rows()[0],error:null});b.then=(ok:any,ko:any)=>Promise.resolve({data:b.tranche?rows().slice(...b.tranche):rows(),error:null}).then(ok,ko);return b;}}}));
 import {chargerJourRecette,chargerHistoriqueRecette} from '@/lib/habitudes-jour-recette';
 beforeEach(()=>{
  const modeles=Array.from({length:13},(_,i)=>({module_id:'HD',version:1,langue:'fr',habit_key:`h${i}`,libelle:`Habitude ${i}`,jours_iso:[1,2,3,4,5,6,7],heure_proposee:'06:00'}));
@@ -38,4 +38,29 @@ it('historique : exclut le futur et conserve les horaires valides de chaque jour
 });
 it('historique : refuse un trou dans les journées publiées',async()=>{
  (mocks.tables.enrollments![0] as Record<string,unknown>).date_debut='2026-10-25';await expect(chargerHistoriqueRecette('E1','P1','2026-10-26')).rejects.toThrow('Historique incomplet');
+});
+
+it('mois 2 : le jour 31 lit sa propre journée publiée et seulement ses propres états',async()=>{
+ const enr=mocks.tables.enrollments![0] as Record<string,unknown>;enr.programme_id='HABITUDES_DEFIS_30J_FR_V1';enr.date_debut='2026-09-26';
+ mocks.tables.contents=[{content_id:'C1',programme_id:'HABITUDES_DEFIS_30J_FR_V1',version:1,langue:'fr',jour:1},{content_id:'C31',programme_id:'HABITUDES_DEFIS_30J_FR_V1',version:1,langue:'fr',jour:31}];
+ const jour1=mocks.tables.activities! as Record<string,unknown>[];
+ mocks.tables.activities=[...jour1,...jour1.map(x=>({...x,content_id:'C31',activity_id:String(x.activity_id)+'_J31'}))];
+ const d=await chargerJourRecette('E1','P1','2026-10-26');
+ expect(d.jour).toBe(31);expect(d.activites).toHaveLength(13);
+ expect(d.activites.every(a=>a.occurrence.occurrence_id.endsWith('_J31'))).toBe(true);
+ // L'état « partielle » du jour 1 (A0) ne déborde pas sur le jour 31.
+ expect(d.activites.some(a=>a.etat)).toBe(false);
+});
+it('refuse un jour au-delà des six mois',async()=>{
+ (mocks.tables.enrollments![0] as Record<string,unknown>).date_debut='2026-04-27';
+ await expect(chargerJourRecette('E1','P1','2026-10-26')).rejects.toThrow('Jour hors parcours');
+});
+it('historique du mois 2 : seulement les journées du mois en cours',async()=>{
+ const enr=mocks.tables.enrollments![0] as Record<string,unknown>;enr.programme_id='HABITUDES_DEFIS_30J_FR_V1';enr.date_debut='2026-09-25';
+ mocks.tables.contents=[1,30,31,32].map(j=>({content_id:`C${j}`,programme_id:'HABITUDES_DEFIS_30J_FR_V1',version:1,langue:'fr',jour:j}));
+ const jour1=mocks.tables.activities! as Record<string,unknown>[];
+ mocks.tables.activities=[1,30,31,32].flatMap(j=>jour1.map(x=>({...x,content_id:`C${j}`,activity_id:`${x.activity_id}_J${j}`})));
+ const h=await mocks.horaires();h.horaires=h.horaires.map((x:Record<string,unknown>)=>({...x,valide_du:'2026-09-25'}));
+ const jours=await chargerHistoriqueRecette('E1','P1','2026-10-26');
+ expect(jours.map(j=>j.jour)).toEqual([31,32]);expect(jours.map(j=>j.date)).toEqual(['2026-10-25','2026-10-26']);
 });

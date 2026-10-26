@@ -3,7 +3,7 @@ import {MemoryRouter} from 'react-router-dom';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 const tables:Record<string,unknown[]>={};let registryError=false;
 const from=vi.fn((table:string)=>{
- const b:Record<string,unknown>={};for(const m of ['select','eq','neq','in','order'])b[m]=()=>b;
+ const b:Record<string,unknown>={};for(const m of ['select','eq','neq','in','order', 'range'])b[m]=()=>b;
  const result=()=>({data:tables[table]??[],error:table==='hd_programme_links'&&registryError?new Error('indisponible'):null});
  b.maybeSingle=()=>Promise.resolve({...result(),data:(tables[table]??[])[0]??null});
  b.then=(ok:(v:unknown)=>unknown)=>Promise.resolve(result()).then(ok);return b;

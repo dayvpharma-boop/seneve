@@ -25,3 +25,9 @@ it('retrouve les déclarations enregistrées lors de la réouverture',async()=>{
 it('ferme les déclarations si la lecture échoue et permet de réessayer',async()=>{
  mocks.charger.mockRejectedValueOnce(Error('closed'));ouvrir();await screen.findByRole('alert');expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'Actualiser les activités'}));await screen.findByRole('heading',{name:'Gratitude du matin'});
 });
+it('mois 2 : le jour 31 reprend la lecture approuvée du jour 1 et annonce le mois',async()=>{
+ mocks.charger.mockResolvedValue({...jour,jour:31});ouvrir();
+ expect(await screen.findByRole('heading',{name:'Commencer avec ce qui est possible'})).toBeVisible();
+ expect(screen.getByText(/Mois 2 sur 6/)).toBeInTheDocument();expect(screen.getByText(/Lecture 1 reprise/)).toBeInTheDocument();
+ expect(screen.queryByText(/30 jours gratuits/)).toBeNull();
+});

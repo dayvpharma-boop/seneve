@@ -14,7 +14,7 @@ function inscrire(langue: string, etat = 'active', jour = '2026-10-25') {
 }
 function builder(table: string) {
   const b: Record<string, unknown> = {};
-  for (const m of ['select', 'eq', 'neq', 'in', 'order']) b[m] = () => b;
+  for (const m of ['select', 'eq', 'neq', 'in', 'order', 'range']) b[m] = () => b;
   b.maybeSingle = () => Promise.resolve({ data: tables[table]?.[0] ?? null, error: null });
   b.then = (ok: (v: unknown) => unknown) => Promise.resolve({ data: tables[table] ?? [], error: null }).then(ok);
   return b;

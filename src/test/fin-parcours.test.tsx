@@ -3,7 +3,7 @@ import {MemoryRouter} from 'react-router-dom';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 const tables:Record<string,unknown[]>={};
 const lectures:{table:string;col:string;value:unknown}[]=[];
-function builder(table:string){const b:Record<string,unknown>={};for(const m of ['select','neq','in','order','limit'])b[m]=()=>b;b['eq']=(col:string,value:unknown)=>{lectures.push({table,col,value});return b;};b['maybeSingle']=()=>Promise.resolve({data:tables[table]?.[0]??null,error:null});b['then']=(ok:(v:unknown)=>unknown)=>Promise.resolve({data:tables[table]??[],error:null}).then(ok);return b;}
+function builder(table:string){const b:Record<string,unknown>={};for(const m of ['select','neq','in','order','limit','range'])b[m]=()=>b;b['eq']=(col:string,value:unknown)=>{lectures.push({table,col,value});return b;};b['maybeSingle']=()=>Promise.resolve({data:tables[table]?.[0]??null,error:null});b['then']=(ok:(v:unknown)=>unknown)=>Promise.resolve({data:tables[table]??[],error:null}).then(ok);return b;}
 vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:()=>Promise.resolve({data:{session:{user:{id:'DEMO',user_metadata:{prenom:'Marie'}}}}}),signOut:()=>Promise.resolve({})},rpc:()=>Promise.resolve({data:'DEMO',error:null}),from:(t:string)=>builder(t)},siteUrl:(p:string)=>p}));
 import {Espace} from '@/routes/espace';
 const P='PROSPECT_LIVRE_7J_FR_V1';

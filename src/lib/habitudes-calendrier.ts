@@ -7,6 +7,16 @@ export function fuseauHabitudes(participant:{fuseau?:unknown;preferences?:unknow
  if(typeof zone!=='string'||!zone)throw new Error('Fuseau du parcours invalide');
  new Intl.DateTimeFormat('en',{timeZone:zone});return zone;
 }
+/** Durée affichée d'un parcours Habitudes & Défis : jusqu'à la fin prévue tenue par le serveur (elle s'allonge à
+ * chaque mois payé, et revient en arrière en cas de remboursement), sinon la durée du programme (mois gratuit). */
+export function dureeHabitudes(debut:string,finPrevue:string|null|undefined,dureeProgramme:number):number{
+ if(!finPrevue||!/^\d{4}-\d{2}-\d{2}$/.test(finPrevue))return dureeProgramme;
+ const n=(Date.parse(finPrevue+'T00:00:00Z')-Date.parse(debut+'T00:00:00Z'))/86400000+1;
+ return Number.isInteger(n)&&n>=1?n:dureeProgramme;
+}
+/** Mois Habitudes & Défis d'un jour du parcours (30 jours par mois) et jour de la lecture reprise (1 à 30). */
+export const moisHabitudes=(jour:number)=>Math.floor((jour-1)/30)+1;
+export const lectureReprise=(jour:number)=>((jour-1)%30)+1;
 /** Jours civils du participant : ne pas diviser un temps écoulé par 24 heures. */
 export function calendrierHabitudes(debut:string,total:number,fuseau:string,now:Date=new Date()){
  if(!Number.isInteger(total)||total<1||!/^\d{4}-\d{2}-\d{2}$/.test(debut))throw new Error('Calendrier invalide');

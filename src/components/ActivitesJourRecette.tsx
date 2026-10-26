@@ -7,6 +7,7 @@ import {lecturesHabitudesEn} from '@/data/habitudes-lectures-en';
 import {HistoriqueRecetteHabitudes} from './HistoriqueRecetteHabitudes';
 import {DeclarationHabitude} from './DeclarationHabitude';
 import {IconeHD} from './IconeHabitudes';
+import {lectureReprise,moisHabitudes} from '@/lib/habitudes-calendrier';
 
 /** Heure locale « HH:MM » du participant ; null si le fuseau est invalide. */
 function heureLocale(fuseau:string,maintenant:number){try{return new Intl.DateTimeFormat('en-GB',{timeZone:fuseau,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(maintenant));}catch{return null;}}
@@ -32,7 +33,9 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   </div>
  </section>;
  if(!data)return <p role="status" className="px-hd-margin py-hd-space-md font-hd-body-md text-hd-body-md text-hd-on-surface-variant">{l('Chargement des activités…','Loading activities…')}</p>;
- const texte=(en?lecturesHabitudesEn:lecturesHabitudesFr).find(x=>x.jour===data.jour);
+ // Mois 2 à 6 : reprise des 30 lectures approuvées (jour 31 → lecture 1, etc.), décision du 26/10/2026.
+ const mois=moisHabitudes(data.jour),jourLecture=lectureReprise(data.jour);
+ const texte=(en?lecturesHabitudesEn:lecturesHabitudesFr).find(x=>x.jour===jourLecture);
  const date=new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long'}).format(new Date(dateLocale+'T12:00:00Z'));
  const activites=[...data.activites].sort((a,b)=>a.heure.localeCompare(b.heure));
  const ouverte=(a:typeof activites[number])=>a.etat?.synchronisation!=='synchronise'||a.etat.etat!=='realisee';
@@ -48,7 +51,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   <header className="py-hd-space-md flex flex-col gap-1">
    <div className="inline-flex items-center gap-2 self-start px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-on-surface-variant">
     <IconeHD nom="calendar_today" className="text-[14px] text-hd-secondary"/>
-    <span className="font-hd-label-sm text-hd-label-sm tracking-wide"><time dateTime={dateLocale}>{date.charAt(0).toUpperCase()+date.slice(1)}</time> · {l('Jour','Day')} {data.jour} · {l('30 jours gratuits','30 free days')}</span>
+    <span className="font-hd-label-sm text-hd-label-sm tracking-wide"><time dateTime={dateLocale}>{date.charAt(0).toUpperCase()+date.slice(1)}</time> · {l('Jour','Day')} {data.jour} · {mois===1?l('30 jours gratuits','30 free days'):l(`Mois ${mois} sur 6`,`Month ${mois} of 6`)}</span>
    </div>
    {texte?<>
     <h2 className="font-hd-headline-md text-hd-headline-md text-hd-on-surface mt-1">{texte.titre}</h2>
@@ -91,7 +94,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   </section>
   {/* Lecture du jour : question pour réfléchir */}
   {texte&&<aside className="mt-hd-space-lg mb-hd-space-sm bg-hd-surface-container p-hd-space-md rounded-2xl border-l-4 border-hd-secondary flex flex-col gap-2" aria-label={l('La lecture du jour','Today’s reading')}>
-   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{l('Un temps pour réfléchir','A moment to reflect')} · {l('Jour','Day')} {data.jour}</span>
+   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{l('Un temps pour réfléchir','A moment to reflect')} · {mois===1?`${l('Jour','Day')} ${data.jour}`:l(`Lecture ${jourLecture} reprise`,`Reading ${jourLecture} again`)}</span>
    <p className="font-hd-body-md text-hd-body-md text-hd-on-surface">{texte.texte_pedagogique}</p>
    <p className="font-hd-scripture-verse text-hd-scripture-verse text-hd-on-surface italic">{texte.question_reflexion}</p>
    <small className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Adaptation pédagogique à partir du livre. La lecture ne valide aucune activité automatiquement.','An educational adaptation based on the book. Reading does not mark any activity as completed.')}</small>

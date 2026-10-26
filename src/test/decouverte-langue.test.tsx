@@ -6,7 +6,7 @@ const appels: { name: string; args: unknown }[] = [];
 let metadata: Record<string, string> = { prenom: 'Marie' };
 function builder(table: string) {
   const b: Record<string, unknown> = {};
-  for (const m of ['select', 'eq', 'neq', 'in', 'order']) b[m] = () => b;
+  for (const m of ['select', 'eq', 'neq', 'in', 'order', 'range']) b[m] = () => b;
   b['maybeSingle'] = () => Promise.resolve({ data: table === 'participants' ? { prenom: 'Marie' } : null, error: null });
   b['then'] = (ok: (v: unknown) => unknown, ko?: (e: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(ok, ko);
   return b;
