@@ -240,8 +240,123 @@
     }
   },
   "defis": {
-    "rythme": null,
-    "contenus": [],
+    "rythme": "proposition_4_semaines_et_bilan_jours_29_30",
+    "contenus": [
+      {
+        "defi_editorial_id": "HD_FR_DEFI_S1",
+        "jour_debut": 1,
+        "jour_fin": 7,
+        "titre": "Préparer un rendez-vous fidèle",
+        "racines": [
+          "Royaume",
+          "Fidélité dans les petites choses"
+        ],
+        "objectif": "Choisir un rendez-vous quotidien réaliste et en observer la pratique.",
+        "invitation": "Cette semaine, choisis parmi tes habitudes un rendez-vous que tu veux mieux préparer : prière, lecture ou gratitude. Vérifie son horaire et prévois ce qui peut t’aider à y entrer calmement. À chaque passage, déclare seulement ce que tu as réellement fait. Si tu le manques, prépare le suivant ; tu ne repars pas de zéro.",
+        "adaptation_proposee": "Tu peux déplacer l’horaire, préparer ton support à l’avance ou demander de l’aide pour comprendre l’activité. Une réalisation partielle reste une information utile.",
+        "critere_declaration_propose": "À la fin de la semaine, indique si tu as essayé de préparer ce rendez-vous et ce que tu en retiens. Aucun nombre de jours réussis n’est imposé par cette proposition.",
+        "question_bilan": "Qu’est-ce qui a facilité ce rendez-vous, et quel ajustement veux-tu garder ?",
+        "source": "Livre fourni, chapitre 1, p. imprimées 9–10 ; chapitre 6, p. 117–118 ; cahier Habitudes & Défis, sections 4 et 9",
+        "caractere_propose": "facultatif_a_valider",
+        "nature": "proposition_editoriale_non_citation",
+        "validation": {
+          "statut": "a_relire",
+          "relecteur": null,
+          "date": null,
+          "preuve": null
+        }
+      },
+      {
+        "defi_editorial_id": "HD_FR_DEFI_S2",
+        "jour_debut": 8,
+        "jour_fin": 14,
+        "titre": "Prendre soin d’une responsabilité",
+        "racines": [
+          "Travail",
+          "Fidélité dans les petites choses"
+        ],
+        "objectif": "Mettre de l’attention et de l’honnêteté dans une responsabilité existante.",
+        "invitation": "Choisis une responsabilité déjà présente dans ta vie : travail, étude, tâche familiale ou engagement personnel. Définis une étape concrète que tu peux raisonnablement mener cette semaine. Prends le temps de la préparer et de reconnaître ce qui est terminé ou encore en cours. Il ne s’agit pas d’accumuler des tâches pour obtenir un meilleur score.",
+        "adaptation_proposee": "Si ton emploi du temps change, réduis l’étape ou explique ce qui n’a pas été possible. Ce défi ne conditionne pas ta valeur à un emploi, à un revenu ou à une performance.",
+        "critere_declaration_propose": "Déclare ce que tu as réellement essayé ou réalisé, y compris partiellement. Aucune preuve publique, comparaison ou note de foi n’est demandée.",
+        "question_bilan": "Quelle attention nouvelle as-tu portée à cette responsabilité ?",
+        "source": "Livre fourni, chapitre 3, p. imprimées 58–59 ; chapitre 6, p. 117–120 ; cahier Habitudes & Défis, section 9",
+        "caractere_propose": "facultatif_a_valider",
+        "nature": "proposition_editoriale_non_citation",
+        "validation": {
+          "statut": "a_relire",
+          "relecteur": null,
+          "date": null,
+          "preuve": null
+        }
+      },
+      {
+        "defi_editorial_id": "HD_FR_DEFI_S3",
+        "jour_debut": 15,
+        "jour_fin": 21,
+        "titre": "Exercer une générosité attentive",
+        "racines": [
+          "Dîme et offrande",
+          "Détachement de l’argent",
+          "Aide aux personnes vulnérables"
+        ],
+        "objectif": "Réfléchir à une aide libre, respectueuse et adaptée à ses possibilités.",
+        "invitation": "Observe un besoin autour de toi sans exposer la personne concernée. Si elle le souhaite et si tu le peux, propose une aide adaptée : écouter, rendre un service, consacrer du temps ou choisir un autre geste. Prends aussi un moment pour réfléchir à ce qui motive ta générosité. Aucun versement n’est demandé par ce défi.",
+        "adaptation_proposee": "Tu peux choisir un geste non financier ou garder cette semaine comme un temps d’écoute et de réflexion. Ne note pas de nom, de montant ou de situation privée dans une déclaration de défi.",
+        "critere_declaration_propose": "Indique simplement si tu as réfléchi à une aide ou posé un geste adapté. Une somme donnée ne sert jamais de critère de réussite.",
+        "question_bilan": "Qu’as-tu appris sur une manière respectueuse d’aider ?",
+        "source": "Livre fourni, chapitre 2, p. imprimées 38–39 ; chapitre 4, p. 79–80 ; chapitre 5, p. 100–101 ; cahier Habitudes & Défis, sections 9 et 12",
+        "caractere_propose": "facultatif_a_valider",
+        "nature": "proposition_editoriale_non_citation",
+        "validation": {
+          "statut": "a_relire",
+          "relecteur": null,
+          "date": null,
+          "preuve": null
+        }
+      },
+      {
+        "defi_editorial_id": "HD_FR_DEFI_S4",
+        "jour_debut": 22,
+        "jour_fin": 28,
+        "titre": "Faire une place au discernement",
+        "racines": [
+          "Discernement",
+          "Fidélité dans les petites choses"
+        ],
+        "objectif": "Prendre du recul avant une décision ordinaire.",
+        "invitation": "Choisis une décision ordinaire sur laquelle tu peux prendre un peu de recul. Accorde-lui un temps de prière, distingue les faits connus de la pression ressentie et formule la question qui reste ouverte. Le parcours ne prétend pas recevoir une réponse divine à ta place. Il t’invite à exercer une attention plus paisible.",
+        "adaptation_proposee": "Tu peux garder une question ouverte ou demander un éclairage approprié. Ce défi ne remplace pas une aide professionnelle pour une décision qui en nécessite une.",
+        "critere_declaration_propose": "Déclare que tu as pris ce temps de recul, même si aucune décision finale n’est prise. Aucune réponse spirituelle particulière n’est attendue.",
+        "question_bilan": "Qu’as-tu mieux compris en ralentissant ?",
+        "source": "Livre fourni, chapitre 7, p. imprimées 134–135 et 144–145 ; cahier Habitudes & Défis, sections 9 et 13",
+        "caractere_propose": "facultatif_a_valider",
+        "nature": "proposition_editoriale_non_citation",
+        "validation": {
+          "statut": "a_relire",
+          "relecteur": null,
+          "date": null,
+          "preuve": null
+        }
+      }
+    ],
+    "bilan_final": {
+      "jour_debut": 29,
+      "jour_fin": 30,
+      "titre": "Choisir la suite avec clarté",
+      "invitation": "Relis un apprentissage, une difficulté et une habitude que tu souhaites poursuivre. Choisis un prochain pas réaliste. Ce bilan ne déclenche ni renouvellement ni paiement.",
+      "questions": [
+        "Qu’aimerais-tu conserver ?",
+        "De quelle aide as-tu encore besoin ?",
+        "Quel prochain pas choisis-tu ?"
+      ],
+      "validation": {
+        "statut": "a_relire",
+        "relecteur": null,
+        "date": null,
+        "preuve": null
+      }
+    },
     "validation": {
       "statut": "a_relire",
       "relecteur": null,
@@ -278,10 +393,12 @@
         "coucher": "HD_FR_J01_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "eba1510b9ad2ba7f3fcf63386b285cbcf606af114dc0d192c05eb46ec0a65212",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel rendez-vous veux-tu préparer en premier ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -308,10 +425,12 @@
         "coucher": "HD_FR_J02_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "5f938f111789327f39c1f0d91bb38d62033e301bf1ce29734b90147bdb36a09f",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel ajustement rendrait ta journée plus cohérente avec tes priorités ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -338,10 +457,12 @@
         "coucher": "HD_FR_J03_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "63903543606279edf41c6207181734e240a8bc6c45c08a1c002499fcb5aa763d",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Qu’est-ce qui t’aide à entrer calmement dans la prière ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -368,10 +489,12 @@
         "coucher": "HD_FR_J04_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9768faa39c7fb67d22d5bb286aa009527dc28cc29c7f37ab7d38398d7af810a1",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle idée ou question gardes-tu de ta lecture ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -398,10 +521,12 @@
         "coucher": "HD_FR_J05_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9996cf0f78100a989f2cab57e2a2e43a349a34bbd012faf8944910854cf108e8",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle responsabilité ordinaire mérite ton attention aujourd’hui ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -428,10 +553,12 @@
         "coucher": "HD_FR_J06_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9fe20ababeaf6a47e808da2fa21571411fef874b9f9ebdcc1a0d1daf8971e5ef",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel horaire ou effort doit être adapté à ta situation ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -458,10 +585,12 @@
         "coucher": "HD_FR_J07_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "201e490feeea54b73b85087dece6d94676cb613899565e1cd172e56ca5dbb449",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Que souhaites-tu conserver et qu’aimerais-tu ajuster ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -488,10 +617,12 @@
         "coucher": "HD_FR_J08_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "f4480939145df50198aa72dd7688e0521c2dfd6c7ee8ec111d475fd687133414",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel pas concret accompagne ta prière aujourd’hui ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -518,10 +649,12 @@
         "coucher": "HD_FR_J09_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "c3c9c5131361f8641b7c4e4ac96d58409fb7d66675669827328f9ae52e298721",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle idée utile as-tu retenue ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -548,10 +681,12 @@
         "coucher": "HD_FR_J10_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "ec99c7108754ca431191d47a6dd16d74c2978d5aa8a2b579831a2797167bd2db",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel engagement mérite une réponse honnête de ta part ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -578,10 +713,12 @@
         "coucher": "HD_FR_J11_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "a5a2a79c5ed8d8429ff7553ffeae11e61f8a6b99df39b58872ec1c30d495bb6b",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "De quoi es-tu responsable, même si cela ne t’appartient pas ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -608,10 +745,12 @@
         "coucher": "HD_FR_J12_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "d4c21fe4d788f1dc0e32996d2ed187bb340d3bccd878e2f397ce1ec045355590",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle étape as-tu réellement pu mener aujourd’hui ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -638,10 +777,12 @@
         "coucher": "HD_FR_J13_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "7fe263340f013c97303c397424f9a7f63f45ea19d911eee1a70d4f4747f6aa8b",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel progrès peux-tu reconnaître sans te comparer ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -668,10 +809,12 @@
         "coucher": "HD_FR_J14_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "e8d1145389128ccba8c67912bba71d92e6fb929d63693110ad85978cf2d6c4fb",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel ajustement simple veux-tu essayer ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -698,10 +841,12 @@
         "coucher": "HD_FR_J15_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "dff7a9216acbb298851236102898e388bcb1a6f3562876cff29f3fd7dd6d467c",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "De quoi peux-tu être reconnaissant tout en restant honnête sur tes difficultés ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -728,10 +873,12 @@
         "coucher": "HD_FR_J16_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9b33430f8393186e1aed6647bfe67499334d899cfc3e7c7b4268b8f0265a9381",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Qu’as-tu appris en observant cette habitude ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -758,10 +905,12 @@
         "coucher": "HD_FR_J17_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "b2e877dbb900b1a84a87aa564b41819a4c4eff45e0b0d6b91c42968c700d50f4",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Qu’est-ce qui motive ta générosité aujourd’hui ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -788,10 +937,12 @@
         "coucher": "HD_FR_J18_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "9e6a61cf560a78aae45928f10ca47193f2bd07055bdb90ed730474aeab403e9d",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle pression aimerais-tu regarder avec plus de recul ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -818,10 +969,12 @@
         "coucher": "HD_FR_J19_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "3acf9a2a8e5de9d51756fc686c971bb71149e2f7221f43a64026aec1c41ac863",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel besoin peux-tu reconnaître avec respect et discrétion ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -848,10 +1001,12 @@
         "coucher": "HD_FR_J20_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "c98666328551b206fc4c1b43e1906a35b59f54cfab08184db9ad6078c1bd198c",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle aide serait utile, souhaitée et à ta portée ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -878,10 +1033,12 @@
         "coucher": "HD_FR_J21_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "adc0a2fd4b7635a21281a2e4b2c055555d0bb822e18aa994fecd4f5d0d82091e",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle attitude souhaites-tu garder pour la prochaine semaine ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -908,10 +1065,12 @@
         "coucher": "HD_FR_J22_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "a7a515c8b9fada556f18fd971621b3722f3add29ac2c4992b56b3f12eff90e83",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Qu’as-tu besoin de comprendre avant de décider ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -938,10 +1097,12 @@
         "coucher": "HD_FR_J23_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "97736a055c53b2f5a6bb33a0b1bf224f2b7e26a393d94ccd98025196be8221fc",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle idée mérite d’être approfondie après ton écoute ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -968,10 +1129,12 @@
         "coucher": "HD_FR_J24_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "1f6224c953f9320d53789327051a5a3f319568bee24e78c025cacd045e9d148a",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle urgence mérite d’être réévaluée ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -998,10 +1161,12 @@
         "coucher": "HD_FR_J25_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "510d6c52d3bf4f1e941a9d99dfa9a8fe05666eb0dc3a9dc90c5e8229884ce942",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Ton planning de culte correspond-il à tes possibilités réelles ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -1028,10 +1193,12 @@
         "coucher": "HD_FR_J26_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "bf45df86119e6b8135071a0dfab89a4fad9aa787c4f0dcabd3a5fbd0bc6d5f1c",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel prochain rendez-vous peux-tu préparer simplement ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -1058,10 +1225,12 @@
         "coucher": "HD_FR_J27_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "c7a7cb30b5fbfcfebcdcd428eac709b6cd617e3a17a96cd79463c1b861aef91a",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Sur quel point une aide te serait-elle utile ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -1088,10 +1257,12 @@
         "coucher": "HD_FR_J28_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "1de2e0855a8fa71cea4277bbcf437fe50d5153ffb19d2ea5cdcf4904e98448fd",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Qu’aimerais-tu continuer et qu’as-tu besoin d’adapter ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -1118,10 +1289,12 @@
         "coucher": "HD_FR_J29_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "34a0fc0f0966e87a3b706227edf1aa6790335eacdc5557c4c5b0f7ed4d938bcc",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quelle habitude veux-tu soutenir dans la durée ?",
       "nature": "adaptation_editoriale_proposee_non_citation"
@@ -1148,10 +1321,12 @@
         "coucher": "HD_FR_J30_COUCHER"
       },
       "validation": {
-        "statut": "a_relire",
-        "relecteur": null,
-        "date": null,
-        "preuve": null
+        "statut": "approuve",
+        "relecteur": "Porteur du projet — accord conversationnel",
+        "date": "2026-10-26",
+        "preuve": "Accord du porteur dans la conversation du 26/10/2026, après remise du document des 30 fiches : « C’est parfait on continue ». Portée : textes français présentés ; aucune approbation de publication, offre, droits de reproduction ou traduction.",
+        "empreinte_sha256": "86e531999c0c50e592bd6139b02fdda2d33989162bc25e607db5f9a9d6ee7b31",
+        "portee": "texte_francais_uniquement"
       },
       "question_reflexion": "Quel prochain pas choisis-tu avec confiance et réalisme ?",
       "nature": "adaptation_editoriale_proposee_non_citation"

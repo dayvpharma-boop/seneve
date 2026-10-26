@@ -6,6 +6,7 @@ Une validation déclarée dans le JSON n'est pas une preuve d'autorisation humai
 """
 import argparse
 import json
+import hashlib
 from pathlib import Path
 
 QUOTIDIENS = {'reveil', 'gratitude_matin', 'priere_matin', 'bible_matin', 'exercice', 'lecture_pro', 'priere_midi', 'predication', 'lecture_personnelle', 'bible_soir', 'gratitude_soir', 'priere_soir', 'coucher'}
@@ -14,6 +15,12 @@ HEBDOMADAIRES = {'culte_semaine', 'culte_dimanche'}
 
 def approuve(v):
     return isinstance(v, dict) and v.get('statut') == 'approuve' and all(isinstance(v.get(k), str) and v[k].strip() for k in ['relecteur', 'date', 'preuve'])
+
+
+def empreinte_fiche(f):
+    champs = ['jour', 'titre', 'objectif', 'texte_pedagogique', 'question_reflexion', 'source', 'nature']
+    contenu = json.dumps({k: f.get(k) for k in champs}, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    return hashlib.sha256(contenu.encode()).hexdigest()
 
 
 def verifier(d):
@@ -43,7 +50,7 @@ def verifier(d):
                 identifiants.add(identifiant)
         if not all(isinstance(f.get(k), str) and f[k].strip() for k in ['objectif', 'texte_pedagogique', 'source']):
             attentes.append(f'Jour {jour} : objectif, texte et source à compléter.')
-        if not approuve(f.get('validation')):
+        if not approuve(f.get('validation')) or f['validation'].get('empreinte_sha256') != empreinte_fiche(f):
             attentes.append(f'Jour {jour} : relecture et preuve de validation nécessaires.')
     for cle, modele in modeles.items():
         if not all(isinstance(modele.get(k), str) and modele[k].strip() for k in ['libelle', 'consigne_proposee', 'critere_propose', 'source']):
@@ -60,7 +67,26 @@ def verifier(d):
     priere = d.get('priere', {})
     if priere.get('droits_reproduction') != 'confirmes' or not approuve(priere.get('validation')) or not priere.get('reference_texte_autorise'):
         attentes.append('Amidah : droits et texte publiable à confirmer.')
-    if not approuve(d.get('defis', {}).get('validation')):
+    defis = d.get('defis', {})
+    contenus = defis.get('contenus', [])
+    if not contenus:
+        attentes.append('Défis : contenus à rédiger.')
+    ids_defis = set()
+    for defi in contenus:
+        identifiant = defi.get('defi_editorial_id')
+        if not isinstance(identifiant, str) or not identifiant or identifiant in ids_defis:
+            structure.append('Défi : identifiant absent ou partagé.')
+        ids_defis.add(identifiant)
+        debut, fin = defi.get('jour_debut'), defi.get('jour_fin')
+        if type(debut) is not int or type(fin) is not int or not 1 <= debut <= fin <= 30:
+            structure.append('Défi : période hors des 30 jours.')
+        if not all(isinstance(defi.get(k), str) and defi[k].strip() for k in ['titre', 'objectif', 'invitation', 'critere_declaration_propose', 'source']):
+            attentes.append(f'{identifiant} : texte ou source à compléter.')
+        if not approuve(defi.get('validation')):
+            attentes.append(f'{identifiant} : défi à relire.')
+    if not approuve(defis.get('bilan_final', {}).get('validation')):
+        attentes.append('Bilan final : texte et accès à approuver.')
+    if not approuve(defis.get('validation')):
         attentes.append('Défis : contenu et rythme à approuver.')
     if not isinstance(d.get('programme_id'), str) or not d['programme_id'].strip() or type(d.get('version')) is not int or d['version'] < 1:
         attentes.append('Programme et version de publication à configurer.')

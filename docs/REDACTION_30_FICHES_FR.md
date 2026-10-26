@@ -1,5 +1,7 @@
 # Rédaction des 30 fiches françaises — propositions pour relecture
 
+Évolution ultérieure : le porteur a donné son accord sur les 30 textes français. Les nouveaux défis restent à relire ; voir `DEFIS_ET_ACCORD_TEXTES_FR.md`. Les chiffres et statuts ci-dessous décrivent l’étape de préparation initiale.
+
 Les 30 fiches disposent maintenant chacune d’un titre, d’un objectif, d’un texte pédagogique, d’une question de réflexion et d’une référence de travail. Elles sont conservées dans `editorial/habitudes-defis/30-jours-fr-brouillon.json` ; une version lisible est disponible dans `30-jours-fr-relecture.md` dans le même dossier.
 
 ## Méthode et sources

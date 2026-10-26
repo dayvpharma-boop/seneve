@@ -50,6 +50,29 @@ class ReceptionTrame(unittest.TestCase):
         self.assertFalse(json.loads(r.stdout)['pret_publication'])
         self.assertEqual(DOSSIER.read_bytes(), avant)
 
+    def test_modifier_un_texte_approuve_demande_une_nouvelle_relecture(self):
+        avant = verifier(self.d)
+        self.assertFalse(any('Jour 1 :' in x for x in avant['attentes_editoriales']))
+        self.d['fiches'][0]['texte_pedagogique'] += ' Modification postérieure à l’accord.'
+        self.assertTrue(any('Jour 1 :' in x for x in verifier(self.d)['attentes_editoriales']))
+
+    def test_modifier_la_source_invalide_aussi_l_accord(self):
+        self.d['fiches'][0]['source'] = 'Autre source'
+        self.assertTrue(any('Jour 1 :' in x for x in verifier(self.d)['attentes_editoriales']))
+
+    def test_accord_sur_les_fiches_ne_valide_pas_offre_priere_ou_defis(self):
+        r = verifier(self.d)
+        self.assertFalse(r['pret_publication'])
+        for mot in ['Offre gratuite', 'Amidah', 'Défis']:
+            self.assertTrue(any(mot in x for x in r['attentes_editoriales']))
+
+    def test_defi_hors_periode_et_identifiant_partage_sont_detectes(self):
+        self.d['defis']['contenus'][0]['jour_fin'] = 31
+        self.d['defis']['contenus'][1]['defi_editorial_id'] = self.d['defis']['contenus'][0]['defi_editorial_id']
+        erreurs = verifier(self.d)['erreurs_structure']
+        self.assertTrue(any('période' in x for x in erreurs))
+        self.assertTrue(any('identifiant' in x for x in erreurs))
+
 
 if __name__ == '__main__':
     unittest.main()

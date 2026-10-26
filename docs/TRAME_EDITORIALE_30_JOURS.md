@@ -1,5 +1,7 @@
 # Trame éditoriale des 30 jours gratuits — brouillon à relire
 
+Évolution ultérieure : le porteur a donné son accord sur les 30 textes français. Les nouveaux défis restent à relire ; voir `DEFIS_ET_ACCORD_TEXTES_FR.md`. Les chiffres et statuts ci-dessous décrivent l’étape de préparation initiale.
+
 Le fichier `editorial/habitudes-defis/30-jours-fr-brouillon.json` prépare le travail éditorial. Il ne constitue pas un programme approuvé et n’est importé ni par le site, ni par Supabase, ni par un processus de publication.
 
 ## Ce qui est préparé

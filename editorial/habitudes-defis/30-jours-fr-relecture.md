@@ -1,6 +1,6 @@
 # Habitudes & Défis — 30 jours : textes proposés pour relecture
 
-Ces textes sont des adaptations éditoriales proposées à partir du livre français fourni et du cahier des charges. L’ordre des thèmes est proposé pour ce module ; ce n’est pas un plan officiel de 30 jours cité du livre. Aucun texte n’est encore approuvé ou publié. Les habitudes quotidiennes et les trois prières restent suivies séparément.
+Ces textes sont des adaptations éditoriales proposées à partir du livre français fourni et du cahier des charges. L’ordre des thèmes est proposé pour ce module ; ce n’est pas un plan officiel de 30 jours cité du livre. Les 30 textes français ont reçu l’accord conversationnel du porteur le 26 octobre 2026. Cet accord ne vaut pas publication ni validation de l’offre. Les habitudes quotidiennes et les trois prières restent suivies séparément.
 
 Les questions invitent à réfléchir ; elles ne demandent aucune saisie obligatoire ni transmission de données privées.
 
@@ -14,7 +14,7 @@ Commence avec la journée qui est devant toi. Le chapitre sur la fidélité invi
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 2 — Faire une place à l’essentiel
 
@@ -26,7 +26,7 @@ Une priorité devient visible dans la manière d’utiliser son temps. Avant de 
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 1, pages imprimées 9–10 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 3 — Préparer son rendez-vous de prière
 
@@ -38,7 +38,7 @@ Le livre présente la prière comme une relation qui accompagne les décisions o
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 144–145 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 4 — Lire pour comprendre
 
@@ -50,7 +50,7 @@ Accorde une attention réelle à ce que tu lis. Le chapitre sur le discernement 
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 144–145 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 5 — Honorer une petite responsabilité
 
@@ -62,7 +62,7 @@ Le livre illustre la fidélité par des gestes ordinaires : une responsabilité 
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 6 — Prendre soin de son rythme
 
@@ -74,7 +74,7 @@ La fidélité se pratique à partir de ce qui t’est confié et de tes possibil
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 7 — Relire une première semaine
 
@@ -86,7 +86,7 @@ Prends un moment pour relire tes premiers jours. Repère un geste que tu as pu r
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 8 — Relier prière et action
 
@@ -98,7 +98,7 @@ Le chapitre sur le travail rapproche la prière de l’action. Présente ta jour
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 3, pages imprimées 58–59 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 9 — Apprendre pour mieux servir
 
@@ -110,7 +110,7 @@ La lecture professionnelle est un rendez-vous pour apprendre quelque chose d’u
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 3, pages imprimées 58–59 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 10 — Tenir une parole donnée
 
@@ -122,7 +122,7 @@ Parmi les exemples de fidélité, le livre place la parole donnée. Pense à un 
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 11 — Prendre soin de ce qui est confié
 
@@ -134,7 +134,7 @@ L’exemple de Joseph met en lumière le soin apporté à ce qui appartient à a
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 119–120 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 12 — Faire une chose avec attention
 
@@ -146,7 +146,7 @@ Le travail dont parle le livre appelle un engagement concret. Choisis une étape
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 3, pages imprimées 58–59 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 13 — Apprendre sans se comparer
 
@@ -158,7 +158,7 @@ La lecture de la parabole des talents proposée dans le livre souligne des capac
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 14 — Faire le point sur son organisation
 
@@ -170,7 +170,7 @@ Relis les rendez-vous de cette deuxième semaine. Certaines difficultés viennen
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 15 — Reconnaître ce qui est déjà là
 
@@ -182,7 +182,7 @@ Le chapitre sur l’argent distingue la possession de l’attachement. Pour ta g
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 4, pages imprimées 79–80 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 16 — Observer une habitude de dépense
 
@@ -194,7 +194,7 @@ Le livre propose d’observer ses dépenses pour mieux comprendre ses habitudes.
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 128 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 17 — Réfléchir à sa générosité
 
@@ -206,7 +206,7 @@ Le chapitre sur la dîme et l’offrande ouvre une réflexion sur la place du do
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 2, pages imprimées 38–39 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 18 — Choisir avec plus de liberté
 
@@ -218,7 +218,7 @@ L’argent peut servir des besoins et des projets ; le livre invite aussi à exa
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 4, pages imprimées 79–80 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 19 — Voir un besoin proche
 
@@ -230,7 +230,7 @@ Le chapitre sur l’aide aux personnes vulnérables ramène l’attention vers d
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 5, pages imprimées 100–101 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 20 — Servir avec discrétion
 
@@ -242,7 +242,7 @@ Après avoir reconnu un besoin, réfléchis à une aide réellement adaptée à 
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 5, pages imprimées 100–101 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 21 — Relire gratitude et attention aux autres
 
@@ -254,7 +254,7 @@ Relis les derniers jours : ta manière de reconnaître ce que tu reçois, de reg
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 4, pages imprimées 79–80 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 22 — Ralentir avant de décider
 
@@ -266,7 +266,7 @@ Le dernier chapitre décrit la pression des décisions prises dans l’urgence. 
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 134–135 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 23 — Écouter avec attention
 
@@ -278,7 +278,7 @@ Pendant ton temps d’écoute, cherche à comprendre le message et sa relation a
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 144–145 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 24 — Ne pas confondre vitesse et fidélité
 
@@ -290,7 +290,7 @@ Une décision rapide n’est pas toujours une décision mieux comprise. Regarde 
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 134–135 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 25 — Préparer sa participation au culte
 
@@ -302,7 +302,7 @@ Le module prévoit trois participations hebdomadaires au culte, avec des jours e
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 26 — Reprendre après un rendez-vous manqué
 
@@ -314,7 +314,7 @@ Un rendez-vous manqué mérite une réponse concrète plutôt qu’un effacement
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 27 — Reconnaître un besoin d’aide
 
@@ -326,7 +326,7 @@ La pratique régulière peut révéler des obstacles que l’on n’avait pas an
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 28 — Relire quatre semaines
 
@@ -338,7 +338,7 @@ Prends une vue d’ensemble de ces quatre semaines. Repère les rendez-vous deve
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 29 — Préparer la continuité
 
@@ -350,7 +350,7 @@ Reviens à tes priorités et aux habitudes qui les rendent concrètes. Choisis c
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 1, pages imprimées 9–10 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
 
 ## Jour 30 — Faire un bilan honnête et paisible
 
@@ -362,4 +362,4 @@ Relis le chemin parcouru pendant ces trente jours. Reconnais une action répét�
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 6, pages imprimées 117–118 ; cahier Habitudes & Défis, sections 3–5 et 10–13.
 
-Statut : à relire.
+Statut : texte français approuvé par accord conversationnel du 26 octobre 2026 ; non publié.
