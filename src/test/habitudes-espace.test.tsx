@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const tables: Record<string, unknown[]> = {};
+let erreurRegistre=false;
 const appels: { etat: string; id: string }[] = [];
 let reponse: (etat: string) => { data: unknown; error: unknown } = () => ({ data: null, error: null });
 function builder(table: string) {
@@ -10,7 +11,7 @@ function builder(table: string) {
   const b: Record<string, unknown> = {};
   for (const m of ['select', 'eq', 'neq', 'in', 'order', 'limit']) b[m] = () => b;
   b['maybeSingle'] = () => Promise.resolve({ data: rows()[0] ?? null, error: null });
-  b['then'] = (ok: (v: unknown) => unknown, ko?: (e: unknown) => unknown) => Promise.resolve({ data: rows(), error: null }).then(ok, ko);
+  b['then'] = (ok: (v: unknown) => unknown, ko?: (e: unknown) => unknown) => Promise.resolve({ data: rows(), error: table==='hd_programme_links'&&erreurRegistre?new Error('registre indisponible'):null }).then(ok, ko);
   return b;
 }
 vi.mock('@/lib/supabase', () => ({
@@ -31,7 +32,7 @@ import { Espace } from '@/routes/espace';
 const eid='10000000-0000-4000-8000-000000000002';
 const aid=(n:number)=>`20000000-0000-4000-8000-00000000000${n}`;
 beforeEach(()=>{
- vi.stubEnv('VITE_HABITUDES_DEFIS','true');vi.useFakeTimers({toFake:['Date']});vi.setSystemTime(new Date('2026-10-25T12:00:00Z'));sessionStorage.clear();appels.length=0;
+ vi.stubEnv('VITE_HABITUDES_DEFIS','true');vi.useFakeTimers({toFake:['Date']});vi.setSystemTime(new Date('2026-10-25T12:00:00Z'));sessionStorage.clear();localStorage.clear();erreurRegistre=false;appels.length=0;
  for(const k of Object.keys(tables))delete tables[k];
  tables.participants=[{prenom:'RECETTE'}];tables.programmes=[{programme_id:'HD_FICTIF',nom:'Habitudes & Défis',duree_jours:180}];
  tables.enrollments=[{enrollment_id:eid,programme_id:'HD_FICTIF',version:1,langue:'fr',date_debut:'2026-10-25',etat:'active'}];
@@ -40,7 +41,7 @@ beforeEach(()=>{
  tables.hd_programme_links=[{programme_id:'HD_FICTIF',version:1,langue:'fr'}];tables.activity_state=[];
  reponse=(etat)=>({data:{event_id:'30000000-0000-4000-8000-000000000001',etat,aide_demandee:false,repetition:false},error:null});
 });
-afterEach(()=>{cleanup();vi.useRealTimers();vi.restoreAllMocks();vi.unstubAllEnvs();});
+afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();vi.restoreAllMocks();vi.unstubAllEnvs();});
 it('la route rend trois déclarations et actualise seulement la prière déclarée',async()=>{
  render(<MemoryRouter><Espace/></MemoryRouter>);const boutons=await screen.findAllByRole('button',{name:'J’ai réalisé cette activité'});expect(boutons).toHaveLength(3);fireEvent.click(boutons[0]!);
  await screen.findByText('Réalisée · Synchronisée');expect(screen.getAllByText('Pas encore enregistrée')).toHaveLength(2);expect(appels).toHaveLength(1);
@@ -73,4 +74,21 @@ it('ouvre la journée selon la préférence du participant plutôt que Kinshasa'
  (tables.enrollments![0] as Record<string,unknown>).date_debut='2026-10-26';
  render(<MemoryRouter><Espace/></MemoryRouter>);expect(await screen.findAllByRole('button',{name:'J’ai réalisé cette activité'})).toHaveLength(3);
  expect(screen.getByRole('combobox',{name:'Jour du parcours'})).toHaveValue('1');
+});
+
+const cleCache='seneve:espace:v1:10000000-0000-4000-8000-000000000001';
+it('exclut les contenus HD du cache quand leur interface est désactivée',async()=>{
+ vi.stubEnv('VITE_HABITUDES_DEFIS','false');localStorage.setItem(cleCache,'ancienne copie');
+ render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('button',{name:'Se déconnecter'});
+ expect(localStorage.getItem(cleCache)).toBeNull();expect(screen.queryByRole('heading',{name:'Mes activités du jour'})).toBeNull();
+});
+it('reste accessible sans copie si le registre est indisponible et le module désactivé',async()=>{
+ vi.stubEnv('VITE_HABITUDES_DEFIS','false');erreurRegistre=true;localStorage.setItem(cleCache,'ancienne copie');
+ render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('button',{name:'Se déconnecter'});
+ expect(localStorage.getItem(cleCache)).toBeNull();expect(appels).toHaveLength(0);
+});
+it('conserve la copie du parcours ordinaire après vérification sans correspondance HD',async()=>{
+ vi.stubEnv('VITE_HABITUDES_DEFIS','false');tables.hd_programme_links=[];
+ render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('button',{name:'Se déconnecter'});
+ expect(JSON.parse(localStorage.getItem(cleCache)!).donnees.parcours).toHaveLength(1);
 });
