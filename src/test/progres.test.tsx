@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -93,7 +93,7 @@ describe('page Mes progrès', () => {
     tables['participants'] = [{ langue: 'en' }]; tables['enrollments'] = [];
     render(<MemoryRouter initialEntries={['/progres']}><Progres /></MemoryRouter>);
     expect(await screen.findByRole('heading', { name: 'My journey' })).toBeInTheDocument();
-    expect(document.documentElement.lang).toBe('en');
+    await waitFor(() => expect(document.documentElement.lang).toBe('en'));
   });
 
   it('un choix explicite anglais traduit aussi le bilan hebdomadaire d’un parcours français', async () => {
