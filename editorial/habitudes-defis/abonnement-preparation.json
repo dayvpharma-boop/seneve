@@ -1,0 +1,24 @@
+{
+  "statut": "preparation_non_publiable",
+  "programme": "Habitudes & Défis",
+  "programme_id": null,
+  "version": null,
+  "mois_concernes": [2, 3, 4, 5, 6],
+  "prix_mensuel": {"montant": null, "devise": null},
+  "definition_mois_payant": null,
+  "renouvellement": null,
+  "conditions_annulation": null,
+  "conditions_remboursement": null,
+  "prestataire": null,
+  "produit_paiement_id": null,
+  "lien_achat": null,
+  "coach": {
+    "inclus": true,
+    "condition": "periode_payante_active_et_paiement_confirme",
+    "quota_valide": null,
+    "preuve_decision": "Précision du porteur le 26 octobre 2026 : sans coach pendant les 30 jours gratuits, accès au coach dans les mois d’abonnement suivants."
+  },
+  "ouverture_apres_essai": "confirmation_et_paiement_requis_aucun_debit_automatique_presume",
+  "historique": "conserve_sans_remise_a_zero",
+  "validation": {"statut": "a_completer", "relecteur": null, "date": null, "preuve": null}
+}
