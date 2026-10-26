@@ -38,7 +38,7 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
    <fieldset disabled={occupe||attente||refus}><legend>{l('Mes horaires','My schedule')} ({c.fuseau})</legend>
     {planning.map((h,i)=><details key={h.habit_key}><summary>{h.libelle}</summary>{h.creneaux.map((s,k)=><label className="hd-horaire-creneau" key={s.creneau_id}>{h.libelle} — {s.jours_iso.map(j=>jours[j-1]).join(', ')}<input type="time" required value={s.heure_locale} onChange={e=>setPlanning(p=>p.map((x,n)=>n===i?{...x,creneaux:x.creneaux.map((t,m)=>m===k?{...t,heure_locale:e.target.value}:t)}:x))}/></label>)}</details>)}
     <p>{l('Ces horaires n’activent aucun rappel. Tu pourras ensuite adapter les jours et les créneaux dans tes réglages.','These times do not enable reminders. You can later adjust days and time slots in settings.')}</p>
-    <label><input type="checkbox" checked={accord} onChange={e=>setAccord(e.target.checked)}/>{l('Je confirme mon inscription aux 30 jours gratuits à partir de maintenant.','I confirm my enrollment in the 30 free days starting now.')}</label>
+    <label className="hd-inscription-accord"><input type="checkbox" checked={accord} onChange={e=>setAccord(e.target.checked)}/><span>{l('Je confirme mon inscription aux 30 jours gratuits à partir de maintenant.','I confirm my enrollment in the 30 free days starting now.')}</span></label>
    </fieldset>
    {erreur&&<p role="alert">{erreur}</p>}
    <button type="submit" className="oa-primary" disabled={!accord||occupe||refus}>{occupe?l('Vérification…','Checking…'):attente?l('Vérifier mon inscription','Verify my enrollment'):l('Commencer mes 30 jours gratuits','Start my 30 free days')}</button>

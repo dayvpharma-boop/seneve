@@ -1,0 +1,17 @@
+// Page de recette visuelle sans réseau, sans compte et sans donnée réelle.
+// Usage : node scripts/recette/habitudes-visuel.mjs /dossier/temporaire
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {build} from 'esbuild';
+const racine=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+const sortie=path.resolve(process.argv[2]);await fs.mkdir(sortie,{recursive:true});
+const entry=`import React from 'react';import {createRoot} from 'react-dom/client';import {InscriptionHabitudes} from './src/components/InscriptionHabitudes';import {rythmeProposeHabitudes} from './src/lib/habitudes-rythme-propose';
+const configuration={compteId:'RECETTE_VISUELLE',programmeId:'RECETTE',version:1,langue:'fr',offreId:'RECETTE',fuseau:'Africa/Kinshasa',planning:rythmeProposeHabitudes.map(h=>({habit_key:h.habit_key,libelle:h.libelle,creneaux:[{creneau_id:'principal',heure_locale:h.heure_proposee.slice(0,5),jours_iso:[...h.jours_iso]}]}))};
+createRoot(document.getElementById('root')).render(<main className="rn-page"><div className="rn-contenu"><p>RECETTE VISUELLE · données fictives · aucun enregistrement</p><h1>Habitudes & Défis</h1><InscriptionHabitudes configuration={configuration}/></div></main>);`;
+const result=await build({stdin:{contents:entry,resolveDir:racine,loader:'tsx'},absWorkingDir:racine,bundle:true,write:false,outdir:'qa',format:'iife',jsx:'automatic',alias:{'@':path.join(racine,'src')},define:{'import.meta.env.BASE_URL':'"./"','process.env.NODE_ENV':'"production"'},plugins:[{name:'transport-recette-sans-reseau',setup(b){b.onLoad({filter:/\/lib\/supabase\.ts$/},()=>({contents:`export const supabase={rpc:async()=>({data:{cree:true,existant:false,enrollment_id:'11111111-1111-4111-8111-111111111111',entitlement_id:'22222222-2222-4222-8222-222222222222',debut:'2026-10-26T08:00:00Z',fin_exclue:'2026-11-25T08:00:00Z',etat:'actif',horaires_appliques:true},error:null})};`,loader:'js'}));}}]});
+const assets=await fs.readdir(path.join(racine,'dist/assets'));const css=await fs.readFile(path.join(racine,'dist/assets',assets.find(n=>/^index-.*\.css$/.test(n))),'utf8');
+const js=result.outputFiles.find(f=>f.path.endsWith('.js')).text;const composantCss=result.outputFiles.find(f=>f.path.endsWith('.css'))?.text??'';
+await fs.writeFile(path.join(sortie,'ecran.html'),`<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recette visuelle inscription</title><style>${css}\n${composantCss}</style><body><div id="root"></div><script>${js.replaceAll('</script','<\\/script')}</script></body></html>`);
+await fs.writeFile(path.join(sortie,'index.html'),`<!doctype html><html lang="fr"><meta charset="utf-8"><title>Recette 390 et 320 pixels</title><body style="background:#ddd;font:16px sans-serif"><h1>Recette visuelle — composant réel, réponses simulées</h1><p>Colonnes de 390 et 320 pixels. Aucun compte ni enregistrement.</p><div style="display:flex;gap:24px"><section><h2>390 px</h2><iframe title="Écran 390 pixels" src="ecran.html" width="390" height="900" style="border:1px solid #888"></iframe></section><section><h2>320 px</h2><iframe title="Écran 320 pixels" src="ecran.html" width="320" height="900" style="border:1px solid #888"></iframe></section></div></body></html>`);
+console.log('Page de recette visuelle créée ; aucun appel réseau applicatif.');
