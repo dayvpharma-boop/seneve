@@ -1,7 +1,9 @@
 import {useEffect,useRef,useState} from 'react';
 import {Link,useLocation,useSearchParams} from 'react-router-dom';
 import {supabase} from '@/lib/supabase';
-import {inscriptionHabitudesOuverte as habitudesActivees} from '@/lib/habitudes-configuration';
+import {habitudesActivees as moduleActive} from '@/lib/habitudes-configuration';
+/** Site réel avant ouverture : l'inscription reste « en préparation ». */
+const habitudesActivees=()=>moduleActive()&&import.meta.env.VITE_HABITUDES_INSCRIPTION!=='fermee';
 import {chargerCatalogueInscription,type CatalogueInscriptionHabitudes} from '@/lib/habitudes-catalogue-api';
 import {InscriptionHabitudes} from '@/components/InscriptionHabitudes';
 import {prenomDuCompte} from '@/lib/connexion-sociale';

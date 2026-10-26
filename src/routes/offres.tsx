@@ -1,5 +1,7 @@
 import {AccesGratuitHabitudes} from '@/components/AccesGratuitHabitudes';
-import {habitudesActivees,inscriptionHabitudesOuverte} from '@/lib/habitudes-configuration';
+import {habitudesActivees} from '@/lib/habitudes-configuration';
+/** Site réel avant ouverture : aucune entrée publique vers l'inscription HD. */
+const inscriptionHdFermee=import.meta.env.VITE_HABITUDES_INSCRIPTION==='fermee';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback,useEffect,useRef,useState,type ReactNode } from 'react';
@@ -29,7 +31,7 @@ export function Offres({mode='offres'}:{mode?:'offres'|'acces'|'paiement'}){
  const path=(p:string)=>p+(en?(p.includes('?')?'&':'?')+'lang=en':'');
  const label=(fr:string,english:string)=>en?english:fr;
  const header=<header className="oa-header"><Link to={path('/espace')} aria-label={label('Revenir à mon espace','Back to my space')}><I nom="arrow_back_ios_new" taille={20}/></Link><h1>{label('Offres & Accès','Offers & access')}</h1><Link to={path('/profil')} aria-label={label('Mon profil','My profile')}><AvatarParticipant><I nom="person" taille={20}/></AvatarParticipant></Link></header>;
- function page(children:ReactNode){return <main className="oa-page">{header}<IllustrationPage theme={mode==='paiement'?'paiement':mode==='acces'?'acces':'offres'} langue={langue} /><div className="oa-content">{mode==='offres'&&inscriptionHabitudesOuverte()&&<Link className="oa-secondary" to={path('/habitudes/inscription')}>{label('Habitudes & Défis · vérifier mes 30 jours gratuits','Habits & Challenges · check my 30 free days')}</Link>}{children}</div></main>;}
+ function page(children:ReactNode){return <main className="oa-page">{header}<IllustrationPage theme={mode==='paiement'?'paiement':mode==='acces'?'acces':'offres'} langue={langue} /><div className="oa-content">{mode==='offres'&&habitudesActivees()&&!inscriptionHdFermee&&<Link className="oa-secondary" to={path('/habitudes/inscription')}>{label('Habitudes & Défis · vérifier mes 30 jours gratuits','Habits & Challenges · check my 30 free days')}</Link>}{children}</div></main>;}
  const aide=<Link to={path('/aide')}>{label('Contacter l’aide SÉNEVÉ','Contact SÉNEVÉ support')}<I nom="arrow_forward" taille={18}/></Link>;
  const compte=<section className="oa-card"><I nom="lock"/><h2>{label('Retrouve tes offres et tes accès','Find your offers and access')}</h2><p>{label('Connecte-toi avec la même adresse e-mail que pour ton achat.','Sign in with the email address used for your purchase.')}</p><Link className="oa-primary" to={path('/connexion')}>{label('Se connecter','Sign in')}<I nom="arrow_forward"/></Link></section>;
  const etatErreur=erreur?<section role="alert" className="oa-card"><I nom="info"/><h2>{label('Vérification indisponible','Verification unavailable')}</h2><p>{erreur}</p><button onClick={()=>void actualiser()} disabled={busy}>{label('Réessayer','Try again')}</button>{aide}</section>:null;
