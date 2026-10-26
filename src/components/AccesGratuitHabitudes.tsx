@@ -31,13 +31,14 @@ export function AccesGratuitHabitudes({droit,periode,inscription,langue,fuseau}:
     <div className="w-10 h-10 rounded-full bg-hd-surface-container-low flex items-center justify-center shrink-0 text-hd-secondary"><IconeHD nom="spa" className="text-[22px]"/></div>
     <div className="flex flex-col gap-1 min-w-0">
      <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{label('La période gratuite n’ouvre aucun mois payant.','The free period does not open any paid month.')}</p>
+     <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{label('Chaque achat de l’abonnement Continuité ouvre ses contenus et le mois suivant d’Habitudes & Défis, jusqu’au mois 6.','Each Continuity purchase opens its content and the next month of Habits & Challenges, up to month 6.')}</p>
      <div className="flex items-center gap-1.5 mt-2 text-hd-secondary"><IconeHD nom="verified_user" className="text-[16px]"/><span className="font-hd-label-sm text-hd-label-sm">{label('Aucun paiement automatique','No automatic payment')}</span></div>
     </div>
    </div>
   </div>
   <div className="bg-hd-surface-container-low rounded-xl px-hd-space-md py-hd-space-sm mb-hd-space-lg flex items-center justify-between gap-2">
-   <div className="flex items-center gap-2"><IconeHD nom="payments" className="text-hd-secondary text-[20px]"/><span className="font-hd-label-md text-hd-label-md text-hd-on-surface">{label('Participation mensuelle','Monthly contribution')}</span></div>
-   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary bg-hd-surface-container-highest px-2.5 py-1 rounded-full uppercase tracking-wider">{label('Tarif à venir','Price to come')}</span>
+   <div className="flex items-center gap-2"><IconeHD nom="payments" className="text-hd-secondary text-[20px]"/><span className="font-hd-label-md text-hd-label-md text-hd-on-surface">{label('Mois 2 à 6','Months 2 to 6')}</span></div>
+   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary bg-hd-surface-container-highest px-2.5 py-1 rounded-full uppercase tracking-wider">{label('Inclus dans Continuité','Included in Continuity')}</span>
   </div>
   <div className="flex flex-col relative pl-2 mb-hd-space-lg">
    <div className="absolute left-[19px] top-4 bottom-8 w-[2px] bg-hd-outline-variant/40"/>
@@ -53,7 +54,7 @@ export function AccesGratuitHabitudes({droit,periode,inscription,langue,fuseau}:
    </div>
    {[2,3,4,5,6].map(n=><div key={n} className={`flex items-start gap-hd-space-md relative ${n<6?'pb-hd-space-lg':''}`}>
     <div className="relative z-10 w-6 h-6 rounded-full bg-hd-surface-container flex items-center justify-center shrink-0 mt-0.5"><div className="w-1.5 h-1.5 rounded-full bg-hd-outline-variant"/></div>
-    <div className="bg-hd-surface-container-low/70 rounded-xl p-hd-space-md flex-1 flex items-center justify-between"><span className="font-hd-label-sm text-hd-label-sm text-hd-tertiary uppercase tracking-wide">{label(`Mois ${n}`,`Month ${n}`)}</span><span className="font-hd-label-sm text-hd-label-sm text-hd-tertiary">{label('Conditions à venir','Terms to come')}</span></div>
+    <div className="bg-hd-surface-container-low/70 rounded-xl p-hd-space-md flex-1 flex items-center justify-between"><span className="font-hd-label-sm text-hd-label-sm text-hd-tertiary uppercase tracking-wide">{label(`Mois ${n}`,`Month ${n}`)}</span><span className="font-hd-label-sm text-hd-label-sm text-hd-tertiary">{label('Avec Continuité','With Continuity')}</span></div>
    </div>)}
   </div>
   <footer className="flex flex-col items-center gap-hd-space-md pt-hd-space-sm text-center">
