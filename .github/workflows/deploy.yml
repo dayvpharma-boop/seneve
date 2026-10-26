@@ -28,6 +28,27 @@ jobs:
         run: npm test
       - name: Construire le site
         run: npm run build
+      - name: Charger la version HD de test validée
+        uses: actions/checkout@v4
+        with:
+          ref: 92da48c7c5bde6c5a5f6c55ca58055f0b1a3958b
+          path: _recette-hd
+      - name: Installer la recette HD
+        working-directory: _recette-hd
+        run: npm install --no-audit --no-fund
+      - name: Vérifier la connexion et la préinscription HD
+        working-directory: _recette-hd
+        run: npx vitest run src/test/habitudes-catalogue.test.tsx src/test/habitudes-retour-connexion.test.tsx src/test/connexion.test.tsx
+      - name: Construire la recette isolée seneve-test
+        working-directory: _recette-hd
+        env:
+          VITE_SUPABASE_URL: https://rlojnuaajeubzlwofwhn.supabase.co
+          VITE_SUPABASE_KEY: sb_publishable_hKtQydTHS9enjNTXkK8eTA_1LJkDcPh
+        run: node scripts/recette/habitudes-build-test.mjs
+      - name: Joindre la recette au site
+        run: |
+          mkdir -p dist/recette-hd
+          cp -R _recette-hd/dist-recette-hd/. dist/recette-hd/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
