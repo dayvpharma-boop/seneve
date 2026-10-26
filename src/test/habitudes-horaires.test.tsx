@@ -38,3 +38,6 @@ it('une double soumission en cours ne lance qu’une demande',async()=>{
  fireEvent.submit(form);fireEvent.submit(form);expect(mock.appels).toHaveLength(1);const a=mock.appels[0]!;
  terminer({data:{revision:a.p_client_event_id,effectif_du:a.p_effectif_du,repetition:false},error:null});await screen.findByText('Horaires enregistrés pour le lendemain.');
 });
+it('refuse deux créneaux de culte identiques avant tout enregistrement',async()=>{
+ await ouvrir();fireEvent.click(screen.getByLabelText('Ven'));fireEvent.click(screen.getByRole('button',{name:'Ajouter un créneau'}));fireEvent.change(screen.getByLabelText('Heure du créneau 2'),{target:{value:'18:30'}});fireEvent.click(screen.getAllByLabelText('Mer')[1]!);fireEvent.click(screen.getByRole('button',{name:'Enregistrer pour demain'}));expect(await screen.findByRole('alert')).toHaveTextContent('conserve la fréquence');expect(mock.appels).toHaveLength(0);
+});

@@ -1,5 +1,6 @@
 import {useRef,useState,type FormEvent} from 'react';
 import {inscrireHabitudesGratuit,type DemandeInscription,type PlanningInscription,type ResultatInscription} from '@/lib/habitudes-inscription-api';
+import {creneauxRespectentFrequence} from '@/lib/habitudes-creneaux';
 import './HorairesHabitudes.css';
 
 // Le parent doit fournir le catalogue autorisé par le serveur, jamais une offre de démonstration.
@@ -15,10 +16,12 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
  const [accord,setAccord]=useState(false),[occupe,setOccupe]=useState(false),[attente,setAttente]=useState(false),[erreur,setErreur]=useState(''),[resultat,setResultat]=useState<ResultatInscription|null>(null),[refus,setRefus]=useState(false);
  const verrou=useRef(false),demande=useRef<DemandeInscription|null>(null);
  const jours=en?['Mon','Tue','Wed','Thu','Fri','Sat','Sun']:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+ const frequence=(i:number)=>c.planning[i]!.creneaux.reduce((n,s)=>n+s.jours_iso.length,0);
+ function modifier(i:number,creneaux:PlanningInscription[number]['creneaux']){setAccord(false);setErreur('');setPlanning(p=>p.map((h,n)=>n===i?{...h,creneaux}:h));}
  async function soumettre(e:FormEvent){
   e.preventDefault();if(verrou.current||resultat||refus||!accord)return;
   if(!demande.current){
-   if(!planning.length||planning.some(h=>!h.creneaux.length||h.creneaux.some(s=>!/^([01]\d|2[0-3]):[0-5]\d$/.test(s.heure_locale)||!s.jours_iso.length))){setErreur(l('Vérifie les horaires avant de confirmer.','Check the schedule before confirming.'));return;}
+   if(!planning.length||planning.some((h,i)=>!creneauxRespectentFrequence(h.habit_key,h.creneaux,frequence(i)))){setErreur(l('Vérifie les jours et les heures : conserve la fréquence proposée pour chaque habitude.','Check days and times: keep the suggested frequency for each habit.'));return;}
    demande.current={p_programme_id:c.programmeId,p_version:c.version,p_langue:c.langue,p_offre_id:c.offreId,p_confirmation:true,p_horaires:planning.map(h=>({habit_key:h.habit_key,creneaux:h.creneaux.map(s=>({...s,jours_iso:[...s.jours_iso]}))}))};
   }
   verrou.current=true;setOccupe(true);setAttente(true);setErreur('');
@@ -36,8 +39,16 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
    <p>{l('Consulte tes accès pour vérifier l’état actuel du parcours.','Check your access page for the current journey status.')}</p>
   </>}<a className="oa-primary" href={`${import.meta.env.BASE_URL}acces?lang=${en?'en':'fr'}`}>{l('Consulter mes accès','View my access')}</a></div>:<form onSubmit={e=>void soumettre(e)}>
    <fieldset disabled={occupe||attente||refus}><legend>{l('Mes horaires','My schedule')} ({c.fuseau})</legend>
-    {planning.map((h,i)=><details key={h.habit_key}><summary>{h.libelle}</summary>{h.creneaux.map((s,k)=><label className="hd-horaire-creneau" key={s.creneau_id}>{h.libelle} — {s.jours_iso.map(j=>jours[j-1]).join(', ')}<input type="time" required value={s.heure_locale} onChange={e=>setPlanning(p=>p.map((x,n)=>n===i?{...x,creneaux:x.creneaux.map((t,m)=>m===k?{...t,heure_locale:e.target.value}:t)}:x))}/></label>)}</details>)}
-    <p>{l('Ces horaires n’activent aucun rappel. Tu pourras ensuite adapter les jours et les créneaux dans tes réglages.','These times do not enable reminders. You can later adjust days and time slots in settings.')}</p>
+    {planning.map((h,i)=><details key={h.habit_key}><summary>{h.libelle}</summary>
+     <p>{l(`Rendez-vous par semaine : ${frequence(i)}.`,`Weekly appointments: ${frequence(i)}.`)}</p>
+     {h.creneaux.map((s,k)=><fieldset className="hd-horaire-creneau" key={s.creneau_id}><legend>{l(`${h.libelle} — créneau ${k+1}`,`${h.libelle} — slot ${k+1}`)}</legend>
+      <label>{h.libelle} — {s.jours_iso.map(j=>jours[j-1]).join(', ')}<input type="time" required value={s.heure_locale} onChange={e=>modifier(i,h.creneaux.map((t,m)=>m===k?{...t,heure_locale:e.target.value}:t))}/></label>
+      <div className="hd-horaire-jours">{jours.map((j,n)=><label key={j}><input type="checkbox" checked={s.jours_iso.includes(n+1)} onChange={e=>modifier(i,h.creneaux.map((t,m)=>m===k?{...t,jours_iso:e.target.checked?[...t.jours_iso,n+1].sort((a,b)=>a-b):t.jours_iso.filter(v=>v!==n+1)}:t))}/>{j}</label>)}</div>
+      {h.creneaux.length>1&&<button type="button" className="oa-secondary" onClick={()=>modifier(i,h.creneaux.filter((_,n)=>n!==k))}>{l(`Retirer le créneau ${k+1}`,`Remove slot ${k+1}`)}</button>}
+     </fieldset>)}
+     {h.creneaux.length<Math.min(7,frequence(i))&&<button type="button" className="oa-secondary" onClick={()=>modifier(i,[...h.creneaux,{creneau_id:'c_'+crypto.randomUUID().replaceAll('-','').slice(0,16),heure_locale:'',jours_iso:[]}])}>{l('Ajouter un créneau','Add a time slot')}</button>}
+    </details>)}
+    <p>{l('Adapte les jours et les heures à ton rythme. Ces horaires n’activent aucun rappel.','Adjust days and times to your rhythm. These times do not enable reminders.')}</p>
     <label className="hd-inscription-accord"><input type="checkbox" checked={accord} onChange={e=>setAccord(e.target.checked)}/><span>{l('Je confirme mon inscription aux 30 jours gratuits à partir de maintenant.','I confirm my enrollment in the 30 free days starting now.')}</span></label>
    </fieldset>
    {erreur&&<p role="alert">{erreur}</p>}

@@ -1,6 +1,7 @@
 import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
 import {chargerHorairesHabitudes,enregistrerHorairesHabitudes,type ConfigurationHoraires,type CreneauPersonnel,type DemandeHoraires} from '@/lib/habitudes-horaires-api';
 import type {ModelePlanningHabitude} from '@/lib/habitudes-planning';
+import {creneauxRespectentFrequence} from '@/lib/habitudes-creneaux';
 import './HorairesHabitudes.css';
 
 export function HorairesHabitudes({enrollmentId,langue}:{enrollmentId:string;langue:string}){
@@ -26,8 +27,7 @@ function FormulaireHoraire({modele,data,langue,onEnregistre}:{modele:ModelePlann
  const jours=en?['Mon','Tue','Wed','Thu','Fri','Sat','Sun']:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
  async function soumettre(e:FormEvent){e.preventDefault();if(verrou.current)return;setErreur('');
   if(!demande.current){
-   const freq=creneaux.reduce((n,c)=>n+c.jours_iso.length,0),daily=modele.jours_iso.length===7;
-   if(freq!==modele.jours_iso.length||creneaux.some(c=>!c.jours_iso.length||!/^([01]\d|2[0-3]):[0-5]\d$/.test(c.heure_locale))||(daily&&new Set(creneaux.flatMap(c=>c.jours_iso)).size!==7)){setErreur(l('Vérifie les jours et les heures : conserve la fréquence proposée pour cette habitude.','Check the days and times: keep the suggested frequency for this habit.'));return;}
+   if(!creneauxRespectentFrequence(modele.habit_key,creneaux,modele.jours_iso.length)){setErreur(l('Vérifie les jours et les heures : conserve la fréquence proposée pour cette habitude.','Check the days and times: keep the suggested frequency for this habit.'));return;}
    demande.current={p_enrollment_id:data.enrollment_id,p_habit_key:modele.habit_key,p_creneaux:creneaux.map(c=>({...c,jours_iso:[...c.jours_iso]})),p_effectif_du:data.modifications_a_partir_du,p_revision_attendue:data.revisions.find(r=>r.habit_key===modele.habit_key)?.revision??null,p_client_event_id:crypto.randomUUID()};setEnAttente(true);
   }
   verrou.current=true;setOccupe(true);
