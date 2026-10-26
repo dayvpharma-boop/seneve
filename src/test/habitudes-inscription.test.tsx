@@ -33,7 +33,7 @@ it('un autre compte ne récupère ni la confirmation ni la demande du premier co
  const r=ouvrir();confirmer();await screen.findByText(/Inscription confirmée/);r.rerender(<InscriptionHabitudes configuration={{...config,compteId:'compte-b'}}/>);expect(screen.queryByText(/Inscription confirmée/)).toBeNull();expect(screen.getByRole('checkbox')).not.toBeChecked();expect(screen.getByRole('button')).toBeDisabled();
 });
 it('un droit révoqué retrouvé invite à consulter les accès sans annoncer sa réactivation',async()=>{
- mock.rpc.mockResolvedValue({data:{...confirmation,cree:false,existant:true,horaires_appliques:false,etat:'revoque'},error:null});ouvrir();confirmer();await screen.findByText(/Ses dates et ses horaires ont été conservés/);expect(screen.queryByText(/Inscription confirmée/)).toBeNull();expect(screen.getByRole('link',{name:'Consulter mes accès'})).toHaveAttribute('href','/offres?lang=fr');
+ mock.rpc.mockResolvedValue({data:{...confirmation,cree:false,existant:true,horaires_appliques:false,etat:'revoque'},error:null});ouvrir();confirmer();await screen.findByText(/Ses dates et ses horaires ont été conservés/);expect(screen.queryByText(/Inscription confirmée/)).toBeNull();expect(screen.getByRole('link',{name:'Consulter mes accès'})).toHaveAttribute('href',`${import.meta.env.BASE_URL}acces?lang=fr`);
 });
 it('traduit la confirmation et les explications en anglais',()=>{
  ouvrir({...config,langue:'en'});expect(screen.getByRole('button',{name:'Start my 30 free days'})).toBeDisabled();expect(screen.getByText(/No automatic payment follows/)).toBeVisible();

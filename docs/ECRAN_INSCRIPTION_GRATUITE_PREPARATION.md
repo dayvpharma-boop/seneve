@@ -1,5 +1,7 @@
 # Écran d’inscription aux 30 jours gratuits — préparation
 
+État historique de la première étape. Le montage de la route et le catalogue TEST ont été réalisés ensuite : voir `CATALOGUE_INSCRIPTION_GRATUITE_TEST.md` pour l’état actuel. L’ouverture publique reste non effectuée.
+
 Le composant `InscriptionHabitudes` et son adaptateur RPC sont préparés sur la branche de développement. Ils ne sont montés dans aucune route et ne sont pas publiés sur GitHub Pages. Le serveur TEST dispose déjà de `hd_start_free` ; aucune migration supplémentaire, aucun compte ni aucune inscription réelle n’a été créé pendant cette étape.
 
 Le formulaire présente les horaires et leur fuseau, permet de modifier les heures, puis exige une case de confirmation explicite. Le serveur reste responsable de la disponibilité de l’offre, des fréquences, des droits, du participant authentifié et de l’unicité de la période gratuite. Le navigateur ne transmet pas d’identifiant de participant. Le texte annonce 30 jours dès confirmation et aucun paiement automatique.
