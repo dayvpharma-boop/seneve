@@ -57,3 +57,26 @@ it('présente l’objectif et le lien de confidentialité avant toute inscriptio
 it('conserve le lien de confidentialité en anglais',async()=>{
  mock.actif=false;render(<MemoryRouter initialEntries={['/habitudes/inscription?lang=en']}><HabitudesInscription/></MemoryRouter>);expect(screen.getByRole('link',{name:'Understand my data privacy'})).toHaveAttribute('href','/confidentialite?lang=en');expect(mock.rpc).not.toHaveBeenCalled();
 });
+
+it.each(['fr','en'])('un lien de confirmation en erreur affiche une reprise sûre en %s sans consulter le compte',async(langue)=>{
+ render(<MemoryRouter initialEntries={[`/habitudes/inscription?lang=${langue}#error=access_denied&error_code=otp_expired&error_description=SECRET_DU_LIEN`]}><HabitudesInscription/></MemoryRouter>);
+ expect(screen.getByRole('alert')).toHaveTextContent(langue==='en'?'This link could not confirm':'Ce lien n’a pas permis');
+ expect(screen.getByRole('link',{name:langue==='en'?'Sign in again':'Se reconnecter'})).toHaveAttribute('href',`/connexion?lang=${langue}&mode=signin&suite=habitudes`);
+ expect(screen.queryByText(/SECRET_DU_LIEN/)).toBeNull();expect(mock.getSession).not.toHaveBeenCalled();expect(mock.profil).not.toHaveBeenCalled();expect(mock.rpc).not.toHaveBeenCalled();
+});
+it('une erreur dans la requête du retour est également bloquée',()=>{
+ render(<MemoryRouter initialEntries={['/habitudes/inscription?error_code=otp_expired']}><HabitudesInscription/></MemoryRouter>);
+ expect(screen.getByRole('alert')).toBeVisible();expect(mock.getSession).not.toHaveBeenCalled();expect(mock.rpc).not.toHaveBeenCalled();
+});
+it('une session arrivée après ouverture du nouvel onglet permet de reprendre sans démarrer l’essai',async()=>{
+ mock.getSession.mockResolvedValue({data:{session:null},error:null});ouvrir();await screen.findByRole('link',{name:'Se connecter'});
+ act(()=>mock.listener!('SIGNED_IN',{user:{id:'compte-a'}}));await screen.findByText('Parcours fictif');
+ expect(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'})).toBeDisabled();
+ expect(mock.profil).toHaveBeenCalledTimes(1);expect(mock.rpc).toHaveBeenCalledTimes(1);expect(mock.rpc).toHaveBeenCalledWith('hd_free_catalogue',{p_langue:'fr'});
+});
+it('une ancienne lecture de session anonyme ne remplace pas la session confirmée',async()=>{
+ let finir!:(v:unknown)=>void;mock.getSession.mockImplementationOnce(()=>new Promise(r=>{finir=r;}));ouvrir();
+ act(()=>mock.listener!('SIGNED_IN',{user:{id:'compte-a'}}));await screen.findByText('Parcours fictif');
+ await act(async()=>{finir({data:{session:null},error:null});});
+ expect(screen.getByText('Parcours fictif')).toBeVisible();expect(screen.queryByRole('link',{name:'Se connecter'})).toBeNull();expect(mock.rpc).toHaveBeenCalledTimes(1);
+});

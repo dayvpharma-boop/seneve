@@ -29,3 +29,12 @@ Ces adresses et le modèle d’e-mail n’ont pas été modifiés ni vérifiés 
 
 
 Ces changements sont préparés sur la branche de développement. PROD et la publication GitHub Pages restent inchangées.
+
+
+## Complément — échec du lien et arrivée différée de la session
+
+La route de préinscription détecte les paramètres d’erreur du retour (`error`, `error_code`, `error_description`) dans la requête ou le fragment. Elle affiche un message fixe traduit et un lien vers la connexion HD dans la langue choisie. Le contenu brut de l’erreur n’est pas affiché. Aucun contrôle de session, profil ou catalogue n’est lancé depuis cet écran d’erreur, même si un compte est déjà connecté. Le lien de reprise ne conserve ni fragment ni paramètres de retour inconnus.
+
+Cinq vérifications supplémentaires couvrent les erreurs FR/EN, l’erreur dans la requête, une session reçue après l’ouverture anonyme de la page et une ancienne réponse anonyme après une confirmation plus récente. Les deux derniers scénarios utilisent le listener existant, sans modification de son comportement : seule la consultation du catalogue est effectuée et le bouton de démarrage reste désactivé sans confirmation explicite.
+
+Validation : 43 tests ciblés réussis (20 catalogue, 12 retour connexion, 11 connexion générale), TypeScript et compilation Vite avec module activé réussis. Le transport Auth reste simulé ; ces résultats ne prouvent ni l’envoi réel ni l’autorisation serveur des destinations. Le connecteur disponible ne fournit pas l’administration des URL Auth : la vérification du tableau de bord et la recette réelle restent ouvertes. Aucun utilisateur, droit, paiement, réglage Supabase ou déploiement public modifié par cette étape.

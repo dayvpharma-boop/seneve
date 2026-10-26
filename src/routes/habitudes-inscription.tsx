@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-import {Link,useSearchParams} from 'react-router-dom';
+import {Link,useLocation,useSearchParams} from 'react-router-dom';
 import {supabase} from '@/lib/supabase';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {chargerCatalogueInscription,type CatalogueInscriptionHabitudes} from '@/lib/habitudes-catalogue-api';
@@ -7,10 +7,12 @@ import {InscriptionHabitudes} from '@/components/InscriptionHabitudes';
 import {prenomDuCompte} from '@/lib/connexion-sociale';
 
 export function HabitudesInscription(){
- const [q]=useSearchParams(),langue=q.get('lang')==='en'?'en':'fr';
+ const [q]=useSearchParams(),location=useLocation(),langue=q.get('lang')==='en'?'en':'fr';
+ const fragment=new URLSearchParams(location.hash.replace(/^#/,''));
+ const erreurConfirmation=['error','error_code','error_description'].some(cle=>q.has(cle)||fragment.has(cle));
  const l=(fr:string,en:string)=>langue==='en'?en:fr;
  useEffect(()=>{document.title=l('Inscription · Habitudes & Défis','Enrollment · Habits & Challenges')+' — SÉNEVÉ';document.documentElement.lang=langue;},[langue]);
- return <main className="rn-page"><div className="rn-contenu"><Link to={`/offres?lang=${langue}`}>{l('Revenir aux offres','Back to offers')}</Link><h1>{l('Habitudes & Défis','Habits & Challenges')}</h1><p>{l('Un parcours pour mettre tes habitudes en pratique, pas à pas, avec des horaires adaptés à ton quotidien. Tu déclares toi-même les actions réalisées.','A journey to put your habits into practice, step by step, with a schedule adapted to your daily life. You report completed actions yourself.')}</p><Link className="oa-secondary" to={`/confidentialite?lang=${langue}`}>{l('Comprendre la confidentialité de mes données','Understand my data privacy')}</Link>{habitudesActivees()?<CatalogueConnecte langue={langue}/>:<p>{l('L’inscription à ce parcours est en préparation.','Enrollment in this journey is being prepared.')}</p>}</div></main>;
+ return <main className="rn-page"><div className="rn-contenu"><Link to={`/offres?lang=${langue}`}>{l('Revenir aux offres','Back to offers')}</Link><h1>{l('Habitudes & Défis','Habits & Challenges')}</h1><p>{l('Un parcours pour mettre tes habitudes en pratique, pas à pas, avec des horaires adaptés à ton quotidien. Tu déclares toi-même les actions réalisées.','A journey to put your habits into practice, step by step, with a schedule adapted to your daily life. You report completed actions yourself.')}</p><Link className="oa-secondary" to={`/confidentialite?lang=${langue}`}>{l('Comprendre la confidentialité de mes données','Understand my data privacy')}</Link>{habitudesActivees()?(erreurConfirmation?<section className="rn-section"><p role="alert">{l('Ce lien n’a pas permis de confirmer ta connexion. Il peut avoir expiré ou déjà été utilisé. Reconnecte-toi pour reprendre ton inscription.','This link could not confirm your sign-in. It may have expired or already been used. Sign in again to resume enrollment.')}</p><Link className="oa-primary" to={`/connexion?lang=${langue}&mode=signin&suite=habitudes`}>{l('Se reconnecter','Sign in again')}</Link></section>:<CatalogueConnecte langue={langue}/>):<p>{l('L’inscription à ce parcours est en préparation.','Enrollment in this journey is being prepared.')}</p>}</div></main>;
 }
 function CatalogueConnecte({langue}:{langue:string}){
  const l=(fr:string,en:string)=>langue==='en'?en:fr;
