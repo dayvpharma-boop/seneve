@@ -1,6 +1,7 @@
 import {useRef,useState,type FormEvent} from 'react';
 import {inscrireHabitudesGratuit,type DemandeInscription,type PlanningInscription,type ResultatInscription} from '@/lib/habitudes-inscription-api';
 import {creneauxRespectentFrequence} from '@/lib/habitudes-creneaux';
+import {SemaineAvantInscription} from '@/components/SemaineAvantInscription';
 import './HorairesHabitudes.css';
 
 // Le parent doit fournir le catalogue autorisé par le serveur, jamais une offre de démonstration.
@@ -49,6 +50,7 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
      {h.creneaux.length<Math.min(7,frequence(i))&&<button type="button" className="oa-secondary" onClick={()=>modifier(i,[...h.creneaux,{creneau_id:'c_'+crypto.randomUUID().replaceAll('-','').slice(0,16),heure_locale:'',jours_iso:[]}])}>{l('Ajouter un créneau','Add a time slot')}</button>}
     </details>)}
     <p>{l('Adapte les jours et les heures à ton rythme. Ces horaires n’activent aucun rappel.','Adjust days and times to your rhythm. These times do not enable reminders.')}</p>
+    <SemaineAvantInscription planning={planning} frequences={Object.fromEntries(c.planning.map((h,i)=>[h.habit_key,frequence(i)]))} fuseau={c.fuseau} langue={c.langue}/>
     <label className="hd-inscription-accord"><input type="checkbox" checked={accord} onChange={e=>setAccord(e.target.checked)}/><span>{l('Je confirme mon inscription aux 30 jours gratuits à partir de maintenant.','I confirm my enrollment in the 30 free days starting now.')}</span></label>
    </fieldset>
    {erreur&&<p role="alert">{erreur}</p>}
