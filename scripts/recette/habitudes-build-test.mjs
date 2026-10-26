@@ -15,7 +15,7 @@ if(resultat.status!==0)throw new Error('Construction TEST échouée.');
 const sortie=path.join(racine,'dist-recette-hd');
 const html=await fs.readFile(path.join(sortie,'recette-hd.html'),'utf8');
 await fs.rename(path.join(sortie,'recette-hd.html'),path.join(sortie,'index.html'));
-for(const route of ['404','connexion','habitudes/inscription','confidentialite']){
+for(const route of ['404','connexion','habitudes/inscription','confidentialite','acces']){
  const cible=path.join(sortie,route+'.html');await fs.mkdir(path.dirname(cible),{recursive:true});await fs.writeFile(cible,html);
 }
 // Cette entrée n'enregistre aucun service worker. Écarter celui copié depuis public/.
@@ -28,5 +28,5 @@ for(const fichier of await fs.readdir(path.join(sortie,'assets'))){
  if(js.includes('rlojnuaajeubzlwofwhn'))testTrouve=true;
 }
 if(!testTrouve)throw new Error('Le projet TEST est absent de la sortie.');
-await fs.writeFile(path.join(sortie,'recette-hd.json'),JSON.stringify({environnement:'seneve-test',project_id:'rlojnuaajeubzlwofwhn',base,perimetre:['connexion','preinscription'],publie:false,email_envoye:false},null,2));
+await fs.writeFile(path.join(sortie,'recette-hd.json'),JSON.stringify({environnement:'seneve-test',project_id:'rlojnuaajeubzlwofwhn',base,perimetre:['connexion','preinscription','lecture_acces'],publie:false,email_envoye:false},null,2));
 console.log('Version TEST construite dans dist-recette-hd. Aucune publication ni aucun e-mail.');

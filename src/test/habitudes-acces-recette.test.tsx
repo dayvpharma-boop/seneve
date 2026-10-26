@@ -1,0 +1,29 @@
+import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
+import {MemoryRouter} from 'react-router-dom';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
+const mock=vi.hoisted(()=>({charger:vi.fn(),listener:null as null|(()=>void)}));
+vi.mock('@/lib/supabase',()=>({supabase:{auth:{onAuthStateChange:(f:()=>void)=>{mock.listener=f;return{data:{subscription:{unsubscribe:vi.fn()}}};}}}}));
+vi.mock('@/lib/offres-acces',async(importOriginal)=>({...await importOriginal<typeof import('@/lib/offres-acces')>(),chargerCatalogueAcces:mock.charger}));
+import {AccesRecetteHabitudes} from '@/components/AccesRecetteHabitudes';
+const debut=new Date(Date.now()-3600000).toISOString(),fin=new Date(Date.parse(debut)+720*3600000).toISOString();
+const catalogue={connecte:true,offres:[],programmes:[],publies:[],droits:[{entitlement_id:'D1',offre_id:'O1',etat:'actif',debut,fin}],inscriptions:[{enrollment_id:'E1',entitlement_id:'D1',programme_id:'HD_RECETTE_INSCRIPTION_FR_20261026',date_debut:'2026-10-26',etat:'active'}],periodesGratuitesHabitudes:[{enrollment_id:'E1',entitlement_id:'D1',debut,fin_exclue:fin}],fuseauHabitudes:'Africa/Kinshasa'};
+beforeEach(()=>{mock.listener=null;mock.charger.mockReset();mock.charger.mockResolvedValue(catalogue);});afterEach(cleanup);
+function ouvrir(en=false){return render(<MemoryRouter initialEntries={[`/acces?lang=${en?'en':'fr'}`]}><AccesRecetteHabitudes/></MemoryRouter>);}
+it('affiche les droits existants et leur fin sans proposer une nouvelle inscription ou un achat',async()=>{
+ ouvrir();await screen.findByText('Tes 30 jours de test sont en cours.');expect(screen.getByText(/Africa\/Kinshasa/)).toBeVisible();expect(screen.getByText(/ne déclenche aucun paiement automatique/)).toBeVisible();expect(screen.queryByRole('button',{name:/Commencer|Acheter/})).toBeNull();expect(screen.queryByRole('link',{name:/Continuer mes habitudes/})).toBeNull();
+});
+it('une période incohérente ne permet pas d’annoncer un accès actif',async()=>{
+ mock.charger.mockResolvedValue({...catalogue,periodesGratuitesHabitudes:[{...catalogue.periodesGratuitesHabitudes[0],entitlement_id:'AUTRE'}]});ouvrir();await screen.findByText('Ton accès doit être vérifié.');expect(screen.queryByText('Tes 30 jours de test sont en cours.')).toBeNull();
+});
+it('un droit révoqué est affiché fermé',async()=>{
+ mock.charger.mockResolvedValue({...catalogue,droits:[{...catalogue.droits[0],etat:'revoque'}]});ouvrir();await screen.findByText('Cet accès de test est fermé.');
+});
+it('demande la connexion en anglais si la session manque',async()=>{
+ mock.charger.mockResolvedValue({...catalogue,connecte:false});ouvrir(true);expect(await screen.findByRole('link',{name:'Sign in'})).toHaveAttribute('href','/connexion?mode=signin&suite=habitudes&lang=en');expect(screen.queryByText('Your 30 test days are in progress.')).toBeNull();
+});
+it('permet de réessayer une lecture échouée',async()=>{
+ mock.charger.mockRejectedValueOnce(Error('network'));ouvrir();await screen.findByRole('alert');fireEvent.click(screen.getByRole('button',{name:'Réessayer'}));await screen.findByText('Tes 30 jours de test sont en cours.');
+});
+it('retire immédiatement les anciens droits lorsque la session change',async()=>{
+ ouvrir();await screen.findByText('Tes 30 jours de test sont en cours.');mock.charger.mockResolvedValue({...catalogue,connecte:false});act(()=>mock.listener!());await screen.findByRole('link',{name:'Se connecter'});expect(screen.queryByText('Tes 30 jours de test sont en cours.')).toBeNull();
+});
