@@ -31,7 +31,7 @@ jobs:
       - name: Charger la version HD de test validée
         uses: actions/checkout@v4
         with:
-          ref: 4a376c1d7f01db14d5a716866557ba00bcaa0102
+          ref: 37da897aa9808cdcec9d8e3fea2ae6680d543416
           path: _recette-hd
       - name: Installer la recette HD
         working-directory: _recette-hd
