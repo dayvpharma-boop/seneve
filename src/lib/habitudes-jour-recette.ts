@@ -4,12 +4,20 @@ import {chargerHorairesHabitudes} from './habitudes-horaires-api';
 import {planningHabitudesPourDate} from './habitudes-planning';
 import type {EtatOccurrence,OccurrenceHabitude} from './habitudes';
 import {lignesPaginees} from './lignes-paginees';
+import {dateDuJourHabitudes,debutsMois,jourHabitudes,type DebutMois,type PeriodeHabitudes} from './habitudes-periodes';
 export type ActiviteJourRecette={occurrence:OccurrenceHabitude;consigne:string;critere:string|null;heure:string;etat?:EtatOccurrence};
-export type JourRecette={userId:string;date:string;jour:number;activites:ActiviteJourRecette[]};
+/** `mois` : mois d'accès en cours pour cette journée (le jour 31 d'un mois gratuit non renouvelé reste au mois 1). */
+export type JourRecette={userId:string;date:string;jour:number;mois?:number;activites:ActiviteJourRecette[]};
 /** Programmes HD publiés lus par cet écran : l'essai technique et le programme réel des 30 premiers jours. */
 const PROGRAMMES=['HD_RECETTE_INSCRIPTION_FR_20261026','HABITUDES_DEFIS_30J_FR_V1'],PREFIXE='RECETTE_HD_QUOTIDIEN_V1:';
 /** Six mois de 30 jours (le dernier finit le 181e jour civil). Au-delà, ou sans journée publiée : refus explicite. */
 const JOURS_MAX=181;
+/** Débuts locaux des mois de l'inscription (périodes d'accès lisibles par leur seul titulaire). */
+async function debutsDe(enrollmentId:string,dateDebut:string,fuseau:string):Promise<DebutMois[]>{
+ const r=await supabase.from('hd_access_periods').select('mois,debut,fin_exclue').eq('enrollment_id',enrollmentId);
+ if(r.error)throw Error('Périodes indisponibles');
+ return debutsMois(dateDebut,(r.data??[]) as PeriodeHabitudes[],fuseau);
+}
 /** Uniquement les UUID techniques effectivement publiés ; aucune activité inventée depuis un horaire. */
 export async function chargerJourRecette(enrollmentId:string,participantId:string,dateLocale:string):Promise<JourRecette>{
  const [session,e,horaires]=await Promise.all([supabase.auth.getSession(),supabase.from('enrollments').select('enrollment_id,participant_id,programme_id,version,langue,date_debut,etat').eq('enrollment_id',enrollmentId).single(),chargerHorairesHabitudes(enrollmentId)]);
@@ -18,7 +26,10 @@ export async function chargerJourRecette(enrollmentId:string,participantId:strin
  if(!enr||enr.participant_id!==participantId||!PROGRAMMES.includes(enr.programme_id)||enr.version!==1||enr.langue!=='fr'||enr.etat!=='active')throw Error('Inscription hors recette');
  // L'horloge du serveur fournit la journée courante ; le composant ne réutilise pas celle d'hier.
  if(horaires.date_locale!==dateLocale)throw Error('Journée à actualiser');
- const jourCivil=(Date.parse(dateLocale+'T00:00:00Z')-Date.parse(enr.date_debut+'T00:00:00Z'))/86400000+1;
+ // Jour du parcours d'après les périodes d'accès : identique au jour civil sans coupure, reprise après un retard.
+ const debuts=await debutsDe(enrollmentId,enr.date_debut,horaires.fuseau);
+ const jourCivil=jourHabitudes(enr.date_debut,debuts,dateLocale);
+ const moisEnCours=[...debuts].sort((a,b)=>b.mois-a.mois).find(x=>x.debut<=dateLocale)?.mois;
  if(!Number.isInteger(jourCivil)||jourCivil<1||jourCivil>JOURS_MAX)throw Error('Jour hors parcours');
  const c=await supabase.from('contents').select('content_id').eq('programme_id',enr.programme_id).eq('version',1).eq('langue','fr').eq('jour',jourCivil);
  if(c.error||c.data?.length!==1)throw Error('Journée non publiée');
@@ -28,7 +39,7 @@ export async function chargerJourRecette(enrollmentId:string,participantId:strin
  const ids=(a.data??[]).map(x=>x.activity_id);
  const s=ids.length?await supabase.from('activity_state').select('activity_id,etat,aide_demandee').eq('enrollment_id',enrollmentId).in('activity_id',ids):{data:[],error:null};
  if(s.error)throw Error('Lecture indisponible');
- return assemblerJourRecette(enrollmentId,participantId,dateLocale,jourCivil,session.data.session.user.id,horaires,a.data??[],s.data??[]);
+ return {...assemblerJourRecette(enrollmentId,participantId,dateLocale,jourCivil,session.data.session.user.id,horaires,a.data??[],s.data??[]),...(moisEnCours?{mois:moisEnCours}:{})};
 }
 type ActivitePubliee={activity_id:string;consigne:string;critere_realisation:string|null;note_source:string|null;obligatoire:boolean};
 type EtatPublie={activity_id:string;etat:string;aide_demandee:boolean};
@@ -69,7 +80,8 @@ export async function chargerHistoriqueRecette(enrollmentId:string,participantId
  if(session.error||!session.data.session||e.error)throw Error('Session ou inscription indisponible');
  const enr=e.data;
  if(!enr||enr.participant_id!==participantId||!PROGRAMMES.includes(enr.programme_id)||enr.version!==1||enr.langue!=='fr'||enr.etat!=='active'||horaires.date_locale!==dateLocale)throw Error('Historique non accessible');
- const raw=(Date.parse(dateLocale+'T00:00:00Z')-Date.parse(enr.date_debut+'T00:00:00Z'))/86400000+1;
+ const debuts=await debutsDe(enrollmentId,enr.date_debut,horaires.fuseau);
+ const raw=jourHabitudes(enr.date_debut,debuts,dateLocale);
  if(!Number.isInteger(raw)||raw<1)throw Error('Calendrier invalide');
  const ouverts=Math.min(JOURS_MAX,raw),premier=Math.floor((ouverts-1)/30)*30+1,attendus=ouverts-premier+1;
  const c=await supabase.from('contents').select('content_id,jour').eq('programme_id',enr.programme_id).eq('version',1).eq('langue','fr').gte('jour',premier).lte('jour',ouverts);
@@ -79,7 +91,6 @@ export async function chargerHistoriqueRecette(enrollmentId:string,participantId
  if(a.error||etats.error)throw Error('Lecture indisponible');
  const s={data:etats.data};
  return [...c.data].sort((a,b)=>a.jour-b.jour).map(contenu=>{
-  const date=new Date(enr.date_debut+'T00:00:00Z');date.setUTCDate(date.getUTCDate()+contenu.jour-1);
-  return assemblerJourRecette(enrollmentId,participantId,date.toISOString().slice(0,10),contenu.jour,session.data.session!.user.id,horaires,(a.data??[]).filter(x=>x.content_id===contenu.content_id),s.data??[]);
+  return assemblerJourRecette(enrollmentId,participantId,dateDuJourHabitudes(enr.date_debut,debuts,contenu.jour),contenu.jour,session.data.session!.user.id,horaires,(a.data??[]).filter(x=>x.content_id===contenu.content_id),s.data??[]);
  });
 }

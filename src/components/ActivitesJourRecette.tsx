@@ -35,7 +35,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  </section>;
  if(!data)return <p role="status" className="px-hd-margin py-hd-space-md font-hd-body-md text-hd-body-md text-hd-on-surface-variant">{l('Chargement des activités…','Loading activities…')}</p>;
  // Mois 2 à 6 : reprise des 30 lectures approuvées (jour 31 → lecture 1, etc.), décision du 26/10/2026.
- const mois=moisHabitudes(data.jour),jourLecture=lectureReprise(data.jour);
+ const mois=data.mois??moisHabitudes(data.jour),jourLecture=lectureReprise(data.jour);
  const texte=(en?lecturesHabitudesEn:lecturesHabitudesFr).find(x=>x.jour===jourLecture);
  // Défis approuvés en français seulement (aucune version anglaise relue).
  const defi=en?undefined:defiDuJour(jourLecture);

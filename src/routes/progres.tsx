@@ -1,5 +1,6 @@
 import {calendrierHabitudes,dureeHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
 import {lignesPaginees,parPaquets} from '@/lib/lignes-paginees';
+import {calendrierPeriodes,dateDuJourHabitudes,type PeriodeHabitudes} from '@/lib/habitudes-periodes';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {BilanHabitudes} from '@/components/BilanHabitudes';
 import {joursHabitudesLecture, type JourHabitudesLecture, type EtatLecture} from '@/lib/habitudes-lecture';
@@ -37,14 +38,18 @@ async function load(): Promise<Loaded | null> {
   const prenom = typeof p.data?.prenom === 'string' ? p.data.prenom : (typeof s.session.user.user_metadata?.prenom === 'string' ? s.session.user.user_metadata.prenom : '');
   if (!enr.length) return { prenom, actions: {}, langue, parcours: [], bilans: {}, notes, habitudes: {} };
   const progIds = [...new Set(enr.map(x => x.programme_id))];
-  const [pr, c, st, hd] = await Promise.all([
+  const [pr, c, st, hd, per] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', progIds),
     supabase.from('contents').select('content_id, programme_id, version, langue, jour, numero_message, theme').in('programme_id', progIds),
     // Lecture complète : six mois d'Habitudes & Défis dépassent la limite de 1 000 lignes d'une réponse.
     lignesPaginees<{ enrollment_id: string; activity_id: string; etat: string; aide_demandee: boolean; realisee_le: string | null }>((de, fin) => supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enr.map(x => x.enrollment_id)).order('enrollment_id').order('activity_id').range(de, fin)).then(data => ({ data, error: null }), (error: unknown) => ({ data: null, error })),
     habitudesActivees() ? supabase.from('hd_programme_links').select('programme_id, version, langue').in('programme_id',progIds) : Promise.resolve({data:[],error:null}),
+    // Périodes d'accès HD : le jour reprend où il était après un abonnement payé en retard.
+    habitudesActivees() ? supabase.from('hd_access_periods').select('enrollment_id, mois, debut, fin_exclue').in('enrollment_id', enr.map(x => x.enrollment_id)) : Promise.resolve({data:[],error:null}),
   ]);
-  for (const r of [pr, c, st, hd]) if (r.error) throw r.error;
+  for (const r of [pr, c, st, hd, per]) if (r.error) throw r.error;
+  const periodes: Record<string, PeriodeHabitudes[]> = {};
+  for (const x of (per.data ?? []) as (PeriodeHabitudes & {enrollment_id: string})[]) (periodes[x.enrollment_id] ??= []).push(x);
   const progs = (pr.data ?? []) as { programme_id: string; nom: string; duree_jours: number | null }[];
   const contents = (c.data ?? []) as { content_id: string; programme_id: string; version: number | string; langue: string; jour: number; numero_message: number; theme: string }[];
   const ids = contents.map(x => x.content_id);
@@ -55,7 +60,10 @@ async function load(): Promise<Loaded | null> {
     const dureeProgramme = prog?.duree_jours ?? 7;
     const estHd = (hd.data ?? []).some((h: {programme_id: string; version: number | string; langue: string}) => h.programme_id === x.programme_id && String(h.version) === String(x.version) && h.langue === x.langue);
     // Habitudes & Défis : jusqu'à la fin prévue par le serveur (mois payés) ; le nom garde la durée du programme.
-    const duree = estHd ? dureeHabitudes(x.date_debut, x.date_fin_prevue, dureeProgramme) : dureeProgramme;
+    const fz = (() => { try { return fuseauHabitudes(p.data ?? {}); } catch { return 'Africa/Kinshasa'; } })();
+    const duree = !estHd ? dureeProgramme : periodes[x.enrollment_id]?.length
+      ? calendrierPeriodes(x.date_debut, periodes[x.enrollment_id]!, fz, dureeProgramme).total
+      : dureeHabitudes(x.date_debut, x.date_fin_prevue, dureeProgramme);
     return { ...x, duree, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, dureeProgramme) };
   });
   const bilans: Record<string, Bilan> = {};
@@ -65,11 +73,13 @@ async function load(): Promise<Loaded | null> {
     const cts = contents.filter(ct => ct.programme_id === x.programme_id && String(ct.version) === String(x.version));
     bilans[x.enrollment_id] = bilan(x.date_debut, x.duree, cts, activites, etats.filter(s2 => s2.enrollment_id === x.enrollment_id));
     if((hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===x.programme_id&&String(h.version)===String(x.version)&&h.langue===x.langue)){
-      const calendrier=calendrierHabitudes(x.date_debut,x.duree,fuseauHabitudes(p.data??{}));
+      const fz=fuseauHabitudes(p.data??{});
+      const calendrier=periodes[x.enrollment_id]?.length?calendrierPeriodes(x.date_debut,periodes[x.enrollment_id]!,fz,x.duree):calendrierHabitudes(x.date_debut,x.duree,fz);
       bilans[x.enrollment_id]={...bilans[x.enrollment_id]!,joursOuverts:calendrier.joursOuverts,termine:calendrier.finished,pasCommence:calendrier.notStarted};
       habitudes[x.enrollment_id]=joursHabitudesLecture({...x,version:Number(x.version)},bilans[x.enrollment_id]!.joursOuverts,
         cts.filter(c=>c.langue===x.langue).map(c=>({...c,version:Number(c.version)})),
-        activites.map(a=>({...a,consigne:a.consigne??''})),etats as EtatLecture[]);
+        activites.map(a=>({...a,consigne:a.consigne??''})),etats as EtatLecture[],
+        'debuts' in calendrier?(j:number)=>dateDuJourHabitudes(x.date_debut,calendrier.debuts,j):undefined);
     }
     actions[x.enrollment_id] = {};
     for (const jour of bilans[x.enrollment_id]!.jours) {

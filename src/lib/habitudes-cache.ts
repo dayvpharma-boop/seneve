@@ -15,5 +15,5 @@ export function retirerHabitudesDuCache<T>(donnees:T):T|null{
  const activities=(d.activities as Record<string,unknown>[]).filter(a=>cids.has(a.content_id));
  const aids=new Set(activities.map(a=>a.activity_id)),eids=new Set(parcours.map(p=>p.enrollment_id));
  const states=(d.states as Record<string,unknown>[]).filter(e=>eids.has(e.enrollment_id)&&aids.has(e.activity_id));
- return {...d,parcours,contents,activities,states,habitudes:[],fuseauHabitudes:undefined} as T;
+ return {...d,parcours,contents,activities,states,habitudes:[],fuseauHabitudes:undefined,periodesHabitudes:undefined} as T;
 }

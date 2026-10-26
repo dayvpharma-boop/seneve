@@ -10,14 +10,15 @@ export type JourHabitudesLecture = {jour:number;date_locale:string;bilan:BilanHa
 /** Lecture des seuls instantanés serveur, filtrés par inscription, version, langue et jour.
  * Aucun calcul à partir d'un clic, du cache local ou d'une écoute audio.
  */
-export function joursHabitudesLecture(inscription:InscriptionLecture, joursOuverts:number, contenus:readonly ContenuLecture[], activites:readonly ActiviteLecture[], etats:readonly EtatLecture[]):JourHabitudesLecture[]{
+export function joursHabitudesLecture(inscription:InscriptionLecture, joursOuverts:number, contenus:readonly ContenuLecture[], activites:readonly ActiviteLecture[], etats:readonly EtatLecture[],dateDuJour?:(jour:number)=>string):JourHabitudesLecture[]{
  if(!Number.isInteger(joursOuverts)||joursOuverts<0)throw new Error('Nombre de jours ouverts invalide');
  const debut=new Date(inscription.date_debut+'T00:00:00Z');
  if(Number.isNaN(+debut)||debut.toISOString().slice(0,10)!==inscription.date_debut)throw new Error('Début de parcours invalide');
  const out:JourHabitudesLecture[]=[];
  for(let jour=1;jour<=joursOuverts;jour++){
+  // Date du jour d'après les périodes d'accès quand elles sont fournies (reprise après un retard).
   const date=new Date(+debut);date.setUTCDate(date.getUTCDate()+jour-1);
-  const ctx={...inscription,jour,date_locale:date.toISOString().slice(0,10)};
+  const ctx={...inscription,jour,date_locale:dateDuJour?dateDuJour(jour):date.toISOString().slice(0,10)};
   const cts=contenus.filter(c=>c.programme_id===ctx.programme_id&&c.version===ctx.version&&c.langue===ctx.langue&&c.jour===jour).sort((a,b)=>a.numero_message-b.numero_message);
   const ids=new Set(cts.map(c=>c.content_id));
   // Conserver l'ordre des messages publiés, jamais déduire les prières de leur position.

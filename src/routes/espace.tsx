@@ -2,6 +2,7 @@ import {PlanningJourHabitudes} from '@/components/PlanningJourHabitudes';
 import {SimulateurDime} from '@/components/SimulateurDime';
 import {calendrierHabitudes,dureeHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
 import {lignesPaginees,parPaquets} from '@/lib/lignes-paginees';
+import {calendrierPeriodes,dateDuJourHabitudes,type PeriodeHabitudes} from '@/lib/habitudes-periodes';
 import {LectureTexteHabitude} from '@/components/LectureTexteHabitude';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {DeclarationHabitude} from '@/components/DeclarationHabitude';
@@ -56,7 +57,7 @@ type Activity = { activity_id: string; content_id: string; type_activite: 'actio
 type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
 // heures : horaires des moments du jour (message 1, 2, 3), lus dans le programme publié ; absents = tout visible.
 type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
-type Data = { prenom: string; participantId?:string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[]; habitudes?: string[]; classificationCacheVerifiee?: boolean; fuseauHabitudes?:string };
+type Data = { prenom: string; participantId?:string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[]; habitudes?: string[]; classificationCacheVerifiee?: boolean; fuseauHabitudes?:string; periodesHabitudes?: Record<string, PeriodeHabitudes[]> };
 
 const LOAD_ERRORS = { fr: 'Impossible de charger ta journée pour le moment.', en: 'Your day cannot be loaded right now.' } as const;
 const loadError = (langue?: string | null) => LOAD_ERRORS[langue === 'en' ? 'en' : 'fr'];
@@ -96,14 +97,22 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   }
   if (!enrollments.length) return { prenom, parcours: [], contents: [], activities: [], states: [] };
   const progIds = [...new Set(enrollments.map(x => x.programme_id))];
-  const [pr, c, hd] = await Promise.all([
+  const [pr, c, hd, per] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours, heures_messages').in('programme_id', progIds),
     supabase.from('contents').select('content_id, programme_id, version, langue, jour, numero_message, theme, explication, texte_officiel, reference_livre')
       .in('programme_id', progIds).order('jour').order('numero_message'),
     // Identifier HD pour le cache même lorsque son interface est désactivée.
     Promise.resolve(supabase.from('hd_programme_links').select('programme_id, version, langue').in('programme_id',progIds))
       .catch(() => ({data: null, error: new Error('Identification des parcours indisponible')})),
+    // Périodes d'accès HD : le jour du parcours reprend où il était après un abonnement payé en retard.
+    habitudesActivees() ? Promise.resolve(supabase.from('hd_access_periods').select('enrollment_id, mois, debut, fin_exclue').in('enrollment_id', enrollments.map(x => x.enrollment_id)))
+      .catch(() => ({data: null, error: new Error('Périodes indisponibles')})) : Promise.resolve({data: [], error: null}),
   ]);
+  if (per.error && habitudesActivees()) throw per.error;
+  const periodesHabitudes: Record<string, PeriodeHabitudes[]> = {};
+  for (const x of (per.data ?? []) as (PeriodeHabitudes & {enrollment_id: string})[]) (periodesHabitudes[x.enrollment_id] ??= []).push(x);
+  // Fuseau lu seulement pour les parcours HD (un fuseau invalide reste signalé plus bas, comme avant).
+  const fuseauHd = (() => { try { return fuseauHabitudes(p.data ?? {}); } catch { return 'Africa/Kinshasa'; } })();
   if(hd.error && habitudesActivees())throw hd.error;
   if (pr.error) throw pr.error;
   if (c.error) throw c.error;
@@ -113,7 +122,9 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
     const prog = programmes.find(q => q.programme_id === x.programme_id);
     const dureeProgramme = prog?.duree_jours ?? 7;
     // Habitudes & Défis : le parcours dure jusqu'à la fin prévue par le serveur (mois payés), le nom garde sa durée.
-    const duree = estHabitudes(x) ? dureeHabitudes(x.date_debut, x.date_fin_prevue, dureeProgramme) : dureeProgramme;
+    const duree = !estHabitudes(x) ? dureeProgramme : periodesHabitudes[x.enrollment_id]?.length
+      ? calendrierPeriodes(x.date_debut, periodesHabitudes[x.enrollment_id]!, fuseauHd, dureeProgramme).total
+      : dureeHabitudes(x.date_debut, x.date_fin_prevue, dureeProgramme);
     return { ...x, nom: nomParcours(prog?.nom ?? x.programme_id, x.langue, dureeProgramme), duree, heures: prog?.heures_messages ?? null };
   });
   // Chaque inscription garde sa version : on ne retient que les contenus de cette version.
@@ -125,7 +136,7 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
     lignesPaginees<State>((de, fin) => supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enrollments.map(x => x.enrollment_id)).order('enrollment_id').order('activity_id').range(de, fin)),
   ]);
   const hdInscrits=enrollments.filter(e=>(hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===e.programme_id&&String(h.version)===String(e.version)&&h.langue===e.langue)).map(e=>e.enrollment_id);
-  return { prenom, participantId:p.data?.participant_id, parcours, contents, activities: activites, states: etats, habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined };
+  return { prenom, participantId:p.data?.participant_id, parcours, contents, activities: activites, states: etats, habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined, periodesHabitudes };
 }
 
 function formatDate(iso: string | null, locale = 'fr-FR') {
@@ -275,7 +286,9 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const enr = data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0]!;
   const total = enr.duree;
   const T = textes(enr.langue);
-  const calendrierDe=(x:Parcours)=>habitudesActivees()&&data.habitudes?.includes(x.enrollment_id)?calendrierHabitudes(x.date_debut,x.duree,data.fuseauHabitudes??'Africa/Kinshasa'):dayInfo(x.date_debut,new Date(),x.duree);
+  const calendrierDe=(x:Parcours)=>!(habitudesActivees()&&data.habitudes?.includes(x.enrollment_id))?dayInfo(x.date_debut,new Date(),x.duree)
+    :data.periodesHabitudes?.[x.enrollment_id]?.length?calendrierPeriodes(x.date_debut,data.periodesHabitudes[x.enrollment_id]!,data.fuseauHabitudes??'Africa/Kinshasa',x.duree)
+    :calendrierHabitudes(x.date_debut,x.duree,data.fuseauHabitudes??'Africa/Kinshasa');
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.mesParcours}>
     {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => { setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{calendrierDe(x).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:calendrierDe(x).finished?T.ongletTermine:T.ongletJour(calendrierDe(x).day)}</span>{' '}{x.nom}</button>)}
   </div>;
@@ -320,7 +333,9 @@ function EspaceDuCompte({ userId }: { userId: string }) {
 
   if(habitudesActivees() && data.habitudes?.includes(enr.enrollment_id)){
     const en=enr.langue==='en';
-    const date_locale=new Date(Date.UTC(Number(enr.date_debut.slice(0,4)),Number(enr.date_debut.slice(5,7))-1,Number(enr.date_debut.slice(8,10))+current-1)).toISOString().slice(0,10);
+    const periodesEnr=data.periodesHabitudes?.[enr.enrollment_id];
+    const date_locale=periodesEnr?.length?dateDuJourHabitudes(enr.date_debut,calendrierPeriodes(enr.date_debut,periodesEnr,data.fuseauHabitudes??'Africa/Kinshasa',enr.duree).debuts,current)
+      :new Date(Date.UTC(Number(enr.date_debut.slice(0,4)),Number(enr.date_debut.slice(5,7))-1,Number(enr.date_debut.slice(8,10))+current-1)).toISOString().slice(0,10);
     const duJour=contents.filter(c=>c.jour===current&&c.langue===enr.langue).sort((a,b)=>a.numero_message-b.numero_message);
     const ctx={enrollment_id:enr.enrollment_id,programme_id:enr.programme_id,version:Number(enr.version),langue:enr.langue,jour:current,date_locale};
     const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities);
