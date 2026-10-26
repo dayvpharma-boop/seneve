@@ -1,7 +1,7 @@
 import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 const mocks=vi.hoisted(()=>({charger:vi.fn(),rpc:vi.fn()}));
-vi.mock('@/lib/habitudes-jour-recette',()=>({chargerJourRecette:mocks.charger}));
+vi.mock('@/lib/habitudes-jour-recette',()=>({chargerJourRecette:mocks.charger,chargerHistoriqueRecette:vi.fn()}));
 vi.mock('@/lib/supabase',()=>({supabase:{rpc:mocks.rpc}}));
 import {ActivitesJourRecette} from '@/components/ActivitesJourRecette';
 const utilisateur='10000000-0000-4000-8000-000000000001',enrollment='20000000-0000-4000-8000-000000000001',activite='30000000-0000-4000-8000-000000000001';

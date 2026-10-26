@@ -1,8 +1,8 @@
 import {beforeEach,expect,it,vi} from 'vitest';
 const mocks=vi.hoisted(()=>({tables:{} as Record<string,unknown[]>,horaires:vi.fn()}));
 vi.mock('@/lib/habitudes-horaires-api',()=>({chargerHorairesHabitudes:mocks.horaires}));
-vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:async()=>({data:{session:{user:{id:'U1'}}},error:null})},from:(table:string)=>{const b:any={};b.select=()=>b;b.eq=(col:string,value:unknown)=>{b.filtres=[...(b.filtres??[]),[col,value]];return b;};const rows=()=> (mocks.tables[table]??[]).filter((r:any)=>(b.filtres??[]).every(([k,v]:[string,unknown])=>r[k]===v));b.single=async()=>({data:rows()[0],error:null});b.then=(ok:any,ko:any)=>Promise.resolve({data:rows(),error:null}).then(ok,ko);return b;}}}));
-import {chargerJourRecette} from '@/lib/habitudes-jour-recette';
+vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:async()=>({data:{session:{user:{id:'U1'}}},error:null})},from:(table:string)=>{const b:any={};b.select=()=>b;b.eq=(col:string,value:unknown)=>{b.filtres=[...(b.filtres??[]),[col,value]];return b;};b.lte=(col:string,value:number)=>{b.max=[col,value];return b;};b.in=(col:string,values:unknown[])=>{b.liste=[col,values];return b;};const rows=()=> (mocks.tables[table]??[]).filter((r:any)=>(b.filtres??[]).every(([k,v]:[string,unknown])=>r[k]===v)&&(!b.max||r[b.max[0]]<=b.max[1])&&(!b.liste||b.liste[1].includes(r[b.liste[0]])));b.single=async()=>({data:rows()[0],error:null});b.then=(ok:any,ko:any)=>Promise.resolve({data:rows(),error:null}).then(ok,ko);return b;}}}));
+import {chargerJourRecette,chargerHistoriqueRecette} from '@/lib/habitudes-jour-recette';
 beforeEach(()=>{
  const modeles=Array.from({length:13},(_,i)=>({module_id:'HD',version:1,langue:'fr',habit_key:`h${i}`,libelle:`Habitude ${i}`,jours_iso:[1,2,3,4,5,6,7],heure_proposee:'06:00'}));
  mocks.horaires.mockReset().mockResolvedValue({date_locale:'2026-10-26',fuseau:'Africa/Kinshasa',modeles,horaires:modeles.map(m=>({...m,participant_id:'P1',creneau_id:'1',heure_locale:'07:30',fuseau:'Africa/Kinshasa',valide_du:'2026-10-26',valide_au:null}))});
@@ -27,4 +27,15 @@ it('ne propose pas un culte hors du jour personnel, même si le modèle le propo
  const h=await mocks.horaires();h.modeles.push({module_id:'HD',version:1,langue:'fr',habit_key:'culte_dimanche',libelle:'Culte',jours_iso:[1],heure_proposee:'09:00'});
  h.horaires.push({participant_id:'P1',module_id:'HD',version:1,langue:'fr',habit_key:'culte_dimanche',creneau_id:'culte',heure_locale:'10:00',jours_iso:[7],fuseau:'Africa/Kinshasa',valide_du:'2026-10-26',valide_au:null});
  const d=await chargerJourRecette('E1','P1','2026-10-26');expect(d.activites).toHaveLength(13);expect(d.activites.some(a=>a.consigne.startsWith('Culte'))).toBe(false);
+});
+
+it('historique : exclut le futur et conserve les horaires valides de chaque journée',async()=>{
+ const enr=mocks.tables.enrollments![0] as Record<string,unknown>;enr.date_debut='2026-10-25';
+ const h=await mocks.horaires();h.horaires=h.horaires.flatMap((x:Record<string,unknown>)=>[{...x,valide_du:'2026-10-25',valide_au:'2026-10-25'},{...x,valide_du:'2026-10-26',valide_au:null,heure_locale:'08:00'}]);
+ mocks.tables.contents!.push({content_id:'C2',programme_id:enr.programme_id,version:1,langue:'fr',jour:2},{content_id:'C3',programme_id:enr.programme_id,version:1,langue:'fr',jour:3});
+ const originales=mocks.tables.activities! as Record<string,unknown>[];mocks.tables.activities=[...originales,...originales.map(x=>({...x,content_id:'C2',activity_id:String(x.activity_id)+'_J2'})),...originales.map(x=>({...x,content_id:'C3',activity_id:String(x.activity_id)+'_FUTUR'}))];
+ const jours=await chargerHistoriqueRecette('E1','P1','2026-10-26');expect(jours.map(j=>j.date)).toEqual(['2026-10-25','2026-10-26']);expect(jours[0]!.activites.every(a=>a.heure==='07:30')).toBe(true);expect(jours[1]!.activites.every(a=>a.heure==='08:00')).toBe(true);expect(jours.flatMap(j=>j.activites).some(a=>a.occurrence.occurrence_id.includes('FUTUR'))).toBe(false);
+});
+it('historique : refuse un trou dans les journées publiées',async()=>{
+ (mocks.tables.enrollments![0] as Record<string,unknown>).date_debut='2026-10-25';await expect(chargerHistoriqueRecette('E1','P1','2026-10-26')).rejects.toThrow('Historique incomplet');
 });
