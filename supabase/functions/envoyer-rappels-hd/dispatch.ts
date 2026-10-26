@@ -11,6 +11,8 @@ export function appareilPushValide(x:unknown):x is AppareilPush{
 export async function traiterRappelsHD(rpc:Rpc,envoyer:(a:AppareilPush,message:string)=>Promise<void>){
  const compte={acceptees:0,echecs:0,bloquees:0,incertaines:0};
  const enabled=await rpc('hd_push_dispatch_enabled');if(enabled.error)throw Error('Configuration indisponible');if(enabled.data!==true)return compte;
+ const planning=await rpc('hd_prepare_push_pilot');if(planning.error)throw Error('Planification indisponible');
+ if(!planning.data||typeof planning.data!=='object'||(planning.data as {prepare?:boolean}).prepare!==true)return compte;
  const claim=await rpc('hd_claim_push_deliveries',{p_limite:10});if(claim.error||!Array.isArray(claim.data))throw Error('Réservation indisponible');
  for(const item of claim.data){
   if(!item||typeof item!=='object')continue;
