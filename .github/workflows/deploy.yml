@@ -24,6 +24,8 @@ jobs:
           node-version: 22
       - name: Installer
         run: npm install --no-audit --no-fund
+      - name: Vérifier les types TypeScript
+        run: npx tsc --noEmit
       - name: Contrôles automatiques
         run: npm test
       - name: Construire le site
