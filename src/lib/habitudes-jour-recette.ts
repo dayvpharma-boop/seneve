@@ -5,7 +5,7 @@ import {planningHabitudesPourDate} from './habitudes-planning';
 import type {EtatOccurrence,OccurrenceHabitude} from './habitudes';
 import {lignesPaginees} from './lignes-paginees';
 import {dateDuJourHabitudes,debutsMois,jourHabitudes,type DebutMois,type PeriodeHabitudes} from './habitudes-periodes';
-export type ActiviteJourRecette={occurrence:OccurrenceHabitude;consigne:string;critere:string|null;heure:string;etat?:EtatOccurrence};
+export type ActiviteJourRecette={habit_key?:string;occurrence:OccurrenceHabitude;consigne:string;critere:string|null;heure:string;etat?:EtatOccurrence};
 /** `mois` : mois d'accès en cours pour cette journée (le jour 31 d'un mois gratuit non renouvelé reste au mois 1). */
 export type JourRecette={userId:string;date:string;jour:number;mois?:number;activites:ActiviteJourRecette[]};
 /** Programmes HD publiés lus par cet écran : l'essai technique et le programme réel des 30 premiers jours. */
@@ -69,7 +69,7 @@ export function assemblerJourRecette(enrollmentId:string,participantId:string,da
   const occurrence={occurrence_id:row.activity_id,enrollment_id:enrollmentId,version:1,date_locale:dateLocale,requise:row.obligatoire};
   const st=etats.find(x=>x.activity_id===row.activity_id);
   if(st&&!['non_commencee','preparee','partielle','realisee'].includes(st.etat))throw Error('État invalide');
-  return [{occurrence,consigne:culte?`${row.consigne}${rdv.length>1?' — '+rang:''}`:row.consigne,critere:row.critere_realisation,heure:rendezVous.heure_locale,etat:st?{...occurrence,etat:st.etat,aide_demandee:st.aide_demandee,synchronisation:'synchronise'} as EtatOccurrence:undefined}];
+  return [{habit_key:habit,occurrence,consigne:culte?`${row.consigne}${rdv.length>1?' — '+rang:''}`:row.consigne,critere:row.critere_realisation,heure:rendezVous.heure_locale,etat:st?{...occurrence,etat:st.etat,aide_demandee:st.aide_demandee,synchronisation:'synchronise'} as EtatOccurrence:undefined}];
  }).sort((a,b)=>a.heure.localeCompare(b.heure)||a.consigne.localeCompare(b.consigne));
  return {userId,date:dateLocale,jour:jourCivil,activites};
 }

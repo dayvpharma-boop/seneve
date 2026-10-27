@@ -6,7 +6,7 @@ import {IconeHD} from './IconeHabitudes';
 
 export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true,variante,heure,attenue=false}:{
  /** « stitch » : carte des maquettes Stitch HD (même mécanisme d'enregistrement). */
- variante?:'stitch';heure?:string;attenue?:boolean;
+ variante?:'stitch'|'priere';heure?:string;attenue?:boolean;
  aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
 }){
  const en=langue==='en';const cle=cleSaisie(userId,occurrence.enrollment_id,occurrence.occurrence_id);
@@ -33,6 +33,15 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,lan
  const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
  if(variante==='stitch')return <CarteStitch {...{en,consigne,critere,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
+ if(variante==='priere')return <section className="ap-actions" aria-label={consigne} aria-busy={occupe}>
+  <p role="status" className="ap-etat">{valeur==='realisee'?(en?'Prayer recorded · Synchronised':'Prière déclarée · Synchronisée'):attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation.':'En attente de confirmation du serveur.')):labels[valeur]}</p>
+  <div className="ap-boutons">
+   <button type="button" disabled aria-label={en?'Audio unavailable':'Audio indisponible'}><IconeHD nom="headphones"/><span>{en?'Unavailable':'Indisponible'}</span></button>
+   <a href={`${import.meta.env.BASE_URL}journal?ecrire=1&lang=${en?'en':'fr'}`} onClick={e=>{if(occupe)e.preventDefault();}} aria-disabled={occupe}><IconeHD nom="edit_note"/><span>{en?'In my own words':'Avec mes mots'}</span></a>
+   <button type="button" className="ap-confirmer" disabled={occupe||lectureSeule||(!attente&&valeur==='realisee')} onClick={()=>void declarer(attente?.action??'realisee')}><IconeHD nom={valeur==='realisee'?'done_all':'check'}/><span>{occupe?(en?'Saving…':'Enregistrement…'):attente?(en?'Retry declaration':'Réessayer la déclaration'):valeur==='realisee'?(en?'Prayer recorded':'Prière déclarée'):(en?'I prayed':'J’ai prié')}</span></button>
+  </div>
+  {erreur&&<p role="alert" className="ap-erreur">{nettoyageIncomplet?(en?'Already confirmed. Retry to finish updating this device.':'Déjà confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Not confirmed. Check your connection and retry the same declaration.':'Non confirmé. Vérifie ta connexion et réessaie cette même déclaration.')}</p>}
+ </section>;
  return <section className="card hd-declaration" aria-label={consigne} aria-busy={occupe}>
   <h3>{consigne}</h3>{critere&&<p>{critere}</p>}
   <p role="status">{labels[valeur]}{courant?.synchronisation==='synchronise'&&<> · {en?'Synchronised':'Synchronisée'}</>}</p>

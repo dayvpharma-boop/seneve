@@ -1,0 +1,30 @@
+.hd-lecteur-priere{position:fixed;inset:0;margin:0;padding:0;border:0;width:100%;height:100dvh;max-width:none;max-height:none;background:#fef9ea;color:#1d1c13;font-family:"Work Sans",sans-serif;overflow:hidden}
+.hd-lecteur-priere[open]{display:flex;flex-direction:column}
+.hd-lecteur-priere::backdrop{background:#32312788}
+.hd-lecteur-priere .ap-tete{display:flex;align-items:center;gap:.5rem;padding:.25rem 1rem;padding-top:max(.25rem,env(safe-area-inset-top));background:#fef9ea;border-bottom:1px solid #ede8d9;flex-shrink:0}
+.hd-lecteur-priere .ap-tete h2{font:500 20px/28px Literata,Georgia,serif;flex:1;margin:0;padding:0}
+.hd-lecteur-priere .ap-tete button{display:flex;justify-content:center;align-items:center;min-width:44px;min-height:44px;border:0;background:transparent;color:#1d1c13;font:500 13px "Work Sans",sans-serif;padding:0;border-radius:999px}
+.hd-lecteur-priere .ap-tailles{display:flex;background:#f2eedf;border-radius:999px}
+.hd-lecteur-priere button:disabled{opacity:.45;cursor:not-allowed}
+.hd-lecteur-priere .ap-corps{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:1rem;scrollbar-color:#755b00 #f2eedf}
+.hd-lecteur-priere .ap-meta{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;margin:0 0 .75rem;font:500 12px/1.6 "Work Sans",sans-serif;color:#755b00}
+.hd-lecteur-priere .ap-meta>span{display:inline-flex;align-items:center;gap:.25rem}
+.hd-lecteur-priere .ap-meta>span:first-child{background:#ffdf9055;border-radius:999px;padding:.25rem .65rem;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.hd-lecteur-priere .ap-langues{display:flex;padding:4px;gap:4px;border-radius:12px;background:#f2eedf;margin-bottom:.75rem;font:500 13px/1.6 "Work Sans",sans-serif}
+.hd-lecteur-priere .ap-langues>span{flex:1;text-align:center;padding:5px 2px;color:#7e7665}
+.hd-lecteur-priere .ap-langues>span:first-child{background:white;border-radius:8px;color:#755b00;box-shadow:0 1px 3px #0001}
+.hd-lecteur-priere .ap-langues small{font-size:9px;text-transform:uppercase}
+.hd-lecteur-priere .ap-information{border-radius:12px;background:#f8f4e4;padding:.8rem 1rem;font:400 13px/1.6 "Work Sans",sans-serif;color:#4d4637;margin:0 0 1.5rem}
+.hd-lecteur-priere .ap-texte{max-width:42rem;margin:0 auto;font-family:Literata,Georgia,serif;line-height:1.85;text-align:left;overflow-wrap:break-word}
+.hd-lecteur-priere .ap-texte p{font:inherit;color:inherit;letter-spacing:normal;white-space:normal;margin:0 0 1.5em;padding:0}
+.hd-lecteur-priere .ap-texte .ap-geste,.hd-lecteur-priere .ap-texte .ap-indication{font-family:"Work Sans",sans-serif;font-size:.76em;line-height:1.65;padding:.8rem 1rem;margin:1.6rem 0 1rem;border-left:3px solid #b89a43;background:#f2eedf;border-radius:0 .65rem .65rem 0;color:#584400}
+.hd-lecteur-priere .ap-texte .ap-fin{text-align:center;font-family:"Work Sans",sans-serif;font-size:.7em;color:#755b00;border-top:1px solid #d0c5b2;padding-top:1rem}
+.hd-lecteur-priere .ap-source{max-width:42rem;margin:1rem auto;font:400 12px/1.6 "Work Sans",sans-serif;color:#4d4637}
+.hd-lecteur-priere .ap-actions{padding:.6rem 1rem;padding-bottom:max(.6rem,env(safe-area-inset-bottom));background:#fff;box-shadow:0 -4px 20px #1d1c130f;flex-shrink:0;margin:0;border:0;border-radius:0}
+.hd-lecteur-priere .ap-etat{font:400 12px/1.5 "Work Sans",sans-serif;color:#4d4637;text-align:center;margin:0 0 .4rem}
+.hd-lecteur-priere .ap-boutons{display:flex;align-items:center;justify-content:center;gap:.5rem;max-width:40rem;margin:auto}
+.hd-lecteur-priere .ap-boutons button,.hd-lecteur-priere .ap-boutons a{display:flex;align-items:center;justify-content:center;gap:.35rem;min-height:48px;padding:.5rem .8rem;border:0;border-radius:12px;font:500 13px/1.35 "Work Sans",sans-serif;text-align:center;text-decoration:none;flex:1;color:#1d1c13;background:#f8f4e4}
+.hd-lecteur-priere .ap-boutons .ap-confirmer{background:#755b00;color:white;font-size:15px}
+.hd-lecteur-priere .ap-erreur{font:400 13px/1.5 "Work Sans",sans-serif;color:#ba1a1a;margin:.5rem auto;max-width:40rem}
+.hd-lecteur-priere :focus-visible{outline:3px solid #755b00;outline-offset:2px}
+@media(max-width:380px){.hd-lecteur-priere .ap-tete{padding-left:.4rem;padding-right:.4rem}.hd-lecteur-priere .ap-tete h2{font-size:17px}.hd-lecteur-priere .ap-boutons button,.hd-lecteur-priere .ap-boutons a{padding:.5rem .35rem;font-size:12px}.hd-lecteur-priere .ap-boutons .ap-confirmer{font-size:13px}}
