@@ -34,6 +34,8 @@ jobs:
         env:
           VITE_HABITUDES_DEFIS: 'true'
           VITE_HABITUDES_COMPTEUR: 'true'
+          # Rappels d'habitudes : fonctions et envoi installés sur seneve-prod le 27/10/2026, envoi limité au compte pilote.
+          VITE_HABITUDES_RAPPELS: 'true'
           VITE_HABITUDES_INSCRIPTION: fermee
         run: npm run build
       - name: Charger la version HD de test validée
