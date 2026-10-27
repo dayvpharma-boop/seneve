@@ -4,6 +4,7 @@ const mocks=vi.hoisted(()=>({charger:vi.fn(),rpc:vi.fn()}));
 vi.mock('@/lib/habitudes-jour-recette',()=>({chargerJourRecette:mocks.charger,chargerHistoriqueRecette:vi.fn()}));
 vi.mock('@/lib/supabase',()=>({supabase:{rpc:mocks.rpc}}));
 import {ActivitesJourRecette} from '@/components/ActivitesJourRecette';
+import {LecturesJourHabitudes} from '@/components/LecturesJourHabitudes';
 const uid='10000000-0000-4000-8000-000000000001',eid='20000000-0000-4000-8000-000000000001';
 const activites=[['bible_matin','Bible du matin','06:20'],['lecture_pro','Lecture professionnelle','12:30'],['predication','Prédication','18:00'],['lecture_personnelle','Développement personnel','20:00'],['bible_soir','Bible du soir','20:35'],['exercice','Exercice','06:45']].map(([habit_key,consigne,heure],i)=>({habit_key,consigne:consigne!,heure:heure!,critere:null,occurrence:{occurrence_id:`30000000-0000-4000-8000-00000000000${i+1}`,enrollment_id:eid,version:1,date_locale:'2026-10-27',requise:true}}));
 const sauvees:{activity_id:string;minutes:number;titre:string|null}[]=[];
@@ -45,4 +46,12 @@ it('une réalisation met à jour le compteur des lectures et la journée, et ré
 });
 it('ne propose pas une lecture inventée depuis son seul libellé',async()=>{
  mocks.charger.mockResolvedValue({userId:uid,jour:2,activites:[{...activites[0],habit_key:undefined}]});ouvrir();await screen.findByRole('heading',{name:'Bible du matin'});expect(screen.queryByRole('button',{name:'Lectures du jour'})).toBeNull();
+});
+it('retire immédiatement les anciens titres quand le compte ou l’inscription change',async()=>{
+ const transport={rpc:mocks.rpc};mocks.rpc.mockResolvedValueOnce({data:[{activity_id:activites[0]!.occurrence.occurrence_id,minutes:20,titre:'Titre du premier compte'}],error:null});
+ const props={activites:activites.slice(0,5),userId:uid,langue:'fr',transport,onConfirme:vi.fn(),onFermer:vi.fn()};
+ const vue=render(<LecturesJourHabitudes {...props}/>);await screen.findByText(/Titre du premier compte/);
+ mocks.rpc.mockImplementation(()=>new Promise(()=>{}));
+ vue.rerender(<LecturesJourHabitudes {...props} userId="10000000-0000-4000-8000-000000000002"/>);
+ expect(screen.queryByText(/Titre du premier compte/)).toBeNull();expect(screen.getByText('Chargement des durées…')).toBeInTheDocument();
 });

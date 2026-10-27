@@ -16,7 +16,7 @@ La saisie en attente est figée dans sessionStorage avant l'appel, sous une clé
 
 - Recette SQL dans TEST avec deux comptes fictifs et rollback intégral : titre normalisé, partielle/réalisée, rejeu, conflit, limites de durée/titre, refus d'une prière et d'un jour futur, isolation entre comptes, absence de session, révocation et historique conservé. Zéro ligne de lecture restante après recette.
 - En PROD : RLS active, SELECT authenticated autorisé, INSERT direct et EXECUTE anon refusés ; zéro ligne avant utilisation. Aucun ajout de progrès sur un compte réel pendant les contrôles.
-- 33 tests ciblés réussis : formulaire, double clic, panne/reprise avec même événement, compteurs, prière, Bible et gratitude. TypeScript sans erreur.
+- 34 tests ciblés réussis : formulaire, double clic, panne/reprise avec même événement, compteurs, retrait immédiat des anciens titres au changement de compte, prière, Bible et gratitude. TypeScript sans erreur.
 - Aucun avertissement des advisors ne concerne les nouveaux objets. Les avertissements antérieurs pg_net et protection des mots de passe ne sont pas modifiés par ce lot.
 
 Un retour à l'ancienne interface peut conserver les nouveaux logs : ne pas supprimer les données de durée lors d'un retour arrière de l'application.

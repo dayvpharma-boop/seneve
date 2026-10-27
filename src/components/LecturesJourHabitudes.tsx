@@ -16,11 +16,12 @@ export function LecturesJourHabitudes({activites,userId,langue,transport,onConfi
  const dialog=useRef<HTMLDialogElement>(null),en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const lectures=activites.filter(a=>estLectureHabitudes(a.habit_key)).sort((a,b)=>a.heure.localeCompare(b.heure));
  const faites=lectures.filter(a=>a.etat?.synchronisation==='synchronise'&&a.etat.etat==='realisee').length;
- const [details,setDetails]=useState<DetailLecture[]|null>(null),[erreurDetails,setErreurDetails]=useState(false),[tour,setTour]=useState(0),[saisieId,setSaisieId]=useState<string|null>(null);
+ const [detailsLus,setDetailsLus]=useState<{cle:string;lignes:DetailLecture[]}|null>(null),[erreurDetails,setErreurDetails]=useState(false),[tour,setTour]=useState(0),[saisieId,setSaisieId]=useState<string|null>(null);
  const transportCourant=useRef(transport);transportCourant.current=transport;
  const ids=lectures.map(a=>a.occurrence.occurrence_id),enrollmentId=lectures[0]?.occurrence.enrollment_id,cle=[userId,enrollmentId,...ids].join(':');
- useEffect(()=>{let actif=true;setDetails(null);setErreurDetails(false);
-  if(enrollmentId&&ids.length)void chargerDetailsLectures(transportCourant.current,enrollmentId,ids).then(r=>{if(actif)setDetails(r);}).catch(()=>{if(actif)setErreurDetails(true);});
+ const details=detailsLus?.cle===cle?detailsLus.lignes:null;
+ useEffect(()=>{let actif=true;setDetailsLus(null);setErreurDetails(false);
+  if(enrollmentId&&ids.length)void chargerDetailsLectures(transportCourant.current,enrollmentId,ids).then(r=>{if(actif)setDetailsLus({cle,lignes:r});}).catch(()=>{if(actif)setErreurDetails(true);});
   return()=>{actif=false;};
  },[cle,tour]);
  const saisie=lectures.find(a=>a.occurrence.occurrence_id===saisieId);
@@ -56,6 +57,6 @@ export function LecturesJourHabitudes({activites,userId,langue,transport,onConfi
     </aside>
    </div>
   </div>
-  {saisie&&details!==null&&<SaisieLectureHabitudes key={saisie.occurrence.occurrence_id} activite={saisie} userId={userId} langue={langue} detail={details.find(d=>d.activity_id===saisie.occurrence.occurrence_id)} transport={transport} onConfirme={(e,d)=>{setDetails(ancien=>[...(ancien??[]).filter(x=>x.activity_id!==d.activity_id),d]);onConfirme(e);}} onFermer={()=>setSaisieId(null)}/>}
+  {saisie&&details!==null&&<SaisieLectureHabitudes key={cle+':'+saisie.occurrence.occurrence_id} activite={saisie} userId={userId} langue={langue} detail={details.find(d=>d.activity_id===saisie.occurrence.occurrence_id)} transport={transport} onConfirme={(e,d)=>{setDetailsLus(ancien=>({cle,lignes:[...(ancien?.cle===cle?ancien.lignes:[]).filter(x=>x.activity_id!==d.activity_id),d]}));onConfirme(e);}} onFermer={()=>setSaisieId(null)}/>}
  </dialog>,document.body);
 }
