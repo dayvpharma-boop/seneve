@@ -1,3 +1,4 @@
+import {effacerReperesPriere} from './habitudes-priere-reprise';
 import {retirerHabitudesDuCache} from './habitudes-cache';
 import {effacerSaisiesHabitudes} from './habitudes-saisie';
 /** Consultation hors connexion de l'espace : dernière copie des journées déjà chargées, sur cet appareil. */
@@ -35,6 +36,7 @@ export function lireEspace<T>(userId: string): { le: string; donnees: T } | null
 export function effacerEspaces(): void {
   effacerProfils();
   effacerSaisiesHabitudes();
+  effacerReperesPriere();
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
       const k = localStorage.key(i);

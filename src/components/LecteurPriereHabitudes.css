@@ -28,3 +28,9 @@
 .hd-lecteur-priere .ap-erreur{font:400 13px/1.5 "Work Sans",sans-serif;color:#ba1a1a;margin:.5rem auto;max-width:40rem}
 .hd-lecteur-priere :focus-visible{outline:3px solid #755b00;outline-offset:2px}
 @media(max-width:380px){.hd-lecteur-priere .ap-tete{padding-left:.4rem;padding-right:.4rem}.hd-lecteur-priere .ap-tete h2{font-size:17px}.hd-lecteur-priere .ap-boutons button,.hd-lecteur-priere .ap-boutons a{padding:.5rem .35rem;font-size:12px}.hd-lecteur-priere .ap-boutons .ap-confirmer{font-size:13px}}
+
+.hd-lecteur-priere .ap-signets{position:sticky;top:-1px;z-index:2;max-width:42rem;margin:0 auto 1.5rem;padding:.65rem .8rem;border-radius:12px;background:#f2eedf;box-shadow:0 2px 8px #1d1c130a}
+.hd-lecteur-priere .ap-commandes-repere{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.hd-lecteur-priere .ap-signets button{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;min-height:44px;padding:.35rem .65rem;border:1px solid #d0c5b2;border-radius:8px;background:#fef9ea;color:#584400;font:500 12px/1.4 "Work Sans",sans-serif}
+.hd-lecteur-priere .ap-signets p,.hd-lecteur-priere .ap-signets small{display:block;margin:.35rem 0 0;padding:0;color:#4d4637;font:400 11px/1.5 "Work Sans",sans-serif}
+.hd-lecteur-priere .ap-texte p[data-repere="true"]{outline:1px solid #b89a43;outline-offset:6px}
