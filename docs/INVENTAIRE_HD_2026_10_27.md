@@ -40,9 +40,9 @@ La recette isolée publiée par le workflow utilise le commit be1dc0ee593c9de38f
 
 | Priorité | Sujet | Action et preuve attendue |
 |---|---|---|
-| 1 | Affichage des mois payants | Reproduire le cas d'un achat Continuité antérieur au mois HD. AccesRecetteHabitudes exige l'égalité des dates du droit et de la période HD, tandis que hd_droit_a autorise des dates propres au mois HD. Écrire un test ciblé ; vérifier révocation, expiration et achat non valide avant correction. |
+| Vérifié | Alignement des mois payants | Continuité et le mois HD financé commencent et finissent ensemble. L'égalité exigée par AccesRecetteHabitudes est conforme à la décision, et ne doit pas être assouplie. La migration d'alignement et le démarrage coordonné des contenus sont présents dans TEST et PROD ; zéro date décalée sur la période payante existante en PROD. |
 | 1 | Durée et contenu | Confronter durée_jours=30, 181 journées techniques et six périodes de 720 h. Vérifier les frontières locales et la reprise ; ne pas remplacer arbitrairement 181 par 180 ni modifier les droits. |
-| 1 | Corpus répété | Documenter ou faire confirmer l'organisation pédagogique avant de présenter les mois 2 à 6 comme des lectures inédites. Ne pas supprimer les journées publiées. |
+| Documenté | Corpus répété | La source habitudes_mois_2_6_reprise.sql consigne la décision du 26 octobre à 23h01 de reprendre les 30 lectures pour les mois 2 à 6. Cette répétition est intentionnelle selon le dépôt ; ne pas la présenter comme six mois de lectures inédites ni supprimer les journées publiées. |
 | 1 | Référentiel documentaire | L'état global et les anciennes fiches de préparation ne doivent plus faire croire à une installation exclusivement TEST. |
 | 2 | Présentation commerciale | Harmoniser l'aperçu, qui indique encore des conditions à définir, avec le raccordement Continuité configuré. Vérifier les décisions avant toute annonce de prix ou ouverture. |
 | 2 | Statuts | Clarifier le sens du module brouillon avec une version pédagogique publiée ; ne pas transformer ce constat en changement de statut automatique. |
@@ -63,9 +63,18 @@ L'absence de policies sur certaines tables avec RLS activée n'est pas, à elle 
 ## Ordre des lots
 
 1. Consolider ce référentiel et marquer les rapports historiques.
-2. Reproduire puis corriger l'affichage des accès payants ; vérifier les frontières de périodes.
+2. Préserver l'alignement Continuité/HD et vérifier les frontières de périodes ; ne pas créer une exception d'affichage pour des dates décalées.
 3. Harmoniser durée, appellations et présentation du corpus après vérification des décisions.
 4. Recevoir les circuits de paiement, publication et rappels dans TEST.
 5. Terminer les contenus autorisés et les fonctions privées, puis recette complète avant ouverture.
 
 Une étape achevée est attestée par son diff, ses vérifications et ses limites. Ce rapport ne déclare pas le programme complet réceptionné.
+
+## Rectification après vérification de la décision d'alignement
+
+Le porteur a rappelé le 27 octobre : « on avais prevu que le deux commencer le meme jours apres achat ». Le fichier supabase/propositions/habitudes_continuite_dates_alignees.sql consigne déjà le choix B du 26 octobre à 19h58 : un paiement finance un mois complet, avec droits et contenus Continuité alignés sur le mois HD. Pour un achat anticipé, la source prévoit un démarrage commun programmé ; cette précision existante n'est pas modifiée par ce rapport.
+
+Vérification SQL en lecture seule dans les deux environnements : alignement des droits et démarrage coordonné présents dans les fonctions installées. PROD contient une période payante et zéro différence de début ou de fin avec son droit ; TEST ne contient aucune période payante. Ces constats ne remplacent pas la recette d'un nouvel achat.
+
+Le soupçon initial de défaut d'affichage fondé sur l'acceptation de dates distinctes est retiré. Quatre cas de non-régression sont ajoutés à habitudes-acces-recette.test.tsx : décalage du début, décalage de la fin, droit payé révoqué et droit payé expiré. L'écran doit refuser les deux premiers et ne monter aucune journée pour les deux derniers. Les tests ne créent aucun achat et ne touchent aucune base réelle.
+
