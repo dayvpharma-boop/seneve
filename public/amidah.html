@@ -45,7 +45,7 @@
 <div class="rounded-xl p-3 bg-surface-container-low flex items-start gap-2.5 mt-1">
 <span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">info</span>
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
-        Texte français intégral. Gestes et passages conditionnels conservés. Cette page permet la lecture et la prière ; le journal et l’enregistrement des réalisations ne sont pas encore disponibles.
+        Texte français intégral. Gestes et passages conditionnels conservés. « Avec mes mots » ouvre ton journal privé. La lecture et l’écriture ne valident aucune activité ; reviens à ta journée pour déclarer ta prière.
       </p>
 </div>
 </div>
@@ -156,16 +156,14 @@
 </button>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant">
-        Déposez ici une intention, un remerciement ou une parole inspirée par la prière de ce matin.
+        Prie librement avec tes propres mots. Si tu souhaites écrire une intention ou un remerciement, ouvre ton journal privé. La note sera enregistrée seulement lorsque tu le décideras.
       </p>
-<textarea class="w-full p-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface-container placeholder:italic placeholder:text-on-surface-variant/50 resize-none" id="personalInput" placeholder="Seigneur, en ce jour je Te confie..." rows="4"></textarea>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Connexion requise pour écrire. Aucun texte personnel n’est saisi ni conservé sur cette page de lecture.</p>
 <div class="flex justify-end gap-2 pt-1">
 <button class="px-4 py-2 rounded-lg text-on-surface-variant font-label-md text-label-md" id="cancelModalBtn" type="button">
           Fermer
         </button>
-<button class="px-4 py-2 rounded-lg bg-secondary text-on-secondary font-label-md text-label-md" id="savePersonalBtn" type="button">
-          Garder dans mon journal
-        </button>
+<a class="px-4 py-2 rounded-lg bg-secondary text-on-secondary font-label-md text-label-md" href="./journal?ecrire=1&amp;lang=fr" id="openPrivateJournal">Écrire dans mon journal privé</a>
 </div>
 </div>
 </div>
@@ -175,8 +173,6 @@
 const modal=document.getElementById('personalModal');const toggle=show=>{modal.classList.toggle('hidden',!show);modal.classList.toggle('flex',show)};
 document.getElementById('btnPersonalWords').onclick=()=>toggle(true);
 ['closeModal','cancelModalBtn'].forEach(id=>document.getElementById(id).onclick=()=>toggle(false));
-const save=document.getElementById('savePersonalBtn');save.textContent='Journal non connecté';save.disabled=true;save.style.opacity='.5';
-document.getElementById('personalInput').placeholder='Prière libre — ce texte ne sera pas enregistré.';
 let done=false;document.getElementById('btnCompletedPrayer').onclick=()=>{done=!done;document.getElementById('completeLabel').textContent=done?'Déclaré · aperçu':"J’ai prié";document.getElementById('completeIcon').textContent=done?'done_all':'check'};
 window.addEventListener('scroll',()=>{const d=document.documentElement.scrollHeight-innerHeight;document.getElementById('scrollProgressPill').style.transform='translateY('+(d>0?240*scrollY/d:0)+'px)'});
 })();
