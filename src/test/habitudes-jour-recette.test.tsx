@@ -43,8 +43,14 @@ it('mois 4 : le jour 91 affiche son propre texte validé le 27/10/2026',async()=
  expect(screen.getByText(/Mois 4 sur 6/)).toBeInTheDocument();expect(screen.getByText(/Un temps pour réfléchir · Jour 91/)).toBeInTheDocument();
  expect(screen.queryByText(/reprise/)).toBeNull();
 });
-it('mois 5 : sans nouveaux textes, le jour 121 reprend encore la lecture du jour 1',async()=>{
+it('mois 5 : le jour 121 affiche son propre texte validé le 27/10/2026',async()=>{
  mocks.charger.mockResolvedValue({...jour,jour:121});ouvrir();
+ expect(await screen.findByRole('heading',{name:'Relire la semaine : marcher vers la liberté'})).toBeVisible();
+ expect(screen.getByText(/Mois 5 sur 6/)).toBeInTheDocument();expect(screen.getByText(/Un temps pour réfléchir · Jour 121/)).toBeInTheDocument();
+ expect(screen.queryByText(/reprise/)).toBeNull();
+});
+it('mois 6 : sans nouveaux textes, le jour 151 reprend encore la lecture du jour 1',async()=>{
+ mocks.charger.mockResolvedValue({...jour,jour:151});ouvrir();
  expect(await screen.findByRole('heading',{name:'Commencer avec ce qui est possible'})).toBeVisible();
  expect(screen.getByText(/Lecture 1 reprise/)).toBeInTheDocument();
 });
