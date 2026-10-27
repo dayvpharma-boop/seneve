@@ -4,9 +4,10 @@ import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import {cleSaisie,lireSaisie,preparerSaisie,type SaisieEnAttente} from '@/lib/habitudes-saisie';
 import {IconeHD} from './IconeHabitudes';
 
-export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true,variante,heure,attenue=false}:{
+export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false}:{
  /** « stitch » : carte des maquettes Stitch HD (même mécanisme d'enregistrement). */
  variante?:'stitch'|'priere';heure?:string;attenue?:boolean;
+ onDemanderLecture?:()=>void;
  lienLecture?:{href:string;label:string};lienEcriture?:{href:string;label:string};aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
 }){
  const en=langue==='en';const cle=cleSaisie(userId,occurrence.enrollment_id,occurrence.occurrence_id);
@@ -20,6 +21,7 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLect
  const aide=courant?.synchronisation==='synchronise'&&courant.aide_demandee;
  async function declarer(action:ActionHabitude){
   if(lectureSeule||verrou.current)return;
+  if(onDemanderLecture&&!attente&&(action==='partielle'||action==='realisee')){onDemanderLecture();return;}
   verrou.current=true;setOccupe(true);setErreur(false);
   try{
    const saisie=preparerSaisie(sessionStorage,cle,action);setAttente(saisie);
