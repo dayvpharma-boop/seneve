@@ -1,8 +1,8 @@
 import { Fragment, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { texts, type Language } from '@/lib/test-texts';
 import { categorie } from '@/lib/racines';
-import { IconeOffres as I, type SymboleOffres } from './IconeOffres';
-const SYMBOLS:SymboleOffres[]=['anchor','favorite','flare','inventory_2','spa','check_circle','compass_calibration'];
+import { IconeOffresDemarrage as I } from './IconesDemarrage';
+const SYMBOLS:Parameters<typeof I>[0]['nom'][]=['anchor','favorite','flare','inventory_2','spa','check_circle','compass_calibration'];
 
 /** Les cartes restent un choix explicite : aucune sélection par défaut en cas d’égalité.
  * `detail` s’ouvre juste sous la racine choisie, et non en bas de la liste (demande du 24/10/2026). */
