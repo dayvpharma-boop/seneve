@@ -6,7 +6,7 @@ export type InscriptionLecture = {enrollment_id:string;programme_id:string;versi
 export type ContenuLecture = {content_id:string;programme_id:string;version:number;langue:string;jour:number;numero_message:number};
 export type ActiviteLecture = {activity_id:string;content_id:string;type_activite:string;consigne:string;obligatoire:boolean;note_source?:string|null};
 export type EtatLecture = {enrollment_id:string;activity_id:string;etat:EtatHabitude;aide_demandee:boolean};
-export type JourHabitudesLecture = {jour:number;date_locale:string;bilan:BilanHabitudes;activites:{id:string;consigne:string;requise:boolean;etat:EtatHabitude;aide:boolean;confirmee:boolean}[]};
+export type JourHabitudesLecture = {jour:number;date_locale:string;bilan:BilanHabitudes;activites:{id:string;habit_key?:string;consigne:string;requise:boolean;etat:EtatHabitude;aide:boolean;confirmee:boolean}[]};
 
 /** Lecture des seuls instantanés serveur, filtrés par inscription, version, langue et jour.
  * Aucun calcul à partir d'un clic, du cache local ou d'une écoute audio.
