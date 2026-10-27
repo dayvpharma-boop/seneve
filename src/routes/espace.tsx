@@ -10,6 +10,8 @@ import {ActivitesJourRecette} from '@/components/ActivitesJourRecette';
 import {occurrencesDepuisContenus} from '@/lib/habitudes-api';
 import {filtreCultesPrevus} from '@/lib/habitudes-cultes';
 import {compteurFideliteActif} from '@/lib/habitudes-fidelite';
+import {rappelsHabitudesActifs} from '@/lib/habitudes-rappels';
+import {FuseauVoyage} from '@/components/FuseauVoyage';
 import {chargerHorairesHabitudes,type ConfigurationHoraires} from '@/lib/habitudes-horaires-api';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { prenomDuCompte } from '@/lib/connexion-sociale';
@@ -348,6 +350,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     // Programme réel, journée du jour et en ligne : l'écran « Aujourd'hui » des maquettes Stitch, directement.
     if(!horsLigne&&enr.programme_id==='HABITUDES_DEFIS_30J_FR_V1'&&current===day&&data.participantId&&enr.etat==='active')
       return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
+        {rappelsHabitudesActifs()&&<div className="px-hd-margin pt-hd-space-md"><FuseauVoyage langue={enr.langue}/></div>}
         <ActivitesJourRecette key={`${enr.enrollment_id}:${date_locale}`} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>
         <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2">
           <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aujourdhui${en?'?lang=en':''}`}>{en?'My access and schedule':'Mon accès et mes horaires'}</Link>

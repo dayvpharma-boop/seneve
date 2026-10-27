@@ -1,0 +1,15 @@
+/* Question de fuseau en voyage : mêmes variables que les cartes Habitudes & Défis, lisible en clair et en sombre.
+ * Classe doublée : la règle de polices « .hd-stitch :is(h2,p,button,section…) » rétablit sinon les marges à zéro dans l’écran Aujourd’hui. */
+.hd-fuseau.hd-fuseau{margin:0 0 16px;padding:16px;border:1px solid var(--hd-or);border-radius:var(--hd-rayon-petit);background:var(--hd-carte);color:var(--hd-encre);font-family:var(--hd-ui)}
+.hd-fuseau.hd-fuseau h2{display:flex;align-items:center;gap:8px;margin:0 0 8px;font:600 1.1rem/1.4 var(--hd-serif);color:var(--hd-encre)}
+.hd-fuseau.hd-fuseau h2 svg{color:var(--hd-or)}
+.hd-fuseau.hd-fuseau p{margin:0 0 10px;color:var(--hd-encre-2);line-height:1.6}
+.hd-fuseau.hd-fuseau p strong{color:var(--hd-encre)}
+.hd-fuseau.hd-fuseau .hd-fuseau-choix{display:flex;flex-direction:column;gap:8px}
+.hd-fuseau.hd-fuseau .hd-fuseau-choix button{min-height:48px;padding:0 16px;border-radius:var(--hd-rayon-petit);font:500 1rem/1.2 var(--hd-ui);cursor:pointer}
+.hd-fuseau.hd-fuseau .hd-fuseau-oui{border:0;background:var(--hd-or);color:#fff}
+.hd-fuseau.hd-fuseau .hd-fuseau-non{border:1px solid var(--hd-trait);background:transparent;color:var(--hd-encre)}
+.hd-fuseau.hd-fuseau [role=alert]{margin:10px 0 0;color:var(--hd-erreur)}
+.hd-fuseau.hd-fuseau.hd-fuseau-fait{display:flex;align-items:flex-start;gap:10px;border-color:var(--hd-trait)}
+.hd-fuseau.hd-fuseau.hd-fuseau-fait svg{color:var(--hd-or);flex-shrink:0;margin-top:2px}
+.hd-fuseau.hd-fuseau.hd-fuseau-fait p{margin:0}
