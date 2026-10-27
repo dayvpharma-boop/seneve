@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 const { oauth, liste } = vi.hoisted(() => ({ oauth: vi.fn(), liste: [] as string[] }));
 vi.mock('@/lib/supabase', () => ({ supabase: { auth: { signInWithOAuth: oauth } }, siteUrl: (p: string) => `https://site/seneve/${p}` }));
@@ -20,7 +20,8 @@ describe('Connexion avec Google / Facebook (25/10/2026)', () => {
     oauth.mockResolvedValue({ data: {}, error: null });
     render(<BoutonsConnexionSociale langue="en" />);
     fireEvent.click(screen.getByRole('button', { name: 'Continue with Google' }));
-    expect(oauth).toHaveBeenCalledWith({ provider: 'google', options: { redirectTo: 'https://site/seneve/espace?lang=en', scopes: undefined } });
+    // Supabase est chargé à la demande : l'appel arrive juste après le clic.
+    await waitFor(() => expect(oauth).toHaveBeenCalledWith({ provider: 'google', options: { redirectTo: 'https://site/seneve/espace?lang=en', scopes: undefined } }));
   });
   it('message clair si le fournisseur refuse', async () => {
     liste.push('facebook');

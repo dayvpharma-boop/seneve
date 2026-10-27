@@ -1,0 +1,19 @@
+/* Polices validées : Poppins (interface, titres) et Lora (textes longs).
+ * Cahier n°1, § 9, et _CORRECTIONS.md des maquettes Stitch corrigées : Outfit et Literata sont remplacées.
+ * Les styles qui demandent encore « Outfit » ou « Literata » reçoivent ici les fichiers de Poppins et de Lora.
+ * Le navigateur ne télécharge chaque fichier qu'une fois, et les deux anciennes polices ne sont plus chargées. */
+@font-face{font-family:'Outfit';font-style:normal;font-display:swap;font-weight:400;src:url(../node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Outfit';font-style:normal;font-display:swap;font-weight:500;src:url(../node_modules/@fontsource/poppins/files/poppins-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Outfit';font-style:normal;font-display:swap;font-weight:600;src:url(../node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Outfit';font-style:normal;font-display:swap;font-weight:700;src:url(../node_modules/@fontsource/poppins/files/poppins-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Literata';font-style:normal;font-display:swap;font-weight:400;src:url(../node_modules/@fontsource/lora/files/lora-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Literata';font-style:italic;font-display:swap;font-weight:400;src:url(../node_modules/@fontsource/lora/files/lora-latin-400-italic.woff2) format('woff2')}
+@font-face{font-family:'Literata';font-style:normal;font-display:swap;font-weight:500;src:url(../node_modules/@fontsource/lora/files/lora-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Literata';font-style:normal;font-display:swap;font-weight:600;src:url(../node_modules/@fontsource/lora/files/lora-latin-600-normal.woff2) format('woff2')}
+
+/* Poppins est plus large qu'Outfit : à côté de la pastille « 3 questions restantes », le nom de la racine
+ * passait sur deux lignes. La pastille monte sur la ligne « RACINE 1 SUR 7 » et le nom prend toute la largeur :
+ * les 14 noms (français et anglais) tiennent sur une ligne dès 360 px de large. */
+#s-quiz .quiz-racine-entete{position:relative}
+#s-quiz .quiz-racine-entete .quiz-restantes{position:absolute;top:0;right:0;max-width:none;white-space:nowrap;margin:0}
+@media (max-width:374px){#s-quiz .quiz-racine-entete h2.quiz-racine{font-size:19px}}
