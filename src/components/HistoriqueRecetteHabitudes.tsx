@@ -3,6 +3,7 @@ import {chargerHistoriqueRecette,type JourRecette} from '@/lib/habitudes-jour-re
 import {bilanHabitudes} from '@/lib/habitudes';
 import type {JourHabitudesLecture} from '@/lib/habitudes-lecture';
 import {BilansHebdomadairesHabitudes} from './BilansHebdomadairesHabitudes';
+import {LecturesHistoriqueHabitudes} from './LecturesHistoriqueHabitudes';
 import {IconeHD} from './IconeHabitudes';
 
 export function HistoriqueRecetteHabitudes({enrollmentId,participantId,dateLocale,langue,revision}:{enrollmentId:string;participantId:string;dateLocale:string;langue:string;revision:number}){
@@ -22,6 +23,7 @@ export function HistoriqueRecetteHabitudes({enrollmentId,participantId,dateLocal
     <h3 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Mes journées','My days')}</h3>
     <div className="flex flex-col gap-2">{[...jours].reverse().map(j=><details key={j.date_locale} className="hd-historique-jour group bg-hd-surface-container-lowest rounded-xl shadow-[0_1px_4px_rgba(29,28,19,0.03)]"><summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer min-h-[52px] px-3 flex items-center gap-2 font-hd-label-md text-hd-label-md text-hd-on-surface"><IconeHD nom="calendar_today" className="text-[16px] text-hd-secondary"/><span className="flex-1">{l('Jour','Day')} {j.jour} · {new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:'UTC',day:'numeric',month:'long'}).format(new Date(j.date_locale+'T12:00:00Z'))} · {j.bilan.realisees}/{j.bilan.total} {l('réalisées','completed')}</span><IconeHD nom="chevron_right" className="text-[18px] text-hd-outline transition-transform group-open:rotate-90"/></summary>
      <ul className="px-3 pb-3 flex flex-col">{j.activites.map(a=><li key={a.id} className="flex items-baseline justify-between gap-2 py-2 border-b border-hd-outline-variant/40 last:border-0"><span className="font-hd-body-sm text-hd-body-sm text-hd-on-surface">{a.consigne}</span><strong className={`font-hd-label-sm text-hd-label-sm px-2 py-0.5 rounded-full ${a.etat==='realisee'?'bg-hd-surface-container text-hd-secondary':a.etat==='partielle'?'bg-hd-secondary-container/40 text-hd-secondary':'bg-hd-surface-container text-hd-on-surface-variant'}`}>{labels[a.etat]}</strong></li>)}</ul>
+     {lecture?.cle===cle&&lecture.jours.find(x=>x.date===j.date_locale)&&<LecturesHistoriqueHabitudes key={cle} jour={lecture.jours.find(x=>x.date===j.date_locale)!} langue={langue}/>}
     </details>)}</div>
     <button type="button" className={secondaire} onClick={()=>setTour(n=>n+1)}><IconeHD nom="refresh" className="text-[18px]"/>{l('Actualiser mon historique','Refresh my history')}</button>
    </>}
