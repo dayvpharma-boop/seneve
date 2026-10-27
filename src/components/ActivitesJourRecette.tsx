@@ -6,6 +6,7 @@ import {supabase} from '@/lib/supabase';
 import {lecturesHabitudesFr} from '@/data/habitudes-lectures-fr';
 import {lecturesHabitudesFrMois2} from '@/data/habitudes-lectures-fr-mois-2';
 import {lecturesHabitudesFrMois3} from '@/data/habitudes-lectures-fr-mois-3';
+import {lecturesHabitudesFrMois4} from '@/data/habitudes-lectures-fr-mois-4';
 import {lecturesHabitudesEn} from '@/data/habitudes-lectures-en';
 import {HistoriqueRecetteHabitudes} from './HistoriqueRecetteHabitudes';
 import {DeclarationHabitude} from './DeclarationHabitude';
@@ -40,9 +41,9 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  </section>;
  if(!data)return <p role="status" className="px-hd-margin py-hd-space-md font-hd-body-md text-hd-body-md text-hd-on-surface-variant">{l('Chargement des activités…','Loading activities…')}</p>;
  // Mois 2 à 6 : reprise des 30 lectures approuvées (jour 31 → lecture 1, etc.), décision du 26/10/2026.
- // Mois 2 et 3 en français : textes propres validés le 27/10/2026 (aucune traduction anglaise relue : l'anglais reprend le mois 1).
+ // Mois 2 à 4 en français : textes propres validés le 27/10/2026 (aucune traduction anglaise relue : l'anglais reprend le mois 1).
  const mois=data.mois??moisHabitudes(data.jour),jourLecture=lectureReprise(data.jour);
- const textePropre=en?undefined:[...lecturesHabitudesFrMois2,...lecturesHabitudesFrMois3].find(x=>x.jour===data.jour);
+ const textePropre=en?undefined:[...lecturesHabitudesFrMois2,...lecturesHabitudesFrMois3,...lecturesHabitudesFrMois4].find(x=>x.jour===data.jour);
  const texte=textePropre??(en?lecturesHabitudesEn:lecturesHabitudesFr).find(x=>x.jour===jourLecture);
  // Défis approuvés en français seulement (aucune version anglaise relue).
  const defi=en?undefined:defiDuJour(jourLecture);
