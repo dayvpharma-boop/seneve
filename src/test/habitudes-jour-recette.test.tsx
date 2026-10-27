@@ -25,11 +25,16 @@ it('retrouve les déclarations enregistrées lors de la réouverture',async()=>{
 it('ferme les déclarations si la lecture échoue et permet de réessayer',async()=>{
  mocks.charger.mockRejectedValueOnce(Error('closed'));ouvrir();await screen.findByRole('alert');expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'Actualiser les activités'}));await screen.findByRole('heading',{name:'Gratitude du matin'});
 });
-it('mois 2 : le jour 31 reprend la lecture approuvée du jour 1 et annonce le mois',async()=>{
+it('mois 2 : le jour 31 affiche son propre texte validé le 27/10/2026 et annonce le mois',async()=>{
  mocks.charger.mockResolvedValue({...jour,jour:31});ouvrir();
+ expect(await screen.findByRole('heading',{name:'Regarder qui est premier'})).toBeVisible();
+ expect(screen.getByText(/Mois 2 sur 6/)).toBeInTheDocument();expect(screen.getByText(/Un temps pour réfléchir · Jour 31/)).toBeInTheDocument();
+ expect(screen.queryByText(/reprise/)).toBeNull();expect(screen.queryByText(/30 jours gratuits/)).toBeNull();
+});
+it('mois 3 : sans nouveaux textes, le jour 61 reprend encore la lecture du jour 1',async()=>{
+ mocks.charger.mockResolvedValue({...jour,jour:61});ouvrir();
  expect(await screen.findByRole('heading',{name:'Commencer avec ce qui est possible'})).toBeVisible();
- expect(screen.getByText(/Mois 2 sur 6/)).toBeInTheDocument();expect(screen.getByText(/Lecture 1 reprise/)).toBeInTheDocument();
- expect(screen.queryByText(/30 jours gratuits/)).toBeNull();
+ expect(screen.getByText(/Lecture 1 reprise/)).toBeInTheDocument();
 });
 it('affiche le défi approuvé de la semaine, et le même défi au mois 2 avec la reprise',async()=>{
  mocks.charger.mockResolvedValue({...jour,jour:9});ouvrir();
