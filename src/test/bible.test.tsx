@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
-import { BibleAccueil, BibleAnnotations, BibleLecture, BibleRecherche } from '@/routes/bible';
+import { BibleAccueil, BibleLivres, BibleAnnotations, BibleLecture, BibleRecherche } from '@/routes/bible';
 import { BarreNav } from '@/components/BarreNav';
 import { LIVRES, analyserReference, annoter, lireAnnotations, morceauxSurlignes, motsRecherche, normaliser } from '@/lib/bible';
 import { texts } from '@/lib/test-texts';
@@ -37,6 +37,7 @@ function JournalRecu() { const l = useLocation(); return <><p>Page du journal</p
 function afficher(chemin: string) {
   return render(<MemoryRouter initialEntries={[chemin]}><Routes>
     <Route path="/bible" element={<BibleAccueil />} />
+    <Route path="/bible/livres" element={<BibleLivres />} />
     <Route path="/bible/recherche" element={<BibleRecherche />} />
     <Route path="/bible/annotations" element={<BibleAnnotations />} />
     <Route path="/bible/:livre/:chapitre" element={<BibleLecture />} />
@@ -169,4 +170,31 @@ describe('écrans de la Bible', () => {
     expect(screen.getByRole('heading', { name: 'Aucun surlignage' })).toBeInTheDocument();
     expect(screen.getByText(/enregistrés sur ce téléphone uniquement/)).toBeInTheDocument();
   });
+});
+
+describe('lecture biblique depuis Habitudes & Défis',()=>{
+ it('garde le matin pendant le choix du chapitre et propose le retour à la journée',async()=>{
+  afficher('/bible/livres?depuis=habitudes&moment=matin');
+  expect(screen.getByRole('complementary',{name:'Lecture biblique des habitudes'})).toHaveTextContent('Bible du matin');
+  expect(screen.getByRole('link',{name:'Revenir à ma journée'})).toHaveAttribute('href','/habitudes/aujourdhui');
+  fireEvent.click(screen.getByRole('button',{name:/Matthieu.*28 chapitres/}));
+  const chapitre=screen.getByRole('listitem',{name:'Matthieu 1'}),url=new URL(chapitre.getAttribute('href')!,'https://exemple.invalid');
+  expect(url.pathname).toBe('/bible/mat/1');expect(url.searchParams.get('depuis')).toBe('habitudes');expect(url.searchParams.get('moment')).toBe('matin');
+  fireEvent.click(chapitre);await screen.findByText('Remplissage MAT 1:1.');expect(screen.getByRole('complementary',{name:'Lecture biblique des habitudes'})).toHaveTextContent('Bible du matin');
+  expect(screen.getByText('Choisis ton livre et ton chapitre. Lire ne marque aucune activité comme réalisée.')).toBeVisible();
+  expect(vi.mocked(fetch).mock.calls.some(([url])=>String(url).includes('record_progress'))).toBe(false);
+ });
+ it('conserve la langue anglaise et le soir sans transmettre ce contexte au profil',()=>{
+  afficher('/bible/livres?depuis=habitudes&moment=soir&lang=en');
+  expect(screen.getByRole('complementary',{name:'Habit Bible reading'})).toHaveTextContent('Evening Bible reading');
+  expect(screen.getByRole('link',{name:'Back to my day'})).toHaveAttribute('href','/habitudes/aujourdhui?lang=en');
+  expect(screen.getByRole('link',{name:'My profile'})).toHaveAttribute('href','/profil?lang=en');
+  fireEvent.click(screen.getByRole('button',{name:/Matthew.*28 chapters/}));
+  const url=new URL(screen.getByRole('listitem',{name:'Matthew 1'}).getAttribute('href')!,'https://exemple.invalid');
+  expect(url.searchParams.get('lang')).toBe('en');expect(url.searchParams.get('moment')).toBe('soir');
+ });
+ it('ignore un contexte de lecture non reconnu',()=>{
+  afficher('/bible/livres?depuis=habitudes&moment=inconnu');
+  expect(screen.queryByRole('complementary',{name:'Lecture biblique des habitudes'})).toBeNull();
+ });
 });

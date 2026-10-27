@@ -4,10 +4,10 @@ import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import {cleSaisie,lireSaisie,preparerSaisie,type SaisieEnAttente} from '@/lib/habitudes-saisie';
 import {IconeHD} from './IconeHabitudes';
 
-export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true,variante,heure,attenue=false}:{
+export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true,variante,heure,attenue=false}:{
  /** « stitch » : carte des maquettes Stitch HD (même mécanisme d'enregistrement). */
  variante?:'stitch'|'priere';heure?:string;attenue?:boolean;
- aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
+ lienLecture?:{href:string;label:string};aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
 }){
  const en=langue==='en';const cle=cleSaisie(userId,occurrence.enrollment_id,occurrence.occurrence_id);
  const [attente,setAttente]=useState<SaisieEnAttente|null>(()=>{try{return lireSaisie(sessionStorage,cle);}catch{return null;}});
@@ -31,7 +31,7 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,lan
   }catch{setErreur(true);}finally{verrou.current=false;setOccupe(false);}
  }
  const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
- if(variante==='stitch')return <CarteStitch {...{en,consigne,critere,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>;
+ if(variante==='stitch')return <CarteStitch {...{en,consigne,critere,lienLecture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
  if(variante==='priere')return <section className="ap-actions" aria-label={consigne} aria-busy={occupe}>
   <p role="status" className="ap-etat">{valeur==='realisee'?(en?'Prayer recorded · Synchronised':'Prière déclarée · Synchronisée'):attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation.':'En attente de confirmation du serveur.')):labels[valeur]}</p>
@@ -43,7 +43,7 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,lan
   {erreur&&<p role="alert" className="ap-erreur">{nettoyageIncomplet?(en?'Already confirmed. Retry to finish updating this device.':'Déjà confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Not confirmed. Check your connection and retry the same declaration.':'Non confirmé. Vérifie ta connexion et réessaie cette même déclaration.')}</p>}
  </section>;
  return <section className="card hd-declaration" aria-label={consigne} aria-busy={occupe}>
-  <h3>{consigne}</h3>{critere&&<p>{critere}</p>}
+  <h3>{consigne}</h3>{critere&&<p>{critere}</p>}{lienLecture&&<a className="btn-secondaire" href={lienLecture.href}>{lienLecture.label}</a>}
   <p role="status">{labels[valeur]}{courant?.synchronisation==='synchronise'&&<> · {en?'Synchronised':'Synchronisée'}</>}</p>
   {aide&&<p>{en?'Help requested':'Aide demandée'}</p>}
   {attente&&<p role="status">{nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation. This declaration is not confirmed yet.':'En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.')}</p>}
@@ -59,11 +59,12 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,etat,lan
 
 type ValeurEtat='non_commencee'|'preparee'|'partielle'|'realisee';
 /** Rendu Stitch : mêmes actions, mêmes messages d'attente et d'erreur que la carte d'origine. */
-function CarteStitch(p:{en:boolean;consigne:string;critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
+function CarteStitch(p:{en:boolean;consigne:string;lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
  const {en,consigne,critere,heure,valeur,aide}=p,l=(fr:string,english:string)=>en?english:fr;
  const etatTexte={non_commencee:l('Pas encore enregistrée','Not recorded yet'),preparee:l('Préparée','Prepared'),partielle:l('Réalisée en partie','Partly done'),realisee:l('Réalisée','Completed')}[valeur]+(p.synchronise?l(' · Synchronisée',' · Synchronised'):'');
  const heureEl=heure?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0"><time dateTime={heure}>{heure}</time></span>:null;
  const statut=<p role="status" className="sr-only">{etatTexte}</p>;
+ const lecture=p.lienLecture?<a href={p.lienLecture.href} aria-label={p.lienLecture.label} className="relative z-10 min-h-[44px] px-3 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 inline-flex items-center justify-center gap-1.5"><IconeHD nom="menu_book" className="text-[17px]"/><span>{l('Lire','Read')}</span></a>:null;
  if(p.attenue)return <article aria-label={consigne} className="relative bg-hd-surface-container/60 rounded-xl px-hd-space-md py-2.5 flex items-center justify-between">
   {statut}<div className="flex items-center gap-3 min-w-0">
    <IconeHD nom="radio_button_unchecked" className="text-[18px] text-hd-outline"/>
@@ -71,13 +72,14 @@ function CarteStitch(p:{en:boolean;consigne:string;critere?:string|null;heure?:s
   </div>
   <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0">{l('À faire','To do')}</span>
   <button type="button" onClick={p.deplier} aria-expanded={false} aria-label={l(`Déclarer : ${consigne}`,`Record: ${consigne}`)} className="absolute inset-0 rounded-xl"/>
+  {lecture}
  </article>;
  if(valeur==='realisee'&&!aide&&!p.attente&&!p.erreur)return <article aria-label={consigne} className="bg-hd-surface-container-lowest rounded-2xl px-hd-space-md py-3 shadow-[0_1px_6px_rgba(29,28,19,0.03)] flex items-center justify-between">
   {statut}<div className="flex items-center gap-3 min-w-0">
    <span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="done" className="text-[17px]"/></span>
    <div className="flex items-baseline gap-2 min-w-0 truncate">{heureEl}<h3 className="font-hd-label-lg text-hd-label-lg text-hd-on-surface truncate">{consigne}</h3></div>
   </div>
-  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-secondary shrink-0"><IconeHD nom="verified" className="text-[15px]"/><span className="font-hd-label-sm text-hd-label-sm">{l('Fait','Done')}</span></div>
+  <div className="flex items-center gap-2"><div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-secondary shrink-0"><IconeHD nom="verified" className="text-[15px]"/><span className="font-hd-label-sm text-hd-label-sm">{l('Fait','Done')}</span></div>{lecture}</div>
  </article>;
  const cercle=aide?<span className="w-7 h-7 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center shrink-0"><IconeHD nom="support_agent" className="text-[18px]"/></span>
   :valeur==='realisee'?<span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="done" className="text-[17px]"/></span>
@@ -103,8 +105,8 @@ function CarteStitch(p:{en:boolean;consigne:string;critere?:string|null;heure?:s
    {pastille}
   </div>
   {(()=>{const reglages=!p.lectureSeule&&!p.attente&&choix.length>0?<button type="button" aria-expanded={p.autres} aria-label={l('Autres choix','Other choices')} onClick={()=>p.setAutres(!p.autres)} className={`min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center transition-colors shrink-0 ${p.autres?'bg-hd-surface-container-high text-hd-on-surface':'bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-on-surface-variant'}`}><IconeHD nom="tune" className="text-[20px]"/></button>:null;
-   return aide?<div className="flex items-center justify-between gap-2 text-hd-on-surface-variant pl-9"><span className="font-hd-body-sm text-hd-body-sm italic flex items-center gap-1.5">{l('Demande envoyée à l’équipe','Request sent to the team')}<IconeHD nom="mark_email_read" className="text-[16px] text-[#0369A1]"/></span>{reglages}</div>
-   :(critere||principal||reglages)&&<div className="flex items-center justify-between gap-hd-space-sm pt-1"><p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant min-w-0 flex-1">{critere}</p><div className="flex items-center gap-2 shrink-0">{principal}{reglages}</div></div>;})()}
+   return aide?<div className="flex items-center justify-between gap-2 text-hd-on-surface-variant pl-9"><span className="font-hd-body-sm text-hd-body-sm italic flex items-center gap-1.5">{l('Demande envoyée à l’équipe','Request sent to the team')}<IconeHD nom="mark_email_read" className="text-[16px] text-[#0369A1]"/></span><div className="flex items-center gap-2 shrink-0">{lecture}{reglages}</div></div>
+   :(critere||principal||reglages||lecture)&&<div className="flex items-center justify-between gap-hd-space-sm pt-1"><p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant min-w-0 flex-1">{critere}</p><div className="flex items-center gap-2 shrink-0">{lecture}{principal}{reglages}</div></div>;})()}
   {p.attente&&<p role="status" className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{p.nettoyageIncomplet?l('Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.','Record confirmed. Retry to finish updating this device.'):l('En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.','Waiting for server confirmation. This declaration is not confirmed yet.')}</p>}
   {p.autres&&!p.lectureSeule&&!p.attente&&choix.length>0&&<div className="flex flex-wrap gap-2">{choix.map(c=><button key={c.a} type="button" disabled={p.occupe} onClick={()=>p.declarer(c.a)} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium disabled:opacity-60">{c.t}</button>)}</div>}
   {p.erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{p.nettoyageIncomplet?l('L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.','The record is already confirmed. Retry to finish the update.'):l('Confirmation indisponible. Réessaie cette même déclaration quand tu peux.','Confirmation unavailable. Retry this same declaration when you can.')}</p>}
