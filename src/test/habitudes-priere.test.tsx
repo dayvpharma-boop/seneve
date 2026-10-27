@@ -1,3 +1,4 @@
+import {cleReperePriere,lireReperePriere} from '@/lib/habitudes-priere-reprise';
 import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {LecteurPriereHabitudes} from '@/components/LecteurPriereHabitudes';
@@ -8,7 +9,7 @@ const ok=(args:Record<string,string>)=>({data:{event_id:args.p_client_event_id,e
 const rpc=vi.fn(),onConfirme=vi.fn(),onFermer=vi.fn();
 function ouvrir(a=activite){render(<LecteurPriereHabitudes activite={a} userId={uid} langue="fr" transport={{rpc}} onConfirme={onConfirme} onFermer={onFermer}/>);return screen.getByRole('dialog');}
 beforeEach(()=>{sessionStorage.clear();rpc.mockReset().mockImplementation((_nom,args)=>Promise.resolve(ok(args)));onConfirme.mockReset();onFermer.mockReset();});
-afterEach(cleanup);
+afterEach(()=>{cleanup();vi.restoreAllMocks();});
 it('ouvre le texte intégral sans déclarer une prière, avec la taille réglable et le journal privé',()=>{
  const d=ouvrir();expect(within(d).getByText('Fin de la Amidah')).toBeVisible();expect(within(d).getByText(/À Pourim, continuez ici/)).toBeVisible();
  const texte=within(d).getByRole('article',{name:'Texte intégral de l’Amidah'});
@@ -28,4 +29,19 @@ it('après une coupure réseau la nouvelle tentative garde le même événement'
 });
 it('un refus du serveur ne devient jamais une prière déclarée',async()=>{
  rpc.mockResolvedValue({data:null,error:{code:'42501',message:'Access denied'}});const d=ouvrir();fireEvent.click(within(d).getByRole('button',{name:'J’ai prié'}));await within(d).findByRole('alert');expect(within(d).queryByText('Prière déclarée · Synchronisée')).toBeNull();expect(onConfirme).not.toHaveBeenCalled();
+});
+
+it('retrouve un repère à la réouverture, rejoint le bon passage et ne déclare rien',()=>{
+ let d=ouvrir();const article=within(d).getByRole('article',{name:'Texte intégral de l’Amidah'});
+ const passages=Array.from(article.querySelectorAll('p'));
+ passages.forEach((p,i)=>vi.spyOn(p,'getBoundingClientRect').mockReturnValue({top:i<5?-40:20+i*30,bottom:i<5?-10:100+i*30,height:30} as DOMRect));
+ fireEvent.click(within(d).getByRole('button',{name:'Placer un repère ici'}));expect(lireReperePriere(cleReperePriere(uid,occurrence),61)).toBe(5);expect(within(d).getByRole('button',{name:'Reprendre'})).toBeEnabled();expect(rpc).not.toHaveBeenCalled();
+ cleanup();d=ouvrir();const texte=within(d).getByRole('article',{name:'Texte intégral de l’Amidah'}),scroll=vi.fn();
+ Object.defineProperty(texte.parentElement!,'scrollTo',{value:scroll,configurable:true});
+ fireEvent.click(within(d).getByRole('button',{name:'Reprendre'}));expect(scroll).toHaveBeenCalled();expect(document.activeElement).toBe(texte.querySelector('[data-amidah-paragraphe="5"]'));expect(rpc).not.toHaveBeenCalled();expect(onConfirme).not.toHaveBeenCalled();
+ fireEvent.click(within(d).getByRole('button',{name:'Effacer le repère'}));expect(within(d).getByRole('button',{name:'Reprendre'})).toBeDisabled();expect(lireReperePriere(cleReperePriere(uid,occurrence),61)).toBeNull();
+});
+it('un échec de stockage n’annonce pas un repère conservé',()=>{
+ const d=ouvrir();vi.spyOn(Storage.prototype,'setItem').mockImplementation(()=>{throw Error('quota');});
+ fireEvent.click(within(d).getByRole('button',{name:'Placer un repère ici'}));expect(within(d).getByText('Le repère n’a pas pu être conservé. Réessaie.')).toBeVisible();expect(within(d).getByRole('button',{name:'Reprendre'})).toBeDisabled();expect(rpc).not.toHaveBeenCalled();
 });
