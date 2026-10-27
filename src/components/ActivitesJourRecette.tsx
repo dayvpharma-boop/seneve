@@ -62,6 +62,12 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
     <p className="font-hd-body-md text-hd-body-md text-hd-on-surface-variant italic">{texte.objectif}</p>
    </>:<h2 className="font-hd-headline-md text-hd-headline-md text-hd-on-surface mt-1">{l('Un pas après l’autre','One step at a time')}</h2>}
   </header>
+  <aside className="mb-hd-space-lg bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-sm flex flex-col gap-2" aria-label={l('Prière Amidah','Amidah prayer')}>
+   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{l('Matin · Midi · Soir','Morning · Midday · Evening')}</span>
+   <h3 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('L’Amidah','The Amidah')}</h3>
+   <a href={`${import.meta.env.BASE_URL}amidah.html?retour=espace`} className="min-h-[48px] px-4 bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg rounded-xl flex items-center justify-center gap-2"><IconeHD nom="auto_stories" className="text-[20px]"/>{l('Lire l’Amidah en français','Read the Amidah in French')}</a>
+   <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Lire ne valide aucune activité. Après ta prière, reviens ici pour la déclarer.','Reading does not complete an activity. After praying, return here to record it.')}</p>
+  </aside>
   {/* Prochain rendez-vous */}
   {prochain&&<section className="mt-hd-space-xs mb-hd-space-lg" aria-label={l('Prochain rendez-vous','Next appointment')}>
    <div className="relative bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_4px_20px_rgba(117,91,0,0.06)] overflow-hidden">
