@@ -8,6 +8,7 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "isolatedModules": true,
     "types": ["vite/client", "vitest/globals", "node"],
@@ -16,3 +17,4 @@
   },
   "include": ["src", "vite.config.ts"]
 }
+
