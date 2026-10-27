@@ -68,7 +68,7 @@ it.each(['revoque','expire'] as const)('site réel : un mois payé aligné mais 
  mock.charger.mockResolvedValue({...catalogue,droits:[{entitlement_id:'D2',offre_id:'CONTINUITE_MENSUEL_FR',etat,debut:paye.debut,fin:paye.fin_exclue}],
   inscriptions:[{...catalogue.inscriptions[0]!,programme_id:'HABITUDES_DEFIS_30J_FR_V1'}],periodesGratuitesHabitudes:[paye]});
  render(<MemoryRouter><AccesRecetteHabitudes reel/></MemoryRouter>);
- await screen.findByText(etat==='revoque'?'Cet accès gratuit est fermé.':'Ton mois 2 est terminé. Le mois suivant s’ouvre seulement avec un abonnement Continuité actif.');
+ await screen.findByText(etat==='revoque'?'Ton mois 2 est fermé.':'Ton mois 2 est terminé. Le mois suivant s’ouvre seulement avec un abonnement Continuité actif.');
  expect(screen.queryByRole('heading',{name:'Ma journée'})).toBeNull();
  expect(screen.queryByTestId('planning')).toBeNull();
 });
