@@ -1,6 +1,6 @@
 import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { chargerSupabase } from '@/lib/supabase-differe';
 
 // Médias publics (Découverte gratuite) : stockage SÉNEVÉ, lecture sans clé. Les médias protégés
 // passeront plus tard par un accès contrôlé (cahier n°6) ; ils ne sont pas servis ici.
@@ -24,7 +24,7 @@ export function AudioCard({ contentIds, langue,maquette=false }: { contentIds: s
     let annule = false;
     setAudios([]);
     if (!cle) return;
-    void Promise.resolve(supabase.from('resources').select('titre, reference_stockage, content_id')
+    void chargerSupabase().then(supabase => supabase.from('resources').select('titre, reference_stockage, content_id')
       .eq('type_media', 'audio').eq('etat', 'publie').eq('est_public', true).in('content_id', cle.split(',')))
       .then(r => { if (!annule && Array.isArray(r?.data)) setAudios(r.data as Ressource[]); })
       .catch(() => undefined);

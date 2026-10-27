@@ -1,5 +1,5 @@
 import {createContext,useContext,useEffect,useRef,useState,type ReactNode} from 'react';
-import {supabase} from '@/lib/supabase';
+import {chargerSupabase} from '@/lib/supabase-differe';
 import {chargerPhoto,suivrePhoto} from '@/lib/photo-profil';
 
 type PhotoCompte={userId:string|null;prenom:string;photo:Blob|null;adresse:string|null;indisponible:boolean};
@@ -18,10 +18,16 @@ export function PhotosParticipant({children}:{children:ReactNode}){
    courant.current=u?.id??null;
    setCompte({id:u?.id??null,prenom:typeof u?.user_metadata?.prenom==='string'?u.user_metadata.prenom:''});
   };
-  const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{evenements++;appliquer(session?.user);});
-  const initial=evenements;
-  void supabase.auth.getSession().then(r=>{if(evenements===initial)appliquer(r.error?undefined:r.data.session?.user);}).catch(()=>{if(evenements===initial)appliquer(undefined);});
-  return()=>{actif=false;courant.current=null;subscription.unsubscribe();};
+  let arreter=()=>{};
+  // Supabase arrive après le premier affichage ; l'écoute de la session commence dès qu'il est chargé.
+  void chargerSupabase().then(supabase=>{
+   if(!actif)return;
+   const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{evenements++;appliquer(session?.user);});
+   arreter=()=>subscription.unsubscribe();
+   const initial=evenements;
+   return supabase.auth.getSession().then(r=>{if(evenements===initial)appliquer(r.error?undefined:r.data.session?.user);}).catch(()=>{if(evenements===initial)appliquer(undefined);});
+  }).catch(()=>appliquer(undefined));
+  return()=>{actif=false;courant.current=null;arreter();};
  },[]);
  useEffect(()=>{
   const id=compte.id;let actif=true,version=0,adresse:string|null=null;

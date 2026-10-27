@@ -1,4 +1,4 @@
-import {supabase} from './supabase';
+import {chargerSupabase} from './supabase-differe';
 
 export const PHOTOS_PROFIL='photos-profil';
 export const PHOTO_MAX_SOURCE=10*1024*1024;
@@ -11,12 +11,12 @@ function annoncerPhoto(id:string,photo:Blob|null){for(const ecoute of ecoutesPho
 const chemin=(id:string)=>`${id}/avatar.jpg`;
 async function verifier(id:string){
   if(navigator.onLine===false)throw Error('Hors connexion');
-  const r=await supabase.auth.getSession();
+  const r=await (await chargerSupabase()).auth.getSession();
   if(r.error||r.data.session?.user.id!==id)throw Error('Session expirée');
 }
 export async function chargerPhoto(id:string):Promise<Blob|null>{
   await verifier(id);
-  const r=await supabase.storage.from(PHOTOS_PROFIL).download(chemin(id));
+  const r=await (await chargerSupabase()).storage.from(PHOTOS_PROFIL).download(chemin(id));
   if(r.error){if(String((r.error as {statusCode?:string}).statusCode)==='404')return null;throw r.error;}
   await verifier(id);
   return r.data;
@@ -24,14 +24,14 @@ export async function chargerPhoto(id:string):Promise<Blob|null>{
 export async function enregistrerPhoto(id:string,photo:Blob){
   if(photo.type!=='image/jpeg'||photo.size===0||photo.size>PHOTO_MAX_ENVOI)throw new PhotoInvalide();
   await verifier(id);
-  const r=await supabase.storage.from(PHOTOS_PROFIL).upload(chemin(id),photo,{contentType:'image/jpeg',upsert:true,cacheControl:'0'});
+  const r=await (await chargerSupabase()).storage.from(PHOTOS_PROFIL).upload(chemin(id),photo,{contentType:'image/jpeg',upsert:true,cacheControl:'0'});
   if(r.error)throw r.error;
   await verifier(id);
   annoncerPhoto(id,photo);
 }
 export async function retirerPhoto(id:string){
   await verifier(id);
-  const r=await supabase.storage.from(PHOTOS_PROFIL).remove([chemin(id)]);
+  const r=await (await chargerSupabase()).storage.from(PHOTOS_PROFIL).remove([chemin(id)]);
   if(r.error)throw r.error;
   await verifier(id);
   annoncerPhoto(id,null);
