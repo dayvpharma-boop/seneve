@@ -81,17 +81,17 @@ const cleCache='seneve:espace:v1:10000000-0000-4000-8000-000000000001';
 it('exclut les contenus HD du cache quand leur interface est désactivée',async()=>{
  vi.stubEnv('VITE_HABITUDES_DEFIS','false');localStorage.setItem(cleCache,'ancienne copie');
  render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('button',{name:'Se déconnecter'});
- expect(localStorage.getItem(cleCache)).toBeNull();expect(screen.queryByRole('heading',{name:'Mes activités du jour'})).toBeNull();
+ await waitFor(()=>expect(localStorage.getItem(cleCache)).toBeNull());expect(screen.queryByRole('heading',{name:'Mes activités du jour'})).toBeNull();
 });
 it('reste accessible sans copie si le registre est indisponible et le module désactivé',async()=>{
  vi.stubEnv('VITE_HABITUDES_DEFIS','false');erreurRegistre=true;localStorage.setItem(cleCache,'ancienne copie');
  render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('button',{name:'Se déconnecter'});
- expect(localStorage.getItem(cleCache)).toBeNull();expect(appels).toHaveLength(0);
+ await waitFor(()=>expect(localStorage.getItem(cleCache)).toBeNull());expect(appels).toHaveLength(0);
 });
 it('conserve la copie du parcours ordinaire après vérification sans correspondance HD',async()=>{
  vi.stubEnv('VITE_HABITUDES_DEFIS','false');tables.hd_programme_links=[];
  render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('button',{name:'Se déconnecter'});
- expect(JSON.parse(localStorage.getItem(cleCache)!).donnees.parcours).toHaveLength(1);
+ await waitFor(()=>expect(JSON.parse(localStorage.getItem(cleCache)??'null')?.donnees.parcours).toHaveLength(1));
 });
 
 it('la date de planning suit la journée choisie et affiche les horaires personnels',async()=>{
@@ -100,3 +100,4 @@ it('la date de planning suit la journée choisie et affiche les horaires personn
  fireEvent.change(screen.getByRole('combobox',{name:'Jour du parcours'}),{target:{value:'1'}});
  expect(document.querySelector('.hd-planning-jour time[datetime="2026-10-24"]')).not.toBeNull();expect(appels).toHaveLength(0);
 });
+

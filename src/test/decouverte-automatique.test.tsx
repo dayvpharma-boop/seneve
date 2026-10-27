@@ -61,7 +61,7 @@ describe('Premier accès : Découverte sans clic supplémentaire', () => {
     metadata.langue = 'en';
     render(<MemoryRouter initialEntries={['/espace']}><Espace /></MemoryRouter>);
     expect(await screen.findByText('Day 1 of 7')).toBeInTheDocument();
-    expect(tables.enrollments[0].langue).toBe('en');
+    expect(tables.enrollments?.[0]?.langue).toBe('en');
   });
   it('respecte la langue choisie sur la page de connexion', async () => {
     render(<MemoryRouter initialEntries={['/espace?lang=en']}><Espace /></MemoryRouter>);
@@ -86,3 +86,4 @@ describe('Premier accès : Découverte sans clic supplémentaire', () => {
     expect(screen.getByRole('button', { name: 'Réessayer' })).toBeInTheDocument();
   });
 });
+

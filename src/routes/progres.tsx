@@ -74,12 +74,13 @@ async function load(): Promise<Loaded | null> {
     bilans[x.enrollment_id] = bilan(x.date_debut, x.duree, cts, activites, etats.filter(s2 => s2.enrollment_id === x.enrollment_id));
     if((hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===x.programme_id&&String(h.version)===String(x.version)&&h.langue===x.langue)){
       const fz=fuseauHabitudes(p.data??{});
-      const calendrier=periodes[x.enrollment_id]?.length?calendrierPeriodes(x.date_debut,periodes[x.enrollment_id]!,fz,x.duree):calendrierHabitudes(x.date_debut,x.duree,fz);
+      const calendrierHd=periodes[x.enrollment_id]?.length?calendrierPeriodes(x.date_debut,periodes[x.enrollment_id]!,fz,x.duree):undefined;
+      const calendrier=calendrierHd??calendrierHabitudes(x.date_debut,x.duree,fz);
       bilans[x.enrollment_id]={...bilans[x.enrollment_id]!,joursOuverts:calendrier.joursOuverts,termine:calendrier.finished,pasCommence:calendrier.notStarted};
       habitudes[x.enrollment_id]=joursHabitudesLecture({...x,version:Number(x.version)},bilans[x.enrollment_id]!.joursOuverts,
         cts.filter(c=>c.langue===x.langue).map(c=>({...c,version:Number(c.version)})),
         activites.map(a=>({...a,consigne:a.consigne??''})),etats as EtatLecture[],
-        'debuts' in calendrier?(j:number)=>dateDuJourHabitudes(x.date_debut,calendrier.debuts,j):undefined);
+        calendrierHd?(j:number)=>dateDuJourHabitudes(x.date_debut,calendrierHd.debuts,j):undefined);
     }
     actions[x.enrollment_id] = {};
     for (const jour of bilans[x.enrollment_id]!.jours) {
@@ -180,4 +181,5 @@ export function Progres() {
     <BarreNav langue={langue} maquette iconesJournee />
   </main>;
 }
+
 
