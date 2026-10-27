@@ -27,8 +27,8 @@ it('ne présente pas un bilan vide comme une réussite',()=>{
 });
 it('propose un bilan personnel via le journal de la bonne inscription',()=>{
  render(<MemoryRouter><BilansHebdomadairesHabitudes jours={[jour(1,[action('a','partielle',{aide:true})])]} langue="fr" inscription="E1"/></MemoryRouter>);
- expect(screen.getByText(/ne mesurent ni ta foi/)).toBeInTheDocument();document.querySelector('details')!.open=true;expect(screen.getByRole('link',{name:'Écrire dans mon journal'})).toHaveAttribute('href','/journal?inscription=E1');expect(screen.getByText('Qu’ai-je appris ?')).toBeInTheDocument();expect(document.querySelector('textarea,input')).toBeNull();
+ expect(screen.getByText(/ne mesurent ni ta foi/)).toBeInTheDocument();document.querySelector('details')!.open=true;expect(screen.getByRole('link',{name:'Écrire dans mon journal'})).toHaveAttribute('href','/journal?ecrire=1&depuis=habitudes&bilan=semaine&periode=1&inscription=E1');expect(screen.getByText('Qu’ai-je appris ?')).toBeInTheDocument();expect(document.querySelector('textarea,input')).toBeNull();
 });
 it('propose le journal anglais sans enregistrer de réponse',()=>{
- render(<MemoryRouter><BilansHebdomadairesHabitudes jours={[jour(1,[action('a','preparee')])]} langue="en" inscription="E2"/></MemoryRouter>);document.querySelector('details')!.open=true;expect(screen.getByRole('link',{name:'Write in my journal'})).toHaveAttribute('href','/journal?inscription=E2&lang=en');
+ render(<MemoryRouter><BilansHebdomadairesHabitudes jours={[jour(1,[action('a','preparee')])]} langue="en" inscription="E2"/></MemoryRouter>);document.querySelector('details')!.open=true;expect(screen.getByRole('link',{name:'Write in my journal'})).toHaveAttribute('href','/journal?ecrire=1&depuis=habitudes&bilan=semaine&periode=1&inscription=E2&lang=en');
 });
