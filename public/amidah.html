@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,300..400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed": "#ffe08f", "secondary": "#755b00", "secondary-fixed-dim": "#e6c364", "surface-tint": "#755b00", "on-error-container": "#93000a", "inverse-primary": "#e6c366", "surface-container": "#f2eedf", "on-tertiary-container": "#dcd8cc", "error": "#ba1a1a", "secondary-container": "#fed978", "on-primary-container": "#f9d576", "background": "#fef9ea", "surface-container-low": "#f8f4e4", "on-surface-variant": "#4d4637", "surface-dim": "#dedacb", "on-tertiary-fixed": "#1d1c15", "tertiary-container": "#605e55", "inverse-on-surface": "#f5f1e2", "surface-bright": "#fef9ea", "surface": "#fef9ea", "primary": "#584400", "on-background": "#1d1c13", "on-secondary": "#ffffff", "primary-container": "#755b00", "surface-container-highest": "#e7e2d4", "error-container": "#ffdad6", "on-surface": "#1d1c13", "surface-container-high": "#ede8d9", "outline": "#7e7665", "surface-container-lowest": "#ffffff", "outline-variant": "#d0c5b2", "on-secondary-fixed-variant": "#584400", "on-secondary-container": "#785d00", "on-tertiary": "#ffffff", "on-secondary-fixed": "#241a00", "on-primary-fixed-variant": "#584400", "tertiary-fixed-dim": "#cac6bb", "surface-variant": "#e7e2d4", "on-error": "#ffffff", "tertiary": "#48473e", "on-primary-fixed": "#241a00", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#49473e", "tertiary-fixed": "#e7e2d6", "inverse-surface": "#323127", "primary-fixed": "#ffdf90", "primary-fixed-dim": "#e6c366" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2.25rem", "margin": "1rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "gutter": "0.75rem", "space-sm": "0.5rem", "space-md": "1rem" }, "fontFamily": { "headline-lg": ["Literata"], "headline-sm": ["Literata"], "label-sm": ["Work Sans"], "body-md": ["Literata"], "scripture-verse": ["Literata"], "label-lg": ["Work Sans"], "label-md": ["Work Sans"], "headline-md": ["Literata"], "body-lg": ["Literata"], "body-sm": ["Work Sans"], "label-nav": ["Work Sans"] }, "fontSize": { "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "600" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "15px", "letterSpacing": "0.05em", "fontWeight": "600" }], "body-md": ["15px", { "lineHeight": "25px", "fontWeight": "400" }], "scripture-verse": ["19px", { "lineHeight": "34px", "letterSpacing": "0.01em", "fontWeight": "400" }], "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "500" }], "label-md": ["13px", { "lineHeight": "17px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "body-lg": ["17px", { "lineHeight": "29px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "19px", "fontWeight": "400" }], "label-nav": ["10px", { "lineHeight": "13px", "fontWeight": "500" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <title>Amidah — lecture française intégrale · SÉNEVÉ</title><style>
+#prayerContent{max-width:46rem;margin:0 auto;padding:0 1.25rem;gap:1.5rem}
+#texteIntegral{font-family:Literata,Georgia,serif;font-size:20px;line-height:1.85;letter-spacing:0;word-spacing:normal;text-align:left;overflow-wrap:break-word}
+#texteIntegral p{margin:0 0 1.5em;white-space:normal}
+#texteIntegral .lecture-geste,#texteIntegral .lecture-indication{font-family:"Work Sans",sans-serif;font-size:.76em;line-height:1.65;padding:.8rem 1rem;margin:1.6rem 0 1rem;border-left:3px solid #b89a43;background:#f2eedf;border-radius:0 .65rem .65rem 0;color:#584400}
+#texteIntegral .lecture-fin{font-family:"Work Sans",sans-serif;font-size:.7em;text-align:center;letter-spacing:.08em;color:#755b00;padding:1rem 0;border-top:1px solid #d0c5b2}
+@media(min-width:700px){#prayerContent{padding:0 2rem}#texteIntegral{font-size:21px}}
+@media(max-width:380px){#prayerContent{padding:0 .3rem}#texteIntegral{font-size:18px}}
+</style></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Retour" class="w-11 h-11 flex items-center justify-center text-on-surface hover:text-primary transition-colors" onclick="location.href='./habitudes#priere'" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-headline-sm text-headline-sm text-on-surface line-clamp-1">Prière du matin</h1></div><div class="flex items-center gap-space-xs"><div aria-label="Taille de police" class="flex items-center bg-surface-container rounded-full px-space-xs py-0.5" role="group"><button aria-label="Diminuer la taille du texte" class="w-11 h-11 flex items-center justify-center font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" type="button">A-</button><button aria-label="Augmenter la taille du texte" class="w-11 h-11 flex items-center justify-center font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" type="button">A+</button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-14 pb-safe bg-surface"><div class="flex flex-col w-full relative pb-28">
+<!-- En-tête contextuel & Métadonnées liturgiques -->
+<div class="px-margin pt-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed/40 text-secondary">
+<span class="material-symbols-outlined text-[14px]">auto_stories</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Amidah · texte français intégral</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+<span>Durée personnelle</span>
+</div>
+</div>
+<!-- Sélecteur de langue liturgique -->
+<div class="flex items-center p-1 rounded-xl bg-surface-container gap-1 mt-1">
+<button class="flex-1 py-1.5 px-2.5 rounded-lg bg-surface-container-lowest shadow-sm text-secondary font-label-md text-label-md text-center transition-colors" type="button">
+        Français
+      </button>
+<div class="flex-1 py-1.5 px-2 rounded-lg text-on-surface-variant/60 font-label-md text-label-md flex items-center justify-center gap-1 cursor-not-allowed">
+<span>Phonétique</span>
+<span class="text-[9px] uppercase font-label-sm px-1 py-0.2 rounded bg-surface-container-highest text-on-surface-variant/80">Bientôt</span>
+</div>
+<div class="flex-1 py-1.5 px-2 rounded-lg text-on-surface-variant/60 font-label-md text-label-md flex items-center justify-center gap-1 cursor-not-allowed">
+<span>English</span>
+<span class="text-[9px] uppercase font-label-sm px-1 py-0.2 rounded bg-surface-container-highest text-on-surface-variant/80">Bientôt</span>
+</div>
+</div>
+<!-- Note d'avertissement éditoriale sobre -->
+<div class="rounded-xl p-3 bg-surface-container-low flex items-start gap-2.5 mt-1">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+        Texte français intégral. Gestes et passages conditionnels conservés. Cette page permet la lecture et la prière ; le journal et l’enregistrement des réalisations ne sont pas encore disponibles.
+      </p>
+</div>
+</div>
+<!-- Conteneur principal du texte avec rail de progression subtil -->
+<div class="relative px-margin mt-space-lg flex">
+<!-- Rail de lecture latéral discret -->
+<div class="absolute right-2 top-0 bottom-0 w-1 flex flex-col items-center pointer-events-none">
+<div class="w-0.5 h-full bg-surface-container-highest rounded-full relative">
+<div class="absolute top-0 w-1.5 -left-0.5 h-10 rounded-full bg-secondary transition-transform duration-100 ease-out" id="scrollProgressPill"></div>
+</div>
+</div>
+<!-- Corps textuel de recueillement -->
+<div class="w-full pr-4 flex flex-col gap-space-xl font-body-lg text-body-lg leading-relaxed text-on-surface" id="prayerContent">
+<article id="texteIntegral" aria-label="Amidah, texte français intégral"><p class="lecture-geste">On fait trois pas en arrière puis en avant et on dit:</p>
+<p class="lecture-priere">Éternel, ouvre mes lèvres, et ma bouche dira Ta louange.</p>
+<p class="lecture-geste">Pliez les genoux à « Béni » ; Redressez-vous à « Eternel notre D.ieu » :</p>
+<p class="lecture-priere">Béni sois-Tu, Eternel notre D.ieu et D.ieu de nos pères, D.ieu d’Abraham, D.ieu d’Isaac et D.ieu de Jacob, le D.ieu grand, puissant et redoutable, D.ieu exalté, qui accorde une bonté abondante, qui crée toutes choses, qui se souvient de la piété des patriarches, et qui, dans l’amour, apporte un rédempteur aux enfants de leurs enfants, pour l’amour de Son Nom.</p>
+<p class="lecture-indication">Pendant les dix jours de pénitence, ajoutez :</p>
+<p class="lecture-priere">Souviens-Toi de nous pour la vie, Roi qui désire la vie ; inscris-nous dans le Livre de Vie, à cause de Toi, ô D.ieu vivant.</p>
+<p class="lecture-geste">Pliez les genoux à « Béni » ; Redressez-vous à « Eternel » :</p>
+<p class="lecture-priere">O Roi, (Tu es) une aide, un sauveur et un bouclier. Béni sois-Tu Eternel, Bouclier d’Abraham.</p>
+<p class="lecture-priere">Tu es puissant pour toujours, mon Éternel ; Tu ressuscites les morts; Tu es puissant pour sauver.</p>
+<p class="lecture-indication">En été, dites : » Il fait descendre la rosée ».</p>
+<p class="lecture-indication">En hiver, dites : « Il fait souffler le vent et faire tomber la pluie ».</p>
+<p class="lecture-priere">Il soutient les vivants avec une bonté aimante, ressuscite les morts avec une grande miséricorde, soutient ceux qui tombent, guérit les malades, libère les liens et accomplit sa confiance envers ceux qui dorment dans la poussière. Qui est comme Toi, puissant ! Et qui peut être comparé à Toi, Roi, qui apporte la mort et restaure la vie, et fait jaillir la délivrance !</p>
+<p class="lecture-indication">Pendant les dix jours de pénitence, ajoutez :</p>
+<p class="lecture-priere">Qui est comme Toi, Père miséricordieux, qui dans la compassion se souvient de ses créatures pour la vie.</p>
+<p class="lecture-priere">Vous êtes digne de confiance pour faire revivre les morts. Béni sois-Tu Eternel, qui ressuscite les morts.</p>
+<p class="lecture-indication">Lorsque le Hazan répète la Amidah, la Kedoucha est récité ici.</p>
+<p class="lecture-priere">Nous te sanctifierons et t’adorerons comme les douces paroles de l’assemblée des Saints séraphins qui te répètent tRois fois « Saint », comme il est écrit par Ton prophète : Et ils s’appellent les uns les autres et disent : (Cong. et Hazan:) « Saint, Saint, Saint est l’Éternel des armées; toute la terre est pleine de sa gloire. » (Hazan:) Ceux qui leur font face offrent des louanges et disent: (Cong et Hazan:) « Béni soit la gloire de l’Éternel de sa place. » (Hazan:) Et dans Vos Saintes Écritures, il est écrit ainsi: (Cong. et Hazan:) L’Éternel régnera pour toujours; Ton D.ieu, ô Sion, à travers toutes les générations. Louez le Seigneur.</p>
+<p class="lecture-priere">Tu es Saint et Ton Nom est Saint, et des êtres Saints Te louent quotidiennement pour toute l’éternité. Béni sois-Tu Eternel, le Saint D.ieu. (Pendant les dix jours de pénitence, remplacer : le Saint Roi.)</p>
+<p class="lecture-priere">Tu accordes gracieusement la connaissance à l’homme et enseignes la compréhension aux mortels. Accorde-nous gracieusement de ta part, sagesse, compréhension et connaissance. Béni sois-Tu Eternel, qui accorde gracieusement la connaissance.</p>
+<p class="lecture-priere">Fais-nous revenir, notre Père, à Ta Torah ; attire-nous, notre Roi, à Ton service; et ramène-nous à Toi avec une repentance sincère. Béni sois-Tu, Éternel, qui désire la pénitence.</p>
+<p class="lecture-priere">Pardonne-nous, notre Père, car nous avons péché ; pardonne-nous, notre Roi, car nous avons transgressé; car Tu es un D.ieu bon et indulgent. Béni sois-Tu Eternel, gracieux qui pardonne abondamment.</p>
+<p class="lecture-priere">O vois notre affliction et livre notre combat ; rachète-nous rapidement à cause de Ton Nom, car Toi, D.ieu, Tu es le puissant rédempteur. Béni sois-Tu Eternel, Rédempteur d’ Israël.</p>
+<p class="lecture-priere">Guéris-nous, ô Eternel, et nous serons guéris ; aidez-nous et nous serons sauvés ; car Tu es notre louange. Accorde la guérison complète et la guérison à toutes nos blessures ; car Toi, Roi Tout-Puissant, Tu es un guérisseur fidèle et miséricordieux. Béni sois-Tu, Éternel, qui guéris les malades de Son peuple Israël.</p>
+<p class="lecture-priere">Bénis pour nous, Eternel notre D.ieu, cette année et toutes les variétés de ses produits pour de bon ; et accorde (Pendant la saison d’été, dis:) bénédiction (Pendant la saison d’hiver, dis : rosée et pluie pour bénédiction) sur la face de la terre. Satisfaits-nous de Ta bonté et bénis notre année comme d’autres bonnes années, pour la bénédiction ; car Tu es un D.ieu généreux qui accorde le bien et bénit les années. Béni sois-Tu Eternel, qui bénis les années.</p>
+<p class="lecture-priere">Sonne le Grand Shofar pour notre liberté ; lève une bannière pour rassembler nos exilés, et rassemble-nous des quatre coins de la terre dans notre pays. Béni sois-Tu, Éternel, qui rassemble les dispersés de son peuple Israël.</p>
+<p class="lecture-priere">Rétablissez nos juges comme autrefois, et nos conseillers comme autrefois ; éloigne de nous le chagrin et les soupirs, et règne sur nous, Toi seul, ô Éternel, avec bonté et compassion, avec droiture et justice. Béni sois-Tu Eternel, Roi qui aime la droiture et la justice. ( Pendant les dix jours de pénitence, remplacer par : le Roi du jugement.)</p>
+<p class="lecture-priere">Qu’il n’y ait aucun espoir pour les informateurs, et que tous les hérétiques et tous les méchants périssent instantanément ; que tous les ennemis de Ton peuple soient rapidement extirpés ; et puisses-Tu rapidement déraciner, briser, écraser et soumettre rapidement le règne de la méchanceté de nos jours. Béni sois-Tu, Éternel, qui écrase les ennemis et soumet les méchants.</p>
+<p class="lecture-priere">Que Ta miséricorde s’éveille, Éternel notre D.ieu, sur les justes, sur les pieux, sur les anciens de Ton peuple, la Maison d’Israël, sur le reste de leurs sages, sur les justes prosélytes et sur nous. Accorde une ample récompense à tous ceux qui ont vraiment confiance en Ton Nom, et place notre sort parmi eux ; puissions-nous ne jamais être déshonorés, car nous avons mis notre confiance en Toi. Béni sois-Tu Eternel, le soutien et la sécurité des justes.</p>
+<p class="lecture-priere">Retourne avec miséricorde à Jérusalem Ta ville et habite-y comme Tu l’as promis; établissez-y promptement le trône de David, Ton serviteur, et rebâtis-le bientôt de nos jours, comme un édifice éternel. Béni sois-Tu, Éternel, qui rebâtis Jérusalem.</p>
+<p class="lecture-priere">Fais vite prospérer le rejeton de David, Ton serviteur, et augmente sa puissance par Ton Salut, car nous espérons Ton Salut tout le jour. Béni sois-Tu, Éternel, qui fais prospérer la puissance du Salut.</p>
+<p class="lecture-priere">Écoute notre voix, Seigneur notre D.ieu ; Père miséricordieux, aie pitié de nous et accepte nos prières avec miséricorde et grâce, car Tu es D.ieu qui entend les prières et les supplications ; ne nous détourne pas de Toi, notre Roi, les mains vides, car Tu écoutes la prière de tous. Béni sois-Tu Eternel, qui entend la prière.</p>
+<p class="lecture-priere">Regarde avec faveur, Éternel notre D.ieu, Ton peuple d’Israël et sois attentif à sa prière ; Rétablis le service de Ton Sanctuaire et accepte avec amour et faveur les offrandes par le feu et la prière d’Israël. et que le service de Ton peuple Israël trouve toujours grâce.</p>
+<p class="lecture-indication">Le jour de Rosh Hodesh et de ‘Hol HaMoed, (Notre D… peut y monter) est récité ici.</p>
+<p class="lecture-priere">Que notre D.ieu et D.ieu de nos pères y montent, viennent et atteignent, soient vus, acceptés et entendus, rappelés et rappelés devant Toi, le souvenir et le souvenir de nous, le souvenir de nos pères, le souvenir de Machia’h, fils de David, Ton serviteur, le souvenir de Jérusalem, Ta ville Sainte, et le souvenir de tout Ton peuple, la maison d’Israël, pour la délivrance, le bien-être, la grâce, la bonté, la miséricorde, la bonne vie et la paix, en ce jour de</p>
+<p class="lecture-indication">À Rosh Hodesh : Rosh Hodesh</p>
+<p class="lecture-indication">A l’occasion de la fête de Pessah : la Fête des Matzot</p>
+<p class="lecture-indication">Lors de la fête de Souccot : la Fête de Souccot.</p>
+<p class="lecture-priere">Souviens-Toi de nous en ce [jour], Eternel notre D.ieu, pour de bon ; pense à nous en ce [jour] pour la bénédiction ; aidez-nous en ce [jour] pour une bonne vie. Avec la promesse de délivrance et de Compassion, épargnez-nous et faites-nous grâce ; aie pitié de nous et délivre-nous ; car nos yeux sont dirigés vers Toi, car Toi, D.ieu, es un Roi miséricordieux et miséricordieux.</p>
+<p class="lecture-priere">Que nos yeux voient Ton retour à Sion dans la miséricorde. Béni sois-Tu, Eternel, qui restaure Sa Présence Divine à Sion.</p>
+<p class="lecture-geste">Pliez les genoux à « Nous reconnaissons que Tu es le Seigneur notre D.ieu.. » ; Redressez-vous avant « le Seigneur notre D.ieu.. » :</p>
+<p class="lecture-priere">Nous reconnaissons avec gratitude que Tu es le Seigneur notre D.ieu et D.ieu de nos pères pour toujours. Tu es la force de notre vie, le bouclier de notre salut à chaque génération. Nous te rendrons grâce et nous raconterons Ta louange, soir, matin et midi, pour nos vies qui sont confiées entre Tes mains, pour nos âmes qui te sont confiées, pour tes miracles qui nous accompagnent chaque jour et pour tes continuelles merveilles et bienfaisances. Tu es le Bienfaisant, car Tes miséricordes ne cessent jamais ; le Miséricordieux, car Tes bontés ne finissent jamais; car nous plaçons toujours notre espérance en Toi.</p>
+<p class="lecture-indication">À ‘Hanoucca et Pourim, ce qui suit est ajouté.</p>
+<p class="lecture-priere">Et [nous te remercions] pour les miracles, pour la rédemption, pour les actes puissants, pour les actes salvateurs et pour les merveilles que Tu as opérées pour nos ancêtres en ces jours, à cette époque —</p>
+<p class="lecture-indication">À ‘Hanoucca, continuez ici :</p>
+<p class="lecture-priere">Aux jours de Matityahu, le fils de Yo’hanan le Souverain Sacrificateur, l’Hasmonéen et ses fils, quand le méchant gouvernement hellénique s’est levé contre Ton peuple Israël pour lui faire oublier Ta Torah et violer les décrets de Ta volonté. Mais Toi, dans Ta miséricorde abondante, Tu es resté à leurs côtés au moment de leur détresse. Vous avez mené leurs combats, défendu leurs dRoits et vengé le tort qui leur avait été fait. Tu as livré les puissants entre les mains des faibles, les nombreux entre les mains de quelques-uns, les impurs entre les mains des purs, les méchants entre les mains des justes, et les pécheurs aveugles entre les mains de ceux qui s’occupent avec Ta Torah. Tu t’es fait un Nom Grand et Saint dans Ton monde, et Tu as effectué une grande délivrance et rédemption pour Ton peuple jusqu’à ce jour. Puis Tes enfants sont entrés dans le sanctuaire de Ta Maison, ont purifié Ton Temple, a purifié Ton Sanctuaire, allumé des lumières dans Tes cours sacrées et institué ces huit jours de ‘Hanoucca pour remercier et louer Ton grand Nom.</p>
+<p class="lecture-indication">À Pourim, continuez ici :</p>
+<p class="lecture-priere">Aux jours de Morde’haï et d’ Esther, à Suse la capitale, quand le méchant Haman se leva contre eux, et chercha à détruire, massacrer et anéantir tous les Juifs, jeunes et vieux, enfants et femmes, en un seul jour, le treizième jour du douzième mois, le mois d’ Adar, et de prendre leur butin pour piller. Mais Toi, dans Ta miséricorde abondante, Tu as déjoué son conseil et frustré son intention, et Tu as fait reculer le mal qu’il projetait — sur sa propre tête, et ils le pendirent, lui et ses fils, à la potence.</p>
+<p class="lecture-priere">Et pour tout cela, que Ton Nom, notre Roi, soit continuellement béni, exalté et exalté pour toujours et à jamais.</p>
+<p class="lecture-indication">Pendant les dix jours de pénitence, ajoutez :</p>
+<p class="lecture-priere">Inscris tous les enfants de Ton Alliance pour une bonne vie.</p>
+<p class="lecture-priere">Et tous les êtres vivants te remercieront à jamais et loueront éternellement Ton grand Nom, car Tu es bon. D.ieu, Tu es notre salut et notre aide éternels, ô D.ieu bienveillant.</p>
+<p class="lecture-geste">Pliez les genoux à « Béni » ; Redressez-vous à « Eternel notre D.ieu » :</p>
+<p class="lecture-priere">Béni sois-Tu Eternel, Bénéfique est Ton Nom, et à Toi il convient d’offrir des remerciements.</p>
+<p class="lecture-priere">Accorde la paix, la bonté et la bénédiction, la vie, la grâce, la bonté et la miséricorde, sur nous et sur tout Ton peuple Israël. Bénis-nous, notre Père, nous tous comme un, avec la lumière de Ton visage. Car par la lumière de Ton visage Tu nous as donné, Éternel notre D.ieu, la Torah de vie et de bonté de cœur, de justice, de bénédiction, de miséricorde, de vie et de paix. Qu’il soit favorable à tes yeux de bénir Ton peuple Israël, en tout temps et à chaque instant, de Ta paix.</p>
+<p class="lecture-indication">Pendant les dix jours de pénitence, ajoutez:</p>
+<p class="lecture-priere">Et dans le livre de vie, bénédiction, paix et prospérité, délivrance, consolation et décrets favorables, puissions-nous, ainsi que tout Ton peuple, la maison d’Israël, être rappelés et inscrits devant Toi pour une vie heureuse et pour paix.</p>
+<p class="lecture-priere">Béni sois-Tu, Éternel, qui bénis son peuple Israël avec la paix. Que les paroles de ma bouche et la méditation de mon cœur soient agréables devant Toi, Éternel, ma Force et mon Rédempteur.</p>
+<p class="lecture-priere">Mon D.ieu, préserve ma langue du mal et mes lèvres des paroles trompeuses. Que mon âme se taise à ceux qui me maudissent ; que mon âme soit comme de la poussière pour tous. Ouvre mon cœur à Ta Torah, et laisse mon âme suivre avec empressement tes commandements. Quant à tous ceux qui complotent le mal contre moi, hâtez-vous d’annuler leur conseil et de contrecarrer leur dessein. Qu’ils soient comme de la paille devant le vent ; que l’ange de l’Éternel les repousse. Afin que tes bien-aimés soient délivrés, aide-moi de Ta Main droite et réponds-moi. Fais-le pour l’amour de Ton Nom; Fais-le à cause de Ta droite; Fais-le pour l’amour de Ta Torah; Fais-le pour Ta Sainteté. Que les paroles de ma bouche et la méditation de mon cœur soient agréables devant Toi, Éternel, ma Force et mon Rédempteur.</p>
+<p class="lecture-geste">Avant de réciter les versets suivants, il faut s’incliner légèrement et, dans cette position inclinée, faire trois pas en arrière. Tout en s’inclinant, il faut tourner la tête vers sa gauche en disant : « Celui qui fait la paix dans Ses Cieux » ; inclinez-vous en avant, en disant: « Puisse-t-Il faire« tourner la tête vers la droite en disant : « la Paix sur nous« et enfin s’incliner en avant, en disant : « et sur tout Israël ; et dire : Amen« .</p>
+<p class="lecture-priere">Que ce soit Ta volonté, Éternel notre D.ieu et D.ieu de nos pères, que le Beth Hamikdash soit rapidement reconstruit de nos jours, et accorde-nous notre part dans Ta Torah.</p>
+<p class="lecture-fin">Fin de la Amidah</p></article><p class="font-body-sm text-body-sm text-on-surface-variant">Source : PDF « LA PRIERE DE LA AMIDAH en phonétique et en traduction française », hassidout.org.</p></div></div>
+<!-- Barre inférieure fixe d'action recueillie (Sticky Dock) -->
+<div class="fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md shadow-[0_-4px_20px_rgba(29,28,19,0.06)] px-margin py-3 pb-safe">
+<div class="max-w-md mx-auto flex items-center justify-between gap-2">
+<!-- Action 1 : Audio (désactivé doucement) -->
+<div class="flex flex-col items-center">
+<button class="h-12 px-3 rounded-xl bg-surface-container-low text-on-surface-variant/40 flex items-center gap-1.5 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-[20px]">headphones</span>
+<span class="font-label-md text-label-md hidden sm:inline">Écouter</span>
+</button>
+<span class="text-[9px] font-label-sm text-on-surface-variant/60 tracking-tight mt-0.5">Indisponible</span>
+</div>
+<!-- Action 2 : Prière libre / Journal personnel -->
+<button class="h-12 flex-1 px-3 rounded-xl bg-surface-container-lowest shadow-sm text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors" id="btnPersonalWords" type="button">
+<span class="material-symbols-outlined text-[19px] text-secondary">edit_note</span>
+<span class="line-clamp-1">Avec mes mots</span>
+</button>
+<!-- Action 3 : Validation de la prière (Bouton or profond sobre) -->
+<button class="h-12 flex-1 px-4 rounded-xl bg-secondary text-on-secondary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 hover:bg-primary transition-all active:scale-[0.99] shadow-sm" id="btnCompletedPrayer" type="button" disabled title="Enregistrement bientôt disponible" style="opacity:.55;cursor:not-allowed">
+<span class="material-symbols-outlined text-[20px]" id="completeIcon">check</span>
+<span id="completeLabel">J’ai prié · bientôt</span>
+</button>
+</div>
+</div>
+<!-- Espace modal discret pour « Prier avec mes mots » -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden items-end justify-center pb-safe" id="personalModal">
+<div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-margin flex flex-col gap-3 shadow-xl">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px]">ink_pen</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Prière personnelle</h3>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface" id="closeModal" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Déposez ici une intention, un remerciement ou une parole inspirée par la prière de ce matin.
+      </p>
+<textarea class="w-full p-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface-container placeholder:italic placeholder:text-on-surface-variant/50 resize-none" id="personalInput" placeholder="Seigneur, en ce jour je Te confie..." rows="4"></textarea>
+<div class="flex justify-end gap-2 pt-1">
+<button class="px-4 py-2 rounded-lg text-on-surface-variant font-label-md text-label-md" id="cancelModalBtn" type="button">
+          Fermer
+        </button>
+<button class="px-4 py-2 rounded-lg bg-secondary text-on-secondary font-label-md text-label-md" id="savePersonalBtn" type="button">
+          Garder dans mon journal
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+(()=>{const content=document.getElementById('texteIntegral');let size=parseFloat(getComputedStyle(content).fontSize);document.querySelector('[aria-label="Diminuer la taille du texte"]').onclick=()=>{size=Math.max(14,size-1);content.style.fontSize=size+'px';content.style.lineHeight='1.8'};document.querySelector('[aria-label="Augmenter la taille du texte"]').onclick=()=>{size=Math.min(34,size+1);content.style.fontSize=size+'px';content.style.lineHeight='1.8'};
+const modal=document.getElementById('personalModal');const toggle=show=>{modal.classList.toggle('hidden',!show);modal.classList.toggle('flex',show)};
+document.getElementById('btnPersonalWords').onclick=()=>toggle(true);
+['closeModal','cancelModalBtn'].forEach(id=>document.getElementById(id).onclick=()=>toggle(false));
+const save=document.getElementById('savePersonalBtn');save.textContent='Journal non connecté';save.disabled=true;save.style.opacity='.5';
+document.getElementById('personalInput').placeholder='Prière libre — ce texte ne sera pas enregistré.';
+let done=false;document.getElementById('btnCompletedPrayer').onclick=()=>{done=!done;document.getElementById('completeLabel').textContent=done?'Déclaré · aperçu':"J’ai prié";document.getElementById('completeIcon').textContent=done?'done_all':'check'};
+window.addEventListener('scroll',()=>{const d=document.documentElement.scrollHeight-innerHeight;document.getElementById('scrollProgressPill').style.transform='translateY('+(d>0?240*scrollY/d:0)+'px)'});
+})();
+</script></main></body></html>
+
