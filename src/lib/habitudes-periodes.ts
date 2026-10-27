@@ -41,5 +41,9 @@ export function calendrierPeriodes(dateDebut:string,periodes:PeriodeHabitudes[],
  const raw=jourHabitudes(dateDebut,debuts,date_locale);
  const derniere=[...periodes].sort((a,b)=>b.mois-a.mois)[0];
  const total=derniere?jourHabitudes(dateDebut,debuts,dateLocale(Date.parse(derniere.fin_exclue)-1,fuseau)):dureeSansPeriode;
- return {date_locale,raw,total,debuts,day:Math.max(1,Math.min(raw,total)),notStarted:raw<1,finished:raw>total,joursOuverts:Math.max(0,Math.min(raw,total))};
+ // Les jours servent à consulter l'historique ; l'accès finit à l'instant serveur,
+ // sans attendre le prochain minuit local. Un mois suivant acheté prolonge cette borne.
+ const termine=raw>total||(derniere!==undefined&&+now>=Date.parse(derniere.fin_exclue));
+ return {date_locale,raw,total,debuts,day:Math.max(1,Math.min(raw,total)),notStarted:raw<1,finished:termine,joursOuverts:Math.max(0,Math.min(raw,total))};
 }
+
