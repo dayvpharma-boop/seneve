@@ -27,6 +27,12 @@
     <link rel="apple-touch-icon" href="%BASE_URL%icons/apple-touch-icon.png" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%icons/icon.svg" />
     <link rel="icon" type="image/png" href="%BASE_URL%icons/favicon-48.png" />
+    <!-- Premier affichage : le navigateur demande les polices du titre et du texte, et la photo de l'accueil,
+         sans attendre le code. Les autres pages reçoivent une copie sans la photo (scripts/pages-statiques.mjs). -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/node_modules/@fontsource/lora/files/lora-latin-400-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2" />
+    <link rel="preload" as="image" data-accueil href="%BASE_URL%illustrations/seneve-pousse-photo-v1-720.webp" imagesrcset="%BASE_URL%illustrations/seneve-pousse-photo-v1-360.webp 360w, %BASE_URL%illustrations/seneve-pousse-photo-v1-720.webp 720w" imagesizes="(max-width:600px) calc(100vw - 40px), 560px" fetchpriority="high" />
   </head>
   <body>
     <div id="root"></div>

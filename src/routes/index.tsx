@@ -194,7 +194,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    <h2 className="jardin-titre">{en ? <>Growth begins<br/><em>within.</em></> : <>Ce qui grandit<br/>commence<br/><em>à l’intérieur.</em></>}</h2>
    <p className="home-intro">{t.intro.split(/(Arrête de mendier des miracles|Stop Begging for Miracles)/).map((texte, index) => index % 2 ? <strong className="home-livre" key={index}>{texte}</strong> : texte)}</p>
    {/* Photo au format d’origine ; tout ce qui suit est identique à l’accueil d’origine (demande du 23/10/2026). */}
-   <div className="home-image"><img src={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp 720w`} sizes="(max-width:600px) calc(100vw - 40px), 560px" width={720} height={314} alt="" decoding="async" /></div>
+   <div className="home-image"><img src={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp 720w`} sizes="(max-width:600px) calc(100vw - 40px), 560px" width={720} height={314} alt="" decoding="async" fetchPriority="high" /></div>
    </div></div>
    <div className="home-reassure">{t.reassurance.map((item, k) => <span key={item} className="reassure-chip"><Icone nom={(['bouclier', 'liste', 'annuler'] as const)[k] ?? 'coche'} taille={22} />{item}</span>)}</div>
    <div className="home-card">

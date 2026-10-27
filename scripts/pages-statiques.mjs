@@ -28,9 +28,18 @@ function versionAnglaise(html) {
   }
   return sortie;
 }
+// La photo de l'accueil n'est préchargée que sur les pages du Test (/, /p, /en) : ailleurs, elle ne s'affiche pas.
+const ACCUEILS = new Set(['p', 'en']);
+function sansPhotoAccueil(html) {
+  const sortie = html.replace(/\s*<link rel="preload" as="image" data-accueil[^>]*>/, '');
+  if (sortie === html) throw new Error('Préchargement de la photo de l’accueil introuvable dans index.html');
+  return sortie;
+}
 for (const route of routes) {
   const fichier = `dist/${route}.html`;
   mkdirSync(dirname(fichier), { recursive: true });
-  writeFileSync(fichier, route === 'en' ? versionAnglaise(page) : page);
+  writeFileSync(fichier, route === 'en' ? versionAnglaise(page) : ACCUEILS.has(route) ? page : sansPhotoAccueil(page));
 }
+// 404.html sert les adresses profondes (Bible, etc.) : elles n'affichent pas la photo de l'accueil.
+writeFileSync('dist/404.html', sansPhotoAccueil(readFileSync('dist/404.html', 'utf8')));
 console.log(`${routes.length} pages fixes : ${routes.join(', ')}`);
