@@ -1,10 +1,12 @@
-import {useEffect,useRef} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import type {ActiviteJourRecette} from '@/lib/habitudes-jour-recette';
 import type {EtatOccurrence} from '@/lib/habitudes';
 import type {TransportProgression} from '@/lib/habitudes-api';
 import {DeclarationHabitude} from './DeclarationHabitude';
 import {IconeHD} from './IconeHabitudes';
+import {SaisieLectureHabitudes} from './SaisieLectureHabitudes';
+import {chargerDetailsLectures,type DetailLecture} from '@/lib/habitudes-lectures-api';
 
 const CLES=['bible_matin','lecture_pro','predication','lecture_personnelle','bible_soir'];
 export const estLectureHabitudes=(cle?:string)=>!!cle&&CLES.includes(cle);
@@ -14,6 +16,14 @@ export function LecturesJourHabitudes({activites,userId,langue,transport,onConfi
  const dialog=useRef<HTMLDialogElement>(null),en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const lectures=activites.filter(a=>estLectureHabitudes(a.habit_key)).sort((a,b)=>a.heure.localeCompare(b.heure));
  const faites=lectures.filter(a=>a.etat?.synchronisation==='synchronise'&&a.etat.etat==='realisee').length;
+ const [details,setDetails]=useState<DetailLecture[]|null>(null),[erreurDetails,setErreurDetails]=useState(false),[tour,setTour]=useState(0),[saisieId,setSaisieId]=useState<string|null>(null);
+ const transportCourant=useRef(transport);transportCourant.current=transport;
+ const ids=lectures.map(a=>a.occurrence.occurrence_id),enrollmentId=lectures[0]?.occurrence.enrollment_id,cle=[userId,enrollmentId,...ids].join(':');
+ useEffect(()=>{let actif=true;setDetails(null);setErreurDetails(false);
+  if(enrollmentId&&ids.length)void chargerDetailsLectures(transportCourant.current,enrollmentId,ids).then(r=>{if(actif)setDetails(r);}).catch(()=>{if(actif)setErreurDetails(true);});
+  return()=>{actif=false;};
+ },[cle,tour]);
+ const saisie=lectures.find(a=>a.occurrence.occurrence_id===saisieId);
  useEffect(()=>{const d=dialog.current;if(!d)return;const avant=document.activeElement,overflow=document.body.style.overflow;document.body.style.overflow='hidden';
   if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');
   return()=>{document.body.style.overflow=overflow;if(d.open&&typeof d.close==='function')d.close();if(avant instanceof HTMLElement&&avant.isConnected)avant.focus();};
@@ -28,11 +38,16 @@ export function LecturesJourHabitudes({activites,userId,langue,transport,onConfi
     <p className="font-hd-body-md text-hd-body-md text-hd-on-surface-variant">{l('Bible, livres et prédication : un temps pour lire, écouter et réfléchir.','Bible, books and preaching: time to read, listen and reflect.')}</p>
     <p role="status" className="font-hd-label-md text-hd-label-md text-hd-secondary">{l(`${faites} sur ${lectures.length} réalisées`,`${faites} of ${lectures.length} completed`)}</p>
     <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Ouvrir cet écran ou un passage ne valide rien. Déclare seulement ce que tu as réellement pratiqué.','Opening this screen or a passage completes nothing. Record only what you actually practised.')}</p>
+    {erreurDetails?<div><p role="alert">{l('Les durées ne peuvent pas être vérifiées. Réessaie avant de saisir une durée.','Times cannot be verified. Retry before entering a time.')}</p><button type="button" className="min-h-[44px] underline" onClick={()=>setTour(n=>n+1)}>{l('Actualiser les durées','Refresh times')}</button></div>:details===null&&<p role="status">{l('Chargement des durées…','Loading times…')}</p>}
     {lectures.map(a=>{
-     const bible=a.habit_key==='bible_matin'||a.habit_key==='bible_soir',matin=a.habit_key==='bible_matin';
+     const bible=a.habit_key==='bible_matin'||a.habit_key==='bible_soir',matin=a.habit_key==='bible_matin',info=details?.find(d=>d.activity_id===a.occurrence.occurrence_id);
      return <section key={a.occurrence.occurrence_id} className="flex flex-col gap-2" aria-label={l(`Repères — ${a.consigne}`,`Guidance — ${a.consigne}`)}>
       <p className="flex items-center gap-2 font-hd-label-sm text-hd-label-sm text-hd-secondary"><IconeHD nom={a.habit_key==='predication'?'headphones':'menu_book'}/>{bible?l('Livre et chapitre au choix · durée personnelle','Choose a book and chapter · your own pace'):l('Objectif : 30 minutes par jour','Goal: 30 minutes a day')}</p>
-      <DeclarationHabitude variante="stitch" userId={userId} occurrence={a.occurrence} consigne={a.consigne} critere={a.critere} heure={a.heure} etat={a.etat} langue={langue} lectureSeule={false} aideDisponible={false} transport={transport} onConfirme={onConfirme} lienLecture={bible?{href:`${import.meta.env.BASE_URL}bible/livres?depuis=habitudes&moment=${matin?'matin':'soir'}&lang=${en?'en':'fr'}`,label:matin?l('Lire la Bible du matin','Read the morning Bible reading'):l('Lire la Bible du soir','Read the evening Bible reading')}:undefined}/>
+      <fieldset disabled={details===null} className="contents"><DeclarationHabitude variante="stitch" userId={userId} occurrence={a.occurrence} consigne={a.consigne} critere={a.critere} heure={a.heure} etat={a.etat} langue={langue} lectureSeule={false} aideDisponible={false} transport={transport} onConfirme={onConfirme} onDemanderLecture={()=>setSaisieId(a.occurrence.occurrence_id)} lienLecture={bible?{href:`${import.meta.env.BASE_URL}bible/livres?depuis=habitudes&moment=${matin?'matin':'soir'}&lang=${en?'en':'fr'}`,label:matin?l('Lire la Bible du matin','Read the morning Bible reading'):l('Lire la Bible du soir','Read the evening Bible reading')}:undefined}/></fieldset>
+      <div className="flex justify-between items-center gap-2 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">
+       <p>{details===null?l('Durée non vérifiée','Time not verified'):info?<>{info.minutes} min{info.titre&&<> · {info.titre}</>}</>:l('Aucune durée déclarée','No time recorded')}</p>
+       <button type="button" disabled={details===null} aria-label={l(`Saisir la durée — ${a.consigne}`,`Enter time — ${a.consigne}`)} onClick={()=>setSaisieId(a.occurrence.occurrence_id)} className="min-h-[44px] px-3 rounded-xl bg-hd-surface-container shrink-0 disabled:opacity-40">{l('Durée','Time')}</button>
+      </div>
      </section>;
     })}
     <aside className="rounded-2xl bg-hd-surface-container p-hd-space-md font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">
@@ -41,5 +56,6 @@ export function LecturesJourHabitudes({activites,userId,langue,transport,onConfi
     </aside>
    </div>
   </div>
+  {saisie&&details!==null&&<SaisieLectureHabitudes key={saisie.occurrence.occurrence_id} activite={saisie} userId={userId} langue={langue} detail={details.find(d=>d.activity_id===saisie.occurrence.occurrence_id)} transport={transport} onConfirme={(e,d)=>{setDetails(ancien=>[...(ancien??[]).filter(x=>x.activity_id!==d.activity_id),d]);onConfirme(e);}} onFermer={()=>setSaisieId(null)}/>}
  </dialog>,document.body);
 }
