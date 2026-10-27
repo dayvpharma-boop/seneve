@@ -130,6 +130,30 @@ describe('modèles de demande d’aide et langue', () => {
 });
 
 describe('Mon journal', () => {
+  it.each([['matin','fr','Gratitude du matin','Revenir à ma journée'],['soir','en','Evening gratitude','Back to my day']])('gratitude %s : contexte %s, note privée et aucune déclaration HD',async(moment,langue,titre,retour)=>{
+    draft.write('journal:libre','Mon brouillon libre','U1');
+    at(`/journal?ecrire=1&depuis=habitudes&gratitude=${moment}&lang=${langue}`);
+    const champ=await screen.findByRole('textbox');
+    expect(screen.getByRole('region',{name:titre})).toBeInTheDocument();
+    expect(screen.getByRole('link',{name:new RegExp(retour!)})).toHaveAttribute('href',langue==='en'?'/habitudes/aujourdhui?lang=en':'/habitudes/aujourdhui');
+    expect(champ).toHaveValue('');expect(writes).toHaveLength(0);
+    fireEvent.change(champ,{target:{value:'Merci pour cette journée'}});
+    expect(draft.read(`journal:gratitude_${moment}`,'U1')).toBe('Merci pour cette journée');
+    expect(draft.read('journal:libre','U1')).toBe('Mon brouillon libre');
+    expect(draft.read(`journal:gratitude_${moment==='matin'?'soir':'matin'}`,'U1')).toBe('');
+    fireEvent.click(screen.getByRole('button',{name:langue==='en'?'Save note':'Enregistrer la note'}));
+    await waitFor(()=>expect(screen.getByRole('textbox')).toHaveValue(''));
+    expect(writes).toHaveLength(1);expect(writes[0]!.value).toMatchObject({texte:'Merci pour cette journée',usage_ia_autorise:false,enrollment_id:null,activity_id:null});
+    expect(rpcs.every(x=>x.name==='ensure_participant')).toBe(true);
+    expect(draft.read('journal:libre','U1')).toBe('Mon brouillon libre');
+  });
+  it.each(['depuis=habitudes&gratitude=inconnu','gratitude=matin','depuis=habitudes&gratitude=matin&inscription=E1'])('ignore un contexte gratitude invalide : %s',async(query)=>{
+    draft.write('journal:libre','Brouillon libre','U1');
+    at(`/journal?${query}`);
+    expect(await screen.findByRole('textbox')).toHaveValue('Brouillon libre');
+    expect(screen.queryByRole('region',{name:/Gratitude/})).toBeNull();
+    expect(screen.queryByRole('link',{name:/Revenir à ma journée/})).toBeNull();expect(writes).toHaveLength(0);
+  });
   it('isole les brouillons de deux comptes et restaure celui du premier après reconnexion', async () => {
     at('/journal');
     const champ = await screen.findByPlaceholderText(/Ce que tu as compris/);
