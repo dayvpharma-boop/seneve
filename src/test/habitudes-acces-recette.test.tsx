@@ -48,3 +48,28 @@ it('site réel : un mois payé en cours prime sur le mois gratuit terminé',asyn
  expect(screen.getByText('Ce mois est inclus dans ton abonnement Continuité.')).toBeInTheDocument();
  expect(screen.queryByText(/30 jours gratuits sont terminés/)).toBeNull();
 });
+
+it.each(['debut','fin'] as const)('site réel : refuse un mois HD dont %s diffère de Continuité',async(borne)=>{
+ const maintenant=Date.now(),iso=(h:number)=>new Date(maintenant+h*3600000).toISOString();
+ const paye={enrollment_id:'E1',entitlement_id:'D2',debut:iso(-10),fin_exclue:iso(710),mois:2};
+ const droit={entitlement_id:'D2',offre_id:'CONTINUITE_MENSUEL_FR',etat:'actif',debut:paye.debut,fin:paye.fin_exclue};
+ droit[borne]=iso(borne==='debut'?-11:709);
+ mock.charger.mockResolvedValue({...catalogue,droits:[droit],
+  inscriptions:[{...catalogue.inscriptions[0]!,programme_id:'HABITUDES_DEFIS_30J_FR_V1'}],periodesGratuitesHabitudes:[paye]});
+ render(<MemoryRouter><AccesRecetteHabitudes reel/></MemoryRouter>);
+ await screen.findByText('Ton accès doit être vérifié.');
+ expect(screen.queryByText('Ton mois 2 sur 6 est en cours.')).toBeNull();
+ expect(screen.queryByTestId('planning')).toBeNull();
+});
+
+it.each(['revoque','expire'] as const)('site réel : un mois payé aligné mais %s ne monte pas la journée',async(etat)=>{
+ const maintenant=Date.now(),iso=(h:number)=>new Date(maintenant+h*3600000).toISOString();
+ const paye={enrollment_id:'E1',entitlement_id:'D2',debut:iso(-10),fin_exclue:iso(710),mois:2};
+ mock.charger.mockResolvedValue({...catalogue,droits:[{entitlement_id:'D2',offre_id:'CONTINUITE_MENSUEL_FR',etat,debut:paye.debut,fin:paye.fin_exclue}],
+  inscriptions:[{...catalogue.inscriptions[0]!,programme_id:'HABITUDES_DEFIS_30J_FR_V1'}],periodesGratuitesHabitudes:[paye]});
+ render(<MemoryRouter><AccesRecetteHabitudes reel/></MemoryRouter>);
+ await screen.findByText(etat==='revoque'?'Cet accès gratuit est fermé.':'Ton mois 2 est terminé. Le mois suivant s’ouvre seulement avec un abonnement Continuité actif.');
+ expect(screen.queryByRole('heading',{name:'Ma journée'})).toBeNull();
+ expect(screen.queryByTestId('planning')).toBeNull();
+});
+

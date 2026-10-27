@@ -31,3 +31,7 @@ Elle retourne des compteurs et des listes limitées à 50 éléments, sans lire 
 - Un échec de lecture affiche une erreur et garde les derniers chiffres datés, sans les remplacer par des zéros.
 
 Le déploiement du frontend suit le workflow GitHub existant. L'ajout local ne publie pas automatiquement le site.
+
+## Habitudes & Défis
+
+État courant : [inventaire vérifié du 27 octobre 2026](docs/INVENTAIRE_HD_2026_10_27.md). Le socle est installé en production et les écrans sont activés pour les inscrits ; l'inscription publique reste fermée. Les anciens comptes rendus TEST décrivent leurs étapes historiques. Le module complet n'est pas encore réceptionné.

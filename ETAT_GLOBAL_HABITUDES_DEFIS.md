@@ -1,3 +1,5 @@
+> **Rapport historique.** Ce document décrit l'étape réalisée à sa date. Pour l'installation et les accès actuellement constatés, consulter [l'inventaire du 27 octobre 2026](docs/INVENTAIRE_HD_2026_10_27.md). Ses mentions « uniquement TEST » ou « aucun déploiement PROD » ne décrivent plus l'état courant.
+
 # État global Habitudes & Défis — revue de préparation
 Date : 25 octobre 2026.
 Sources : cahier HD du 25 octobre 2026, sections 7–16 ; architecture HD ; sources et comptes rendus de la branche feat/habitudes-defis-socle.

@@ -1,3 +1,5 @@
+> **Rapport historique.** Ce document décrit l'étape réalisée à sa date. Pour l'installation et les accès actuellement constatés, consulter [l'inventaire du 27 octobre 2026](INVENTAIRE_HD_2026_10_27.md). Ses mentions « uniquement TEST » ou « aucun déploiement PROD » ne décrivent plus l'état courant.
+
 # Contrôle d’ensemble Habitudes & Défis — 26 octobre 2026
 
 ## Conclusion vérifiable
