@@ -45,7 +45,7 @@
 <div class="rounded-xl p-3 bg-surface-container-low flex items-start gap-2.5 mt-1">
 <span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">info</span>
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
-        Texte français intégral. Gestes et passages conditionnels conservés. « Avec mes mots » ouvre ton journal privé. La lecture et l’écriture ne valident aucune activité ; reviens à ta journée pour déclarer ta prière.
+        Texte français intégral. Gestes et passages conditionnels conservés. « Avec mes mots » ouvre ton journal privé. La lecture et l’écriture ne valident aucune activité ; ouvre ta journée et choisis Matin, Midi ou Soir pour déclarer ta prière.
       </p>
 </div>
 </div>
@@ -137,10 +137,7 @@
 <span class="line-clamp-1">Avec mes mots</span>
 </button>
 <!-- Action 3 : Validation de la prière (Bouton or profond sobre) -->
-<button class="h-12 flex-1 px-4 rounded-xl bg-secondary text-on-secondary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 hover:bg-primary transition-all active:scale-[0.99] shadow-sm" id="btnCompletedPrayer" type="button" disabled title="Enregistrement bientôt disponible" style="opacity:.55;cursor:not-allowed">
-<span class="material-symbols-outlined text-[20px]" id="completeIcon">check</span>
-<span id="completeLabel">J’ai prié · bientôt</span>
-</button>
+<a class="h-12 flex-1 px-4 rounded-xl bg-secondary text-on-secondary font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 shadow-sm" href="./habitudes/aujourdhui"><span class="material-symbols-outlined text-[20px]">check</span><span>Déclarer ma prière</span></a>
 </div>
 </div>
 <!-- Espace modal discret pour « Prier avec mes mots » -->
@@ -173,7 +170,6 @@
 const modal=document.getElementById('personalModal');const toggle=show=>{modal.classList.toggle('hidden',!show);modal.classList.toggle('flex',show)};
 document.getElementById('btnPersonalWords').onclick=()=>toggle(true);
 ['closeModal','cancelModalBtn'].forEach(id=>document.getElementById(id).onclick=()=>toggle(false));
-let done=false;document.getElementById('btnCompletedPrayer').onclick=()=>{done=!done;document.getElementById('completeLabel').textContent=done?'Déclaré · aperçu':"J’ai prié";document.getElementById('completeIcon').textContent=done?'done_all':'check'};
 window.addEventListener('scroll',()=>{const d=document.documentElement.scrollHeight-innerHeight;document.getElementById('scrollProgressPill').style.transform='translateY('+(d>0?240*scrollY/d:0)+'px)'});
 })();
 </script></main></body></html>
