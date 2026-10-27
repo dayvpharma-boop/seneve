@@ -36,9 +36,12 @@ export function RecetteHabitudes(){
   {/* Essai réel des rappels d'habitudes : notifications de ce téléphone, puis choix des habitudes. */}
   <Route path="/rappels" element={<main className="rn-page journee-nouvelle"><div className="rn-contenu"><h1>{en?'Habit reminders (test)':'Rappels d’habitudes (essai)'}</h1>
    <p>{en?'1. Turn on reminders on this phone. 2. Turn on habit reminders and choose the habits.':'1. Active les rappels sur ce téléphone. 2. Active les rappels d’habitudes et choisis les habitudes.'}</p>
+   {/* Sur iPhone, l'icône de l'écran d'accueil garde sa propre connexion : la page doit y mener. */}
+   <p><Link to={`/connexion?lang=${langue}`}>{en?'Sign in to the test account':'Me connecter au compte de test'}</Link></p>
    <section className="rn-section"><RappelsCard langue={langue}/></section><RappelsHabitudes langue={langue}/>
    <p><Link to={`/acces?lang=${langue}`}>{en?'My access and my day':'Mon accès et ma journée'}</Link></p></div></main>}/>
-  <Route path="/espace" element={<Navigate to={`/acces?lang=${langue}`} replace/>}/>
+  {/* Après la connexion (qui mène à /espace) : retour à la page de l'essai des rappels. */}
+  <Route path="/espace" element={<Navigate to={`/rappels?lang=${langue}`} replace/>}/>
   <Route path="*" element={<main className="wrap"><h1>{en?'Outside this test':'Hors du périmètre de cet essai'}</h1><p>{en?'Only sign-in, enrollment and access are available in this test version.':'Seuls la connexion, l’inscription et les accès sont disponibles dans cette version de test.'}</p><Link to={lien}>{en?'Back to enrollment':'Revenir à l’inscription'}</Link></main>}/>
  </Routes></div>;
 }
