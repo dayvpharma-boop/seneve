@@ -47,7 +47,8 @@ function JournalDuCompte({ userId }: { userId: string }) {
   const [params] = useSearchParams();
   const inscription = params.get('inscription');
   const activite = inscription ? params.get('activite') : null;
-  const draftKey = `journal:${activite ?? 'libre'}`;
+  const gratitude = !inscription && params.get('depuis') === 'habitudes' && ['matin','soir'].includes(params.get('gratitude') ?? '') ? params.get('gratitude') : null;
+  const draftKey = `journal:${gratitude ? 'gratitude_'+gratitude : activite ?? 'libre'}`;
   const location = useLocation();
   const cleChargee = useRef(draftKey);
   const citationRecue = useRef(false);
@@ -129,10 +130,12 @@ function JournalDuCompte({ userId }: { userId: string }) {
   }
 
   const en = langueUI === 'en';
+  const titreGratitude = gratitude === 'matin' ? (en ? 'Morning gratitude' : 'Gratitude du matin') : (en ? 'Evening gratitude' : 'Gratitude du soir');
+  const retourJour = gratitude && <Link className="link" to={en ? '/habitudes/aujourdhui?lang=en' : '/habitudes/aujourdhui'}>← {en ? 'Back to my day' : 'Revenir à ma journée'}</Link>;
   const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><Link className="journal-profil" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
   const intro = <div className="journal-confidentialite"><IconeJournal nom="lock" taille={20} /><p className="journal-intro">{T.introJournal}</p></div>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
-  if (failed) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;
+  if (failed) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{retourJour ?? back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;
   if (!data) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langueUI} maquette iconesJournal /></main>;
 
   const trop = texte.trim().length > NOTE_MAX;
@@ -143,6 +146,12 @@ function JournalDuCompte({ userId }: { userId: string }) {
     {formOuvert
       ? <form className="card journal-form" onSubmit={save} aria-label={T.nouvelle}>
           <div className="journal-form-haut"><p className="tag"><span />{en ? "New reflection" : "Nouvelle réflexion"}</p><span>{en ? "Today" : "Aujourd’hui"}</span></div>
+          {gratitude && <section className="journal-question" aria-label={titreGratitude}>
+            <h2>{titreGratitude}</h2>
+            <p>{en ? 'Express freely one or more reasons for gratitude.' : 'Exprime librement un ou plusieurs motifs de reconnaissance.'}</p>
+            <p className="muted">{en ? 'Writing or saving a note does not mark this activity as completed.' : 'Écrire ou enregistrer une note ne marque pas cette activité comme réalisée.'}</p>
+            {retourJour}
+          </section>}
           {data.consigne && <div className="prompt-carte journal-question"><p className="tag"><IconeJournal nom="psychology_alt" taille={16} />{en ? "Guiding question" : "Question guide"}</p><div className="journal-question-ligne"><p className="prompt-question">{data.consigne}</p></div></div>}
           <label className="field"><span className="sr-only">{T.nouvelle}</span>
             <textarea ref={champ} rows={6} value={texte} maxLength={NOTE_MAX + 500} placeholder={T.placeholderNote} onChange={e => change(e.target.value)} />

@@ -4,10 +4,10 @@ import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import {cleSaisie,lireSaisie,preparerSaisie,type SaisieEnAttente} from '@/lib/habitudes-saisie';
 import {IconeHD} from './IconeHabitudes';
 
-export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true,variante,heure,attenue=false}:{
+export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,aideDisponible=true,variante,heure,attenue=false}:{
  /** « stitch » : carte des maquettes Stitch HD (même mécanisme d'enregistrement). */
  variante?:'stitch'|'priere';heure?:string;attenue?:boolean;
- lienLecture?:{href:string;label:string};aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
+ lienLecture?:{href:string;label:string};lienEcriture?:{href:string;label:string};aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
 }){
  const en=langue==='en';const cle=cleSaisie(userId,occurrence.enrollment_id,occurrence.occurrence_id);
  const [attente,setAttente]=useState<SaisieEnAttente|null>(()=>{try{return lireSaisie(sessionStorage,cle);}catch{return null;}});
@@ -31,7 +31,7 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLect
   }catch{setErreur(true);}finally{verrou.current=false;setOccupe(false);}
  }
  const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
- if(variante==='stitch')return <CarteStitch {...{en,consigne,critere,lienLecture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>;
+ if(variante==='stitch')return <CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
  if(variante==='priere')return <section className="ap-actions" aria-label={consigne} aria-busy={occupe}>
   <p role="status" className="ap-etat">{valeur==='realisee'?(en?'Prayer recorded · Synchronised':'Prière déclarée · Synchronisée'):attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation.':'En attente de confirmation du serveur.')):labels[valeur]}</p>
@@ -59,12 +59,13 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLect
 
 type ValeurEtat='non_commencee'|'preparee'|'partielle'|'realisee';
 /** Rendu Stitch : mêmes actions, mêmes messages d'attente et d'erreur que la carte d'origine. */
-function CarteStitch(p:{en:boolean;consigne:string;lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
+function CarteStitch(p:{en:boolean;consigne:string;lienEcriture?:{href:string;label:string};lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
  const {en,consigne,critere,heure,valeur,aide}=p,l=(fr:string,english:string)=>en?english:fr;
  const etatTexte={non_commencee:l('Pas encore enregistrée','Not recorded yet'),preparee:l('Préparée','Prepared'),partielle:l('Réalisée en partie','Partly done'),realisee:l('Réalisée','Completed')}[valeur]+(p.synchronise?l(' · Synchronisée',' · Synchronised'):'');
  const heureEl=heure?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0"><time dateTime={heure}>{heure}</time></span>:null;
  const statut=<p role="status" className="sr-only">{etatTexte}</p>;
- const lecture=p.lienLecture?<a href={p.lienLecture.href} aria-label={p.lienLecture.label} className="relative z-10 min-h-[44px] px-3 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 inline-flex items-center justify-center gap-1.5"><IconeHD nom="menu_book" className="text-[17px]"/><span>{l('Lire','Read')}</span></a>:null;
+ const lien=p.lienEcriture??p.lienLecture;
+ const lecture=lien?<a href={lien.href} aria-label={lien.label} className="relative z-10 min-h-[44px] px-3 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 inline-flex items-center justify-center gap-1.5"><IconeHD nom={p.lienEcriture?'edit_note':'menu_book'} className="text-[17px]"/><span>{p.lienEcriture?l('Écrire','Write'):l('Lire','Read')}</span></a>:null;
  if(p.attenue)return <article aria-label={consigne} className="relative bg-hd-surface-container/60 rounded-xl px-hd-space-md py-2.5 flex items-center justify-between">
   {statut}<div className="flex items-center gap-3 min-w-0">
    <IconeHD nom="radio_button_unchecked" className="text-[18px] text-hd-outline"/>
