@@ -432,3 +432,16 @@ describe('Besoin d’aide', () => {
     expect(await screen.findByRole('heading', { name: 'Help & Contact' })).toBeInTheDocument();
   });
 });
+
+it('bilan mensuel : contexte, brouillon séparé, retour aux bilans et aucune écriture à l’ouverture',async()=>{
+ const id='20000000-0000-4000-8000-000000000001';
+ draft.write('journal:libre','Note libre conservée','U1');
+ at(`/journal?ecrire=1&depuis=habitudes&bilan=mois&periode=2&inscription=${id}`);
+ const champ=await screen.findByRole('textbox');expect(champ).toHaveValue('');expect(screen.getByRole('heading',{name:'Bilan du mois 2'})).toBeVisible();
+ expect(screen.getByRole('link',{name:'← Revenir à mes bilans'})).toHaveAttribute('href','/habitudes/aujourdhui?historique=1#hd-historique');
+ fireEvent.change(champ,{target:{value:'Ma réflexion du mois'}});expect(draft.read(`journal:bilan:${id}:mois:2`,'U1')).toBe('Ma réflexion du mois');expect(draft.read('journal:libre','U1')).toBe('Note libre conservée');expect(writes).toHaveLength(0);expect(screen.getByRole('checkbox')).not.toBeChecked();
+});
+it('bilan hebdomadaire anglais : titre et retour localisés, sans préremplissage',async()=>{
+ at('/journal?ecrire=1&depuis=habitudes&bilan=semaine&periode=3&inscription=20000000-0000-4000-8000-000000000001&lang=en');
+ expect(await screen.findByRole('textbox')).toHaveValue('');expect(screen.getByRole('heading',{name:'Weekly review 3'})).toBeVisible();expect(screen.getByRole('link',{name:'← Back to my reviews'})).toHaveAttribute('href','/habitudes/aujourdhui?historique=1&lang=en#hd-historique');expect(writes).toHaveLength(0);
+});

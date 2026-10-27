@@ -42,7 +42,7 @@ export function BilansHebdomadairesHabitudes({jours,langue,inscription,complemen
     {complementSemaine?.(s.de,s.a)}
     <details className="group rounded-xl bg-hd-surface-container-low"><summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer min-h-[48px] px-3 flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="edit_note" className="text-[20px] text-hd-secondary"/><span className="flex-1">{en?'Reflect on my week':'Préparer mon bilan'}</span><IconeHD nom="chevron_right" className="text-[20px] text-hd-outline transition-transform group-open:rotate-90"/></summary>
      <div className="px-3 pb-3 flex flex-col gap-2"><ol className="flex flex-col gap-2">{questions.map(q=><li key={q} className="rounded-xl bg-hd-surface-container-lowest p-3 font-hd-body-md text-hd-body-md text-hd-on-surface">{q}</li>)}</ol>
-      {inscription&&<Link className="min-h-[48px] rounded-xl bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium flex items-center justify-center gap-2" to={`/journal?inscription=${encodeURIComponent(inscription)}${en?'&lang=en':''}`}>{en?'Write in my journal':'Écrire dans mon journal'}</Link>}</div>
+      {inscription&&<Link className="min-h-[48px] rounded-xl bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium flex items-center justify-center gap-2" to={`/journal?ecrire=1&depuis=habitudes&bilan=semaine&periode=${s.numero}&inscription=${encodeURIComponent(inscription)}${en?'&lang=en':''}`}>{en?'Write in my journal':'Écrire dans mon journal'}</Link>}</div>
     </details>
    </li>;})}</ol>
  </section>;
