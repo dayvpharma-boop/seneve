@@ -1,6 +1,6 @@
 import {IconeResultat} from './IconeResultat';
-import {IconeEdition} from './IconeEdition';
-import {IconeConfidentialite} from './IconeConfidentialite';
+import {IconeEditionDemarrage as IconeEdition} from './IconesDemarrage';
+import {IconeConfidentialiteDemarrage as IconeConfidentialite} from './IconesDemarrage';
 import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useState } from 'react';
 import { invitationTextes, lienInvitation, lienWhatsAppInvitation } from '@/lib/invitation';

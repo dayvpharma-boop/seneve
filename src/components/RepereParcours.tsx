@@ -1,5 +1,5 @@
 import { Icone, type NomIcone } from '@/components/Icone';
-import { IconeMaquette } from '@/components/IconeMaquette';
+import { IconeMaquetteDemarrage as IconeMaquette } from '@/components/IconesDemarrage';
 import { entreGuillemets } from '@/lib/parole';
 
 type Contexte = 'journal' | 'aide' | 'coach' | 'progres' | 'test' | 'resultat' | 'journee';

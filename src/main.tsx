@@ -38,13 +38,13 @@ import './styles-confidentialite-maquette.css';
 import './styles-polices-validees.css';
 import { TestPage } from '@/routes/index';
 import { GarderLangue } from '@/components/GarderLangue';
-import { NotFound } from '@/routes/introuvable';
 import './styles-introuvable.css';
 import { enregistrerServiceWorker } from '@/lib/hors-ligne';
 
 // Pages chargées à la demande : seul le Test des 7 Racines (la page d'arrivée) reste dans le fichier principal.
 // L'administration, que les participants n'ouvrent jamais, a son propre fichier avec ses styles.
 const Connexion = lazy(() => import('@/routes/connexion').then(m => ({ default: m.Connexion })));
+const NotFound = lazy(() => import('@/routes/introuvable').then(m => ({ default: m.NotFound })));
 const Espace = lazy(() => import('@/routes/espace').then(m => ({ default: m.Espace })));
 const Journal = lazy(() => import('@/routes/journal').then(m => ({ default: m.Journal })));
 const Aide = lazy(() => import('@/routes/aide').then(m => ({ default: m.Aide })));
