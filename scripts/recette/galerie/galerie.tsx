@@ -19,6 +19,7 @@ import {HistoriqueRecetteHabitudes} from '@/components/HistoriqueRecetteHabitude
 import {AccesGratuitHabitudes} from '@/components/AccesGratuitHabitudes';
 import {HabitudesInscription} from '@/routes/habitudes-inscription';
 import {HabitudesEngagements} from '@/routes/habitudes-engagements';
+import {RappelsHabitudes} from '@/components/RappelsHabitudes';
 import {IconeHD} from '@/components/IconeHabitudes';
 import {rythmeProposeHabitudes} from '@/lib/habitudes-rythme-propose';
 const configuration={compteId:'GALERIE',programmeId:'GALERIE',version:1,langue:'fr',offreId:'GALERIE',fuseau:'Africa/Kinshasa',planning:rythmeProposeHabitudes.map(h=>({habit_key:h.habit_key,libelle:h.libelle,creneaux:[{creneau_id:'principal',heure_locale:h.heure_proposee!.slice(0,5),jours_iso:[...h.jours_iso]}]}))};
@@ -31,6 +32,9 @@ const ecrans:Record<string,()=>ReactElement>={
  engagements:()=><HabitudesEngagements/>,
  'engagements-visible':()=><HabitudesEngagements/>,
  'engagements-declaration-visible':()=><HabitudesEngagements/>,
+ // Réglage des rappels d'habitudes, dans le cadre de la page Mes réglages (styles chargés pour ces écrans seulement).
+ rappels:()=><main className="rn-page journee-nouvelle"><RappelsHabitudes langue="fr"/></main>,
+ 'rappels-actif':()=><main className="rn-page journee-nouvelle"><RappelsHabitudes langue="fr"/></main>,
  acces:()=>{const debut=new Date(T-11*864e5),fin=new Date(+debut+720*3600000);const D='22222222-2222-4222-8222-222222222222';
   return <CadreHabitudes titre="Mes accès" langue="fr" actif="parcours" liens={{parcours:'/'}}><div className="flex flex-col w-full px-hd-margin pt-hd-space-md pb-hd-space-lg"><AccesGratuitHabitudes droit={{entitlement_id:D,offre_id:'GALERIE',etat:'actif',debut:debut.toISOString(),fin:fin.toISOString()}} periode={{enrollment_id:E,entitlement_id:D,debut:debut.toISOString(),fin_exclue:fin.toISOString()}} inscription={{enrollment_id:E,entitlement_id:D,programme_id:'GALERIE',date_debut:debut.toISOString().slice(0,10),etat:'active'}} langue="fr" fuseau="Africa/Kinshasa"/></div></CadreHabitudes>;},
  bilan:()=><CadreHabitudes titre="Bilan" langue="fr" actif="aujourdhui" liens={{aujourdhui:'/'}}><div className="flex flex-col w-full px-hd-margin pb-hd-space-lg"><HistoriqueRecetteHabitudes enrollmentId={E} participantId={P} dateLocale="2026-10-26" langue="fr" revision={0}/></div></CadreHabitudes>,
@@ -41,6 +45,7 @@ const ecrans:Record<string,()=>ReactElement>={
  aujourdhui:()=><CadreHabitudes titre="Aujourd’hui" langue="fr" actif="aujourdhui" liens={{aujourdhui:'/'}}><ActivitesJourRecette enrollmentId={E} participantId={P} dateLocale="2026-10-26" langue="fr" fuseau="Africa/Kinshasa"/></CadreHabitudes>,
 };
 const nom=decodeURIComponent(location.hash.slice(1)),Ecran=ecrans[nom];
+if(nom.startsWith('rappels')){void import('@/styles-journee-nouvelle.css');void import('@/styles-mode-sombre.css');}
 createRoot(document.getElementById('root')!).render(<MemoryRouter>{Ecran?<Ecran/>:<ul>{Object.keys(ecrans).map(n=><li key={n}><a href={'#'+n}>{n}</a></li>)}</ul>}</MemoryRouter>);
 // Écran dîme : on remplit l'exemple du cahier (commerce 1000 / 650 / 150) comme le ferait un participant.
 function saisir(sel:string,valeur:string){const el=document.querySelector(sel) as HTMLInputElement|HTMLSelectElement|null;if(!el)return;const proto=el instanceof HTMLSelectElement?HTMLSelectElement.prototype:HTMLInputElement.prototype;Object.getOwnPropertyDescriptor(proto,'value')!.set!.call(el,valeur);el.dispatchEvent(new Event(el instanceof HTMLSelectElement?'change':'input',{bubbles:true}));}

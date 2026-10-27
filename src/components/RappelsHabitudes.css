@@ -1,0 +1,17 @@
+/* Réglage des rappels d'habitudes : mêmes variables que la carte « Mes horaires d'habitudes » (styles-habitudes-stitch.css). */
+/* Fond et texte pris dans les mêmes variables : lisible même si le thème du site et celui du téléphone diffèrent. */
+.rn-section.hd-rappels,.hd-rappels{padding:16px;font-family:var(--hd-ui);color:var(--hd-encre);background:var(--hd-carte)}
+.hd-rappels>h2{margin:0 0 8px;font:600 1.35rem/1.35 var(--hd-serif);color:var(--hd-encre)}
+.hd-rappels legend,.hd-rappels-liste label{color:var(--hd-encre)}
+.hd-rappels>p{margin:0 0 12px;color:var(--hd-encre-2);line-height:1.7}
+.hd-rappels input[type=checkbox]{width:22px;height:22px;min-width:22px;margin:0;accent-color:var(--hd-or)}
+.hd-rappels-interrupteur{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 16px;border-radius:var(--hd-rayon-petit);background:var(--hd-carte-basse);font-weight:500}
+.hd-rappels fieldset{margin:16px 0 0;padding:0;border:0}
+.hd-rappels legend{padding:0;font-weight:600}
+.hd-rappels fieldset>p{margin:4px 0 8px;color:var(--hd-encre-2);font-size:.9rem;line-height:1.5}
+.hd-rappels-liste{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.hd-rappels-liste label{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 14px;border:1px solid var(--hd-trait);border-radius:var(--hd-rayon-petit);background:var(--hd-carte)}
+.hd-rappels-liste label:has(input:checked){border-color:var(--hd-or);background:var(--hd-or-voile)}
+.hd-rappels [role=alert]{margin:12px 0 0;color:var(--hd-erreur)}
+.hd-rappels-annonce{margin:8px 0 0;color:var(--hd-encre-2);font-size:.9rem}
+.hd-rappels-annonce:empty{display:none}
