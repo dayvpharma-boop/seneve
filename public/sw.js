@@ -4,7 +4,7 @@
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v12-incidents-20261022';
+const CACHE = 'seneve-site-v13-offline-20261027';
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -12,26 +12,29 @@ const INDEX = BASE + 'index.html';
 async function precache() {
   const cache = await caches.open(CACHE);
   const res = await fetch(INDEX, { cache: 'no-store' });
-  if (!res.ok) return;
+  if (!res.ok) throw new Error('Site indisponible pour le téléchargement');
   const html = await res.clone().text();
-  await cache.put(INDEX, res);
+  // Ne publier la nouvelle page qu'après ses fichiers indispensables.
+
   const urls = new Set([BASE + 'manifest.webmanifest', BASE + 'icons/icon-192.png']);
   for (const m of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
     const u = new URL(m[1], self.location.origin + BASE);
     if (u.origin === self.location.origin && u.pathname.startsWith(BASE + 'assets/')) urls.add(u.pathname);
   }
-  await Promise.all([...urls].map(u => cache.add(u).catch(() => undefined)));
+  await Promise.all([...urls].map(u => cache.add(u)));
+  await garderLesPages(true);
+  await cache.put(INDEX, res);
 }
 
 const ATTENTE_RESEAU = 3000;
 let dernierInventaire = 0;
 /** Garde les fichiers des pages chargées à la demande (sauf l'administration), pour qu'elles s'ouvrent aussi
  *  hors connexion. Seuls les fichiers absents du téléphone sont téléchargés ; au plus une fois toutes les 10 min. */
-async function garderLesPages() {
+async function garderLesPages(obligatoire = false) {
   if (Date.now() - dernierInventaire < 600000) return;
   dernierInventaire = Date.now();
   const r = await fetch(BASE + 'asset-manifest.json', { cache: 'no-store' });
-  if (!r.ok) return;
+  if (!r.ok) throw new Error('Inventaire indisponible');
   const liste = await r.json();
   const fichiers = new Set();
   for (const [source, f] of Object.entries(liste)) {
@@ -40,13 +43,13 @@ async function garderLesPages() {
     for (const css of f.css || []) fichiers.add(BASE + css);
   }
   const cache = await caches.open(CACHE);
-  for (const u of fichiers) if (!(await cache.match(u))) await cache.add(u).catch(() => undefined);
+  for (const u of fichiers) if (!(await cache.match(u))) await cache.add(u).catch(err => { if (obligatoire) throw err; });
 }
 
-self.addEventListener('install', e => { e.waitUntil(precache().catch(() => undefined).then(() => self.skipWaiting())); });
+self.addEventListener('install', e => { e.waitUntil(precache().then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('seneve-site-') && k !== CACHE).map(k => caches.delete(k))))
-    .then(() => self.clients.claim()).then(() => { garderLesPages().catch(() => undefined); }));
+    .then(() => self.clients.claim()).then(() => garderLesPages().catch(() => undefined)));
 });
 
 self.addEventListener('fetch', e => {
@@ -55,11 +58,16 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin || !url.pathname.startsWith(BASE)) return;   // Supabase, n8n, polices : pas touchés
 
+  // La recette dispose de son propre point d'entrée ; ne pas remplacer le site par sa page.
+  if (url.pathname.startsWith(BASE + 'recette-hd/')) return;
+
   if (req.mode === 'navigate') {
     // Le réseau a 3 secondes pour répondre ; au-delà, la copie du téléphone s'affiche. La réponse du réseau,
     // même tardive, remplace la copie pour la visite suivante.
     const reseau = fetch(req).then(async res => {
-      if (res.ok) { const c = await caches.open(CACHE); await c.put(INDEX, res.clone()); garderLesPages().catch(() => undefined); }
+      // INDEX reste la page cohérente téléchargée avec les fichiers à l'installation.
+      // Les autres routes (dont la recette) ne doivent jamais l'écraser.
+      if (res.ok) garderLesPages().catch(() => undefined);
       return res;
     });
     e.waitUntil(reseau.then(() => undefined, () => undefined));
@@ -68,7 +76,8 @@ self.addEventListener('fetch', e => {
       const horsLigne = () => new Response('Hors connexion', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
       if (!copie) return reseau.catch(horsLigne);
       const delai = new Promise(r => setTimeout(() => r(null), ATTENTE_RESEAU));
-      return (await Promise.race([reseau.catch(() => null), delai])) || copie;
+      const reponse = await Promise.race([reseau.catch(() => null), delai]);
+      return reponse && reponse.ok ? reponse : copie;
     })());
     return;
   }
