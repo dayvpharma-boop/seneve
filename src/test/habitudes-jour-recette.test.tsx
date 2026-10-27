@@ -31,8 +31,14 @@ it('mois 2 : le jour 31 affiche son propre texte validé le 27/10/2026 et annonc
  expect(screen.getByText(/Mois 2 sur 6/)).toBeInTheDocument();expect(screen.getByText(/Un temps pour réfléchir · Jour 31/)).toBeInTheDocument();
  expect(screen.queryByText(/reprise/)).toBeNull();expect(screen.queryByText(/30 jours gratuits/)).toBeNull();
 });
-it('mois 3 : sans nouveaux textes, le jour 61 reprend encore la lecture du jour 1',async()=>{
+it('mois 3 : le jour 61 affiche son propre texte validé le 27/10/2026',async()=>{
  mocks.charger.mockResolvedValue({...jour,jour:61});ouvrir();
+ expect(await screen.findByRole('heading',{name:'Changer les causes'})).toBeVisible();
+ expect(screen.getByText(/Mois 3 sur 6/)).toBeInTheDocument();expect(screen.getByText(/Un temps pour réfléchir · Jour 61/)).toBeInTheDocument();
+ expect(screen.queryByText(/reprise/)).toBeNull();
+});
+it('mois 4 : sans nouveaux textes, le jour 91 reprend encore la lecture du jour 1',async()=>{
+ mocks.charger.mockResolvedValue({...jour,jour:91});ouvrir();
  expect(await screen.findByRole('heading',{name:'Commencer avec ce qui est possible'})).toBeVisible();
  expect(screen.getByText(/Lecture 1 reprise/)).toBeInTheDocument();
 });
