@@ -4,6 +4,8 @@ import {calendrierPeriodes,dateDuJourHabitudes,type PeriodeHabitudes} from '@/li
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {BilanHabitudes} from '@/components/BilanHabitudes';
 import {joursHabitudesLecture, type JourHabitudesLecture, type EtatLecture} from '@/lib/habitudes-lecture';
+import {filtreCultesPrevus} from '@/lib/habitudes-cultes';
+import {chargerHorairesHabitudes} from '@/lib/habitudes-horaires-api';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useState } from 'react';
@@ -53,7 +55,7 @@ async function load(): Promise<Loaded | null> {
   const progs = (pr.data ?? []) as { programme_id: string; nom: string; duree_jours: number | null }[];
   const contents = (c.data ?? []) as { content_id: string; programme_id: string; version: number | string; langue: string; jour: number; numero_message: number; theme: string }[];
   const ids = contents.map(x => x.content_id);
-  const activites = (await parPaquets(ids, paquet => lignesPaginees((de, fin) => supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire').in('content_id', paquet).order('activity_id').range(de, fin)))) as { activity_id: string; content_id: string; type_activite: string; consigne?: string; obligatoire:boolean }[];
+  const activites = (await parPaquets(ids, paquet => lignesPaginees((de, fin) => supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire, note_source').in('content_id', paquet).order('activity_id').range(de, fin)))) as { activity_id: string; content_id: string; type_activite: string; consigne?: string; obligatoire:boolean; note_source?: string | null }[];
   const etats = (st.data ?? []) as { enrollment_id: string; activity_id: string; etat: string; aide_demandee: boolean; realisee_le: string | null }[];
   const parcours: Parcours[] = enr.map(x => {
     const prog = progs.find(q => q.programme_id === x.programme_id);
@@ -69,6 +71,10 @@ async function load(): Promise<Loaded | null> {
   const bilans: Record<string, Bilan> = {};
   const actions: Record<string, Record<number, string>> = {};
   const habitudes:Record<string,JourHabitudesLecture[]>={};
+  // Planning personnel des inscriptions HD, pour ne compter que les cultes prévus chaque jour.
+  // Refusé sans accès en cours : le suivi reste lisible avec les seuls cultes déjà déclarés.
+  const estLienHd=(x:Parcours)=>(hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===x.programme_id&&String(h.version)===String(x.version)&&h.langue===x.langue);
+  const horairesHd=new Map(await Promise.all(parcours.filter(estLienHd).map(async x=>[x.enrollment_id,await chargerHorairesHabitudes(x.enrollment_id).catch(()=>null)] as const)));
   for (const x of parcours) {
     const cts = contents.filter(ct => ct.programme_id === x.programme_id && String(ct.version) === String(x.version));
     bilans[x.enrollment_id] = bilan(x.date_debut, x.duree, cts, activites, etats.filter(s2 => s2.enrollment_id === x.enrollment_id));
@@ -80,7 +86,8 @@ async function load(): Promise<Loaded | null> {
       habitudes[x.enrollment_id]=joursHabitudesLecture({...x,version:Number(x.version)},bilans[x.enrollment_id]!.joursOuverts,
         cts.filter(c=>c.langue===x.langue).map(c=>({...c,version:Number(c.version)})),
         activites.map(a=>({...a,consigne:a.consigne??''})),etats as EtatLecture[],
-        calendrierHd?(j:number)=>dateDuJourHabitudes(x.date_debut,calendrierHd.debuts,j):undefined);
+        calendrierHd?(j:number)=>dateDuJourHabitudes(x.date_debut,calendrierHd.debuts,j):undefined,
+        filtreCultesPrevus(horairesHd.get(x.enrollment_id)??null));
     }
     actions[x.enrollment_id] = {};
     for (const jour of bilans[x.enrollment_id]!.jours) {

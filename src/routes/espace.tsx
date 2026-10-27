@@ -8,6 +8,8 @@ import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {DeclarationHabitude} from '@/components/DeclarationHabitude';
 import {ActivitesJourRecette} from '@/components/ActivitesJourRecette';
 import {occurrencesDepuisContenus} from '@/lib/habitudes-api';
+import {filtreCultesPrevus} from '@/lib/habitudes-cultes';
+import {chargerHorairesHabitudes,type ConfigurationHoraires} from '@/lib/habitudes-horaires-api';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { prenomDuCompte } from '@/lib/connexion-sociale';
 import {Apparence} from '@/components/Apparence';
@@ -53,11 +55,11 @@ import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
 type Content = { content_id: string; programme_id: string; version: number | string; jour: number; numero_message: number; langue: string; theme: string; explication: string | null; texte_officiel: string; reference_livre: string | null };
-type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean; critere_realisation?: string | null };
+type Activity = { activity_id: string; content_id: string; type_activite: 'action' | 'question'; consigne: string; obligatoire: boolean; critere_realisation?: string | null; note_source?: string | null };
 type State = { enrollment_id: string; activity_id: string; etat: string; aide_demandee?: boolean; realisee_le: string | null };
 // heures : horaires des moments du jour (message 1, 2, 3), lus dans le programme publié ; absents = tout visible.
 type Parcours = Enrollment & { nom: string; duree: number; heures?: string[] | null };
-type Data = { prenom: string; participantId?:string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[]; habitudes?: string[]; classificationCacheVerifiee?: boolean; fuseauHabitudes?:string; periodesHabitudes?: Record<string, PeriodeHabitudes[]> };
+type Data = { prenom: string; participantId?:string; parcours: Parcours[]; contents: Content[]; activities: Activity[]; states: State[]; habitudes?: string[]; classificationCacheVerifiee?: boolean; fuseauHabitudes?:string; periodesHabitudes?: Record<string, PeriodeHabitudes[]>; horairesHabitudes?: Record<string, ConfigurationHoraires | null> };
 
 const LOAD_ERRORS = { fr: 'Impossible de charger ta journée pour le moment.', en: 'Your day cannot be loaded right now.' } as const;
 const loadError = (langue?: string | null) => LOAD_ERRORS[langue === 'en' ? 'en' : 'fr'];
@@ -132,11 +134,13 @@ async function load(langueDemandee: string | null): Promise<Data | null> {
   const ids = contents.map(x => x.content_id);
   // Lecture complète : six mois d'Habitudes & Défis dépassent la limite de 1 000 lignes d'une réponse.
   const [activites, etats] = await Promise.all([
-    parPaquets(ids, paquet => lignesPaginees<Activity>((de, fin) => supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire, critere_realisation').in('content_id', paquet).order('activity_id').range(de, fin))),
+    parPaquets(ids, paquet => lignesPaginees<Activity>((de, fin) => supabase.from('activities').select('activity_id, content_id, type_activite, consigne, obligatoire, critere_realisation, note_source').in('content_id', paquet).order('activity_id').range(de, fin))),
     lignesPaginees<State>((de, fin) => supabase.from('activity_state').select('enrollment_id, activity_id, etat, aide_demandee, realisee_le').in('enrollment_id', enrollments.map(x => x.enrollment_id)).order('enrollment_id').order('activity_id').range(de, fin)),
   ]);
   const hdInscrits=enrollments.filter(e=>(hd.data??[]).some((h:{programme_id:string;version:number|string;langue:string})=>h.programme_id===e.programme_id&&String(h.version)===String(e.version)&&h.langue===e.langue)).map(e=>e.enrollment_id);
-  return { prenom, participantId:p.data?.participant_id, parcours, contents, activities: activites, states: etats, habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined, periodesHabitudes };
+  // Planning personnel HD : un jour passé n'affiche que les cultes prévus ce jour-là (refusé sans accès en cours).
+  const horairesHabitudes=habitudesActivees()?Object.fromEntries(await Promise.all(hdInscrits.map(async id=>[id,await chargerHorairesHabitudes(id).catch(()=>null)] as const))):{};
+  return { prenom, participantId:p.data?.participant_id, parcours, contents, activities: activites, states: etats, habitudes: hdInscrits, classificationCacheVerifiee: !hd.error, fuseauHabitudes:hdInscrits.length?fuseauHabitudes(p.data??{}):undefined, periodesHabitudes, horairesHabitudes };
 }
 
 function formatDate(iso: string | null, locale = 'fr-FR') {
@@ -338,7 +342,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       :new Date(Date.UTC(Number(enr.date_debut.slice(0,4)),Number(enr.date_debut.slice(5,7))-1,Number(enr.date_debut.slice(8,10))+current-1)).toISOString().slice(0,10);
     const duJour=contents.filter(c=>c.jour===current&&c.langue===enr.langue).sort((a,b)=>a.numero_message-b.numero_message);
     const ctx={enrollment_id:enr.enrollment_id,programme_id:enr.programme_id,version:Number(enr.version),langue:enr.langue,jour:current,date_locale};
-    const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities);
+    const culte=filtreCultesPrevus(data.horairesHabitudes?.[enr.enrollment_id]??null);
+    const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities.filter(a=>culte(a.note_source,date_locale,Boolean(etatDe(a)))));
     // Programme réel, journée du jour et en ligne : l'écran « Aujourd'hui » des maquettes Stitch, directement.
     if(!horsLigne&&enr.programme_id==='HABITUDES_DEFIS_30J_FR_V1'&&current===day&&data.participantId&&enr.etat==='active')
       return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
