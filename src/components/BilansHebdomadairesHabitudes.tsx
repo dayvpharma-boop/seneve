@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import {Link} from 'react-router-dom';
 import type {JourHabitudesLecture} from '@/lib/habitudes-lecture';
 import {semainesHabitudes} from '@/lib/habitudes-bilans';
@@ -8,7 +9,7 @@ const FAMILLES:[string,string,RegExp][]=[['Prières','Prayers',/pri[eè]re|praye
 function point(etats:string[]){if(!etats.length)return 'aucun';if(etats.every(e=>e==='realisee'))return 'fait';if(etats.some(e=>e==='realisee'||e==='partielle'))return 'partiel';return 'vide';}
 
 /** Bilans hebdomadaires présentés comme la maquette Stitch « Bilan hebdomadaire ». */
-export function BilansHebdomadairesHabitudes({jours,langue,inscription}:{jours:readonly JourHabitudesLecture[];langue:string;inscription?:string}){
+export function BilansHebdomadairesHabitudes({jours,langue,inscription,complementSemaine}:{jours:readonly JourHabitudesLecture[];langue:string;inscription?:string;complementSemaine?:(de:number,a:number)=>ReactNode}){
  const en=langue==='en',semaines=semainesHabitudes(jours);
  if(!semaines.some(s=>s.total>0))return null;
  const questions=en?['What went well this week?','What was difficult?','What did I learn?','What goal fits my situation now?','What next action do I choose?']:['Qu’est-ce qui s’est bien passé cette semaine ?','Qu’est-ce qui a été difficile ?','Qu’ai-je appris ?','Quel objectif est adapté à ma situation aujourd’hui ?','Quelle prochaine action est-ce que je choisis ?'];
@@ -38,6 +39,7 @@ export function BilansHebdomadairesHabitudes({jours,langue,inscription}:{jours:r
     <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 rounded-xl bg-hd-surface-container-low p-3">
      {[[en?'Completed activities':'Activités réalisées',`${s.realisees} / ${s.total}`],[en?'Partly done':'Réalisées en partie',s.partielles],[en?'Prepared':'Préparées',s.preparees],[en?'Help requested':'Aide demandée',s.aides],[en?'Days with required activities completed':'Journées avec les activités requises réalisées',s.journeesCompletes],...(s.enAttente>0?[[en?'Awaiting confirmation':'En attente de confirmation',s.enAttente]]:[])].map(([dt,dd])=><div key={String(dt)} className="contents"><dt className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{dt}</dt><dd className="font-hd-label-lg text-hd-label-lg text-hd-on-surface font-semibold text-right">{dd}</dd></div>)}
     </dl>
+    {complementSemaine?.(s.de,s.a)}
     <details className="group rounded-xl bg-hd-surface-container-low"><summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer min-h-[48px] px-3 flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="edit_note" className="text-[20px] text-hd-secondary"/><span className="flex-1">{en?'Reflect on my week':'Préparer mon bilan'}</span><IconeHD nom="chevron_right" className="text-[20px] text-hd-outline transition-transform group-open:rotate-90"/></summary>
      <div className="px-3 pb-3 flex flex-col gap-2"><ol className="flex flex-col gap-2">{questions.map(q=><li key={q} className="rounded-xl bg-hd-surface-container-lowest p-3 font-hd-body-md text-hd-body-md text-hd-on-surface">{q}</li>)}</ol>
       {inscription&&<Link className="min-h-[48px] rounded-xl bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium flex items-center justify-center gap-2" to={`/journal?inscription=${encodeURIComponent(inscription)}${en?'&lang=en':''}`}>{en?'Write in my journal':'Écrire dans mon journal'}</Link>}</div>
