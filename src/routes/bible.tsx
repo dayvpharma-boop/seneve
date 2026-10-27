@@ -21,14 +21,17 @@ type Langue = 'fr' | 'en';
 function useLangue() {
   const [params] = useSearchParams();
   const langue: Langue = params.get('lang') === 'en' ? 'en' : 'fr';
+  const moment=params.get('moment');
+  const lectureHabitudes=params.get('depuis')==='habitudes'&&(moment==='matin'||moment==='soir')?moment:null;
   const t = useCallback((fr: string, en: string) => (langue === 'en' ? en : fr), [langue]);
   const lien = useCallback((chemin: string, extra?: Record<string, string>) => {
     const p = new URLSearchParams(extra);
     if (langue === 'en') p.set('lang', 'en');
+    if(lectureHabitudes&&(chemin==='/bible'||chemin.startsWith('/bible/'))){p.set('depuis','habitudes');p.set('moment',lectureHabitudes);}
     const q = p.toString();
     return q ? `${chemin}?${q}` : chemin;
-  }, [langue]);
-  return { langue, t, lien };
+  }, [langue,lectureHabitudes]);
+  return { langue, t, lien, lectureHabitudes };
 }
 function useTitre(titre: string, langue: Langue) {
   useEffect(() => { document.title = `${titre} — SÉNEVÉ`; document.documentElement.lang = langue; }, [titre, langue]);
@@ -69,7 +72,7 @@ function Embleme({ taille = 48, anime = false }: { taille?: number; anime?: bool
 }
 
 function Page({ titre, retour, enfants, classe = '', reglages, droite }: { titre: string; retour?: string; enfants: ReactNode; classe?: string; reglages?: Reglages; droite?: ReactNode }) {
-  const { langue, t, lien } = useLangue();
+  const { langue, t, lien, lectureHabitudes } = useLangue();
   return <main className={`bb-page bb-ambiance-${reglages?.ambiance ?? 'ivoire'} ${classe}`}>
     <header className="bb-tete">
       {retour
@@ -79,7 +82,11 @@ function Page({ titre, retour, enfants, classe = '', reglages, droite }: { titre
       {droite}
       <Link className="bb-profil" to={lien('/profil')} aria-label={t('Mon profil', 'My profile')}><AvatarParticipant><I nom="person" taille={20} /></AvatarParticipant></Link>
     </header>{!retour && <IllustrationPage theme="lecture" langue={langue} />}
-    <div className="bb-contenu">{enfants}</div>
+    <div className="bb-contenu">{lectureHabitudes&&<aside className="bb-carte" aria-label={t('Lecture biblique des habitudes','Habit Bible reading')}>
+      <p className="bb-etiquette">{t('Habitudes & Défis','Habits & Challenges')} · {lectureHabitudes==='matin'?t('Bible du matin','Morning Bible reading'):t('Bible du soir','Evening Bible reading')}</p>
+      <p className="bb-petit">{t('Choisis ton livre et ton chapitre. Lire ne marque aucune activité comme réalisée.','Choose your book and chapter. Reading does not mark any activity as completed.')}</p>
+      <Link className="bb-bouton-texte" to={langue==='en'?'/habitudes/aujourdhui?lang=en':'/habitudes/aujourdhui'}><I nom="arrow_back" taille={18}/>{t('Revenir à ma journée','Back to my day')}</Link>
+    </aside>}{enfants}</div>
     <BarreNav langue={langue} maquette iconesJournee />
   </main>;
 }
