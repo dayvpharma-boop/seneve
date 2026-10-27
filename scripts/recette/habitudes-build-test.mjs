@@ -15,11 +15,14 @@ if(resultat.status!==0)throw new Error('Construction TEST échouée.');
 const sortie=path.join(racine,'dist-recette-hd');
 const html=await fs.readFile(path.join(sortie,'recette-hd.html'),'utf8');
 await fs.rename(path.join(sortie,'recette-hd.html'),path.join(sortie,'index.html'));
-for(const route of ['404','connexion','habitudes/inscription','confidentialite','acces']){
+for(const route of ['404','connexion','habitudes/inscription','confidentialite','acces','rappels']){
  const cible=path.join(sortie,route+'.html');await fs.mkdir(path.dirname(cible),{recursive:true});await fs.writeFile(cible,html);
 }
-// Cette entrée n'enregistre aucun service worker. Écarter celui copié depuis public/.
-await fs.rm(path.join(sortie,'sw.js'),{force:true});
+// Service worker de notifications seulement, sans cache : celui de public/ partagerait le cache du site réel.
+await fs.copyFile(path.join(racine,'scripts/recette/sw-recette.js'),path.join(sortie,'sw.js'));
+// Sur iPhone, l'icône de l'écran d'accueil doit ouvrir cette version de test, pas le site réel.
+const manifeste=JSON.parse(await fs.readFile(path.join(sortie,'manifest.webmanifest'),'utf8'));
+await fs.writeFile(path.join(sortie,'manifest.webmanifest'),JSON.stringify({...manifeste,name:'SÉNEVÉ — Version de test',short_name:'SÉNEVÉ test',start_url:'./rappels',scope:'./'},null,2));
 let testTrouve=false;
 for(const fichier of await fs.readdir(path.join(sortie,'assets'))){
  if(!fichier.endsWith('.js'))continue;
@@ -28,5 +31,5 @@ for(const fichier of await fs.readdir(path.join(sortie,'assets'))){
  if(js.includes('rlojnuaajeubzlwofwhn'))testTrouve=true;
 }
 if(!testTrouve)throw new Error('Le projet TEST est absent de la sortie.');
-await fs.writeFile(path.join(sortie,'recette-hd.json'),JSON.stringify({environnement:'seneve-test',project_id:'rlojnuaajeubzlwofwhn',base,perimetre:['connexion','preinscription','lecture_acces'],publie:false,email_envoye:false},null,2));
+await fs.writeFile(path.join(sortie,'recette-hd.json'),JSON.stringify({environnement:'seneve-test',project_id:'rlojnuaajeubzlwofwhn',base,perimetre:['connexion','preinscription','lecture_acces','rappels_habitudes'],publie:false,email_envoye:false},null,2));
 console.log('Version TEST construite dans dist-recette-hd. Aucune publication ni aucun e-mail.');
