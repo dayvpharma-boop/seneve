@@ -9,6 +9,7 @@ import {DeclarationHabitude} from '@/components/DeclarationHabitude';
 import {ActivitesJourRecette} from '@/components/ActivitesJourRecette';
 import {occurrencesDepuisContenus} from '@/lib/habitudes-api';
 import {filtreCultesPrevus} from '@/lib/habitudes-cultes';
+import {compteurFideliteActif} from '@/lib/habitudes-fidelite';
 import {chargerHorairesHabitudes,type ConfigurationHoraires} from '@/lib/habitudes-horaires-api';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { prenomDuCompte } from '@/lib/connexion-sociale';
@@ -350,6 +351,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
         <ActivitesJourRecette key={`${enr.enrollment_id}:${date_locale}`} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>
         <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2">
           <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aujourdhui${en?'?lang=en':''}`}>{en?'My access and schedule':'Mon accès et mes horaires'}</Link>
+          {compteurFideliteActif()&&<Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/engagements${en?'?lang=en':''}`}>{en?'My commitments':'Mes engagements'}</Link>}
           <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>
         </div>
       </div>{footer(enr.langue)}</>,'journee-nouvelle');
