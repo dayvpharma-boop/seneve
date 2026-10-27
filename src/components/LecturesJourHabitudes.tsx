@@ -18,7 +18,7 @@ export function LecturesJourHabitudes({activites,userId,langue,transport,onConfi
   if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');
   return()=>{document.body.style.overflow=overflow;if(d.open&&typeof d.close==='function')d.close();if(avant instanceof HTMLElement&&avant.isConnected)avant.focus();};
  },[]);
- return createPortal(<dialog ref={dialog} aria-label={l('Lectures du jour','Today’s readings')} className="fixed inset-0 m-0 p-0 border-0 w-full h-[100dvh] max-w-none max-h-none bg-hd-surface text-hd-on-surface open:flex open:flex-col backdrop:bg-hd-inverse-surface/50" onCancel={e=>{e.preventDefault();onFermer();}}>
+ return createPortal(<dialog ref={dialog} aria-label={l('Lectures du jour','Today’s readings')} className="hd-stitch overflow-hidden fixed inset-0 m-0 p-0 border-0 w-full h-[100dvh] max-w-none max-h-none bg-hd-surface text-hd-on-surface open:flex open:flex-col backdrop:bg-hd-inverse-surface/50" onCancel={e=>{e.preventDefault();onFermer();}}>
   <header className="flex items-center gap-3 px-hd-margin py-2 border-b border-hd-outline-variant shrink-0">
    <button type="button" onClick={onFermer} aria-label={l('Revenir à ma journée','Back to my day')} className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full"><IconeHD nom="arrow_back"/></button>
    <h2 className="font-hd-headline-sm text-hd-headline-sm">{l('Lectures du jour','Today’s readings')}</h2>
