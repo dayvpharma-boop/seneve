@@ -1,4 +1,5 @@
-import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {GarderLangue} from '@/components/GarderLangue';
+import {cleanup,fireEvent,render,screen,within,waitFor} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {Habitudes} from '@/routes/habitudes';
@@ -68,4 +69,7 @@ it.each([['fr','Voir les conditions et m’inscrire','Retrouver ma journée'],['
 });
 it('une inscription fermée ne bloque pas le lien vers la journée des participants existants',()=>{
  vi.stubEnv('VITE_HABITUDES_DEFIS','true');vi.stubEnv('VITE_HABITUDES_INSCRIPTION','fermee');render(<MemoryRouter><Habitudes/></MemoryRouter>);expect(screen.queryByRole('link',{name:'Voir les conditions et m’inscrire'})).toBeNull();expect(screen.getByRole('link',{name:'Retrouver ma journée'})).toBeVisible();expect(screen.getByText(/Les nouvelles inscriptions sont momentanément fermées/)).toBeVisible();
+});
+it('le choix Français prime sur la conservation globale de l’anglais',async()=>{
+ render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><GarderLangue/><Habitudes/></MemoryRouter>);expect(screen.getByRole('article')).toHaveAttribute('lang','en');fireEvent.change(screen.getByRole('combobox',{name:'Choose a reading'}),{target:{value:'17'}});expect(screen.getByRole('link',{name:'Français'})).toHaveAttribute('href','/habitudes?lang=fr');fireEvent.click(screen.getByRole('link',{name:'Français'}));await waitFor(()=>expect(screen.getByRole('article')).toHaveAttribute('lang','fr'));expect(screen.getByRole('combobox',{name:'Choisir une lecture'})).toHaveValue('17');
 });
