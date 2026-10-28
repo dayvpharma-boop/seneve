@@ -37,7 +37,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 1.
 
 **Aim:** See where you stand honestly, one line at a time.
 
-Chapter 1 offers a table in two columns. On one side: praying but deciding alone, seeking the blessing, living in constant urgency. On the other: praying and waiting for God's direction, seeking His will, keeping peace while waiting. The book invites you to tick honestly, line by line, the column that resembles you: "It is between you and God." Do it today for just one line, without condemning yourself. If you recognise yourself in the first column, it is not an ending: it is the place to begin.
+Chapter 1 offers a table in two columns. On one side: praying but deciding alone, seeking the blessing, living in constant urgency. On the other: praying and waiting for God's direction, seeking His will, keeping peace while waiting. The book invites you to tick honestly, line by line, the column that resembles you: "It is between you and God." Do it today for just one line, without condemning yourself. If you recognize yourself in the first column, it is not an ending: it is the place to begin.
 
 **For reflection:** Which line of the table would you like to see change in your life?
 
@@ -153,13 +153,13 @@ Chapter 2 begins with an observation: "The wallet is the last domain a man surre
 
 Working source: Stop Begging for Miracles, English edition provided, chapter 2.
 
-## Day 75 — Recognise where the victory comes from
+## Day 75 — Recognize where the victory comes from
 
 **Aim:** Connect what you receive with the One who gives it.
 
 The book recalls that Abraham gave the tithe to Melchizedek after his victory (Genesis 14), four centuries before the Law of Moses. No one had commanded it of him. The book sees in it "the natural response of a man who understands that his victory comes from God." Think of a recent success, small or great: an exam, a finished piece of work, a problem solved, some help received. Thank God specifically for it today.
 
-**For reflection:** Which recent success do you want to recognise as a gift from God?
+**For reflection:** Which recent success do you want to recognize as a gift from God?
 
 Working source: Stop Begging for Miracles, English edition provided, chapter 2.
 
@@ -177,7 +177,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 2.
 
 **Aim:** Keep giving and a just heart together.
 
-The book quotes Matthew 23:23, where Jesus speaks of the tithe and adds: "these ought ye to have done, and not to leave the other undone." In this passage, those other things are justice, mercy and faith. For the book, the tithe is not a religious tax but an act of justice. Giving never replaces the way we treat others. Today, do an act of justice or mercy towards someone.
+The book quotes Matthew 23:23, where Jesus speaks of the tithe and adds: "these ought ye to have done, and not to leave the other undone." In this passage, those other things are justice, mercy and faith. For the book, the tithe is not a religious tax but an act of justice. Giving never replaces the way we treat others. Today, do an act of justice or mercy toward someone.
 
 **For reflection:** Where are justice and mercy asked of you this week?
 
@@ -185,7 +185,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 2.
 
 ## Day 78 — Pray for those who feed you
 
-**Aim:** Recognise those who watch over your spiritual life.
+**Aim:** Recognize those who watch over your spiritual life.
 
 The book recalls that the tithe once supported the Levites, consecrated to the service of God (Numbers 18:21), and quotes Paul: "Even so hath the Lord ordained that they which preach the gospel should live of the gospel" (1 Corinthians 9:14). It asks a practical question: "Who feeds your soul?" It also advises wisdom: connect to a ministry that is faithful to the Word. Today, pray for someone who watches over you in prayer, and thank them if you can.
 
@@ -197,7 +197,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 2.
 
 **Aim:** Take stock of gratitude and giving.
 
-This week spoke about the way to giving: handing over your order and your money to God, recognising where the victory comes from, giving out of gratitude, keeping justice and praying for those who feed you. Read over your records without comparing yourself to anyone. No amount is expected of you here. Above all, notice whether the way you look at what you receive has changed.
+This week spoke about the way to giving: handing over your order and your money to God, recognizing where the victory comes from, giving out of gratitude, keeping justice and praying for those who feed you. Read over your records without comparing yourself to anyone. No amount is expected of you here. Above all, notice whether the way you look at what you receive has changed.
 
 **For reflection:** What nourished your gratitude this week?
 
@@ -257,7 +257,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 2.
 
 **Aim:** Understand that faithfulness does not depend on the sum.
 
-To the objection "I don't have enough to give the tithe," the book answers: "The tithe is not an amount — it is a proportion. Ten percent of one thousand is one hundred. Ten percent of five hundred is fifty." It concludes: "Faithfulness does not depend on the amount." If you practise tithing, the module's optional simulator can help you with this calculation; it saves nothing and starts no payment.
+To the objection "I don't have enough to give the tithe," the book answers: "The tithe is not an amount — it is a proportion. Ten percent of one thousand is one hundred. Ten percent of five hundred is fifty." It concludes: "Faithfulness does not depend on the amount." If you practice tithing, the module's optional simulator can help you with this calculation; it saves nothing and starts no payment.
 
 **For reflection:** What makes faithfulness possible, even with little?
 
@@ -287,7 +287,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 2.
 
 **Aim:** Look at faithfulness over time.
 
-To the objection "I don't see immediate results," the book answers: "The tithe is a covenant, not a transaction." A covenant is verified over years, not over weeks. It adds with humour: "God's accountants do not close their books at the end of the month." This patience also applies to your habits: a missed day does not undo a journey. Simply start again where you are.
+To the objection "I don't see immediate results," the book answers: "The tithe is a covenant, not a transaction." A covenant is verified over years, not over weeks. It adds with humor: "God's accountants do not close their books at the end of the month." This patience also applies to your habits: a missed day does not undo a journey. Simply start again where you are.
 
 **For reflection:** Where do you need patience at the moment?
 

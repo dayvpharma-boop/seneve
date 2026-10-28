@@ -57,7 +57,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 1.
 
 **Aim:** Understand the idea of "firstfruits".
 
-The book tells the story of Brother Évariste, who calculated his tithe on what was left after all his expenses — often nothing. Chapter 2 recalls Proverbs 3:9: to honour the Lord "with the firstfruits of all thine increase", that is, "the first portion, not the leftovers." If you practise tithing, notice at what moment you set it aside. The module's optional simulator can help you with the calculation; it saves nothing and starts no payment.
+The book tells the story of Brother Évariste, who calculated his tithe on what was left after all his expenses — often nothing. Chapter 2 recalls Proverbs 3:9: to honor the Lord "with the firstfruits of all thine increase", that is, "the first portion, not the leftovers." If you practice tithing, notice at what moment you set it aside. The module's optional simulator can help you with the calculation; it saves nothing and starts no payment.
 
 **For reflection:** At what moment do you set aside what you give to God?
 
@@ -89,7 +89,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 1; 
 
 Chapter 2 describes three traps that empty a gift of its meaning: giving to be seen, giving while grumbling, giving "to force God's hand". Jesus invites us to give without letting the left hand know what the right hand is doing (Matthew 6:3). Paul reminds us that "God loveth a cheerful giver" (2 Corinthians 9:7). The book says it plainly: "You do not buy God." Notice which of these traps threatens you most, without accusing yourself.
 
-**For reflection:** Which of these three traps do you recognise most easily in yourself?
+**For reflection:** Which of these three traps do you recognize most easily in yourself?
 
 Working source: Stop Begging for Miracles, English edition provided, chapter 2.
 
@@ -125,7 +125,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 3.
 
 ## Day 42 — Your work speaks before you do
 
-**Aim:** Consider the effect of your behaviour on others.
+**Aim:** Consider the effect of your behavior on others.
 
 The book says that "your life has already preached before your mouth." Arriving on time, keeping your word, giving the exact change, respecting the least: these acts are noticed. They can open conversations without speeches. Today, do not try to preach. Be reliable in one thing others expect from you.
 
@@ -159,13 +159,13 @@ Working source: Stop Begging for Miracles, English edition provided, chapters 2 
 
 The book describes several signs of a heart too attached to money. The first: a peace that rises and falls with your account. Others follow: praying less when you earn more, making compromises to protect what you have, finding it hard to give, being disturbed by the success of others. "A single one is enough to begin the cleanup," it says. Choose one sign and observe it honestly today.
 
-**For reflection:** Which of these signs do you recognise, even a little, in your life?
+**For reflection:** Which of these signs do you recognize, even a little, in your life?
 
 Working source: Stop Begging for Miracles, English edition provided, chapter 4.
 
 ## Day 46 — Gratitude against covetousness
 
-**Aim:** Practise specific gratitude.
+**Aim:** Practice specific gratitude.
 
 Chapter 4 offers a simple remedy: each evening, name before God three things received during the day. "Gratitude is the natural antidote to covetousness," the book says. Tonight, during your gratitude, look for specific things rather than general ones: a meal, a word, some help, a moment of calm.
 
@@ -247,7 +247,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 6.
 
 **Aim:** Pay attention to someone around you.
 
-In prison, Joseph notices that two fellow prisoners look downcast and asks them: "Wherefore look ye so sadly to day?" (Genesis 40:7). The book points out that this small attention changed his story. Faithfulness also concerns people: a tired colleague, a lonely neighbour, a worried relative. Today, take the time to sincerely ask someone how they are.
+In prison, Joseph notices that two fellow prisoners look downcast and asks them: "Wherefore look ye so sadly to day?" (Genesis 40:7). The book points out that this small attention changed his story. Faithfulness also concerns people: a tired colleague, a lonely neighbor, a worried relative. Today, take the time to sincerely ask someone how they are.
 
 **For reflection:** Who around you seems to be carrying something heavy right now?
 
@@ -275,7 +275,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 7.
 
 ## Day 57 — Slow down when urgency rises
 
-**Aim:** Recognise the pressure that pushes you to decide too quickly.
+**Aim:** Recognize the pressure that pushes you to decide too quickly.
 
 The book distinguishes two voices: "Urgency pushes; the Spirit leads. Urgency creates anxiety; the Spirit gives peace." The author tells how contracts signed under pressure contributed to his own debts. He drew a rule from it: when the pressure to decide immediately becomes strong, "that is precisely the signal to slow down." Then pray and seek counsel. Think of a decision that is pressing on you right now.
 
@@ -285,7 +285,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 7.
 
 ## Day 58 — Look back over four weeks
 
-**Aim:** See the road travelled this month.
+**Aim:** See the road traveled this month.
 
 This month has gone through the whole book: God first, tithes and offerings, work, money, sharing, faithfulness and the leading of the Spirit. Read over your weekly reviews. Notice what you have understood, what you have begun, and what remains difficult. The journey is not a race: starting again after a break is also part of faithfulness.
 
@@ -307,7 +307,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 7.
 
 **Aim:** Make a peaceful review and choose a single step.
 
-At the end of the book, the author invites you: "Choose one key — just one to begin." Among the seven markers of this month, which one do you want to practise first next month? Your review measures neither your faith nor your worth; it helps you see where you are. Your daily habits continue, and you can adjust your times at any moment.
+At the end of the book, the author invites you: "Choose one key — just one to begin." Among the seven markers of this month, which one do you want to practice first next month? Your review measures neither your faith nor your worth; it helps you see where you are. Your daily habits continue, and you can adjust your times at any moment.
 
 **For reflection:** Which key do you want to choose for next month?
 

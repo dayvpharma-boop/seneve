@@ -2,7 +2,7 @@
 
 > **Pour Dr Justin (en français).** Brouillons anglais préparés le 28 octobre 2026 à partir de tes textes français du mois 1 (approuvés le 26 octobre, `30-jours-fr-relecture.md`) et des quatre défis hebdomadaires avec le bilan des jours 29–30 (validés le 26 octobre, `defis-30-jours-fr-relecture.md`).
 >
-> - **Les 30 lectures** reprennent la traduction anglaise déjà visible sur la page de lecture publique depuis le 26 octobre. Je l'ai relue phrase par phrase : elle suit fidèlement ton français, sans idée ajoutée ni retirée. Seule l'orthographe passe de l'anglais britannique à l'anglais américain (« Honor », « recognize », « organize », « program »), comme le livre anglais et les mois 2 à 6.
+> - **Les 30 lectures** reprennent la traduction anglaise déjà visible sur la page de lecture publique depuis le 26 octobre. Je l'ai relue phrase par phrase : elle suit fidèlement ton français, sans idée ajoutée ni retirée. Seule l'orthographe passe de l'anglais britannique à l'anglais américain (« Honor », « recognize », « organize », « program »), comme le livre anglais. Les mois 2 à 6, qui étaient surtout en orthographe britannique, ont été harmonisés de la même façon le 28 octobre (orthographe seulement, citations du livre inchangées).
 > - **Les défis** sont traduits pour la première fois.
 > - Ces textes du mois 1 ne citent pas le livre : il n'y a donc aucune citation à vérifier.
 >
