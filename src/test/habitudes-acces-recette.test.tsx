@@ -73,3 +73,18 @@ it.each(['revoque','expire'] as const)('site réel : un mois payé aligné mais 
  expect(screen.queryByTestId('planning')).toBeNull();
 });
 
+it.each(['fr','en'])('site réel : annonce la fin des six mois sans promettre un septième mois (%s)',async(langue)=>{
+ const maintenant=Date.now(),iso=(h:number)=>new Date(maintenant+h*3600000).toISOString();
+ const periode={enrollment_id:'E1',entitlement_id:'D6',debut:iso(-730),fin_exclue:iso(-10),mois:6};
+ mock.charger.mockResolvedValue({...catalogue,droits:[{entitlement_id:'D6',offre_id:'CONTINUITE_MENSUEL_FR',etat:'actif',debut:periode.debut,fin:periode.fin_exclue}],
+  inscriptions:[{...catalogue.inscriptions[0]!,programme_id:'HABITUDES_DEFIS_30J_FR_V1'}],periodesGratuitesHabitudes:[periode]});
+ render(<MemoryRouter initialEntries={[`/habitudes/aujourdhui?lang=${langue}`]}><AccesRecetteHabitudes reel/></MemoryRouter>);
+ await screen.findByText(langue==='en'?'Your six-month journey is complete.':'Ton parcours de six mois est terminé.');
+ expect(screen.queryByText(/Le mois suivant|The next month/)).toBeNull();
+ expect(screen.queryByRole('heading',{name:langue==='en'?'My day':'Ma journée'})).toBeNull();
+});
+it.each([['fr','expire','Retrouver mon parcours dans mon espace'],['en','revoque','View my journey in my space']])('un accès réel fermé %s explique la limite et renvoie vers son propre parcours',async(langue,etat,lien)=>{
+ mock.charger.mockResolvedValue({...catalogue,droits:[{...catalogue.droits[0],etat}],inscriptions:[{...catalogue.inscriptions[0]!,programme_id:'HABITUDES_DEFIS_30J_FR_V1'}]});
+ render(<MemoryRouter initialEntries={[`/habitudes/aujourdhui?lang=${langue}`]}><AccesRecetteHabitudes reel/></MemoryRouter>);
+ const retour=await screen.findByRole('link',{name:lien});expect(retour).toHaveAttribute('href',`/espace?parcours=E1${langue==='en'?'&lang=en':''}`);expect(screen.queryByTestId('planning')).toBeNull();expect(screen.queryByText('Tu peux déclarer tes habitudes quotidiennes et les cultes prévus dans ton planning personnel.')).toBeNull();expect(screen.queryByText('You can record your daily habits and the worship appointments in your personal schedule.')).toBeNull();expect(screen.getByText(langue==='en'?/New records require confirmed active access/:/Les nouvelles déclarations nécessitent un accès actif confirmé/)).toBeVisible();
+});
