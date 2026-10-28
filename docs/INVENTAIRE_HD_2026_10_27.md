@@ -1,6 +1,8 @@
+> **Rapport historique du 27 octobre.** Le point d’entrée courant est [l’inventaire vérifié du 28 octobre 2026](INVENTAIRE_HD_2026_10_28.md). Les mentions de 30 textes répétés, d’absence du compteur et de rappels inexistants ci-dessous décrivent l’ancien instantané, pas l’état actuel.
+
 # Inventaire vérifié Habitudes & Défis — 27 octobre 2026
 
-Ce document est le point d'entrée courant. Les comptes rendus des 25 et 26 octobre restent des preuves historiques de leurs étapes, pas une description de l'état actuel.
+Ce document décrivait le point d’entrée courant au 27 octobre. Les comptes rendus des 25 et 26 octobre restent des preuves historiques de leurs étapes, pas une description de l'état actuel.
 
 ## Périmètre et preuves
 
