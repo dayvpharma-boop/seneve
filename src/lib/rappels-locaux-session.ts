@@ -10,7 +10,7 @@ export function initialiserRappelsLocaux(){
  supabase.auth.onAuthStateChange((event,session)=>{
   const owner=session?.user.id??null;
   // Une session initiale non vérifiable sans réseau n’est pas une déconnexion explicite.
-  if(event==='INITIAL_SESSION'&&!owner&&navigator.onLine===false)return;
+  if(event==='INITIAL_SESSION'&&!owner)return;
   const initial=precedent===undefined,change=!initial&&owner!==precedent;
   precedent=owner;
   // Aucun appel Supabase asynchrone dans le callback d'authentification.

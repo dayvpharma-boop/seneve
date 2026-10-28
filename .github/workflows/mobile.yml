@@ -37,6 +37,26 @@ jobs:
       - name: Construire l’APK de test
         working-directory: android
         run: bash gradlew assembleDebug --no-daemon
+      - name: Autoriser l’accélération de l’émulateur éphémère
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Vérifier deux redémarrages réels sans réseau
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: bash scripts/mobile/cold-start-offline.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: preuve-demarrage-android
+          path: build/cold-start/
+          if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         with:
           name: seneve-android-test

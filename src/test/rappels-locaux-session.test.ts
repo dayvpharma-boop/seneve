@@ -17,8 +17,8 @@ it('conserve un avertissement si l’arrêt au changement de compte échoue',asy
  m.stop.mockRejectedValue(Error('téléphone indisponible'));initialiserRappelsLocaux();m.callback!('INITIAL_SESSION',{user:{id:'A'}});m.callback!('SIGNED_OUT',null);
  await vi.waitFor(()=>expect(localStorage.getItem('echec-arret')).toBe('1'));
 });
-it('ne supprime pas les rappels si la session initiale ne peut pas être vérifiée hors connexion',()=>{
- vi.spyOn(navigator,'onLine','get').mockReturnValue(false);initialiserRappelsLocaux();
+it.each([false,true])('une session initiale inconnue conserve les rappels même avec onLine=%s',online=>{
+ vi.spyOn(navigator,'onLine','get').mockReturnValue(online);initialiserRappelsLocaux();
  m.callback!('INITIAL_SESSION',null);expect(m.stop).not.toHaveBeenCalled();expect(m.change).not.toHaveBeenCalled();
  m.callback!('SIGNED_IN',{user:{id:'A'}});expect(m.change).toHaveBeenCalledWith('A');expect(m.stop).not.toHaveBeenCalled();
  m.callback!('SIGNED_OUT',null);expect(m.stop).toHaveBeenCalledOnce();
