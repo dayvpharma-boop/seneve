@@ -18,14 +18,19 @@ export function RappelsLocauxHabitudes(props:Props){
 function FormulaireLocal({enrollmentId,participantId,dateLocale,finAcces,langue}:Props){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [data,setData]=useState<ConfigurationHoraires|null>(null),[etat,setEtat]=useState<Awaited<ReturnType<typeof etatRappelsLocaux>>|null>(null);
+ const [proprietaire,setProprietaire]=useState<string|null>(null);
  const [cles,setCles]=useState<string[]>(['priere_matin','priere_midi','priere_soir']);
  const [accord,setAccord]=useState(false),[busy,setBusy]=useState(false),[erreur,setErreur]=useState(''),[message,setMessage]=useState(''),[tour,setTour]=useState(0),[reglage,setReglage]=useState(false);
  const vivant=useRef(true),verrou=useRef(false);
  useEffect(()=>{vivant.current=true;return()=>{vivant.current=false;};},[]);
  useEffect(()=>{
-  let actif=true;setData(null);setEtat(null);setErreur('');
-  void Promise.all([chargerHorairesHabitudes(enrollmentId),etatRappelsLocaux()])
-   .then(([d,e])=>{if(actif){setData(d);setEtat(e);}})
+  let actif=true;setData(null);setProprietaire(null);setEtat(null);setErreur('');
+  void (async()=>{
+    const avant=await supabase.auth.getSession();if(avant.error||!avant.data.session)throw Error('Session à vérifier');
+    const [d,e]=await Promise.all([chargerHorairesHabitudes(enrollmentId),etatRappelsLocaux()]);
+    const apres=await supabase.auth.getSession();if(apres.error||apres.data.session?.user.id!==avant.data.session.user.id)throw Error('Compte modifié');
+    return {d,e,owner:avant.data.session.user.id};
+   })().then(({d,e,owner})=>{if(actif){setData(d);setEtat(e);setProprietaire(owner);}})
    .catch(()=>{if(actif)setErreur(l('Tes horaires ou les rappels du téléphone ne peuvent pas être vérifiés. Réessaie.','Your schedule or phone reminders could not be checked. Try again.'));});
   return()=>{actif=false;};
  },[enrollmentId,tour]);
@@ -46,7 +51,7 @@ function FormulaireLocal({enrollmentId,participantId,dateLocale,finAcces,langue}
    }else{
     if(!accord||!plan?.rappels.length)throw Error('Sélection requise');
     const s=await supabase.auth.getSession();
-    if(s.error||!s.data.session||!vivant.current)throw Error('Session à vérifier');
+    if(s.error||!s.data.session||s.data.session.user.id!==proprietaire||!vivant.current){if(vivant.current){setData(null);setProprietaire(null);setAccord(false);}throw Error('Session à vérifier');}
     const resultat=await programmerRappelsLocaux(plan,s.data.session.user.id,enrollmentId,()=>vivant.current);
     if(vivant.current)setMessage(l(`${resultat.nombre} rappels confirmés par le téléphone. Dernier rendez-vous : ${new Date(resultat.jusqua).toLocaleString('fr-FR',{timeZone:data!.fuseau})} (${data!.fuseau}).`,`${resultat.nombre} reminders confirmed by the phone. Last appointment: ${new Date(resultat.jusqua).toLocaleString('en-GB',{timeZone:data!.fuseau})} (${data!.fuseau}).`));
    }

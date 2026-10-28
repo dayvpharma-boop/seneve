@@ -21,7 +21,7 @@ it('ne montre pas une fausse capacité hors connexion sur le site',()=>{
 });
 it('exige un choix explicite et ne programme rien à l’ouverture',async()=>{
  render(<RappelsLocauxHabitudes {...props}/>);ouvrir();await screen.findByLabelText('Prière du matin');
- const b=screen.getByRole('button',{name:'Autoriser et programmer sur ce téléphone'});expect(b).toBeDisabled();expect(m.programmer).not.toHaveBeenCalled();expect(m.session).not.toHaveBeenCalled();
+ const b=screen.getByRole('button',{name:'Autoriser et programmer sur ce téléphone'});expect(b).toBeDisabled();expect(m.programmer).not.toHaveBeenCalled();
  fireEvent.click(screen.getByLabelText(/Pour ces rendez-vous/));fireEvent.click(b);
  await screen.findByText(/4 rappels confirmés par le téléphone/);
  expect(m.programmer.mock.calls[0]![0].rappels).toHaveLength(4);expect(m.programmer.mock.calls[0]![1]).toBe('U');expect(m.programmer.mock.calls[0]![2]).toBe('E');
@@ -37,5 +37,11 @@ it('arrête les rappels sans demander de permission et n’annonce pas un arrêt
  m.arreter.mockRejectedValue(Error('arrêt refusé'));render(<RappelsLocauxHabitudes {...props}/>);ouvrir();await screen.findByLabelText('Prière du matin');
  fireEvent.click(screen.getByRole('button',{name:'Arrêter les rappels locaux de ce téléphone'}));await screen.findByRole('alert');
  expect(screen.queryByText(/ont été arrêtés/)).toBeNull();expect(m.programmer).not.toHaveBeenCalled();
+});
+it('ne programme pas les horaires de l’ancien compte si la session change avant activation',async()=>{
+ render(<RappelsLocauxHabitudes {...props}/>);ouvrir();await screen.findByLabelText('Prière du matin');
+ m.session.mockResolvedValue({data:{session:{user:{id:'AUTRE'}}},error:null});
+ fireEvent.click(screen.getByLabelText(/Pour ces rendez-vous/));fireEvent.click(screen.getByRole('button',{name:'Autoriser et programmer sur ce téléphone'}));
+ await screen.findByRole('alert');expect(m.programmer).not.toHaveBeenCalled();expect(screen.queryByLabelText('Prière du matin')).toBeNull();
 });
 
