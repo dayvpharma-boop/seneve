@@ -55,3 +55,12 @@ it('retire immédiatement les anciens titres quand le compte ou l’inscription 
  vue.rerender(<LecturesJourHabitudes {...props} userId="10000000-0000-4000-8000-000000000002"/>);
  expect(screen.queryByText(/Titre du premier compte/)).toBeNull();expect(screen.getByText('Chargement des durées…')).toBeInTheDocument();
 });
+it('depuis Ma journée, Fait ouvre la durée sans écrire avant la confirmation et met à jour la bonne activité',async()=>{
+ ouvrir();const carte=await screen.findByRole('article',{name:'Lecture professionnelle'});fireEvent.click(within(carte).getByRole('button',{name:'J’ai réalisé cette activité'}));
+ const saisie=await screen.findByRole('dialog',{name:'Combien de temps ?'});expect(ecritures()).toHaveLength(0);expect(screen.getByRole('progressbar')).toHaveAttribute('value','0');fireEvent.click(within(saisie).getByRole('button',{name:'30 min'}));fireEvent.click(within(saisie).getByRole('button',{name:'Fait'}));
+ await screen.findByText('1 sur 5 réalisées');expect(ecritures()).toHaveLength(1);expect(ecritures()[0]![0]).toBe('hd_record_reading');expect(ecritures()[0]![1].p_activity_id).toBe(activites[1]!.occurrence.occurrence_id);expect(screen.getByRole('progressbar')).toHaveAttribute('value','1');
+});
+it('le bouton de durée depuis une lecture déjà faite retrouve le temps enregistré et fermer ne réécrit rien',async()=>{
+ const a=activites[1]!;sauvees.push({activity_id:a.occurrence.occurrence_id,minutes:20,titre:'Mon ouvrage'});mocks.charger.mockResolvedValue({userId:uid,jour:2,activites:activites.map(x=>x===a?{...x,etat:{...x.occurrence,etat:'realisee',aide_demandee:false,synchronisation:'synchronise'}}:x)});
+ ouvrir();fireEvent.click(await screen.findByRole('button',{name:'Renseigner la durée — Lecture professionnelle'}));const saisie=await screen.findByRole('dialog',{name:'Combien de temps ?'});expect(within(saisie).getByRole('button',{name:'20 min'})).toHaveAttribute('aria-pressed','true');expect(within(saisie).getByDisplayValue('Mon ouvrage')).toBeVisible();fireEvent.click(within(saisie).getByRole('button',{name:'Fermer la saisie de durée'}));expect(ecritures()).toHaveLength(0);expect(screen.getByRole('progressbar')).toHaveAttribute('value','1');
+});
