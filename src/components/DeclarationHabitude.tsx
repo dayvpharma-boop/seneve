@@ -4,9 +4,11 @@ import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import {cleSaisie,lireSaisie,preparerSaisie,type SaisieEnAttente} from '@/lib/habitudes-saisie';
 import {IconeHD} from './IconeHabitudes';
 
-export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false}:{
- /** « stitch » : carte des maquettes Stitch HD (même mécanisme d'enregistrement). */
- variante?:'stitch'|'priere';heure?:string;attenue?:boolean;
+export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu}:{
+ /** « stitch » : carte des maquettes Stitch HD ; « culte » : « J'y ai participé » de la maquette 07 (même mécanisme d'enregistrement). */
+ variante?:'stitch'|'priere'|'culte';heure?:string;attenue?:boolean;
+ /** Culte : « Je n'ai pas pu » n'enregistre rien sur le serveur ; le parent ouvre son panneau. */
+ onPasPu?:()=>void;
  onDemanderLecture?:()=>void;
  lienLecture?:{href:string;label:string};lienEcriture?:{href:string;label:string};aideDisponible?:boolean;userId:string;occurrence:OccurrenceHabitude;consigne:string;critere?:string|null;etat?:EtatOccurrence;langue:string;lectureSeule:boolean;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
 }){
@@ -35,6 +37,14 @@ export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLect
  const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
  if(variante==='stitch')return <CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
+ if(variante==='culte')return <div className="flex flex-col gap-2" aria-busy={occupe}>
+  <p role="status" className={valeur==='realisee'||attente?'font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant':'sr-only'}>{attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation. This declaration is not confirmed yet.':'En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.')):valeur==='realisee'?(en?'Participation recorded · Synchronised':'Participation déclarée · Synchronisée'):labels[valeur]}</p>
+  {lectureSeule?<p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{en?'Read only':'Lecture seule'}</p>:(attente||valeur!=='realisee')&&<>
+   <button type="button" disabled={occupe} onClick={()=>void declarer(attente?.action??'realisee')} className="min-h-[48px] rounded-xl bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium flex items-center justify-center gap-2 disabled:opacity-60"><IconeHD nom={attente?'refresh':'done'} className="text-[18px]"/>{occupe?(en?'Saving…':'Enregistrement…'):attente?(en?'Retry this declaration':'Réessayer cette déclaration'):(en?'I attended':'J’y ai participé')}</button>
+   {!attente&&onPasPu&&<button type="button" disabled={occupe} onClick={onPasPu} className="min-h-[48px] rounded-xl bg-hd-surface-container text-hd-on-surface font-hd-label-lg text-hd-label-lg font-medium flex items-center justify-center gap-2 disabled:opacity-60"><IconeHD nom="event_busy" className="text-[18px]"/>{en?'I couldn’t go':'Je n’ai pas pu'}</button>}
+  </>}
+  {erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{nettoyageIncomplet?(en?'The record is already confirmed. Retry to finish the update.':'L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.'):(en?'Confirmation unavailable. Retry this same declaration when you can.':'Confirmation indisponible. Réessaie cette même déclaration quand tu peux.')}</p>}
+ </div>;
  if(variante==='priere')return <section className="ap-actions" aria-label={consigne} aria-busy={occupe}>
   <p role="status" className="ap-etat">{valeur==='realisee'?(en?'Prayer recorded · Synchronised':'Prière déclarée · Synchronisée'):attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation.':'En attente de confirmation du serveur.')):labels[valeur]}</p>
   <div className="ap-boutons">
