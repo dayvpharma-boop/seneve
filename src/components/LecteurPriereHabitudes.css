@@ -11,8 +11,9 @@
 .hd-lecteur-priere .ap-meta>span{display:inline-flex;align-items:center;gap:.25rem}
 .hd-lecteur-priere .ap-meta>span:first-child{background:#ffdf9055;border-radius:999px;padding:.25rem .65rem;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
 .hd-lecteur-priere .ap-langues{display:flex;padding:4px;gap:4px;border-radius:12px;background:#f2eedf;margin-bottom:.75rem;font:500 13px/1.6 "Work Sans",sans-serif}
-.hd-lecteur-priere .ap-langues>span{flex:1;text-align:center;padding:5px 2px;color:#7e7665}
-.hd-lecteur-priere .ap-langues>span:first-child{background:white;border-radius:8px;color:#755b00;box-shadow:0 1px 3px #0001}
+.hd-lecteur-priere .ap-langues>span,.hd-lecteur-priere .ap-langues>button{flex:1;text-align:center;padding:5px 2px;color:#7e7665;font:inherit;background:none;border:0;border-radius:8px;min-height:36px}
+.hd-lecteur-priere .ap-langues>button{cursor:pointer}
+.hd-lecteur-priere .ap-langues>button[aria-pressed="true"]{background:white;color:#755b00;box-shadow:0 1px 3px #0001}
 .hd-lecteur-priere .ap-langues small{font-size:9px;text-transform:uppercase}
 .hd-lecteur-priere .ap-information{border-radius:12px;background:#f8f4e4;padding:.8rem 1rem;font:400 13px/1.6 "Work Sans",sans-serif;color:#4d4637;margin:0 0 1.5rem}
 .hd-lecteur-priere .ap-texte{max-width:42rem;margin:0 auto;font-family:Literata,Georgia,serif;line-height:1.85;text-align:left;overflow-wrap:break-word}
