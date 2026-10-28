@@ -8,6 +8,8 @@ import {chargerCatalogueAcces,etatDroit,type CatalogueAcces} from '@/lib/offres-
 import {CadreHabitudes} from './CadreHabitudes';
 import {IconeHD} from './IconeHabitudes';
 import {estProgrammeHdReel,PROGRAMME_HD_RECETTE} from '@/lib/habitudes-programmes';
+import {useEnLigne} from '@/lib/hors-ligne';
+import {IconeJournee} from './IconeJournee';
 
 /** Lecture des droits existants seulement : aucune création ou reprise de période.
  * `reel` : écran du site réel, pour les programmes publiés en français et en anglais (sinon : essai technique de la recette). */
@@ -18,6 +20,7 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
  const [data,setData]=useState<CatalogueAcces|null>(null),[erreur,setErreur]=useState(false),[tour,setTour]=useState(0);
  const [maintenant,setMaintenant]=useState(Date.now);
  const sequence=useRef(0);
+ const enLigne=useEnLigne();
  useEffect(()=>{const actualiser=()=>setMaintenant(Date.now());const t=window.setInterval(actualiser,60000);window.addEventListener('focus',actualiser);return()=>{window.clearInterval(t);window.removeEventListener('focus',actualiser);};},[]);
  useEffect(()=>{
   const auth=supabase.auth.onAuthStateChange(()=>{sequence.current++;setData(null);setErreur(false);setTour(t=>t+1);});
@@ -33,7 +36,21 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
  const bouton='min-h-[48px] w-full bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium rounded-xl flex items-center justify-center gap-2';
  return <CadreHabitudes titre={l('Aujourd’hui','Today')} langue={langue} actif="aujourdhui" liens={{aujourdhui:reel?`/habitudes/aujourdhui?lang=${langue}`:`/acces?lang=${langue}`}}>
  <h1 className="sr-only">{m('Mes accès de test','My test access','Habitudes & Défis','Habits & Challenges')}</h1>
- {erreur?<section className="px-hd-margin py-hd-space-md"><div className={carte}><p role="alert" className="font-hd-body-md text-hd-body-md">{l('Tes accès ne peuvent pas être vérifiés pour le moment.','Your access cannot be verified right now.')}</p><button className={bouton} onClick={()=>setTour(t=>t+1)}><IconeHD nom="refresh" className="text-[20px]"/>{l('Réessayer','Try again')}</button></div></section>
+ {erreur&&reel&&!enLigne?<section className="px-hd-margin py-hd-space-md flex flex-col gap-hd-space-lg" aria-labelledby="hd-hors-ligne-titre">
+  {/* Maquette Stitch n° 5 (28/10/2026) : les habitudes ne sont pas gardées sur l’appareil. */}
+  <div className="bg-hd-surface-container-lowest rounded-2xl p-hd-space-lg shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col items-center text-center">
+   <span className="w-16 h-16 rounded-full bg-hd-surface-container-low flex items-center justify-center text-hd-secondary mb-hd-space-md" aria-hidden="true"><IconeJournee nom="wifi_off" taille={30}/></span>
+   <h2 id="hd-hors-ligne-titre" className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface mb-hd-space-sm">{l('Tes habitudes du jour demandent une connexion','Your habits for today need a connection')}</h2>
+   <p role="status" className="font-hd-body-md text-hd-body-md text-hd-tertiary mb-hd-space-lg max-w-[290px]">{l('Pour protéger tes données, les habitudes ne sont pas gardées sur cet appareil. Tu pourras noter ce que tu as fait dès que le réseau reviendra.','To protect your data, habits are not kept on this device. You can record what you did as soon as the network is back.')}</p>
+   <button className={bouton} onClick={()=>setTour(t=>t+1)}><IconeHD nom="refresh" className="text-[20px]"/>{l('Réessayer','Try again')}</button>
+  </div>
+  <nav className="bg-hd-surface-container-low rounded-2xl p-hd-space-md flex flex-col gap-hd-space-sm" aria-labelledby="hd-en-attendant">
+   <h3 id="hd-en-attendant" className="font-hd-label-lg text-hd-label-lg text-hd-on-surface font-semibold px-hd-space-xs">{l('En attendant','Meanwhile')}</h3>
+   <Link className="min-h-[48px] bg-hd-surface-container-lowest/80 rounded-xl p-hd-space-md flex items-center justify-between gap-hd-space-sm text-hd-on-surface" to={en?'/bible?lang=en':'/bible'}><span className="flex items-center gap-hd-space-md"><IconeHD nom="menu_book" className="text-hd-secondary text-[24px]"/><span className="font-hd-body-md text-hd-body-md">{l('Lire la Bible','Read the Bible')}</span></span><IconeHD nom="chevron_right" className="text-hd-outline-variant text-[20px]"/></Link>
+   <Link className="min-h-[48px] bg-hd-surface-container-lowest/80 rounded-xl p-hd-space-md flex items-center justify-between gap-hd-space-sm text-hd-on-surface" to="/espace"><span className="flex items-center gap-hd-space-md"><IconeHD nom="wb_sunny" className="text-hd-secondary text-[24px]"/><span className="font-hd-body-md text-hd-body-md">{l('Relire ma journée','Reread my day')}</span></span><IconeHD nom="chevron_right" className="text-hd-outline-variant text-[20px]"/></Link>
+  </nav>
+ </section>
+ :erreur?<section className="px-hd-margin py-hd-space-md"><div className={carte}><p role="alert" className="font-hd-body-md text-hd-body-md">{l('Tes accès ne peuvent pas être vérifiés pour le moment.','Your access cannot be verified right now.')}</p><button className={bouton} onClick={()=>setTour(t=>t+1)}><IconeHD nom="refresh" className="text-[20px]"/>{l('Réessayer','Try again')}</button></div></section>
  :!data?<p role="status" className="px-hd-margin py-hd-space-md font-hd-body-md text-hd-body-md text-hd-on-surface-variant">{l('Vérification de ton accès…','Checking your access…')}</p>
  :!data.connecte?<section className="px-hd-margin py-hd-space-md"><div className={carte}><p className="font-hd-body-md text-hd-body-md">{m('Connecte-toi pour consulter ton accès de test.','Sign in to view your test access.','Connecte-toi pour retrouver ton parcours.','Sign in to view your journey.')}</p><Link className={bouton} to={`/connexion?mode=signin&suite=habitudes&lang=${langue}`}>{l('Se connecter','Sign in')}</Link></div></section>:<>
  {inscriptions.length===0&&<p className="px-hd-margin py-hd-space-md font-hd-body-md text-hd-body-md">{m('Aucune inscription à cet essai n’est enregistrée pour ton compte.','No enrollment in this test is recorded for your account.','Aucune inscription à Habitudes & Défis n’est enregistrée pour ton compte.','No Habits & Challenges enrollment is recorded for your account.')}</p>}

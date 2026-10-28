@@ -88,3 +88,21 @@ it.each([['fr','expire','Retrouver mon parcours dans mon espace'],['en','revoque
  render(<MemoryRouter initialEntries={[`/habitudes/aujourdhui?lang=${langue}`]}><AccesRecetteHabitudes reel/></MemoryRouter>);
  const retour=await screen.findByRole('link',{name:lien});expect(retour).toHaveAttribute('href',`/espace?parcours=E1${langue==='en'?'&lang=en':''}`);expect(screen.queryByTestId('planning')).toBeNull();expect(screen.queryByText('Tu peux déclarer tes habitudes quotidiennes et les cultes prévus dans ton planning personnel.')).toBeNull();expect(screen.queryByText('You can record your daily habits and the worship appointments in your personal schedule.')).toBeNull();expect(screen.getByText(langue==='en'?/New records require confirmed active access/:/Les nouvelles déclarations nécessitent un accès actif confirmé/)).toBeVisible();
 });
+it('sans réseau, l’écran réel explique que les habitudes demandent une connexion (maquette Stitch du 28/10/2026)',async()=>{
+ Object.defineProperty(navigator,'onLine',{configurable:true,value:false});
+ try{
+  mock.charger.mockRejectedValue(new TypeError('Failed to fetch'));
+  render(<MemoryRouter initialEntries={['/habitudes/aujourdhui?lang=fr']}><AccesRecetteHabitudes reel/></MemoryRouter>);
+  expect(await screen.findByRole('heading',{name:'Tes habitudes du jour demandent une connexion'})).toBeInTheDocument();
+  expect(screen.getByText('Pour protéger tes données, les habitudes ne sont pas gardées sur cet appareil. Tu pourras noter ce que tu as fait dès que le réseau reviendra.')).toBeInTheDocument();
+  expect(screen.getByRole('link',{name:'Lire la Bible'})).toHaveAttribute('href','/bible');
+  expect(screen.getByRole('link',{name:'Relire ma journée'})).toHaveAttribute('href','/espace');
+  expect(screen.queryByText('Tes accès ne peuvent pas être vérifiés pour le moment.')).not.toBeInTheDocument();
+ }finally{Object.defineProperty(navigator,'onLine',{configurable:true,value:true});}
+});
+it('avec réseau, une erreur garde le message habituel sur l’écran réel',async()=>{
+ mock.charger.mockRejectedValue(Error('serveur'));
+ render(<MemoryRouter initialEntries={['/habitudes/aujourdhui?lang=fr']}><AccesRecetteHabitudes reel/></MemoryRouter>);
+ expect(await screen.findByText('Tes accès ne peuvent pas être vérifiés pour le moment.')).toBeInTheDocument();
+ expect(screen.queryByRole('heading',{name:'Tes habitudes du jour demandent une connexion'})).not.toBeInTheDocument();
+});
