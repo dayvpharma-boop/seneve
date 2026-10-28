@@ -83,7 +83,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Choisis ta prière. Lire ne valide rien : appuie sur « J’ai prié » après avoir prié.','Choose your prayer. Reading completes nothing: press “I prayed” after praying.')}</p>
   </aside>
   {activites.some(a=>estLectureHabitudes(a.habit_key))&&<button type="button" onClick={()=>setLecturesOuvertes(true)} className="mb-hd-space-lg min-h-[48px] px-4 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-lg text-hd-label-lg flex items-center justify-center gap-2"><IconeHD nom="menu_book"/>{l('Lectures du jour','Today’s readings')}<IconeHD nom="chevron_right"/></button>}
-  <CultesSemaineHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue}/>
+  <CultesSemaineHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} onConfirme={confirmer}/>
   {/* Prochain rendez-vous */}
   {prochain&&<section className="mt-hd-space-xs mb-hd-space-lg" aria-label={l('Prochain rendez-vous','Next appointment')}>
    <div className="relative bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_4px_20px_rgba(117,91,0,0.06)] overflow-hidden">
