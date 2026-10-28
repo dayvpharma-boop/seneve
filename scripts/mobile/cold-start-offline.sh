@@ -2,11 +2,10 @@
 set -euo pipefail
 mkdir -p build/cold-start
 adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-adb shell settings put global airplane_mode_on 1
-adb shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true
 adb shell svc wifi disable
 adb shell svc data disable
-adb shell settings get global airplane_mode_on > build/cold-start/airplane-mode.txt
+adb shell settings get global wifi_on > build/cold-start/wifi-state.txt
+adb shell settings get global mobile_data > build/cold-start/data-state.txt
 adb shell dumpsys connectivity > build/cold-start/connectivity.txt
 for pass in 1 2; do
   adb shell am force-stop org.seneve.mobile
