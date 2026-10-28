@@ -1,0 +1,54 @@
+-- Recette transactionnelle : comptes fictifs, aucune donnée conservée, aucun envoi.
+begin;
+create temp table lecture_test_context(u1 uuid,u2 uuid,e1 uuid,e2 uuid,d1 uuid,a1 uuid,priere uuid,futur uuid);
+do $$declare u1 uuid:=gen_random_uuid();u2 uuid:=gen_random_uuid();p1 uuid:=gen_random_uuid();p2 uuid:=gen_random_uuid();e1 uuid:=gen_random_uuid();e2 uuid:=gen_random_uuid();d1 uuid:=gen_random_uuid();d2 uuid:=gen_random_uuid();a uuid;pr uuid;fu uuid;debut timestamptz:=now()-interval '1 hour';begin
+ insert into auth.users(id)values(u1),(u2);
+ insert into seneve.participants(participant_id,auth_user_id,prenom,langue,fuseau)values(p1,u1,'Recette lecture A','fr','Africa/Kinshasa'),(p2,u2,'Recette lecture B','fr','Africa/Kinshasa');
+ insert into seneve.entitlements(entitlement_id,participant_id,offre_id,origine,debut,fin)values(d1,p1,'HD_RECETTE_INSCRIPTION_FR_20261026_30J','gratuit',debut,debut+interval '720 hours'),(d2,p2,'HD_RECETTE_INSCRIPTION_FR_20261026_30J','gratuit',debut,debut+interval '720 hours');
+ insert into seneve.enrollments(enrollment_id,participant_id,programme_id,version,langue,date_debut,entitlement_id)values(e1,p1,'HD_RECETTE_INSCRIPTION_FR_20261026',1,'fr',(now()at time zone 'Africa/Kinshasa')::date,d1),(e2,p2,'HD_RECETTE_INSCRIPTION_FR_20261026',1,'fr',(now()at time zone 'Africa/Kinshasa')::date,d2);
+ insert into seneve.hd_access_periods(enrollment_id,participant_id,mois,entitlement_id,debut,fin_exclue)values(e1,p1,1,d1,debut,debut+interval '720 hours'),(e2,p2,1,d2,debut,debut+interval '720 hours');
+ select a.activity_id into strict a from seneve.activities a join seneve.contents c using(content_id)where c.programme_id='HD_RECETTE_INSCRIPTION_FR_20261026' and c.version=1 and c.langue='fr' and c.jour=1 and a.note_source='RECETTE_HD_QUOTIDIEN_V1:lecture_pro';
+ select a.activity_id into strict pr from seneve.activities a join seneve.contents c using(content_id)where c.programme_id='HD_RECETTE_INSCRIPTION_FR_20261026' and c.version=1 and c.langue='fr' and c.jour=1 and a.note_source='RECETTE_HD_QUOTIDIEN_V1:priere_matin';
+ select a.activity_id into strict fu from seneve.activities a join seneve.contents c using(content_id)where c.programme_id='HD_RECETTE_INSCRIPTION_FR_20261026' and c.version=1 and c.langue='fr' and c.jour=2 and a.note_source='RECETTE_HD_QUOTIDIEN_V1:lecture_pro';
+ insert into lecture_test_context values(u1,u2,e1,e2,d1,a,pr,fu);
+end $$;
+grant select on lecture_test_context to authenticated;
+set local role authenticated;
+do $$declare c lecture_test_context%rowtype;r jsonb;token text;ev uuid:=gen_random_uuid();cor uuid:=gen_random_uuid();old_token text;begin
+ select * into c from lecture_test_context;
+ perform set_config('request.jwt.claim.sub',c.u1::text,true);
+ perform seneve.hd_record_reading(c.e1,c.a1,ev,'realisee',30,'Livre fictif');
+ r:=seneve.hd_corriger_realisation(c.e1,c.a1);token:=r->>'confirmation';
+ assert token is not null,'préparation';
+ begin perform seneve.hd_corriger_realisation(c.e2,c.a1);raise exception 'autre compte accepté';exception when insufficient_privilege then null;end;
+ begin perform seneve.hd_corriger_realisation(c.e1,c.futur);raise exception 'futur accepté';exception when insufficient_privilege then null;end;
+ r:=seneve.hd_corriger_realisation(c.e1,c.a1,cor,token);
+ assert r->>'etat'='non_commencee' and not(r->>'repetition')::boolean,'correction';
+ assert jsonb_array_length(seneve.hd_reading_details(c.e1,c.a1::text))=0,'ancienne durée retirée';
+ assert (select count(*)from seneve.hd_reading_logs where enrollment_id=c.e1)=1,'historique brut conservé';
+ r:=seneve.hd_corriger_realisation(c.e1,c.a1,cor,token);assert (r->>'repetition')::boolean,'doublon correction';
+ r:=seneve.record_progress(c.e1,c.a1,ev,'realisee','web');assert r->>'etat'='non_commencee','rejeu ancien ne rétablit pas fait';
+ perform seneve.hd_record_reading(c.e1,c.a1,gen_random_uuid(),'realisee',10,null);
+ assert seneve.hd_reading_details(c.e1,c.a1::text)#>>'{0,minutes}'='10','nouvelle durée';
+ r:=seneve.hd_corriger_realisation(c.e1,c.a1,cor,token);assert r->>'etat'='realisee','rejeu ne retire pas nouveau fait';
+ r:=seneve.hd_corriger_realisation(c.e1,c.a1);old_token:=r->>'confirmation';
+ perform seneve.hd_record_reading(c.e1,c.a1,gen_random_uuid(),'realisee',20,null);
+ begin perform seneve.hd_corriger_realisation(c.e1,c.a1,gen_random_uuid(),old_token);raise exception 'conflit accepté';exception when serialization_failure then null;end;
+ begin perform seneve.hd_corriger_realisation(c.e1,c.a1,cor,repeat('a',32));raise exception 'identifiant réutilisé accepté';exception when unique_violation then null;end;
+ assert not has_table_privilege('authenticated','seneve.hd_progress_corrections','SELECT'),'lecture directe autorisée';
+ assert not has_table_privilege('authenticated','seneve.hd_progress_corrections','INSERT'),'écriture directe autorisée';
+ assert not has_function_privilege('anon','seneve.hd_corriger_realisation(uuid,uuid,uuid,text)','EXECUTE'),'anonyme autorisé';
+ perform set_config('request.jwt.claim.sub','',true);
+ begin perform seneve.hd_corriger_realisation(c.e1,c.a1);raise exception 'sans session accepté';exception when invalid_authorization_specification then null;end;
+end $$;
+reset role;
+update seneve.entitlements set etat='revoque'where entitlement_id=(select d1 from lecture_test_context);
+set local role authenticated;
+do $$declare c lecture_test_context%rowtype;begin
+ select * into c from lecture_test_context;perform set_config('request.jwt.claim.sub',c.u1::text,true);
+ begin perform seneve.hd_corriger_realisation(c.e1,c.a1);raise exception 'droit révoqué accepté';exception when insufficient_privilege then null;end;
+ assert seneve.hd_reading_details(c.e1,c.a1::text)#>>'{0,minutes}'='20','historique après révocation';
+end $$;
+reset role;
+rollback;
+select 'OK : correction, idempotence, rejeu ancien, nouvelle lecture, conflit, droits et isolation ; données fictives annulées' verification;
