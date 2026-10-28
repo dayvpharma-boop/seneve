@@ -11,6 +11,8 @@ import { eventIdFor } from '@/lib/espace';
 import { NOTE_MAX, draft, formatDateHeure, journalTextes, texteValide } from '@/lib/journal';
 import { Icone } from '@/components/Icone';
 import { IconeJournal } from '@/components/IconeJournal';
+import { IconeJournee } from '@/components/IconeJournee';
+import { useEnLigne } from '@/lib/hors-ligne';
 
 type Entry = { entry_id: string; texte: string; usage_ia_autorise: boolean; cree_le: string; modifie_le: string; activity_id: string | null };
 type Loaded = { participantId: string; prenom: string; langue: string; langueParcours: string | null; entries: Entry[]; consigne: string | null };
@@ -62,6 +64,8 @@ function JournalDuCompte({ userId }: { userId: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
+  const [garde, setGarde] = useState<'' | 'ok' | 'echec'>('');
+  const enLigne = useEnLigne();
   const pendingId = useRef<string | null>(null);
   // « Écrire » (barre du bas) ou « Écrire ma réflexion » : le champ de la note est prêt à recevoir le texte.
   const champ = useRef<HTMLTextAreaElement>(null);
@@ -106,7 +110,9 @@ function JournalDuCompte({ userId }: { userId: string }) {
   const T = journalTextes(langueUI);
   useEffect(() => { document.title = `${T.titreJournal} — SÉNEVÉ`; document.documentElement.lang = langueUI === 'en' ? 'en' : 'fr'; }, [T, langueUI]);
 
-  function change(v: string) { setTexte(v); setSaved(false); draft.write(draftKey, v, userId); }
+  function change(v: string) { setTexte(v); setSaved(false); setGarde(''); draft.write(draftKey, v, userId); }
+  // Hors connexion : on relit le brouillon après écriture, pour n'annoncer que ce qui est réellement gardé.
+  function garderBrouillon() { draft.write(draftKey, texte, userId); setGarde(draft.read(draftKey, userId) === texte ? 'ok' : 'echec'); }
 
   async function save(e: FormEvent) {
     e.preventDefault();
@@ -138,6 +144,19 @@ function JournalDuCompte({ userId }: { userId: string }) {
   const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><Link className="journal-profil" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
   const intro = <div className="journal-confidentialite"><IconeJournal nom="lock" taille={20} /><p className="journal-intro">{T.introJournal}</p></div>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
+  if (failed && !enLigne) return <main className="wrap avec-nav journal-page journal-nouveau journal-horsligne">{tete}
+    <div className="hc-bandeau" role="status"><IconeJournee nom="wifi_off" taille={20} /><p>{en ? 'Offline. Your saved notes will appear when you are back online.' : 'Hors connexion. Tes notes déjà enregistrées s’afficheront au retour du réseau.'}</p></div>
+    <section className="hc-carte hc-brouillon">
+      <label className="hc-etiquette" htmlFor="hc-brouillon"><IconeJournee nom="edit_note" taille={16} />{en ? 'Draft on this device' : 'Brouillon sur cet appareil'}</label>
+      <textarea id="hc-brouillon" value={texte} maxLength={NOTE_MAX} rows={6} placeholder={en ? 'Write freely here…' : 'Écris ici en toute liberté…'} onChange={e => change(e.target.value)} />
+      <button type="button" className="hc-bouton-clair" onClick={garderBrouillon} disabled={!texte.trim()}><IconeJournee nom="save" taille={20} />{en ? 'Keep draft' : 'Conserver le brouillon'}</button>
+      {garde && <p className="hc-etat" role="status"><IconeJournee nom="inventory_2" taille={18} />{garde === 'ok'
+        ? (en ? 'Draft kept on this device. Not saved to your journal yet.' : 'Brouillon conservé sur cet appareil. Pas encore enregistré dans ton journal.')
+        : (en ? 'Draft not kept. Leave this page open and copy your text.' : 'Brouillon non conservé. Garde cette page ouverte et copie ton texte.')}</p>}
+    </section>
+    <p className="hc-note">{en ? 'A draft may be erased if the browser frees up space.' : 'Un brouillon peut être effacé si le navigateur libère de la place.'}</p>
+    <button type="button" className="hc-bouton" onClick={() => void refresh()}>{T.reessayer}</button>
+    {retourBilan ?? retourJour ?? back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;
   if (failed) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{retourBilan ?? retourJour ?? back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;
   if (!data) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langueUI} maquette iconesJournal /></main>;
 

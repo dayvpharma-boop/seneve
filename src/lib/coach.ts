@@ -45,6 +45,7 @@ export const COACH_TEXTES = {
     aideLien: 'Demander de l’aide',
     chargement: 'Chargement…',
     erreurChargement: 'Impossible de charger le coach pour le moment.',
+    horsLigne: 'Le coach a besoin d’Internet pour te répondre. Ta question n’a pas été envoyée.',
     reessayer: 'Réessayer',
   },
   en: {
@@ -76,6 +77,7 @@ export const COACH_TEXTES = {
     aideLien: 'Ask for help',
     chargement: 'Loading…',
     erreurChargement: 'The coach cannot be loaded right now.',
+    horsLigne: 'The coach needs the Internet to answer you. Your question has not been sent.',
     reessayer: 'Try again',
   },
 } as const;

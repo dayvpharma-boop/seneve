@@ -9,6 +9,8 @@ import {habitudesActivees} from '@/lib/habitudes-configuration';
 import { eventIdFor, pickDefault, placerOngletActif } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { COACH_MAX, coachTextes, enAttente, reveillerCoach, type CoachMessage } from '@/lib/coach';
+import { useEnLigne } from '@/lib/hors-ligne';
+import { CarteHorsConnexion, langueSansDonnees } from '@/components/HorsConnexion';
 
 
 
@@ -69,6 +71,7 @@ export function Coach() {
   const [chosen, setChosen] = useState<string | null>(params.get('inscription'));
   const pendingId = useRef<string | null>(null);
   const bottom = useRef<HTMLDivElement | null>(null);
+  const enLigne = useEnLigne();
 
   const refresh = useCallback(async () => {
     try {
@@ -80,8 +83,9 @@ export function Coach() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   const enrollment = data ? (data.enrollments.find(x => x.enrollment_id === chosen) ?? data.defaut) : null;
-  const T = coachTextes(enrollment?.langue ?? data?.langue);
-  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = (enrollment?.langue ?? data?.langue) === 'en' ? 'en' : 'fr'; }, [T, enrollment?.langue, data?.langue]);
+  const langueVue = enrollment?.langue ?? data?.langue ?? langueSansDonnees(params);
+  const T = coachTextes(langueVue);
+  useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = langueVue === 'en' ? 'en' : 'fr'; }, [T, langueVue]);
 
   // Tant qu'une réponse est attendue, on relit la conversation toutes les 4 secondes.
   const attente = data ? enAttente(data.messages) : false;
@@ -97,6 +101,8 @@ export function Coach() {
     if (busy || !data || !enrollment) return;
     const t = texte.trim();
     if (!t || t.length > COACH_MAX) return;
+    // Sans réseau, rien n'est envoyé : la question reste dans le champ.
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) { setError(T.horsLigne); return; }
     pendingId.current = eventIdFor(pendingId.current);
     setBusy(true); setError('');
     try {
@@ -118,9 +124,10 @@ export function Coach() {
     await refresh();
   }
 
-  const en=(enrollment?.langue ?? data?.langue)==='en';
+  const en=langueVue==='en';
   const aideVers=enrollment ? `/aide?inscription=${enrollment.enrollment_id}` : '/aide';
   const tete=<><header className="coach-entete"><div><Link to="/espace" aria-label={T.retour}><IconeCoach nom="arrow_back_ios_new" taille={20}/></Link><span>{en?'Coach conversation':'Conversation Coach'}</span></div><span className="coach-initiale" aria-hidden="true"><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></header><IllustrationPage theme="coach" langue={en?'en':'fr'} /></>;
+  if (failed && !data && !enLigne) return <main className="wrap coach-page coach-horsligne">{tete}<CarteHorsConnexion langue={langueVue} texte={T.horsLigne} reessayer={() => void refresh()} /></main>;
   if (failed && !data) return <main className="wrap coach-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div></main>;
   if (!data) return <main className="wrap coach-page">{tete}<p className="muted">{T.chargement}</p></main>;
 

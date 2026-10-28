@@ -189,3 +189,22 @@ it('un mois HD payant autorisé par le serveur ouvre le formulaire de coach',asy
  rpcResults['coach_eligible_enrollments']={data:['HD2'],error:null};
  page();await screen.findByRole('textbox');expect(rpcs.some(x=>x.name==='coach_ask')).toBe(false);expect(fetch).not.toHaveBeenCalled();
 });
+
+describe('hors connexion (maquette Stitch du 28/10/2026)', () => {
+  afterEach(() => { Object.defineProperty(navigator, 'onLine', { configurable: true, value: true }); });
+  it('sans réseau, le coach affiche la carte hors connexion au lieu de l’erreur générique', async () => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false });
+    rpcResults['coach_quota'] = { data: null, error: { message: 'Failed to fetch' } };
+    page();
+    expect(await screen.findByRole('heading', { name: 'Tu es hors connexion' })).toBeInTheDocument();
+    expect(screen.getByText('Le coach a besoin d’Internet pour te répondre. Ta question n’a pas été envoyée.')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Relire ma journée' })).toHaveAttribute('href', '/espace');
+    expect(screen.queryByText('Impossible de charger le coach pour le moment.')).not.toBeInTheDocument();
+  });
+  it('avec réseau, une erreur de chargement garde le message habituel', async () => {
+    rpcResults['coach_quota'] = { data: null, error: { message: 'erreur serveur' } };
+    page();
+    expect(await screen.findByText('Impossible de charger le coach pour le moment.')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Tu es hors connexion' })).not.toBeInTheDocument();
+  });
+});
