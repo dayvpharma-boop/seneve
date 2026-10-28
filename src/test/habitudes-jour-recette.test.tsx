@@ -56,11 +56,20 @@ it('mois 6 : le jour 151 affiche son propre texte validé le 28/10/2026, jusqu�
  cleanup();mocks.charger.mockResolvedValue({...jour,jour:180});ouvrir();
  expect(await screen.findByRole('heading',{name:'Une lettre à Dieu'})).toBeVisible();
 });
-it('en anglais, sans traduction relue, le mois 6 reprend encore la lecture du jour 1',async()=>{
+it('en anglais, le mois 6 affiche son propre texte validé et le jour 181 reprend la lecture du jour 1',async()=>{
  mocks.charger.mockResolvedValue({...jour,jour:151});
+ const vue=render(<ActivitesJourRecette enrollmentId={enrollment} participantId="P1" dateLocale="2026-10-26" langue="en"/>);
+ expect(await screen.findByRole('heading',{name:'Manufactured urgency'})).toBeVisible();
+ vue.unmount();mocks.charger.mockResolvedValue({...jour,jour:181});
  render(<ActivitesJourRecette enrollmentId={enrollment} participantId="P1" dateLocale="2026-10-26" langue="en"/>);
  expect(await screen.findByRole('heading',{name:'Start with what is possible'})).toBeVisible();
  expect(screen.getByText(/Reading 1 again/)).toBeInTheDocument();
+});
+it('en anglais, affiche le défi validé de la semaine',async()=>{
+ mocks.charger.mockResolvedValue({...jour,jour:9});
+ render(<ActivitesJourRecette enrollmentId={enrollment} participantId="P1" dateLocale="2026-10-26" langue="en"/>);
+ expect(await screen.findByRole('heading',{name:'Take care of a responsibility'})).toBeVisible();
+ expect(screen.getByText(/Challenge of the week · Days 8 to 14 · optional/)).toBeInTheDocument();
 });
 it('affiche le défi approuvé de la semaine, et le même défi au mois 2 avec la reprise',async()=>{
  mocks.charger.mockResolvedValue({...jour,jour:9});ouvrir();

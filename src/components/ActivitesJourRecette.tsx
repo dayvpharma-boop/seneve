@@ -19,6 +19,8 @@ import {IconeHD} from './IconeHabitudes';
 import {lectureReprise,moisHabitudes} from '@/lib/habitudes-calendrier';
 import {SuiviDefisHabitudes} from './SuiviDefisHabitudes';
 import {defiDuJour} from '@/data/habitudes-defis-fr';
+import {defiDuJourEn} from '@/data/habitudes-defis-en';
+import {lecturesHabitudesEnMois2a6} from '@/data/habitudes-lectures-en-mois-2-6';
 
 /** Heure locale « HH:MM » du participant ; null si le fuseau est invalide. */
 function heureLocale(fuseau:string,maintenant:number){try{return new Intl.DateTimeFormat('en-GB',{timeZone:fuseau,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(maintenant));}catch{return null;}}
@@ -46,13 +48,12 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   </div>
  </section>;
  if(!data)return <p role="status" className="px-hd-margin py-hd-space-md font-hd-body-md text-hd-body-md text-hd-on-surface-variant">{l('Chargement des activités…','Loading activities…')}</p>;
- // En anglais (aucune traduction relue) : reprise des 30 lectures approuvées (jour 31 → lecture 1, etc.), décision du 26/10/2026.
- // En français, mois 2 à 6 : textes propres validés les 27 et 28/10/2026.
+ // Mois 2 à 6 : textes propres validés (français les 27 et 28/10/2026, anglais le 28/10/2026).
+ // Au-delà (jour 181), reprise des 30 lectures du mois 1 (jour 181 → lecture 1).
  const mois=data.mois??moisHabitudes(data.jour),jourLecture=lectureReprise(data.jour);
- const textePropre=en?undefined:[...lecturesHabitudesFrMois2,...lecturesHabitudesFrMois3,...lecturesHabitudesFrMois4,...lecturesHabitudesFrMois5,...lecturesHabitudesFrMois6].find(x=>x.jour===data.jour);
+ const textePropre=(en?lecturesHabitudesEnMois2a6:[...lecturesHabitudesFrMois2,...lecturesHabitudesFrMois3,...lecturesHabitudesFrMois4,...lecturesHabitudesFrMois5,...lecturesHabitudesFrMois6]).find(x=>x.jour===data.jour);
  const texte=textePropre??(en?lecturesHabitudesEn:lecturesHabitudesFr).find(x=>x.jour===jourLecture);
- // Défis approuvés en français seulement (aucune version anglaise relue).
- const defi=en?undefined:defiDuJour(jourLecture);
+ const defi=(en?defiDuJourEn:defiDuJour)(jourLecture);
  const date=new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long'}).format(new Date(dateLocale+'T12:00:00Z'));
  const activites=[...data.activites].sort((a,b)=>a.heure.localeCompare(b.heure));
  const prieres=activites.filter(a=>momentPriere(a.habit_key));
@@ -129,14 +130,14 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    <small className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Adaptation pédagogique à partir du livre. La lecture ne valide aucune activité automatiquement.','An educational adaptation based on the book. Reading does not mark any activity as completed.')}</small>
   </aside>}
   {/* Défi de la semaine : lecture seule, facultatif, aucune donnée collectée */}
-  {defi&&<section className="mb-hd-space-sm bg-hd-surface-container-lowest p-hd-space-md rounded-2xl shadow-sm flex flex-col gap-2" aria-label="Défi de la semaine">
-   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{defi.du===29?'Bilan':'Défi de la semaine'} · Jours {defi.du} à {defi.au} · facultatif</span>
+  {defi&&<section className="mb-hd-space-sm bg-hd-surface-container-lowest p-hd-space-md rounded-2xl shadow-sm flex flex-col gap-2" aria-label={l('Défi de la semaine','Challenge of the week')}>
+   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{defi.du===29?l('Bilan','Review'):l('Défi de la semaine','Challenge of the week')} · {en?`Days ${defi.du} to ${defi.au} · optional`:`Jours ${defi.du} à ${defi.au} · facultatif`}</span>
    <h3 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{defi.titre}</h3>
-   {defi.objectif&&<p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant"><strong>Objectif :</strong> {defi.objectif}</p>}
+   {defi.objectif&&<p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant"><strong>{l('Objectif :','Aim:')}</strong> {defi.objectif}</p>}
    <p className="font-hd-body-md text-hd-body-md text-hd-on-surface">{defi.texte}</p>
    {defi.questions&&<ul className="list-disc pl-5 font-hd-body-md text-hd-body-md text-hd-on-surface">{defi.questions.map(q=><li key={q}>{q}</li>)}</ul>}
-   {defi.adapter&&<details className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant"><summary className="min-h-[44px] flex items-center cursor-pointer font-hd-label-md text-hd-label-md text-hd-secondary">Adapter</summary><p>{defi.adapter}</p></details>}
-   {defi.relire&&<p className="font-hd-scripture-verse text-hd-scripture-verse text-hd-on-surface italic">Pour relire la semaine : {defi.relire}</p>}
+   {defi.adapter&&<details className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant"><summary className="min-h-[44px] flex items-center cursor-pointer font-hd-label-md text-hd-label-md text-hd-secondary">{l('Adapter','Adapting')}</summary><p>{defi.adapter}</p></details>}
+   {defi.relire&&<p className="font-hd-scripture-verse text-hd-scripture-verse text-hd-on-surface italic">{l('Pour relire la semaine :','Looking back on the week:')} {defi.relire}</p>}
   </section>}
   <SuiviDefisHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} jour={data.jour} langue={langue}/>
   {/* Note de bas de page */}

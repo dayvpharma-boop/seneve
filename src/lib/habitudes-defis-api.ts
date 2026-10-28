@@ -1,8 +1,8 @@
 import {supabase} from './supabase';
 import {chargerHorairesHabitudes} from './habitudes-horaires-api';
 import type {EtatOccurrence,OccurrenceHabitude} from './habitudes';
+import {programmeHdLisible} from './habitudes-programmes';
 export const PERIODES_DEFIS=[{du:1,au:7},{du:8,au:14},{du:15,au:21},{du:22,au:28},{du:29,au:30}] as const;
-const PROGRAMMES=['HABITUDES_DEFIS_30J_FR_V1','HD_RECETTE_INSCRIPTION_FR_20261026'];
 export type DefiSuivi={du:number;au:number;titre:string;critere:string|null;occurrence:OccurrenceHabitude;etat?:EtatOccurrence;ouvert:boolean};
 export type SuiviDefis={userId:string;jour:number;defis:DefiSuivi[]};
 /** Lecture distincte des habitudes. Aucun nouveau droit ni état déduit d'une lecture. */
@@ -10,10 +10,10 @@ export async function chargerDefisHabitudes(enrollmentId:string,participantId:st
  const [session,e,h]=await Promise.all([supabase.auth.getSession(),supabase.from('enrollments').select('programme_id,participant_id,version,langue,date_debut,etat').eq('enrollment_id',enrollmentId).single(),chargerHorairesHabitudes(enrollmentId)]);
  if(session.error||!session.data.session||e.error||!e.data||h.date_locale!==dateLocale)throw Error('Accès non vérifiable');
  const enr=e.data;
- if(!PROGRAMMES.includes(enr.programme_id)||enr.participant_id!==participantId||enr.version!==1||enr.langue!=='fr'||enr.etat!=='active')throw Error('Inscription non autorisée');
+ if(!programmeHdLisible(enr.programme_id,enr.langue)||enr.participant_id!==participantId||enr.version!==1||enr.etat!=='active')throw Error('Inscription non autorisée');
  const jour=(Date.parse(dateLocale+'T00:00:00Z')-Date.parse(enr.date_debut+'T00:00:00Z'))/86400000+1;
  if(!Number.isInteger(jour)||jour<1||jour>30)throw Error('Défis du premier mois uniquement');
- const c=await supabase.from('contents').select('content_id,jour').eq('programme_id',enr.programme_id).eq('version',1).eq('langue','fr').in('jour',PERIODES_DEFIS.map(p=>p.du));
+ const c=await supabase.from('contents').select('content_id,jour').eq('programme_id',enr.programme_id).eq('version',1).eq('langue',enr.langue).in('jour',PERIODES_DEFIS.map(p=>p.du));
  if(c.error||c.data?.length!==5||new Set(c.data.map(x=>x.jour)).size!==5)throw Error('Périodes non publiées');
  const a=await supabase.from('activities').select('activity_id,content_id,consigne,critere_realisation,obligatoire,note_source').in('content_id',c.data.map(x=>x.content_id)).eq('type_activite','engagement');
  if(a.error)throw Error('Défis indisponibles');
