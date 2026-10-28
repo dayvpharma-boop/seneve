@@ -1,4 +1,4 @@
-import { siteUrl, supabase } from './supabase';
+import { chargerModuleSupabase } from './supabase-differe';
 
 /**
  * Connexion avec Google ou Facebook (demande du 25/10/2026).
@@ -20,6 +20,7 @@ export function prenomDuCompte(meta: Record<string, unknown> | undefined | null)
 
 /** Ouvre la page de connexion du fournisseur ; au retour, la personne arrive dans son espace, dans sa langue. */
 export async function connexionSociale(fournisseur: Fournisseur, langue: 'fr' | 'en') {
+  const { supabase, siteUrl } = await chargerModuleSupabase();
   return supabase.auth.signInWithOAuth({
     provider: fournisseur,
     options: {

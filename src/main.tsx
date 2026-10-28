@@ -35,22 +35,16 @@ import './styles-coach-maquette.css';
 import './styles-fin-parcours.css';
 import './styles-resultat-partage.css';
 import './styles-confidentialite-maquette.css';
-import '@fontsource/outfit/latin-400.css';
-import '@fontsource/outfit/latin-500.css';
-import '@fontsource/outfit/latin-600.css';
-import '@fontsource/outfit/latin-700.css';
-import '@fontsource/literata/latin-400.css';
-import '@fontsource/literata/latin-400-italic.css';
-import '@fontsource/literata/latin-600.css';
+import './styles-polices-validees.css';
 import { TestPage } from '@/routes/index';
 import { GarderLangue } from '@/components/GarderLangue';
-import { NotFound } from '@/routes/introuvable';
 import './styles-introuvable.css';
 import { enregistrerServiceWorker } from '@/lib/hors-ligne';
 
 // Pages chargées à la demande : seul le Test des 7 Racines (la page d'arrivée) reste dans le fichier principal.
 // L'administration, que les participants n'ouvrent jamais, a son propre fichier avec ses styles.
 const Connexion = lazy(() => import('@/routes/connexion').then(m => ({ default: m.Connexion })));
+const NotFound = lazy(() => import('@/routes/introuvable').then(m => ({ default: m.NotFound })));
 const Espace = lazy(() => import('@/routes/espace').then(m => ({ default: m.Espace })));
 const Journal = lazy(() => import('@/routes/journal').then(m => ({ default: m.Journal })));
 const Aide = lazy(() => import('@/routes/aide').then(m => ({ default: m.Aide })));
@@ -135,5 +129,4 @@ import './styles-espace-vivant.css';
 
 import './styles-illustrations-pages.css';
 import './styles-habitudes-stitch.css';
-import '@fontsource/literata/latin-500.css';
 import './styles-habitudes-polices.css';

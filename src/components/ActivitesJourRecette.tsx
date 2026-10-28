@@ -1,4 +1,7 @@
+import {RepereDureeHabitudes} from './RepereDureeHabitudes';
+import {CultesSemaineHabitudes} from './CultesSemaineHabitudes';
 import {LecteurPriereHabitudes,momentPriere} from './LecteurPriereHabitudes';
+import {LecturesJourHabitudes,estLectureHabitudes} from './LecturesJourHabitudes';
 import {useEffect,useState} from 'react';
 import {chargerJourRecette,type JourRecette} from '@/lib/habitudes-jour-recette';
 import {bilanHabitudes,type EtatOccurrence} from '@/lib/habitudes';
@@ -28,8 +31,9 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [lecture,setLecture]=useState<{cle:string;data:JourRecette}|null>(null),[erreur,setErreur]=useState(false),[tour,setTour]=useState(0);
  const [revision,setRevision]=useState(0),[maintenant,setMaintenant]=useState(Date.now);
- const [priereId,setPriereId]=useState<string|null>(null);
+ const [priereId,setPriereId]=useState<string|null>(null),[lecturesOuvertes,setLecturesOuvertes]=useState(false),[lectureInitialeId,setLectureInitialeId]=useState<string|null>(null);
  const cle=`${enrollmentId}:${participantId}:${dateLocale}`;
+ useEffect(()=>{setLecturesOuvertes(false);setLectureInitialeId(null);},[cle]);
  useEffect(()=>{let vivant=true;setLecture(null);setErreur(false);void chargerJourRecette(enrollmentId,participantId,dateLocale).then(data=>{if(vivant)setLecture({cle,data});}).catch(()=>{if(vivant)setErreur(true);});return()=>{vivant=false;};},[cle,tour]);
  useEffect(()=>{const t=window.setInterval(()=>setMaintenant(Date.now()),60000);return()=>window.clearInterval(t);},[]);
  const data=lecture?.cle===cle?lecture.data:null;
@@ -79,6 +83,8 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    {prieres.length?<div className="flex flex-wrap gap-2">{prieres.map(a=><button key={a.occurrence.occurrence_id} type="button" aria-label={l(`Lire et prier — ${momentPriere(a.habit_key)}`,`Read and pray — ${momentPriere(a.habit_key)}`)} onClick={()=>setPriereId(a.occurrence.occurrence_id)} className="flex-1 min-h-[48px] px-3 bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg rounded-xl flex items-center justify-center gap-2"><IconeHD nom="auto_stories" className="text-[20px]"/>{momentPriere(a.habit_key)==='matin'?l('Matin','Morning'):momentPriere(a.habit_key)==='midi'?l('Midi','Midday'):l('Soir','Evening')}</button>)}</div>:<a href={`${import.meta.env.BASE_URL}amidah.html?retour=espace`} className="min-h-[48px] px-4 bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg rounded-xl flex items-center justify-center gap-2"><IconeHD nom="auto_stories" className="text-[20px]"/>{l('Lire l’Amidah en français','Read the Amidah in French')}</a>}
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Choisis ta prière. Lire ne valide rien : appuie sur « J’ai prié » après avoir prié.','Choose your prayer. Reading completes nothing: press “I prayed” after praying.')}</p>
   </aside>
+  {activites.some(a=>estLectureHabitudes(a.habit_key))&&<button type="button" onClick={()=>{setLectureInitialeId(null);setLecturesOuvertes(true);}} className="mb-hd-space-lg min-h-[48px] px-4 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-lg text-hd-label-lg flex items-center justify-center gap-2"><IconeHD nom="menu_book"/>{l('Lectures du jour','Today’s readings')}<IconeHD nom="chevron_right"/></button>}
+  <CultesSemaineHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue}/>
   {/* Prochain rendez-vous */}
   {prochain&&<section className="mt-hd-space-xs mb-hd-space-lg" aria-label={l('Prochain rendez-vous','Next appointment')}>
    <div className="relative bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_4px_20px_rgba(117,91,0,0.06)] overflow-hidden">
@@ -109,7 +115,9 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    <div className="flex flex-col gap-2.5">
     {activites.map((a,i)=><div key={a.occurrence.occurrence_id} id={`hd-activite-${a.occurrence.occurrence_id}`} className={plusTard(i)?'opacity-85':''}>
      {i===premierPlusTard&&<span className="block pt-2 pb-2 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant px-1 uppercase tracking-wider">{l('Plus tard aujourd’hui','Later today')}</span>}
-     <DeclarationHabitude variante="stitch" lienLecture={a.habit_key==='bible_matin'||a.habit_key==='bible_soir'?{href:`${import.meta.env.BASE_URL}bible/livres?depuis=habitudes&moment=${a.habit_key==='bible_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='bible_matin'?l('Lire la Bible du matin','Read the morning Bible reading'):l('Lire la Bible du soir','Read the evening Bible reading')}:undefined} lienEcriture={a.habit_key==='gratitude_matin'||a.habit_key==='gratitude_soir'?{href:`${import.meta.env.BASE_URL}journal?ecrire=1&depuis=habitudes&gratitude=${a.habit_key==='gratitude_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='gratitude_matin'?l('Écrire ma gratitude du matin','Write my morning gratitude'):l('Écrire ma gratitude du soir','Write my evening gratitude')}:undefined} heure={a.heure} attenue={plusTard(i)} userId={data.userId} occurrence={a.occurrence} consigne={a.consigne} critere={a.critere} etat={a.etat} langue={langue} lectureSeule={false} aideDisponible={false} transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onConfirme={confirmer}/>
+     <DeclarationHabitude variante="stitch" lienLecture={a.habit_key==='bible_matin'||a.habit_key==='bible_soir'?{href:`${import.meta.env.BASE_URL}bible/livres?depuis=habitudes&moment=${a.habit_key==='bible_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='bible_matin'?l('Lire la Bible du matin','Read the morning Bible reading'):l('Lire la Bible du soir','Read the evening Bible reading')}:undefined} lienEcriture={a.habit_key==='gratitude_matin'||a.habit_key==='gratitude_soir'?{href:`${import.meta.env.BASE_URL}journal?ecrire=1&depuis=habitudes&gratitude=${a.habit_key==='gratitude_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='gratitude_matin'?l('Écrire ma gratitude du matin','Write my morning gratitude'):l('Écrire ma gratitude du soir','Write my evening gratitude')}:undefined} heure={a.heure} attenue={plusTard(i)} userId={data.userId} occurrence={a.occurrence} consigne={a.consigne} critere={a.critere} etat={a.etat} langue={langue} lectureSeule={false} aideDisponible={false} transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onDemanderLecture={estLectureHabitudes(a.habit_key)?()=>{setLectureInitialeId(a.occurrence.occurrence_id);setLecturesOuvertes(true);}:undefined} onConfirme={confirmer}/>
+     <RepereDureeHabitudes habitKey={a.habit_key} langue={langue}/>
+     {estLectureHabitudes(a.habit_key)&&<button type="button" aria-label={l(`Renseigner la durée — ${a.consigne}`,`Record time — ${a.consigne}`)} className="min-h-[44px] mb-2 px-3 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-md text-hd-label-md" onClick={()=>{setLectureInitialeId(a.occurrence.occurrence_id);setLecturesOuvertes(true);}}>{l('Durée de lecture','Reading time')}</button>}
     </div>)}
    </div>
   </section>
@@ -136,6 +144,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    <div className="inline-flex items-center gap-1.5 text-hd-on-surface-variant px-3 py-1 rounded-full bg-hd-surface-container/50"><IconeHD nom="cloud_done" className="text-[16px] text-hd-secondary"/><span className="font-hd-label-sm text-hd-label-sm">{l('Ta progression est conservée.','Your progress is saved.')}</span></div>
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant max-w-[280px]">{l('Tes déclarations décrivent ta pratique. Elles ne mesurent ni ta foi ni ta valeur.','Your records describe your practice. They do not measure your faith or worth.')}</p>
   </footer>
+  {lecturesOuvertes&&<LecturesJourHabitudes lectureInitialeId={lectureInitialeId} activites={activites.filter(a=>estLectureHabitudes(a.habit_key))} userId={data.userId} langue={langue} transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onConfirme={confirmer} onFermer={()=>setLecturesOuvertes(false)}/>}
   {priere&&<LecteurPriereHabitudes activite={priere} userId={data.userId} langue={langue} transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onConfirme={confirmer} onFermer={()=>setPriereId(null)}/>}
   <HistoriqueRecetteHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} revision={revision}/>
  </section>;
