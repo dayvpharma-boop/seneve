@@ -7,16 +7,18 @@ import {lireRappelsHabitudes,reglerRappelsHabitudes,type EtatRappelsHabitudes} f
  * Chaque changement est enregistré aussitôt par le serveur ; un appui pendant un enregistrement est ignoré. */
 export function RappelsHabitudes({langue}:{langue:string}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
- const [etat,setEtat]=useState<EtatRappelsHabitudes|null>(null),[erreur,setErreur]=useState(false),[occupe,setOccupe]=useState(false),[annonce,setAnnonce]=useState('');
+ const [etat,setEtat]=useState<EtatRappelsHabitudes|null>(null),[erreur,setErreur]=useState<''|'chargement'|'enregistrement'>(''),[essai,setEssai]=useState(0),[occupe,setOccupe]=useState(false),[annonce,setAnnonce]=useState('');
  const verrou=useRef(false);
- useEffect(()=>{let actif=true;void lireRappelsHabitudes().then(e=>{if(actif)setEtat(e);}).catch(()=>{if(actif)setErreur(true);});return()=>{actif=false;};},[]);
+ useEffect(()=>{let actif=true;setErreur('');void lireRappelsHabitudes().then(e=>{if(actif)setEtat(e);}).catch(()=>{if(actif)setErreur('chargement');});return()=>{actif=false;};},[essai]);
  async function regler(actif:boolean,coupees:string[],message:string){
-  if(verrou.current)return;verrou.current=true;setOccupe(true);setErreur(false);setAnnonce('');
-  try{setEtat(await reglerRappelsHabitudes(actif,coupees));setAnnonce(message);}catch{setErreur(true);}finally{verrou.current=false;setOccupe(false);}
+  if(verrou.current)return;verrou.current=true;setOccupe(true);setErreur('');setAnnonce('');
+  try{setEtat(await reglerRappelsHabitudes(actif,coupees));setAnnonce(message);}catch{setErreur('enregistrement');}finally{verrou.current=false;setOccupe(false);}
  }
  if(etat&&!etat.inscrit)return null;
  const titre=<h2>{l('Mes rappels d’habitudes','My habit reminders')}</h2>;
- const alerte=erreur&&<p role="alert">{l('Le réglage n’a pas pu être enregistré. Réessaie dans un instant.','The setting could not be saved. Please try again in a moment.')}</p>;
+ // Échec de lecture (souvent sans réseau) et échec d'enregistrement ont des messages distincts.
+ const alerte=erreur==='chargement'?<><p role="alert">{l('Tes rappels d’habitudes ne peuvent pas être affichés. Vérifie ta connexion, puis réessaie.','Your habit reminders cannot be shown. Check your connection, then try again.')}</p><button type="button" className="oa-secondary" onClick={()=>setEssai(n=>n+1)}>{l('Réessayer','Try again')}</button></>
+  :erreur==='enregistrement'&&<p role="alert">{l('Le réglage n’a pas pu être enregistré. Réessaie dans un instant.','The setting could not be saved. Please try again in a moment.')}</p>;
  if(!etat)return <section className="rn-section hd-rappels">{titre}{alerte||<p>{l('Chargement…','Loading…')}</p>}</section>;
  const coupees=etat.habitudes.filter(h=>!h.recu).map(h=>h.habit_key);
  return <section className="rn-section hd-rappels">{titre}
