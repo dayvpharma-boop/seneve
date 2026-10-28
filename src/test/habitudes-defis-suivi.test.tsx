@@ -17,6 +17,7 @@ it('compte le défi seulement après confirmation du serveur',async()=>{
 it('propose une reprise après échec sans annoncer de progression',async()=>{
  mock.charger.mockRejectedValueOnce(Error('network'));render(<SuiviDefisHabitudes {...props}/>);fireEvent.click(screen.getByRole('button',{name:'Suivre mes défis facultatifs'}));await screen.findByRole('alert');expect(screen.queryByText(/défi\(s\) réalisé/)).toBeNull();fireEvent.click(screen.getByRole('button',{name:'Réessayer les défis'}));await screen.findByRole('heading',{name:'Défi 1'});
 });
-it('reste limité au premier mois français validé',()=>{
- const vue=render(<SuiviDefisHabitudes {...props} jour={31}/>);expect(screen.queryByRole('button')).toBeNull();vue.rerender(<SuiviDefisHabitudes {...props} langue="en"/>);expect(screen.queryByRole('button')).toBeNull();expect(mock.charger).not.toHaveBeenCalled();
+it('reste limité au premier mois, en français comme en anglais validés',()=>{
+ const vue=render(<SuiviDefisHabitudes {...props} jour={31}/>);expect(screen.queryByRole('button')).toBeNull();vue.rerender(<SuiviDefisHabitudes {...props} jour={31} langue="en"/>);expect(screen.queryByRole('button')).toBeNull();expect(mock.charger).not.toHaveBeenCalled();
+ vue.rerender(<SuiviDefisHabitudes {...props} langue="en"/>);expect(screen.getByRole('button',{name:'Track my optional challenges'})).toBeTruthy();
 });

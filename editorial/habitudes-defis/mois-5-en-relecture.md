@@ -13,21 +13,21 @@ Month 5 returns in depth to two keys: Tzedakah, or helping the least (days 122 t
 
 Sentences in quotation marks are quotations from the book or from the Bible; the rest is editorial adaptation to be validated. No text promises a miracle, healing, promotion or wealth, or measures a person's faith or worth. No amount is asked of you, and the help suggested always stays within each person's means. The questions invite reflection; they do not ask you to type anything.
 
-## Day 121 — Review the week: walking towards freedom
+## Day 121 — Review the week: walking toward freedom
 
 **Aim:** Take stock of the week that opens the fifth month.
 
-This week spoke about looking your debts in the face, moving forward one victory at a time, being set free from the need to appear, Jesus who became poor, money put back in its place and work done with God. Read over your records without judging yourself. Notice one step, even a small one, towards more freedom. A new month is beginning: it will speak about compassion and faithfulness.
+This week spoke about looking your debts in the face, moving forward one victory at a time, being set free from the need to appear, Jesus who became poor, money put back in its place and work done with God. Read over your records without judging yourself. Notice one step, even a small one, toward more freedom. A new month is beginning: it will speak about compassion and faithfulness.
 
-**For reflection:** Which step towards more freedom did you take this week?
+**For reflection:** Which step toward more freedom did you take this week?
 
 Working source: Stop Begging for Miracles, English edition provided, chapters 3 and 4; Habits & Challenges specification, section 9.
 
 ## Day 122 — You do it unto Him
 
-**Aim:** Recognise Jesus in the person in need.
+**Aim:** Recognize Jesus in the person in need.
 
-In chapter 5, the book revisits the judgement scene in Matthew 25. The King does not ask how many services we attended. He asks: "Was I hungry — did you feed Me?" Then He says: "Inasmuch as ye have done it unto one of the least of these my brethren, ye have done it unto me" (Matthew 25:40). The book concludes: "The widow in your neighborhood — that is Him." Today, look around you with those eyes.
+In chapter 5, the book revisits the judgment scene in Matthew 25. The King does not ask how many services we attended. He asks: "Was I hungry — did you feed Me?" Then He says: "Inasmuch as ye have done it unto one of the least of these my brethren, ye have done it unto me" (Matthew 25:40). The book concludes: "The widow in your neighborhood — that is Him." Today, look around you with those eyes.
 
 **For reflection:** Who around you needs to be seen today?
 
@@ -37,7 +37,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 5.
 
 **Aim:** Approach the suffering of others with the eyes of Jesus.
 
-The book notes that the King's questions describe His own life. He was hungry in the wilderness. As a child, He fled into Egypt as a refugee. He was stripped at Calvary and arrested at night. The book writes that He recognises His own "by a distress He Himself has inhabited." Think of someone living one of these situations: hunger, exile, illness, prison. Pray for them today, and look for a simple act to support them.
+The book notes that the King's questions describe His own life. He was hungry in the wilderness. As a child, He fled into Egypt as a refugee. He was stripped at Calvary and arrested at night. The book writes that He recognizes His own "by a distress He Himself has inhabited." Think of someone living one of these situations: hunger, exile, illness, prison. Pray for them today, and look for a simple act to support them.
 
 **For reflection:** Which distress close to you would you like to carry in prayer?
 
@@ -83,7 +83,7 @@ The apostle John asks a question: "But whoso hath this world's good, and seeth h
 
 Working source: Stop Begging for Miracles, English edition provided, chapter 5.
 
-## Day 128 — Review the week: recognising the King
+## Day 128 — Review the week: recognizing the King
 
 **Aim:** Take stock of compassion.
 
@@ -113,11 +113,11 @@ The book makes clear that Tzedakah is not only about money: "Skills are a curren
 
 Working source: Stop Begging for Miracles, English edition provided, chapter 5.
 
-## Day 131 — Love that organises itself
+## Day 131 — Love that organizes itself
 
 **Aim:** Move from emotion to a lasting commitment.
 
-The book notes that you can give once on a wave of emotion, then move on to something else. In Acts 6, when widows were being neglected, the apostles organised the help with "seven men full of the Spirit." The book concludes: "Emotion passes. Organized love remains." Today, choose a form of help you can keep up over time, even a modest one, on your own or with your church.
+The book notes that you can give once on a wave of emotion, then move on to something else. In Acts 6, when widows were being neglected, the apostles organized the help with "seven men full of the Spirit." The book concludes: "Emotion passes. Organized love remains." Today, choose a form of help you can keep up over time, even a modest one, on your own or with your church.
 
 **For reflection:** Which modest help could you keep up over time?
 
@@ -157,7 +157,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 5.
 
 **Aim:** Take stock of a discreet and faithful compassion.
 
-This week spoke about the gift you forget, a skill to pass on, organised love, Jesus moved before the widow of Nain, a place made for someone who is alone and the needs we no longer see. Read over your records without comparing yourself to anyone. Notice one act you could repeat. The most useful compassion is often the kind that comes back, week after week.
+This week spoke about the gift you forget, a skill to pass on, organized love, Jesus moved before the widow of Nain, a place made for someone who is alone and the needs we no longer see. Read over your records without comparing yourself to anyone. Notice one act you could repeat. The most useful compassion is often the kind that comes back, week after week.
 
 **For reflection:** Which act of compassion would you like to repeat?
 
@@ -255,7 +255,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 6.
 
 ## Day 145 — Management that speaks
 
-**Aim:** Honour your small money commitments.
+**Aim:** Honor your small money commitments.
 
 The book notes that Potiphar, the keeper of the prison and Pharaoh saw God in Joseph's management without hearing him preach. Pharaoh said: "Can we find such a one as this is, a man in whom the Spirit of God is?" (Genesis 41:38). The book adds: "Your colleagues watch whether you repay the small sums you borrow — or whether you 'forget.'" Today, settle a small debt or keep a commitment that is still waiting.
 
@@ -287,9 +287,9 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 6.
 
 **Aim:** Remember the true goal of faithfulness.
 
-The parable of the talents ends with these words: "enter thou into the joy of thy lord." The book points out that the final reward is not an amount: "It is His joy — it is Him." It adds: "Faithfulness in the little things is not a promotion technique: it is a long walk toward that face." Today, live your habits as a path towards Him, and not as a performance.
+The parable of the talents ends with these words: "enter thou into the joy of thy lord." The book points out that the final reward is not an amount: "It is His joy — it is Him." It adds: "Faithfulness in the little things is not a promotion technique: it is a long walk toward that face." Today, live your habits as a path toward Him, and not as a performance.
 
-**For reflection:** What changes if your habits are a path towards God?
+**For reflection:** What changes if your habits are a path toward God?
 
 Working source: Stop Begging for Miracles, English edition provided, chapter 6.
 

@@ -165,7 +165,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 3.
 
 ## Day 106 — What takes God's place
 
-**Aim:** Recognise what you put your trust in.
+**Aim:** Recognize what you put your trust in.
 
 The book makes clear that Mammon is not only money: "It is everything that seeks to take God's place in your trust — a salary, a relationship, a diploma, a position, an insurance policy." These things are often good. The problem begins when they become what reassures you most. Today, simply ask yourself what you lean on when you are afraid, and talk to God about it.
 
@@ -265,7 +265,7 @@ Working source: Stop Begging for Miracles, English edition provided, chapter 4.
 
 ## Day 116 — One victory at a time
 
-**Aim:** Move step by step towards freedom.
+**Aim:** Move step by step toward freedom.
 
 The book describes the path the author followed for three years: cutting back on the superfluous for a time, paying off the smallest debt first to create momentum, and refusing any new debt taken on to keep up appearances. It makes clear: "It is not the only possible method: it is the one I can testify to." If an important money decision is waiting for you, also seek counsel from a competent person. Today, choose a single small, realistic action.
 

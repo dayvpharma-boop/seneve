@@ -3,7 +3,7 @@ import {Link,useSearchParams} from 'react-router-dom';
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {CompteurFidelite} from '@/components/CompteurFidelite';
 import {IconeHD} from '@/components/IconeHabitudes';
-import {PROGRAMME_HD_REEL} from '@/components/AccesRecetteHabitudes';
+import {PROGRAMMES_HD_REELS} from '@/lib/habitudes-programmes';
 import {compteurFideliteActif} from '@/lib/habitudes-fidelite';
 import {supabase} from '@/lib/supabase';
 import {NotFound} from '@/routes/introuvable';
@@ -30,7 +30,7 @@ export function HabitudesEngagements(){
  useEffect(()=>{
   if(!compteurFideliteActif())return;
   let actif=true;
-  void Promise.resolve(supabase.from('enrollments').select('enrollment_id').eq('programme_id',PROGRAMME_HD_REEL).neq('etat','annulee').order('date_debut',{ascending:false}).limit(1))
+  void Promise.resolve(supabase.from('enrollments').select('enrollment_id').in('programme_id',Object.values(PROGRAMMES_HD_REELS)).neq('etat','annulee').order('date_debut',{ascending:false}).limit(1))
    .then(({data,error})=>{if(actif)setInscription(error?null:(data?.[0]?.enrollment_id as string|undefined)??null);},()=>{if(actif)setInscription(null);});
   return()=>{actif=false;};
  },[]);

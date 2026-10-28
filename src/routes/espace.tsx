@@ -54,6 +54,7 @@ import { BarreNav } from '@/components/BarreNav';
 import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
+import { estProgrammeHdReel } from '@/lib/habitudes-programmes';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
@@ -349,7 +350,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const culte=filtreCultesPrevus(data.horairesHabitudes?.[enr.enrollment_id]??null);
     const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities.filter(a=>culte(a.note_source,date_locale,Boolean(etatDe(a)))));
     // Programme réel, journée du jour et en ligne : l'écran « Aujourd'hui » des maquettes Stitch, directement.
-    if(!lectureSeule&&enr.programme_id==='HABITUDES_DEFIS_30J_FR_V1'&&current===day&&data.participantId&&enr.etat==='active')
+    if(!lectureSeule&&estProgrammeHdReel(enr.programme_id)&&current===day&&data.participantId&&enr.etat==='active')
       return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
         {rappelsHabitudesActifs()&&<div className="px-hd-margin pt-hd-space-md"><FuseauVoyage langue={enr.langue}/></div>}
         <ActivitesJourRecette key={`${enr.enrollment_id}:${date_locale}`} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>

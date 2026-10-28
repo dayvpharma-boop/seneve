@@ -7,10 +7,10 @@ import {supabase} from '@/lib/supabase';
 import {chargerCatalogueAcces,etatDroit,type CatalogueAcces} from '@/lib/offres-acces';
 import {CadreHabitudes} from './CadreHabitudes';
 import {IconeHD} from './IconeHabitudes';
+import {estProgrammeHdReel,PROGRAMME_HD_RECETTE} from '@/lib/habitudes-programmes';
 
 /** Lecture des droits existants seulement : aucune création ou reprise de période.
- * `reel` : écran du site réel, pour le programme publié HABITUDES_DEFIS_30J_FR_V1 (sinon : essai technique de la recette). */
-export const PROGRAMME_HD_REEL='HABITUDES_DEFIS_30J_FR_V1';
+ * `reel` : écran du site réel, pour les programmes publiés en français et en anglais (sinon : essai technique de la recette). */
 export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
  const [q]=useSearchParams(),en=q.get('lang')==='en',langue=en?'en':'fr';
  const l=(fr:string,english:string)=>en?english:fr;
@@ -28,7 +28,7 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
   return()=>{sequence.current++;};
  },[langue,tour]);
  useEffect(()=>{document.title=m('Mes accès de test','My test access','Habitudes & Défis','Habits & Challenges')+' — SÉNEVÉ';document.documentElement.lang=langue;},[langue]);
- const inscriptions=data?.inscriptions.filter(e=>e.programme_id===(reel?PROGRAMME_HD_REEL:'HD_RECETTE_INSCRIPTION_FR_20261026'))??[];
+ const inscriptions=data?.inscriptions.filter(e=>(reel?estProgrammeHdReel(e.programme_id):e.programme_id===PROGRAMME_HD_RECETTE))??[];
  const carte='bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col gap-hd-space-sm';
  const bouton='min-h-[48px] w-full bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium rounded-xl flex items-center justify-center gap-2';
  return <CadreHabitudes titre={l('Aujourd’hui','Today')} langue={langue} actif="aujourdhui" liens={{aujourdhui:reel?`/habitudes/aujourdhui?lang=${langue}`:`/acces?lang=${langue}`}}>
