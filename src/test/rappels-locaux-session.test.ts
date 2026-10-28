@@ -5,7 +5,7 @@ vi.mock('@/lib/rappels-locaux',()=>({CLE_ERREUR_ARRET_LOCAL:'echec-arret',rappel
 vi.mock('@capacitor/local-notifications',()=>({LocalNotifications:{addListener:m.listener}}));
 import {initialiserRappelsLocaux} from '@/lib/rappels-locaux-session';
 beforeEach(()=>{localStorage.clear();m.native=true;m.callback=null;m.stop.mockReset().mockResolvedValue(undefined);m.change.mockReset().mockResolvedValue(undefined);m.listener.mockReset().mockResolvedValue({remove:vi.fn()});});
-afterEach(()=>localStorage.clear());
+afterEach(()=>{localStorage.clear();vi.restoreAllMocks();});
 it('ne prépare aucune notification sur le site web',()=>{m.native=false;initialiserRappelsLocaux();expect(m.callback).toBeNull();expect(m.listener).not.toHaveBeenCalled();});
 it('annule au changement de compte et à la déconnexion, sans attente dans le callback Auth',()=>{
  initialiserRappelsLocaux();expect(m.callback!('INITIAL_SESSION',{user:{id:'A'}})).toBeUndefined();expect(m.change).toHaveBeenCalledWith('A');
@@ -16,5 +16,11 @@ it('annule au changement de compte et à la déconnexion, sans attente dans le c
 it('conserve un avertissement si l’arrêt au changement de compte échoue',async()=>{
  m.stop.mockRejectedValue(Error('téléphone indisponible'));initialiserRappelsLocaux();m.callback!('INITIAL_SESSION',{user:{id:'A'}});m.callback!('SIGNED_OUT',null);
  await vi.waitFor(()=>expect(localStorage.getItem('echec-arret')).toBe('1'));
+});
+it('ne supprime pas les rappels si la session initiale ne peut pas être vérifiée hors connexion',()=>{
+ vi.spyOn(navigator,'onLine','get').mockReturnValue(false);initialiserRappelsLocaux();
+ m.callback!('INITIAL_SESSION',null);expect(m.stop).not.toHaveBeenCalled();expect(m.change).not.toHaveBeenCalled();
+ m.callback!('SIGNED_IN',{user:{id:'A'}});expect(m.change).toHaveBeenCalledWith('A');expect(m.stop).not.toHaveBeenCalled();
+ m.callback!('SIGNED_OUT',null);expect(m.stop).toHaveBeenCalledOnce();
 });
 

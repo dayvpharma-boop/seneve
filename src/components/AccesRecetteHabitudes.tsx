@@ -19,6 +19,7 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
  const [data,setData]=useState<CatalogueAcces|null>(null),[erreur,setErreur]=useState(false),[tour,setTour]=useState(0);
  const [maintenant,setMaintenant]=useState(Date.now);
  const sequence=useRef(0);
+ useEffect(()=>{const retour=()=>setTour(t=>t+1);window.addEventListener('online',retour);return()=>window.removeEventListener('online',retour);},[]);
  useEffect(()=>{const actualiser=()=>setMaintenant(Date.now());const t=window.setInterval(actualiser,60000);window.addEventListener('focus',actualiser);return()=>{window.clearInterval(t);window.removeEventListener('focus',actualiser);};},[]);
  useEffect(()=>{
   const auth=supabase.auth.onAuthStateChange(()=>{sequence.current++;setData(null);setErreur(false);setTour(t=>t+1);});

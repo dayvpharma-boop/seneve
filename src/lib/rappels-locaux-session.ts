@@ -9,6 +9,8 @@ export function initialiserRappelsLocaux(){
  const signaler=()=>{try{localStorage.setItem(CLE_ERREUR_ARRET_LOCAL,'1');}catch{/* le message reste affiché si possible */}window.dispatchEvent(new Event('seneve:rappels-locaux-erreur'));};
  supabase.auth.onAuthStateChange((event,session)=>{
   const owner=session?.user.id??null;
+  // Une session initiale non vérifiable sans réseau n’est pas une déconnexion explicite.
+  if(event==='INITIAL_SESSION'&&!owner&&navigator.onLine===false)return;
   const initial=precedent===undefined,change=!initial&&owner!==precedent;
   precedent=owner;
   // Aucun appel Supabase asynchrone dans le callback d'authentification.
