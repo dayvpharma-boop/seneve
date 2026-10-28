@@ -9,14 +9,14 @@ Décisions de Dr Justin : chaque notification nomme sa tâche et présente un me
 - Relances espacées de 30 minutes à partir de l’horaire personnel, pendant la journée locale de l’activité. Les horaires de silence, le consentement, les habitudes désactivées et les droits restent contrôlés avant envoi.
 - « Ignorer les rappels pour aujourd’hui » conserve un choix séparé de la progression. Aucun succès n’est affiché avant confirmation serveur. Une panne réseau nécessite de réessayer. La tâche peut toujours être réalisée ensuite.
 - Une réalisation synchronisée annule les rappels en attente. Le choix d’ignorer supprime également la tâche du planning attendu, y compris au contrôle final et à la prochaine préparation. Les tâches du lendemain conservent leurs rappels.
-- Aucun rattrapage en rafale : les créneaux passés ne sont pas recréés ; chaque créneau garde ses propres réservation et déduplication. Le tag de notification est stable par activité.
+- Aucun rattrapage en rafale : les créneaux passés ne sont pas recréés ; chaque créneau garde ses propres réservation et déduplication. Le tag de notification est stable par activité ; le service worker redemande une alerte lors du remplacement (renotify). Le téléphone garde la décision de son et d’affichage.
 - L’interrupteur serveur `relances_30min_actives` permet d’installer le changement sans activer les relances avant la publication du bouton d’arrêt.
 
 ## Vérifications
 
 Recette transactionnelle TEST : intervalle de 30 minutes, frontière de journée, préparation répétée sans doublons, choix d’ignorer idempotent sans réalisation, conservation des rappels du lendemain, déclaration explicite de réalisation, isolation entre deux comptes. Aucune notification envoyée par la recette et données fictives annulées, absence vérifiée.
 
-985 tests Vitest réussis ; vérification TypeScript réussie ; construction avec l’option `VITE_HABITUDES_RELANCES=true` réussie. Les tests de transport utilisent un expéditeur simulé. L’expéditeur a été empaqueté et déployé sur TEST sans invoquer un envoi réel.
+985 tests Vitest réussis, puis test supplémentaire du service worker réussi (986 tests au total) ; vérification TypeScript réussie ; construction avec l’option `VITE_HABITUDES_RELANCES=true` réussie. Les tests de transport utilisent un expéditeur simulé. L’expéditeur a été empaqueté et déployé sur TEST sans invoquer un envoi réel.
 
 L’analyse Supabase dans TEST ne révèle aucun nouveau signal par rapport à l’état précédent. Les avertissements antérieurs sur pg_net et les mots de passe compromis restent hors périmètre.
 

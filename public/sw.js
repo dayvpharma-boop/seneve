@@ -4,7 +4,7 @@
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v35-calendrier-rappels-20261028';
+const CACHE = 'seneve-site-v36-relances-taches-20261028';
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -113,7 +113,7 @@ self.addEventListener('push', e => {
   try { m = e.data ? e.data.json() : {}; } catch { m = {}; }
   const lien = typeof m.url === 'string' && m.url.startsWith(BASE) ? m.url : BASE + 'espace';
   e.waitUntil(self.registration.showNotification(m.title || 'SÉNEVÉ', {
-    body: m.body || '', tag: m.tag || 'seneve-rappel', icon: BASE + 'icons/icon-192.png', badge: BASE + 'icons/favicon-48.png', data: { url: lien },
+    body: m.body || '', tag: m.tag || 'seneve-rappel', renotify: typeof m.tag === 'string' && m.tag.startsWith('seneve-hd-'), icon: BASE + 'icons/icon-192.png', badge: BASE + 'icons/favicon-48.png', data: { url: lien },
   }));
 });
 
