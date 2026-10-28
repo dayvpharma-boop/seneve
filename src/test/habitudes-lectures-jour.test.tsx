@@ -64,3 +64,17 @@ it('le bouton de durée depuis une lecture déjà faite retrouve le temps enregi
  const a=activites[1]!;sauvees.push({activity_id:a.occurrence.occurrence_id,minutes:20,titre:'Mon ouvrage'});mocks.charger.mockResolvedValue({userId:uid,jour:2,activites:activites.map(x=>x===a?{...x,etat:{...x.occurrence,etat:'realisee',aide_demandee:false,synchronisation:'synchronise'}}:x)});
  ouvrir();fireEvent.click(await screen.findByRole('button',{name:'Renseigner la durée — Lecture professionnelle'}));const saisie=await screen.findByRole('dialog',{name:'Combien de temps ?'});expect(within(saisie).getByRole('button',{name:'20 min'})).toHaveAttribute('aria-pressed','true');expect(within(saisie).getByDisplayValue('Mon ouvrage')).toBeVisible();fireEvent.click(within(saisie).getByRole('button',{name:'Fermer la saisie de durée'}));expect(ecritures()).toHaveLength(0);expect(screen.getByRole('progressbar')).toHaveAttribute('value','1');
 });
+
+it('une correction dans le panneau retire aussi la durée affichée',async()=>{
+ const a=activites[1]!;
+ sauvees.push({activity_id:a.occurrence.occurrence_id,minutes:30,titre:null});
+ mocks.charger.mockResolvedValue({userId:uid,jour:2,activites:activites.map(x=>x===a?{...x,etat:{...x.occurrence,etat:'realisee',aide_demandee:false,synchronisation:'synchronise'}}:x)});
+ const normal=mocks.rpc.getMockImplementation()!;
+ mocks.rpc.mockImplementation((n,p)=>n==='hd_corriger_realisation'?Promise.resolve(p.p_confirmation?{data:{event_id:p.p_client_event_id,etat:'non_commencee',aide_demandee:false,repetition:false},error:null}:{data:{confirmation:'a'.repeat(32)},error:null}):normal(n,p));
+ ouvrir();fireEvent.click(await screen.findByRole('button',{name:'Lectures du jour'}));
+ const d=screen.getByRole('dialog');await within(d).findByText('30 min');
+ fireEvent.click(within(d).getByRole('button',{name:'Corriger ce « Fait »'}));await within(d).findByRole('button',{name:'Confirmer la correction'});
+ fireEvent.click(within(d).getByRole('button',{name:'Confirmer la correction'}));
+ await within(d).findByText('0 sur 5 réalisées');expect(within(d).queryByText('30 min')).toBeNull();expect(screen.getByRole('progressbar')).toHaveAttribute('value','0');
+});
+

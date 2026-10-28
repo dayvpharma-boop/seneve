@@ -1,10 +1,11 @@
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState,type ComponentProps} from 'react';
+import {CorrectionRealisationHabitude} from './CorrectionRealisationHabitude';
 import {enregistrerHabitude,type ActionHabitude,type TransportProgression} from '@/lib/habitudes-api';
 import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import {cleSaisie,lireSaisie,preparerSaisie,type SaisieEnAttente} from '@/lib/habitudes-saisie';
 import {IconeHD} from './IconeHabitudes';
 
-export function DeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu}:{
+function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu}:{
  /** « stitch » : carte des maquettes Stitch HD ; « culte » : « J'y ai participé » de la maquette 07 (même mécanisme d'enregistrement). */
  variante?:'stitch'|'priere'|'culte';heure?:string;attenue?:boolean;
  /** Culte : « Je n'ai pas pu » n'enregistre rien sur le serveur ; le parent ouvre son panneau. */
@@ -124,4 +125,15 @@ function CarteStitch(p:{en:boolean;consigne:string;lienEcriture?:{href:string;la
   {p.autres&&!p.lectureSeule&&!p.attente&&choix.length>0&&<div className="flex flex-wrap gap-2">{choix.map(c=><button key={c.a} type="button" disabled={p.occupe} onClick={()=>p.declarer(c.a)} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium disabled:opacity-60">{c.t}</button>)}</div>}
   {p.erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{p.nettoyageIncomplet?l('L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.','The record is already confirmed. Retry to finish the update.'):l('Confirmation indisponible. Réessaie cette même déclaration quand tu peux.','Confirmation unavailable. Retry this same declaration when you can.')}</p>}
  </article>;
+}
+
+export function DeclarationHabitude(props:ComponentProps<typeof CarteDeclarationHabitude>){
+ const [etat,setEtat]=useState(props.etat);
+ useEffect(()=>{setEtat(props.etat);},[props.etat]);
+ function confirmer(e:EtatOccurrence){setEtat(e);props.onConfirme(e);}
+ let saisieEnAttente=true;
+ try{saisieEnAttente=!!sessionStorage.getItem(cleSaisie(props.userId,props.occurrence.enrollment_id,props.occurrence.occurrence_id))||!!sessionStorage.getItem('seneve:habitudes:lecture:v1:'+props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id);}catch{/* correction indisponible si le stockage est illisible */}
+ return <><CarteDeclarationHabitude {...props} etat={etat} onConfirme={confirmer}/>
+ {!props.lectureSeule&&!saisieEnAttente&&etat?.synchronisation==='synchronise'&&etat.etat==='realisee'&&
+ <CorrectionRealisationHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} userId={props.userId} occurrence={props.occurrence} langue={props.langue} transport={props.transport} onConfirme={confirmer}/>}</>;
 }

@@ -22,5 +22,5 @@ export function preparerSaisie(stockage:StockageSaisie,cle:string,action:ActionH
  const r={eventId:crypto.randomUUID(),action};stockage.setItem(cle,JSON.stringify(r));return r;
 }
 export function effacerSaisiesHabitudes():void{
- try{for(let i=sessionStorage.length-1;i>=0;i--){const key=sessionStorage.key(i);if(key?.startsWith(PREFIXE)||key?.startsWith('seneve:habitudes:lecture:v1:'))sessionStorage.removeItem(key);}}catch{/* rien */}
+ try{for(let i=sessionStorage.length-1;i>=0;i--){const key=sessionStorage.key(i);if(key?.startsWith(PREFIXE)||key?.startsWith('seneve:habitudes:lecture:v1:')||key?.startsWith('seneve:habitudes:correction:v1:'))sessionStorage.removeItem(key);}}catch{/* rien */}
 }
