@@ -100,4 +100,15 @@ it('la date de planning suit la journée choisie et affiche les horaires personn
  fireEvent.change(screen.getByRole('combobox',{name:'Jour du parcours'}),{target:{value:'1'}});
  expect(document.querySelector('.hd-planning-jour time[datetime="2026-10-24"]')).not.toBeNull();expect(appels).toHaveLength(0);
 });
-
+it('une journée passée du parcours HD terminé reste lisible sans bouton de déclaration',async()=>{
+ (tables.enrollments![0] as Record<string,unknown>).date_debut='2026-04-01';
+ tables.activity_state=[{enrollment_id:eid,activity_id:aid(1),etat:'realisee',aide_demandee:false}];
+ render(<MemoryRouter initialEntries={['/espace?jour=1']}><Espace/></MemoryRouter>);
+ await screen.findByRole('heading',{name:'Mes activités — jour 1'});expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();expect(screen.getAllByText('Lecture seule')).toHaveLength(3);expect(screen.getByText('Réalisée · Synchronisée')).toBeVisible();expect(document.querySelectorAll('.hd-lecture')).toHaveLength(3);expect(appels).toHaveLength(0);
+});
+it('la dernière journée du programme réel terminé ne rouvre pas les cartes de déclaration d’Aujourd’hui',async()=>{
+ (tables.enrollments![0] as Record<string,unknown>).date_debut='2026-04-01';(tables.enrollments![0] as Record<string,unknown>).programme_id='HABITUDES_DEFIS_30J_FR_V1';(tables.programmes![0] as Record<string,unknown>).programme_id='HABITUDES_DEFIS_30J_FR_V1';(tables.hd_programme_links![0] as Record<string,unknown>).programme_id='HABITUDES_DEFIS_30J_FR_V1';
+ tables.contents=tables.contents!.map(c=>({...c as Record<string,unknown>,programme_id:'HABITUDES_DEFIS_30J_FR_V1',jour:180}));
+ render(<MemoryRouter initialEntries={['/espace?jour=180']}><Espace/></MemoryRouter>);
+ await screen.findByRole('heading',{name:'Mes activités du jour'});expect(screen.getAllByText('Lecture seule')).toHaveLength(3);expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();expect(screen.queryByText('Les activités ne peuvent pas être vérifiées. Actualise avant de déclarer une action.')).toBeNull();expect(appels).toHaveLength(0);
+});
