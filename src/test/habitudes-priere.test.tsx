@@ -45,3 +45,13 @@ it('un échec de stockage n’annonce pas un repère conservé',()=>{
  const d=ouvrir();vi.spyOn(Storage.prototype,'setItem').mockImplementation(()=>{throw Error('quota');});
  fireEvent.click(within(d).getByRole('button',{name:'Placer un repère ici'}));expect(within(d).getByText('Le repère n’a pas pu être conservé. Réessaie.')).toBeVisible();expect(within(d).getByRole('button',{name:'Reprendre'})).toBeDisabled();expect(rpc).not.toHaveBeenCalled();
 });
+it('en anglais, ouvre l’Amidah anglaise validée et permet de passer au français sans perdre le repère',()=>{
+ render(<LecteurPriereHabitudes activite={{...activite,consigne:'Morning prayer'}} userId={uid} langue="en" transport={{rpc}} onConfirme={onConfirme} onFermer={onFermer}/>);
+ const d=screen.getByRole('dialog');
+ const texte=within(d).getByRole('article',{name:'Full text of the Amidah'});
+ expect(texte).toHaveAttribute('lang','en');expect(within(d).getByText('End of the Amidah')).toBeVisible();expect(within(d).getByText(/On Purim, continue here/)).toBeVisible();
+ expect(within(d).getByRole('button',{name:'English'})).toHaveAttribute('aria-pressed','true');
+ fireEvent.click(within(d).getByRole('button',{name:'Français'}));
+ expect(within(d).getByText('Fin de la Amidah')).toBeVisible();expect(texte).toHaveAttribute('lang','fr');
+ expect(texte.querySelectorAll('[data-amidah-paragraphe]')).toHaveLength(61);expect(rpc).not.toHaveBeenCalled();
+});
