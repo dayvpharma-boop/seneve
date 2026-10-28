@@ -3,8 +3,11 @@ import type {ConfigurationHoraires} from './habitudes-horaires-api';
 import {dateLocale} from './habitudes-periodes';
 export const HABITUDES_EXPORTABLES=['reveil','gratitude_matin','priere_matin','bible_matin','exercice','lecture_pro','priere_midi','predication','lecture_personnelle','bible_soir','gratitude_soir','priere_soir','coucher','culte_semaine','culte_dimanche']as const;
 export type RendezVousCalendrier={date:string;heure:string;cle:string;creneau:string;titre:string;instant:number};
+const formatsFuseaux=new Map<string,Intl.DateTimeFormat>();
 function parties(instant:number,fuseau:string){
- const p=new Intl.DateTimeFormat('en-GB',{timeZone:fuseau,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date(instant));
+ let format=formatsFuseaux.get(fuseau);
+ if(!format){format=new Intl.DateTimeFormat('en-GB',{timeZone:fuseau,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});if(formatsFuseaux.size>=8)formatsFuseaux.clear();formatsFuseaux.set(fuseau,format);}
+ const p=format.formatToParts(new Date(instant));
  const v=(s:string)=>Number(p.find(x=>x.type===s)!.value);
  return Date.UTC(v('year'),v('month')-1,v('day'),v('hour'),v('minute'),v('second'));
 }

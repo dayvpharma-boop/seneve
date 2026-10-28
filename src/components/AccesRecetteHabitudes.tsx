@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {Link,useSearchParams} from 'react-router-dom';
 import {ActivitesJourRecette} from './ActivitesJourRecette';
+import {RappelsLocauxHabitudes} from './RappelsLocauxHabitudes';
 import {PlanningJourHabitudes} from './PlanningJourHabitudes';
 import {calendrierHabitudes} from '@/lib/habitudes-calendrier';
 import {supabase} from '@/lib/supabase';
@@ -18,6 +19,7 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
  const [data,setData]=useState<CatalogueAcces|null>(null),[erreur,setErreur]=useState(false),[tour,setTour]=useState(0);
  const [maintenant,setMaintenant]=useState(Date.now);
  const sequence=useRef(0);
+ useEffect(()=>{const retour=()=>setTour(t=>t+1);window.addEventListener('online',retour);return()=>window.removeEventListener('online',retour);},[]);
  useEffect(()=>{const actualiser=()=>setMaintenant(Date.now());const t=window.setInterval(actualiser,60000);window.addEventListener('focus',actualiser);return()=>{window.clearInterval(t);window.removeEventListener('focus',actualiser);};},[]);
  useEffect(()=>{
   const auth=supabase.auth.onAuthStateChange(()=>{sequence.current++;setData(null);setErreur(false);setTour(t=>t+1);});
@@ -53,6 +55,7 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
   const actif=etat==='actif'&&e.etat==='active';
   return <div key={e.enrollment_id} className="flex flex-col">
    {actif&&data.participantIdHabitudes&&dateLocale&&<div><h2 className="sr-only">{l('Ma journée','My day')}</h2><ActivitesJourRecette key={`${e.enrollment_id}:${data.participantIdHabitudes}:${dateLocale}`} enrollmentId={e.enrollment_id} participantId={data.participantIdHabitudes} dateLocale={dateLocale} langue={langue} fuseau={data.fuseauHabitudes}/></div>}
+   {actif&&p&&data.participantIdHabitudes&&dateLocale&&<RappelsLocauxHabitudes enrollmentId={e.enrollment_id} participantId={data.participantIdHabitudes} dateLocale={dateLocale} finAcces={p.fin_exclue} langue={langue}/>}
    <section className="px-hd-margin pb-hd-space-lg flex flex-col gap-hd-space-sm" aria-label={l('Mon accès','My access')}>
     <div className="relative bg-hd-surface-container-lowest rounded-xl p-hd-space-md shadow-sm overflow-hidden flex flex-col gap-1">
      <div className="flex items-center justify-between gap-2 mb-1"><span className="font-hd-label-sm text-hd-label-sm text-hd-secondary tracking-wide uppercase">{m('Habitudes & Défis — essai technique','Habits & Challenges — technical test','Habitudes & Défis','Habits & Challenges')}</span>{actif&&<span className="font-hd-label-sm text-hd-label-sm text-hd-secondary bg-hd-secondary-container/40 px-2 py-0.5 rounded-full">{l('Actif','Active')}</span>}</div>
