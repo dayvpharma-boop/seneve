@@ -1,0 +1,48 @@
+-- Recette transactionnelle sans donnée ni recommandation conservée.
+begin;
+create temp table reco_test(admin_id uuid,participant_id uuid,id uuid);
+do $$declare a uuid:=gen_random_uuid();p uuid:=gen_random_uuid();begin
+ insert into auth.users(id)values(a),(p);
+ insert into seneve.staff_roles(auth_user_id,role)values(a,'administrateur');
+ insert into reco_test values(a,p,gen_random_uuid());
+end $$;
+grant select on reco_test to authenticated;
+set local role authenticated;
+do $$declare c reco_test%rowtype;x jsonb;r jsonb;ev uuid:=gen_random_uuid();n int;begin
+ select * into c from reco_test;
+ x:=jsonb_build_object('categorie','lecture_pro','titre','Livre de recette','auteur','Auteur fictif','langue','fr','url','https://example.org/livre','description','Recette uniquement','acces','gratuit','etat','brouillon','valide',false);
+ perform set_config('request.jwt.claim.sub',c.participant_id::text,true);
+ begin perform seneve.staff_hd_recommandation_enregistrer(c.id,0,ev,x);raise exception 'participant écrit';exception when insufficient_privilege then null;end;
+ begin perform seneve.staff_hd_recommandations();raise exception 'participant lit administration';exception when insufficient_privilege then null;end;
+ perform set_config('request.jwt.claim.sub',c.admin_id::text,true);
+ r:=seneve.staff_hd_recommandation_enregistrer(c.id,0,ev,x);assert r->>'etat'='brouillon'and(r->>'revision')::int=1,'création brouillon';
+ r:=seneve.staff_hd_recommandation_enregistrer(c.id,0,ev,x);assert(r->>'revision')::int=1,'doublon création';
+ begin perform seneve.staff_hd_recommandation_enregistrer(c.id,1,ev,x);raise exception 'identifiant réutilisé';exception when unique_violation then null;end;
+ perform set_config('request.jwt.claim.sub',c.participant_id::text,true);
+ assert not exists(select 1 from seneve.hd_recommendations where id=c.id),'RLS brouillon';
+ assert not exists(select 1 from jsonb_array_elements(seneve.hd_recommandations('fr'))j where j->>'id'=c.id::text),'catalogue brouillon';
+ perform set_config('request.jwt.claim.sub',c.admin_id::text,true);
+ begin perform seneve.staff_hd_recommandation_enregistrer(c.id,1,gen_random_uuid(),x||'{"etat":"publie"}');raise exception 'publication sans validation';exception when invalid_parameter_value then null;end;
+ begin perform seneve.staff_hd_recommandation_enregistrer(c.id,1,gen_random_uuid(),x||'{"url":"javascript:alert(1)"}');raise exception 'URL dangereuse';exception when check_violation then null;end;
+ x:=x||'{"etat":"publie","valide":true}';
+ r:=seneve.staff_hd_recommandation_enregistrer(c.id,1,gen_random_uuid(),x);assert r->>'etat'='publie'and(r->>'revision')::int=2 and r->>'validee_le'is not null,'publication';
+ perform set_config('request.jwt.claim.sub',c.participant_id::text,true);
+ assert exists(select 1 from jsonb_array_elements(seneve.hd_recommandations('fr'))j where j->>'id'=c.id::text),'visible participant';
+ assert not exists(select 1 from jsonb_array_elements(seneve.hd_recommandations('en'))j where j->>'id'=c.id::text),'langue isolée';
+ begin update seneve.hd_recommendations set titre='altéré'where id=c.id;raise exception 'écriture directe';exception when insufficient_privilege then null;end;
+ perform set_config('request.jwt.claim.sub',c.admin_id::text,true);
+ begin perform seneve.staff_hd_recommandation_enregistrer(c.id,1,gen_random_uuid(),x||'{"titre":"conflit"}');raise exception 'conflit écrase';exception when serialization_failure then null;end;
+ r:=seneve.staff_hd_recommandation_enregistrer(c.id,2,gen_random_uuid(),x||'{"titre":"Livre corrigé"}');assert r->>'titre'='Livre corrigé','modification';
+ r:=seneve.staff_hd_recommandation_enregistrer(c.id,3,gen_random_uuid(),x||'{"etat":"retire"}');assert r->>'etat'='retire','retrait';
+ perform set_config('request.jwt.claim.sub',c.participant_id::text,true);
+ assert not exists(select 1 from jsonb_array_elements(seneve.hd_recommandations('fr'))j where j->>'id'=c.id::text),'retrait invisible';
+ assert not exists(select 1 from seneve.hd_recommendations where id=c.id),'RLS retrait';
+ assert not has_function_privilege('anon','seneve.hd_recommandations(text)','EXECUTE'),'anonyme lit';
+ assert not has_function_privilege('anon','seneve.staff_hd_recommandation_enregistrer(uuid,integer,uuid,jsonb)','EXECUTE'),'anonyme écrit';
+ assert not has_table_privilege('authenticated','seneve_private.hd_recommendation_writes','SELECT'),'journal privé';
+ perform set_config('request.jwt.claim.sub','',true);
+ begin perform seneve.hd_recommandations('fr');raise exception 'sans session';exception when invalid_authorization_specification then null;end;
+end $$;
+reset role;
+rollback;
+select 'OK : brouillon, publication, modification, retrait, RLS, rôle administrateur, langue, lien, doublon et conflit ; données fictives annulées' verification;
