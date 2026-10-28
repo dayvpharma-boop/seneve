@@ -1,3 +1,4 @@
+import {IgnorerRappelHabitude} from './IgnorerRappelHabitude';
 import {useEffect,useRef,useState,type ComponentProps} from 'react';
 import {CorrectionRealisationHabitude} from './CorrectionRealisationHabitude';
 import {enregistrerHabitude,type ActionHabitude,type TransportProgression} from '@/lib/habitudes-api';
@@ -134,6 +135,7 @@ export function DeclarationHabitude(props:ComponentProps<typeof CarteDeclaration
  let saisieEnAttente=true;
  try{saisieEnAttente=!!sessionStorage.getItem(cleSaisie(props.userId,props.occurrence.enrollment_id,props.occurrence.occurrence_id))||!!sessionStorage.getItem('seneve:habitudes:lecture:v1:'+props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id);}catch{/* correction indisponible si le stockage est illisible */}
  return <><CarteDeclarationHabitude {...props} etat={etat} onConfirme={confirmer}/>
+ {import.meta.env.VITE_HABITUDES_RELANCES==='true'&&!props.lectureSeule&&etat?.etat!=='realisee'&&<IgnorerRappelHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} enrollmentId={props.occurrence.enrollment_id} activityId={props.occurrence.occurrence_id} langue={props.langue}/>}
  {!props.lectureSeule&&!saisieEnAttente&&etat?.synchronisation==='synchronise'&&etat.etat==='realisee'&&
  <CorrectionRealisationHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} userId={props.userId} occurrence={props.occurrence} langue={props.langue} transport={props.transport} onConfirme={confirmer}/>}</>;
 }
