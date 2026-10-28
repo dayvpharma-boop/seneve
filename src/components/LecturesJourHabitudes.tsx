@@ -12,11 +12,11 @@ const CLES=['bible_matin','lecture_pro','predication','lecture_personnelle','bib
 export const estLectureHabitudes=(cle?:string)=>!!cle&&CLES.includes(cle);
 
 /** Vue des activités déjà vérifiées de la journée : aucune lecture ni déclaration supplémentaire à l'ouverture. */
-export function LecturesJourHabitudes({activites,userId,langue,transport,onConfirme,onFermer}:{activites:ActiviteJourRecette[];userId:string;langue:string;transport:TransportProgression;onConfirme:(etat:EtatOccurrence)=>void;onFermer:()=>void}){
+export function LecturesJourHabitudes({activites,userId,langue,transport,onConfirme,onFermer,lectureInitialeId}:{activites:ActiviteJourRecette[];userId:string;langue:string;transport:TransportProgression;onConfirme:(etat:EtatOccurrence)=>void;onFermer:()=>void;lectureInitialeId?:string|null}){
  const dialog=useRef<HTMLDialogElement>(null),en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const lectures=activites.filter(a=>estLectureHabitudes(a.habit_key)).sort((a,b)=>a.heure.localeCompare(b.heure));
  const faites=lectures.filter(a=>a.etat?.synchronisation==='synchronise'&&a.etat.etat==='realisee').length;
- const [detailsLus,setDetailsLus]=useState<{cle:string;lignes:DetailLecture[]}|null>(null),[erreurDetails,setErreurDetails]=useState(false),[tour,setTour]=useState(0),[saisieId,setSaisieId]=useState<string|null>(null);
+ const [detailsLus,setDetailsLus]=useState<{cle:string;lignes:DetailLecture[]}|null>(null),[erreurDetails,setErreurDetails]=useState(false),[tour,setTour]=useState(0),[saisieId,setSaisieId]=useState<string|null>(lectureInitialeId??null);
  const transportCourant=useRef(transport);transportCourant.current=transport;
  const ids=lectures.map(a=>a.occurrence.occurrence_id),enrollmentId=lectures[0]?.occurrence.enrollment_id,cle=[userId,enrollmentId,...ids].join(':');
  const details=detailsLus?.cle===cle?detailsLus.lignes:null;
