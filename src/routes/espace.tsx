@@ -356,6 +356,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
         <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2">
           <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aujourdhui${en?'?lang=en':''}`}>{en?'My access and schedule':'Mon accès et mes horaires'}</Link>
           {compteurFideliteActif()&&<Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/engagements${en?'?lang=en':''}`}>{en?'My commitments':'Mes engagements'}</Link>}
+          <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aide${en?'?lang=en':''}`}>{en?'Help and privacy':'Aide et confidentialité'}</Link>
           <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>
         </div>
       </div>{footer(enr.langue)}</>,'journee-nouvelle');
