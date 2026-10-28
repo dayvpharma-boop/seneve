@@ -85,3 +85,9 @@ Cela ne remplace pas une recette complète d’un nouvel achat, d’un doublon, 
 Préparer une matrice de réception des droits et paiements **dans TEST**, en réutilisant les règles existantes. Relever pour chaque scénario la preuve, les limites et le nettoyage des données fictives. Aucun changement de prix, de statut, d’inscription publique ou de droit réel n’est inclus dans cette étape.
 
 Les rapports des 25–27 octobre restent conservés comme historiques, avec leurs constats datés.
+
+## Complément du 28 octobre : recette SQL des paiements
+
+La [recette serveur des paiements HD dans TEST](RECETTE_PAIEMENTS_HD_TEST_2026_10_28.md) a depuis vérifié les contrôles de conformité, les doublons, l’alignement Continuité/HD, l’achat anticipé, la reprise après coupure et la révocation avec conservation de l’historique. Un écart de conformité de TEST a été corrigé ; PROD n’a pas été modifiée. Les données fictives ont été annulées et leur absence contrôlée.
+
+La vérification HTTP de la signature du webhook, le navigateur, le prestataire et les autres scénarios de réception restent distincts ; la réussite SQL ne vaut pas réception financière de bout en bout.
