@@ -7,4 +7,3 @@ const config: CapacitorConfig = {
   plugins: { LocalNotifications: { smallIcon: 'ic_stat_seneve', iconColor: '#38543e', presentationOptions: ['banner','sound','list'] } },
 };
 export default config;
-

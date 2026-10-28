@@ -44,7 +44,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
   ios:
-    runs-on: macos-26
+    runs-on: macos-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
