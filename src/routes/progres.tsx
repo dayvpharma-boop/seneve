@@ -8,7 +8,7 @@ import {filtreCultesPrevus} from '@/lib/habitudes-cultes';
 import {chargerHorairesHabitudes} from '@/lib/habitudes-horaires-api';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
@@ -19,9 +19,13 @@ import { bilan, progresTextes, semaines, semaineTextes, type Bilan } from '@/lib
 import { JardinCard } from '@/components/JardinCard';
 import { IconeProgres } from '@/components/IconeProgres';
 import { RepereParcours } from '@/components/RepereParcours';
+import { useEnLigne } from '@/lib/hors-ligne';
+import { CarteHorsConnexion } from '@/components/HorsConnexion';
+import { IconeJournee } from '@/components/IconeJournee';
+import { enregistrerCopieProgres, lireCopieProgres, reduireBilan, semaineEnCours, type CopieProgres } from '@/lib/progres-copie';
 
 type Parcours = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null; duree: number; nom: string };
-type Loaded = { prenom: string; actions: Record<string, Record<number, string>>; langue: string; parcours: Parcours[]; bilans: Record<string, Bilan>; notes: number; habitudes: Record<string,JourHabitudesLecture[]> };
+type Loaded = { userId: string; prenom: string; actions: Record<string, Record<number, string>>; langue: string; parcours: Parcours[]; bilans: Record<string, Bilan>; notes: number; habitudes: Record<string,JourHabitudesLecture[]> };
 
 async function load(): Promise<Loaded | null> {
   const { data: s } = await supabase.auth.getSession();
@@ -38,7 +42,7 @@ async function load(): Promise<Loaded | null> {
   const langue = (p.data?.langue as string | undefined) ?? 'fr';
   const notes = (j.data ?? []).length;
   const prenom = typeof p.data?.prenom === 'string' ? p.data.prenom : (typeof s.session.user.user_metadata?.prenom === 'string' ? s.session.user.user_metadata.prenom : '');
-  if (!enr.length) return { prenom, actions: {}, langue, parcours: [], bilans: {}, notes, habitudes: {} };
+  if (!enr.length) return { userId: s.session.user.id, prenom, actions: {}, langue, parcours: [], bilans: {}, notes, habitudes: {} };
   const progIds = [...new Set(enr.map(x => x.programme_id))];
   const [pr, c, st, hd, per] = await Promise.all([
     supabase.from('programmes').select('programme_id, nom, duree_jours').in('programme_id', progIds),
@@ -96,7 +100,7 @@ async function load(): Promise<Loaded | null> {
       if (typeof action?.consigne === 'string') actions[x.enrollment_id]![jour.jour] = action.consigne;
     }
   }
-  return { prenom, actions, langue, parcours, bilans, notes, habitudes };
+  return { userId: s.session.user.id, prenom, actions, langue, parcours, bilans, notes, habitudes };
 }
 
 function dateCourte(iso: string, locale: string) {
@@ -109,14 +113,21 @@ export function Progres() {
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
   const [chosen, setChosen] = useState<string | null>(null);
+  const [copie, setCopie] = useState<CopieProgres | null>(null);
+  const enLigne = useEnLigne();
 
   const refresh = useCallback(async () => {
     setFailed(false);
     try {
       const loaded = await load();
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
-      setData(loaded);
-    } catch { setFailed(true); }
+      setData(loaded); setCopie(null);
+      // Copie hors connexion (décision du 28/10/2026) : chiffres et état des jours seulement, hors Habitudes & Défis.
+      enregistrerCopieProgres(loaded.userId, loaded.parcours.filter(x => !loaded.habitudes[x.enrollment_id] && loaded.bilans[x.enrollment_id]).map(x => reduireBilan(x, loaded.bilans[x.enrollment_id]!)));
+    } catch {
+      setFailed(true);
+      try { const { data: s } = await supabase.auth.getSession(); setCopie(s.session ? lireCopieProgres(s.session.user.id) : null); } catch { setCopie(null); }
+    }
   }, [navigate]);
   useEffect(() => { void refresh(); }, [refresh]);
 
@@ -131,6 +142,8 @@ export function Progres() {
   // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026) : marque puis titre.
   const en = langue === 'en';
   const tete = <><header className="parcours-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span>{data && <Link className="parcours-avatar" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header><IllustrationPage theme="parcours" langue={langue} /></>;
+  if (failed && copie) return <ProgresHorsLigne copie={copie} langue={langue} tete={tete} reessayer={() => void refresh()} />;
+  if (failed && !enLigne) return <main className="wrap avec-nav parcours-page">{tete}<CarteHorsConnexion langue={langue} texte={en ? 'There is no saved copy of your progress on this device.' : 'Aucune copie de tes progrès n’est disponible sur cet appareil.'} reessayer={() => void refresh()} /><BarreNav langue={langue} maquette iconesJournee /></main>;
   if (failed) return <main className="wrap avec-nav parcours-page">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
   if (!data) return <main className="wrap avec-nav parcours-page">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langue} maquette iconesJournee /></main>;
   if (!enr) return <main className="wrap avec-nav parcours-page">{tete}<p className="muted">{T.aucun}</p>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
@@ -190,3 +203,22 @@ export function Progres() {
 }
 
 
+
+/** Maquette Stitch n° 4 (28/10/2026) : dernière copie des progrès, en lecture seule. */
+function ProgresHorsLigne({ copie, langue, tete, reessayer }: { copie: CopieProgres; langue: string; tete: ReactNode; reessayer: () => void }) {
+  const en = langue === 'en';
+  const p = copie.parcours[0]!;
+  const date = new Intl.DateTimeFormat(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Kinshasa' }).format(new Date(copie.le));
+  const libelle = (e: string | null) => e === 'realisee' ? (en ? 'done' : 'réalisée') : e === 'partielle' ? (en ? 'partly done' : 'en partie') : (en ? 'not started' : 'pas commencée');
+  return <main className="wrap avec-nav parcours-page progres-horsligne">{tete}
+    <div className="hc-bandeau hc-bandeau-action" role="status"><IconeJournee nom="wifi_off" taille={20} /><p>{en ? 'Copy from ' : 'Copie du '}<time dateTime={copie.le}>{date}</time>. {en ? 'Reconnect to see your up-to-date progress.' : 'Reconnecte-toi pour voir tes progrès à jour.'}</p><button type="button" className="hc-lien-bouton" onClick={reessayer}>{en ? 'Try again' : 'Réessayer'}</button></div>
+    <section className="hc-lecture-seule" aria-label={en ? 'Saved copy, read only' : 'Copie enregistrée, en lecture seule'}>
+      {copie.parcours.length > 1 && <p className="hc-parcours">{p.nom}</p>}
+      <article className="hc-carte hc-chiffre"><span>{en ? 'Actions done' : 'Actions réalisées'}</span><strong>{p.realisees}</strong><p>{en ? 'on the days already started' : 'sur les journées déjà commencées'}</p></article>
+      <article className="hc-carte hc-semaine"><span>{en ? 'My week' : 'Ma semaine'}</span>
+        <ol>{semaineEnCours(p).map(j => <li key={j.jour}><span className={`hc-rond is-${j.ouvert ? (j.etat ?? 'aucune') : 'a-venir'}`} aria-hidden="true" /><small>{en ? 'D' : 'J'}{j.jour}</small><span className="sr-only">{en ? `Day ${j.jour}: ` : `Jour ${j.jour} : `}{j.ouvert ? libelle(j.etat) : (en ? 'not open yet' : 'pas encore ouvert')}</span></li>)}</ol>
+        <p className="hc-legende" aria-hidden="true"><span><i className="hc-rond is-realisee" />{en ? 'Done' : 'Réalisée'}</span><span><i className="hc-rond is-partielle" />{en ? 'Partly' : 'En partie'}</span><span><i className="hc-rond is-non_commencee" />{en ? 'Not started' : 'Pas commencée'}</span></p>
+      </article>
+    </section>
+    <BarreNav langue={langue} maquette iconesJournee /></main>;
+}

@@ -743,3 +743,8 @@
 :root[data-apparence="sombre"] .hc-brouillon textarea{background:#1d1b18;}
 :root[data-apparence="sombre"] .hc-bouton{background:#ffd482;color:#1d1b18;}
 :root[data-apparence="sombre"] .hc-lien{color:#ffd482;}
+:root[data-apparence="sombre"] .hc-lien-bouton,:root[data-apparence="sombre"] .hc-chiffre strong,:root[data-apparence="sombre"] .hc-parcours{color:#ffd482;}
+:root[data-apparence="sombre"] .hc-lecture-seule .hc-carte > span,:root[data-apparence="sombre"] .hc-chiffre p,:root[data-apparence="sombre"] .hc-legende span,:root[data-apparence="sombre"] .hc-semaine small{color:#d1c5b3;}
+:root[data-apparence="sombre"] .hc-rond{background:#1d1b18;box-shadow:inset 0 0 0 1.5px #4e4638;}
+:root[data-apparence="sombre"] .hc-rond.is-realisee{background:#ffd482;box-shadow:none;}
+:root[data-apparence="sombre"] .hc-rond.is-partielle,:root[data-apparence="sombre"] .hc-rond.is-preparee{background:linear-gradient(90deg,#ffd482 50%,#363531 50%);box-shadow:none;}

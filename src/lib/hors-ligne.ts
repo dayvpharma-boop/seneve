@@ -4,6 +4,7 @@ import {effacerSaisiesHabitudes} from './habitudes-saisie';
 /** Consultation hors connexion de l'espace : dernière copie des journées déjà chargées, sur cet appareil. */
 import { useEffect, useState } from 'react';
 import {effacerProfils} from './profil';
+import {effacerCopiesProgres} from './progres-copie';
 
 const PREFIXE = 'seneve:espace:v1:';
 
@@ -35,6 +36,7 @@ export function lireEspace<T>(userId: string): { le: string; donnees: T } | null
 /** À la déconnexion : aucune copie ne reste sur l'appareil. */
 export function effacerEspaces(): void {
   effacerProfils();
+  effacerCopiesProgres();
   effacerSaisiesHabitudes();
   effacerReperesPriere();
   try {
