@@ -1,4 +1,6 @@
 import {PhotosParticipant} from '@/components/AvatarParticipant';
+import {initialiserRappelsLocaux} from './lib/rappels-locaux-session';
+import {ErreurArretRappelsLocaux} from './components/ErreurArretRappelsLocaux';
 import {suivrePreferencesVisuelles} from './lib/preferences-visuelles';
 import {suivreApparence} from './lib/apparence';
 import './styles-offres-acces.css';
@@ -73,12 +75,13 @@ const BibleAnnotations = lazy(() => bible().then(m => ({ default: m.BibleAnnotat
 suivreApparence();
 suivrePreferencesVisuelles();
 enregistrerServiceWorker();
+initialiserRappelsLocaux();
 
 const root = document.getElementById('root');
 if (root) createRoot(root).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-      <PhotosParticipant><GarderLangue />
+      <PhotosParticipant><GarderLangue /><ErreurArretRappelsLocaux/>
       <Suspense fallback={null}><Routes>
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />

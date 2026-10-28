@@ -1,4 +1,5 @@
 import {effacerReperesPriere} from './habitudes-priere-reprise';
+import {Capacitor} from '@capacitor/core';
 import {retirerHabitudesDuCache} from './habitudes-cache';
 import {effacerSaisiesHabitudes} from './habitudes-saisie';
 /** Consultation hors connexion de l'espace : dernière copie des journées déjà chargées, sur cet appareil. */
@@ -56,6 +57,7 @@ export function useEnLigne(): boolean {
 }
 
 export function enregistrerServiceWorker(): void {
+  if(Capacitor.isNativePlatform())return; // Les ressources mobiles sont embarquées dans le binaire.
   if (typeof navigator === 'undefined' || !('serviceWorker' in navigator) || !import.meta.env.PROD) return;
   const base = import.meta.env.BASE_URL;
   // Une copie ancienne du site peut demander le fichier d'une page qui n'existe plus depuis une publication :

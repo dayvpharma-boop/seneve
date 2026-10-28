@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {preferencesCss} from './scripts/preferences-css';
 
 // Le site est servi par GitHub Pages sous /seneve/.
@@ -13,7 +14,7 @@ export default defineConfig({
   css: {postcss:{plugins:[preferencesCss()]}},
   // Liste des fichiers construits : le service hors connexion s'en sert pour garder les pages chargées à la demande.
   build: { manifest: 'asset-manifest.json' },
-  resolve: { preserveSymlinks: true, alias: { '@': path.resolve(__dirname, './src') } },
+  resolve: { preserveSymlinks: true, alias: { '@': path.resolve(fileURLToPath(new URL('.', import.meta.url)), './src') } },
   test: {
     environment: 'jsdom',
     globals: true,
