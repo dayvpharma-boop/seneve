@@ -4,6 +4,7 @@ import type {ActiviteJourRecette} from '@/lib/habitudes-jour-recette';
 import type {EtatOccurrence} from '@/lib/habitudes';
 import type {TransportProgression} from '@/lib/habitudes-api';
 import {DeclarationHabitude} from './DeclarationHabitude';
+import {RecommandationsHabitudes} from './RecommandationsHabitudes';
 import {IconeHD} from './IconeHabitudes';
 import {SaisieLectureHabitudes} from './SaisieLectureHabitudes';
 import {chargerDetailsLectures,type DetailLecture} from '@/lib/habitudes-lectures-api';
@@ -51,10 +52,7 @@ export function LecturesJourHabitudes({activites,userId,langue,transport,onConfi
       </div>
      </section>;
     })}
-    <aside className="rounded-2xl bg-hd-surface-container p-hd-space-md font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">
-     <h3 className="font-hd-label-lg text-hd-label-lg text-hd-on-surface">{l('Recommandations bientôt disponibles','Recommendations coming later')}</h3>
-     <p>{l('Tu peux utiliser les livres et prédications de ton choix. Les suggestions de l’application seront proposées après validation éditoriale.','You can use books and preaching of your choice. App suggestions will be offered after editorial approval.')}</p>
-    </aside>
+    <RecommandationsHabitudes langue={langue}/>
    </div>
   </div>
   {saisie&&details!==null&&<SaisieLectureHabitudes key={cle+':'+saisie.occurrence.occurrence_id} activite={saisie} userId={userId} langue={langue} detail={details.find(d=>d.activity_id===saisie.occurrence.occurrence_id)} transport={transport} onConfirme={(e,d)=>{setDetailsLus(ancien=>({cle,lignes:[...(ancien?.cle===cle?ancien.lignes:[]).filter(x=>x.activity_id!==d.activity_id),d]}));onConfirme(e);}} onFermer={()=>setSaisieId(null)}/>}
