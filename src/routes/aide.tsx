@@ -10,6 +10,8 @@ import { eventIdFor } from '@/lib/espace';
 import { nomParcours } from '@/lib/espace-textes';
 import { MOTIF_MAX, draft, formatDateHeure, journalTextes, peutAnnuler, texteValide } from '@/lib/journal';
 import { IconeAide } from '@/components/IconeAide';
+import { useEnLigne } from '@/lib/hors-ligne';
+import { CarteHorsConnexion } from '@/components/HorsConnexion';
 
 
 type Request = { request_id: string; motif: string; etat: string; reponse: string | null; extraits_partages: string | null; cree_le: string };
@@ -80,6 +82,7 @@ function AideDuCompte({ userId }: { userId: string }) {
   const [params] = useSearchParams();
   const [data, setData] = useState<Loaded | null>(null);
   const [failed, setFailed] = useState(false);
+  const enLigne = useEnLigne();
   const [motif, setMotif] = useState(() => draft.read('aide', userId));
   const motifPersonnalise = useRef(Boolean(motif));
   const [parcours, setParcours] = useState(params.get('inscription') ?? '');
@@ -126,6 +129,8 @@ function AideDuCompte({ userId }: { userId: string }) {
     if (busy || !data) return;
     const m = texteValide(motif, limite);
     if (!m) { setError(motif.trim() ? T.trop(limite) : ''); return; }
+    // Sans réseau, rien n'est envoyé : le texte reste dans le champ et dans le brouillon de l'appareil.
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) { setError(horsLigneAide(langueUI)); return; }
     pendingId.current = eventIdFor(pendingId.current);
     setBusy(true); setError('');
     try {
@@ -144,6 +149,7 @@ function AideDuCompte({ userId }: { userId: string }) {
 
   const tete = <><header className="today-head page-tete"><div className="aide-barre"><p className="brand"><Icone nom="graine" taille={24} /><span>SÉNEVÉ</span></p><span className="aide-initiale" aria-hidden="true"><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></div><p className="aide-repere"><span />{en?'Listening & support':'Écoute & Soutien'}</p><h1>{en?'Help & Contact':'Aide & Contact'}</h1></header><IllustrationPage theme="aide" langue={langueUI} /></>;
   const back = <Link className="link" to="/espace">← {T.retour}</Link>;
+  if (failed && !enLigne) return <main className="wrap avec-nav aide-page">{tete}<CarteHorsConnexion langue={langueUI} texte={horsLigneAide(langueUI)} reessayer={() => void refresh()} /><BarreNav langue={langueUI} iconesAide /></main>;
   if (failed) return <main className="wrap avec-nav aide-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langueUI} iconesAide /></main>;
   if (!data) return <main className="wrap avec-nav aide-page">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langueUI} iconesAide /></main>;
 
@@ -263,4 +269,9 @@ function RequestCard({ request, messages, langue, onChanged }: { request: Reques
       : <button type="button" className="link" disabled={busy} onClick={() => setConfirmer(true)}>{T.annulerDemande}</button>)}
     {error && <p className="error" role="alert">{error}</p>}
   </article>;
+}
+
+/** Écran n° 2 (modèle commun hors connexion) : texte retenu tant qu'aucune file d'envoi n'existe pour l'aide. */
+function horsLigneAide(langue: string) {
+  return langue === 'en' ? 'Your help request needs a connection. Nothing has been sent: try again when you are back online.' : 'Ta demande d’aide demande une connexion. Rien n’a été envoyé : réessaie quand la connexion sera revenue.';
 }

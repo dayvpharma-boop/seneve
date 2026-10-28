@@ -445,3 +445,18 @@ it('bilan hebdomadaire anglais : titre et retour localisés, sans préremplissag
  at('/journal?ecrire=1&depuis=habitudes&bilan=semaine&periode=3&inscription=20000000-0000-4000-8000-000000000001&lang=en');
  expect(await screen.findByRole('textbox')).toHaveValue('');expect(screen.getByRole('heading',{name:'Weekly review 3'})).toBeVisible();expect(screen.getByRole('link',{name:'← Back to my reviews'})).toHaveAttribute('href','/habitudes/aujourdhui?historique=1&lang=en#hd-historique');expect(writes).toHaveLength(0);
 });
+
+describe('aide hors connexion (modèle Stitch n° 2 du 28/10/2026)', () => {
+  it('sans réseau, la demande n’est pas envoyée et le texte reste dans le champ', async () => {
+    at('/aide?lang=fr&motif=adresse-email');
+    const champ = await screen.findByRole('textbox');
+    const texte = (champ as HTMLTextAreaElement).value;
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false });
+    try {
+      fireEvent.submit(document.querySelector('.aide-form')!);
+      expect(await screen.findByText('Ta demande d’aide demande une connexion. Rien n’a été envoyé : réessaie quand la connexion sera revenue.')).toBeInTheDocument();
+      expect(rpcs.some(x => x.name === 'request_help')).toBe(false);
+      expect(screen.getByRole('textbox')).toHaveValue(texte);
+    } finally { Object.defineProperty(navigator, 'onLine', { configurable: true, value: true }); }
+  });
+});
