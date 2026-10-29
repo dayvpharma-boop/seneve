@@ -1,4 +1,4 @@
-import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 const mocks=vi.hoisted(()=>({charger:vi.fn(),rpc:vi.fn()}));
 vi.mock('@/lib/habitudes-jour-recette',()=>({chargerJourRecette:mocks.charger,chargerHistoriqueRecette:vi.fn()}));
@@ -22,7 +22,8 @@ describe('Habitudes & Défis hors connexion (décision du 29/10/2026 : lire et n
  it('en ligne, la journée est gardée sur l’appareil pour ce compte seulement',async()=>{
   render(<ActivitesJourRecette enrollmentId={E} participantId="P1" dateLocale={aujourdhui} langue="fr" fuseau={F}/>);
   await screen.findByRole('heading',{name:'Gratitude du matin'});
-  expect(copiesJourHdValides(U)).toHaveLength(1);
+  // La copie est écrite après l'affichage : on attend son écriture au lieu de supposer sa date.
+  await waitFor(()=>expect(copiesJourHdValides(U)).toHaveLength(1));
   expect(copiesJourHdValides('autre-compte')).toHaveLength(0);
  });
  it('une copie d’un autre jour, ou d’un accès terminé, n’est pas proposée ; la déconnexion l’efface',()=>{
