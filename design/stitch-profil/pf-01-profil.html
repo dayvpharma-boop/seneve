@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mon profil - SÉNEVÉ</title>
+  <!-- Google Fonts: Outfit & Literata -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400;1,7..72,500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Symbols Rounded -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      width: 100%;
+      max-width: 390px;
+      margin: 0 auto;
+      background-color: #F2F3EB;
+      color: #243125;
+      font-family: 'Outfit', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .font-serif {
+      font-family: 'Literata', serif;
+    }
+
+    .font-sans {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .material-symbols-rounded {
+      font-family: 'Material Symbols Rounded';
+      font-weight: 300;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: #F2F3EB;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 16px;
+      border-bottom: 1px solid #CDD7C5;
+    }
+
+    .top-bar-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: #243125;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    .top-bar-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #243125;
+      text-align: center;
+      flex: 1;
+    }
+
+    .top-bar-spacer {
+      width: 44px;
+    }
+
+    /* Scrollable Content */
+    .content {
+      flex: 1;
+      padding: 16px 16px 100px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Identity Hero Card */
+    .hero-card {
+      position: relative;
+      background: linear-gradient(145deg, #E5EADD 0%, #FCFDF7 100%);
+      border: 1px solid #CDD7C5;
+      border-radius: 24px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(36, 49, 37, 0.03);
+    }
+
+    /* Mustard seed / young sprout line decoration in corner */
+    .sprout-motif {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      opacity: 0.28;
+      color: #38523C;
+      pointer-events: none;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background-color: #38523C;
+      color: #FCFDF7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(56, 82, 60, 0.18);
+    }
+
+    .camera-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      background-color: #FCFDF7;
+      border: 1px solid #CDD7C5;
+      color: #38523C;
+      border-radius: 20px;
+      padding: 4px 8px 4px 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+
+    .camera-badge .material-symbols-rounded {
+      font-size: 14px;
+    }
+
+    .profile-name {
+      font-size: 26px;
+      font-weight: 600;
+      color: #243125;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+
+    .profile-email {
+      font-size: 14px;
+      color: #52604E;
+      margin-bottom: 8px;
+    }
+
+    .edit-name-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: #38523C;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .edit-name-btn .material-symbols-rounded {
+      font-size: 15px;
+    }
+
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .pill-chip {
+      background-color: #FCFDF7;
+      border: 1px solid #CDD7C5;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: #243125;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .pill-chip .material-symbols-rounded {
+      font-size: 16px;
+      color: #B79755; /* small gold detail */
+    }
+
+    /* Section Titles */
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #52604E;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    /* Generic Cards */
+    .card-surface {
+      background-color: #FCFDF7;
+      border: 1px solid #CDD7C5;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(36, 49, 37, 0.02);
+    }
+
+    .section-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Chemin Section Cards */
+    .chemin-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chemin-card {
+      background-color: #FCFDF7;
+      border: 1px solid #CDD7C5;
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chemin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .chemin-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #243125;
+      line-height: 1.3;
+    }
+
+    .chemin-step {
+      font-size: 13px;
+      font-weight: 500;
+      color: #52604E;
+      white-space: nowrap;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background-color: #EDF0E7;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      width: calc((5 / 14) * 100%);
+      height: 100%;
+      background-color: #38523C;
+      border-radius: 999px;
+    }
+
+    .link-action {
+      align-self: flex-start;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #38523C;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .objectif-text {
+      font-family: 'Literata', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: #243125;
+      line-height: 1.45;
+    }
+
+    .objectif-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .small-text-btn {
+      background: none;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #38523C;
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+
+    /* Grouped List Card */
+    .grouped-list {
+      background-color: #FCFDF7;
+      border: 1px solid #CDD7C5;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .list-row {
+      display: flex;
+      align-items: center;
+      padding: 13px 16px;
+      gap: 12px;
+      min-height: 52px;
+      cursor: pointer;
+      background-color: #FCFDF7;
+      transition: background-color 0.15s ease;
+    }
+
+    .list-row:not(:last-child) {
+      border-bottom: 1px solid #CDD7C5;
+    }
+
+    .icon-tile {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background-color: #EDF0E7;
+      color: #38523C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .icon-tile .material-symbols-rounded {
+      font-size: 19px;
+    }
+
+    .row-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .row-label {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: #243125;
+    }
+
+    .row-value {
+      font-size: 13px;
+      color: #52604E;
+      text-align: right;
+    }
+
+    .row-chevron {
+      color: #7D8B76;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 2px;
+    }
+
+    .row-chevron .material-symbols-rounded {
+      font-size: 19px;
+    }
+
+    /* Mes données notice */
+    .data-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background-color: #EDF0E7;
+      border: 1px solid #CDD7C5;
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+
+    .data-notice .material-symbols-rounded {
+      font-size: 18px;
+      color: #B79755; /* small gold detail */
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .data-notice-text {
+      font-size: 12.5px;
+      color: #52604E;
+      line-height: 1.4;
+    }
+
+    /* Actions Bottom */
+    .account-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      height: 48px;
+      min-height: 48px;
+      background-color: transparent;
+      border: 1.5px solid #38523C;
+      border-radius: 16px;
+      color: #38523C;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-delete-link {
+      background: none;
+      border: none;
+      color: #ba1a1a;
+      font-size: 13px;
+      font-family: 'Outfit', sans-serif;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 6px 12px;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 390px;
+      height: 68px;
+      background-color: #FCFDF7;
+      border-top: 1px solid #CDD7C5;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 50;
+      padding: 0 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      height: 100%;
+      min-height: 44px;
+      color: #52604E;
+      text-decoration: none;
+      gap: 3px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-item .material-symbols-rounded {
+      font-size: 22px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .nav-item.active {
+      color: #38523C;
+    }
+
+    .nav-item.active .material-symbols-rounded {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .nav-item.active .nav-label {
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <button class="top-bar-btn" aria-label="Retour">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <h1 class="top-bar-title font-sans">Mon profil</h1>
+    <div class="top-bar-spacer"></div>
+  </header>
+
+  <!-- Content Container -->
+  <main class="content">
+
+    <!-- 1. Identity Hero Card -->
+    <section class="hero-card">
+      <!-- Subtle Sprout Motif Line Art -->
+      <svg class="sprout-motif" width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M28 48C28 36 28 26 36 18C42 12 49 10 50 10C50 11 48 18 42 24C36 30 28 34 28 48Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M28 36C28 29 25 21 19 16C14 11 8 9 7 9C7 10 9 16 14 21C19 26 25 30 28 36Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="28" cy="48" r="2" fill="currentColor"/>
+      </svg>
+
+      <!-- Avatar & Changer ma photo -->
+      <div class="avatar-wrapper">
+        <div class="avatar">G</div>
+        <button class="camera-badge" aria-label="Changer ma photo">
+          <span class="material-symbols-rounded">photo_camera</span>
+          <span>Changer ma photo</span>
+        </button>
+      </div>
+
+      <!-- Name & Email -->
+      <h2 class="profile-name">Grâce</h2>
+      <p class="profile-email">grace@exemple.com</p>
+
+      <!-- Edit name button -->
+      <button class="edit-name-btn">
+        <span class="material-symbols-rounded">edit</span>
+        <span>Modifier mon prénom</span>
+      </button>
+
+      <!-- Chips row -->
+      <div class="chips-row">
+        <span class="pill-chip">
+          <span class="material-symbols-rounded">auto_stories</span>
+          <span>1 parcours en cours</span>
+        </span>
+        <span class="pill-chip">
+          <span class="material-symbols-rounded">spa</span>
+          <span>Racine : Fidélité dans les petites choses</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- 2. Section "Mon chemin" -->
+    <section class="section-group">
+      <h3 class="section-title">Mon chemin</h3>
+      <div class="chemin-cards">
+        <!-- Card Accompagnement -->
+        <div class="chemin-card">
+          <div class="chemin-header">
+            <span class="chemin-title">Accompagnement du livre — 14 jours</span>
+            <span class="chemin-step">Jour 5 sur 14</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill"></div>
+          </div>
+          <a href="#" class="link-action">
+            <span>Ouvrir ma journée</span>
+            <span class="material-symbols-rounded" style="font-size: 16px;">arrow_forward</span>
+          </a>
+        </div>
+
+        <!-- Card Mon objectif -->
+        <div class="chemin-card">
+          <div class="chemin-header">
+            <span class="chemin-title">Mon objectif</span>
+          </div>
+          <p class="objectif-text">« Mettre de côté la dîme chaque semaine »</p>
+          <div class="objectif-footer">
+            <button class="small-text-btn">Modifier</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Section "Réglages" -->
+    <section class="section-group">
+      <h3 class="section-title">Réglages</h3>
+      <div class="grouped-list">
+        <!-- Préférences -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">tune</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">Préférences</span>
+            <span class="row-value">Français · Clair · Ivoire</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- Rappels et annonces -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">notifications</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">Rappels et annonces</span>
+            <span class="row-value">Matin 7 h 30</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- E-mail du matin -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">mail</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">E-mail du matin</span>
+            <span class="row-value">Désactivé</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- WhatsApp -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">chat</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">WhatsApp</span>
+            <span class="row-value">Non relié</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- J’ai un code de place -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">confirmation_number</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">J’ai un code de place</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Section "Mon compte" -->
+    <section class="section-group">
+      <h3 class="section-title">Mon compte</h3>
+      <div class="grouped-list">
+        <!-- Ma bibliothèque -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">auto_stories</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">Ma bibliothèque</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- Mes accès -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">key</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">Mes accès</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- Changer mon mot de passe -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">lock</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">Changer mon mot de passe</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- Changer mon adresse e-mail -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">alternate_email</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">Changer mon adresse e-mail</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- Aide et contact -->
+        <div class="list-row">
+          <div class="icon-tile">
+            <span class="material-symbols-rounded">help</span>
+          </div>
+          <div class="row-content">
+            <span class="row-label">Aide et contact</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Section "Mes données" -->
+    <section class="section-group">
+      <h3 class="section-title">Mes données</h3>
+      
+      <!-- Privacy Note -->
+      <div class="data-notice">
+        <span class="material-symbols-rounded">lock</span>
+        <p class="data-notice-text">Ton journal est privé. Tu choisis les extraits que tu partages avec l’équipe.</p>
+      </div>
+
+      <div class="grouped-list">
+        <!-- Comment nous protégeons tes données -->
+        <div class="list-row">
+          <div class="row-content">
+            <span class="row-label">Comment nous protégeons tes données</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- Télécharger mon profil et mon journal -->
+        <div class="list-row">
+          <div class="row-content">
+            <span class="row-label">Télécharger mon profil et mon journal</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- Demander une copie de toutes mes données -->
+        <div class="list-row">
+          <div class="row-content">
+            <span class="row-label">Demander une copie de toutes mes données</span>
+          </div>
+          <div class="row-chevron">
+            <span class="material-symbols-rounded">chevron_right</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Bottom Actions: Logout & Delete Account -->
+    <section class="account-actions">
+      <button class="btn-logout">Se déconnecter</button>
+      <button class="btn-delete-link">Demander la suppression de mon compte</button>
+    </section>
+
+  </main>
+
+  <!-- 7. Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item">
+      <span class="material-symbols-rounded">wb_sunny</span>
+      <span class="nav-label">Aujourd’hui</span>
+    </button>
+    <button class="nav-item">
+      <span class="material-symbols-rounded">edit_note</span>
+      <span class="nav-label">Journal</span>
+    </button>
+    <button class="nav-item">
+      <span class="material-symbols-rounded">psychology</span>
+      <span class="nav-label">Coach</span>
+    </button>
+    <button class="nav-item">
+      <span class="material-symbols-rounded">trending_up</span>
+      <span class="nav-label">Progrès</span>
+    </button>
+    <button class="nav-item active">
+      <span class="material-symbols-rounded">person</span>
+      <span class="nav-label">Profil</span>
+    </button>
+  </nav>
+
+</body>
+</html>
