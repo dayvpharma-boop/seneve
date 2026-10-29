@@ -55,6 +55,8 @@ import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
 import { estProgrammeHdReel } from '@/lib/habitudes-programmes';
+import { IconeEdition } from '@/components/IconeEdition';
+import { entreesFile, envoyerFile, garderAction, reponseConfirme, useEntreeFile, type ChoixHorsLigne, type EntreeFile, type TransportFile } from '@/lib/file-actions';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
@@ -218,10 +220,12 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   useEffect(() => { void refresh(); }, [refresh]);
   // Retour du réseau : on recharge les vraies données.
   const etaitHorsLigne = useRef(false);
+  // Les actions notées sans réseau partent d'abord (même identifiant, aucun doublon), puis les données sont relues.
   useEffect(() => {
     if (!enLigne) { etaitHorsLigne.current = true; return; }
-    if (etaitHorsLigne.current) { etaitHorsLigne.current = false; void refresh(); }
-  }, [enLigne, refresh]);
+    const enAttente = entreesFile(userId).some(e => e.statut !== 'refuse');
+    if (etaitHorsLigne.current || enAttente) { etaitHorsLigne.current = false; void envoyerFile(userId, supabase as unknown as TransportFile).finally(() => { void refresh(); }); }
+  }, [enLigne, refresh, userId]);
   // Lien vers l'administration, affiché seulement aux membres de l'équipe (sans bloquer l'espace).
   useEffect(() => {
     void Promise.resolve(supabase.rpc('staff_me')).then(r => {
@@ -316,6 +320,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const horsLigne = copieDu !== null || !enLigne;
   const habitudesTerminees=finished&&Boolean(data.habitudes?.includes(enr.enrollment_id));
   const lectureSeule = paused || cloture || horsLigne || habitudesTerminees;
+  // Décision du 29/10/2026 : sans réseau, l'action du jour des parcours (hors Habitudes & Défis) peut être notée sur l'appareil.
+  const actionLocale = horsLigne && !paused && !cloture && !habitudesTerminees && enr.etat === 'active' && !estProgrammeHdReel(enr.programme_id);
 
   /** Moments d'un jour : le message 1 d'abord (ou le premier contenu), puis les autres par numéro. */
   const momentsDuJour = (jour: number): Moment[] => {
@@ -338,7 +344,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   // Une action enregistrée met à jour les données de l'espace (le message de reprise disparaît aussitôt).
   const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
   const lienJournal = (q: Activity) => `/journal?inscription=${enr.enrollment_id}&activite=${q.activity_id}`;
-  const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} lecture={momentParam > 0} readOnly={lectureSeule} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;
+  const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} lecture={momentParam > 0} readOnly={lectureSeule && !actionLocale} horsLigne={horsLigne} userId={userId} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;
 
   if(habitudesActivees() && data.habitudes?.includes(enr.enrollment_id)){
     const en=enr.langue==='en';
@@ -523,7 +529,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     {action && <section className="today-section" aria-labelledby="titre-action">
       <h2 id="titre-action"><IconeJournee nom={current === 1 ? "self_improvement" : "task_alt"} taille={22} />{T.action}</h2>
       {carteAction(action, false)}
-      {horsLigne && <p className="offline-action-note"><IconeJournee nom="save" taille={20} />{enr.langue === 'en' ? 'Read your action now. A connection is needed to record its completion.' : 'Tu peux relire ton action. Une connexion est nécessaire pour enregistrer sa réalisation.'}</p>}
+      {horsLigne && <p className="offline-action-note"><IconeJournee nom="save" taille={20} />{actionLocale ? (enr.langue === 'en' ? 'You can record your action: it stays on this device and will be sent when the network is back.' : 'Tu peux noter ton action : elle reste sur cet appareil et sera envoyée au retour du réseau.') : (enr.langue === 'en' ? 'Read your action now. A connection is needed to record its completion.' : 'Tu peux relire ton action. Une connexion est nécessaire pour enregistrer sa réalisation.')}</p>}
     </section>}
 
     {/* Bouton coach permanent, en français et en anglais (décision de Dr Justin du 25/10/2026). */}
@@ -553,7 +559,7 @@ function IllustrationLecture({ photographique = false }: { photographique?: bool
 
 type Choix = 'realisee' | 'partielle' | 'preparee' | 'aide_demandee';
 
-function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 'fr', titre = true, lecture = false, onEnregistre }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; langue?: string; titre?: boolean; lecture?: boolean; onEnregistre?: (st: State) => void }) {
+function ActionCard({ enrollmentId, activity, state, readOnly = false, horsLigne = false, userId, langue = 'fr', titre = true, lecture = false, onEnregistre }: { enrollmentId: string; activity: Activity; state: State | undefined; readOnly?: boolean; horsLigne?: boolean; userId?: string; langue?: string; titre?: boolean; lecture?: boolean; onEnregistre?: (st: State) => void }) {
   const T = textes(langue);
   const [etat, setEtat] = useState<string>(state?.etat ?? 'non_commencee');
   const [aide, setAide] = useState<boolean>(Boolean(state?.aide_demandee));
@@ -562,26 +568,36 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
   const [error, setError] = useState(false);
   // Un identifiant par choix, réutilisé si l'envoi échoue : une nouvelle tentative ne crée jamais de doublon.
   const eventIds = useRef<Partial<Record<Choix, string | null>>>({});
+  // File locale (sans réseau) : état de sauvegarde visible et réponse du serveur appliquée à son arrivée.
+  const { entree, resultat } = useEntreeFile(userId, enrollmentId, activity.activity_id);
+  const [recu, setRecu] = useState(false);
+  const [locale, setLocale] = useState(false);
+  function appliquer(r: { etat?: string; aide_demandee?: boolean }) {
+    setEtat(r.etat ?? etat);
+    setAide(Boolean(r.aide_demandee));
+    if (r.etat === 'realisee' && !doneAt) setDoneAt(new Date().toISOString());
+    onEnregistre?.({ enrollment_id: enrollmentId, activity_id: activity.activity_id, etat: r.etat ?? etat, aide_demandee: Boolean(r.aide_demandee), realisee_le: r.etat === 'realisee' ? (doneAt || new Date().toISOString()) : (state?.realisee_le ?? null) });
+  }
+  useEffect(() => { if (resultat) { appliquer(resultat); setRecu(true); } }, [resultat]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function record(choix: Choix) {
     if (pending) return;
+    // Sans réseau : l'action est gardée sur l'appareil, jamais présentée comme reçue par SÉNEVÉ.
+    if (choix !== 'aide_demandee' && userId && (horsLigne || (typeof navigator !== 'undefined' && navigator.onLine === false))) {
+      setError(false); setRecu(false);
+      setLocale(garderAction(userId, enrollmentId, activity.activity_id, choix as ChoixHorsLigne) === null);
+      return;
+    }
     const id = eventIdFor(eventIds.current[choix] ?? null);
     eventIds.current[choix] = id;
     setPending(choix); setError(false);
     try {
       const { data, error } = await supabase.rpc('record_progress', { p_enrollment_id: enrollmentId, p_activity_id: activity.activity_id, p_client_event_id: id, p_etat: choix, p_canal: 'web' });
       const r = data as { etat?: string; aide_demandee?: boolean } | null;
-      const ok = !error && r && (choix === 'aide_demandee' ? r.aide_demandee === true
-        : choix === 'realisee' ? r.etat === 'realisee'
-        : choix === 'partielle' ? (r.etat === 'partielle' || r.etat === 'realisee')
-        : (r.etat === 'preparee' || r.etat === 'partielle' || r.etat === 'realisee'));
-      if (!ok || !r) throw error ?? new Error('bad');
+      if (error || !r || !reponseConfirme(choix, r)) throw error ?? new Error('bad');
       eventIds.current[choix] = null;
       // L'état affiché est celui renvoyé par la base (un état déjà plus avancé n'est jamais rétrogradé).
-      setEtat(r.etat ?? etat);
-      setAide(Boolean(r.aide_demandee));
-      if (r.etat === 'realisee' && !doneAt) setDoneAt(new Date().toISOString());
-      onEnregistre?.({ enrollment_id: enrollmentId, activity_id: activity.activity_id, etat: r.etat ?? etat, aide_demandee: Boolean(r.aide_demandee), realisee_le: r.etat === 'realisee' ? (doneAt || new Date().toISOString()) : (state?.realisee_le ?? null) });
+      appliquer(r);
     } catch { setError(true); }
     finally { setPending(null); }
   }
@@ -596,16 +612,44 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, langue = 
     {!realisee && etat === 'partielle' && <p className="success" role="status">{T.partielleNotee}</p>}
     {!realisee && aide && <div className="aide-notee" role="status"><p>{T.aideNotee}</p>
       <div className="coach-boutons"><Link className="btn btn-link" to={avecLangue("/coach", langue)}><IconeJourneeSuite nom="chat" taille={20}/>{T.demanderCoach}</Link><Link className="btn-secondaire" to={`/aide?inscription=${enrollmentId}`}>{T.ecrireEquipe}</Link></div></div>}
-    {!realisee && !readOnly && <>
+    {(entree || recu || locale) && <EtatSauvegarde entree={entree} recu={recu && !entree} echecLocal={locale && !entree} langue={langue} enrollmentId={enrollmentId} reessayer={() => { if (userId) void envoyerFile(userId, supabase as unknown as TransportFile, true); }} />}
+    {!realisee && !readOnly && !(entree && entree.statut !== 'refuse') && <>
       <button type="button" className="btn btn-or action-btn" disabled={pending !== null} onClick={() => void record('realisee')}>{lecture ? <IconeLecture nom="done" taille={18} /> : <IconeJournee nom="check" taille={18}/>}{pending === 'realisee' ? T.enregistrement : T.bouton}</button>
       <div className="choix-row">
         {/* « Préparée » ne compte jamais comme réalisée ; proposé seulement tant que rien de plus avancé n'est noté. */}
         {etat === 'non_commencee' && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('preparee')}>{lecture && <IconeLecture nom="hourglass_top" taille={18} />}{pending === 'preparee' ? T.enregistrement : T.boutonPrepa}</button>}
         {etat !== 'partielle' &&<button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('partielle')}>{lecture && <IconeLecture nom="timelapse" taille={18} />}{pending === 'partielle' ? T.enregistrement : T.boutonPartie}</button>}
-        {!aide && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('aide_demandee')}>{lecture && <IconeLecture nom="support" taille={18} />}{pending === 'aide_demandee' ? T.enregistrement : T.boutonAide}</button>}
+        {!aide && !horsLigne && <button type="button" className="btn-secondaire" disabled={pending !== null} onClick={() => void record('aide_demandee')}>{lecture && <IconeLecture nom="support" taille={18} />}{pending === 'aide_demandee' ? T.enregistrement : T.boutonAide}</button>}
       </div>
       {error && <p className="error" role="alert">{T.erreur}</p>}
     </>}
   </div>;
 }
 
+
+/** Maquette Stitch n° 6 (28/10/2026) : état réel de la sauvegarde d'une action notée sans réseau. */
+function EtatSauvegarde({ entree, recu, echecLocal, langue, enrollmentId, reessayer }: { entree: EntreeFile | null; recu: boolean; echecLocal: boolean; langue: string; enrollmentId: string; reessayer: () => void }) {
+  const en = langue === 'en';
+  const choix = entree ? (entree.choix === 'realisee' ? (en ? 'action done' : 'action réalisée') : entree.choix === 'partielle' ? (en ? 'partly done' : 'réalisée en partie') : (en ? 'prepared' : 'préparée')) : '';
+  const etat = echecLocal ? 'refuse-local' : recu ? 'recu' : entree?.statut === 'appareil' && typeof navigator !== 'undefined' && navigator.onLine !== false ? 'attente' : entree?.statut ?? 'attente';
+  const v: Record<string, { cls: string; icone: 'offline_pin' | 'schedule' | 'sync' | 'check_circle' | 'error'; titre: string; phrase?: string }> = {
+    appareil: { cls: 'is-appareil', icone: 'offline_pin', titre: en ? 'Saved on this device' : 'Enregistré sur cet appareil', phrase: en ? 'Not sent to SÉNEVÉ yet.' : 'Pas encore envoyé à SÉNEVÉ.' },
+    attente: { cls: 'is-attente', icone: 'schedule', titre: en ? 'Waiting for connection' : 'En attente de connexion', phrase: en ? 'Will be sent when the network is back.' : 'Sera envoyé au retour du réseau.' },
+    envoi: { cls: 'is-envoi', icone: 'sync', titre: en ? 'Sending…' : 'Envoi en cours…' },
+    recu: { cls: 'is-recu', icone: 'check_circle', titre: en ? 'Saved' : 'Enregistré', phrase: en ? 'Received by SÉNEVÉ.' : 'Reçu par SÉNEVÉ.' },
+    refuse: { cls: 'is-refuse', icone: 'error', titre: en ? 'Not saved' : 'Non enregistré', phrase: en ? 'Your access needs to be checked. Try again or ask for help.' : 'Ton accès doit être vérifié. Réessaie ou demande de l’aide.' },
+    'refuse-local': { cls: 'is-refuse', icone: 'error', titre: en ? 'Not saved' : 'Non enregistré', phrase: en ? 'This device could not keep your action. Try again when you are back online.' : 'Cet appareil n’a pas pu garder ton action. Réessaie quand la connexion sera revenue.' },
+  };
+  const x = v[etat] ?? v.attente!;
+  return <div className={`etat-sauvegarde ${x.cls}`} role="status">
+    {choix && <p className="etat-choix">{en ? 'Your choice: ' : 'Ton choix : '}{choix}</p>}
+    <span className="etat-badge"><IconeSauvegarde nom={x.icone} />{x.titre}</span>
+    {x.phrase && <p>{x.phrase}</p>}
+    {etat === 'refuse' && <p className="etat-liens"><button type="button" className="link" onClick={reessayer}>{en ? 'Try again' : 'Réessayer'}</button><Link to={`/aide?inscription=${enrollmentId}`}>{en ? 'Ask for help' : 'Demander de l’aide'}</Link></p>}
+  </div>;
+}
+
+/** Icônes officielles déjà présentes dans le site (pas de nouveau tracé) : « offline_pin » tient lieu de téléphone. */
+function IconeSauvegarde({ nom }: { nom: 'offline_pin' | 'schedule' | 'sync' | 'check_circle' | 'error' }) {
+  return nom === 'error' ? <IconeEdition nom="error" taille={18} /> : <IconeJournee nom={nom} taille={18} />;
+}

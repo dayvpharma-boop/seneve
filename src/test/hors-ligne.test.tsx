@@ -42,7 +42,7 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 
 describe('Espace hors connexion', () => {
-  it('sans réseau, la dernière copie reste lisible et les actions sont fermées', async () => {
+  it('sans réseau, la dernière copie reste lisible et l’action du jour peut être notée sur l’appareil (décision du 29/10/2026)', async () => {
     const premier = ouvrir();
     expect(await screen.findByRole('button', { name: "J'ai réalisé cette action" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
@@ -52,10 +52,11 @@ describe('Espace hors connexion', () => {
     reseau = false;
     ouvrir();
     expect(await screen.findByText(/Tu n’as pas de connexion. Tes brouillons restent sur cet appareil./)).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: "J'ai réalisé cette action" })).not.toBeInTheDocument();
+    expect(screen.getByText('Tu peux noter ton action : elle reste sur cet appareil et sera envoyée au retour du réseau.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: "J'ai besoin d'aide" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
     expect(await screen.findByText('Texte du jour 2')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: "J'ai réalisé cette action" })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "J'ai réalisé cette action" })).toBeInTheDocument();
   });
 
   it('sans réseau et sans copie : message d’erreur habituel', async () => {
