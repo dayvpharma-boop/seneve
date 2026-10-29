@@ -2,15 +2,17 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const m = vi.hoisted(() => ({ rpc: vi.fn(), session: true }));
+const m = vi.hoisted(() => ({ rpc: vi.fn(), session: true, upload: vi.fn() }));
 vi.mock('@/lib/supabase', () => ({
   supabase: {
     auth: { getSession: () => Promise.resolve({ data: { session: m.session ? { user: { id: 'U1' } } : null }, error: null }), onAuthStateChange: () => ({ data: { subscription: { unsubscribe: vi.fn() } } }) },
     rpc: (n: string, a: unknown) => m.rpc(n, a),
+    storage: { from: (b: string) => ({ getPublicUrl: (p: string) => ({ data: { publicUrl: `https://stockage.test/${b}/${p}` } }), upload: (p: string, f: Blob, o: unknown) => m.upload(b, p, f, o) }) },
     from: () => { const q: Record<string, unknown> = {}; for (const k of ['select', 'order']) q[k] = () => q; q.then = (ok: (v: unknown) => unknown) => Promise.resolve({ data: [{ programme_id: 'P30', nom: 'Formation 30 jours' }], error: null }).then(ok); return q; },
   },
   siteUrl: (p: string) => p,
 }));
+vi.mock('@/lib/annonces-medias', async orig => ({ ...(await orig<typeof import('@/lib/annonces-medias')>()), preparerImageAnnonce: async () => new Blob(['jpeg'], { type: 'image/jpeg' }) }));
 import { Notifications } from '@/routes/notifications';
 import { ClocheNotifications } from '@/components/ClocheNotifications';
 import { AnnoncesAdministration } from '@/components/AnnoncesAdministration';
@@ -25,7 +27,7 @@ const liste = {
     { type: 'annonce', id: 'A0', date: '2026-10-27T09:00:00Z', titre: 'Ancienne annonce', texte: 'Déjà vue.', langue: 'fr', nouveau: false },
   ],
 };
-beforeEach(() => { m.session = true; m.rpc.mockReset(); m.rpc.mockImplementation(async (n: string) => n === 'mes_notifications' ? { data: liste, error: null } : n === 'marquer_notifications_vues' ? { data: '2026-10-29T10:00:00Z', error: null } : n === 'staff_annonces' ? { data: [], error: null } : { data: null, error: null }); });
+beforeEach(() => { m.session = true; m.upload.mockReset(); m.upload.mockResolvedValue({ data: {}, error: null }); m.rpc.mockReset(); m.rpc.mockImplementation(async (n: string) => n === 'mes_notifications' ? { data: liste, error: null } : n === 'marquer_notifications_vues' ? { data: '2026-10-29T10:00:00Z', error: null } : n === 'staff_annonces' ? { data: [], error: null } : { data: null, error: null }); });
 afterEach(() => { cleanup(); Object.defineProperty(navigator, 'onLine', { configurable: true, value: true }); });
 const page = () => render(<MemoryRouter initialEntries={['/notifications']}><Routes><Route path="/notifications" element={<Notifications />} /></Routes></MemoryRouter>);
 
@@ -135,5 +137,65 @@ describe('annonces dans l’administration', () => {
     expect(screen.getByText('Pour envoyer, écris un titre et un message, puis choisis un parcours.')).toBeInTheDocument();
     fireEvent.change(await screen.findByLabelText('Parcours'), { target: { value: 'P30' } });
     expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeEnabled();
+  });
+});
+
+describe('image et vidéo dans les annonces (décision du 29/10/2026)', () => {
+  it('le participant voit l’image ; la vidéo ne se charge qu’après un appui', async () => {
+    m.rpc.mockImplementation(async (n: string) => n === 'mes_notifications' ? { data: { vu_jusqu_a: null, non_lues: 1, elements: [
+      { type: 'annonce', id: 'A5', date: '2026-10-29T09:00:00Z', titre: 'Culte spécial', texte: 'Regarde la vidéo.', langue: 'fr', nouveau: true, image: '11111111-1111-4111-8111-111111111111.jpg', video: 'https://youtu.be/dQw4w9WgXcQ' },
+    ] }, error: null } : { data: null, error: null });
+    page();
+    const img = await screen.findByRole('img', { name: 'Image de l’annonce : Culte spécial' });
+    expect(img).toHaveAttribute('src', 'https://stockage.test/annonces/11111111-1111-4111-8111-111111111111.jpg');
+    expect(document.querySelector('iframe')).toBeNull();
+    expect(screen.getByRole('link', { name: 'Ouvrir sur YouTube' })).toHaveAttribute('href', 'https://youtu.be/dQw4w9WgXcQ');
+    fireEvent.click(screen.getByRole('button', { name: 'Regarder la vidéo (YouTube)' }));
+    expect(screen.getByTitle('Vidéo : Culte spécial')).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+  });
+  it('l’administration refuse un lien hors YouTube/TikTok', async () => {
+    render(<AnnoncesAdministration />);
+    await screen.findByText('Aucune annonce pour le moment.');
+    fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'T' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'X' } });
+    fireEvent.change(screen.getByLabelText('Lien vidéo YouTube ou TikTok (facultatif)'), { target: { value: 'https://exemple.com/video' } });
+    expect(screen.getByRole('alert')).toHaveTextContent('Ce lien n’est pas reconnu');
+    expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Lien vidéo YouTube ou TikTok (facultatif)'), { target: { value: 'https://www.tiktok.com/@drjustin/video/7300000000000000000' } });
+    expect(screen.getByText('Vidéo TikTok reconnue.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeEnabled();
+  });
+  it('envoie l’image sous le nom de l’annonce, puis publie avec l’image et la vidéo', async () => {
+    const createObjectURL = vi.fn(() => 'blob:apercu'), revokeObjectURL = vi.fn();
+    Object.assign(URL, { createObjectURL, revokeObjectURL });
+    render(<AnnoncesAdministration />);
+    await screen.findByText('Aucune annonce pour le moment.');
+    fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'Culte' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Dimanche.' } });
+    fireEvent.change(screen.getByLabelText('Image (facultatif)'), { target: { files: [new File(['x'], 'photo.png', { type: 'image/png' })] } });
+    expect(await screen.findByRole('img', { name: 'Aperçu de l’image de l’annonce' })).toHaveAttribute('src', 'blob:apercu');
+    fireEvent.change(screen.getByLabelText('Lien vidéo YouTube ou TikTok (facultatif)'), { target: { value: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
+    expect(screen.getByText(/Publier « Culte » avec son image et sa vidéo pour tous les participants/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
+    expect(await screen.findByText(/Annonce publiée/)).toBeInTheDocument();
+    const appel = m.rpc.mock.calls.find(c => c[0] === 'staff_annonce_publier')![1] as { p_client_id: string; p_image_path: string; p_video_url: string };
+    expect(m.upload).toHaveBeenCalledWith('annonces', `${appel.p_client_id}.jpg`, expect.any(Blob), expect.objectContaining({ contentType: 'image/jpeg', upsert: false }));
+    expect(appel.p_image_path).toBe(`${appel.p_client_id}.jpg`);
+    expect(appel.p_video_url).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  });
+  it('si l’image ne part pas, l’annonce n’est pas publiée et le dit', async () => {
+    Object.assign(URL, { createObjectURL: vi.fn(() => 'blob:apercu'), revokeObjectURL: vi.fn() });
+    m.upload.mockResolvedValue({ data: null, error: { statusCode: '500', message: 'Failed to fetch' } });
+    render(<AnnoncesAdministration />);
+    await screen.findByText('Aucune annonce pour le moment.');
+    fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'Culte' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Dimanche.' } });
+    fireEvent.change(screen.getByLabelText('Image (facultatif)'), { target: { files: [new File(['x'], 'photo.jpg', { type: 'image/jpeg' })] } });
+    await screen.findByRole('img', { name: 'Aperçu de l’image de l’annonce' });
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
+    expect(await screen.findByText(/L’image n’a pas pu être envoyée/)).toBeInTheDocument();
+    expect(m.rpc).not.toHaveBeenCalledWith('staff_annonce_publier', expect.anything());
   });
 });

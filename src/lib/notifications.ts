@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from './supabase';
 
 export type ElementNotification =
-  | { type: 'annonce'; id: string; date: string; titre: string; texte: string; langue: string }
+  | { type: 'annonce'; id: string; date: string; titre: string; texte: string; langue: string; image?: string | null; video?: string | null }
   | { type: 'reponse'; id: string; date: string; texte: string; request_id: string }
   | { type: 'rappel_moment'; id: string; date: string; moment: string }
   | { type: 'rappel_habitude'; id: string; date: string; activity_id: string; habit_key: string | null };

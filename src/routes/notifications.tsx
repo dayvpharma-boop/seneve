@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { analyserLienVideo, lienImageAnnonce } from '@/lib/annonces-medias';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ComptePrive } from '@/components/ComptePrive';
 import { BarreNav } from '@/components/BarreNav';
@@ -71,7 +72,30 @@ function Element({ e, en, nouveau }: { e: ElementNotification; en: boolean; nouv
       <p className="nt-titre">{nouveau && <span className="nt-badge">{en ? 'New' : 'Nouveau'}</span>}{titre}</p>
       <time dateTime={e.date}>{date}</time>
       {texte && <p className="nt-texte">{texte}</p>}
+      {e.type === 'annonce' && e.image && <img className="nt-image" src={lienImageAnnonce(e.image)} alt={en ? `Image of the announcement: ${e.titre}` : `Image de l’annonce : ${e.titre}`} loading="lazy" decoding="async" />}
+      {e.type === 'annonce' && e.video && <VideoAnnonce lien={e.video} titre={e.titre} en={en} />}
       {lien && <Link to={lien.to}>{lien.label}</Link>}
     </div>
   </li>;
+}
+
+/** Vidéo d'une annonce : rien n'est chargé depuis YouTube ou TikTok avant que le participant appuie (données mobiles). */
+function VideoAnnonce({ lien, titre, en }: { lien: string; titre: string; en: boolean }) {
+  const [ouverte, setOuverte] = useState(false);
+  const v = analyserLienVideo(lien);
+  if (!v) return null;
+  const nom = v.plateforme === 'youtube' ? 'YouTube' : 'TikTok';
+  const ouvrir = <a className="nt-video-lien" href={v.lien} target="_blank" rel="noopener noreferrer">{en ? `Open on ${nom}` : `Ouvrir sur ${nom}`}</a>;
+  if (!v.integration) return <div className="nt-video">{ouvrir}</div>;
+  return <div className="nt-video">
+    {ouverte
+      ? <div className={`nt-video-cadre${v.verticale ? ' is-verticale' : ''}${v.plateforme === 'tiktok' ? ' is-tiktok' : ''}`}>
+          <iframe src={v.integration} title={en ? `Video: ${titre}` : `Vidéo : ${titre}`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin"
+            allow="encrypted-media; picture-in-picture; fullscreen" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation allow-popups" />
+        </div>
+      : <button type="button" className="nt-video-lancer" onClick={() => setOuverte(true)}>
+          <span aria-hidden="true">▶</span>{en ? `Watch the video (${nom})` : `Regarder la vidéo (${nom})`}
+        </button>}
+    {ouvrir}
+  </div>;
 }

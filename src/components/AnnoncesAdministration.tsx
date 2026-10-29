@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { supabase } from '@/lib/supabase';
+import { analyserLienVideo, envoyerImageAnnonce, IMAGE_MAX_SOURCE, lienImageAnnonce, preparerImageAnnonce } from '@/lib/annonces-medias';
 
-type Annonce = { annonce_id: string; titre: string; texte: string; langue: string; cible: string; programme_id: string | null; publie_le: string; retire_le: string | null };
+type Annonce = { annonce_id: string; titre: string; texte: string; langue: string; cible: string; programme_id: string | null; publie_le: string; retire_le: string | null; image_path?: string | null; video_url?: string | null };
 type Programme = { programme_id: string; nom: string };
 const TITRE_MAX = 120, TEXTE_MAX = 2000;
 
@@ -16,6 +17,12 @@ export function AnnoncesAdministration() {
   const [confirmer, setConfirmer] = useState(false), [occupe, setOccupe] = useState(false);
   const [message, setMessage] = useState(''), [erreur, setErreur] = useState('');
   const [aRetirer, setARetirer] = useState<string | null>(null);
+  // Image réduite sur l'appareil, prête à l'envoi ; aperçu local ; lien vidéo saisi.
+  const [image, setImage] = useState<Blob | null>(null), [apercu, setApercu] = useState<string | null>(null);
+  const [prepImage, setPrepImage] = useState(false), [erreurImage, setErreurImage] = useState('');
+  const [video, setVideo] = useState('');
+  const champImage = useRef<HTMLInputElement | null>(null);
+  useEffect(() => () => { if (apercu) URL.revokeObjectURL(apercu); }, [apercu]);
   // Même identifiant si la publication échoue : un nouvel essai ne crée jamais deux annonces.
   const clientId = useRef<string | null>(null);
 
@@ -34,7 +41,22 @@ export function AnnoncesAdministration() {
   }, []);
   useEffect(() => { void charger(); }, [charger]);
 
-  const valide = titre.trim().length > 0 && titre.trim().length <= TITRE_MAX && texte.trim().length > 0 && texte.trim().length <= TEXTE_MAX && (cible === 'tous' || programme !== '');
+  const lienVideo = analyserLienVideo(video);
+  const videoInvalide = video.trim() !== '' && !lienVideo;
+  const valide = titre.trim().length > 0 && titre.trim().length <= TITRE_MAX && texte.trim().length > 0 && texte.trim().length <= TEXTE_MAX && (cible === 'tous' || programme !== '') && !videoInvalide && !prepImage;
+
+  async function choisirImage(fichier: File | undefined) {
+    modifier(); setErreurImage('');
+    if (!fichier) return;
+    if (fichier.size > IMAGE_MAX_SOURCE) { setErreurImage('Cette image est trop lourde (20 Mo au plus).'); return; }
+    setPrepImage(true);
+    try {
+      const pret = await preparerImageAnnonce(fichier);
+      setImage(pret); setApercu(URL.createObjectURL(pret));
+    } catch { setErreurImage('Cette image ne peut pas être utilisée. Choisis une photo JPEG, PNG ou WebP.'); }
+    finally { setPrepImage(false); if (champImage.current) champImage.current.value = ''; }
+  }
+  function retirerImage() { modifier(); setImage(null); setApercu(null); setErreurImage(''); }
   function modifier() { setConfirmer(false); setMessage(''); setErreur(''); clientId.current = null; }
 
   async function publier(e: FormEvent) {
@@ -43,10 +65,15 @@ export function AnnoncesAdministration() {
     if (!confirmer) { setConfirmer(true); return; }
     clientId.current ??= crypto.randomUUID();
     setOccupe(true); setErreur('');
-    const { error } = await supabase.rpc('staff_annonce_publier', { p_client_id: clientId.current, p_titre: titre, p_texte: texte, p_langue: langue, p_cible: cible, p_programme_id: cible === 'programme' ? programme : null });
+    let chemin: string | null = null;
+    if (image) {
+      try { chemin = await envoyerImageAnnonce(clientId.current, image); }
+      catch { setOccupe(false); setErreur('L’image n’a pas pu être envoyée. Vérifie ta connexion, puis réessaie : l’annonce ne sera pas publiée deux fois.'); return; }
+    }
+    const { error } = await supabase.rpc('staff_annonce_publier', { p_client_id: clientId.current, p_titre: titre, p_texte: texte, p_langue: langue, p_cible: cible, p_programme_id: cible === 'programme' ? programme : null, p_image_path: chemin, p_video_url: lienVideo ? lienVideo.lien : null });
     setOccupe(false);
-    if (error) { setErreur(error.message.includes('Parcours inconnu') ? 'Ce parcours est inconnu. Choisis-en un dans la liste.' : 'L’annonce n’a pas été publiée. Vérifie ta connexion, puis réessaie : elle ne sera pas publiée deux fois.'); return; }
-    clientId.current = null; setTitre(''); setTexte(''); setConfirmer(false);
+    if (error) { setErreur(error.message.includes('Parcours inconnu') ? 'Ce parcours est inconnu. Choisis-en un dans la liste.' : error.message.includes('Lien vidéo invalide') ? 'Ce lien vidéo n’est pas accepté. Colle un lien YouTube ou TikTok.' : 'L’annonce n’a pas été publiée. Vérifie ta connexion, puis réessaie : elle ne sera pas publiée deux fois.'); return; }
+    clientId.current = null; setTitre(''); setTexte(''); setVideo(''); setImage(null); setApercu(null); setConfirmer(false);
     setMessage('Annonce publiée. Elle apparaît dans la page Notifications des participants concernés.');
     await charger();
   }
@@ -60,16 +87,33 @@ export function AnnoncesAdministration() {
     await charger();
   }
 
+  const medias = image && lienVideo ? ' avec son image et sa vidéo' : image ? ' avec son image' : lienVideo ? ' avec sa vidéo' : '';
   const destinataires = cible === 'tous' ? `tous les participants (${langue === 'en' ? 'anglais' : 'français'})` : `les inscrits du parcours ${programme} (${langue === 'en' ? 'anglais' : 'français'})`;
   return <section className="card admin-annonces" aria-labelledby="annonces-admin">
     <h2 id="annonces-admin">Annonces aux participants</h2>
-    <p className="muted">L’annonce s’affiche dans la page Notifications (icône cloche) des participants concernés, pendant 60 jours. Elle n’envoie pas de notification sur le téléphone.</p>
+    <p className="muted">L’annonce s’affiche dans la page Notifications (icône cloche) des participants concernés, pendant 60 jours. Elle n’envoie pas de notification sur le téléphone. Tu peux y joindre une image et un lien vidéo YouTube ou TikTok.</p>
     <form className="admin-annonce-form" onSubmit={publier}>
       <label htmlFor="annonce-titre">Titre</label>
       <input id="annonce-titre" value={titre} maxLength={TITRE_MAX} onChange={e => { setTitre(e.target.value); modifier(); }} />
       <label htmlFor="annonce-texte">Message</label>
       <textarea id="annonce-texte" value={texte} rows={5} maxLength={TEXTE_MAX} onChange={e => { setTexte(e.target.value); modifier(); }} />
       <p className="muted">{texte.trim().length} / {TEXTE_MAX} caractères</p>
+      <label htmlFor="annonce-image">Image (facultatif)</label>
+      {apercu ? <div className="admin-annonce-apercu">
+          <img src={apercu} alt="Aperçu de l’image de l’annonce" />
+          <button type="button" className="link" onClick={retirerImage}>Retirer l’image</button>
+        </div>
+        : <input id="annonce-image" ref={champImage} type="file" accept="image/jpeg,image/png,image/webp" disabled={prepImage} onChange={e => void choisirImage(e.target.files?.[0])} />}
+      {prepImage && <p className="muted" role="status">Préparation de l’image…</p>}
+      {erreurImage && <p className="error" role="alert">{erreurImage}</p>}
+      {!apercu && !prepImage && <p className="muted admin-annonce-aide">Photo JPEG, PNG ou WebP. Elle est réduite avant l’envoi pour rester légère.</p>}
+      <label htmlFor="annonce-video">Lien vidéo YouTube ou TikTok (facultatif)</label>
+      <input id="annonce-video" type="url" inputMode="url" value={video} maxLength={500} placeholder="https://www.youtube.com/watch?v=…" aria-describedby="annonce-video-etat" onChange={e => { setVideo(e.target.value); modifier(); }} />
+      <p id="annonce-video-etat" className={videoInvalide ? 'error' : 'muted admin-annonce-aide'} role={videoInvalide ? 'alert' : undefined}>
+        {videoInvalide ? 'Ce lien n’est pas reconnu. Colle un lien qui commence par https://www.youtube.com, https://youtu.be ou https://www.tiktok.com.'
+          : lienVideo ? `Vidéo ${lienVideo.plateforme === 'youtube' ? 'YouTube' : 'TikTok'} reconnue.${lienVideo.integration ? '' : ' Elle s’ouvrira dans TikTok.'}`
+          : 'La vidéo reste sur YouTube ou TikTok ; le participant la regarde depuis l’annonce.'}
+      </p>
       <div className="admin-annonce-choix">
         <label htmlFor="annonce-langue">Langue</label>
         <select id="annonce-langue" value={langue} onChange={e => { setLangue(e.target.value === 'en' ? 'en' : 'fr'); modifier(); }}><option value="fr">Français</option><option value="en">Anglais</option></select>
@@ -78,9 +122,9 @@ export function AnnoncesAdministration() {
         {cible === 'programme' && <><label htmlFor="annonce-programme">Parcours</label>
           <select id="annonce-programme" value={programme} onChange={e => { setProgramme(e.target.value); modifier(); }}><option value="">Choisir un parcours…</option>{programmes.map(p => <option key={p.programme_id} value={p.programme_id}>{p.nom} — {p.programme_id}</option>)}</select></>}
       </div>
-      {confirmer && valide && <p className="admin-annonce-confirmer" role="status">Publier « {titre.trim()} » pour {destinataires} ? Appuie sur « Confirmer l’envoi ».</p>}
+      {confirmer && valide && <p className="admin-annonce-confirmer" role="status">Publier « {titre.trim()} »{medias} pour {destinataires} ? Appuie sur « Confirmer l’envoi ».</p>}
       <button type="submit" className="admin-annonce-envoyer" disabled={!valide || occupe}><span aria-hidden="true">➤</span>{occupe ? 'Envoi…' : confirmer ? 'Confirmer l’envoi' : 'Envoyer l’annonce'}</button>
-      {!valide && !occupe && <p className="muted admin-annonce-aide">Pour envoyer, écris un titre et un message{cible === 'programme' && !programme ? ', puis choisis un parcours' : ''}.</p>}
+      {!valide && !occupe && !videoInvalide && !prepImage && <p className="muted admin-annonce-aide">Pour envoyer, écris un titre et un message{cible === 'programme' && !programme ? ', puis choisis un parcours' : ''}.</p>}
       {confirmer && <button type="button" className="link" onClick={modifier}>Annuler</button>}
     </form>
     {message && <p className="success" role="status">{message}</p>}
@@ -92,6 +136,8 @@ export function AnnoncesAdministration() {
       : <ul className="admin-annonces-liste">{liste.map(a => <li key={a.annonce_id}>
           <p><strong>{a.titre}</strong> · {a.langue === 'en' ? 'anglais' : 'français'} · {a.cible === 'tous' ? 'tous' : a.programme_id} · {new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(a.publie_le))}{a.retire_le ? ' · retirée' : ''}</p>
           <p className="muted">{a.texte}</p>
+          {a.image_path && <img className="admin-annonce-vignette" src={lienImageAnnonce(a.image_path)} alt={`Image de l’annonce « ${a.titre} »`} loading="lazy" />}
+          {a.video_url && <p className="muted">Vidéo : <a href={a.video_url} target="_blank" rel="noopener noreferrer">{analyserLienVideo(a.video_url)?.plateforme === 'tiktok' ? 'TikTok' : 'YouTube'}</a></p>}
           {!a.retire_le && (aRetirer === a.annonce_id
             ? <p>Retirer cette annonce chez tous ses destinataires ? <button type="button" className="link" disabled={occupe} onClick={() => void retirer(a.annonce_id)}>Confirmer le retrait</button> <button type="button" className="link" onClick={() => setARetirer(null)}>Annuler</button></p>
             : <button type="button" className="link" onClick={() => setARetirer(a.annonce_id)}>Retirer</button>)}

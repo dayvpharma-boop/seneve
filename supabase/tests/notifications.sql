@@ -11,7 +11,7 @@ begin
   if admin is null then raise exception 'Administrateur absent pour la vérification'; end if;
   select c.programme_id into prog from seneve.contents c join seneve.programmes p using (programme_id) limit 1;
   if has_function_privilege('anon','seneve.mes_notifications(integer)','EXECUTE')
-     or has_function_privilege('anon','seneve.staff_annonce_publier(uuid,text,text,text,text,text)','EXECUTE')
+     or has_function_privilege('anon','seneve.staff_annonce_publier(uuid,text,text,text,text,text,text,text)','EXECUTE')
      or has_table_privilege('authenticated','seneve.annonces','SELECT')
      or has_table_privilege('authenticated','seneve.notifications_vues','SELECT') then
     raise exception 'Permissions trop larges';
@@ -97,5 +97,46 @@ begin
   insert into seneve.communications(cle_idempotence, enrollment_id, canal, creneau, etat, motif, modifie_le)
     values ('verification_d_' || gen_random_uuid()::text, ea, 'push', now(), 'accepte', 'rappel_matin', clock_timestamp() + interval '1 second');
   if (seneve.mes_notifications(50)->>'non_lues')::int <> 1 then raise exception 'Nouveau rappel du matin non compté'; end if;
+end $test$;
+
+-- seneve_051 : image téléversée et lien vidéo (décision de Dr Justin du 29/10/2026).
+do $test$
+declare
+  admin uuid; ua uuid := gen_random_uuid(); pa uuid := gen_random_uuid();
+  cid uuid := gen_random_uuid(); cid2 uuid := gen_random_uuid(); n jsonb; e jsonb;
+begin
+  select auth_user_id into admin from seneve.staff_roles where role = 'administrateur' limit 1;
+  if not exists (select 1 from storage.buckets where id = 'annonces' and public and file_size_limit = 2097152 and allowed_mime_types = array['image/jpeg']) then
+    raise exception 'Stockage annonces mal réglé';
+  end if;
+  insert into auth.users(id) values (ua);
+  insert into seneve.participants(participant_id, auth_user_id, prenom, langue) values (pa, ua, 'Fictif M', 'fr');
+  perform set_config('request.jwt.claim.sub', admin::text, true);
+  -- Image absente du stockage : refus.
+  begin perform seneve.staff_annonce_publier(cid, 'Avec image', 'Texte', 'fr', 'tous', null, cid::text || '.jpg', null); raise exception 'Image absente acceptée';
+  exception when invalid_parameter_value then null; end;
+  insert into storage.objects(bucket_id, name) values ('annonces', cid::text || '.jpg');
+  -- Image d'une autre annonce : refus.
+  begin perform seneve.staff_annonce_publier(cid2, 'Image volée', 'Texte', 'fr', 'tous', null, cid::text || '.jpg', null); raise exception 'Image d’une autre annonce acceptée';
+  exception when invalid_parameter_value then null; end;
+  -- Liens refusés : autre site, http, espace.
+  begin perform seneve.staff_annonce_publier(cid2, 'Lien', 'Texte', 'fr', 'tous', null, null, 'https://exemple.com/video'); raise exception 'Lien hors YouTube/TikTok accepté';
+  exception when invalid_parameter_value then null; end;
+  begin perform seneve.staff_annonce_publier(cid2, 'Lien', 'Texte', 'fr', 'tous', null, null, 'http://youtu.be/dQw4w9WgXcQ'); raise exception 'Lien http accepté';
+  exception when invalid_parameter_value then null; end;
+  begin perform seneve.staff_annonce_publier(cid2, 'Lien', 'Texte', 'fr', 'tous', null, null, 'https://youtube.com.exemple.com/watch?v=dQw4w9WgXcQ'); raise exception 'Faux domaine accepté';
+  exception when invalid_parameter_value then null; end;
+  perform seneve.staff_annonce_publier(cid, 'Avec image', 'Texte', 'fr', 'tous', null, cid::text || '.jpg', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  perform seneve.staff_annonce_publier(cid2, 'TikTok', 'Texte', 'fr', 'tous', null, null, 'https://www.tiktok.com/@drjustin/video/7300000000000000000');
+  -- Répétition identique acceptée, répétition sans l'image refusée.
+  if (seneve.staff_annonce_publier(cid, 'Avec image', 'Texte', 'fr', 'tous', null, cid::text || '.jpg', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')->>'repetition')::boolean is not true then raise exception 'Répétition média non reconnue'; end if;
+  begin perform seneve.staff_annonce_publier(cid, 'Avec image', 'Texte', 'fr', 'tous', null, null, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'); raise exception 'Répétition différente acceptée';
+  exception when unique_violation then null; end;
+  -- Le participant reçoit l'image et le lien.
+  perform set_config('request.jwt.claim.sub', ua::text, true);
+  n := seneve.mes_notifications(50);
+  select x into e from jsonb_array_elements(n->'elements') x where x->>'titre' = 'Avec image';
+  if e->>'image' <> cid::text || '.jpg' or e->>'video' <> 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' then raise exception 'Média absent chez le participant : %', e; end if;
+  raise notice 'Annonces avec image et vidéo : vérifications réussies';
 end $test$;
 rollback;

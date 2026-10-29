@@ -762,3 +762,4 @@
 :root[data-apparence="sombre"] .nt-texte,:root[data-apparence="sombre"] .nt-vide{color:#d1c5b3;}
 :root[data-apparence="sombre"] .nt-section h2,:root[data-apparence="sombre"] .nt-corps a{color:#ffd482;}
 :root[data-apparence="sombre"] .nt-corps time,:root[data-apparence="sombre"] .nt-note{color:#b5ab9a;}
+:root[data-apparence="sombre"] .nt-video-lancer{background:#ffd482;color:#3f2e00;}
