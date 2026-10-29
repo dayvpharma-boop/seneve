@@ -8,7 +8,8 @@ import {lireRappelsHabitudes,reglerRappelsHabitudes,type EtatRappelsHabitudes} f
 export function RappelsHabitudes({langue}:{langue:string}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [etat,setEtat]=useState<EtatRappelsHabitudes|null>(null),[erreur,setErreur]=useState<''|'chargement'|'enregistrement'>(''),[essai,setEssai]=useState(0),[occupe,setOccupe]=useState(false),[annonce,setAnnonce]=useState('');
- const verrou=useRef(false);
+ const verrou=useRef(false),section=useRef<HTMLElement>(null);
+ useEffect(()=>{if(window.location.hash==='#rappels-habitudes')section.current?.scrollIntoView?.({block:'start'});},[etat]);
  useEffect(()=>{let actif=true;setErreur('');void lireRappelsHabitudes().then(e=>{if(actif)setEtat(e);}).catch(()=>{if(actif)setErreur('chargement');});return()=>{actif=false;};},[essai]);
  async function regler(actif:boolean,coupees:string[],message:string){
   if(verrou.current)return;verrou.current=true;setOccupe(true);setErreur('');setAnnonce('');
@@ -19,9 +20,9 @@ export function RappelsHabitudes({langue}:{langue:string}){
  // Échec de lecture (souvent sans réseau) et échec d'enregistrement ont des messages distincts.
  const alerte=erreur==='chargement'?<><p role="alert">{l('Tes rappels d’habitudes ne peuvent pas être affichés. Vérifie ta connexion, puis réessaie.','Your habit reminders cannot be shown. Check your connection, then try again.')}</p><button type="button" className="oa-secondary" onClick={()=>setEssai(n=>n+1)}>{l('Réessayer','Try again')}</button></>
   :erreur==='enregistrement'&&<p role="alert">{l('Le réglage n’a pas pu être enregistré. Réessaie dans un instant.','The setting could not be saved. Please try again in a moment.')}</p>;
- if(!etat)return <section className="rn-section hd-rappels">{titre}{alerte||<p>{l('Chargement…','Loading…')}</p>}</section>;
+ if(!etat)return <section id="rappels-habitudes" ref={section} style={{scrollMarginTop:80}} className="rn-section hd-rappels">{titre}{alerte||<p>{l('Chargement…','Loading…')}</p>}</section>;
  const coupees=etat.habitudes.filter(h=>!h.recu).map(h=>h.habit_key);
- return <section className="rn-section hd-rappels">{titre}
+ return <section id="rappels-habitudes" ref={section} style={{scrollMarginTop:80}} className="rn-section hd-rappels">{titre}
   {import.meta.env.VITE_HABITUDES_RELANCES==='true'?<p>{l('Chaque rappel indique son activité. Relance toutes les 30 minutes dans la journée, jusqu’à réalisation ou « Ignorer les rappels pour aujourd’hui », selon tes heures de silence.','Each reminder names its activity. Reminders repeat every 30 minutes during the day until completed or skipped for today, respecting your quiet hours.')}</p>:<p>{l('Une notification à l’heure de chaque habitude, selon tes horaires. Le texte reste neutre sur l’écran verrouillé, et aucun rappel ne part pour une activité déjà faite.','One notification at the time of each habit, following your schedule. The text stays neutral on the lock screen, and no reminder is sent for an activity already done.')}</p>}
   {!etat.push_pret?<p role="status">{l('Pour recevoir ces rappels, active d’abord les notifications sur ce téléphone.','To get these reminders, first turn on notifications on this phone.')} <Link to={`/profil${en?'?lang=en':''}#notifications`}>{l('Activer les notifications','Turn on notifications')}</Link></p>
   :<>

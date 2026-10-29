@@ -15,6 +15,7 @@ import {lecturesHabitudesFrMois6} from '@/data/habitudes-lectures-fr-mois-6';
 import {lecturesHabitudesEn} from '@/data/habitudes-lectures-en';
 import {HistoriqueRecetteHabitudes} from './HistoriqueRecetteHabitudes';
 import {ExportCalendrierHabitudes} from './ExportCalendrierHabitudes';
+import {AccesRappelsWebHabitudes} from './AccesRappelsWebHabitudes';
 import {DeclarationHabitude} from './DeclarationHabitude';
 import {IconeHD} from './IconeHabitudes';
 import {lectureReprise,moisHabitudes} from '@/lib/habitudes-calendrier';
@@ -112,6 +113,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
     </div>
    </div>
   </section>}
+  {!horsLigne&&<AccesRappelsWebHabitudes enrollmentId={enrollmentId} langue={langue}/>}
   {!horsLigne&&<ExportCalendrierHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue}/>}
   {/* Ma journée */}
   <section className="flex flex-col gap-hd-space-sm" aria-label={l('Ma journée','My day')}>

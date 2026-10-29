@@ -32,6 +32,7 @@ export function Profil(){
  const[data,setData]=useState<Donnees|null>(null);const[etat,setEtat]=useState<'chargement'|'pret'|'erreur'>('chargement');const[copie,setCopie]=useState<string|null>(null);
  const[editing,setEditing]=useState(false);const[prenom,setPrenom]=useState('');const[busy,setBusy]=useState(false);const[message,setMessage]=useState('');const[erreur,setErreur]=useState('');
  const[equipe,setEquipe]=useState(false);const generation=useRef(0);const userId=useRef<string|null>(null);const en=(params.get('lang')??data?.langue)==='en';const langue=en?'en':'fr';
+ useEffect(()=>{if(etat==='pret'&&window.location.hash==='#notifications')document.getElementById('notifications')?.scrollIntoView?.({block:'start'});},[etat]);
  const refresh=useCallback(async()=>{const ticket=++generation.current;setEtat('chargement');setBusy(false);setErreur('');setMessage('');setData(null);setCopie(null);setEditing(false);
   try{const s=await supabase.auth.getSession();if(ticket!==generation.current)return;if(s.error)throw s.error;const u=s.data.session?.user;if(!u){effacerProfils();navigate('/connexion',{replace:true});return;}userId.current=u.id;effacerProfils(u.id);
    const cache=lireProfil(u.id);if(navigator.onLine===false){if(!cache)throw Error('Aucune copie');setData(cache.profil);setCopie(cache.le);setEtat('pret');return;}
