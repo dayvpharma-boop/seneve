@@ -58,9 +58,9 @@ export function LecteurPriereHabitudes({activite,userId,langue,transport,onConfi
    </div>
   </header>
   <div className="ap-corps" ref={corps}>
-   <div className="ap-meta"><span><IconeHD nom="auto_stories"/> {langueTexte==='en'?l('Amidah · texte anglais intégral','Amidah · full English text'):l('Amidah · texte français intégral','Amidah · full French text')}</span><span><time>{activite.heure}</time> · {l('Durée personnelle','Your own pace')}</span></div>
+   <div className="ap-meta"><span><IconeHD nom="auto_stories"/> {langueTexte==='en'?l('Amidah · version anglaise adaptée','Amidah · adapted English version'):l('Amidah · version française adaptée','Amidah · adapted French version')}</span><span><time>{activite.heure}</time> · {l('Durée personnelle','Your own pace')}</span></div>
    <div className="ap-langues" role="group" aria-label={l('Langues de lecture','Reading languages')}>{ongletLangue('fr','Français')}<span aria-disabled="true">{l('Phonétique','Phonetic')} <small>{l('Bientôt','Soon')}</small></span>{ongletLangue('en','English')}</div>
-   <p className="ap-information">{l('Gestes et passages conditionnels conservés. Lire ne valide aucune activité. Appuie sur « J’ai prié » seulement après ta prière.','Movements and conditional passages are preserved. Reading completes nothing. Press “I prayed” only after your prayer.')}</p>
+   <p className="ap-information">{l('Version adaptée selon les retraits demandés par Dr Justin Tshims. Lire ne valide aucune activité. Appuie sur « J’ai prié » seulement après ta prière.','Adapted version with the passages removed as requested by Dr Justin Tshims. Reading completes nothing. Press “I prayed” only after your prayer.')}</p>
    <section className="ap-signets" ref={barreRepere} aria-label={l('Repère de lecture','Reading bookmark')}>
     <div className="ap-commandes-repere">
      <button type="button" onClick={placerRepere}><IconeHD nom="bookmark"/>{l('Placer un repère ici','Place a bookmark here')}</button>
@@ -70,7 +70,7 @@ export function LecteurPriereHabitudes({activite,userId,langue,transport,onConfi
     <p role="status">{messageRepere||l('Conservé dans cet onglet jusqu’à sa fermeture.','Kept in this tab until it is closed.')}</p>
     {repere!==null&&<small>{l('Repère','Bookmark')} : « {amidah[repere]!.texte.slice(0,90)}{amidah[repere]!.texte.length>90?'…':''} »</small>}
    </section>
-   <article ref={texte} className="ap-texte" lang={langueTexte} aria-label={l('Texte intégral de l’Amidah','Full text of the Amidah')} style={{fontSize:taille+'px'}}>{amidah.map((p,i)=><p key={i} data-amidah-paragraphe={i} data-repere={repere===i?'true':undefined} tabIndex={-1} className={'ap-'+p.type}>{p.texte}</p>)}</article>
+   <article ref={texte} className="ap-texte" lang={langueTexte} aria-label={l('Version adaptée de l’Amidah','Adapted version of the Amidah')} style={{fontSize:taille+'px'}}>{amidah.map((p,i)=><p key={i} data-amidah-paragraphe={i} data-repere={repere===i?'true':undefined} tabIndex={-1} className={'ap-'+p.type}>{p.texte}</p>)}</article>
    <p className="ap-source">{langueTexte==='en'?l('Version anglaise validée par Dr Justin Tshims, établie d’après le texte français.','English version approved by Dr Justin Tshims, prepared from the French text.'):l('Source : PDF « LA PRIERE DE LA AMIDAH en phonétique et en traduction française », hassidout.org.','Source: PDF “LA PRIERE DE LA AMIDAH en phonétique et en traduction française”, hassidout.org.')}</p>
   </div>
   <DeclarationHabitude key={activite.occurrence.occurrence_id} variante="priere" userId={userId} occurrence={activite.occurrence} consigne={activite.consigne} critere={activite.critere} etat={activite.etat} langue={langue} lectureSeule={false} aideDisponible={false} transport={transport} onConfirme={onConfirme}/>

@@ -1,5 +1,6 @@
-/** Texte français du PDF fourni et relu par le porteur ; mêmes paragraphes que le lecteur publié.
- * Les gestes et variantes restent visibles ; aucune sélection liturgique automatique.
+/** Version adaptée selon les retraits explicites de Dr Justin Tshims du 29/10/2026.
+ * Les autres paragraphes sont conservés mot pour mot. Source intégrale conservée dans l’historique Git.
+ * Même sélection et ordre en français et en anglais.
  */
 export const amidahFr = [
   {
@@ -17,14 +18,6 @@ export const amidahFr = [
   {
     "type": "priere",
     "texte": "Béni sois-Tu, Eternel notre D.ieu et D.ieu de nos pères, D.ieu d’Abraham, D.ieu d’Isaac et D.ieu de Jacob, le D.ieu grand, puissant et redoutable, D.ieu exalté, qui accorde une bonté abondante, qui crée toutes choses, qui se souvient de la piété des patriarches, et qui, dans l’amour, apporte un rédempteur aux enfants de leurs enfants, pour l’amour de Son Nom."
-  },
-  {
-    "type": "indication",
-    "texte": "Pendant les dix jours de pénitence, ajoutez :"
-  },
-  {
-    "type": "priere",
-    "texte": "Souviens-Toi de nous pour la vie, Roi qui désire la vie ; inscris-nous dans le Livre de Vie, à cause de Toi, ô D.ieu vivant."
   },
   {
     "type": "geste",
@@ -51,24 +44,12 @@ export const amidahFr = [
     "texte": "Il soutient les vivants avec une bonté aimante, ressuscite les morts avec une grande miséricorde, soutient ceux qui tombent, guérit les malades, libère les liens et accomplit sa confiance envers ceux qui dorment dans la poussière. Qui est comme Toi, puissant ! Et qui peut être comparé à Toi, Roi, qui apporte la mort et restaure la vie, et fait jaillir la délivrance !"
   },
   {
-    "type": "indication",
-    "texte": "Pendant les dix jours de pénitence, ajoutez :"
-  },
-  {
     "type": "priere",
     "texte": "Qui est comme Toi, Père miséricordieux, qui dans la compassion se souvient de ses créatures pour la vie."
   },
   {
     "type": "priere",
     "texte": "Vous êtes digne de confiance pour faire revivre les morts. Béni sois-Tu Eternel, qui ressuscite les morts."
-  },
-  {
-    "type": "indication",
-    "texte": "Lorsque le Hazan répète la Amidah, la Kedoucha est récité ici."
-  },
-  {
-    "type": "priere",
-    "texte": "Nous te sanctifierons et t’adorerons comme les douces paroles de l’assemblée des Saints séraphins qui te répètent tRois fois « Saint », comme il est écrit par Ton prophète : Et ils s’appellent les uns les autres et disent : (Cong. et Hazan:) « Saint, Saint, Saint est l’Éternel des armées; toute la terre est pleine de sa gloire. » (Hazan:) Ceux qui leur font face offrent des louanges et disent: (Cong et Hazan:) « Béni soit la gloire de l’Éternel de sa place. » (Hazan:) Et dans Vos Saintes Écritures, il est écrit ainsi: (Cong. et Hazan:) L’Éternel régnera pour toujours; Ton D.ieu, ô Sion, à travers toutes les générations. Louez le Seigneur."
   },
   {
     "type": "priere",
@@ -131,30 +112,6 @@ export const amidahFr = [
     "texte": "Regarde avec faveur, Éternel notre D.ieu, Ton peuple d’Israël et sois attentif à sa prière ; Rétablis le service de Ton Sanctuaire et accepte avec amour et faveur les offrandes par le feu et la prière d’Israël. et que le service de Ton peuple Israël trouve toujours grâce."
   },
   {
-    "type": "indication",
-    "texte": "Le jour de Rosh Hodesh et de ‘Hol HaMoed, (Notre D… peut y monter) est récité ici."
-  },
-  {
-    "type": "priere",
-    "texte": "Que notre D.ieu et D.ieu de nos pères y montent, viennent et atteignent, soient vus, acceptés et entendus, rappelés et rappelés devant Toi, le souvenir et le souvenir de nous, le souvenir de nos pères, le souvenir de Machia’h, fils de David, Ton serviteur, le souvenir de Jérusalem, Ta ville Sainte, et le souvenir de tout Ton peuple, la maison d’Israël, pour la délivrance, le bien-être, la grâce, la bonté, la miséricorde, la bonne vie et la paix, en ce jour de"
-  },
-  {
-    "type": "indication",
-    "texte": "À Rosh Hodesh : Rosh Hodesh"
-  },
-  {
-    "type": "indication",
-    "texte": "A l’occasion de la fête de Pessah : la Fête des Matzot"
-  },
-  {
-    "type": "indication",
-    "texte": "Lors de la fête de Souccot : la Fête de Souccot."
-  },
-  {
-    "type": "priere",
-    "texte": "Souviens-Toi de nous en ce [jour], Eternel notre D.ieu, pour de bon ; pense à nous en ce [jour] pour la bénédiction ; aidez-nous en ce [jour] pour une bonne vie. Avec la promesse de délivrance et de Compassion, épargnez-nous et faites-nous grâce ; aie pitié de nous et délivre-nous ; car nos yeux sont dirigés vers Toi, car Toi, D.ieu, es un Roi miséricordieux et miséricordieux."
-  },
-  {
     "type": "priere",
     "texte": "Que nos yeux voient Ton retour à Sion dans la miséricorde. Béni sois-Tu, Eternel, qui restaure Sa Présence Divine à Sion."
   },
@@ -167,40 +124,8 @@ export const amidahFr = [
     "texte": "Nous reconnaissons avec gratitude que Tu es le Seigneur notre D.ieu et D.ieu de nos pères pour toujours. Tu es la force de notre vie, le bouclier de notre salut à chaque génération. Nous te rendrons grâce et nous raconterons Ta louange, soir, matin et midi, pour nos vies qui sont confiées entre Tes mains, pour nos âmes qui te sont confiées, pour tes miracles qui nous accompagnent chaque jour et pour tes continuelles merveilles et bienfaisances. Tu es le Bienfaisant, car Tes miséricordes ne cessent jamais ; le Miséricordieux, car Tes bontés ne finissent jamais; car nous plaçons toujours notre espérance en Toi."
   },
   {
-    "type": "indication",
-    "texte": "À ‘Hanoucca et Pourim, ce qui suit est ajouté."
-  },
-  {
-    "type": "priere",
-    "texte": "Et [nous te remercions] pour les miracles, pour la rédemption, pour les actes puissants, pour les actes salvateurs et pour les merveilles que Tu as opérées pour nos ancêtres en ces jours, à cette époque —"
-  },
-  {
-    "type": "indication",
-    "texte": "À ‘Hanoucca, continuez ici :"
-  },
-  {
-    "type": "priere",
-    "texte": "Aux jours de Matityahu, le fils de Yo’hanan le Souverain Sacrificateur, l’Hasmonéen et ses fils, quand le méchant gouvernement hellénique s’est levé contre Ton peuple Israël pour lui faire oublier Ta Torah et violer les décrets de Ta volonté. Mais Toi, dans Ta miséricorde abondante, Tu es resté à leurs côtés au moment de leur détresse. Vous avez mené leurs combats, défendu leurs dRoits et vengé le tort qui leur avait été fait. Tu as livré les puissants entre les mains des faibles, les nombreux entre les mains de quelques-uns, les impurs entre les mains des purs, les méchants entre les mains des justes, et les pécheurs aveugles entre les mains de ceux qui s’occupent avec Ta Torah. Tu t’es fait un Nom Grand et Saint dans Ton monde, et Tu as effectué une grande délivrance et rédemption pour Ton peuple jusqu’à ce jour. Puis Tes enfants sont entrés dans le sanctuaire de Ta Maison, ont purifié Ton Temple, a purifié Ton Sanctuaire, allumé des lumières dans Tes cours sacrées et institué ces huit jours de ‘Hanoucca pour remercier et louer Ton grand Nom."
-  },
-  {
-    "type": "indication",
-    "texte": "À Pourim, continuez ici :"
-  },
-  {
-    "type": "priere",
-    "texte": "Aux jours de Morde’haï et d’ Esther, à Suse la capitale, quand le méchant Haman se leva contre eux, et chercha à détruire, massacrer et anéantir tous les Juifs, jeunes et vieux, enfants et femmes, en un seul jour, le treizième jour du douzième mois, le mois d’ Adar, et de prendre leur butin pour piller. Mais Toi, dans Ta miséricorde abondante, Tu as déjoué son conseil et frustré son intention, et Tu as fait reculer le mal qu’il projetait — sur sa propre tête, et ils le pendirent, lui et ses fils, à la potence."
-  },
-  {
     "type": "priere",
     "texte": "Et pour tout cela, que Ton Nom, notre Roi, soit continuellement béni, exalté et exalté pour toujours et à jamais."
-  },
-  {
-    "type": "indication",
-    "texte": "Pendant les dix jours de pénitence, ajoutez :"
-  },
-  {
-    "type": "priere",
-    "texte": "Inscris tous les enfants de Ton Alliance pour une bonne vie."
   },
   {
     "type": "priere",
@@ -219,24 +144,12 @@ export const amidahFr = [
     "texte": "Accorde la paix, la bonté et la bénédiction, la vie, la grâce, la bonté et la miséricorde, sur nous et sur tout Ton peuple Israël. Bénis-nous, notre Père, nous tous comme un, avec la lumière de Ton visage. Car par la lumière de Ton visage Tu nous as donné, Éternel notre D.ieu, la Torah de vie et de bonté de cœur, de justice, de bénédiction, de miséricorde, de vie et de paix. Qu’il soit favorable à tes yeux de bénir Ton peuple Israël, en tout temps et à chaque instant, de Ta paix."
   },
   {
-    "type": "indication",
-    "texte": "Pendant les dix jours de pénitence, ajoutez:"
-  },
-  {
-    "type": "priere",
-    "texte": "Et dans le livre de vie, bénédiction, paix et prospérité, délivrance, consolation et décrets favorables, puissions-nous, ainsi que tout Ton peuple, la maison d’Israël, être rappelés et inscrits devant Toi pour une vie heureuse et pour paix."
-  },
-  {
     "type": "priere",
     "texte": "Béni sois-Tu, Éternel, qui bénis son peuple Israël avec la paix. Que les paroles de ma bouche et la méditation de mon cœur soient agréables devant Toi, Éternel, ma Force et mon Rédempteur."
   },
   {
     "type": "priere",
     "texte": "Mon D.ieu, préserve ma langue du mal et mes lèvres des paroles trompeuses. Que mon âme se taise à ceux qui me maudissent ; que mon âme soit comme de la poussière pour tous. Ouvre mon cœur à Ta Torah, et laisse mon âme suivre avec empressement tes commandements. Quant à tous ceux qui complotent le mal contre moi, hâtez-vous d’annuler leur conseil et de contrecarrer leur dessein. Qu’ils soient comme de la paille devant le vent ; que l’ange de l’Éternel les repousse. Afin que tes bien-aimés soient délivrés, aide-moi de Ta Main droite et réponds-moi. Fais-le pour l’amour de Ton Nom; Fais-le à cause de Ta droite; Fais-le pour l’amour de Ta Torah; Fais-le pour Ta Sainteté. Que les paroles de ma bouche et la méditation de mon cœur soient agréables devant Toi, Éternel, ma Force et mon Rédempteur."
-  },
-  {
-    "type": "geste",
-    "texte": "Avant de réciter les versets suivants, il faut s’incliner légèrement et, dans cette position inclinée, faire trois pas en arrière. Tout en s’inclinant, il faut tourner la tête vers sa gauche en disant : « Celui qui fait la paix dans Ses Cieux » ; inclinez-vous en avant, en disant: « Puisse-t-Il faire« tourner la tête vers la droite en disant : « la Paix sur nous« et enfin s’incliner en avant, en disant : « et sur tout Israël ; et dire : Amen« ."
   },
   {
     "type": "priere",

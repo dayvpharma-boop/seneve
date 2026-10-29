@@ -10,9 +10,9 @@ const rpc=vi.fn(),onConfirme=vi.fn(),onFermer=vi.fn();
 function ouvrir(a=activite){render(<LecteurPriereHabitudes activite={a} userId={uid} langue="fr" transport={{rpc}} onConfirme={onConfirme} onFermer={onFermer}/>);return screen.getByRole('dialog');}
 beforeEach(()=>{sessionStorage.clear();rpc.mockReset().mockImplementation((_nom,args)=>Promise.resolve(ok(args)));onConfirme.mockReset();onFermer.mockReset();});
 afterEach(()=>{cleanup();vi.restoreAllMocks();});
-it('ouvre le texte intégral sans déclarer une prière, avec la taille réglable et le journal privé',()=>{
- const d=ouvrir();expect(within(d).getByText('Fin de la Amidah')).toBeVisible();expect(within(d).getByText(/À Pourim, continuez ici/)).toBeVisible();
- const texte=within(d).getByRole('article',{name:'Texte intégral de l’Amidah'});
+it('ouvre le texte adapté sans déclarer une prière, avec la taille réglable et le journal privé',()=>{
+ const d=ouvrir();expect(within(d).getByText('Fin de la Amidah')).toBeVisible();expect(within(d).queryByText(/À Pourim, continuez ici/)).toBeNull();
+ const texte=within(d).getByRole('article',{name:'Version adaptée de l’Amidah'});
  expect(texte).toHaveStyle({fontSize:'21px'});fireEvent.click(within(d).getByRole('button',{name:'Augmenter la taille du texte'}));expect(texte).toHaveStyle({fontSize:'23px'});
  expect(within(d).getByRole('link',{name:'Avec mes mots'})).toHaveAttribute('href',expect.stringContaining('journal?ecrire=1&lang=fr'));
  expect(rpc).not.toHaveBeenCalled();fireEvent.click(within(d).getByRole('button',{name:'Revenir à ma journée'}));expect(onFermer).toHaveBeenCalledOnce();expect(onConfirme).not.toHaveBeenCalled();
@@ -32,11 +32,11 @@ it('un refus du serveur ne devient jamais une prière déclarée',async()=>{
 });
 
 it('retrouve un repère à la réouverture, rejoint le bon passage et ne déclare rien',()=>{
- let d=ouvrir();const article=within(d).getByRole('article',{name:'Texte intégral de l’Amidah'});
+ let d=ouvrir();const article=within(d).getByRole('article',{name:'Version adaptée de l’Amidah'});
  const passages=Array.from(article.querySelectorAll('p'));
  passages.forEach((p,i)=>vi.spyOn(p,'getBoundingClientRect').mockReturnValue({top:i<5?-40:20+i*30,bottom:i<5?-10:100+i*30,height:30} as DOMRect));
  fireEvent.click(within(d).getByRole('button',{name:'Placer un repère ici'}));expect(lireReperePriere(cleReperePriere(uid,occurrence),61)).toBe(5);expect(within(d).getByRole('button',{name:'Reprendre'})).toBeEnabled();expect(rpc).not.toHaveBeenCalled();
- cleanup();d=ouvrir();const texte=within(d).getByRole('article',{name:'Texte intégral de l’Amidah'}),scroll=vi.fn();
+ cleanup();d=ouvrir();const texte=within(d).getByRole('article',{name:'Version adaptée de l’Amidah'}),scroll=vi.fn();
  Object.defineProperty(texte.parentElement!,'scrollTo',{value:scroll,configurable:true});
  fireEvent.click(within(d).getByRole('button',{name:'Reprendre'}));expect(scroll).toHaveBeenCalled();expect(document.activeElement).toBe(texte.querySelector('[data-amidah-paragraphe="5"]'));expect(rpc).not.toHaveBeenCalled();expect(onConfirme).not.toHaveBeenCalled();
  fireEvent.click(within(d).getByRole('button',{name:'Effacer le repère'}));expect(within(d).getByRole('button',{name:'Reprendre'})).toBeDisabled();expect(lireReperePriere(cleReperePriere(uid,occurrence),61)).toBeNull();
@@ -48,10 +48,10 @@ it('un échec de stockage n’annonce pas un repère conservé',()=>{
 it('en anglais, ouvre l’Amidah anglaise validée et permet de passer au français sans perdre le repère',()=>{
  render(<LecteurPriereHabitudes activite={{...activite,consigne:'Morning prayer'}} userId={uid} langue="en" transport={{rpc}} onConfirme={onConfirme} onFermer={onFermer}/>);
  const d=screen.getByRole('dialog');
- const texte=within(d).getByRole('article',{name:'Full text of the Amidah'});
- expect(texte).toHaveAttribute('lang','en');expect(within(d).getByText('End of the Amidah')).toBeVisible();expect(within(d).getByText(/On Purim, continue here/)).toBeVisible();
+ const texte=within(d).getByRole('article',{name:'Adapted version of the Amidah'});
+ expect(texte).toHaveAttribute('lang','en');expect(within(d).getByText('End of the Amidah')).toBeVisible();expect(within(d).queryByText(/On Purim, continue here/)).toBeNull();
  expect(within(d).getByRole('button',{name:'English'})).toHaveAttribute('aria-pressed','true');
  fireEvent.click(within(d).getByRole('button',{name:'Français'}));
  expect(within(d).getByText('Fin de la Amidah')).toBeVisible();expect(texte).toHaveAttribute('lang','fr');
- expect(texte.querySelectorAll('[data-amidah-paragraphe]')).toHaveLength(61);expect(rpc).not.toHaveBeenCalled();
+ expect(texte.querySelectorAll('[data-amidah-paragraphe]')).toHaveLength(39);expect(rpc).not.toHaveBeenCalled();
 });

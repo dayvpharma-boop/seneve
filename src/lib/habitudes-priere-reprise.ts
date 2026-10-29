@@ -3,7 +3,7 @@
  * La clé change avec le compte, l'inscription, la prière datée et la version du texte.
  */
 import type {OccurrenceHabitude} from './habitudes';
-const PREFIXE='seneve:habitudes:repere:amidah-fr-20261027-v1:';
+const PREFIXE='seneve:habitudes:repere:amidah-adaptee-20261029-v2:';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function cleReperePriere(userId:string,o:OccurrenceHabitude):string{
  if(![userId,o.enrollment_id,o.occurrence_id].every(x=>UUID.test(x))||!/^\d{4}-\d{2}-\d{2}$/.test(o.date_locale))throw Error('Contexte de lecture invalide');
@@ -18,5 +18,5 @@ export function placerReperePriere(cle:string,index:number,total:number):void{
 }
 export function retirerReperePriere(cle:string):void{sessionStorage.removeItem(cle);}
 export function effacerReperesPriere():void{
- try{for(let i=sessionStorage.length-1;i>=0;i--){const cle=sessionStorage.key(i);if(cle?.startsWith(PREFIXE))sessionStorage.removeItem(cle);}}catch{/* Une panne de stockage n'interrompt pas la déconnexion. */}
+ try{for(let i=sessionStorage.length-1;i>=0;i--){const cle=sessionStorage.key(i);if(cle?.startsWith('seneve:habitudes:repere:'))sessionStorage.removeItem(cle);}}catch{/* Une panne de stockage n'interrompt pas la déconnexion. */}
 }
