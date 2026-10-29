@@ -11,6 +11,14 @@ const COULEURS:Record<string,string>={
   '#141310':'nuit','#12100c':'nuit','#1d1b18':'nuit-surface','#1c1a15':'nuit-surface',
   '#211f1c':'nuit-doux','#2b2a26':'nuit-haut','#363531':'nuit-ligne','#4e4638':'nuit-contour',
   '#e6e2dc':'nuit-texte','#d1c5b3':'nuit-secondaire','#ffd482':'nuit-accent','#e6c364':'nuit-accent',
+  // Neutres crème et gris chauds des maquettes Stitch, reliés à la palette (passage au bleu lavande, 29/10/2026).
+  '#fef9ea':'papier','#f8f4e4':'doux','#f2eedf':'doux','#f7f2e8':'doux','#ede8d9':'haut','#ece5d3':'carte',
+  '#e7e2d4':'ligne','#e8e2d4':'ligne','#e7e2d6':'ligne','#dedacb':'ligne','#eae2d3':'ligne','#e3dccb':'ligne',
+  '#fffdf6':'surface','#fffdf7':'surface','#fffdfa':'surface','#fffdf8':'surface',
+  '#d0c5b2':'contour','#cac6bb':'contour','#7e7665':'contour','#7b776f':'contour','#7a7365':'contour',
+  '#48473e':'secondaire','#4d4637':'secondaire','#59564f':'secondaire','#605e55':'secondaire','#514b41':'secondaire','#49453d':'secondaire',
+  '#16140e':'encre','#151410':'encre','#1b1a17':'encre',
+  '#e6c366':'or','#fed978':'or-doux','#ffdf90':'or-doux','#f3ead0':'or-pale','#fff3cd':'or-pale','#fdf3e7':'or-pale','#494643':'secondaire',
 };
 export function valeurCouleurs(value:string) {
   return value.replace(/#[\da-f]{3,8}\b/gi,hex=>{

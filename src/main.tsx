@@ -138,3 +138,4 @@ import './styles-habitudes-stitch.css';
 import './styles-habitudes-polices.css';
 
 import './styles-bleu-lavande.css';
+import './styles-modele-lavande.css';

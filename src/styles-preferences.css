@@ -1,12 +1,14 @@
 /* Palette commune à toutes les routes FR/EN, y compris les feuilles chargées à la demande.
    Les autres palettes choisies dans le profil gardent leurs propres couleurs. */
 :root[data-palette="ivoire"], :root:not([data-palette]) {
-  --palette-papier:#F2F3EB;--palette-ivoire:#EDF0E4;--palette-surface:#FCFDF7;
-  --palette-doux:#EDF0E7;--palette-carte:#E5EADD;--palette-haut:#DAE2D2;--palette-ligne:#CDD7C5;
-  --palette-encre:#243125;--palette-secondaire:#52604E;--palette-accent:#38523C;--palette-sur-accent:#28402D;
-  --palette-or:#B79755;--palette-or-doux:#DDE6CE;--palette-or-pale:#F3EDDB;--palette-contour:#7D8B76;
-  --palette-nuit:#171E18;--palette-nuit-surface:#222B23;--palette-nuit-doux:#283329;--palette-nuit-haut:#303D30;
-  --palette-nuit-ligne:#40503D;--palette-nuit-contour:#8B9B82;--palette-nuit-texte:#F0F2E9;--palette-nuit-secondaire:#CAD2C4;--palette-nuit-accent:#C6DCB0;
+  /* Palette par défaut « Lavande » (modèle validé par Dr Justin le 29/10/2026) ; l'identifiant technique reste « ivoire »
+     pour ne pas perdre le choix déjà enregistré sur les appareils. */
+  --palette-papier:#F5F7FE;--palette-ivoire:#EEF1FB;--palette-surface:#FFFFFF;
+  --palette-doux:#F1F3FC;--palette-carte:#E9ECFA;--palette-haut:#DFE4F6;--palette-ligne:#DDE3F2;
+  --palette-encre:#151B36;--palette-secondaire:#4D5874;--palette-accent:#49439B;--palette-sur-accent:#37327E;
+  --palette-or:#7C74D6;--palette-or-doux:#E3E6FB;--palette-or-pale:#EEE8FC;--palette-contour:#8790AE;
+  --palette-nuit:#13172A;--palette-nuit-surface:#1D243B;--palette-nuit-doux:#222A44;--palette-nuit-haut:#29324C;
+  --palette-nuit-ligne:#3B4562;--palette-nuit-contour:#6B7594;--palette-nuit-texte:#EDF0FF;--palette-nuit-secondaire:#BDC7E0;--palette-nuit-accent:#C5BBFF;
 }
 /* Le fond extérieur rejoint celui des pages, indépendamment de leur langue. */
 :root[data-apparence="clair"] body {background:var(--palette-papier);color:var(--palette-encre)}

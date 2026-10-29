@@ -25,3 +25,14 @@ Limites : aucune connexion réelle, aucune vérification physique Android/iPhone
 ## Retour arrière
 
 Revenir sur ce seul commit de présentation avec `git revert` après intégration, puis laisser les contrôles et le déploiement habituels s'exécuter. Aucun retour arrière de base de données n'est nécessaire. Les photos et les identifiants techniques restent identiques.
+
+## Extension à toute l'application (29/10/2026, soir)
+
+Demande de Dr Justin : « change tout avec le même style » (reprendre le modèle, les icônes et le style).
+
+- Palette par défaut : la palette « ivoire » (identifiant technique conservé) prend les couleurs du modèle, claires et sombres, avec les mêmes valeurs que les trois espaces déjà adaptés. Elle s'appelle désormais « Lavande » dans Préférences. Les palettes Sable, Sauge, Argile et Bleu ardoise restent au choix.
+- Couleurs anciennes écrites en dur (crèmes, gris chauds, petits jaunes des maquettes Stitch) reliées à la palette dans `scripts/preferences-css.ts`, sauf les ambiances de lecture de la Bible.
+- `src/styles-modele-lavande.css`, chargé en dernier : barre du bas à plat avec l'onglet actif en couleur principale, bouton principal arrondi en couleur principale, pousse verte à la place du carré sombre du logo, avatar rond clair, grands titres en Poppins gras avec un trait de couleur principale.
+- Barre du téléphone et écran de démarrage : #F5F7FE.
+- Photos : celles du modèle (pousse, chemin, livre ouvert) sont déjà celles de l'application ; aucune nouvelle photo ajoutée dans cette étape.
+- Vérification : aperçu de l'application entière avec un compte fictif (`scripts/recette/vite-apercu-app.config.ts`), en clair et en sombre, sur Aujourd'hui, Parcours, Journal, Bible, Bibliothèque, Coach, Aide, Notifications, Profil, Réglages, Connexion et Offres ; 1 045 tests réussis ; construction réussie. Pas de vérification sur un vrai téléphone.

@@ -27,7 +27,7 @@ const jourParcours=(debut:string,n:number)=>{const d=new Date(`${debut}T00:00:00
 const dateCourte=(d:Date,en:boolean,timeZone='UTC')=>{const annee=Number(new Intl.DateTimeFormat('en',{year:'numeric',timeZone}).format(d));return new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',...(annee!==new Date().getFullYear()?{year:'numeric' as const}:{}),timeZone}).format(d);};
 function etatParcours(p:Parcours){const brut=rawDay(p.debut,new Date());const jour=Math.max(0,Math.min(p.duree,brut));const statut=p.etat==='en_pause'?'pause':jour===0?'avenir':jour>=p.duree&&(p.etat==='terminee'||brut>p.duree)?'termine':'encours';return{p,jour,statut};}
 
-const NOMS_PALETTES:Record<string,[string,string]>={ivoire:['Ivoire','Ivory'],sable:['Sable','Sand'],sauge:['Sauge','Sage'],argile:['Argile','Clay'],ardoise:['Bleu ardoise','Slate blue']};
+const NOMS_PALETTES:Record<string,[string,string]>={ivoire:['Lavande','Lavender'],sable:['Sable','Sand'],sauge:['Sauge','Sage'],argile:['Argile','Clay'],ardoise:['Bleu ardoise','Slate blue']};
 /** Ligne de réglage qui s'ouvre sur place (maquette Stitch « pf-02 », 29/10/2026). Le contenu reste monté : les états
  *  se chargent comme avant et le résumé de la ligne reste juste, même fermée. */
 function Reglage({id,icone,titre,valeur,ouvert,basculer,children}:{id:string;icone:SymboleProfil;titre:string;valeur?:string|null;ouvert:boolean;basculer:()=>void;children:ReactNode}){

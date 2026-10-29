@@ -5,7 +5,7 @@ import {choisirApparence} from '@/lib/apparence';
 import {DEFAUT_VISUEL,usePreferencesVisuelles,type Palette,type TailleTexte} from '@/lib/preferences-visuelles';
 
 const PALETTES:{id:Palette;fr:string;en:string;couleurs:string[]}[]=[
-  {id:'ivoire',fr:'Ivoire',en:'Ivory',couleurs:['#fff9ea','#1d1c13','#C9A84C']},
+  {id:'ivoire',fr:'Lavande',en:'Lavender',couleurs:['#F5F7FE','#151B36','#49439B']},
   {id:'sable',fr:'Sable',en:'Sand',couleurs:['#FAF2E5','#251B14','#C2A062']},
   {id:'sauge',fr:'Sauge',en:'Sage',couleurs:['#F2F3E9','#171F18','#A7B987']},
   {id:'argile',fr:'Argile',en:'Clay',couleurs:['#FAEFE8','#2B1C18','#C99170']},
@@ -32,7 +32,7 @@ export function PreferencesProfil({langue,langueCompte,indisponible=false,lectur
       <fieldset className="pf-size-options"><legend className="sr-only">{en?'Text size':'Taille du texte'}</legend>{tailles.map(([taille,label],k)=><label key={taille}><input type="radio" name={`${id}-taille`} aria-label={label} checked={preferences.taille===taille} onChange={()=>appliquer({taille})}/><span className={`pf-size-aa pf-size-aa-${k}`} aria-hidden="true">Aa</span><span>{label}</span></label>)}</fieldset>
     </div>
     <div className="pf-preference-block"><h3><I nom="palette" taille={22}/>{en?'App colours':'Couleurs de l’application'}</h3>
-      <p>{en?'Choose a palette. Ivory keeps SÉNEVÉ’s original colours.':'Choisis une palette. Ivoire conserve les couleurs d’origine de SÉNEVÉ.'}</p>
+      <p>{en?'Choose a palette. Lavender is SÉNEVÉ’s default palette.':'Choisis une palette. Lavande est la palette par défaut de SÉNEVÉ.'}</p>
       <fieldset className="pf-palette-options"><legend className="sr-only">{en?'Colour palette':'Palette de couleurs'}</legend>{PALETTES.map(p=><label key={p.id}><input type="radio" name={`${id}-palette`} checked={preferences.palette===p.id} onChange={()=>appliquer({palette:p.id})}/><span className="pf-palette-swatches" aria-hidden="true">{p.couleurs.map(c=><i key={c} style={{backgroundColor:c}}/>)}</span><span>{en?p.en:p.fr}</span>{preferences.palette===p.id&&<I nom="check" taille={18}/>}</label>)}</fieldset>
     </div>
     <div className="pf-preference-block pf-mode-block"><h3>{en?'Light or dark':'Clair ou sombre'}</h3><Apparence langue={langue}/></div>
