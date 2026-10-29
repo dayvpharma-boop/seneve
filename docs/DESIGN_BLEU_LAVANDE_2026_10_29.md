@@ -18,7 +18,9 @@ Il s'agit d'une première intégration aux composants existants, pas d'une repro
 
 TypeScript et suite existante : 142 fichiers, 1 045 tests réussis. Construction du site avec les options HD de production. Contrôle visuel HD dans la galerie locale avec données fictives ; pas de connexion à un compte réel durant cette recette. Les textes et liens FR/EN utilisent le même composant et la même feuille de styles.
 
-À recevoir avant publication : rendu des trois écrans avec un compte connecté, téléphone Android/iPhone, mode sombre et texte agrandi, comparaison visuelle FR/EN. Cette note ne prouve ni une publication, ni la réception de ces scénarios.
+Recette complémentaire : les vraies routes Aujourd’hui et Parcours ont été rendues avec une session fictive isolée dans une fenêtre interne de 360 px. HD a été relu dans cette largeur. Le débordement horizontal de l’en-tête a été corrigé. Le thème anglais sombre avec texte à 125 % a été inspecté sur Aujourd’hui. Les fixtures ne sont jamais importées par le site publié.
+
+Limites : aucune connexion réelle, aucune vérification physique Android/iPhone, aucune recette complète FR/EN de tous les états. Cette note ne prouve pas la réception de ces scénarios.
 
 ## Retour arrière
 

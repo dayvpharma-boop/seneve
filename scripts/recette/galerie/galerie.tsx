@@ -1,4 +1,16 @@
 // Galerie de recette visuelle HD : vrais composants, données fictives, heure figée à 12 h 45 (Kinshasa).
+import {Espace} from '@/routes/espace';
+import {Progres} from '@/routes/progres';
+import '@/styles-maquettes.css';
+import '@/styles-aujourdhui.css';
+import '@/styles-journee-nouvelle.css';
+import '@/styles-parcours-maquette.css';
+import '@/styles-espace-vivant.css';
+import '@/styles-illustrations-pages.css';
+import '@/styles-preferences.css';
+import '@/styles-polices-validees.css';
+import '@/styles-mode-sombre.css';
+import '@/styles-bleu-lavande.css';
 import type {ReactElement} from 'react';
 import {createRoot} from 'react-dom/client';
 import {MemoryRouter} from 'react-router-dom';
@@ -13,7 +25,8 @@ import '@/styles-habitudes-stitch.css';
 import '@/styles-habitudes-polices.css';
 import '@/styles-bleu-lavande.css';
 document.documentElement.dataset.palette='ivoire';
-document.documentElement.dataset.apparence='clair';
+document.documentElement.dataset.apparence=new URLSearchParams(location.search).get('mode')==='sombre'?'sombre':'clair';
+document.documentElement.style.setProperty('--texte-echelle',new URLSearchParams(location.search).get('taille')==='grande'?'1.25':'1');
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {ActivitesJourRecette} from '@/components/ActivitesJourRecette';
 import {InscriptionHabitudes} from '@/components/InscriptionHabitudes';
@@ -30,6 +43,8 @@ const configuration={compteId:'GALERIE',programmeId:'GALERIE',version:1,langue:'
 const T=Date.parse('2026-10-26T11:45:00Z');Date.now=()=>T;
 const E='11111111-1111-4111-8111-111111111111',P='33333333-3333-4333-8333-333333333333';
 const ecrans:Record<string,()=>ReactElement>={
+ 'design-espace':()=> <Espace/>,
+ 'design-progres':()=> <Progres/>,
  horaires:()=><CadreHabitudes titre="Sénevé" sousTitreCentre="Habitudes & Défis" langue="fr" retour="/" retourLibelle="Revenir aux offres" avecNavigation={false}><div className="flex flex-col w-full px-hd-margin pt-hd-space-md pb-hd-space-lg"><InscriptionHabitudes configuration={configuration}/></div></CadreHabitudes>,
  presentation:()=><HabitudesInscription/>,
  // Compteur de fidélité : masqué par défaut, affiché, puis fenêtre de déclaration ouverte (construire avec VITE_HABITUDES_COMPTEUR=true).
@@ -52,7 +67,7 @@ const ecrans:Record<string,()=>ReactElement>={
 };
 const nom=decodeURIComponent(location.hash.slice(1)),Ecran=ecrans[nom];
 if(nom.startsWith('rappels')){void import('@/styles-journee-nouvelle.css');void import('@/styles-mode-sombre.css');}
-createRoot(document.getElementById('root')!).render(<MemoryRouter>{Ecran?<Ecran/>:<ul>{Object.keys(ecrans).map(n=><li key={n}><a href={'#'+n}>{n}</a></li>)}</ul>}</MemoryRouter>);
+createRoot(document.getElementById('root')!).render(<MemoryRouter initialEntries={[(nom==='design-progres'?'/progres':'/espace')+location.search]}>{Ecran?<Ecran/>:<ul>{Object.keys(ecrans).map(n=><li key={n}><a href={'#'+n}>{n}</a></li>)}</ul>}</MemoryRouter>);
 // Écran dîme : on remplit l'exemple du cahier (commerce 1000 / 650 / 150) comme le ferait un participant.
 function saisir(sel:string,valeur:string){const el=document.querySelector(sel) as HTMLInputElement|HTMLSelectElement|null;if(!el)return;const proto=el instanceof HTMLSelectElement?HTMLSelectElement.prototype:HTMLInputElement.prototype;Object.getOwnPropertyDescriptor(proto,'value')!.set!.call(el,valeur);el.dispatchEvent(new Event(el instanceof HTMLSelectElement?'change':'input',{bubbles:true}));}
 setTimeout(()=>{

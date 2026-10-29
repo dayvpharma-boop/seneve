@@ -67,6 +67,16 @@
 :root[data-apparence] .parcours-page .progres-chiffres li {background:var(--vivant-miel);border-radius:12px}
 :root[data-apparence] .parcours-page .is-today .parcours-rond {background:var(--vivant-vert);color:var(--vivant-sur-accent);border-radius:50%}
 :root[data-apparence] .hd-ecran {max-width:640px;margin-inline:auto}
+/* Les anciennes règles de ces pages suivent aussi les mêmes couleurs locales. */
+:root[data-palette="ivoire"][data-apparence] :is(.espace-page,.parcours-page,.hd-stitch) {
+  --palette-papier:var(--vivant-fond);--palette-surface:var(--vivant-surface);
+  --palette-encre:var(--vivant-encre);--palette-secondaire:var(--vivant-secondaire);
+  --palette-accent:var(--vivant-vert);--palette-sur-accent:var(--vivant-vert);
+  --palette-ivoire:var(--vivant-argile);--palette-doux:var(--vivant-miel);
+  --palette-carte:var(--vivant-lavande);--palette-haut:var(--vivant-lavande);
+  --palette-ligne:var(--vivant-ligne);--palette-or-doux:var(--vivant-lavande);
+  --palette-or-pale:var(--vivant-miel);
+}
 /* Jetons locaux HD : suit le choix clair/sombre explicite, y compris sur un système sombre. */
 :root[data-palette="ivoire"][data-apparence] .hd-stitch {
   --hdc-surface:var(--vivant-fond);--hdc-background:var(--vivant-fond);
@@ -97,3 +107,10 @@
   :root[data-apparence] :is(.espace-page,.parcours-page,.hd-stitch) {--vivant-fond:Canvas;--vivant-surface:Canvas;--vivant-encre:CanvasText;--vivant-secondaire:CanvasText;--vivant-vert:LinkText;--vivant-sur-accent:Canvas;--vivant-ligne:CanvasText;--vivant-miel:Canvas;--vivant-lavande:Canvas}
   :root[data-apparence] body:has(:is(.espace-page,.parcours-page,.hd-ecran)) {background:Canvas;color:CanvasText}
 }
+/* En-tête compact : les quatre commandes restent dans la largeur à 360 px. */
+:root[data-apparence] .espace-page .barre-haut {gap:8px;min-width:0}
+:root[data-apparence] .espace-page .barre-haut .logo-marque {min-width:0;flex:1}
+:root[data-apparence] .espace-page .barre-haut .logo-marque>img {flex-shrink:0}
+:root[data-apparence] .espace-page .barre-haut .today-profil {flex-shrink:0}
+:root[data-apparence] .espace-page .barre-haut .logo-marque>span {overflow-wrap:anywhere}
+:root[data-apparence] .espace-page .barre-haut {margin-inline:0;padding-inline:0;width:100%;max-width:100%}
