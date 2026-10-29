@@ -25,9 +25,12 @@ export function AnnoncesAdministration() {
       const a = await supabase.rpc('staff_annonces');
       if (a.error || !Array.isArray(a.data)) { setErreurListe(true); return; }
       setListe(a.data as Annonce[]);
+    } catch { setErreurListe(true); return; }
+    // La liste des parcours ne sert qu'au ciblage : son échec n'empêche pas d'écrire une annonce à tous.
+    try {
       const p = await supabase.from('programmes').select('programme_id, nom').order('programme_id');
       if (!p.error) setProgrammes((p.data ?? []) as Programme[]);
-    } catch { setErreurListe(true); }
+    } catch { /* ciblage par parcours indisponible */ }
   }, []);
   useEffect(() => { void charger(); }, [charger]);
 

@@ -59,3 +59,16 @@ it('le tableau ordinateur conserve les chiffres en cas de panne sans annoncer un
  await screen.findByText('VENTE1');rpc.mockRejectedValue(new Error('réseau'));fireEvent.click(screen.getByRole('button',{name:'Actualiser'}));
  expect(await screen.findByRole('alert')).toHaveTextContent('Derniers chiffres conservés');expect(screen.getByText('VENTE1')).toBeInTheDocument();expect(screen.getByRole('alert')).toHaveTextContent('18 octobre 2026');
 });
+it('l’administrateur trouve « Annonces » dans le menu et la section dans sa vue (signalé le 29/10/2026)',async()=>{
+ render(<MemoryRouter><AdministrationBureau admin prenom="Justin" requests={[]} outils={outils}/></MemoryRouter>);
+ expect(await screen.findByRole('button',{name:'Annonces'})).toBeInTheDocument();
+ cleanup();
+ render(<MemoryRouter><AdministrationBureau vue="annonces" admin prenom="Justin" requests={[]} outils={outils}/></MemoryRouter>);
+ expect(await screen.findByRole('heading',{name:'Annonces aux participants'})).toBeInTheDocument();
+ expect(await screen.findByText('Aucune annonce pour le moment.')).toBeInTheDocument();
+});
+it('un membre de l’équipe sans rôle administrateur ne voit pas les annonces',async()=>{
+ render(<MemoryRouter><AdministrationBureau vue="annonces" admin={false} prenom="Aide" requests={[]} outils={outils}/></MemoryRouter>);
+ await waitFor(()=>expect(screen.queryByRole('heading',{name:'Annonces aux participants'})).toBeNull());
+ expect(screen.queryByRole('button',{name:'Annonces'})).toBeNull();
+});

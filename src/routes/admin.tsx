@@ -26,7 +26,6 @@ import { EchangesDemande } from '@/components/EchangesDemande';
 import { SuppressionCompte } from '@/components/SuppressionCompte';
 import { formatDateHeure } from '@/lib/journal';
 import { ETATS_EQUIPE, ETAT_LIBELLE, REPONSE_MAX, erreurAdmin, filtrer, lienWhatsApp, type Filtre, type StaffRequest, type TeamMember } from '@/lib/admin';
-import { AnnoncesAdministration } from '@/components/AnnoncesAdministration';
 
 type Me = { roles: string[]; admin: boolean };
 type Loaded = { authId:string; prenom:string; me: Me; requests: StaffRequest[]; team: TeamMember[] };
@@ -87,7 +86,7 @@ export function Admin() {
       : liste.map(r => <RequestAdmin key={`${r.request_id}:${r.modifie_le}`} request={r} admin={data.me.admin} team={data.team} onSaved={refresh} />)}
 </section>;
 
-  if(intervention||data.me.admin||params.get('vue')==='demandes'||params.get('vue')==='contenus')return <AdministrationBureau authId={data.authId} vue={params.get('vue')==='freins'&&data.me.admin?'freins':intervention?'intervention':params.get('vue')==='demandes'?'demandes':params.get('vue')==='participants'&&data.me.admin?'participants':params.get('vue')==='achats'&&data.me.admin?'achats':params.get('vue')==='contenus'?'contenus':params.get('vue')==='communications'&&data.me.admin?'communications':params.get('vue')==='incidents'&&data.me.admin?'incidents':'tableau'} mobile={!ordinateur} admin={data.me.admin} prenom={data.prenom} requests={data.requests} outils={{detailDemande:r=><RequestAdmin maquette key={`${r.request_id}:${r.modifie_le}`} request={r} admin={data.me.admin} team={data.team} onSaved={refresh}/>,demandes,places:<ConventionsAdmin/>,equipe:<Team team={data.team} onChanged={refresh}/>,freins:<FreinsAdmin admin={data.me.admin}/>,indicateurs:<PilotageAdmin/>}}/>;
+  if(intervention||data.me.admin||params.get('vue')==='demandes'||params.get('vue')==='contenus')return <AdministrationBureau authId={data.authId} vue={params.get('vue')==='freins'&&data.me.admin?'freins':intervention?'intervention':params.get('vue')==='demandes'?'demandes':params.get('vue')==='participants'&&data.me.admin?'participants':params.get('vue')==='achats'&&data.me.admin?'achats':params.get('vue')==='contenus'?'contenus':params.get('vue')==='communications'&&data.me.admin?'communications':params.get('vue')==='incidents'&&data.me.admin?'incidents':params.get('vue')==='annonces'&&data.me.admin?'annonces':'tableau'} mobile={!ordinateur} admin={data.me.admin} prenom={data.prenom} requests={data.requests} outils={{detailDemande:r=><RequestAdmin maquette key={`${r.request_id}:${r.modifie_le}`} request={r} admin={data.me.admin} team={data.team} onSaved={refresh}/>,demandes,places:<ConventionsAdmin/>,equipe:<Team team={data.team} onChanged={refresh}/>,freins:<FreinsAdmin admin={data.me.admin}/>,indicateurs:<PilotageAdmin/>}}/>;
 
   return <main className={`wrap admin-maquette admin-tableau${intervention?' admin-intervention':''}`}>
     {head}
@@ -97,7 +96,6 @@ export function Admin() {
     {<InterventionAdministration requests={data.requests} admin={data.me.admin} onOpenRequest={()=>setOutilsDemandes(true)} desktop={ordinateur}/>}
     {intervention&&ordinateur?<details className="intervention-outils-demandes" open={outilsDemandes} onToggle={e=>setOutilsDemandes(e.currentTarget.open)}><summary>Traitement des demandes · {compte('a_traiter')} à traiter</summary>{demandes}</details>:demandes}
     {data.me.admin&&intervention&&ordinateur?<div className="intervention-registres"><ConventionsAdmin compact/><IncidentsIntervention/></div>:data.me.admin&&<ConventionsAdmin/>}
-    {data.me.admin && <AnnoncesAdministration />}
     {intervention&&ordinateur?<details className="intervention-autres"><summary>Autres outils d’accompagnement</summary><FreinsAdmin admin={data.me.admin}/></details>:<FreinsAdmin admin={data.me.admin}/>}
     {data.me.admin && <Team team={data.team} onChanged={refresh} />}
   </main>;
