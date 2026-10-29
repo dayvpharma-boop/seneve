@@ -141,17 +141,24 @@ describe('annonces dans l’administration', () => {
 });
 
 describe('image et vidéo dans les annonces (décision du 29/10/2026)', () => {
-  it('le participant voit l’image ; la vidéo ne se charge qu’après un appui', async () => {
+  it('le participant agrandit l’image ; la vidéo s’ouvre dans YouTube (lecture intégrée bloquée par YouTube)', async () => {
     m.rpc.mockImplementation(async (n: string) => n === 'mes_notifications' ? { data: { vu_jusqu_a: null, non_lues: 1, elements: [
       { type: 'annonce', id: 'A5', date: '2026-10-29T09:00:00Z', titre: 'Culte spécial', texte: 'Regarde la vidéo.', langue: 'fr', nouveau: true, image: '11111111-1111-4111-8111-111111111111.jpg', video: 'https://youtu.be/dQw4w9WgXcQ' },
     ] }, error: null } : { data: null, error: null });
     page();
     const img = await screen.findByRole('img', { name: 'Image de l’annonce : Culte spécial' });
     expect(img).toHaveAttribute('src', 'https://stockage.test/annonces/11111111-1111-4111-8111-111111111111.jpg');
+    fireEvent.click(screen.getByRole('button', { name: 'Agrandir l’image : Culte spécial' }));
+    const plein = screen.getByRole('dialog', { name: 'Image de l’annonce : Culte spécial' });
+    expect(plein.querySelector('img')).toHaveAttribute('src', 'https://stockage.test/annonces/11111111-1111-4111-8111-111111111111.jpg');
+    expect(screen.getByRole('button', { name: 'Fermer' })).toHaveFocus();
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.querySelector('iframe')).toBeNull();
-    expect(screen.getByRole('link', { name: 'Ouvrir sur YouTube' })).toHaveAttribute('href', 'https://youtu.be/dQw4w9WgXcQ');
-    fireEvent.click(screen.getByRole('button', { name: 'Regarder la vidéo (YouTube)' }));
-    expect(screen.getByTitle('Vidéo : Culte spécial')).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    const lien = screen.getByRole('link', { name: 'Regarder la vidéo sur YouTube : Culte spécial' });
+    expect(lien).toHaveAttribute('href', 'https://youtu.be/dQw4w9WgXcQ');
+    expect(lien).toHaveAttribute('target', '_blank');
+    expect(lien.querySelector('img')).toHaveAttribute('src', 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg');
   });
   it('l’administration refuse un lien hors YouTube/TikTok', async () => {
     render(<AnnoncesAdministration />);

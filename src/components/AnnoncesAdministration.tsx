@@ -118,8 +118,8 @@ export function AnnoncesAdministration() {
       <input id="annonce-video" type="url" inputMode="url" value={video} maxLength={500} placeholder="https://www.youtube.com/watch?v=…" aria-describedby="annonce-video-etat" onChange={e => { setVideo(e.target.value); modifier(); }} />
       <p id="annonce-video-etat" className={videoInvalide ? 'error' : 'muted admin-annonce-aide'} role={videoInvalide ? 'alert' : undefined}>
         {videoInvalide ? 'Ce lien n’est pas reconnu. Colle un lien qui commence par https://www.youtube.com, https://youtu.be ou https://www.tiktok.com.'
-          : lienVideo ? `Vidéo ${lienVideo.plateforme === 'youtube' ? 'YouTube' : 'TikTok'} reconnue.${lienVideo.integration ? '' : ' Elle s’ouvrira dans TikTok.'}`
-          : 'La vidéo reste sur YouTube ou TikTok ; le participant la regarde depuis l’annonce.'}
+          : lienVideo ? `Vidéo ${lienVideo.plateforme === 'youtube' ? 'YouTube' : 'TikTok'} reconnue.`
+          : 'La vidéo reste sur YouTube ou TikTok : le participant l’ouvre depuis l’annonce, dans l’application YouTube ou TikTok.'}
       </p>
       <div className="admin-annonce-choix">
         <label htmlFor="annonce-langue">Langue</label>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { analyserLienVideo, lienImageAnnonce } from '@/lib/annonces-medias';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ComptePrive } from '@/components/ComptePrive';
@@ -72,30 +72,48 @@ function Element({ e, en, nouveau }: { e: ElementNotification; en: boolean; nouv
       <p className="nt-titre">{nouveau && <span className="nt-badge">{en ? 'New' : 'Nouveau'}</span>}{titre}</p>
       <time dateTime={e.date}>{date}</time>
       {texte && <p className="nt-texte">{texte}</p>}
-      {e.type === 'annonce' && e.image && <img className="nt-image" src={lienImageAnnonce(e.image)} alt={en ? `Image of the announcement: ${e.titre}` : `Image de l’annonce : ${e.titre}`} loading="lazy" decoding="async" />}
+      {e.type === 'annonce' && e.image && <ImageAnnonce src={lienImageAnnonce(e.image)} titre={e.titre} en={en} />}
       {e.type === 'annonce' && e.video && <VideoAnnonce lien={e.video} titre={e.titre} en={en} />}
       {lien && <Link to={lien.to}>{lien.label}</Link>}
     </div>
   </li>;
 }
 
-/** Vidéo d'une annonce : rien n'est chargé depuis YouTube ou TikTok avant que le participant appuie (données mobiles). */
+/** Image d'une annonce : un appui l'affiche en plein écran ; « Fermer » ou la touche Échap revient à la liste. */
+function ImageAnnonce({ src, titre, en }: { src: string; titre: string; en: boolean }) {
+  const [grande, setGrande] = useState(false);
+  const fermer = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    if (!grande) return;
+    fermer.current?.focus();
+    const touche = (ev: KeyboardEvent) => { if (ev.key === 'Escape') setGrande(false); };
+    window.addEventListener('keydown', touche);
+    const avant = document.body.style.overflow; document.body.style.overflow = 'hidden';
+    return () => { window.removeEventListener('keydown', touche); document.body.style.overflow = avant; };
+  }, [grande]);
+  const alt = en ? `Image of the announcement: ${titre}` : `Image de l’annonce : ${titre}`;
+  return <>
+    <button type="button" className="nt-image-bouton" onClick={() => setGrande(true)} aria-label={en ? `Enlarge the image: ${titre}` : `Agrandir l’image : ${titre}`}>
+      <img className="nt-image" src={src} alt={alt} loading="lazy" decoding="async" />
+    </button>
+    {grande && <div className="nt-image-plein" role="dialog" aria-modal="true" aria-label={alt} onClick={() => setGrande(false)}>
+      <img src={src} alt={alt} onClick={ev => ev.stopPropagation()} />
+      <button type="button" ref={fermer} className="nt-image-fermer" onClick={() => setGrande(false)}>{en ? 'Close' : 'Fermer'}</button>
+    </div>}
+  </>;
+}
+
+/** Vidéo d'une annonce : YouTube et TikTok bloquent souvent la lecture intégrée à un autre site (vérification
+ *  « je ne suis pas un robot », vidéo non intégrable ; constaté le 29/10/2026). La vidéo s'ouvre donc dans
+ *  l'application YouTube ou TikTok du téléphone, ou dans le navigateur. Rien n'est chargé chez YouTube avant l'appui,
+ *  sauf la miniature. */
 function VideoAnnonce({ lien, titre, en }: { lien: string; titre: string; en: boolean }) {
-  const [ouverte, setOuverte] = useState(false);
   const v = analyserLienVideo(lien);
   if (!v) return null;
   const nom = v.plateforme === 'youtube' ? 'YouTube' : 'TikTok';
-  const ouvrir = <a className="nt-video-lien" href={v.lien} target="_blank" rel="noopener noreferrer">{en ? `Open on ${nom}` : `Ouvrir sur ${nom}`}</a>;
-  if (!v.integration) return <div className="nt-video">{ouvrir}</div>;
-  return <div className="nt-video">
-    {ouverte
-      ? <div className={`nt-video-cadre${v.verticale ? ' is-verticale' : ''}${v.plateforme === 'tiktok' ? ' is-tiktok' : ''}`}>
-          <iframe src={v.integration} title={en ? `Video: ${titre}` : `Vidéo : ${titre}`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin"
-            allow="encrypted-media; picture-in-picture; fullscreen" allowFullScreen sandbox="allow-scripts allow-same-origin allow-presentation allow-popups" />
-        </div>
-      : <button type="button" className="nt-video-lancer" onClick={() => setOuverte(true)}>
-          <span aria-hidden="true">▶</span>{en ? `Watch the video (${nom})` : `Regarder la vidéo (${nom})`}
-        </button>}
-    {ouvrir}
-  </div>;
+  const libelle = en ? `Watch the video on ${nom}` : `Regarder la vidéo sur ${nom}`;
+  return <a className={`nt-video${v.vignette ? ' a-vignette' : ''}`} href={v.lien} target="_blank" rel="noopener noreferrer" aria-label={`${libelle} : ${titre}`}>
+    {v.vignette && <span className="nt-video-vignette"><img src={v.vignette} alt="" loading="lazy" decoding="async" /><span className="nt-video-play" aria-hidden="true">▶</span></span>}
+    <span className="nt-video-lancer"><span aria-hidden="true">▶</span>{libelle}</span>
+  </a>;
 }
