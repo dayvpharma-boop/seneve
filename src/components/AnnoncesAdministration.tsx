@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { supabase } from '@/lib/supabase';
 import { analyserLienVideo, envoyerImageAnnonce, IMAGE_MAX_SOURCE, lienImageAnnonce, preparerImageAnnonce } from '@/lib/annonces-medias';
 
-type Annonce = { annonce_id: string; titre: string; texte: string; langue: string; cible: string; programme_id: string | null; publie_le: string; retire_le: string | null; image_path?: string | null; video_url?: string | null };
+type Annonce = { annonce_id: string; titre: string; texte: string; langue: string; cible: string; programme_id: string | null; publie_le: string; retire_le: string | null; image_path?: string | null; video_url?: string | null; sonner?: boolean; envois?: { acceptes: number; en_attente: number; echecs: number } };
 type Programme = { programme_id: string; nom: string };
 const TITRE_MAX = 120, TEXTE_MAX = 2000;
 
@@ -21,6 +21,7 @@ export function AnnoncesAdministration() {
   const [image, setImage] = useState<Blob | null>(null), [apercu, setApercu] = useState<string | null>(null);
   const [prepImage, setPrepImage] = useState(false), [erreurImage, setErreurImage] = useState('');
   const [video, setVideo] = useState('');
+  const [sonner, setSonner] = useState(true);
   const champImage = useRef<HTMLInputElement | null>(null);
   useEffect(() => () => { if (apercu) URL.revokeObjectURL(apercu); }, [apercu]);
   // Même identifiant si la publication échoue : un nouvel essai ne crée jamais deux annonces.
@@ -70,11 +71,17 @@ export function AnnoncesAdministration() {
       try { chemin = await envoyerImageAnnonce(clientId.current, image); }
       catch { setOccupe(false); setErreur('L’image n’a pas pu être envoyée. Vérifie ta connexion, puis réessaie : l’annonce ne sera pas publiée deux fois.'); return; }
     }
-    const { error } = await supabase.rpc('staff_annonce_publier', { p_client_id: clientId.current, p_titre: titre, p_texte: texte, p_langue: langue, p_cible: cible, p_programme_id: cible === 'programme' ? programme : null, p_image_path: chemin, p_video_url: lienVideo ? lienVideo.lien : null });
+    const { data, error } = await supabase.rpc('staff_annonce_publier', { p_client_id: clientId.current, p_titre: titre, p_texte: texte, p_langue: langue, p_cible: cible, p_programme_id: cible === 'programme' ? programme : null, p_image_path: chemin, p_video_url: lienVideo ? lienVideo.lien : null, p_sonner: sonner });
     setOccupe(false);
     if (error) { setErreur(error.message.includes('Parcours inconnu') ? 'Ce parcours est inconnu. Choisis-en un dans la liste.' : error.message.includes('Lien vidéo invalide') ? 'Ce lien vidéo n’est pas accepté. Colle un lien YouTube ou TikTok.' : 'L’annonce n’a pas été publiée. Vérifie ta connexion, puis réessaie : elle ne sera pas publiée deux fois.'); return; }
+    const res = (data ?? {}) as { telephones?: number; differes?: number };
+    const tel = Number(res.telephones ?? 0), plusTard = Number(res.differes ?? 0), maintenant = tel - plusTard;
     clientId.current = null; setTitre(''); setTexte(''); setVideo(''); setImage(null); setApercu(null); setConfirmer(false);
-    setMessage('Annonce publiée. Elle apparaît dans la page Notifications des participants concernés.');
+    setMessage('Annonce publiée. Elle apparaît dans la page Notifications des participants concernés.'
+      + (!sonner ? ' Aucun téléphone ne sonne (case décochée).'
+        : tel === 0 ? ' Aucun téléphone ne sonne : aucun participant concerné n’a activé les rappels sur son téléphone.'
+        : ` Elle sonne sur ${maintenant} téléphone${maintenant > 1 ? 's' : ''} maintenant${plusTard ? `, et sur ${plusTard} autre${plusTard > 1 ? 's' : ''} à 7 h (heure du participant)` : ''}.`));
+    setSonner(true);
     await charger();
   }
 
@@ -122,7 +129,9 @@ export function AnnoncesAdministration() {
         {cible === 'programme' && <><label htmlFor="annonce-programme">Parcours</label>
           <select id="annonce-programme" value={programme} onChange={e => { setProgramme(e.target.value); modifier(); }}><option value="">Choisir un parcours…</option>{programmes.map(p => <option key={p.programme_id} value={p.programme_id}>{p.nom} — {p.programme_id}</option>)}</select></>}
       </div>
-      {confirmer && valide && <p className="admin-annonce-confirmer" role="status">Publier « {titre.trim()} »{medias} pour {destinataires} ? Appuie sur « Confirmer l’envoi ».</p>}
+      <label className="admin-annonce-sonner"><input type="checkbox" checked={sonner} onChange={e => { setSonner(e.target.checked); modifier(); }} /><span>Faire sonner les téléphones</span></label>
+      <p className="muted admin-annonce-aide">Seulement chez les participants concernés qui ont activé les rappels. Entre 21 h et 7 h (heure du participant), le téléphone sonne à 7 h.</p>
+      {confirmer && valide && <p className="admin-annonce-confirmer" role="status">Publier « {titre.trim()} »{medias} pour {destinataires}{sonner ? ', en faisant sonner leurs téléphones' : ', sans faire sonner les téléphones'} ? Appuie sur « Confirmer l’envoi ».</p>}
       <button type="submit" className="admin-annonce-envoyer" disabled={!valide || occupe}><span aria-hidden="true">➤</span>{occupe ? 'Envoi…' : confirmer ? 'Confirmer l’envoi' : 'Envoyer l’annonce'}</button>
       {!valide && !occupe && !videoInvalide && !prepImage && <p className="muted admin-annonce-aide">Pour envoyer, écris un titre et un message{cible === 'programme' && !programme ? ', puis choisis un parcours' : ''}.</p>}
       {confirmer && <button type="button" className="link" onClick={modifier}>Annuler</button>}
@@ -137,6 +146,7 @@ export function AnnoncesAdministration() {
           <p><strong>{a.titre}</strong> · {a.langue === 'en' ? 'anglais' : 'français'} · {a.cible === 'tous' ? 'tous' : a.programme_id} · {new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(a.publie_le))}{a.retire_le ? ' · retirée' : ''}</p>
           <p className="muted">{a.texte}</p>
           {a.image_path && <img className="admin-annonce-vignette" src={lienImageAnnonce(a.image_path)} alt={`Image de l’annonce « ${a.titre} »`} loading="lazy" />}
+          {a.envois && (a.envois.acceptes + a.envois.en_attente + a.envois.echecs > 0) && <p className="muted">Téléphones : {a.envois.acceptes} sonné{a.envois.acceptes > 1 ? 's' : ''}{a.envois.en_attente ? ` · ${a.envois.en_attente} en attente` : ''}{a.envois.echecs ? ` · ${a.envois.echecs} non joignable${a.envois.echecs > 1 ? 's' : ''}` : ''}</p>}
           {a.video_url && <p className="muted">Vidéo : <a href={a.video_url} target="_blank" rel="noopener noreferrer">{analyserLienVideo(a.video_url)?.plateforme === 'tiktok' ? 'TikTok' : 'YouTube'}</a></p>}
           {!a.retire_le && (aRetirer === a.annonce_id
             ? <p>Retirer cette annonce chez tous ses destinataires ? <button type="button" className="link" disabled={occupe} onClick={() => void retirer(a.annonce_id)}>Confirmer le retrait</button> <button type="button" className="link" onClick={() => setARetirer(null)}>Annuler</button></p>

@@ -19,6 +19,7 @@ vi.mock('@/lib/supabase', () => ({
       if (name !== 'rappels_etat' && m.echec) return Promise.resolve({ data: null, error: { message: 'indisponible' } });
       if (name === 'rappels_activer') return Promise.resolve({ data: { ...m.etat, actif: true, cet_appareil: true, moments: args['p_moments'] }, error: null });
       if (name === 'rappels_arreter') return Promise.resolve({ data: { ...m.etat, actif: false, cet_appareil: false }, error: null });
+      if (name === 'rappels_annonces') return Promise.resolve({ data: { ...m.etat, actif: true, cet_appareil: true, annonces: args['p_actif'] }, error: null });
       if (name === 'rappels_regler') return Promise.resolve({ data: { ...m.etat, actif: true, cet_appareil: true, moments: args['p_moments'] }, error: null });
       return Promise.resolve({ data: m.etat, error: null });
     },
@@ -136,3 +137,15 @@ describe('Rappels sur ce téléphone', () => {
 it('une panne de chargement conserve les rappels visibles et permet de réessayer',async()=>{m.chargementErreur=true;render(<RappelsCard langue="fr"/>);expect(await screen.findByText('Tes réglages de rappel n’ont pas pu être chargés.')).toBeInTheDocument();m.chargementErreur=false;fireEvent.click(screen.getByRole('button',{name:'Réessayer les rappels'}));expect(await screen.findByLabelText('Matin')).toBeInTheDocument();});
 
 it('présente les rappels et les heures en anglais',async()=>{render(<RappelsCard langue="en"/>);expect(await screen.findByLabelText('Morning')).toBeChecked();expect(screen.getByRole('option',{name:'07:30'})).toBeInTheDocument();expect(screen.getByLabelText('Midday')).not.toBeChecked();expect(screen.getByRole('button',{name:'Get my reminders'})).toBeInTheDocument();});
+
+  it('annonces de l’équipe : annoncées dans les réglages et coupables séparément (décision du 29/10/2026)', async () => {
+    m.etat = { ...m.etat, actif: true, cet_appareil: true, appareils: 1, annonces: true };
+    render(<RappelsCard langue="fr" />);
+    const caseAnnonces = await screen.findByLabelText('Recevoir aussi les annonces de l’équipe SÉNEVÉ');
+    expect(caseAnnonces).toBeChecked();
+    expect(screen.getByText(/jamais entre 21 h et 7 h/)).toBeInTheDocument();
+    fireEvent.click(caseAnnonces);
+    await waitFor(() => expect(screen.getByLabelText('Recevoir aussi les annonces de l’équipe SÉNEVÉ')).not.toBeChecked());
+    expect(m.appels.find(a => a.name === 'rappels_annonces')?.args).toEqual({ p_actif: false, p_endpoint: null });
+    expect(m.appels.some(a => a.name === 'rappels_arreter')).toBe(false);
+  });

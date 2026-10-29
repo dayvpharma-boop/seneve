@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MOMENTS, PAR_DEFAUT, RefusNotifications, abonnementActuel, abonner, clesAbonnement, fuseauTelephone, heuresPossibles, possibilite, type Moment, type Moments } from '@/lib/rappels';
 
-type Etat = { actif: boolean; cet_appareil: boolean; appareils: number; moments: Moments; fuseau: string; cle_publique: string | null };
+type Etat = { actif: boolean; cet_appareil: boolean; appareils: number; moments: Moments; fuseau: string; cle_publique: string | null; annonces?: boolean };
 
 // Textes des rappels présentés à Dr Justin le 22/10/2026 (« Rappels sur ce téléphone »).
 export const RAPPELS_TEXTES = {
@@ -19,6 +19,8 @@ export const RAPPELS_TEXTES = {
     bientot: 'Les rappels seront disponibles dans quelques minutes. Réessaie plus tard.',
     refus: 'Les notifications sont bloquées pour SÉNEVÉ. Autorise-les dans les réglages de ton navigateur, puis réessaie.',
     erreur: 'Ton choix n’a pas été enregistré. Vérifie ta connexion et réessaie.',
+    annonces: 'Recevoir aussi les annonces de l’équipe SÉNEVÉ',
+    annoncesNote: 'Les annonces de l’équipe arrivent aussi sur ce téléphone, jamais entre 21 h et 7 h. Tu peux les couper ici ; elles restent lisibles dans la cloche.',
   },
   en: {
     titre: 'Reminders on this phone',
@@ -33,6 +35,8 @@ export const RAPPELS_TEXTES = {
     bientot: 'Reminders will be available in a few minutes. Please try again later.',
     refus: 'Notifications are blocked for SÉNEVÉ. Allow them in your browser settings, then try again.',
     erreur: 'Your choice was not saved. Check your connection and try again.',
+    annonces: 'Also get announcements from the SÉNEVÉ team',
+    annoncesNote: 'Team announcements also arrive on this phone, never between 9 pm and 7 am. You can turn them off here; they stay readable under the bell.',
   },
 } as const;
 
@@ -110,6 +114,17 @@ export function RappelsCard({ langue }: { langue: string }) {
     try { const sub = await abonnementActuel(); await sub?.unsubscribe(); } catch { /* serveur déjà arrêté */ }
   }
 
+  async function choisirAnnonces(actif: boolean) {
+    if (verrou.current || !etat) return;
+    verrou.current = true; setBusy(true); setErreur('');
+    try {
+      const { data, error } = await supabase.rpc('rappels_annonces', { p_actif: actif, p_endpoint: endpoint });
+      if (error || !data) throw error ?? new Error('refus');
+      appliquer(data as Etat);
+    } catch { setErreur(T.erreur); }
+    finally { verrou.current = false; setBusy(false); }
+  }
+
   async function arreter() {
     if (verrou.current) return;
     verrou.current = true; setBusy(true); setErreur('');
@@ -137,8 +152,10 @@ export function RappelsCard({ langue }: { langue: string }) {
         </fieldset>
         {actifIci ? <p className="muted" role="status">{T.actifs}</p> : etat.actif && <p className="muted" role="status">{T.autreTelephone}</p>}
         {!actifIci && <button type="button" className="btn" disabled={busy || !unMoment} onClick={() => void recevoir()}>{busy ? T.patienter : T.recevoir}</button>}
+        {etat.actif && <label className="rappels-annonces"><input type="checkbox" checked={etat.annonces !== false} disabled={busy} onChange={e => void choisirAnnonces(e.target.checked)} /><span>{T.annonces}</span></label>}
         {etat.actif && <button type="button" className="link rappels-arreter" disabled={busy} onClick={() => void arreter()}>{T.arreter}</button>}
       </>}
+    {poss !== 'non' && <p className="muted rappels-note">{T.annoncesNote}</p>}
     <p className="muted rappels-note">{T.note}</p>
     {erreur && <p className="error" role="alert">{erreur}</p>}
   </div>;

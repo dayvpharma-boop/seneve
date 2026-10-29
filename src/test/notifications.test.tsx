@@ -122,7 +122,7 @@ describe('annonces dans l’administration', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText(/L’annonce n’a pas été publiée/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
-    expect(await screen.findByText('Annonce publiée. Elle apparaît dans la page Notifications des participants concernés.')).toBeInTheDocument();
+    expect(await screen.findByText(/^Annonce publiée. Elle apparaît dans la page Notifications des participants concernés./)).toBeInTheDocument();
     const appels = m.rpc.mock.calls.filter(c => c[0] === 'staff_annonce_publier').map(c => (c[1] as { p_client_id: string }).p_client_id);
     expect(appels).toHaveLength(2);
     expect(appels[0]).toBe(appels[1]);
@@ -197,5 +197,38 @@ describe('image et vidéo dans les annonces (décision du 29/10/2026)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText(/L’image n’a pas pu être envoyée/)).toBeInTheDocument();
     expect(m.rpc).not.toHaveBeenCalledWith('staff_annonce_publier', expect.anything());
+  });
+});
+
+describe('annonce qui fait sonner les téléphones (décision du 29/10/2026)', () => {
+  it('sonne par défaut et dit combien de téléphones sonnent maintenant et à 7 h', async () => {
+    m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [], error: null } : n === 'staff_annonce_publier' ? { data: { telephones: 3, differes: 1 }, error: null } : { data: null, error: null });
+    render(<AnnoncesAdministration />);
+    await screen.findByText('Aucune annonce pour le moment.');
+    expect(screen.getByLabelText('Faire sonner les téléphones')).toBeChecked();
+    fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'Culte' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Dimanche.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
+    expect(screen.getByText(/en faisant sonner leurs téléphones/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
+    expect(await screen.findByText(/Elle sonne sur 2 téléphones maintenant, et sur 1 autre à 7 h/)).toBeInTheDocument();
+    expect(m.rpc).toHaveBeenCalledWith('staff_annonce_publier', expect.objectContaining({ p_sonner: true }));
+  });
+  it('case décochée : publiée sans faire sonner', async () => {
+    m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [], error: null } : n === 'staff_annonce_publier' ? { data: { telephones: 0, differes: 0 }, error: null } : { data: null, error: null });
+    render(<AnnoncesAdministration />);
+    await screen.findByText('Aucune annonce pour le moment.');
+    fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'Culte' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Dimanche.' } });
+    fireEvent.click(screen.getByLabelText('Faire sonner les téléphones'));
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
+    expect(await screen.findByText(/Aucun téléphone ne sonne \(case décochée\)/)).toBeInTheDocument();
+    expect(m.rpc).toHaveBeenCalledWith('staff_annonce_publier', expect.objectContaining({ p_sonner: false }));
+  });
+  it('la liste montre le bilan des téléphones', async () => {
+    m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [{ annonce_id: 'A1', titre: 'Culte', texte: 'T', langue: 'fr', cible: 'tous', programme_id: null, publie_le: '2026-10-29T17:00:00Z', retire_le: null, envois: { acceptes: 2, en_attente: 1, echecs: 0 } }], error: null } : { data: null, error: null });
+    render(<AnnoncesAdministration />);
+    expect(await screen.findByText('Téléphones : 2 sonnés · 1 en attente')).toBeInTheDocument();
   });
 });

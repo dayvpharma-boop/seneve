@@ -58,3 +58,7 @@
 .admin-annonce-apercu { display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
 .admin-annonce-apercu img, .admin-annonce-vignette { display:block; max-width:100%; max-height:220px; border-radius:10px; object-fit:contain; background:#f3edde; }
 :root:root .admin-annonce-form input[type="file"] { min-height:auto; padding:8px; font-size:14px; }
+
+/* Faire sonner les téléphones (seneve_052). */
+.admin-annonce-sonner, .rappels-annonces { display:flex; align-items:center; gap:10px; min-height:44px; margin-top:8px; font:500 15px/22px Outfit,sans-serif; cursor:pointer; }
+:root:root .admin-annonce-sonner input, .rappels-annonces input { width:22px; height:22px; min-height:0; margin:0; padding:0; accent-color:#755b00; flex:none; }
