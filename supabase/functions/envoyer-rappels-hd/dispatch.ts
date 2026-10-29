@@ -1,6 +1,13 @@
 import {messageRappel} from './messages.ts';
 type Rpc=(nom:string,params?:Record<string,unknown>)=>PromiseLike<{data:unknown;error:unknown}>;
 export type AppareilPush={endpoint:string;p256dh:string;auth:string};
+export type ResultatAppareil={request_id:string;fournisseur:'google'|'apple'|'mozilla';resultat:'accepte_fournisseur'|'echec';statut_http:number|null};
+/** Ne transmettre ni l'endpoint, ni les clés, ni le texte du rappel aux traces. */
+export function statutHttpPush(erreur:unknown):number|null{
+ if(!erreur||typeof erreur!=='object')return null;
+ const code=(erreur as {statusCode?:unknown}).statusCode;
+ return typeof code==='number'&&Number.isInteger(code)&&code>=100&&code<=599?code:null;
+}
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 /** Aucun endpoint arbitraire ou réseau interne ne doit être contacté. */
 export function appareilPushValide(x:unknown):x is AppareilPush{
@@ -9,7 +16,7 @@ export function appareilPushValide(x:unknown):x is AppareilPush{
  try{const u=new URL(a.endpoint);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&['fcm.googleapis.com','updates.push.services.mozilla.com','web.push.apple.com'].includes(u.hostname);}catch{return false;}
 }
 /** Le transport est injecté : les tests ne contactent jamais un téléphone. Aucun rejeu fournisseur. */
-export async function traiterRappelsHD(rpc:Rpc,envoyer:(a:AppareilPush,message:string)=>Promise<void>){
+export async function traiterRappelsHD(rpc:Rpc,envoyer:(a:AppareilPush,message:string)=>Promise<void>,observer?:(resultat:ResultatAppareil)=>void){
  const compte={acceptees:0,echecs:0,bloquees:0,incertaines:0};
  const enabled=await rpc('hd_push_dispatch_enabled');if(enabled.error)throw Error('Configuration indisponible');if(enabled.data!==true)return compte;
  const planning=await rpc('hd_prepare_push_pilot');if(planning.error)throw Error('Planification indisponible');
@@ -31,7 +38,11 @@ export async function traiterRappelsHD(rpc:Rpc,envoyer:(a:AppareilPush,message:s
    for(const appareil of livraison.appareils){
     if(!appareilPushValide(appareil)||vus.has(appareil.endpoint))continue;vus.add(appareil.endpoint);
     const control=await rpc('hd_push_delivery_allowed',params);if(control.error)throw Error('Contrôle final inconnu');if(control.data!==true)break;
-    try{await envoyer(appareil,message);accepte=true;}catch{/* Pas de journal contenant un endpoint ou une réponse fournisseur privée. */}
+    let resultat:ResultatAppareil['resultat']='echec';let statut_http:number|null=null;
+    try{await envoyer(appareil,message);accepte=true;resultat='accepte_fournisseur';}catch(erreur){statut_http=statutHttpPush(erreur);}
+    const fournisseur=new URL(appareil.endpoint).hostname==='fcm.googleapis.com'?'google':new URL(appareil.endpoint).hostname==='web.push.apple.com'?'apple':'mozilla';
+    // Une panne du journal ne doit jamais modifier le résultat ni rejouer l'envoi.
+    try{observer?.({request_id,fournisseur,resultat,statut_http});}catch{/* Traces indisponibles. */}
    }
    const fin=await rpc('hd_finish_push_delivery',{...params,p_accepte:accepte});
    if(fin.error||fin.data!==true)compte.incertaines++;else if(accepte)compte.acceptees++;else compte.echecs++;
