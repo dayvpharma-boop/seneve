@@ -9,7 +9,7 @@ export function AccesRappelsWebHabitudes({enrollmentId,langue}:{enrollmentId:str
   <nav aria-label={l('Réglages des rappels','Reminder settings')} className="flex flex-col gap-2">
    <a className={lien} href={base+'profil?lang='+langue+'#notifications'}>{l('Activer les notifications sur ce téléphone','Turn on notifications on this phone')}</a>
    <a className={lien} href={base+'reglages?parcours='+encodeURIComponent(enrollmentId)+'&lang='+langue+'#rappels-habitudes'}>{l('Choisir mes rappels d’habitudes et leurs horaires','Choose my habit reminders and their times')}</a>
-   <a className={lien} href="#hd-calendrier">{l('Ajouter mes rendez-vous au calendrier','Add my appointments to my calendar')}</a>
+   <a className={lien} href={'#hd-calendrier-'+enrollmentId}>{l('Ajouter mes rendez-vous au calendrier','Add my appointments to my calendar')}</a>
   </nav>
   <p className="font-hd-body-sm text-hd-body-sm">{l('Les notifications web nécessitent Internet. Pour les alertes du calendrier, importe les rendez-vous puis vérifie les alertes dans ton calendrier. Choisis une seule méthode pour les mêmes rendez-vous afin d’éviter les doublons.','Web notifications need Internet. For calendar alerts, import the appointments and check alerts in your calendar. Choose one method for the same appointments to avoid duplicates.')}</p>
  </section>;

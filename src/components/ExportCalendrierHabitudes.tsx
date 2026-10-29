@@ -3,9 +3,9 @@ import {chargerHorairesHabitudes,type ConfigurationHoraires} from '@/lib/habitud
 import {HABITUDES_EXPORTABLES,rendezVousCalendrier,creerCalendrierHabitudes,telechargerCalendrierHabitudes} from '@/lib/habitudes-calendrier-export';
 export function ExportCalendrierHabitudes(props:{enrollmentId:string;participantId:string;dateLocale:string;langue:string}){
  const [ouvert,setOuvert]=useState(false),en=props.langue==='en';
- const section=useRef<HTMLDetailsElement>(null);
- useEffect(()=>{const ouvrir=()=>{if(window.location.hash==='#hd-calendrier'){setOuvert(true);section.current?.scrollIntoView?.({block:'start'});}};ouvrir();window.addEventListener('hashchange',ouvrir);return()=>window.removeEventListener('hashchange',ouvrir);},[]);
- return <details id="hd-calendrier" ref={section} open={ouvert} style={{scrollMarginTop:80}} className="rounded-2xl bg-hd-surface-container-lowest p-hd-space-md mb-hd-space-lg" onToggle={e=>setOuvert(e.currentTarget.open)}><summary className="min-h-[48px] cursor-pointer font-hd-label-lg text-hd-label-lg text-hd-on-surface flex items-center">{en?'Add reminders to my calendar':'Ajouter mes rappels au calendrier'}</summary>{ouvert&&<FormulaireExport key={[props.enrollmentId,props.participantId,props.dateLocale].join(':')} {...props}/>}</details>;
+ const section=useRef<HTMLDetailsElement>(null),idCalendrier='hd-calendrier-'+props.enrollmentId;
+ useEffect(()=>{const ouvrir=()=>{if(window.location.hash==='#'+idCalendrier){setOuvert(true);section.current?.scrollIntoView?.({block:'start'});}};ouvrir();window.addEventListener('hashchange',ouvrir);return()=>window.removeEventListener('hashchange',ouvrir);},[idCalendrier]);
+ return <details id={idCalendrier} ref={section} open={ouvert} style={{scrollMarginTop:80}} className="rounded-2xl bg-hd-surface-container-lowest p-hd-space-md mb-hd-space-lg" onToggle={e=>setOuvert(e.currentTarget.open)}><summary className="min-h-[48px] cursor-pointer font-hd-label-lg text-hd-label-lg text-hd-on-surface flex items-center">{en?'Add reminders to my calendar':'Ajouter mes rappels au calendrier'}</summary>{ouvert&&<FormulaireExport key={[props.enrollmentId,props.participantId,props.dateLocale].join(':')} {...props}/>}</details>;
 }
 function FormulaireExport({enrollmentId,participantId,dateLocale,langue}:{enrollmentId:string;participantId:string;dateLocale:string;langue:string}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;

@@ -8,8 +8,18 @@ import {ExportCalendrierHabitudes} from '@/components/ExportCalendrierHabitudes'
 const props={enrollmentId:'E1',participantId:'P1',dateLocale:'2026-10-28',langue:'fr'};
 const config={enrollment_id:'E1',fuseau:'Africa/Kinshasa',date_locale:'2026-10-28',modifications_a_partir_du:'2026-10-29',revisions:[],horaires:[],modeles:[{module_id:'HD',version:1,langue:'fr',habit_key:'priere_matin',libelle:'Prière du matin',heure_proposee:'07:30',jours_iso:[1,2,3,4,5,6,7]}]};
 beforeEach(()=>{vi.useFakeTimers({toFake:['Date']});vi.setSystemTime(new Date('2026-10-28T05:00:00Z'));vi.stubGlobal('crypto',webcrypto);m.charger.mockReset().mockResolvedValue(config);m.download.mockReset();});
-afterEach(()=>{cleanup();vi.useRealTimers();vi.unstubAllGlobals();});
+afterEach(()=>{cleanup();vi.useRealTimers();vi.unstubAllGlobals();window.history.replaceState(null,'',window.location.pathname+window.location.search);});
 function ouvrir(){const d=screen.getByText('Ajouter mes rappels au calendrier').closest('details')!;d.open=true;fireEvent(d,new Event('toggle'));}
+it('ouvre uniquement le calendrier du parcours visé par le lien',async()=>{
+ m.charger.mockImplementation(async(enrollmentId:string)=>({...config,enrollment_id:enrollmentId}));
+ render(<><ExportCalendrierHabitudes {...props}/><ExportCalendrierHabitudes {...props} enrollmentId="E2"/></>);
+ expect(m.charger).not.toHaveBeenCalled();
+ window.history.replaceState(null,'','#hd-calendrier-E2');fireEvent(window,new Event('hashchange'));
+ await screen.findByLabelText('Prière du matin');
+ expect(m.charger).toHaveBeenCalledOnce();expect(m.charger).toHaveBeenCalledWith('E2');
+ const sections=screen.getAllByText('Ajouter mes rappels au calendrier').map(s=>s.closest('details')!);
+ expect(sections[0]!.open).toBe(false);expect(sections[1]!.open).toBe(true);expect(m.download).not.toHaveBeenCalled();
+});
 it('ne charge rien avant ouverture, prépare un fichier et ne confirme pas une importation',async()=>{
  render(<ExportCalendrierHabitudes {...props}/>);expect(m.charger).not.toHaveBeenCalled();ouvrir();
  await screen.findByLabelText('Prière du matin');fireEvent.click(screen.getByRole('button',{name:'Exporter les 7 prochains jours (.ics)'}));
