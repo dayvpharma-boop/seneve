@@ -136,3 +136,5 @@ import './styles-espace-vivant.css';
 import './styles-illustrations-pages.css';
 import './styles-habitudes-stitch.css';
 import './styles-habitudes-polices.css';
+
+import './styles-bleu-lavande.css';
