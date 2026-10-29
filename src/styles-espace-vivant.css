@@ -52,19 +52,19 @@
   background: var(--vivant-fond)!important; color: var(--vivant-secondaire);
 }
 .espace-page .accueil-vivant {
-  position: relative; display: grid; grid-template-columns: 1.25fr 1fr;
+  position: relative; display: flex; flex-direction: column;
   overflow: hidden; isolation: isolate; margin: 22px 0 8px;
   border-radius: 24px; background: var(--vivant-sauge);
   border: 1px solid color-mix(in srgb, var(--vivant-vert) 12%, transparent);
   box-shadow: 0 10px 28px #172b1810;
 }
-.espace-page .accueil-vivant-texte { position: relative; padding: 28px 8px 26px 26px; z-index: 1; }
+.espace-page .accueil-vivant-texte { position: relative; padding: 22px; z-index: 1; }
 .espace-page .accueil-vivant-repere { display: flex; align-items: center; gap: 7px; font: 600 10px/1.5 Outfit,sans-serif; letter-spacing: .12em; color: var(--vivant-vert); }
 .espace-page .accueil-vivant-repere i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 .espace-page .accueil-vivant-titre { font: 500 clamp(25px,4vw,34px)/1.17 Lora,Georgia,serif; letter-spacing: -.035em; color: var(--vivant-encre); margin: 16px 0 12px; }
 .espace-page .accueil-vivant-titre em { font-weight: 400; color: var(--vivant-vert); }
-.espace-page .accueil-vivant-note { font: 400 13px/1.7 Outfit,sans-serif; color: var(--vivant-secondaire); margin: 0; max-width: 235px; }
-.espace-page .accueil-vivant > img { height: 100%; min-height: 235px; width: 100%; object-fit: cover; object-position: 54% center; mask-image: linear-gradient(90deg,transparent,#000 25%); }
+.espace-page .accueil-vivant-note { font: 400 13px/1.7 Outfit,sans-serif; color: var(--vivant-secondaire); margin: 0; max-width: none; }
+.espace-page .accueil-vivant > img { display: block; height: auto; min-height: 0; width: 100%; aspect-ratio: 720 / 314; object-fit: cover; object-position: center; mask-image: none; }
 .espace-page:not(.moment-vue) .today-head { margin-bottom: 28px; }
 .espace-page.journee-nouvelle .jn-avatar-grand { top: 80px; bottom: auto; }
 .espace-page:not(.moment-vue) .logo-marque img { display: block; border-radius: 10px; }
@@ -109,7 +109,7 @@
   .espace-page:not(.moment-vue) .moment-rail:not(.is-seul) > li { min-width: 0; }
 }
 @media(max-width:420px) {
-  .espace-page .accueil-vivant-texte { padding: 22px 0 22px 18px; }
+  .espace-page .accueil-vivant-texte { padding: 20px; }
   .espace-page .accueil-vivant-titre { font-size: 25px; }
   .espace-page .accueil-vivant-repere { font-size: 8px; letter-spacing: .08em; }
   .espace-page .accueil-vivant-note { font-size: 12px; }
