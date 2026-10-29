@@ -27,10 +27,21 @@
 .nt-vide { margin:0; padding:16px; border-radius:16px; background:#f8f4e4; font:400 15px/25px Literata,Georgia,serif; color:#48473e; }
 .nt-note { margin:0 0 24px; font:400 12px/18px 'Work Sans',Outfit,system-ui,sans-serif; color:#7e7665; }
 /* Administration : annonces aux participants. */
+/* Annonces (Admin) : le bureau d'administration reste clair, même quand le téléphone est en mode sombre.
+   Sans ces règles, la carte devenait sombre et le texte tapé (vert foncé) ne se voyait plus (signalé le 29/10/2026). */
+:root:root .admin-annonces { background:#fffdf6; color:#1d1c13; border:1px solid #e6dfcc; }
+:root:root .admin-annonces :is(h2,h3,label,p,strong) { color:#1d1c13; }
+:root:root .admin-annonces .muted { color:#4a463f; }
 .admin-annonce-form { display:flex; flex-direction:column; gap:6px; margin:12px 0; }
-.admin-annonce-form input,.admin-annonce-form textarea,.admin-annonce-form select { width:100%; box-sizing:border-box; }
+.admin-annonce-form label { font:600 14px/20px Outfit,sans-serif; margin-top:6px; }
+:root:root .admin-annonce-form :is(input,textarea,select) { width:100%; box-sizing:border-box; color:#1d1c13; -webkit-text-fill-color:#1d1c13; caret-color:#1d1c13; background:#fff; border:1px solid #b9ae98; border-radius:10px; padding:10px 12px; min-height:44px; font:400 16px/24px Outfit,sans-serif; color-scheme:light; opacity:1; }
+:root:root .admin-annonce-form :is(input,textarea)::placeholder { color:#7a7365; -webkit-text-fill-color:#7a7365; }
+:root:root .admin-annonce-form :is(input,textarea,select):focus { outline:3px solid #755b00; outline-offset:1px; border-color:#755b00; }
 .admin-annonce-choix { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; }
-.admin-annonce-confirmer { margin:8px 0; padding:12px; border-radius:12px; background:#ffe08f; color:#584400; }
+:root:root .admin-annonce-envoyer { display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:52px; margin-top:12px; border:0; border-radius:999px; background:#755b00; color:#fff; font:600 16px/24px Outfit,sans-serif; cursor:pointer; opacity:1; }
+:root:root .admin-annonce-envoyer:disabled { background:#d9d2c0; color:#4a463f; cursor:not-allowed; }
+.admin-annonce-aide { margin:4px 0 0; font-size:14px; }
+:root:root .admin-annonce-confirmer { margin:8px 0; padding:12px; border-radius:12px; background:#ffe08f; color:#584400; }
 .admin-annonces-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
-.admin-annonces-liste li { padding:12px; border-radius:12px; background:#f8f4e4; overflow-wrap:anywhere; }
+:root:root .admin-annonces-liste li { padding:12px; border-radius:12px; background:#f8f4e4; color:#1d1c13; overflow-wrap:anywhere; }
 .admin-annonces-liste p { margin:0 0 4px; }

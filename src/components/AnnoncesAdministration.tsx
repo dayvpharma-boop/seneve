@@ -78,8 +78,9 @@ export function AnnoncesAdministration() {
         {cible === 'programme' && <><label htmlFor="annonce-programme">Parcours</label>
           <select id="annonce-programme" value={programme} onChange={e => { setProgramme(e.target.value); modifier(); }}><option value="">Choisir un parcours…</option>{programmes.map(p => <option key={p.programme_id} value={p.programme_id}>{p.nom} — {p.programme_id}</option>)}</select></>}
       </div>
-      {confirmer && valide && <p className="admin-annonce-confirmer" role="status">Publier « {titre.trim()} » pour {destinataires} ? Appuie de nouveau pour confirmer.</p>}
-      <button type="submit" className="btn" disabled={!valide || occupe}>{occupe ? 'Publication…' : confirmer ? 'Confirmer la publication' : 'Publier l’annonce'}</button>
+      {confirmer && valide && <p className="admin-annonce-confirmer" role="status">Publier « {titre.trim()} » pour {destinataires} ? Appuie sur « Confirmer l’envoi ».</p>}
+      <button type="submit" className="admin-annonce-envoyer" disabled={!valide || occupe}><span aria-hidden="true">➤</span>{occupe ? 'Envoi…' : confirmer ? 'Confirmer l’envoi' : 'Envoyer l’annonce'}</button>
+      {!valide && !occupe && <p className="muted admin-annonce-aide">Pour envoyer, écris un titre et un message{cible === 'programme' && !programme ? ', puis choisis un parcours' : ''}.</p>}
       {confirmer && <button type="button" className="link" onClick={modifier}>Annuler</button>}
     </form>
     {message && <p className="success" role="status">{message}</p>}

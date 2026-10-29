@@ -762,5 +762,3 @@
 :root[data-apparence="sombre"] .nt-texte,:root[data-apparence="sombre"] .nt-vide{color:#d1c5b3;}
 :root[data-apparence="sombre"] .nt-section h2,:root[data-apparence="sombre"] .nt-corps a{color:#ffd482;}
 :root[data-apparence="sombre"] .nt-corps time,:root[data-apparence="sombre"] .nt-note{color:#b5ab9a;}
-:root[data-apparence="sombre"] .admin-annonces-liste li{background:#2b2a26;}
-:root[data-apparence="sombre"] .admin-annonce-confirmer{background:#363531;color:#ffd482;}

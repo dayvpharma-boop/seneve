@@ -113,13 +113,13 @@ describe('annonces dans l’administration', () => {
     await screen.findByText('Aucune annonce pour le moment.');
     fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'Nouvelle formation' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Ouverture lundi.' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Publier l’annonce' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
     expect(screen.getByText(/Publier « Nouvelle formation » pour tous les participants \(français\)/)).toBeInTheDocument();
     expect(m.rpc).not.toHaveBeenCalledWith('staff_annonce_publier', expect.anything());
     m.rpc.mockImplementationOnce(async () => ({ data: null, error: { message: 'Failed to fetch' } }));
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmer la publication' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText(/L’annonce n’a pas été publiée/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmer la publication' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText('Annonce publiée. Elle apparaît dans la page Notifications des participants concernés.')).toBeInTheDocument();
     const appels = m.rpc.mock.calls.filter(c => c[0] === 'staff_annonce_publier').map(c => (c[1] as { p_client_id: string }).p_client_id);
     expect(appels).toHaveLength(2);
@@ -131,8 +131,9 @@ describe('annonces dans l’administration', () => {
     fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'T' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'X' } });
     fireEvent.change(screen.getByLabelText('Destinataires'), { target: { value: 'programme' } });
-    expect(screen.getByRole('button', { name: 'Publier l’annonce' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeDisabled();
+    expect(screen.getByText('Pour envoyer, écris un titre et un message, puis choisis un parcours.')).toBeInTheDocument();
     fireEvent.change(await screen.findByLabelText('Parcours'), { target: { value: 'P30' } });
-    expect(screen.getByRole('button', { name: 'Publier l’annonce' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeEnabled();
   });
 });
