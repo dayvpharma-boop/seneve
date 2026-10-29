@@ -55,8 +55,8 @@ import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
 import { estProgrammeHdReel } from '@/lib/habitudes-programmes';
-import { IconeEdition } from '@/components/IconeEdition';
-import { entreesFile, envoyerFile, garderAction, reponseConfirme, useEntreeFile, type ChoixHorsLigne, type EntreeFile, type TransportFile } from '@/lib/file-actions';
+import { EtatSauvegarde } from '@/components/EtatSauvegarde';
+import { entreesFile, envoyerFile, garderAction, reponseConfirme, useEntreeFile, type ChoixHorsLigne, type TransportFile } from '@/lib/file-actions';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null };
 type Programme = { programme_id: string; nom: string; duree_jours: number | null; heures_messages?: string[] | null };
@@ -372,7 +372,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       {!horsLigne&&<Link className="oa-secondary" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>}
       <label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>
       {!horsLigne&&data.participantId&&<PlanningJourHabitudes key={enr.enrollment_id} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue}/>}
-      {horsLigne&&<p role="status">{en?'Offline copy — reading and declarations are unavailable here.':'Copie hors connexion — la lecture et les déclarations sont indisponibles ici.'}</p>}
+      {horsLigne&&<p role="status">{en?'Offline: your habits for today can be reread and recorded on the Habits screen, if this device has already opened it today.':'Hors connexion : ta journée d’habitudes se relit et se note sur l’écran Habitudes, si cet appareil l’a déjà ouvert aujourd’hui.'} <Link to={en?'/habitudes/aujourdhui?lang=en':'/habitudes/aujourdhui'}>{en?'Open my habits':'Ouvrir mes habitudes'}</Link></p>}
       {occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
       {!horsLigne&&duJour.map(c=><LectureTexteHabitude key={c.content_id} titre={c.theme||(en?`Reading ${c.numero_message}`:`Lecture ${c.numero_message}`)} texte={c.texte_officiel} langue={enr.langue}/>)}
       {!horsLigne&&occurrences.map(o=>{const a=data.activities.find(a=>a.activity_id===o.occurrence_id)!;const st=etatDe(a);return <DeclarationHabitude key={`${userId}:${enr.enrollment_id}:${o.occurrence_id}`} userId={userId} occurrence={o} consigne={a.consigne} critere={a.critere_realisation} langue={enr.langue} lectureSeule={lectureSeule||enr.etat!=='active'}
@@ -627,29 +627,3 @@ function ActionCard({ enrollmentId, activity, state, readOnly = false, horsLigne
 }
 
 
-/** Maquette Stitch n° 6 (28/10/2026) : état réel de la sauvegarde d'une action notée sans réseau. */
-function EtatSauvegarde({ entree, recu, echecLocal, langue, enrollmentId, reessayer }: { entree: EntreeFile | null; recu: boolean; echecLocal: boolean; langue: string; enrollmentId: string; reessayer: () => void }) {
-  const en = langue === 'en';
-  const choix = entree ? (entree.choix === 'realisee' ? (en ? 'action done' : 'action réalisée') : entree.choix === 'partielle' ? (en ? 'partly done' : 'réalisée en partie') : (en ? 'prepared' : 'préparée')) : '';
-  const etat = echecLocal ? 'refuse-local' : recu ? 'recu' : entree?.statut === 'appareil' && typeof navigator !== 'undefined' && navigator.onLine !== false ? 'attente' : entree?.statut ?? 'attente';
-  const v: Record<string, { cls: string; icone: 'offline_pin' | 'schedule' | 'sync' | 'check_circle' | 'error'; titre: string; phrase?: string }> = {
-    appareil: { cls: 'is-appareil', icone: 'offline_pin', titre: en ? 'Saved on this device' : 'Enregistré sur cet appareil', phrase: en ? 'Not sent to SÉNEVÉ yet.' : 'Pas encore envoyé à SÉNEVÉ.' },
-    attente: { cls: 'is-attente', icone: 'schedule', titre: en ? 'Waiting for connection' : 'En attente de connexion', phrase: en ? 'Will be sent when the network is back.' : 'Sera envoyé au retour du réseau.' },
-    envoi: { cls: 'is-envoi', icone: 'sync', titre: en ? 'Sending…' : 'Envoi en cours…' },
-    recu: { cls: 'is-recu', icone: 'check_circle', titre: en ? 'Saved' : 'Enregistré', phrase: en ? 'Received by SÉNEVÉ.' : 'Reçu par SÉNEVÉ.' },
-    refuse: { cls: 'is-refuse', icone: 'error', titre: en ? 'Not saved' : 'Non enregistré', phrase: en ? 'Your access needs to be checked. Try again or ask for help.' : 'Ton accès doit être vérifié. Réessaie ou demande de l’aide.' },
-    'refuse-local': { cls: 'is-refuse', icone: 'error', titre: en ? 'Not saved' : 'Non enregistré', phrase: en ? 'This device could not keep your action. Try again when you are back online.' : 'Cet appareil n’a pas pu garder ton action. Réessaie quand la connexion sera revenue.' },
-  };
-  const x = v[etat] ?? v.attente!;
-  return <div className={`etat-sauvegarde ${x.cls}`} role="status">
-    {choix && <p className="etat-choix">{en ? 'Your choice: ' : 'Ton choix : '}{choix}</p>}
-    <span className="etat-badge"><IconeSauvegarde nom={x.icone} />{x.titre}</span>
-    {x.phrase && <p>{x.phrase}</p>}
-    {etat === 'refuse' && <p className="etat-liens"><button type="button" className="link" onClick={reessayer}>{en ? 'Try again' : 'Réessayer'}</button><Link to={`/aide?inscription=${enrollmentId}`}>{en ? 'Ask for help' : 'Demander de l’aide'}</Link></p>}
-  </div>;
-}
-
-/** Icônes officielles déjà présentes dans le site (pas de nouveau tracé) : « offline_pin » tient lieu de téléphone. */
-function IconeSauvegarde({ nom }: { nom: 'offline_pin' | 'schedule' | 'sync' | 'check_circle' | 'error' }) {
-  return nom === 'error' ? <IconeEdition nom="error" taille={18} /> : <IconeJournee nom={nom} taille={18} />;
-}

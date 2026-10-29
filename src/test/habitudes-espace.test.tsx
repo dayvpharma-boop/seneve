@@ -51,9 +51,9 @@ it('le parcours en pause bloque les trois déclarations',async()=>{
  (tables.enrollments![0] as Record<string,unknown>).etat='en_pause';render(<MemoryRouter><Espace/></MemoryRouter>);
  await screen.findByRole('heading',{name:'Mes activités du jour'});expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();expect(appels).toHaveLength(0);
 });
-it('une copie hors connexion ne propose pas de déclaration',async()=>{
+it('dans l’espace, une copie hors connexion renvoie vers l’écran Habitudes sans proposer de déclaration',async()=>{
  vi.spyOn(window.navigator,'onLine','get').mockReturnValue(false);render(<MemoryRouter><Espace/></MemoryRouter>);
- await screen.findByText('Copie hors connexion — la lecture et les déclarations sont indisponibles ici.');expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();expect(appels).toHaveLength(0);
+ await screen.findByText(/Hors connexion : ta journée d’habitudes se relit et se note sur l’écran Habitudes/);expect(screen.getByRole('link',{name:'Ouvrir mes habitudes'})).toHaveAttribute('href','/habitudes/aujourdhui');expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();expect(appels).toHaveLength(0);
 });
 
 it('ouvrir une lecture conserve le texte entier et ne déclare aucune activité',async()=>{

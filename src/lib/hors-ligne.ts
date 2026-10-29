@@ -5,6 +5,7 @@ import {effacerSaisiesHabitudes} from './habitudes-saisie';
 import { useEffect, useState } from 'react';
 import {effacerProfils} from './profil';
 import {effacerCopiesProgres} from './progres-copie';
+import {effacerCopiesJourHd} from './habitudes-copie-jour';
 
 const PREFIXE = 'seneve:espace:v1:';
 
@@ -37,6 +38,7 @@ export function lireEspace<T>(userId: string): { le: string; donnees: T } | null
 export function effacerEspaces(): void {
   effacerProfils();
   effacerCopiesProgres();
+  effacerCopiesJourHd();
   effacerSaisiesHabitudes();
   effacerReperesPriere();
   try {

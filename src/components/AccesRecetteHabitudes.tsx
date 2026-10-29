@@ -10,6 +10,8 @@ import {IconeHD} from './IconeHabitudes';
 import {estProgrammeHdReel,PROGRAMME_HD_RECETTE} from '@/lib/habitudes-programmes';
 import {useEnLigne} from '@/lib/hors-ligne';
 import {IconeJournee} from './IconeJournee';
+import {copiesJourHdValides} from '@/lib/habitudes-copie-jour';
+import {entreesFile,envoyerFile,type TransportFile} from '@/lib/file-actions';
 
 /** Lecture des droits existants seulement : aucune création ou reprise de période.
  * `reel` : écran du site réel, pour les programmes publiés en français et en anglais (sinon : essai technique de la recette). */
@@ -21,6 +23,11 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
  const [maintenant,setMaintenant]=useState(Date.now);
  const sequence=useRef(0);
  const enLigne=useEnLigne();
+ // Compte de la session (lu sur l'appareil, aussi sans réseau) : copies et file d'actions sont rangées par compte.
+ const [userId,setUserId]=useState<string|null>(null);
+ useEffect(()=>{let vivant=true;void Promise.resolve(supabase.auth.getSession?.()).then(r=>{if(vivant)setUserId(r?.data?.session?.user?.id??null);}).catch(()=>undefined);return()=>{vivant=false;};},[tour]);
+ // Retour du réseau : les habitudes notées sans réseau partent d'abord (même identifiant), puis l'écran est relu.
+ useEffect(()=>{if(!reel||!enLigne||!userId||!entreesFile(userId).some(e=>e.statut!=='refuse'))return;void envoyerFile(userId,supabase as unknown as TransportFile).finally(()=>setTour(t=>t+1));},[reel,enLigne,userId]);
  useEffect(()=>{const actualiser=()=>setMaintenant(Date.now());const t=window.setInterval(actualiser,60000);window.addEventListener('focus',actualiser);return()=>{window.clearInterval(t);window.removeEventListener('focus',actualiser);};},[]);
  useEffect(()=>{
   const auth=supabase.auth.onAuthStateChange(()=>{sequence.current++;setData(null);setErreur(false);setTour(t=>t+1);});
@@ -36,7 +43,8 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
  const bouton='min-h-[48px] w-full bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium rounded-xl flex items-center justify-center gap-2';
  return <CadreHabitudes titre={l('Aujourd’hui','Today')} langue={langue} actif="aujourdhui" liens={{aujourdhui:reel?`/habitudes/aujourdhui?lang=${langue}`:`/acces?lang=${langue}`}}>
  <h1 className="sr-only">{m('Mes accès de test','My test access','Habitudes & Défis','Habits & Challenges')}</h1>
- {erreur&&reel&&!enLigne?<section className="px-hd-margin py-hd-space-md flex flex-col gap-hd-space-lg" aria-labelledby="hd-hors-ligne-titre">
+ {erreur&&reel&&!enLigne&&userId&&copiesJourHdValides(userId,maintenant).length?<div className="flex flex-col">{copiesJourHdValides(userId,maintenant).map(c=><ActivitesJourRecette key={`${c.enrollmentId}:${c.dateLocale}`} enrollmentId={c.enrollmentId} participantId={c.participantId} dateLocale={c.dateLocale} langue={langue} fuseau={c.fuseau} finExclue={c.finExclue} copie={c}/>)}</div>
+ :erreur&&reel&&!enLigne?<section className="px-hd-margin py-hd-space-md flex flex-col gap-hd-space-lg" aria-labelledby="hd-hors-ligne-titre">
   {/* Maquette Stitch n° 5 (28/10/2026) : les habitudes ne sont pas gardées sur l’appareil. */}
   <div className="bg-hd-surface-container-lowest rounded-2xl p-hd-space-lg shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col items-center text-center">
    <span className="w-16 h-16 rounded-full bg-hd-surface-container-low flex items-center justify-center text-hd-secondary mb-hd-space-md" aria-hidden="true"><IconeJournee nom="wifi_off" taille={30}/></span>
@@ -69,7 +77,7 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
   const etat=coherent&&fin&&d?etatDroit(d,maintenant):'attente';
   const actif=etat==='actif'&&e.etat==='active';
   return <div key={e.enrollment_id} className="flex flex-col">
-   {actif&&data.participantIdHabitudes&&dateLocale&&<div><h2 className="sr-only">{l('Ma journée','My day')}</h2><ActivitesJourRecette key={`${e.enrollment_id}:${data.participantIdHabitudes}:${dateLocale}`} enrollmentId={e.enrollment_id} participantId={data.participantIdHabitudes} dateLocale={dateLocale} langue={langue} fuseau={data.fuseauHabitudes}/></div>}
+   {actif&&data.participantIdHabitudes&&dateLocale&&<div><h2 className="sr-only">{l('Ma journée','My day')}</h2><ActivitesJourRecette key={`${e.enrollment_id}:${data.participantIdHabitudes}:${dateLocale}`} enrollmentId={e.enrollment_id} participantId={data.participantIdHabitudes} dateLocale={dateLocale} langue={langue} fuseau={data.fuseauHabitudes} finExclue={reel&&p?p.fin_exclue:null}/></div>}
    <section className="px-hd-margin pb-hd-space-lg flex flex-col gap-hd-space-sm" aria-label={l('Mon accès','My access')}>
     <div className="relative bg-hd-surface-container-lowest rounded-xl p-hd-space-md shadow-sm overflow-hidden flex flex-col gap-1">
      <div className="flex items-center justify-between gap-2 mb-1"><span className="font-hd-label-sm text-hd-label-sm text-hd-secondary tracking-wide uppercase">{m('Habitudes & Défis — essai technique','Habits & Challenges — technical test','Habitudes & Défis','Habits & Challenges')}</span>{actif&&<span className="font-hd-label-sm text-hd-label-sm text-hd-secondary bg-hd-secondary-container/40 px-2 py-0.5 rounded-full">{l('Actif','Active')}</span>}</div>

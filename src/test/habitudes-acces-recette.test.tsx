@@ -2,7 +2,7 @@ import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 const mock=vi.hoisted(()=>({charger:vi.fn(),listener:null as null|(()=>void)}));
-vi.mock('@/lib/supabase',()=>({supabase:{auth:{onAuthStateChange:(f:()=>void)=>{mock.listener=f;return{data:{subscription:{unsubscribe:vi.fn()}}};}}}}));
+vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:async()=>({data:{session:{user:{id:'10000000-0000-4000-8000-000000000001'}}}}),onAuthStateChange:(f:()=>void)=>{mock.listener=f;return{data:{subscription:{unsubscribe:vi.fn()}}};}},rpc:vi.fn()}}));
 vi.mock('@/lib/offres-acces',async(importOriginal)=>({...await importOriginal<typeof import('@/lib/offres-acces')>(),chargerCatalogueAcces:mock.charger}));
 vi.mock('@/components/PlanningJourHabitudes',()=>({PlanningJourHabitudes:({enrollmentId,participantId,dateLocale}:{enrollmentId:string;participantId:string;dateLocale:string})=><div data-testid="planning">{enrollmentId}/{participantId}/{dateLocale}</div>}));
 import {AccesRecetteHabitudes} from '@/components/AccesRecetteHabitudes';
@@ -105,4 +105,21 @@ it('avec réseau, une erreur garde le message habituel sur l’écran réel',asy
  render(<MemoryRouter initialEntries={['/habitudes/aujourdhui?lang=fr']}><AccesRecetteHabitudes reel/></MemoryRouter>);
  expect(await screen.findByText('Tes accès ne peuvent pas être vérifiés pour le moment.')).toBeInTheDocument();
  expect(screen.queryByRole('heading',{name:'Tes habitudes du jour demandent une connexion'})).not.toBeInTheDocument();
+});
+
+it('sans réseau, l’écran réel affiche la journée gardée sur l’appareil au lieu du message de connexion',async()=>{
+ const {enregistrerCopieJourHd}=await import('@/lib/habitudes-copie-jour');
+ const {calendrierHabitudes}=await import('@/lib/habitudes-calendrier');
+ const jourLocal=calendrierHabitudes('2000-01-01',1,'Africa/Kinshasa').date_locale;
+ const o={occurrence_id:'30000000-0000-4000-8000-000000000001',enrollment_id:'20000000-0000-4000-8000-000000000001',version:1,date_locale:jourLocal,requise:true};
+ localStorage.clear();
+ enregistrerCopieJourHd('10000000-0000-4000-8000-000000000001',{enrollmentId:o.enrollment_id,participantId:'P1',dateLocale:jourLocal,fuseau:'Africa/Kinshasa',finExclue:null,data:{userId:'10000000-0000-4000-8000-000000000001',date:jourLocal,jour:1,activites:[{habit_key:'gratitude_matin',occurrence:o,consigne:'Gratitude du matin',critere:null,heure:'05:50'}]}});
+ Object.defineProperty(navigator,'onLine',{configurable:true,value:false});
+ try{
+  mock.charger.mockRejectedValue(new TypeError('Failed to fetch'));
+  render(<MemoryRouter initialEntries={['/habitudes/aujourdhui?lang=fr']}><AccesRecetteHabitudes reel/></MemoryRouter>);
+  expect(await screen.findByRole('heading',{name:'Gratitude du matin'})).toBeInTheDocument();
+  expect(screen.getByText(/Tu es hors connexion : tu peux noter tes habitudes/)).toBeInTheDocument();
+  expect(screen.queryByRole('heading',{name:'Tes habitudes du jour demandent une connexion'})).not.toBeInTheDocument();
+ }finally{Object.defineProperty(navigator,'onLine',{configurable:true,value:true});localStorage.clear();}
 });

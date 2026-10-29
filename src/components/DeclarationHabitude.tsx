@@ -5,8 +5,12 @@ import {enregistrerHabitude,type ActionHabitude,type TransportProgression} from 
 import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import {cleSaisie,lireSaisie,preparerSaisie,type SaisieEnAttente} from '@/lib/habitudes-saisie';
 import {IconeHD} from './IconeHabitudes';
+import {EtatSauvegarde} from './EtatSauvegarde';
+import {envoyerFile,garderAction,useEntreeFile,type TransportFile} from '@/lib/file-actions';
 
-function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu}:{
+function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu,horsLigne=false}:{
+ /** Sans réseau (décision du 29/10/2026) : la déclaration est gardée sur l'appareil puis envoyée au retour du réseau. */
+ horsLigne?:boolean;
  /** « stitch » : carte des maquettes Stitch HD ; « culte » : « J'y ai participé » de la maquette 07 (même mécanisme d'enregistrement). */
  variante?:'stitch'|'priere'|'culte';heure?:string;attenue?:boolean;
  /** Culte : « Je n'ai pas pu » n'enregistre rien sur le serveur ; le parent ouvre son panneau. */
@@ -21,10 +25,18 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
  const [nettoyageIncomplet,setNettoyageIncomplet]=useState(false);
  const [confirmation,setConfirmation]=useState<EtatOccurrence|undefined>();
  useEffect(()=>{setConfirmation(etat);},[etat]);
+ // File locale : même identifiant à chaque envoi ; la réponse du serveur est appliquée à son arrivée.
+ const {entree,resultat}=useEntreeFile(userId,occurrence.enrollment_id,occurrence.occurrence_id);
+ const [recu,setRecu]=useState(false),[echecLocal,setEchecLocal]=useState(false);
+ useEffect(()=>{if(!resultat||!['non_commencee','preparee','partielle','realisee'].includes(resultat.etat??''))return;const e={...occurrence,etat:resultat.etat as EtatOccurrence['etat'],aide_demandee:!!resultat.aide_demandee,synchronisation:'synchronise'} as EtatOccurrence;setConfirmation(e);onConfirme(e);setRecu(true);},[resultat]); // eslint-disable-line react-hooks/exhaustive-deps
+ const enFile=!!entree&&entree.statut!=='refuse';
+ const verrouLocal=lectureSeule||enFile;
+ const badge=(entree||recu||echecLocal)?<EtatSauvegarde entree={entree} recu={recu&&!entree} echecLocal={echecLocal&&!entree} langue={langue} enrollmentId={occurrence.enrollment_id} reessayer={()=>{void envoyerFile(userId,transport as unknown as TransportFile,true);}}/>:null;
  const courant=confirmation??etat;const valeur=courant?.synchronisation==='synchronise'?courant.etat:'non_commencee';
  const aide=courant?.synchronisation==='synchronise'&&courant.aide_demandee;
  async function declarer(action:ActionHabitude){
-  if(lectureSeule||verrou.current)return;
+  if(verrouLocal||verrou.current)return;
+  if(action!=='aide_demandee'&&(horsLigne||(typeof navigator!=='undefined'&&navigator.onLine===false))){setErreur(false);setRecu(false);setEchecLocal(garderAction(userId,occurrence.enrollment_id,occurrence.occurrence_id,action)===null);return;}
   if(onDemanderLecture&&!attente&&(action==='partielle'||action==='realisee')){onDemanderLecture();return;}
   verrou.current=true;setOccupe(true);setErreur(false);
   try{
@@ -37,7 +49,7 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
   }catch{setErreur(true);}finally{verrou.current=false;setOccupe(false);}
  }
  const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
- if(variante==='stitch')return <CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>;
+ if(variante==='stitch')return <><CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule:verrouLocal,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>{badge}</>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
  if(variante==='culte')return <div className="flex flex-col gap-2" aria-busy={occupe}>
   <p role="status" className={valeur==='realisee'||attente?'font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant':'sr-only'}>{attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation. This declaration is not confirmed yet.':'En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.')):valeur==='realisee'?(en?'Participation recorded · Synchronised':'Participation déclarée · Synchronisée'):labels[valeur]}</p>
@@ -135,7 +147,7 @@ export function DeclarationHabitude(props:ComponentProps<typeof CarteDeclaration
  let saisieEnAttente=true;
  try{saisieEnAttente=!!sessionStorage.getItem(cleSaisie(props.userId,props.occurrence.enrollment_id,props.occurrence.occurrence_id))||!!sessionStorage.getItem('seneve:habitudes:lecture:v1:'+props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id);}catch{/* correction indisponible si le stockage est illisible */}
  return <><CarteDeclarationHabitude {...props} etat={etat} onConfirme={confirmer}/>
- {import.meta.env.VITE_HABITUDES_RELANCES==='true'&&!props.lectureSeule&&etat?.etat!=='realisee'&&<IgnorerRappelHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} enrollmentId={props.occurrence.enrollment_id} activityId={props.occurrence.occurrence_id} langue={props.langue}/>}
- {!props.lectureSeule&&!saisieEnAttente&&etat?.synchronisation==='synchronise'&&etat.etat==='realisee'&&
+ {import.meta.env.VITE_HABITUDES_RELANCES==='true'&&!props.lectureSeule&&!props.horsLigne&&etat?.etat!=='realisee'&&<IgnorerRappelHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} enrollmentId={props.occurrence.enrollment_id} activityId={props.occurrence.occurrence_id} langue={props.langue}/>}
+ {!props.lectureSeule&&!props.horsLigne&&!saisieEnAttente&&etat?.synchronisation==='synchronise'&&etat.etat==='realisee'&&
  <CorrectionRealisationHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} userId={props.userId} occurrence={props.occurrence} langue={props.langue} transport={props.transport} onConfirme={confirmer}/>}</>;
 }
