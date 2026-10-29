@@ -4,7 +4,7 @@
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v38-cloche-amidah-20261029';
+const CACHE = 'seneve-site-v39-pastille-icone-20261029';
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -136,6 +136,12 @@ self.addEventListener('push', e => {
   }).then(async () => {
     // La cloche des pages ouvertes se relit (29/10/2026) : rien de privé n'est transmis, seulement un signal.
     // Un échec ici ne doit jamais empêcher l'affichage du rappel, déjà fait.
+    // Chiffre sur l'icône (iPhone écran d'accueil, ordinateur) : nombre de notifications SÉNEVÉ affichées ;
+    // la page le remplace par le compte exact de la cloche dès qu'elle est ouverte.
+    try {
+      const affichees = await self.registration.getNotifications();
+      if (self.navigator && typeof self.navigator.setAppBadge === 'function') await self.navigator.setAppBadge(affichees.length);
+    } catch { /* non pris en charge */ }
     try {
       const fenetres = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
       for (const f of fenetres) f.postMessage({ type: 'seneve-notification' });

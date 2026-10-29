@@ -16,3 +16,11 @@ it('après l’affichage d’un rappel, prévient les pages ouvertes pour que la
  await attente;
  expect(postMessage).toHaveBeenCalledWith({ type: 'seneve-notification' });
 });
+it('fixe le chiffre de l’icône au nombre de notifications SÉNEVÉ affichées, quand le navigateur le permet', async () => {
+ const handlers: Record<string, (e: unknown) => void> = {}, setAppBadge = vi.fn().mockResolvedValue(undefined);
+ runInNewContext(readFileSync('public/sw.js', 'utf8'), { URL, self: { location: 'https://example.test/seneve/sw.js', navigator: { setAppBadge }, addEventListener: (name: string, fn: (e: unknown) => void) => { handlers[name] = fn; }, registration: { showNotification: vi.fn().mockResolvedValue(undefined), getNotifications: async () => [{}, {}] }, clients: { matchAll: async () => [] } } });
+ let attente: Promise<unknown> | undefined;
+ handlers.push!({ data: { json: () => ({ title: 'SÉNEVÉ', body: 'Rappel' }) }, waitUntil: (p: Promise<unknown>) => { attente = p; } });
+ await attente;
+ expect(setAppBadge).toHaveBeenCalledWith(2);
+});

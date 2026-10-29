@@ -26,6 +26,29 @@ export async function marquerNotificationsVues(): Promise<void> {
   const { error } = await supabase.rpc('marquer_notifications_vues');
   if (error) throw error;
   try { window.dispatchEvent(new Event(EVENEMENT)); } catch { /* sans fenêtre */ }
+  await effacerNotificationsTelephone();
+}
+
+type NavigateurPastille = Navigator & { setAppBadge?: (n?: number) => Promise<void>; clearAppBadge?: () => Promise<void> };
+/** Chiffre sur l'icône de SÉNEVÉ (demande de Dr Justin du 29/10/2026). iPhone (écran d'accueil) et ordinateur :
+ *  le site fixe le chiffre. Android : le chiffre vient des notifications présentes, retirées par effacerNotificationsTelephone.
+ *  Sans prise en charge par le navigateur, rien ne se passe. */
+export function afficherPastilleApplication(n: number): void {
+  try {
+    const nav = navigator as NavigateurPastille;
+    if (n > 0) void nav.setAppBadge?.(n)?.catch(() => undefined);
+    else void nav.clearAppBadge?.()?.catch(() => undefined);
+  } catch { /* non pris en charge */ }
+}
+
+/** Tout est lu : les notifications SÉNEVÉ encore affichées sur le téléphone sont retirées, et le chiffre de l'icône aussi. */
+export async function effacerNotificationsTelephone(): Promise<void> {
+  try {
+    const reg = await navigator.serviceWorker?.getRegistration?.();
+    const liste = (await reg?.getNotifications?.()) ?? [];
+    for (const x of liste) x.close();
+  } catch { /* notifications non prises en charge */ }
+  afficherPastilleApplication(0);
 }
 
 /** Nombre d'annonces, de réponses et de rappels non vus (seneve_050) ; null si inconnu (sans réseau, sans session) : aucune pastille alors. */
@@ -33,7 +56,7 @@ export function useNonLues(): number | null {
   const [n, setN] = useState<number | null>(null);
   const lire = useCallback(() => {
     if (typeof navigator !== 'undefined' && navigator.onLine === false) { setN(null); return; }
-    void chargerNotifications(1).then(r => setN(r.non_lues), () => setN(null));
+    void chargerNotifications(1).then(r => { setN(r.non_lues); afficherPastilleApplication(r.non_lues); }, () => setN(null));
   }, []);
   useEffect(() => {
     lire();

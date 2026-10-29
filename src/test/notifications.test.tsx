@@ -55,6 +55,27 @@ describe('page Notifications', () => {
   });
 });
 
+describe('chiffre sur l’icône de l’application (demande du 29/10/2026)', () => {
+  it('suit la cloche, puis disparaît avec les notifications du téléphone quand la page est lue', async () => {
+    const setAppBadge = vi.fn().mockResolvedValue(undefined), clearAppBadge = vi.fn().mockResolvedValue(undefined), close = vi.fn();
+    Object.defineProperty(navigator, 'setAppBadge', { configurable: true, value: setAppBadge });
+    Object.defineProperty(navigator, 'clearAppBadge', { configurable: true, value: clearAppBadge });
+    Object.defineProperty(navigator, 'serviceWorker', { configurable: true, value: Object.assign(new EventTarget(), { getRegistration: async () => ({ getNotifications: async () => [{ close }, { close }] }) }) });
+    try {
+      render(<MemoryRouter><ClocheNotifications langue="fr" /></MemoryRouter>);
+      await screen.findByRole('link', { name: 'Notifications, 3 nouvelles' });
+      expect(setAppBadge).toHaveBeenCalledWith(3);
+      cleanup();
+      page();
+      await screen.findByText('Nouvelle formation');
+      await waitFor(() => expect(close).toHaveBeenCalledTimes(2));
+      expect(clearAppBadge).toHaveBeenCalled();
+    } finally {
+      for (const k of ['setAppBadge', 'clearAppBadge', 'serviceWorker']) Object.defineProperty(navigator, k, { configurable: true, value: undefined });
+    }
+  });
+});
+
 describe('cloche de l’en-tête', () => {
   it('affiche le nombre de messages non vus et mène à la page', async () => {
     render(<MemoryRouter><ClocheNotifications langue="fr" /></MemoryRouter>);
