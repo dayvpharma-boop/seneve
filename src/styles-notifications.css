@@ -1,0 +1,36 @@
+/* Centre de notifications (29/10/2026) : cloche de l'en-tête et page /notifications, palette crème et or de SÉNEVÉ. */
+.cloche-notifications { position:relative; display:inline-grid; place-items:center; width:44px; height:44px; flex-shrink:0; border-radius:50%; color:#1d1c13; text-decoration:none; }
+.cloche-notifications:hover { background:rgb(117 91 0 / .08); }
+.cloche-notifications:focus-visible { outline:2px solid #755b00; outline-offset:2px; }
+.cloche-pastille { position:absolute; top:4px; right:2px; min-width:18px; height:18px; padding:0 5px; box-sizing:border-box; border-radius:999px; background:#ba1a1a; color:#fff; font:600 11px/18px 'Work Sans',Outfit,system-ui,sans-serif; text-align:center; box-shadow:0 0 0 2px #fef9ea; }
+.cloche-hd { color:#48473e; }
+
+.nt-page { padding-bottom:96px; }
+.nt-tete { display:flex; align-items:center; gap:8px; min-height:56px; margin-bottom:8px; }
+.nt-tete a { display:inline-grid; place-items:center; width:44px; height:44px; color:#1d1c13; }
+.nt-tete a:focus-visible { outline:2px solid #755b00; outline-offset:2px; border-radius:12px; }
+.nt-tete h1 { margin:0; font:600 24px/32px Literata,Georgia,serif; color:#1d1c13; }
+.nt-section { margin:0 0 24px; }
+.nt-section h2 { margin:0 0 12px; font:600 11px/15px 'Work Sans',Outfit,system-ui,sans-serif; letter-spacing:.06em; text-transform:uppercase; color:#755b00; }
+.nt-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.nt-element { display:flex; gap:12px; align-items:flex-start; padding:16px; border-radius:16px; background:#fff; box-shadow:0 2px 10px rgb(29 28 19 / .04); }
+.nt-element.is-rappel_moment,.nt-element.is-rappel_habitude { background:#f8f4e4; box-shadow:none; }
+.nt-element.is-nouveau { box-shadow:inset 3px 0 0 #755b00, 0 2px 10px rgb(29 28 19 / .04); }
+.nt-icone { display:grid; place-items:center; width:40px; height:40px; flex-shrink:0; border-radius:50%; background:#f8f4e4; color:#755b00; }
+.nt-element.is-rappel_moment .nt-icone,.nt-element.is-rappel_habitude .nt-icone { background:#ede8d9; color:#48473e; }
+.nt-corps { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.nt-titre { margin:0; display:flex; flex-wrap:wrap; align-items:center; gap:6px; font:500 16px/24px Literata,Georgia,serif; color:#1d1c13; }
+.nt-badge { padding:1px 8px; border-radius:999px; background:#ffe08f; color:#584400; font:600 11px/16px 'Work Sans',Outfit,system-ui,sans-serif; }
+.nt-corps time { font:400 12px/16px 'Work Sans',Outfit,system-ui,sans-serif; color:#7e7665; }
+.nt-texte { margin:6px 0 0; font:400 15px/25px Literata,Georgia,serif; color:#48473e; white-space:pre-wrap; overflow-wrap:anywhere; }
+.nt-corps a { align-self:flex-start; display:inline-flex; align-items:center; min-height:44px; color:#755b00; font:500 13px/17px 'Work Sans',Outfit,system-ui,sans-serif; text-decoration:underline; text-underline-offset:4px; }
+.nt-vide { margin:0; padding:16px; border-radius:16px; background:#f8f4e4; font:400 15px/25px Literata,Georgia,serif; color:#48473e; }
+.nt-note { margin:0 0 24px; font:400 12px/18px 'Work Sans',Outfit,system-ui,sans-serif; color:#7e7665; }
+/* Administration : annonces aux participants. */
+.admin-annonce-form { display:flex; flex-direction:column; gap:6px; margin:12px 0; }
+.admin-annonce-form input,.admin-annonce-form textarea,.admin-annonce-form select { width:100%; box-sizing:border-box; }
+.admin-annonce-choix { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; }
+.admin-annonce-confirmer { margin:8px 0; padding:12px; border-radius:12px; background:#ffe08f; color:#584400; }
+.admin-annonces-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+.admin-annonces-liste li { padding:12px; border-radius:12px; background:#f8f4e4; overflow-wrap:anywhere; }
+.admin-annonces-liste p { margin:0 0 4px; }

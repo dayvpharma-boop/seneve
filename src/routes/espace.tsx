@@ -57,6 +57,7 @@ import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib
 import { estProgrammeHdReel } from '@/lib/habitudes-programmes';
 import { copiesJourHdValides } from '@/lib/habitudes-copie-jour';
 import { EtatSauvegarde } from '@/components/EtatSauvegarde';
+import { ClocheNotifications } from '@/components/ClocheNotifications';
 import { entreesFile, envoyerFile, garderAction, reponseConfirme, useEntreeFile, type ChoixHorsLigne, type TransportFile } from '@/lib/file-actions';
 
 type Enrollment = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null };
@@ -271,7 +272,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     if (charge) document.documentElement.lang = enTete ? 'en' : 'fr';
   }, [charge, enTete]);
   const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
-    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div>
+    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><ClocheNotifications langue={enTete ? 'en' : 'fr'} /><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div>
     {notice}{repere}
     {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<Link className="jn-avatar-grand" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom.charAt(0).toUpperCase()}</AvatarParticipant></Link>}
     {data && <AccueilVivant langue={enTete ? 'en' : 'fr'} />}

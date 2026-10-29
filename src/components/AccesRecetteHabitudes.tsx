@@ -41,7 +41,7 @@ export function AccesRecetteHabitudes({reel=false}:{reel?:boolean}={}){
  const inscriptions=data?.inscriptions.filter(e=>(reel?estProgrammeHdReel(e.programme_id):e.programme_id===PROGRAMME_HD_RECETTE))??[];
  const carte='bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col gap-hd-space-sm';
  const bouton='min-h-[48px] w-full bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium rounded-xl flex items-center justify-center gap-2';
- return <CadreHabitudes titre={l('Aujourd’hui','Today')} langue={langue} actif="aujourdhui" liens={{aujourdhui:reel?`/habitudes/aujourdhui?lang=${langue}`:`/acces?lang=${langue}`}}>
+ return <CadreHabitudes cloche={reel} titre={l('Aujourd’hui','Today')} langue={langue} actif="aujourdhui" liens={{aujourdhui:reel?`/habitudes/aujourdhui?lang=${langue}`:`/acces?lang=${langue}`}}>
  <h1 className="sr-only">{m('Mes accès de test','My test access','Habitudes & Défis','Habits & Challenges')}</h1>
  {erreur&&reel&&!enLigne&&userId&&copiesJourHdValides(userId,maintenant).length?<div className="flex flex-col">{copiesJourHdValides(userId,maintenant).map(c=><ActivitesJourRecette key={`${c.enrollmentId}:${c.dateLocale}`} enrollmentId={c.enrollmentId} participantId={c.participantId} dateLocale={c.dateLocale} langue={langue} fuseau={c.fuseau} finExclue={c.finExclue} copie={c}/>)}</div>
  :erreur&&reel&&!enLigne?<section className="px-hd-margin py-hd-space-md flex flex-col gap-hd-space-lg" aria-labelledby="hd-hors-ligne-titre">

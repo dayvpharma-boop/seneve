@@ -753,3 +753,14 @@
 :root[data-apparence="sombre"] .etat-sauvegarde.is-refuse .etat-badge{background:#4a1f1b;color:#ffb4ab;}
 :root[data-apparence="sombre"] .etat-choix,:root[data-apparence="sombre"] .etat-sauvegarde > p:not(.etat-choix){color:#d1c5b3;}
 :root[data-apparence="sombre"] .etat-liens button,:root[data-apparence="sombre"] .etat-liens a{color:#ffd482;}
+:root[data-apparence="sombre"] .cloche-notifications,:root[data-apparence="sombre"] .nt-tete a,:root[data-apparence="sombre"] .nt-tete h1,:root[data-apparence="sombre"] .nt-titre{color:#e6e2dc;}
+:root[data-apparence="sombre"] .cloche-pastille{background:#ffb4ab;color:#690005;box-shadow:0 0 0 2px #141310;}
+:root[data-apparence="sombre"] .nt-element,:root[data-apparence="sombre"] .nt-vide{background:#2b2a26;box-shadow:none;}
+:root[data-apparence="sombre"] .nt-element.is-rappel_moment,:root[data-apparence="sombre"] .nt-element.is-rappel_habitude{background:#1d1b18;}
+:root[data-apparence="sombre"] .nt-element.is-nouveau{box-shadow:inset 3px 0 0 #ffd482;}
+:root[data-apparence="sombre"] .nt-icone{background:#363531;color:#ffd482;}
+:root[data-apparence="sombre"] .nt-texte,:root[data-apparence="sombre"] .nt-vide{color:#d1c5b3;}
+:root[data-apparence="sombre"] .nt-section h2,:root[data-apparence="sombre"] .nt-corps a{color:#ffd482;}
+:root[data-apparence="sombre"] .nt-corps time,:root[data-apparence="sombre"] .nt-note{color:#b5ab9a;}
+:root[data-apparence="sombre"] .admin-annonces-liste li{background:#2b2a26;}
+:root[data-apparence="sombre"] .admin-annonce-confirmer{background:#363531;color:#ffd482;}

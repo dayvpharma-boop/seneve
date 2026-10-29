@@ -24,6 +24,7 @@ import './styles-aujourdhui-suite.css';
 import './styles-etats-espace.css';
 import './styles-erreur-maquette.css';
 import './styles-hors-connexion.css';
+import './styles-notifications.css';
 import './styles-auth-maquette.css';
 import './styles-recuperation.css';
 import './styles-decouverte-accueil.css';
@@ -49,6 +50,7 @@ const Espace = lazy(() => import('@/routes/espace').then(m => ({ default: m.Espa
 const Journal = lazy(() => import('@/routes/journal').then(m => ({ default: m.Journal })));
 const Aide = lazy(() => import('@/routes/aide').then(m => ({ default: m.Aide })));
 const Coach = lazy(() => import('@/routes/coach').then(m => ({ default: m.Coach })));
+const Notifications = lazy(() => import('@/routes/notifications').then(m => ({ default: m.Notifications })));
 const Progres = lazy(() => import('@/routes/progres').then(m => ({ default: m.Progres })));
 const Profil = lazy(() => import('@/routes/profil').then(m => ({ default: m.Profil })));
 const Reglages = lazy(() => import('@/routes/reglages').then(m => ({ default: m.Reglages })));
@@ -104,6 +106,7 @@ if (root) createRoot(root).render(
         <Route path="/aide" element={<Aide />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/coach" element={<Coach />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="/progres" element={<Progres />} />
         <Route path="/confidentialite" element={<Confidentialite />} />
         <Route path="/nouveau-mot-de-passe" element={<NewPassword />} />
