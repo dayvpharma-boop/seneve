@@ -1,0 +1,116 @@
+/* Direction validée le 29/10 : photos existantes, surfaces bleu lavande.
+ * Périmètre : Aujourd'hui, Parcours et HD. Aucun changement de données ou de droits.
+ * Les palettes personnelles alternatives et les états d'erreur sont conservés. */
+:root[data-palette="ivoire"] :is(.espace-page,.parcours-page,.hd-stitch) {
+  --vivant-fond:#f5f7fe;--vivant-surface:rgb(255 255 255);--vivant-encre:#151b36;
+  --vivant-secondaire:#4d5874;--vivant-vert:#49439b;--vivant-sur-accent:rgb(255 255 255);
+  --vivant-ligne:#dde3f2;--vivant-sauge:#e6f3f2;--vivant-miel:#e3efff;
+  --vivant-argile:#edf2fc;--vivant-lavande:#eee8fc;
+  --background:var(--vivant-fond);--surface:var(--vivant-surface);
+  --foreground:var(--vivant-encre);--muted:var(--vivant-secondaire);
+  --gold:var(--vivant-vert);--brand:var(--vivant-vert);--line:var(--vivant-ligne);
+  --chip:var(--vivant-argile);--soft-gold:var(--vivant-miel);
+}
+:root[data-palette="ivoire"][data-apparence="sombre"] :is(.espace-page,.parcours-page,.hd-stitch) {
+  --vivant-fond:#13172a;--vivant-surface:#1d243b;--vivant-encre:#edf0ff;
+  --vivant-secondaire:#bdc7e0;--vivant-vert:#c5bbff;--vivant-sur-accent:#252048;
+  --vivant-ligne:#3b4562;--vivant-sauge:#203c40;--vivant-miel:#233555;
+  --vivant-argile:#29324c;--vivant-lavande:#352c50;
+}
+:root[data-palette="ivoire"] body:has(:is(.espace-page,.parcours-page,.hd-ecran)) {
+  background:linear-gradient(145deg,#edf3ff,#f2edfd);color:#151b36;
+}
+:root[data-palette="ivoire"][data-apparence="sombre"] body:has(:is(.espace-page,.parcours-page,.hd-ecran)) {
+  background:#13172a;color:#edf0ff;
+}
+:root[data-apparence] :is(.espace-page,.parcours-page) {
+  background:var(--vivant-fond);color:var(--vivant-encre);
+}
+:root[data-apparence] .espace-page .accueil-vivant {
+  display:flex;flex-direction:column;background:var(--vivant-miel);border-radius:24px;
+}
+:root[data-apparence] .espace-page .accueil-vivant>img {
+  order:-1;width:100%;height:150px;min-height:0;mask-image:none;object-position:center;
+}
+:root[data-apparence] .espace-page .accueil-vivant-texte {padding:20px 22px}
+:root[data-apparence] .espace-page .accueil-vivant-titre {
+  font-family:Poppins,system-ui,sans-serif;font-size:26px;line-height:1.3;margin:10px 0;
+}
+:root[data-apparence] .espace-page .accueil-vivant-note {max-width:none}
+:root[data-apparence] .espace-page .accueil-vivant-repere {letter-spacing:.06em}
+:root[data-apparence] .espace-page .jn-avatar-grand {display:none}
+:root[data-apparence] :is(.espace-page,.parcours-page) .barre-nav {
+  background:var(--vivant-surface);border-top:1px solid var(--vivant-ligne);
+  box-shadow:0 -4px 24px #23295008;
+}
+:root[data-apparence] :is(.espace-page,.parcours-page) .barre-nav a[aria-current="page"] {
+  color:var(--vivant-vert);
+}
+:root[data-apparence] .parcours-page .page-illustration {
+  display:flex;flex-direction:column;background:var(--vivant-miel);border-radius:24px;
+}
+:root[data-apparence] .parcours-page .page-illustration>img {
+  order:-1;width:100%;height:156px;min-height:0;mask-image:none;
+}
+:root[data-apparence] .parcours-page .page-illustration-texte {padding:20px}
+:root[data-apparence] .parcours-page .page-illustration-titre {
+  font-family:Poppins,system-ui,sans-serif;font-size:23px;line-height:1.35;
+}
+:root[data-apparence] .parcours-page :is(.progres-carte,.bilan-jour,.parcours-semaines,.repere-parcours) {
+  background:var(--vivant-surface);border:1px solid var(--vivant-ligne);border-radius:20px;
+}
+:root[data-apparence] .parcours-page .prog-tab {border-radius:16px;background:var(--vivant-argile);color:var(--vivant-secondaire)}
+:root[data-apparence] .parcours-page .prog-tab[aria-selected=true],
+:root[data-apparence] .parcours-page .progres-suite .moment-btn {
+  background:var(--vivant-vert);color:var(--vivant-sur-accent);border-radius:16px;
+}
+:root[data-apparence] .parcours-page .progres-chiffres li {background:var(--vivant-miel);border-radius:12px}
+:root[data-apparence] .parcours-page .is-today .parcours-rond {background:var(--vivant-vert);color:var(--vivant-sur-accent);border-radius:50%}
+:root[data-apparence] .hd-ecran {max-width:640px;margin-inline:auto}
+/* Les anciennes règles de ces pages suivent aussi les mêmes couleurs locales. */
+:root[data-palette="ivoire"][data-apparence] :is(.espace-page,.parcours-page,.hd-stitch) {
+  --palette-papier:var(--vivant-fond);--palette-surface:var(--vivant-surface);
+  --palette-encre:var(--vivant-encre);--palette-secondaire:var(--vivant-secondaire);
+  --palette-accent:var(--vivant-vert);--palette-sur-accent:var(--vivant-vert);
+  --palette-ivoire:var(--vivant-argile);--palette-doux:var(--vivant-miel);
+  --palette-carte:var(--vivant-lavande);--palette-haut:var(--vivant-lavande);
+  --palette-ligne:var(--vivant-ligne);--palette-or-doux:var(--vivant-lavande);
+  --palette-or-pale:var(--vivant-miel);
+}
+/* Jetons locaux HD : suit le choix clair/sombre explicite, y compris sur un système sombre. */
+:root[data-palette="ivoire"][data-apparence] .hd-stitch {
+  --hdc-surface:var(--vivant-fond);--hdc-background:var(--vivant-fond);
+  --hdc-surface-bright:var(--vivant-surface);--hdc-surface-dim:var(--vivant-argile);
+  --hdc-surface-container-lowest:var(--vivant-surface);--hdc-surface-container-low:var(--vivant-argile);
+  --hdc-surface-container:var(--vivant-miel);--hdc-surface-container-high:var(--vivant-lavande);
+  --hdc-surface-container-highest:var(--vivant-lavande);--hdc-surface-variant:var(--vivant-argile);
+  --hdc-on-background:var(--vivant-encre);--hdc-on-surface:var(--vivant-encre);
+  --hdc-on-surface-variant:var(--vivant-secondaire);--hdc-outline-variant:var(--vivant-ligne);
+  --hdc-outline:var(--vivant-secondaire);--hdc-primary:var(--vivant-vert);
+  --hdc-secondary:var(--vivant-vert);--hdc-primary-container:var(--vivant-vert);
+  --hdc-on-primary:var(--vivant-sur-accent);--hdc-on-secondary:var(--vivant-sur-accent);
+  --hdc-on-primary-container:var(--vivant-sur-accent);--hdc-secondary-container:var(--vivant-lavande);
+  --hdc-on-secondary-container:var(--vivant-vert);--hdc-on-secondary-fixed-variant:var(--vivant-vert);
+  --hdc-tertiary:var(--vivant-secondaire);
+  --hd-fond:var(--vivant-fond);--hd-carte:var(--vivant-surface);--hd-encre:var(--vivant-encre);
+  --hd-or:var(--vivant-vert);--hd-discret:var(--vivant-secondaire);
+}
+:root[data-apparence] .hd-stitch :is(h1,h2,h3):not(.hd-classique *) {font-family:Poppins,system-ui,sans-serif}
+:root[data-apparence] .hd-stitch .hd-prochain-rendez-vous>div {background:var(--vivant-lavande);border-radius:24px}
+:root[data-apparence] .raccourcis-parcours {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}
+:root[data-apparence] .raccourcis-parcours a {display:flex;align-items:center;gap:10px;min-height:64px;padding:14px;border:1px solid var(--vivant-ligne);border-radius:18px;background:var(--vivant-miel);color:var(--vivant-encre);font:500 13px/1.5 Poppins,system-ui,sans-serif;text-decoration:none;overflow-wrap:anywhere}
+:root[data-apparence] .raccourcis-parcours a:nth-child(even) {background:var(--vivant-lavande)}
+.raccourcis-parcours svg {flex-shrink:0}
+:root[data-apparence] :is(.espace-page,.parcours-page,.hd-stitch) :is(a,button):focus-visible {outline:3px solid var(--vivant-vert);outline-offset:4px}
+@media(min-width:900px) {:root[data-apparence] .espace-page .accueil-vivant>img {height:220px}}
+@media(forced-colors:active) {
+  :root[data-apparence] :is(.espace-page,.parcours-page,.hd-stitch) {--vivant-fond:Canvas;--vivant-surface:Canvas;--vivant-encre:CanvasText;--vivant-secondaire:CanvasText;--vivant-vert:LinkText;--vivant-sur-accent:Canvas;--vivant-ligne:CanvasText;--vivant-miel:Canvas;--vivant-lavande:Canvas}
+  :root[data-apparence] body:has(:is(.espace-page,.parcours-page,.hd-ecran)) {background:Canvas;color:CanvasText}
+}
+/* En-tête compact : les quatre commandes restent dans la largeur à 360 px. */
+:root[data-apparence] .espace-page .barre-haut {gap:8px;min-width:0}
+:root[data-apparence] .espace-page .barre-haut .logo-marque {min-width:0;flex:1}
+:root[data-apparence] .espace-page .barre-haut .logo-marque>img {flex-shrink:0}
+:root[data-apparence] .espace-page .barre-haut .today-profil {flex-shrink:0}
+:root[data-apparence] .espace-page .barre-haut .logo-marque>span {overflow-wrap:anywhere}
+:root[data-apparence] .espace-page .barre-haut {margin-inline:0;padding-inline:0;width:100%;max-width:100%}

@@ -11,7 +11,7 @@ export default {
  publicDir:path.join(racine,'public'),
  cacheDir:path.join(racine,'.vite-cache-galerie'),
  resolve:{...configuration.resolve,alias:[
-  {find:/^(@\/lib|\.)\/supabase$/,replacement:path.join(g,'supabase-fictif.ts')},
+  {find:/^(@\/lib|\.)\/supabase$/,replacement:path.join(g,'design-supabase-fictif.ts')},
   {find:/^(@\/lib|\.)\/habitudes-jour-recette$/,replacement:path.join(g,'jour-fictif.ts')},
   {find:'@',replacement:path.join(racine,'src')},
  ]},
