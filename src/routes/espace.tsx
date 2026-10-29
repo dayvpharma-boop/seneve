@@ -55,6 +55,7 @@ import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
 import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
 import { estProgrammeHdReel } from '@/lib/habitudes-programmes';
+import { copiesJourHdValides } from '@/lib/habitudes-copie-jour';
 import { EtatSauvegarde } from '@/components/EtatSauvegarde';
 import { entreesFile, envoyerFile, garderAction, reponseConfirme, useEntreeFile, type ChoixHorsLigne, type TransportFile } from '@/lib/file-actions';
 
@@ -367,13 +368,20 @@ function EspaceDuCompte({ userId }: { userId: string }) {
           <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>
         </div>
       </div>{footer(enr.langue)}</>,'journee-nouvelle');
+    // Sans réseau (décision du 29/10/2026) : la journée HD gardée sur cet appareil, relue et notée comme en ligne.
+    const copieHd=horsLigne&&!paused&&!cloture&&!habitudesTerminees&&estProgrammeHdReel(enr.programme_id)&&current===day&&enr.etat==='active'?copiesJourHdValides(userId).find(c=>c.enrollmentId===enr.enrollment_id):undefined;
+    if(copieHd)
+      return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
+        <ActivitesJourRecette key={`${enr.enrollment_id}:${copieHd.dateLocale}:hors-ligne`} enrollmentId={enr.enrollment_id} participantId={copieHd.participantId} dateLocale={copieHd.dateLocale} langue={enr.langue} fuseau={copieHd.fuseau} finExclue={copieHd.finExclue} copie={copieHd}/>
+        <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2"><Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aide${en?'?lang=en':''}`}>{en?'Help and privacy':'Aide et confidentialité'}</Link></div>
+      </div>{footer(enr.langue)}</>,'journee-nouvelle');
     return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p>
 <h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
       {!horsLigne&&<Link className="oa-secondary" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>}
-      <label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>
+      {!horsLigne&&<label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>}
       {!horsLigne&&data.participantId&&<PlanningJourHabitudes key={enr.enrollment_id} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue}/>}
       {horsLigne&&<p role="status">{en?'Offline: your habits for today can be reread and recorded on the Habits screen, if this device has already opened it today.':'Hors connexion : ta journée d’habitudes se relit et se note sur l’écran Habitudes, si cet appareil l’a déjà ouvert aujourd’hui.'} <Link to={en?'/habitudes/aujourdhui?lang=en':'/habitudes/aujourdhui'}>{en?'Open my habits':'Ouvrir mes habitudes'}</Link></p>}
-      {occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
+      {!horsLigne&&occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
       {!horsLigne&&duJour.map(c=><LectureTexteHabitude key={c.content_id} titre={c.theme||(en?`Reading ${c.numero_message}`:`Lecture ${c.numero_message}`)} texte={c.texte_officiel} langue={enr.langue}/>)}
       {!horsLigne&&occurrences.map(o=>{const a=data.activities.find(a=>a.activity_id===o.occurrence_id)!;const st=etatDe(a);return <DeclarationHabitude key={`${userId}:${enr.enrollment_id}:${o.occurrence_id}`} userId={userId} occurrence={o} consigne={a.consigne} critere={a.critere_realisation} langue={enr.langue} lectureSeule={lectureSeule||enr.etat!=='active'}
         etat={st?{...o,etat:st.etat as 'non_commencee'|'preparee'|'partielle'|'realisee',aide_demandee:st.aide_demandee??false,synchronisation:horsLigne?'local':'synchronise'}:undefined}

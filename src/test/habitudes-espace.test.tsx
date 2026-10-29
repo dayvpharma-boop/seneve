@@ -81,7 +81,8 @@ const cleCache='seneve:espace:v1:10000000-0000-4000-8000-000000000001';
 it('exclut les contenus HD du cache quand leur interface est désactivée',async()=>{
  vi.stubEnv('VITE_HABITUDES_DEFIS','false');localStorage.setItem(cleCache,'ancienne copie');
  render(<MemoryRouter><Espace/></MemoryRouter>);await screen.findByRole('button',{name:'Se déconnecter'});
- await waitFor(()=>expect(localStorage.getItem(cleCache)).toBeNull());expect(screen.queryByRole('heading',{name:'Mes activités du jour'})).toBeNull();
+ // Depuis le 29/10/2026, la ligne du parcours reste dans la copie ; ses contenus et activités jamais.
+ await waitFor(()=>expect(localStorage.getItem(cleCache)).not.toBe('ancienne copie'));const brut=localStorage.getItem(cleCache)??'';expect(brut).not.toContain('Prière du matin');expect(brut).not.toContain('"c1"');expect(screen.queryByRole('heading',{name:'Mes activités du jour'})).toBeNull();
 });
 it('reste accessible sans copie si le registre est indisponible et le module désactivé',async()=>{
  vi.stubEnv('VITE_HABITUDES_DEFIS','false');erreurRegistre=true;localStorage.setItem(cleCache,'ancienne copie');
@@ -111,4 +112,40 @@ it('la dernière journée du programme réel terminé ne rouvre pas les cartes d
  tables.contents=tables.contents!.map(c=>({...c as Record<string,unknown>,programme_id:'HABITUDES_DEFIS_30J_FR_V1',jour:180}));
  render(<MemoryRouter initialEntries={['/espace?jour=180']}><Espace/></MemoryRouter>);
  await screen.findByRole('heading',{name:'Mes activités du jour'});expect(screen.getAllByText('Lecture seule')).toHaveLength(3);expect(screen.queryByRole('button',{name:'J’ai réalisé cette activité'})).toBeNull();expect(screen.queryByText('Les activités ne peuvent pas être vérifiées. Actualise avant de déclarer une action.')).toBeNull();expect(appels).toHaveLength(0);
+});
+describe('actualisation sans réseau (signalé par Dr Justin le 29/10/2026)',()=>{
+ it('après une actualisation hors connexion, le parcours Habitudes reste là et la journée gardée se relit et se note',async()=>{
+  const {enregistrerCopieJourHd}=await import('@/lib/habitudes-copie-jour');
+  const {entreesFile}=await import('@/lib/file-actions');
+  tables.programmes=[{programme_id:'HABITUDES_DEFIS_30J_FR_V1',nom:'Habitudes & Défis',duree_jours:30}];
+  tables.enrollments=[{enrollment_id:eid,programme_id:'HABITUDES_DEFIS_30J_FR_V1',version:1,langue:'fr',date_debut:'2026-10-25',etat:'active'}];
+  tables.contents=tables.contents!.map(c=>({...(c as object),programme_id:'HABITUDES_DEFIS_30J_FR_V1'}));
+  tables.hd_programme_links=[{programme_id:'HABITUDES_DEFIS_30J_FR_V1',version:1,langue:'fr'}];
+  // 1. Visite avec réseau : la copie de l'espace est écrite (le jour HD a sa propre copie, écrite par l'écran Habitudes).
+  const premier=render(<MemoryRouter><Espace/></MemoryRouter>);
+  await waitFor(()=>expect(localStorage.getItem('seneve:espace:v1:10000000-0000-4000-8000-000000000001')).not.toBeNull());
+  premier.unmount();
+  const brut=localStorage.getItem('seneve:espace:v1:10000000-0000-4000-8000-000000000001')!;
+  expect(brut).toContain(eid);expect(brut).not.toContain('Prière du matin');
+  const o={occurrence_id:aid(1),enrollment_id:eid,version:1,date_locale:'2026-10-25',requise:true};
+  enregistrerCopieJourHd('10000000-0000-4000-8000-000000000001',{enrollmentId:eid,participantId:'PA',dateLocale:'2026-10-25',fuseau:'Africa/Kinshasa',finExclue:null,data:{userId:'10000000-0000-4000-8000-000000000001',date:'2026-10-25',jour:1,activites:[{habit_key:'gratitude_matin',occurrence:o,consigne:'Gratitude du matin',critere:null,heure:'05:50'}]}});
+  // 2. Actualisation sans réseau.
+  vi.spyOn(window.navigator,'onLine','get').mockReturnValue(false);
+  render(<MemoryRouter><Espace/></MemoryRouter>);
+  expect(await screen.findByRole('heading',{name:'Gratitude du matin'})).toBeInTheDocument();
+  expect(screen.getByText(/Tu es hors connexion : tu peux noter tes habitudes/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button',{name:'J’ai réalisé cette activité'}));
+  expect(await screen.findByText('Enregistré sur cet appareil')).toBeInTheDocument();
+  expect(appels).toHaveLength(0);
+  expect(entreesFile('10000000-0000-4000-8000-000000000001')).toHaveLength(1);
+ });
+ it('sans journée gardée, l’onglet reste et renvoie vers l’écran Habitudes, sans page d’erreur',async()=>{
+  const premier=render(<MemoryRouter><Espace/></MemoryRouter>);
+  await waitFor(()=>expect(localStorage.getItem('seneve:espace:v1:10000000-0000-4000-8000-000000000001')).not.toBeNull());
+  premier.unmount();
+  vi.spyOn(window.navigator,'onLine','get').mockReturnValue(false);
+  render(<MemoryRouter><Espace/></MemoryRouter>);
+  expect(await screen.findByText(/Hors connexion : ta journée d’habitudes se relit et se note sur l’écran Habitudes/)).toBeInTheDocument();
+  expect(screen.queryByText('Aucune activité n’est disponible pour le moment.')).toBeNull();
+ });
 });
