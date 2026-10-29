@@ -149,3 +149,16 @@ it('présente les rappels et les heures en anglais',async()=>{render(<RappelsCar
     expect(m.appels.find(a => a.name === 'rappels_annonces')?.args).toEqual({ p_actif: false, p_endpoint: null });
     expect(m.appels.some(a => a.name === 'rappels_arreter')).toBe(false);
   });
+
+it('présentation du profil : interrupteurs et résumé de la ligne (maquette du 29/10/2026)', async () => {
+  m.etat = { ...m.etat, actif: true, cet_appareil: true, appareils: 1, moments: { matin: '07:30', midi: null, soir: '19:30' }, annonces: true };
+  const resume = vi.fn();
+  render(<RappelsCard langue="fr" interrupteurs onResume={resume} />);
+  const matin = await screen.findByRole('switch', { name: 'Matin' });
+  expect(matin).toBeChecked();
+  expect(screen.getByRole('switch', { name: 'Midi' })).not.toBeChecked();
+  expect(screen.getByRole('switch', { name: 'Recevoir aussi les annonces de l’équipe SÉNEVÉ' })).toBeChecked();
+  await waitFor(() => expect(resume).toHaveBeenLastCalledWith('Matin 7 h 30 · Soir 19 h 30'));
+  fireEvent.click(screen.getByRole('switch', { name: 'Midi' }));
+  await waitFor(() => expect(m.appels.some(a => a.name === 'rappels_regler')).toBe(true));
+});

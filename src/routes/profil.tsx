@@ -1,7 +1,6 @@
 import {PhotoProfil} from '@/components/PhotoProfil';
-import {IconeProfil} from '@/components/IconeProfil';
-import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
-import {Link,useNavigate,useSearchParams} from 'react-router-dom';
+import {useCallback,useEffect,useRef,useState,type FormEvent,type ReactNode} from 'react';
+import {Link,useLocation,useNavigate,useSearchParams} from 'react-router-dom';
 import {supabase} from '@/lib/supabase';
 import {chargerProfil,enregistrerProfil,effacerProfils,lireProfil,modifierProfil,exporterProfil,type Profil as Donnees} from '@/lib/profil';
 import {effacerEspaces,useEnLigne} from '@/lib/hors-ligne';
@@ -16,9 +15,10 @@ import {RappelsCard} from '@/components/RappelsCard';
 import {WhatsAppLink} from '@/components/WhatsAppLink';
 import {CodePlaceCard} from '@/components/CodePlaceCard';
 import {IconeConfidentialite as C} from '@/components/IconeConfidentialite';
-import {IconeJournee as I} from '@/components/IconeJournee';
 import {BarreNav} from '@/components/BarreNav';
-import {IconeBible} from '@/components/IconeBible';
+import {IconeProfilModerne as P,type SymboleProfil} from '@/components/IconeProfilModerne';
+import {useApparence} from '@/lib/apparence';
+import {usePreferencesVisuelles} from '@/lib/preferences-visuelles';
 
 type Parcours=Donnees['parcours'][number];
 /** Jour n d'un parcours (0 = premier jour), compté en dates sans décalage de fuseau. */
@@ -27,8 +27,24 @@ const jourParcours=(debut:string,n:number)=>{const d=new Date(`${debut}T00:00:00
 const dateCourte=(d:Date,en:boolean,timeZone='UTC')=>{const annee=Number(new Intl.DateTimeFormat('en',{year:'numeric',timeZone}).format(d));return new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',...(annee!==new Date().getFullYear()?{year:'numeric' as const}:{}),timeZone}).format(d);};
 function etatParcours(p:Parcours){const brut=rawDay(p.debut,new Date());const jour=Math.max(0,Math.min(p.duree,brut));const statut=p.etat==='en_pause'?'pause':jour===0?'avenir':jour>=p.duree&&(p.etat==='terminee'||brut>p.duree)?'termine':'encours';return{p,jour,statut};}
 
+const NOMS_PALETTES:Record<string,[string,string]>={ivoire:['Ivoire','Ivory'],sable:['Sable','Sand'],sauge:['Sauge','Sage'],argile:['Argile','Clay'],ardoise:['Bleu ardoise','Slate blue']};
+/** Ligne de réglage qui s'ouvre sur place (maquette Stitch « pf-02 », 29/10/2026). Le contenu reste monté : les états
+ *  se chargent comme avant et le résumé de la ligne reste juste, même fermée. */
+function Reglage({id,icone,titre,valeur,ouvert,basculer,children}:{id:string;icone:SymboleProfil;titre:string;valeur?:string|null;ouvert:boolean;basculer:()=>void;children:ReactNode}){
+ return <div className={`pf-reglage${ouvert?' est-ouvert':''}`} id={`pf-${id}`}>
+  <button type="button" className="pf-ligne" aria-expanded={ouvert} aria-controls={`pf-${id}-panneau`} onClick={basculer}>
+   <span className="pf-tuile"><P nom={icone}/></span><span className="pf-ligne-titre">{titre}{valeur&&<small className="pf-ligne-valeur">{valeur}</small>}</span><span className="pf-chevron pf-chevron-bas"><P nom="keyboard_arrow_down"/></span>
+  </button>
+  <div className="pf-reglage-panneau" id={`pf-${id}-panneau`} role="region" aria-label={titre} hidden={!ouvert}>{children}</div>
+ </div>;
+}
+function LigneLien({to,icone,children,className=''}:{to:string;icone?:SymboleProfil;children:ReactNode;className?:string}){
+ return <Link to={to} className={`pf-ligne${className?` ${className}`:''}`}>{icone&&<span className="pf-tuile"><P nom={icone}/></span>}<span className="pf-ligne-titre">{children}</span><span className="pf-chevron"><P nom="chevron_right"/></span></Link>;
+}
+
 export function Profil(){
- const navigate=useNavigate();const[params,setParams]=useSearchParams();const enLigne=useEnLigne();
+ const navigate=useNavigate();const location=useLocation();const[apparence]=useApparence();const[visuel]=usePreferencesVisuelles();
+ const[ouvert,setOuvert]=useState<string|null>(null);const[resumeRappels,setResumeRappels]=useState<string|null>(null);const[resumeEmail,setResumeEmail]=useState<string|null>(null);const[resumeWhatsApp,setResumeWhatsApp]=useState<string|null>(null);const[params,setParams]=useSearchParams();const enLigne=useEnLigne();
  const[data,setData]=useState<Donnees|null>(null);const[etat,setEtat]=useState<'chargement'|'pret'|'erreur'>('chargement');const[copie,setCopie]=useState<string|null>(null);
  const[editing,setEditing]=useState(false);const[prenom,setPrenom]=useState('');const[busy,setBusy]=useState(false);const[message,setMessage]=useState('');const[erreur,setErreur]=useState('');
  const[equipe,setEquipe]=useState(false);const generation=useRef(0);const userId=useRef<string|null>(null);const en=(params.get('lang')??data?.langue)==='en';const langue=en?'en':'fr';
@@ -43,28 +59,85 @@ export function Profil(){
  // Administration déplacée du bas de l'espace vers le profil (demande du 24/10/2026) : visible seulement pour l'équipe.
  useEffect(()=>{if(!data||copie)return;let actif=true;void Promise.resolve().then(()=>supabase.rpc('staff_me')).then(r=>{const d=r?.data as {admin?:boolean;roles?:string[]}|null|undefined;if(actif)setEquipe(Boolean(d&&(d.admin||d.roles?.length)));}).catch(()=>undefined);return()=>{actif=false;};},[data?.userId,copie]);
  useEffect(()=>{document.title=`${en?'My profile':'Mon profil'} — SÉNEVÉ`;document.documentElement.lang=langue;},[en,langue]);
+ // Liens vers une rubrique (#preferences, #notifications, #rappels, #whatsapp, #email-matin, #code) : la ligne s'ouvre.
+ useEffect(()=>{if(etat!=='pret')return;const h=location.hash.replace('#','');const cible=h==='notifications'||h==='rappels'?'rappels':['preferences','email-matin','whatsapp','code'].includes(h)?h:null;if(!cible)return;setOuvert(cible);requestAnimationFrame(()=>document.getElementById(`pf-${cible}`)?.scrollIntoView?.({block:'start'}));},[etat,location.hash]);
  const lectureSeule=!enLigne||copie!==null;const racine=racineTest();const racineLe=dateRacineTest();
  const parcours=(data?.parcours??[]).map(etatParcours);const enCours=parcours.filter(x=>x.statut==='encours'&&x.p.etat==='active').length;
  async function enregistrer(changements:{prenom?:string;langue?:string}){if(!data||busy||lectureSeule)return;const p=data;const ticket=generation.current;setBusy(true);setMessage('');setErreur('');try{const nouveau=await modifierProfil(p,changements);if(ticket!==generation.current)return;setData(nouveau);enregistrerProfil(nouveau);setEditing(false);if(changements.langue)setParams({lang:changements.langue},{replace:true});setMessage(changements.langue==='en'||(en&&!changements.langue)?'Profile saved':'Profil mis à jour');}catch{if(ticket===generation.current)setErreur(en?'Your changes could not be saved. Please try again.':'Tes modifications n’ont pas pu être enregistrées. Réessaie.');}finally{if(ticket===generation.current)setBusy(false);}}
  function sauverPrenom(e:FormEvent){e.preventDefault();const v=prenom.trim();if(v&&v.length<=80)void enregistrer({prenom:v});}
  async function deconnecter(){if(busy)return;setBusy(true);setErreur('');try{const r=await supabase.auth.signOut({scope:'local'});if(r.error)throw r.error;effacerEspaces();effacerProfils();navigate('/connexion',{replace:true});}catch{setErreur(en?'Sign out failed. Please try again.':'La déconnexion a échoué. Réessaie.');}finally{setBusy(false);}}
  async function telecharger(){if(!data||lectureSeule||busy)return;const ticket=generation.current;setBusy(true);setErreur('');try{const copie=await exporterProfil(data);if(ticket!==generation.current)return;const url=URL.createObjectURL(new Blob([JSON.stringify(copie,null,2)],{type:'application/json'}));const lien=document.createElement('a');lien.href=url;lien.download='seneve-profil-journal.json';lien.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch{if(ticket===generation.current)setErreur(en?'Download failed. Please try again.':'Le téléchargement a échoué. Réessaie.');}finally{if(ticket===generation.current)setBusy(false);}}
- const tete=<><header className="pf-header"><Link to="/espace" aria-label={en?'Back to today':'Revenir à ma journée'}><C nom="arrow_back"/></Link><h1>{en?'My profile':'Mon profil'}</h1><C nom="person"/></header></>;
+ const tete=<header className="pf-header pf-header-moderne"><Link to="/espace" aria-label={en?'Back to today':'Revenir à ma journée'}><P nom="arrow_back" taille={24}/></Link><h1>{en?'My profile':'Mon profil'}</h1><span className="pf-header-espace" aria-hidden="true"/></header>;
  if(etat==='chargement')return <main className="pf-page">{tete}<section className="pf-loading" role="status" aria-label={en?'Loading your profile':'Chargement de ton profil'}><span className="pf-avatar pf-squelette"/><p>{en?'Loading your profile…':'Chargement de ton profil…'}</p>{[0,1,2].map(k=><div className="pf-squelette pf-loading-card" key={k}/>)}</section></main>;
  if(etat==='erreur'||!data)return <main className="pf-page">{tete}<section className="pf-error"><C nom={enLigne?'wifi_off':'wifi_off'} taille={64}/><h2>{en?(enLigne?'Unable to load your profile':'You are offline'):(enLigne?'Impossible de charger ton profil':'Tu es hors connexion')}</h2><p role="alert">{en?(enLigne?'Check your connection, then try again.':'There is no saved profile available on this device.'):(enLigne?'Vérifie ta connexion, puis réessaie.':'Aucune copie de ton profil n’est disponible sur cet appareil.')}</p><button className="btn" onClick={()=>void refresh()}>{en?'Try again':'Réessayer'}</button><Link to="/espace">{en?'Back to today':'Revenir à ma journée'}</Link></section><Apparence langue={langue}/></main>;
  return <main className="pf-page avec-nav">{tete}
  {lectureSeule&&<aside className="pf-offline" role="status"><C nom="wifi_off"/><div><strong>{en?(enLigne?'Connection interrupted':'Offline mode'):(enLigne?'Connexion interrompue':'Mode hors connexion')}</strong><p>{copie?<>{en?'Saved copy from ':'Copie enregistrée le '}<time dateTime={copie}>{new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Africa/Kinshasa'}).format(new Date(copie))}</time>.</>:null} {en?'Reconnect to edit your profile.':'Reconnecte-toi pour modifier ton profil.'}</p>{enLigne&&<button className="link" onClick={()=>void refresh()}>{en?'Try again':'Réessayer'}</button>}</div></aside>}
  {message&&<div className="pf-saved" role="status"><C nom="check"/><strong>{message}</strong><button aria-label={en?'Dismiss confirmation':'Fermer la confirmation'} onClick={()=>setMessage('')}>×</button></div>}{erreur&&<p className="error" role="alert">{erreur}</p>}
- <section className="pf-identity"><PhotoProfil key={data.userId} userId={data.userId} prenom={data.prenom} langue={langue} lectureSeule={lectureSeule}/><h2>{data.prenom|| (en?'My space':'Mon espace')}</h2><p>{data.email}</p>{editing?<form onSubmit={sauverPrenom}><label className="field">{en?'First name':'Prénom'}<input value={prenom} maxLength={80} required disabled={lectureSeule||busy} onChange={e=>setPrenom(e.target.value)} autoComplete="given-name"/></label><button className="btn" disabled={busy||lectureSeule||!prenom.trim()}>{en?'Save':'Enregistrer'}</button><button type="button" className="link" onClick={()=>setEditing(false)}>{en?'Cancel':'Annuler'}</button></form>:<button className="link" disabled={lectureSeule} onClick={()=>{setPrenom(data.prenom);setEditing(true);}}><I nom="stylus_note" taille={18}/>{en?'Edit my first name':'Modifier mon prénom'}</button>}</section>
- <nav className="pf-raccourcis" aria-label={en?"Profile sections":"Rubriques du profil"}><a href="#preferences">{en?"Preferences":"Préférences"}</a><a href="#notifications">{en?"Reminders":"Rappels"}</a></nav>
- <PreferencesProfil langue={langue} langueCompte={data.langue} indisponible={busy||lectureSeule} lectureSeule={lectureSeule} onLangueChange={l=>void enregistrer({langue:l})}/>
- <section className="pf-card pf-notifications" id="notifications"><h2>{en?'Notifications':'Notifications'}</h2>{lectureSeule?<p>{en?'Reconnect to view or change your notifications and WhatsApp link.':'Reconnecte-toi pour consulter ou modifier tes notifications et ta liaison WhatsApp.'}</p>:<><RappelsCard langue={langue}/><EmailMatinCard langue={langue}/><WhatsAppLink maquette langue={langue}/></>}</section>
- <section className="pf-card"><h2 className="pf-titre-compte">{en?'My journeys':'Mes parcours'}{enCours>0&&<span>{en?`${enCours} in progress`:`${enCours} en cours`}</span>}</h2>{parcours.length?parcours.map(({p,jour,statut})=><article className="pf-journey" key={p.id}><C nom="auto_stories"/><div><h3>{p.nom}</h3><p>{statut==='pause'?(en?'Paused':'En pause'):statut==='avenir'?(en?`Starts on ${dateCourte(jourParcours(p.debut,0),en)}`:`Commence le ${dateCourte(jourParcours(p.debut,0),en)}`):statut==='termine'?(en?`Completed on ${dateCourte(jourParcours(p.debut,p.duree-1),en)}`:`Terminé le ${dateCourte(jourParcours(p.debut,p.duree-1),en)}`):(en?`Day ${jour} of ${p.duree}`:`Jour ${jour} sur ${p.duree}`)}</p><progress value={jour} max={p.duree} aria-label={en?'Journey calendar':'Calendrier du parcours'}/><Link to={`/espace?parcours=${encodeURIComponent(p.id)}`}>{en?'Open my journey':'Ouvrir mon parcours'} →</Link></div></article>):<p>{en?'You have not started a journey yet.':'Tu n’as pas encore commencé de parcours.'}</p>}<Link to={`/offres?lang=${langue}`}>{en?'Discover the journeys':'Découvrir les parcours'} →</Link></section>
- <section className="pf-card"><h2>{en?'My root from the test':'Ma racine au test'}</h2><div className="pf-root"><IconeProfil/>{racine===null?<p>{en?'No root selected on this device.':'Aucune racine choisie sur cet appareil.'}</p>:<div><p className="pf-root-label">{texts[langue].share.card.start}</p><p className="pf-root-nom">{nomsRacines(langue)[racine]}</p>{racineLe&&<p className="pf-root-date">{en?'Chosen on ':'Choisie le '}{dateCourte(new Date(racineLe),en,'Africa/Kinshasa')}</p>}</div>}</div><Link to={`/?lang=${langue}`}>{en?'Take the test again':'Refaire le test'} →</Link></section>
- <section className="pf-card pf-goal"><h2>{en?'My goal':'Mon objectif'}</h2>{lectureSeule?<blockquote>{data.objectif?.texte||(en?'No goal in this saved copy.':'Aucun objectif dans cette copie.')}</blockquote>:<GoalCard langue={langue} onSaved={()=>{setMessage(en?'Goal saved':'Objectif enregistré');void chargerProfil({id:data.userId,email:data.email}).then(p=>{if(userId.current===p.userId){setData(p);enregistrerProfil(p);}}).catch(()=>undefined);}}/>}</section>
- <section className="pf-card"><h2>{en?'I have an access code':'J’ai un code de place'}</h2>{lectureSeule?<p>{en?'Reconnect to use a code.':'Reconnecte-toi pour utiliser un code.'}</p>:<CodePlaceCard langue={langue} onOuvert={()=>navigate('/espace')}/>}</section>
- <section className="pf-card pf-links"><h2>{en?'My account':'Mon compte'}</h2>{equipe&&<Link to="/admin" className="pf-admin"><C nom="verified_user"/>Administration<span>›</span></Link>}<Link to={`/bibliotheque?lang=${langue}`}><C nom="auto_stories"/>{en?'My library':'Ma bibliothèque'}<span>›</span></Link><Link to={`/mot-de-passe-oublie?lang=${langue}`}><C nom="lock"/>{en?'Change my password':'Changer mon mot de passe'}<span>›</span></Link><Link to="/aide?motif=adresse-email"><C nom="mail"/>{en?'Change my email address':'Changer mon adresse e-mail'}<span>›</span></Link><Link to={`/acces?lang=${langue}`}><C nom="badge"/>{en?'My access':'Mes accès'}<span>›</span></Link><Link to={`/aide${en?'?lang=en':''}`}><IconeBible nom="help"/>{en?'Help and contact':'Aide et contact'}<span>›</span></Link></section>
- <section className="pf-card pf-links"><h2>{en?'My data':'Mes données'}</h2><p className="pf-root"><C nom="lock"/>{en?'Your journal is private. You choose the excerpts you share with the team.':'Ton journal est privé. Tu choisis les extraits que tu partages avec l’équipe.'}</p><Link to={en?"/confidentialite?lang=en":"/confidentialite"}>{en?'How we protect your data':'Comment nous protégeons tes données'} →</Link><button type="button" className="link" disabled={lectureSeule||busy} onClick={()=>void telecharger()}>{en?'Download my profile and journal':'Télécharger mon profil et mon journal'}</button><Link to="/aide?motif=export-donnees">{en?'Request a copy of all my data':'Demander une copie de toutes mes données'} →</Link></section>
- <footer className="pf-footer"><button className="pf-logout" disabled={busy} onClick={()=>void deconnecter()}>{en?'Sign out':'Se déconnecter'}</button><Link className="pf-delete" to="/aide?motif=suppression-compte">{en?'Request account deletion':'Demander la suppression de mon compte'}</Link></footer><BarreNav langue={langue} maquette iconesJournee/>
+ <div className="pf-moderne">
+ <section className="pf-hero" aria-label={en?'My identity':'Mon identité'}>
+  <svg className="pf-hero-motif" width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true"><path d="M28 48C28 36 28 26 36 18C42 12 49 10 50 10C50 11 48 18 42 24C36 30 28 34 28 48Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M28 36C28 29 25 21 19 16C14 11 8 9 7 9C7 10 9 16 14 21C19 26 25 30 28 36Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="28" cy="48" r="2" fill="currentColor"/></svg>
+  <PhotoProfil key={data.userId} userId={data.userId} prenom={data.prenom} langue={langue} lectureSeule={lectureSeule}/>
+  <h2>{data.prenom|| (en?'My space':'Mon espace')}</h2><p className="pf-hero-email">{data.email}</p>
+  {editing?<form className="pf-prenom-form" onSubmit={sauverPrenom}><label className="field">{en?'First name':'Prénom'}<input value={prenom} maxLength={80} required disabled={lectureSeule||busy} onChange={e=>setPrenom(e.target.value)} autoComplete="given-name"/></label><button className="btn" disabled={busy||lectureSeule||!prenom.trim()}>{en?'Save':'Enregistrer'}</button><button type="button" className="link" onClick={()=>setEditing(false)}>{en?'Cancel':'Annuler'}</button></form>
+   :<button className="pf-hero-modifier" disabled={lectureSeule} onClick={()=>{setPrenom(data.prenom);setEditing(true);}}><P nom="edit" taille={16}/>{en?'Edit my first name':'Modifier mon prénom'}</button>}
+  {(enCours>0||racine!==null)&&<ul className="pf-pastilles">
+   {enCours>0&&<li><P nom="auto_stories" taille={16}/>{en?`${enCours} ${enCours>1?'journeys':'journey'} in progress`:`${enCours} parcours en cours`}</li>}
+   {racine!==null&&<li><P nom="spa" taille={16}/>{en?'Root: ':'Racine : '}{nomsRacines(langue)[racine]}</li>}
+  </ul>}
+ </section>
+
+ <section className="pf-groupe" aria-labelledby="pf-chemin"><h2 className="pf-groupe-titre" id="pf-chemin">{en?'My path':'Mon chemin'}</h2>
+  {parcours.length?parcours.map(({p,jour,statut})=><article className="pf-carte pf-parcours" key={p.id}>
+   <div className="pf-parcours-tete"><h3>{p.nom}</h3><p>{statut==='pause'?(en?'Paused':'En pause'):statut==='avenir'?(en?`Starts on ${dateCourte(jourParcours(p.debut,0),en)}`:`Commence le ${dateCourte(jourParcours(p.debut,0),en)}`):statut==='termine'?(en?`Completed on ${dateCourte(jourParcours(p.debut,p.duree-1),en)}`:`Terminé le ${dateCourte(jourParcours(p.debut,p.duree-1),en)}`):(en?`Day ${jour} of ${p.duree}`:`Jour ${jour} sur ${p.duree}`)}</p></div>
+   <progress value={jour} max={p.duree} aria-label={en?'Journey calendar':'Calendrier du parcours'}/>
+   <Link className="pf-lien-action" to={`/espace?parcours=${encodeURIComponent(p.id)}`}>{en?'Open my journey':'Ouvrir mon parcours'}<P nom="arrow_forward" taille={16}/></Link>
+  </article>):<article className="pf-carte"><p>{en?'You have not started a journey yet.':'Tu n’as pas encore commencé de parcours.'}</p></article>}
+  <Link className="pf-lien-action pf-lien-seul" to={`/offres?lang=${langue}`}>{en?'Discover the journeys':'Découvrir les parcours'}<P nom="arrow_forward" taille={16}/></Link>
+  <article className="pf-carte pf-goal">{lectureSeule?<><h3>{en?'My goal':'Mon objectif'}</h3><blockquote>{data.objectif?.texte||(en?'No goal in this saved copy.':'Aucun objectif dans cette copie.')}</blockquote></>:<GoalCard langue={langue} onSaved={()=>{setMessage(en?'Goal saved':'Objectif enregistré');void chargerProfil({id:data.userId,email:data.email}).then(p=>{if(userId.current===p.userId){setData(p);enregistrerProfil(p);}}).catch(()=>undefined);}}/>}</article>
+  <article className="pf-carte pf-racine"><span className="pf-tuile"><P nom="spa"/></span><div><h3>{en?'My root from the test':'Ma racine au test'}</h3>{racine===null?<p>{en?'No root selected on this device.':'Aucune racine choisie sur cet appareil.'}</p>:<><p className="pf-root-label">{texts[langue].share.card.start}</p><p className="pf-root-nom">{nomsRacines(langue)[racine]}</p>{racineLe&&<p className="pf-root-date">{en?'Chosen on ':'Choisie le '}{dateCourte(new Date(racineLe),en,'Africa/Kinshasa')}</p>}</>}<Link className="pf-lien-action" to={`/?lang=${langue}`}>{en?'Take the test again':'Refaire le test'}<P nom="arrow_forward" taille={16}/></Link></div></article>
+ </section>
+
+ <section className="pf-groupe" aria-labelledby="pf-reglages"><h2 className="pf-groupe-titre" id="pf-reglages">{en?'Settings':'Réglages'}</h2>
+  <div className="pf-liste">
+   <Reglage id="preferences" icone="tune" titre={en?'Preferences':'Préférences'} valeur={`${data.langue==='en'?'English':'Français'} · ${apparence==='sombre'?(en?'Dark':'Sombre'):apparence==='clair'?(en?'Light':'Clair'):(en?'Device':'Appareil')} · ${(NOMS_PALETTES[visuel.palette]??NOMS_PALETTES.ivoire!)[en?1:0]}`} ouvert={ouvert==='preferences'} basculer={()=>setOuvert(o=>o==='preferences'?null:'preferences')}>
+    <PreferencesProfil langue={langue} langueCompte={data.langue} indisponible={busy||lectureSeule} lectureSeule={lectureSeule} onLangueChange={l=>void enregistrer({langue:l})}/>
+   </Reglage>
+   <Reglage id="rappels" icone="notifications" titre={en?'Reminders and announcements':'Rappels et annonces'} valeur={lectureSeule?null:resumeRappels} ouvert={ouvert==='rappels'} basculer={()=>setOuvert(o=>o==='rappels'?null:'rappels')}>
+    {lectureSeule?<p className="pf-reglage-note">{en?'Reconnect to view or change your notifications and WhatsApp link.':'Reconnecte-toi pour consulter ou modifier tes notifications et ta liaison WhatsApp.'}</p>:<RappelsCard langue={langue} interrupteurs onResume={setResumeRappels}/>}
+   </Reglage>
+   <Reglage id="email-matin" icone="mail" titre={en?'Morning e-mail':'E-mail du matin'} valeur={lectureSeule?null:resumeEmail} ouvert={ouvert==='email-matin'} basculer={()=>setOuvert(o=>o==='email-matin'?null:'email-matin')}>
+    {lectureSeule?<p className="pf-reglage-note">{en?'Reconnect to view or change your notifications and WhatsApp link.':'Reconnecte-toi pour consulter ou modifier tes notifications et ta liaison WhatsApp.'}</p>:<EmailMatinCard langue={langue} maquette onResume={setResumeEmail}/>}
+   </Reglage>
+   <Reglage id="whatsapp" icone="chat" titre="WhatsApp" valeur={lectureSeule?null:resumeWhatsApp} ouvert={ouvert==='whatsapp'} basculer={()=>setOuvert(o=>o==='whatsapp'?null:'whatsapp')}>
+    {lectureSeule?<p className="pf-reglage-note">{en?'Reconnect to view or change your notifications and WhatsApp link.':'Reconnecte-toi pour consulter ou modifier tes notifications et ta liaison WhatsApp.'}</p>:<WhatsAppLink maquette langue={langue} onResume={setResumeWhatsApp}/>}
+   </Reglage>
+   <Reglage id="code" icone="confirmation_number" titre={en?'I have an access code':'J’ai un code de place'} ouvert={ouvert==='code'} basculer={()=>setOuvert(o=>o==='code'?null:'code')}>
+    {lectureSeule?<p className="pf-reglage-note">{en?'Reconnect to use a code.':'Reconnecte-toi pour utiliser un code.'}</p>:<CodePlaceCard langue={langue} onOuvert={()=>navigate('/espace')}/>}
+   </Reglage>
+  </div>
+ </section>
+
+ <section className="pf-groupe" aria-labelledby="pf-compte"><h2 className="pf-groupe-titre" id="pf-compte">{en?'My account':'Mon compte'}</h2>
+  <nav className="pf-liste" aria-labelledby="pf-compte">
+   {equipe&&<LigneLien to="/admin" icone="verified_user" className="pf-admin">Administration</LigneLien>}
+   <LigneLien to={`/bibliotheque?lang=${langue}`} icone="auto_stories">{en?'My library':'Ma bibliothèque'}</LigneLien>
+   <LigneLien to={`/acces?lang=${langue}`} icone="key">{en?'My access':'Mes accès'}</LigneLien>
+   <LigneLien to={`/mot-de-passe-oublie?lang=${langue}`} icone="lock">{en?'Change my password':'Changer mon mot de passe'}</LigneLien>
+   <LigneLien to="/aide?motif=adresse-email" icone="alternate_email">{en?'Change my email address':'Changer mon adresse e-mail'}</LigneLien>
+   <LigneLien to={`/aide${en?'?lang=en':''}`} icone="help">{en?'Help and contact':'Aide et contact'}</LigneLien>
+  </nav>
+ </section>
+
+ <section className="pf-groupe" aria-labelledby="pf-donnees"><h2 className="pf-groupe-titre" id="pf-donnees">{en?'My data':'Mes données'}</h2>
+  <p className="pf-note-privee"><P nom="lock" taille={18}/>{en?'Your journal is private. You choose the excerpts you share with the team.':'Ton journal est privé. Tu choisis les extraits que tu partages avec l’équipe.'}</p>
+  <div className="pf-liste">
+   <LigneLien to={en?"/confidentialite?lang=en":"/confidentialite"}>{en?'How we protect your data':'Comment nous protégeons tes données'}</LigneLien>
+   <button type="button" className="pf-ligne" disabled={lectureSeule||busy} onClick={()=>void telecharger()}><span className="pf-ligne-titre">{en?'Download my profile and journal':'Télécharger mon profil et mon journal'}</span><span className="pf-chevron"><P nom="download"/></span></button>
+   <LigneLien to="/aide?motif=export-donnees">{en?'Request a copy of all my data':'Demander une copie de toutes mes données'}</LigneLien>
+  </div>
+ </section>
+
+ <footer className="pf-footer pf-footer-moderne"><button className="pf-logout" disabled={busy} onClick={()=>void deconnecter()}>{en?'Sign out':'Se déconnecter'}</button><Link className="pf-delete" to="/aide?motif=suppression-compte">{en?'Request account deletion':'Demander la suppression de mon compte'}</Link></footer>
+ </div><BarreNav langue={langue} maquette iconesJournee/>
  </main>;
 }

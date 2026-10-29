@@ -35,7 +35,7 @@ const TEXTES = {
 
 /** Carte « Relier mon WhatsApp » : liaison vérifiée par un code à usage unique (15 minutes).
  *  Le message envoyé (« LIER 123456 ») reste le même dans les deux langues : c'est lui que le serveur reconnaît. */
-export function WhatsAppLink({maquette=false,langue}:{maquette?:boolean;langue?:string|null}) {
+export function WhatsAppLink({maquette=false,langue,onResume}:{maquette?:boolean;langue?:string|null;onResume?:(resume:string|null)=>void}) {
   const en = langue === 'en';
   const T = TEXTES[en ? 'en' : 'fr'];
   const time = (iso: string) => new Intl.DateTimeFormat(en ? 'en-GB' : 'fr-FR', { timeZone: 'Africa/Kinshasa', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
@@ -53,6 +53,8 @@ export function WhatsAppLink({maquette=false,langue}:{maquette?:boolean;langue?:
     setLink((data as Link | null) ?? null);
   }, [T]);
   useEffect(() => { void load(); }, [load]);
+  // Résumé pour la ligne « WhatsApp » du profil.
+  useEffect(() => { onResume?.(link === undefined ? null : link ? (en ? 'Linked' : 'Relié') : (en ? 'Not linked' : 'Non relié')); }, [link, en, onResume]);
 
   async function ask() {
     setBusy(true); setError('');

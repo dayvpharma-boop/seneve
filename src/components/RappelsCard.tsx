@@ -41,7 +41,17 @@ export const RAPPELS_TEXTES = {
 } as const;
 
 /** Rappels sur ce téléphone : désactivés par défaut, la personne choisit ses moments et ses heures. */
-export function RappelsCard({ langue }: { langue: string }) {
+/** Résumé court pour la ligne « Rappels et annonces » du profil : « Matin 7 h 30 · Soir 19 h 30 », « Désactivés »… */
+export function resumeRappels(e: Etat | null, langue: string): string | null {
+  if (!e) return null;
+  const en = langue === 'en';
+  if (!e.actif) return en ? 'Off' : 'Désactivés';
+  const T = RAPPELS_TEXTES[en ? 'en' : 'fr'];
+  const actifs = MOMENTS.filter(m => e.moments?.[m]).map(m => `${T.moments[m]} ${en ? e.moments[m] : String(e.moments[m]).replace(/^0/, '').replace(':', ' h ')}`);
+  return actifs.length ? actifs.join(' · ') : (en ? 'On' : 'Activés');
+}
+
+export function RappelsCard({ langue, interrupteurs = false, onResume }: { langue: string; interrupteurs?: boolean; onResume?: (resume: string | null) => void }) {
   const T = RAPPELS_TEXTES[langue === 'en' ? 'en' : 'fr'];
   const [poss] = useState(() => possibilite());
   const [etat, setEtat] = useState<Etat | null>(null);
@@ -68,6 +78,8 @@ export function RappelsCard({ langue }: { langue: string }) {
     })();
     return () => { annule = true; };
   }, [revision]);
+
+  useEffect(() => { onResume?.(resumeRappels(etat, langue)); }, [etat, langue, onResume]);
 
   const moments = (): Record<Moment, string | null> => ({ matin: choix.matin ?? null, midi: choix.midi ?? null, soir: choix.soir ?? null });
   const unMoment = MOMENTS.some(m => choix[m]);
@@ -143,7 +155,13 @@ export function RappelsCard({ langue }: { langue: string }) {
       : <>
         <fieldset className="rappels-moments" disabled={busy}>
           <legend className="sr-only">{T.titre}</legend>
-          {MOMENTS.map(m => <div key={m} className="rappels-moment">
+          {interrupteurs ? MOMENTS.map(m => <div key={m} className="rappels-moment rappels-moment-interrupteur">
+            <span className="rappels-moment-nom" aria-hidden="true">{T.moments[m]}</span>
+            {choix[m] && <select className="rappels-heure" aria-label={T.heure(T.moments[m])} value={choix[m] ?? ''} onChange={e => void regler({ ...choix, [m]: e.target.value })}>
+              {heuresPossibles(m).map(h => <option key={h} value={h}>{langue==='en'?h:h.replace(':', ' h ')}</option>)}
+            </select>}
+            <input type="checkbox" role="switch" className="interrupteur" aria-label={T.moments[m]} checked={Boolean(choix[m])} onChange={e => void regler({ ...choix, [m]: e.target.checked ? PAR_DEFAUT[m] : null })} />
+          </div>) : MOMENTS.map(m => <div key={m} className="rappels-moment">
             <label><input type="checkbox" checked={Boolean(choix[m])} onChange={e => void regler({ ...choix, [m]: e.target.checked ? PAR_DEFAUT[m] : null })} /><span>{T.moments[m]}</span></label>
             {choix[m] && <select aria-label={T.heure(T.moments[m])} value={choix[m] ?? ''} onChange={e => void regler({ ...choix, [m]: e.target.value })}>
               {heuresPossibles(m).map(h => <option key={h} value={h}>{langue==='en'?h:h.replace(':', ' h ')}</option>)}
@@ -152,10 +170,12 @@ export function RappelsCard({ langue }: { langue: string }) {
         </fieldset>
         {actifIci ? <p className="muted" role="status">{T.actifs}</p> : etat.actif && <p className="muted" role="status">{T.autreTelephone}</p>}
         {!actifIci && <button type="button" className="btn" disabled={busy || !unMoment} onClick={() => void recevoir()}>{busy ? T.patienter : T.recevoir}</button>}
-        {etat.actif && <label className="rappels-annonces"><input type="checkbox" checked={etat.annonces !== false} disabled={busy} onChange={e => void choisirAnnonces(e.target.checked)} /><span>{T.annonces}</span></label>}
+        {etat.actif && (interrupteurs
+          ? <label className="rappels-annonces rappels-annonces-interrupteur"><span>{T.annonces}<small id="rappels-annonces-note">{T.annoncesNote}</small></span><input type="checkbox" role="switch" className="interrupteur" aria-label={T.annonces} aria-describedby="rappels-annonces-note" checked={etat.annonces !== false} disabled={busy} onChange={e => void choisirAnnonces(e.target.checked)} /></label>
+          : <label className="rappels-annonces"><input type="checkbox" checked={etat.annonces !== false} disabled={busy} onChange={e => void choisirAnnonces(e.target.checked)} /><span>{T.annonces}</span></label>)}
         {etat.actif && <button type="button" className="link rappels-arreter" disabled={busy} onClick={() => void arreter()}>{T.arreter}</button>}
       </>}
-    {poss !== 'non' && <p className="muted rappels-note">{T.annoncesNote}</p>}
+    {poss !== 'non' && !(interrupteurs && etat.actif) && <p className="muted rappels-note">{T.annoncesNote}</p>}
     <p className="muted rappels-note">{T.note}</p>
     {erreur && <p className="error" role="alert">{erreur}</p>}
   </div>;

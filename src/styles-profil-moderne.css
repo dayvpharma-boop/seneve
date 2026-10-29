@@ -1,0 +1,140 @@
+/* Profil modernisé (maquettes Stitch pf-01 et pf-02 validées par Dr Justin le 29/10/2026).
+   Les couleurs sont celles de l'interface : la palette choisie par la personne les remplace (scripts/preferences-css.ts).
+   Correspondance avec la palette Ivoire : #fff9ea fond, #ffffff surface, #f3edde tuiles, #f9f3e4 ligne ouverte,
+   #e8e2d3 filets, #1d1c13 texte, #4a463f texte secondaire, #755b00 couleur principale, #c9a84c détail doré. */
+
+body:has(.pf-moderne) { background: #fff9ea; }
+.pf-page:has(.pf-moderne) { background: #fff9ea; color: #1d1c13; }
+
+/* En-tête : retour, titre centré. */
+.pf-header.pf-header-moderne { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; min-height: 56px; border-bottom: 1px solid #e8e2d3; margin-bottom: 16px; }
+.pf-header-moderne a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; color: #1d1c13; }
+.pf-header-moderne h1 { text-align: center; font: 600 17px/24px Outfit, sans-serif; margin: 0; }
+
+.pf-moderne { display: flex; flex-direction: column; gap: 28px; }
+
+/* Carte d'identité. */
+.pf-hero { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px 20px; border: 1px solid #e8e2d3; border-radius: 24px; background: linear-gradient(145deg, #f3edde 0%, #ffffff 100%); box-shadow: 0 2px 8px rgba(29, 28, 19, .03); }
+.pf-hero-motif { position: absolute; top: 12px; right: 14px; color: #755b00; opacity: .28; pointer-events: none; }
+.pf-hero h2 { font: 600 26px/32px Outfit, sans-serif; margin: 0 0 2px; color: #1d1c13; overflow-wrap: anywhere; }
+.pf-hero-email { font: 400 14px/20px Outfit, sans-serif; color: #4a463f; margin: 0 0 6px; overflow-wrap: anywhere; }
+.pf-hero .pf-photo { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 12px; }
+.pf-photo-avatar { position: relative; width: 88px; height: 88px; }
+.pf-hero .pf-photo .pf-avatar { width: 88px; height: 88px; margin: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #755b00; color: #ffffff; font: 600 38px/1 Outfit, sans-serif; box-shadow: 0 4px 12px rgba(29, 28, 19, .14); }
+.pf-hero .pf-photo .pf-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.pf-hero .pf-photo .pf-photo-choisir { position: absolute; right: -4px; bottom: -4px; width: 36px; height: 36px; min-width: 36px; min-height: 36px; max-height: 36px; box-sizing: border-box; padding: 0; border-radius: 50%; border: 1px solid #e8e2d3; background: #ffffff; color: #755b00; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 0, .08); }
+.pf-photo-choisir:disabled { opacity: .55; cursor: default; }
+.pf-hero .pf-photo .link, .pf-hero .pf-photo-note, .pf-hero .pf-photo-status { font: 500 13px/18px Outfit, sans-serif; }
+.pf-hero-modifier { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 12px; border: 0; border-radius: 10px; background: none; color: #755b00; font: 500 14px/20px Outfit, sans-serif; cursor: pointer; }
+.pf-hero-modifier:disabled { opacity: .5; cursor: default; }
+.pf-prenom-form { display: flex; flex-direction: column; align-items: stretch; gap: 8px; width: 100%; max-width: 320px; margin-top: 4px; text-align: left; }
+.pf-pastilles { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.pf-pastilles li { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid #e8e2d3; border-radius: 999px; background: #ffffff; color: #1d1c13; font: 500 13px/18px Outfit, sans-serif; text-align: left; }
+.pf-pastilles svg { color: #c9a84c; flex: none; }
+
+/* Groupes et cartes. */
+.pf-groupe { display: flex; flex-direction: column; gap: 12px; }
+.pf-groupe-titre { font: 600 15px/20px Outfit, sans-serif; color: #4a463f; margin: 0; padding-left: 4px; text-transform: none; letter-spacing: 0; }
+.pf-carte { background: #ffffff; border: 1px solid #e8e2d3; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 4px rgba(29, 28, 19, .02); }
+.pf-carte h3 { font: 600 15px/21px Outfit, sans-serif; margin: 0; color: #1d1c13; }
+.pf-carte p { margin: 0; }
+.pf-parcours-tete { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.pf-parcours-tete p { font: 500 13px/18px Outfit, sans-serif; color: #4a463f; white-space: nowrap; }
+.pf-parcours progress { width: 100%; height: 6px; border: 0; border-radius: 999px; overflow: hidden; background: #f3edde; appearance: none; -webkit-appearance: none; }
+.pf-parcours progress::-webkit-progress-bar { background: #f3edde; border-radius: 999px; }
+.pf-parcours progress::-webkit-progress-value { background: #755b00; border-radius: 999px; }
+.pf-parcours progress::-moz-progress-bar { background: #755b00; border-radius: 999px; }
+.pf-lien-action { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 32px; color: #755b00; font: 600 14px/20px Outfit, sans-serif; text-decoration: none; }
+.pf-lien-seul { margin: -4px 0 0 4px; }
+.pf-goal .card, .pf-goal .objectif-card { background: none; border: 0; box-shadow: none; padding: 0; margin: 0; }
+.pf-goal blockquote { margin: 0; font: italic 400 15px/23px Literata, serif; }
+.pf-racine { flex-direction: row; align-items: flex-start; }
+.pf-racine > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.pf-racine .pf-root-label { font: 500 12px/16px Outfit, sans-serif; color: #4a463f; }
+.pf-racine .pf-root-nom { font: 500 16px/22px Literata, serif; color: #1d1c13; }
+.pf-racine .pf-root-date { font: 400 13px/18px Outfit, sans-serif; color: #4a463f; }
+
+/* Listes groupées (réglages, compte, données). */
+.pf-liste { background: #ffffff; border: 1px solid #e8e2d3; border-radius: 20px; overflow: hidden; }
+.pf-liste > * + * { border-top: 1px solid #e8e2d3; }
+.pf-ligne { width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; border: 0; background: #ffffff; color: #1d1c13; text-align: left; text-decoration: none; cursor: pointer; font: 500 15px/20px Outfit, sans-serif; box-sizing: border-box; }
+.pf-ligne:disabled { opacity: .5; cursor: default; }
+.pf-ligne:focus-visible { outline: 3px solid #755b00; outline-offset: -3px; }
+.pf-tuile { width: 36px; height: 36px; flex: none; border-radius: 10px; background: #f3edde; color: #755b00; display: inline-flex; align-items: center; justify-content: center; }
+.pf-ligne-titre { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pf-ligne-valeur { font: 400 13px/18px Outfit, sans-serif; color: #4a463f; overflow-wrap: anywhere; }
+.pf-chevron { flex: none; display: inline-flex; color: #ccc6bd; }
+.pf-chevron-bas svg { transition: transform .2s ease; }
+.pf-reglage.est-ouvert > .pf-ligne { background: #f9f3e4; }
+.pf-reglage.est-ouvert .pf-chevron-bas { color: #755b00; }
+.pf-reglage.est-ouvert .pf-chevron-bas svg { transform: rotate(180deg); }
+.pf-reglage-panneau { padding: 16px 16px 20px; background: #ffffff; }
+.pf-reglage-panneau[hidden] { display: none; }
+.pf-reglage-note { margin: 0; font: 400 14px/21px Outfit, sans-serif; color: #4a463f; }
+.pf-admin .pf-tuile { background: #755b00; color: #ffffff; }
+
+/* Contenu des réglages ouverts : les cartes existantes s'insèrent sans leur cadre. */
+.pf-reglage-panneau :is(.card, .pf-card) { background: none; border: 0; box-shadow: none; padding: 0; margin: 0; border-radius: 0; }
+.pf-reglage-panneau .pf-section-heading { display: none; }
+.pf-reglage-panneau .pf-preference-block:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+.pf-reglage-panneau .rappels-titre { font: 600 14px/20px Outfit, sans-serif; margin: 0 0 8px; }
+.pf-reglage-panneau .rappels-moments { display: flex; flex-direction: column; gap: 4px; border: 0; padding: 0; margin: 0 0 8px; }
+.pf-reglage-panneau .rappels-moment-interrupteur { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0; background: none; border-radius: 0; }
+.pf-reglage-panneau .rappels-moment-nom { flex: 1; font: 400 16px/24px Literata, serif; color: #1d1c13; }
+.pf-reglage-panneau .rappels-heure { height: 34px; min-height: 34px; width: auto; padding: 0 10px; border: 0; border-radius: 10px; background: #f3edde; color: #1d1c13; font: 500 13px/18px Outfit, sans-serif; }
+.pf-reglage-panneau .rappels-carte p[role="status"] { display: flex; align-items: center; gap: 6px; margin: 4px 0 8px; color: #755b00; font: 500 13px/18px Outfit, sans-serif; }
+.pf-reglage-panneau .rappels-carte p[role="status"]::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #755b00; flex: none; }
+.pf-reglage-panneau .rappels-annonces-interrupteur { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 8px 0 0; padding-top: 14px; border-top: 1px solid #e8e2d3; font: 500 15px/21px Outfit, sans-serif; cursor: pointer; min-height: 44px; }
+.pf-reglage-panneau .rappels-annonces-interrupteur span { display: flex; flex-direction: column; gap: 4px; }
+.pf-reglage-panneau .rappels-annonces-interrupteur small { font: 400 13px/19px Outfit, sans-serif; color: #4a463f; }
+.pf-reglage-panneau .rappels-note { font: italic 400 14px/22px Literata, serif; color: #4a463f; margin: 12px 0 0; }
+.pf-reglage-panneau .rappels-arreter { color: #ba1a1a; min-height: 44px; font: 500 15px/20px Outfit, sans-serif; padding: 0; }
+.pf-reglage-panneau .share-check { display: flex; flex-direction: row-reverse; align-items: flex-start; justify-content: space-between; gap: 12px; min-height: 44px; }
+
+/* Interrupteur (case à cocher affichée en bascule ; rôle « switch » pour les lecteurs d'écran). */
+.pf-moderne input.interrupteur, .pf-reglage-panneau .share-check input[type="checkbox"] { appearance: none; -webkit-appearance: none; flex: none; position: relative; width: 44px; height: 26px; min-height: 26px; margin: 0; padding: 0; border: 0; border-radius: 999px; background: #ccc6bd; cursor: pointer; transition: background-color .2s ease; }
+.pf-moderne input.interrupteur::before, .pf-reglage-panneau .share-check input[type="checkbox"]::before { content: ""; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: #ffffff; box-shadow: 0 1px 3px rgba(0, 0, 0, .2); transition: transform .2s ease; }
+.pf-moderne input.interrupteur:checked, .pf-reglage-panneau .share-check input[type="checkbox"]:checked { background: #755b00; }
+.pf-moderne input.interrupteur:checked::before, .pf-reglage-panneau .share-check input[type="checkbox"]:checked::before { transform: translateX(18px); }
+.pf-moderne input.interrupteur:focus-visible, .pf-reglage-panneau .share-check input[type="checkbox"]:focus-visible { outline: 3px solid #755b00; outline-offset: 2px; }
+.pf-moderne input.interrupteur:disabled, .pf-reglage-panneau .share-check input[type="checkbox"]:disabled { opacity: .5; cursor: default; }
+
+/* Données et bas de page. */
+.pf-note-privee { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 10px 12px; border: 1px solid #e8e2d3; border-radius: 14px; background: #f9f3e4; color: #4a463f; font: 400 13px/19px Outfit, sans-serif; }
+.pf-note-privee svg { color: #c9a84c; flex: none; margin-top: 1px; }
+.pf-footer.pf-footer-moderne { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 4px 0 0; padding: 0; border: 0; }
+.pf-footer-moderne .pf-logout { width: 100%; min-height: 48px; border: 1.5px solid #755b00; border-radius: 16px; background: transparent; color: #755b00; font: 600 15px/20px Outfit, sans-serif; cursor: pointer; }
+.pf-footer-moderne .pf-delete { color: #ba1a1a; font: 400 13px/18px Outfit, sans-serif; text-decoration: underline; padding: 6px 12px; }
+
+@media (prefers-reduced-motion: reduce) { .pf-chevron-bas svg, .pf-moderne input.interrupteur, .pf-moderne input.interrupteur::before { transition: none; } }
+
+/* Mode sombre. */
+:root[data-apparence="sombre"] body:has(.pf-moderne), :root[data-apparence="sombre"] .pf-page:has(.pf-moderne) { background: #141310; color: #e6e2dc; }
+:root[data-apparence="sombre"] .pf-header-moderne { border-bottom-color: #363531; }
+:root[data-apparence="sombre"] .pf-header-moderne a { color: #e6e2dc; }
+:root[data-apparence="sombre"] .pf-hero { background: linear-gradient(145deg, #2b2a26 0%, #1d1b18 100%); border-color: #363531; }
+:root[data-apparence="sombre"] .pf-hero-motif { color: #ffd482; }
+:root[data-apparence="sombre"] .pf-hero h2, :root[data-apparence="sombre"] .pf-carte h3, :root[data-apparence="sombre"] .pf-ligne, :root[data-apparence="sombre"] .pf-racine .pf-root-nom, :root[data-apparence="sombre"] .pf-reglage-panneau .rappels-moment-nom { color: #e6e2dc; }
+:root[data-apparence="sombre"] .pf-hero-email, :root[data-apparence="sombre"] .pf-groupe-titre, :root[data-apparence="sombre"] .pf-parcours-tete p, :root[data-apparence="sombre"] .pf-ligne-valeur, :root[data-apparence="sombre"] .pf-racine .pf-root-label, :root[data-apparence="sombre"] .pf-racine .pf-root-date, :root[data-apparence="sombre"] .pf-reglage-note, :root[data-apparence="sombre"] .pf-reglage-panneau .rappels-annonces-interrupteur small, :root[data-apparence="sombre"] .pf-reglage-panneau .rappels-note, :root[data-apparence="sombre"] .pf-note-privee { color: #d1c5b3; }
+:root[data-apparence="sombre"] .pf-hero .pf-photo .pf-avatar { background: #ffd482; color: #141310; }
+:root[data-apparence="sombre"] .pf-hero .pf-photo .pf-photo-choisir, :root[data-apparence="sombre"] .pf-pastilles li { background: #1d1b18; border-color: #363531; color: #e6e2dc; }
+:root[data-apparence="sombre"] .pf-hero .pf-photo .pf-photo-choisir { color: #ffd482; }
+:root[data-apparence="sombre"] .pf-hero-modifier, :root[data-apparence="sombre"] .pf-lien-action, :root[data-apparence="sombre"] .pf-reglage-panneau .rappels-carte p[role="status"] { color: #ffd482; }
+:root[data-apparence="sombre"] .pf-reglage-panneau .rappels-carte p[role="status"]::before { background: #ffd482; }
+:root[data-apparence="sombre"] .pf-carte, :root[data-apparence="sombre"] .pf-liste, :root[data-apparence="sombre"] .pf-ligne, :root[data-apparence="sombre"] .pf-reglage-panneau { background: #1d1b18; border-color: #363531; }
+:root[data-apparence="sombre"] .pf-liste > * + *, :root[data-apparence="sombre"] .pf-reglage-panneau .rappels-annonces-interrupteur { border-top-color: #363531; }
+:root[data-apparence="sombre"] .pf-tuile, :root[data-apparence="sombre"] .pf-reglage-panneau .rappels-heure, :root[data-apparence="sombre"] .pf-parcours progress { background: #2b2a26; color: #ffd482; }
+:root[data-apparence="sombre"] .pf-reglage-panneau .rappels-heure { color: #e6e2dc; }
+:root[data-apparence="sombre"] .pf-parcours progress::-webkit-progress-bar { background: #2b2a26; }
+:root[data-apparence="sombre"] .pf-parcours progress::-webkit-progress-value { background: #ffd482; }
+:root[data-apparence="sombre"] .pf-parcours progress::-moz-progress-bar { background: #ffd482; }
+:root[data-apparence="sombre"] .pf-reglage.est-ouvert > .pf-ligne { background: #211f1c; }
+:root[data-apparence="sombre"] .pf-reglage.est-ouvert .pf-chevron-bas, :root[data-apparence="sombre"] .pf-ligne:focus-visible { color: #ffd482; }
+:root[data-apparence="sombre"] .pf-chevron { color: #4e4638; }
+:root[data-apparence="sombre"] .pf-admin .pf-tuile { background: #ffd482; color: #141310; }
+:root[data-apparence="sombre"] .pf-note-privee { background: #211f1c; border-color: #363531; }
+:root[data-apparence="sombre"] .pf-moderne input.interrupteur, :root[data-apparence="sombre"] .pf-reglage-panneau .share-check input[type="checkbox"] { background: #4e4638; }
+:root[data-apparence="sombre"] .pf-moderne input.interrupteur:checked, :root[data-apparence="sombre"] .pf-reglage-panneau .share-check input[type="checkbox"]:checked { background: #ffd482; }
+:root[data-apparence="sombre"] .pf-moderne input.interrupteur:checked::before, :root[data-apparence="sombre"] .pf-reglage-panneau .share-check input[type="checkbox"]:checked::before { background: #141310; }
+:root[data-apparence="sombre"] .pf-footer-moderne .pf-logout { border-color: #ffd482; color: #ffd482; }
+:root[data-apparence="sombre"] .pf-footer-moderne .pf-delete { color: #ffb4ab; }

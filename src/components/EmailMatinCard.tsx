@@ -37,7 +37,7 @@ export const EMAIL_MATIN_TEXTES = {
 } as const;
 
 /** Choix de l'e-mail du matin, pour les parcours commencés sur le site (pas ceux suivis sur WhatsApp). */
-export function EmailMatinCard({ langue,maquette=false }: { langue: string;maquette?:boolean }) {
+export function EmailMatinCard({ langue,maquette=false,onResume }: { langue: string;maquette?:boolean;onResume?:(resume:string|null)=>void }) {
   const T = EMAIL_MATIN_TEXTES[langue === 'en' ? 'en' : 'fr'];
   const [etat, setEtat] = useState<Etat | null>(null);
   const [busy, setBusy] = useState(false);
@@ -48,6 +48,9 @@ export function EmailMatinCard({ langue,maquette=false }: { langue: string;maque
       if (!r?.error && r?.data) setEtat(r.data as Etat);
     }).catch(() => undefined);
   }, []);
+
+  // Résumé pour la ligne « E-mail du matin » du profil.
+  useEffect(() => { const en = langue === 'en'; onResume?.(!etat ? null : !etat.concerne ? (en ? 'Not offered' : 'Non proposé') : etat.actif ? (en ? 'On' : 'Activé') : (en ? 'Off' : 'Désactivé')); }, [etat, langue, onResume]);
 
   async function changer(actif: boolean) {
     if (busy) return;
