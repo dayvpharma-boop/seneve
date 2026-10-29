@@ -1,6 +1,7 @@
 import type {ReactNode} from 'react';
 import {Link} from 'react-router-dom';
 import {IconeHD} from './IconeHabitudes';
+import {ClocheNotifications} from './ClocheNotifications';
 
 /** Barre du haut et barre du bas des maquettes Stitch Habitudes & Défis, reproduites telles quelles.
  * Les onglets sans lien fourni restent visibles mais inactifs (hors du périmètre de l'écran).
@@ -13,14 +14,16 @@ const ONGLETS:{id:OngletHD;icone:string;fr:string;en:string}[]=[
  {id:'bible',icone:'menu_book',fr:'Bible',en:'Bible'},
  {id:'journal',icone:'edit_note',fr:'Journal',en:'Journal'},
 ];
-export function CadreHabitudes({titre,langue,actif,liens={},retour,retourLibelle,sousTitreCentre,droite,children,avecNavigation=true}:{titre:string;langue:string;actif?:OngletHD;liens?:Partial<Record<OngletHD,string>>;retour?:string;retourLibelle?:string;sousTitreCentre?:string;droite?:ReactNode;children:ReactNode;avecNavigation?:boolean}){
+export function CadreHabitudes({titre,langue,actif,liens={},retour,retourLibelle,sousTitreCentre,droite,children,avecNavigation=true,cloche=false}:{
+ /** Cloche des notifications : seulement sur les écrans d'un participant inscrit (aucun appel serveur sinon). */
+ cloche?:boolean;titre:string;langue:string;actif?:OngletHD;liens?:Partial<Record<OngletHD,string>>;retour?:string;retourLibelle?:string;sousTitreCentre?:string;droite?:ReactNode;children:ReactNode;avecNavigation?:boolean}){
  const en=langue==='en';
  return <div className="hd-ecran hd-stitch bg-hd-surface text-hd-on-surface antialiased flex flex-col min-h-screen font-hd-body-md">
   {sousTitreCentre?<header className="sticky top-0 inset-x-0 z-40 bg-hd-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(29,28,19,0.04)] pt-safe">
    <div className="h-20 px-hd-margin grid grid-cols-[auto_1fr_auto] items-center gap-2">
     <div className="flex items-center gap-hd-space-xs">{retour&&<Link to={retour} aria-label={retourLibelle??(en?'Back':'Retour')} className="w-11 h-11 -ml-1 rounded-xl flex items-center justify-center text-hd-on-surface hover:bg-hd-surface-container/60 transition-colors"><IconeHD nom="arrow_back_ios_new" className="text-[22px]"/></Link>}<img alt="" className="h-8 w-8 object-contain rounded-lg" src={`${import.meta.env.BASE_URL}icons/icon.svg`}/></div>
     <div className="flex flex-col items-center justify-center text-center min-w-0"><span className="font-hd-headline-md text-hd-headline-sm tracking-wide text-hd-on-surface leading-none">{titre}</span><span className="font-hd-label-sm text-hd-label-sm uppercase tracking-wider text-hd-secondary mt-1">{sousTitreCentre}</span></div>
-    <div className="flex items-center justify-end w-11">{droite??<div className="w-8 h-8 rounded-full bg-hd-primary flex items-center justify-center shadow-[0_2px_6px_rgba(88,68,0,0.18)]"><IconeHD nom="person" className="text-hd-on-primary text-[18px]"/></div>}</div>
+    <div className="flex items-center justify-end min-w-11">{droite??<div className="flex items-center gap-1">{cloche&&<ClocheNotifications langue={langue} className="cloche-hd"/>}<div className="w-8 h-8 rounded-full bg-hd-primary flex items-center justify-center shadow-[0_2px_6px_rgba(88,68,0,0.18)]"><IconeHD nom="person" className="text-hd-on-primary text-[18px]"/></div></div>}</div>
    </div>
   </header>:<header className="sticky top-0 w-full z-40 pt-safe bg-hd-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(29,28,19,0.04)]">
    <div className="h-14 px-hd-margin flex items-center justify-between">
@@ -32,7 +35,7 @@ export function CadreHabitudes({titre,langue,actif,liens={},retour,retourLibelle
       <span className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface leading-none truncate">{titre}</span>
      </div>
     </div>
-    {droite??<div className="w-8 h-8 rounded-full bg-hd-primary flex items-center justify-center"><IconeHD nom="person" className="text-hd-on-primary text-[18px]"/></div>}
+    {droite??<div className="flex items-center gap-1">{cloche&&<ClocheNotifications langue={langue} className="cloche-hd"/>}<div className="w-8 h-8 rounded-full bg-hd-primary flex items-center justify-center"><IconeHD nom="person" className="text-hd-on-primary text-[18px]"/></div></div>}
    </div>
   </header>}
   <main className={`flex-1 flex flex-col relative w-full bg-hd-surface ${avecNavigation?'pb-20':''}`}>{children}</main>

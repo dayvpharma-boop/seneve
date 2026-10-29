@@ -26,6 +26,7 @@ import { EchangesDemande } from '@/components/EchangesDemande';
 import { SuppressionCompte } from '@/components/SuppressionCompte';
 import { formatDateHeure } from '@/lib/journal';
 import { ETATS_EQUIPE, ETAT_LIBELLE, REPONSE_MAX, erreurAdmin, filtrer, lienWhatsApp, type Filtre, type StaffRequest, type TeamMember } from '@/lib/admin';
+import { AnnoncesAdministration } from '@/components/AnnoncesAdministration';
 
 type Me = { roles: string[]; admin: boolean };
 type Loaded = { authId:string; prenom:string; me: Me; requests: StaffRequest[]; team: TeamMember[] };
@@ -96,6 +97,7 @@ export function Admin() {
     {<InterventionAdministration requests={data.requests} admin={data.me.admin} onOpenRequest={()=>setOutilsDemandes(true)} desktop={ordinateur}/>}
     {intervention&&ordinateur?<details className="intervention-outils-demandes" open={outilsDemandes} onToggle={e=>setOutilsDemandes(e.currentTarget.open)}><summary>Traitement des demandes · {compte('a_traiter')} à traiter</summary>{demandes}</details>:demandes}
     {data.me.admin&&intervention&&ordinateur?<div className="intervention-registres"><ConventionsAdmin compact/><IncidentsIntervention/></div>:data.me.admin&&<ConventionsAdmin/>}
+    {data.me.admin && <AnnoncesAdministration />}
     {intervention&&ordinateur?<details className="intervention-autres"><summary>Autres outils d’accompagnement</summary><FreinsAdmin admin={data.me.admin}/></details>:<FreinsAdmin admin={data.me.admin}/>}
     {data.me.admin && <Team team={data.team} onChanged={refresh} />}
   </main>;
