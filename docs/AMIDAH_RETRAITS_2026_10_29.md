@@ -7,3 +7,5 @@ Dr Justin Tshims demande de retirer les passages transmis dans la conversation :
 La même sélection est appliquée à la traduction anglaise existante, sans nouvelle traduction. Le lecteur est présenté comme une version adaptée. Cette décision explicite remplace pour ces passages l’ancienne consigne de texte intégral. Le PDF d’origine reste inchangé.
 
 Les repères de lecture changent de version pour ne pas déplacer un ancien signet vers un autre passage. Aucun changement d’activité, de déclaration, d’achat, de droit ou de rappel. Retour arrière : restaurer les fichiers à partir du commit parent 0819a4e629c2d900db0b4cf37305311d1c338b3b.
+
+Complément demandé le même jour : retrait du segment « que le Beth Hamikdash soit rapidement reconstruit de nos jours, et » dans le dernier paragraphe, ainsi que de son correspondant anglais. La demande de recevoir notre part dans la Torah reste conservée. Aucun paragraphe supplémentaire supprimé.

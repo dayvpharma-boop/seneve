@@ -153,7 +153,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Que ce soit Ta volonté, Éternel notre D.ieu et D.ieu de nos pères, que le Beth Hamikdash soit rapidement reconstruit de nos jours, et accorde-nous notre part dans Ta Torah."
+    "texte": "Que ce soit Ta volonté, Éternel notre D.ieu et D.ieu de nos pères, accorde-nous notre part dans Ta Torah."
   },
   {
     "type": "fin",

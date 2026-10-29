@@ -153,7 +153,7 @@ export const amidahEn = [
   },
   {
     "type": "priere",
-    "texte": "May it be Your will, Lord our G-d and G-d of our fathers, that the Holy Temple be speedily rebuilt in our days, and grant us our portion in Your Torah."
+    "texte": "May it be Your will, Lord our G-d and G-d of our fathers, grant us our portion in Your Torah."
   },
   {
     "type": "fin",
