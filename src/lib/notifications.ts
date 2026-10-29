@@ -8,7 +8,7 @@ export type ElementNotification =
   | { type: 'reponse'; id: string; date: string; texte: string; request_id: string }
   | { type: 'rappel_moment'; id: string; date: string; moment: string }
   | { type: 'rappel_habitude'; id: string; date: string; activity_id: string; habit_key: string | null };
-export type Notifications = { vu_jusqu_a: string | null; non_lues: number; elements: ElementNotification[] };
+export type Notifications = { vu_jusqu_a: string | null; non_lues: number; elements: (ElementNotification & { nouveau?: boolean })[] };
 
 const TYPES = new Set(['annonce', 'reponse', 'rappel_moment', 'rappel_habitude']);
 
@@ -28,7 +28,7 @@ export async function marquerNotificationsVues(): Promise<void> {
   try { window.dispatchEvent(new Event(EVENEMENT)); } catch { /* sans fenêtre */ }
 }
 
-/** Nombre d'annonces et de réponses non vues ; null si inconnu (sans réseau, sans session) : aucune pastille alors. */
+/** Nombre d'annonces, de réponses et de rappels non vus (seneve_050) ; null si inconnu (sans réseau, sans session) : aucune pastille alors. */
 export function useNonLues(): number | null {
   const [n, setN] = useState<number | null>(null);
   const lire = useCallback(() => {
@@ -38,8 +38,19 @@ export function useNonLues(): number | null {
   useEffect(() => {
     lire();
     const vu = () => setN(0);
+    const visible = () => { if (document.visibilityState === 'visible') lire(); };
+    // Un rappel vient d'arriver sur ce téléphone : le serveur le note juste après l'envoi, on relit donc deux fois.
+    const minuteurs: number[] = [];
+    const signal = (ev: MessageEvent) => { if ((ev.data as { type?: string } | null)?.type === 'seneve-notification') { minuteurs.push(window.setTimeout(lire, 3000), window.setTimeout(lire, 15000)); } };
+    const regulier = window.setInterval(() => { if (document.visibilityState === 'visible') lire(); }, 120000);
+    const sw = typeof navigator !== 'undefined' ? navigator.serviceWorker : undefined;
     window.addEventListener(EVENEMENT, vu); window.addEventListener('focus', lire); window.addEventListener('online', lire);
-    return () => { window.removeEventListener(EVENEMENT, vu); window.removeEventListener('focus', lire); window.removeEventListener('online', lire); };
+    document.addEventListener('visibilitychange', visible); sw?.addEventListener?.('message', signal);
+    return () => {
+      window.removeEventListener(EVENEMENT, vu); window.removeEventListener('focus', lire); window.removeEventListener('online', lire);
+      document.removeEventListener('visibilitychange', visible); sw?.removeEventListener?.('message', signal);
+      window.clearInterval(regulier); minuteurs.forEach(t => window.clearTimeout(t));
+    };
   }, [lire]);
   return n;
 }

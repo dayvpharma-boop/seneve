@@ -41,7 +41,7 @@ function NotificationsDuCompte() {
 
   const messages = data.elements.filter(e => e.type === 'annonce' || e.type === 'reponse');
   const rappels = data.elements.filter(e => e.type === 'rappel_moment' || e.type === 'rappel_habitude');
-  const nouveau = (e: ElementNotification) => (e.type === 'annonce' || e.type === 'reponse') && (!data.vu_jusqu_a || Date.parse(e.date) > Date.parse(data.vu_jusqu_a));
+  const nouveau = (e: ElementNotification & { nouveau?: boolean }) => e.nouveau === true;
   return <main className="wrap avec-nav nt-page">{tete}
     <section className="nt-section" aria-labelledby="nt-messages">
       <h2 id="nt-messages">{en ? 'Messages from the team' : 'Messages de l’équipe'}</h2>
@@ -50,7 +50,7 @@ function NotificationsDuCompte() {
     </section>
     <section className="nt-section" aria-labelledby="nt-rappels">
       <h2 id="nt-rappels">{en ? 'Reminders received' : 'Rappels reçus'}</h2>
-      {rappels.length ? <ul className="nt-liste">{rappels.map(e => <Element key={e.type + e.id} e={e} en={en} nouveau={false} />)}</ul>
+      {rappels.length ? <ul className="nt-liste">{rappels.map(e => <Element key={e.type + e.id} e={e} en={en} nouveau={nouveau(e)} />)}</ul>
         : <p className="nt-vide">{en ? 'No reminder in the last 60 days. You can turn reminders on in your profile and settings.' : 'Aucun rappel ces 60 derniers jours. Tu peux activer les rappels dans ton profil et tes réglages.'}</p>}
     </section>
     <p className="nt-note">{en ? 'Last 60 days. Reminders are listed once accepted by your phone’s notification service.' : '60 derniers jours. Un rappel est listé dès qu’il a été accepté par le service de notifications du téléphone.'}</p>

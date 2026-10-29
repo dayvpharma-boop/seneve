@@ -4,7 +4,7 @@
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'amidah-adaptee-20261029-r2-seneve-site-v37-hors-connexion-20261028';
+const CACHE = 'seneve-site-v38-cloche-amidah-20261029';
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -67,7 +67,7 @@ async function garderLesPages(obligatoire = false) {
 
 self.addEventListener('install', e => { e.waitUntil(precache().then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('seneve-site-') && k !== CACHE).map(k => caches.delete(k))))
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== CACHE_BIBLE && (k.startsWith('seneve-site-') || k.includes('-seneve-site-'))).map(k => caches.delete(k))))
     .then(() => self.clients.claim()).then(() => garderLesPages().catch(() => undefined)));
 });
 
@@ -133,6 +133,13 @@ self.addEventListener('push', e => {
   const lien = typeof m.url === 'string' && m.url.startsWith(BASE) ? m.url : BASE + 'espace';
   e.waitUntil(self.registration.showNotification(m.title || 'SÉNEVÉ', {
     body: m.body || '', tag: m.tag || 'seneve-rappel', renotify: typeof m.tag === 'string' && m.tag.startsWith('seneve-hd-'), icon: BASE + 'icons/icon-192.png', badge: BASE + 'icons/favicon-48.png', data: { url: lien },
+  }).then(async () => {
+    // La cloche des pages ouvertes se relit (29/10/2026) : rien de privé n'est transmis, seulement un signal.
+    // Un échec ici ne doit jamais empêcher l'affichage du rappel, déjà fait.
+    try {
+      const fenetres = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      for (const f of fenetres) f.postMessage({ type: 'seneve-notification' });
+    } catch { /* aucune page à prévenir */ }
   }));
 });
 

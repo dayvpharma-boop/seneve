@@ -70,4 +70,32 @@ begin
   exception when invalid_authorization_specification then null; end;
   raise notice 'Centre de notifications : vérifications réussies';
 end $test$;
+
+-- seneve_050 : les rappels reçus comptent dans la pastille (signalé par Dr Justin le 29/10/2026).
+-- Rappels des moments (mêmes règles que les rappels d'habitudes, sans les contrôles de jour HD).
+do $test$
+declare
+  ua uuid := gen_random_uuid(); pa uuid := gen_random_uuid(); ea uuid := gen_random_uuid();
+  prog text; n jsonb;
+begin
+  select c.programme_id into prog from seneve.contents c join seneve.programmes p using (programme_id) limit 1;
+  insert into auth.users(id) values (ua);
+  insert into seneve.participants(participant_id, auth_user_id, prenom, langue) values (pa, ua, 'Fictif R', 'fr');
+  insert into seneve.enrollments(enrollment_id, participant_id, programme_id, version, langue, date_debut, etat)
+    select ea, pa, prog, (select min(version) from seneve.contents where programme_id = prog), 'fr', current_date, 'active';
+  insert into seneve.communications(cle_idempotence, enrollment_id, canal, creneau, etat, motif, modifie_le) values
+    ('verification_a_' || gen_random_uuid()::text, ea, 'push', now() - interval '2 days', 'accepte', 'rappel_soir', now() - interval '2 days'),
+    ('verification_b_' || gen_random_uuid()::text, ea, 'push', now() - interval '1 hour', 'accepte', 'rappel_midi', now() - interval '1 hour'),
+    ('verification_c_' || gen_random_uuid()::text, ea, 'push', now(), 'planifie', 'rappel_soir', now());
+  perform set_config('request.jwt.claim.sub', ua::text, true);
+  n := seneve.mes_notifications(50);
+  if (n->>'non_lues')::int <> 1 then raise exception 'Rappels non lus attendus 1, obtenus %', n->>'non_lues'; end if;
+  if (select count(*) from jsonb_array_elements(n->'elements') e where e->>'type' = 'rappel_moment') <> 2 then raise exception 'Historique des rappels incorrect'; end if;
+  if (select count(*) from jsonb_array_elements(n->'elements') e where (e->>'nouveau')::boolean) <> 1 then raise exception 'Marque nouveau incorrecte'; end if;
+  perform seneve.marquer_notifications_vues();
+  if (seneve.mes_notifications(50)->>'non_lues')::int <> 0 then raise exception 'Vu non pris en compte pour les rappels'; end if;
+  insert into seneve.communications(cle_idempotence, enrollment_id, canal, creneau, etat, motif, modifie_le)
+    values ('verification_d_' || gen_random_uuid()::text, ea, 'push', now(), 'accepte', 'rappel_matin', clock_timestamp() + interval '1 second');
+  if (seneve.mes_notifications(50)->>'non_lues')::int <> 1 then raise exception 'Nouveau rappel du matin non compté'; end if;
+end $test$;
 rollback;
