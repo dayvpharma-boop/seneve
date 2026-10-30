@@ -111,3 +111,7 @@
 
 /* Cadres de la journée Habitudes un peu plus larges, plus proches de la largeur de la photo (demande de Dr Justin du 30/10/2026). */
 :root:root[data-apparence] .espace-page .hd-stitch>.hd-jour-stitch{padding-left:8px;padding-right:8px}
+
+/* « Aujourd'hui » sous « SÉNEVÉ » dans l'en-tête, comme sur les autres pages (demande de Dr Justin du 30/10/2026). */
+:root:root[data-apparence] .espace-page .logo-marque>span{display:flex;flex-direction:column;line-height:1.2}
+:root:root[data-apparence] .espace-page .logo-marque small{display:block;margin-top:2px;font:400 11px/1.4 Poppins,sans-serif;letter-spacing:0;text-transform:none;color:var(--vivant-secondaire)}
