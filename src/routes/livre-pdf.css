@@ -1,0 +1,12 @@
+/* PDF : aucune URL de média ni droit ajouté. */
+:root:root[data-apparence] .bl-pdf .bl-detail-titre .bl-label{display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.03em}
+:root:root[data-apparence] .bl-pdf .bl-fiche-formats>.bl-format{background:var(--bl-accent);padding:20px;gap:14px}
+:root:root[data-apparence] .bl-pdf .bl-format-titre .bl-statut{background:var(--bl-carte);border:1px solid var(--bl-trait)}
+:root:root[data-apparence] .bl-pdf .bl-format>p{font-size:14px}
+:root:root[data-apparence] .bl-pdf .bl-format>a{display:flex;justify-content:center;min-height:48px;padding:10px 14px;border-radius:16px;background:var(--bl-or);color:var(--bl-sur-accent);font-size:13px;text-decoration:none;text-align:center}
+:root:root[data-apparence] .bl-pdf .bl-format .bl-indisponible{background:var(--bl-carte);color:var(--bl-second);cursor:not-allowed}
+:root:root[data-apparence] .bl-pdf .bl-pdf-livraison{display:flex;align-items:flex-start;gap:12px;padding:18px;border:1px solid var(--bl-trait);border-radius:22px;background:var(--bl-doux);margin:0 0 20px;color:var(--bl-encre)}
+:root:root[data-apparence] .bl-pdf .bl-pdf-livraison>svg{flex-shrink:0;color:var(--bl-or);margin-top:3px}
+:root:root[data-apparence] .bl-pdf .bl-pdf-livraison h2{font:600 15px/1.6 Poppins,sans-serif;margin:0 0 8px}
+:root:root[data-apparence] .bl-pdf .bl-pdf-livraison p{font:400 13px/1.8 Lora,Georgia,serif;margin:0;color:var(--bl-second)}
+@media(min-width:900px){:root:root[data-apparence] .bl-pdf .bl-fiche-formats>.bl-format{padding:24px}:root:root[data-apparence] .bl-pdf .bl-format>a{align-self:flex-start;min-width:260px}}

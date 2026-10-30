@@ -28,3 +28,14 @@ it('la page audio anglaise conserve l’aide et les sept chapitres sans annoncer
  expect(container.querySelector('audio,[download]')).toBeNull();
  expect(screen.queryByText(/access confirmed|activity completed/i)).toBeNull();
 });
+
+it('le PDF anglais distingue livraison et ouverture dans l’application sans exposer de fichier',()=>{
+ const {container}=afficher('/livre/pdf?lang=en');
+ expect(document.title).toBe('Digital book · PDF · Stop Begging for Miracles — SÉNEVÉ');
+ expect(screen.getByRole('heading',{name:'Delivery after an order'})).toBeTruthy();
+ expect(screen.getByText(/This is separate from opening the PDF in the app/)).toBeTruthy();
+ expect(screen.getByRole('link',{name:'A question about this format? →'})).toHaveAttribute('href','/aide?motif=livre-pdf&lang=en');
+ expect(screen.getByRole('button',{name:'PDF not yet available'})).toBeDisabled();
+ expect(container.querySelector('iframe,object,embed,[download],a[href$=".pdf"]')).toBeNull();
+ expect(screen.queryByRole('button',{name:/open pdf|resume reading/i})).toBeNull();
+});
