@@ -1,0 +1,71 @@
+/* Bibliothèque : le livre existant, ses formats et ses destinations, sans droit inventé. */
+:root:root:root[data-apparence] body:has(.bl-page){background:#f5f7fe;color:#151b36}
+:root:root:root[data-apparence] .bl-page{--bl-fond:#f5f7fe;--bl-carte:rgb(255 255 255);--bl-encre:#151b36;--bl-second:#59627e;--bl-or:#49439b;--bl-accent:#eee8fc;--bl-doux:#e3efff;--bl-trait:#dce3f0;--bl-sur-accent:rgb(255 255 255);max-width:1080px;margin:auto;padding:0 24px 124px;min-height:100dvh;background:var(--bl-fond);color:var(--bl-encre);border:0;font:400 14px/1.7 Poppins,system-ui,sans-serif;overflow-wrap:anywhere}
+:root:root:root[data-apparence=sombre] body:has(.bl-page){background:#111528;color:#eef0ff}
+:root:root:root[data-apparence=sombre] .bl-page{--bl-fond:#111528;--bl-carte:#1c2238;--bl-encre:#eef0ff;--bl-second:#bbc4de;--bl-or:#bcb2ff;--bl-accent:#332d4f;--bl-doux:#24334d;--bl-trait:#3b4460;--bl-sur-accent:#201a4d}
+:root:root[data-apparence] .bl-page :is(h1,h2,h3,button,a,.bl-label,.bl-statut,.bl-header,.bl-footer){font-family:Poppins,system-ui,sans-serif}
+:root:root[data-apparence] .bl-page :is(h1,h2,h3){color:var(--bl-encre)}
+:root:root[data-apparence] .bl-page .bl-header{position:static;min-height:74px;padding:12px 0;margin:0;gap:12px;background:var(--bl-fond)}
+:root:root[data-apparence] .bl-page .bl-header>img{width:30px;height:36px}
+:root:root[data-apparence] .bl-page .bl-header>div>span{font:500 13px/1.6 Poppins,sans-serif;letter-spacing:.1em;color:var(--bl-encre)}
+:root:root[data-apparence] .bl-page .bl-header strong{font:400 10px/1.5 Poppins,sans-serif;color:var(--bl-second)}
+:root:root[data-apparence] .bl-page .bl-header .bl-profil{min-width:44px;min-height:44px;width:44px;height:44px;background:var(--bl-accent);color:var(--bl-or);border:1px solid var(--bl-trait);border-radius:16px}
+:root:root[data-apparence] .bl-page .bl-contenu{padding:0}
+:root:root[data-apparence] .bl-page .bl-intro{margin:6px 0 16px}
+:root:root[data-apparence] .bl-page .bl-label{font:500 10px/1.7 Poppins,sans-serif;color:var(--bl-or);letter-spacing:.07em}
+:root:root[data-apparence] .bl-page .bl-intro>.bl-label{margin:0 0 5px}
+:root:root[data-apparence] .bl-page h1{font:600 28px/1.3 Poppins,sans-serif;letter-spacing:-.035em}
+:root:root[data-apparence] .bl-page .bl-soustitre{font:400 13px/1.7 Lora,Georgia,serif;font-style:normal;color:var(--bl-second);margin:8px 0 0}
+:root:root[data-apparence] .bl-page .page-illustration{display:flex;flex-direction:column;border:1px solid var(--bl-trait);border-radius:24px;background:var(--bl-carte);overflow:hidden;margin:0 0 18px;box-shadow:none;color:var(--bl-encre)}
+:root:root[data-apparence] .bl-page .page-illustration>img{order:0;display:block;position:static;width:100%;height:auto;min-height:0;aspect-ratio:720/309;object-fit:cover;object-position:center;mask:none;-webkit-mask:none}
+:root:root[data-apparence] .bl-page .page-illustration-texte{padding:16px 18px;position:static}
+:root:root[data-apparence] .bl-page .page-illustration-repere{font:500 10px/1.5 Poppins,sans-serif;letter-spacing:.07em;color:var(--bl-or);margin:0 0 5px}
+:root:root[data-apparence] .bl-page .page-illustration-titre{font:600 20px/1.4 Poppins,sans-serif;color:var(--bl-encre);letter-spacing:-.02em;margin:0 0 5px}
+:root:root[data-apparence] .bl-page .page-illustration-note{font:400 13px/1.7 Lora,Georgia,serif;color:var(--bl-second);margin:0}
+:root:root[data-apparence] .bl-page .bl-filtres{display:flex;gap:8px;margin:0 0 16px;padding:0;overflow:visible;flex-wrap:wrap}
+:root:root[data-apparence] .bl-page .bl-filtres button{min-height:44px;min-width:64px;padding:9px 18px;border:1px solid var(--bl-trait);border-radius:16px;font:500 12px/1.7 Poppins,sans-serif;background:var(--bl-carte);color:var(--bl-second);white-space:normal}
+:root:root[data-apparence] .bl-page .bl-filtres button[aria-pressed=true]{background:var(--bl-or);color:var(--bl-sur-accent);border-color:var(--bl-or)}
+:root:root[data-apparence] .bl-page .bl-rayonnage{display:grid;gap:18px;align-items:start;grid-template-columns:minmax(0,1fr)}
+:root:root[data-apparence] .bl-page :is(.bl-card,.bl-acces,.bl-edition,.bl-sommaire,.bl-citation){border:1px solid var(--bl-trait);border-radius:24px;background:var(--bl-carte);color:var(--bl-encre);padding:18px;box-shadow:none;margin:0 0 18px;min-width:0}
+:root:root[data-apparence] .bl-page .bl-livre-carte{margin:0}
+:root:root[data-apparence] .bl-page .bl-livre-identite{display:flex;align-items:flex-start;gap:16px;min-width:0}
+:root:root[data-apparence] .bl-page .bl-livre-identite h2{font:600 18px/1.45 Poppins,sans-serif;letter-spacing:-.025em;margin:6px 0}
+:root:root[data-apparence] .bl-page .bl-livre-identite>div:last-child>p{font:400 11px/1.7 Poppins,sans-serif;color:var(--bl-second);margin:0 0 10px}
+:root:root[data-apparence] .bl-page .bl-statut{display:inline-flex;align-items:center;gap:5px;border-radius:10px;background:var(--bl-accent);color:var(--bl-or);font:500 10px/1.6 Poppins,sans-serif;padding:5px 8px;white-space:normal}
+:root:root[data-apparence] .bl-page .bl-liste-formats{display:flex;flex-direction:column;gap:9px;margin:18px 0}
+:root:root[data-apparence] .bl-page .bl-liste-formats>a{display:flex;align-items:center;gap:12px;min-height:64px;border:1px solid var(--bl-trait);border-radius:16px;padding:12px;background:var(--bl-fond);color:var(--bl-encre);font:500 13px/1.6 Poppins,sans-serif}
+:root:root[data-apparence] .bl-page .bl-liste-formats>a>svg:first-child{color:var(--bl-or)}
+:root:root[data-apparence] .bl-page .bl-liste-formats small{font:400 11px/1.7 Poppins,sans-serif;color:var(--bl-second)}
+:root:root:root[data-apparence] .bl-page :is(.bl-principal,.bl-acces-bouton){display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 14px;border:1px solid var(--bl-or);border-radius:16px;background:var(--bl-or);color:var(--bl-sur-accent);font:500 13px/1.7 Poppins,sans-serif;text-transform:none;text-decoration:none;white-space:normal;letter-spacing:0;box-shadow:none}
+:root:root[data-apparence] .bl-page .bl-parcours{display:grid;grid-template-columns:24px minmax(0,1fr);gap:14px 10px;overflow:hidden;padding:0 18px 18px}
+:root:root[data-apparence] .bl-page .bl-formation-image{grid-column:1/-1;display:block;width:calc(100% + 36px);max-width:none;height:auto;aspect-ratio:720/313;margin:0 -18px;border-radius:23px 23px 0 0;object-fit:cover}
+:root:root[data-apparence] .bl-page .bl-acces>svg{color:var(--bl-or)}
+:root:root[data-apparence] .bl-page .bl-acces h2{font:600 18px/1.5 Poppins,sans-serif;margin:0 0 6px}
+:root:root[data-apparence] .bl-page :is(.bl-acces p,.bl-edition p,.bl-format>p){font:400 13px/1.8 Lora,Georgia,serif;color:var(--bl-second);margin:0 0 14px}
+:root:root[data-apparence] .bl-page .bl-edition{background:var(--bl-accent)}
+:root:root[data-apparence] .bl-page .bl-edition h2{font:600 18px/1.5 Poppins,sans-serif;margin:8px 0}
+:root:root[data-apparence] .bl-page .bl-edition a{display:inline-flex;align-items:center;min-height:44px;font:500 12px/1.7 Poppins,sans-serif;color:var(--bl-or)}
+:root:root[data-apparence] .bl-page .bl-complements>:last-child{margin-bottom:0}
+:root:root[data-apparence] .bl-page .bl-footer{padding:20px 0;margin:18px 0 0;gap:8px;color:var(--bl-second);font:400 11px/1.7 Poppins,sans-serif}
+:root:root[data-apparence] .bl-page .bl-footer strong{font:500 10px/1.7 Poppins,sans-serif;color:var(--bl-second)}
+:root:root[data-apparence] .bl-page .bl-footer>a{color:var(--bl-or);min-height:44px}
+:root:root[data-apparence] .bl-page .bl-detail-cover{padding:10px 0 20px}
+:root:root[data-apparence] .bl-page .bl-detail-titre>p{font:400 15px/1.8 Lora,Georgia,serif;color:var(--bl-second)}
+:root:root[data-apparence] .bl-page .bl-detail-titre>strong{font:500 13px/1.7 Poppins,sans-serif;color:var(--bl-second)}
+:root:root[data-apparence] .bl-page .bl-format-titre h2{font:600 18px/1.5 Poppins,sans-serif;color:var(--bl-encre)}
+:root:root[data-apparence] .bl-page .bl-indisponible{min-height:48px;border:1px solid var(--bl-trait);border-radius:16px;background:var(--bl-doux);color:var(--bl-second);font:500 13px/1.7 Poppins,sans-serif;padding:12px;white-space:normal;opacity:.8}
+:root:root[data-apparence] .bl-page .bl-format>a{min-height:44px;color:var(--bl-or);font:500 12px/1.7 Poppins,sans-serif}
+:root:root[data-apparence] .bl-page .bl-sommaire li{background:var(--bl-fond);color:var(--bl-encre);border:1px solid var(--bl-trait);border-radius:16px;padding:14px;gap:12px}
+:root:root[data-apparence] .bl-page .bl-sommaire h2{font:600 18px/1.5 Poppins,sans-serif}
+:root:root[data-apparence] .bl-page .bl-sommaire h3{font:500 14px/1.6 Poppins,sans-serif}
+:root:root[data-apparence] .bl-page .bl-sommaire :is(p,.bl-numero){font:400 11px/1.7 Poppins,sans-serif;color:var(--bl-second)}
+:root:root[data-apparence] .bl-page .bl-citation blockquote{font:400 16px/1.8 Lora,Georgia,serif;color:var(--bl-encre)}
+:root:root[data-apparence] .bl-page .bl-hors-ligne{display:flex;gap:12px;padding:16px;border:1px solid var(--bl-trait);border-radius:22px;background:var(--bl-accent);margin:0 0 18px;color:var(--bl-encre);font:400 13px/1.7 Poppins,sans-serif}
+:root:root[data-apparence] .bl-page .bl-hors-ligne p{font:400 12px/1.7 Poppins,sans-serif;color:var(--bl-second);margin:5px 0 0}
+:root:root[data-apparence] .bl-page>.barre-nav{max-width:1080px;margin:auto;background:var(--bl-carte);border-top:1px solid var(--bl-trait);color:var(--bl-encre)}
+:root:root[data-apparence] .bl-page>.barre-nav a{font:500 10px/1.5 Poppins,sans-serif;color:var(--bl-second);min-height:48px;white-space:normal}
+:root:root[data-apparence] .bl-page>.barre-nav a[aria-current=page]{color:var(--bl-or)}
+:root:root[data-apparence] .bl-page>.barre-nav .nav-plus{background:var(--bl-accent);color:var(--bl-or);border-radius:14px}
+:root:root[data-apparence] .bl-page :is(a,button,summary):focus-visible{outline:3px solid #8275d4;outline-offset:3px}
+@media(max-width:760px){:root:root:root[data-apparence] .bl-page{padding:0 18px 124px}:root:root[data-apparence] .bl-page h1{font-size:26px}:root:root[data-apparence] .bl-page>.barre-nav a{font-size:9px}}
+@media(min-width:900px){:root:root[data-apparence] .bl-page .page-illustration{display:grid;grid-template-columns:1.15fr 1fr;align-items:center}:root:root[data-apparence] .bl-page .page-illustration>img{height:230px;aspect-ratio:auto}:root:root[data-apparence] .bl-page .page-illustration-texte{padding:24px 28px}:root:root[data-apparence] .bl-page .bl-rayonnage{grid-template-columns:1.1fr 1fr;gap:24px}:root:root[data-apparence] .bl-page .bl-livre-carte{padding:24px}:root:root[data-apparence] .bl-page .bl-livre-identite h2{font-size:24px}}
