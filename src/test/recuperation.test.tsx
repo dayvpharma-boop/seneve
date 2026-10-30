@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const api = vi.hoisted(() => ({ reset: vi.fn(), update: vi.fn() }));
@@ -122,4 +122,41 @@ describe('Nouveau mot de passe', () => {
     await waitFor(() => expect(api.reset).toHaveBeenCalledWith('mary@example.org', { redirectTo: 'https://seneve.example/seneve/nouveau-mot-de-passe?lang=en' }));
     expect(await screen.findByText('Check your inbox')).toBeInTheDocument();
   });
+});
+
+
+it('un lien invalide garde un accès clair à une nouvelle demande en anglais', async () => {
+ api.update.mockResolvedValue({error:{message:'Invalid token'}});
+ render(<MemoryRouter initialEntries={['/nouveau-mot-de-passe?lang=en']}><NewPassword/></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('New password'),{target:{value:'ExempleSeulement123'}});
+ fireEvent.change(screen.getByLabelText('Confirm new password'),{target:{value:'ExempleSeulement123'}});
+ fireEvent.submit(screen.getByRole('button',{name:'Save'}).closest('form')!);
+ expect(await screen.findByRole('alert')).toHaveTextContent('This link is invalid.');
+ expect(screen.getByRole('link',{name:'Request a new link'})).toHaveAttribute('href','/mot-de-passe-oublie?lang=en');
+ expect(screen.queryByText('Your password has been changed.')).toBeNull();
+});
+
+it('hors connexion : garde le formulaire et ne demande aucun lien', () => {
+ forgot();
+ fireEvent.change(screen.getByLabelText('E-mail'),{target:{value:'exemple@example.org'}});
+ fireEvent(window,new Event('offline'));
+ const bouton=screen.getByRole('button',{name:'Recevoir le lien'});
+ expect(bouton).toBeDisabled();
+ fireEvent.submit(bouton.closest('form')!);
+ expect(api.reset).not.toHaveBeenCalled();
+ fireEvent(window,new Event('online'));
+ expect(bouton).toBeEnabled();
+ expect(screen.getByLabelText('E-mail')).toHaveValue('exemple@example.org');
+});
+
+function RetourLangue(){const l=useLocation();return <p>{l.pathname+l.search}</p>;}
+
+it('après une modification confirmée, le retour à l’espace conserve l’anglais', async () => {
+ api.update.mockResolvedValue({error:null});
+ render(<MemoryRouter initialEntries={['/nouveau-mot-de-passe?lang=en']}><Routes><Route path="/nouveau-mot-de-passe" element={<NewPassword/>}/><Route path="/espace" element={<RetourLangue/>}/></Routes></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('New password'),{target:{value:'ExempleSeulement123'}});
+ fireEvent.change(screen.getByLabelText('Confirm new password'),{target:{value:'ExempleSeulement123'}});
+ fireEvent.submit(screen.getByRole('button',{name:'Save'}).closest('form')!);
+ fireEvent.click(await screen.findByRole('button',{name:'Go to my space'}));
+ expect(await screen.findByText('/espace?lang=en')).toBeInTheDocument();
 });
