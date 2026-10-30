@@ -5,6 +5,8 @@ import { siteUrl, supabase } from '@/lib/supabase';
 import { IconeConnexion } from '@/components/IconeConnexion';
 import { Icone } from '@/components/Icone';
 import { PenseeLivre } from '@/components/RepereParcours';
+import './connexion-moderne.css';
+import {useEnLigne} from '@/lib/hors-ligne';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 
 const ERREURS = {
@@ -69,6 +71,7 @@ const TEXTES = {
 
 export function Connexion() {
   const navigate = useNavigate();
+  const enLigne = useEnLigne();
   const location = useLocation();
   const [search] = useSearchParams();
   const langue: 'fr' | 'en' = search.get('lang') === 'en' ? 'en' : 'fr';
@@ -96,7 +99,7 @@ export function Connexion() {
   }, [attente]);
 
   async function renvoyer() {
-    if (!aConfirmer || renvoi || attente > 0) return;
+    if (!aConfirmer || renvoi || attente > 0 || !enLigne) return;
     setRenvoi(true); setError(''); setInfo('');
     try {
       const { error } = await supabase.auth.resend({ type: 'signup', email: aConfirmer, options: { emailRedirectTo: retourConfirmation } });
@@ -109,6 +112,7 @@ export function Connexion() {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (!enLigne || busy) return;
     setError(''); setInfo(''); setAConfirmer(null);
     if (password.length < 8) { setError(ERREURS[langue].mdp); return; }
     setBusy(true);
@@ -151,16 +155,22 @@ export function Connexion() {
       <span className="auth-brand"><Icone nom="graine" taille={22} /><strong>SÉNEVÉ</strong></span>
       <Link className="auth-language" to={(langue === 'en' ? '/connexion?lang=fr' : '/connexion?lang=en')+(suiteHabitudes?`&mode=${tab}&suite=habitudes`:'')}><IconeConnexion nom="language" taille={16} /><span>{T.autreLangue}</span><IconeConnexion nom="expand_more" taille={16} /></Link>
     </header>
+    <div className="auth-layout"><div className="auth-overview">
     <div className="auth-intro">
       <p className="auth-repere">{tab === 'signup' ? <IconeConnexion nom="bookmark" taille={14} /> : <span className="auth-point" />}{langue === 'en' ? 'One step each day' : 'Un pas chaque jour'}</p>
       <h1>{T.titre}</h1><p className="connexion-intro">{T.intro}</p>
     </div>
+    {tab === 'signup' && <aside className="auth-decouverte"><IconeConnexion nom="spa" taille={24}/><div><strong>{langue === 'en' ? '7-day Discovery' : 'Découverte de 7 jours'}</strong><p>{langue === 'en' ? 'For eligible new accounts. Your access will be confirmed in your space.' : 'Pour les nouveaux comptes éligibles. Ton accès sera confirmé dans ton espace.'}</p></div></aside>}
+    </div><div className="auth-panel">
+    {!enLigne && <p className="auth-offline" role="status">{langue === 'en' ? 'You are offline. Reconnect to sign in or create your account.' : 'Tu es hors connexion. Reconnecte-toi pour te connecter ou créer ton compte.'}</p>}
     <div className="choix-double" role="tablist" aria-label={T.onglet}>
       <button id="auth-signup" type="button" role="tab" aria-selected={tab === 'signup'} aria-controls="auth-form" onClick={() => choose('signup')}>{tab === 'signup' && <IconeConnexion nom="person_add" taille={18} />}{T.creer}</button>
       <button id="auth-signin" type="button" role="tab" aria-selected={tab === 'signin'} aria-controls="auth-form" onClick={() => choose('signin')}>{tab === 'signup' && <IconeConnexion nom="login" taille={18} />}{T.connecter}</button>
     </div>
-    <BoutonsConnexionSociale langue={langue === 'en' ? 'en' : 'fr'} />
-    <form id="auth-form" className="card form connexion-form" onSubmit={submit} aria-labelledby={`auth-${tab}`}>
+    <fieldset className="auth-social-cadre" disabled={!enLigne}><BoutonsConnexionSociale langue={langue === 'en' ? 'en' : 'fr'} /></fieldset>
+    <form id="auth-form" className="card form connexion-form" onSubmit={submit} aria-busy={busy} aria-labelledby={`auth-${tab}`}>
+      {error && <p className="error" role="alert">{error}</p>}
+      {info && <div className="connexion-info" role="status">{aConfirmer && <strong>{langue === 'en' ? 'Confirm your email address' : 'Confirme ton adresse e-mail'}</strong>}<p>{info}</p></div>}
       {tab === 'signup' && <div className="auth-field"><label className="field" htmlFor="auth-prenom">{T.prenom}</label><span className="auth-hint">{langue === 'en' ? 'Required' : 'Requis'}</span><div className="auth-input"><IconeConnexion nom="badge" /><input id="auth-prenom" placeholder={langue === 'en' ? 'e.g. Mary' : 'ex. Marie'} value={prenom} onChange={e => setPrenom(e.target.value)} autoComplete="given-name" required /></div></div>}
       <div className="auth-field"><label className="field" htmlFor="auth-email">{T.email}</label>{tab === 'signup' && <span className="auth-hint">{langue === 'en' ? 'Login ID' : 'Identifiant'}</span>}<div className="auth-input">{tab === 'signup' && <IconeConnexion nom="mail" />}<input id="auth-email" placeholder="marie@exemple.com" type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" inputMode="email" required /></div></div>
       <div className="connexion-password auth-field">
@@ -174,16 +184,16 @@ export function Connexion() {
         {tab === 'signin' && <button type="button" className="link connexion-oubli" onClick={forgot}>{T.oubli}</button>}
       </div>
       <p className="connexion-achat"><span className="auth-achat-icon"><IconeConnexion nom={tab === 'signup' ? 'auto_stories_filled' : 'auto_stories'} taille={20} /></span><span>{T.achat}</span></p>
-      {error && <p className="error" role="alert">{error}</p>}
-      {info && <p className="connexion-info" role="status">{info}</p>}
-      {aConfirmer && aConfirmer === email && <button type="button" className="link connexion-renvoi" disabled={renvoi || attente > 0} onClick={() => void renvoyer()}><IconeConnexion nom="mail" taille={16} />{attente > 0 ? T.renvoyerDans(attente) : renvoi ? T.patienter : T.renvoyer}</button>}
-      <button className="btn moment-btn" type="submit" disabled={busy}>{busy ? T.patienter : tab === 'signup' ? T.creer : T.connecter}{tab === 'signup' ? <IconeConnexion nom="arrow_forward" taille={18} /> : <IconeConnexion nom="east" taille={18} />}</button>
+      {aConfirmer && aConfirmer === email && <button type="button" className="link connexion-renvoi" disabled={renvoi || attente > 0 || !enLigne} onClick={() => void renvoyer()}><IconeConnexion nom="mail" taille={16} />{attente > 0 ? T.renvoyerDans(attente) : renvoi ? T.patienter : T.renvoyer}</button>}
+      <button className="btn moment-btn" type="submit" disabled={busy || !enLigne}>{busy ? T.patienter : tab === 'signup' ? T.creer : T.connecter}{tab === 'signup' ? <IconeConnexion nom="arrow_forward" taille={18} /> : <IconeConnexion nom="east" taille={18} />}</button>
     </form>
+    {(suiteHabitudes || /^\/(?:journal|admin)(?:\?|$)/.test(location.state?.retourJournal ?? location.state?.retour ?? '')) && <p className="auth-retour">{langue === 'en' ? 'After sign-in, you will return to the requested page.' : 'Après la connexion, tu retrouveras la page demandée.'}</p>}
     <div className="connexion-suite">
       {tab === 'signin' && <p className="connexion-inscription"><span>{T.pasEncore}</span><button type="button" onClick={() => choose('signup')}>{T.creer}</button></p>}
       <p className="connexion-securite"><IconeConnexion nom={tab === 'signup' ? 'shield_lock' : 'verified_user'} taille={16} /><span>{T.securite}</span></p>
     </div>
     <p className="muted connexion-legal">{tab === 'signup' ? T.age : ''}<Link className="link-inline" to={langue === 'en' ? '/confidentialite?lang=en' : '/confidentialite'}>{T.confidentialite}<IconeConnexion nom="open_in_new" taille={14} /></Link></p>
     {tab === 'signup' ? <aside className="auth-rythme"><span><IconeConnexion nom="spa" taille={20} /></span><div><strong>{langue === 'en' ? 'An unhurried rhythm' : 'Un rythme sans précipitation'}</strong><p>{langue === 'en' ? 'Take time to put each teaching into practice.' : 'Prends le temps de mettre chaque enseignement en pratique.'}</p></div></aside> : <div className="auth-pensee"><span className="auth-pensee-icone"><IconeConnexion nom="bookmark_heart" taille={24} /></span><PenseeLivre langue={langue} /></div>}
+    </div></div>
   </main>;
 }

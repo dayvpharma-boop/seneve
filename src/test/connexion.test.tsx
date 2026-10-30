@@ -120,3 +120,20 @@ describe('Messages d’erreur de Supabase', () => {
     expect(authError('For security purposes, you can only request this after 43 seconds.')).toBe('Trop de tentatives. Réessaie dans quelques minutes.');
   });
 });
+
+it('hors connexion : garde les champs sans envoyer, puis permet de reprendre au retour du réseau', () => {
+  ouvrir();
+  fireEvent.change(screen.getByLabelText('Ton prénom'), { target: { value: 'Exemple' } });
+  fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'exemple@example.org' } });
+  fireEvent.change(screen.getByLabelText('Mot de passe'), { target: { value: 'MotDePasseExemple' } });
+  fireEvent(window, new Event('offline'));
+  expect(screen.getByRole('status')).toHaveTextContent('Tu es hors connexion.');
+  const bouton = screen.getByRole('button', { name: 'Créer un compte' });
+  expect(bouton).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Continuer avec Google' })).toBeDisabled();
+  fireEvent.submit(bouton.closest('form')!);
+  expect(appels).toHaveLength(0);
+  fireEvent(window, new Event('online'));
+  expect(bouton).toBeEnabled();
+  expect(screen.getByLabelText('E-mail')).toHaveValue('exemple@example.org');
+});
