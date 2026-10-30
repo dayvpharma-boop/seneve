@@ -30,3 +30,12 @@ L’analyse Supabase dans TEST ne révèle aucun nouveau signal par rapport à l
 ## Limites de preuve
 
 Acceptation fournisseur ≠ réception/lecture. Les appareils hors réseau dépendent toujours du transport push et de sa durée de conservation. Un rappel déjà transmis ne peut pas être retiré rétroactivement par l’annulation serveur. Les nouveaux textes et le bouton doivent encore être observés sur Android et iPhone ; les tests ne constituent pas cette preuve de réception.
+
+## Changement de journée — 30 octobre 2026
+
+Demande de Dr Justin : à minuit, les rappels de la veille s'arrêtent ; la nouvelle journée commence avec ses propres rappels.
+
+- Existant vérifié (production) : le planning crée les relances jusqu'à 23 h 59 au plus tard ; aucun rappel d'une journée n'a été envoyé après minuit (historique depuis le 27/10 : dernier envoi 23 h 50).
+- Expéditeur `envoyer-rappels-hd` version 5 (déployée le 30/10 vers 23 h 37, Kinshasa) : validité chez le fournisseur limitée à minuit dans le fuseau du participant (30 min au plus) ; aucun envoi dans la dernière minute de la journée ; la fin de journée (`fin`) est transmise au téléphone. Premiers envois vérifiés à 23 h 40 (Apple et Google acceptés). Version 4 conservée dans l'historique git (commit précédent 0c747b6^).
+- Téléphone (service, cache v72) : chaque rappel habitudes et matin/midi/soir garde sa journée ; ceux d'une journée passée encore affichés sont retirés à l'arrivée d'un nouveau rappel et à l'ouverture de SÉNEVÉ ; le chiffre de l'icône ne les compte plus. Les annonces ne sont pas concernées.
+- Limite : sans nouveau rappel ni ouverture de SÉNEVÉ, le téléphone ne peut pas retirer seul une notification exactement à minuit (aucun programme ne tourne sur le téléphone sans message entrant). Elles disparaissent au premier rappel du matin ou à l'ouverture de l'application.
