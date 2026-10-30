@@ -200,6 +200,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
 
   // Copie hors connexion : date de la copie affichée quand le réseau manque.
   const [copieDu, setCopieDu] = useState<string | null>(null);
+  // Copie de l'appareil affichée pendant la relecture d'un espace Habitudes & Défis (sa journée n'y est pas).
+  const [relecture, setRelecture] = useState(false);
   const enLigne = useEnLigne();
 
   const langueDemandee = params.get('lang');
@@ -238,6 +240,13 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       return;
     }
     const copie = lireEspace<Data>(userId);
+    // Page rouverte de zéro (fréquent sur iPhone, 31/10/2026) avec Habitudes & Défis : le reste de l'espace
+    // s'affiche tout de suite depuis la copie ; la journée Habitudes se charge seule (rien d'intime n'est copié).
+    if (copie && copie.donnees.habitudes?.length) {
+      setData(copie.donnees); setRelecture(true);
+      void refresh().finally(() => setRelecture(false));
+      return;
+    }
     if (copie && !copie.donnees.habitudes?.length) {
       setData(copie.donnees);
       if (copieEncoreFraiche(copie.le)) {
@@ -420,7 +429,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       {!horsLigne&&<label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>}
       {!horsLigne&&data.participantId&&<PlanningJourHabitudes key={enr.enrollment_id} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue}/>}
       {horsLigne&&<p role="status">{en?'Offline: your habits for today can be reread and recorded on the Habits screen, if this device has already opened it today.':'Hors connexion : ta journée d’habitudes se relit et se note sur l’écran Habitudes, si cet appareil l’a déjà ouvert aujourd’hui.'} <Link to={en?'/habitudes/aujourdhui?lang=en':'/habitudes/aujourdhui'}>{en?'Open my habits':'Ouvrir mes habitudes'}</Link></p>}
-      {!horsLigne&&occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
+      {relecture&&<p role="status">{en?'Loading…':'Chargement…'}</p>}
+      {!horsLigne&&!relecture&&occurrences.length===0&&<p role="status">{en?'No activity is currently available.':'Aucune activité n’est disponible pour le moment.'}</p>}
       {!horsLigne&&duJour.map(c=><LectureTexteHabitude key={c.content_id} titre={c.theme||(en?`Reading ${c.numero_message}`:`Lecture ${c.numero_message}`)} texte={c.texte_officiel} langue={enr.langue}/>)}
       {!horsLigne&&occurrences.map(o=>{const a=data.activities.find(a=>a.activity_id===o.occurrence_id)!;const st=etatDe(a);return <DeclarationHabitude key={`${userId}:${enr.enrollment_id}:${o.occurrence_id}`} userId={userId} occurrence={o} consigne={a.consigne} critere={a.critere_realisation} langue={enr.langue} lectureSeule={lectureSeule||enr.etat!=='active'}
         etat={st?{...o,etat:st.etat as 'non_commencee'|'preparee'|'partielle'|'realisee',aide_demandee:st.aide_demandee??false,synchronisation:horsLigne?'local':'synchronise'}:undefined}

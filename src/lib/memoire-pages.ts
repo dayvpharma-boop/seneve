@@ -34,7 +34,21 @@ export function memoireFraiche(le: number, maintenant = Date.now()): boolean {
 
 /** Dernier compte vérifié pendant la visite : l'écran privé s'affiche sans attendre la relecture de la session. */
 let dernierCompte: string | undefined;
-export function compteMemorise(): string | undefined { return dernierCompte; }
+export function compteMemorise(): string | undefined { return dernierCompte ?? compteDeLAppareil(); }
+
+/** Page rouverte de zéro (fréquent sur iPhone) : compte de la session gardée sur l'appareil par Supabase.
+ *  Sert seulement à afficher l'écran sans attendre ; la session est toujours vérifiée ensuite. */
+function compteDeLAppareil(): string | undefined {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || !/^sb-.+-auth-token$/.test(k)) continue;
+      const id = (JSON.parse(localStorage.getItem(k) ?? 'null') as { user?: { id?: unknown } } | null)?.user?.id;
+      if (typeof id === 'string' && id) return id;
+    }
+  } catch { /* stockage indisponible */ }
+  return undefined;
+}
 export function memoriserCompte(id: string | null): void { dernierCompte = id ?? undefined; }
 
 export function effacerMemoire(): void { memoire.clear(); dernierCompte = undefined; }

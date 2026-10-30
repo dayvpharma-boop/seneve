@@ -33,3 +33,13 @@ describe('Mémoire des pages pendant la visite (30/10/2026)', () => {
     effacerMemoire();
   });
 });
+
+describe('Page rouverte de zéro (iPhone, 31/10/2026)', () => {
+  it('le compte de la session gardée sur l’appareil sert à afficher sans attendre', () => {
+    effacerMemoire();
+    localStorage.setItem('sb-abc-auth-token', JSON.stringify({ user: { id: 'U9' } }));
+    expect(compteMemorise()).toBe('U9');
+    localStorage.removeItem('sb-abc-auth-token');
+    expect(compteMemorise()).toBeUndefined();
+  });
+});
