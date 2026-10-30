@@ -10,7 +10,7 @@ import {chargerHorairesHabitudes} from '@/lib/habitudes-horaires-api';
 import { RaccourcisParcours } from '@/components/RaccourcisParcours';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
-import { useCallback, useEffect, useState, type ReactNode, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode, type KeyboardEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
@@ -24,6 +24,7 @@ import { RepereParcours } from '@/components/RepereParcours';
 import { useEnLigne } from '@/lib/hors-ligne';
 import { CarteHorsConnexion } from '@/components/HorsConnexion';
 import { IconeJournee } from '@/components/IconeJournee';
+import { garderEnMemoire, lireEnMemoire } from '@/lib/memoire-pages';
 import { enregistrerCopieProgres, lireCopieProgres, reduireBilan, semaineEnCours, type CopieProgres } from '@/lib/progres-copie';
 
 type Parcours = { enrollment_id: string; programme_id: string; version: number | string; langue: string; date_debut: string; etat: string; date_fin_prevue?: string | null; duree: number; nom: string };
@@ -126,6 +127,7 @@ export function Progres() {
   const [chosen, setChosen] = useState<string | null>(null);
   const [copie, setCopie] = useState<CopieProgres | null>(null);
   const enLigne = useEnLigne();
+  const gardee = useRef(false);
 
   const refresh = useCallback(async () => {
     setFailed(false);
@@ -133,14 +135,26 @@ export function Progres() {
       const loaded = await load();
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
       setData(loaded); setCopie(null);
+      garderEnMemoire('progres', loaded.userId, loaded);
       // Copie hors connexion (décision du 28/10/2026) : chiffres et état des jours seulement, hors Habitudes & Défis.
       enregistrerCopieProgres(loaded.userId, loaded.parcours.filter(x => !loaded.habitudes[x.enrollment_id] && loaded.bilans[x.enrollment_id]).map(x => reduireBilan(x, loaded.bilans[x.enrollment_id]!)));
     } catch {
+      // Page déjà affichée depuis la mémoire de la visite : on la garde plutôt que l'écran d'erreur.
+      if (gardee.current) return;
       setFailed(true);
       try { const { data: s } = await supabase.auth.getSession(); setCopie(s.session ? lireCopieProgres(s.session.user.id) : null); } catch { setCopie(null); }
     }
   }, [navigate]);
-  useEffect(() => { void refresh(); }, [refresh]);
+  // Changement d'onglet (30/10/2026) : la page gardée en mémoire pendant la visite s'affiche tout de suite,
+  // puis les progrès sont relus en arrière-plan (une action notée ailleurs doit apparaître).
+  useEffect(() => {
+    let actif = true;
+    void supabase.auth.getSession().then(({ data: s }) => {
+      const m = s.session ? lireEnMemoire<Loaded>('progres', s.session.user.id) : null;
+      if (actif && m) { gardee.current = true; setData(m.donnees); }
+    }).catch(() => undefined).finally(() => { if (actif) void refresh(); });
+    return () => { actif = false; };
+  }, [refresh]);
 
   const enr = data ? (data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0] ?? null) : null;
   // Un choix explicite de langue prime ; sans choix, on suit le parcours, puis le profil.

@@ -128,3 +128,17 @@ describe('Retour dans l’espace : copie affichée tout de suite (demande du 30/
     expect(apres.donnees.states).toEqual([{ activity_id: 'A2', etat: 'realisee' }]);
   });
 });
+
+describe('Changement d’onglet pendant la visite (30/10/2026)', () => {
+  it('revenir sur Aujourd’hui dans les 30 minutes : la page revient sans lecture du serveur', async () => {
+    const premier = ouvrir();
+    await screen.findByText('Jour 2 sur 7');
+    premier.unmount();
+    localStorage.clear(); // seule la mémoire de la visite reste
+    vi.setSystemTime(new Date('2026-10-12T12:10:00Z'));
+    lectures = 0;
+    ouvrir();
+    expect(await screen.findByText('Jour 2 sur 7')).toBeInTheDocument();
+    expect(lectures).toBe(0);
+  });
+});

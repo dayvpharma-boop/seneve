@@ -54,6 +54,7 @@ import { AccueilVivant } from '@/components/AccueilVivant';
 import { BarreNav } from '@/components/BarreNav';
 import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
+import { garderEnMemoire, lireEnMemoire, memoireFraiche, modifierEnMemoire } from '@/lib/memoire-pages';
 import { copieEncoreFraiche, effacerEspaces, enregistrerEspace, lireEspace, modifierEspace, useEnLigne } from '@/lib/hors-ligne';
 import { estProgrammeHdReel } from '@/lib/habitudes-programmes';
 import { copiesJourHdValides } from '@/lib/habitudes-copie-jour';
@@ -213,8 +214,11 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       const loaded = await load(langueDemandee);
       if (!loaded) { navigate('/connexion', { replace: true }); return; }
       setData(loaded); setCopieDu(null);
-      if (userId) enregistrerEspace(userId, loaded);
+      if (userId) { enregistrerEspace(userId, loaded); garderEnMemoire('espace', userId, loaded); }
     } catch {
+      // Page déjà affichée depuis la mémoire de la visite : elle reste, marquée comme copie.
+      const memoire = userId ? lireEnMemoire<Data>('espace', userId) : null;
+      if (memoire) { setData(memoire.donnees); setCopieDu(new Date(memoire.le).toISOString()); return; }
       const copie = userId ? lireEspace<Data>(userId) : null;
       if (copie) { setData(copie.donnees); setCopieDu(copie.le); }
       else setFailed(true);
@@ -224,6 +228,15 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   // Moins de 30 minutes et même journée : rien n'est rechargé. Sinon, les données sont relues en arrière-plan.
   // Habitudes & Défis : sa journée n'est jamais dans cette copie, donc ces espaces se chargent comme avant.
   useEffect(() => {
+    // Changement d'onglet pendant la visite : la page gardée en mémoire revient sans « Chargement… ».
+    // Habitudes & Défis : affichée tout de suite aussi, mais toujours relue en arrière-plan (déclarations faites ailleurs).
+    const memoire = lireEnMemoire<Data>('espace', userId);
+    if (memoire) {
+      setData(memoire.donnees);
+      if (!memoire.donnees.habitudes?.length && memoireFraiche(memoire.le)) return;
+      void refresh();
+      return;
+    }
     const copie = lireEspace<Data>(userId);
     if (copie && !copie.donnees.habitudes?.length) {
       setData(copie.donnees);
@@ -367,6 +380,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     setRepriseFaite(true); setData(prev => prev ? noter(prev) : prev);
     // La copie de l'appareil suit l'action notée : au retour dans les 30 minutes, l'action reste affichée comme faite.
     modifierEspace<Data>(userId, noter);
+    modifierEnMemoire<Data>('espace', userId, noter);
   };
   const lienJournal = (q: Activity) => `/journal?inscription=${enr.enrollment_id}&activite=${q.activity_id}`;
   const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} lecture={momentParam > 0} readOnly={lectureSeule && !actionLocale} horsLigne={horsLigne} userId={userId} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;

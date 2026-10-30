@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import {effacerProfils} from './profil';
 import {effacerCopiesProgres} from './progres-copie';
 import {effacerCopiesJourHd} from './habitudes-copie-jour';
+import {effacerMemoire} from './memoire-pages';
 
 const PREFIXE = 'seneve:espace:v1:';
 
@@ -61,6 +62,7 @@ export function modifierEspace<T>(userId: string, modifier: (donnees: T) => T): 
 
 /** À la déconnexion : aucune copie ne reste sur l'appareil. */
 export function effacerEspaces(): void {
+  effacerMemoire();
   effacerProfils();
   effacerCopiesProgres();
   effacerCopiesJourHd();

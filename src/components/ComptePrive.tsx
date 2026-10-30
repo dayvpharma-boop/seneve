@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { compteMemorise, memoriserCompte } from '@/lib/memoire-pages';
 
 /** Remonte les écrans privés quand le compte change, y compris dans un autre onglet. */
 export function ComptePrive({ enfants }: { enfants: (userId: string) => ReactNode }) {
-  const [compte, setCompte] = useState<string | null | undefined>(undefined);
+  // Changement d'onglet (30/10/2026) : le dernier compte vérifié s'affiche tout de suite, sans « Chargement… » ;
+  // la session est quand même relue, et un autre compte remonte l'écran.
+  const [compte, setCompteEtat] = useState<string | null | undefined>(compteMemorise);
+  const setCompte = (c: string | null) => { memoriserCompte(c); setCompteEtat(c); };
   const [erreur, setErreur] = useState(false);
   const [essai, setEssai] = useState(0);
   const revision = useRef(0);

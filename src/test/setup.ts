@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { beforeEach, vi } from "vitest";
+import { effacerMemoire } from "@/lib/memoire-pages";
 
 // Les contrôles automatiques n'écrivent jamais dans la vraie base : le suivi du test est simulé partout.
 vi.mock("@/lib/suivi-test", async (importOriginal) => {
@@ -34,6 +35,7 @@ Object.defineProperty(window, "matchMedia", {
 // Copie de l'espace (30/10/2026) : elle s'affiche au retour, sans rechargement pendant 30 minutes.
 // Chaque essai part donc sans copie laissée par l'essai précédent.
 beforeEach(() => {
+  effacerMemoire();
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
       const k = localStorage.key(i);
