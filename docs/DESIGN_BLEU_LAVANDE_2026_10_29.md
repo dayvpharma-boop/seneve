@@ -36,3 +36,8 @@ Demande de Dr Justin : « change tout avec le même style » (reprendre le modè
 - Barre du téléphone et écran de démarrage : #F5F7FE.
 - Photos : celles du modèle (pousse, chemin, livre ouvert) sont déjà celles de l'application ; aucune nouvelle photo ajoutée dans cette étape.
 - Vérification : aperçu de l'application entière avec un compte fictif (`scripts/recette/vite-apercu-app.config.ts`), en clair et en sombre, sur Aujourd'hui, Parcours, Journal, Bible, Bibliothèque, Coach, Aide, Notifications, Profil, Réglages, Connexion et Offres ; 1 045 tests réussis ; construction réussie. Pas de vérification sur un vrai téléphone.
+
+## Retours du 30/10/2026
+- Logo d'origine rétabli sur toutes les pages (demande de Dr Justin).
+- Titres (police, gras, trait dessous) et icônes (avatar rond de l'en-tête, barre du bas à plat) revenus comme avant, à sa demande. La barre du bas retrouve le bouton Bibliothèque au centre.
+- Restent : couleurs bleu lavande (palette par défaut « Lavande »), bouton principal arrondi en couleur principale, barre du téléphone #F5F7FE.

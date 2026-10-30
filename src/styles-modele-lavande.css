@@ -1,34 +1,7 @@
-/* Modèle bleu lavande étendu à toute l'application (demande de Dr Justin du 29/10/2026 : « change tout avec le même style »).
-   Chargé en dernier. Les couleurs viennent de la palette choisie (Lavande par défaut) : rien n'est figé ici. */
-
-/* Barre du bas : cinq icônes à plat, l'onglet actif en couleur principale (plus de bouton central surélevé). */
-:root:root[data-apparence] body .barre-nav { background: var(--palette-surface, #fff); border: 0; border-top: 1px solid var(--palette-ligne, #e8e2d3); box-shadow: 0 -2px 12px rgba(21, 27, 54, .05); }
-:root:root[data-apparence] body .barre-nav a { color: var(--palette-secondaire, #4a463f); font: 500 11px/15px Poppins, Outfit, system-ui, sans-serif; letter-spacing: 0; text-transform: none; text-decoration: none; }
-:root:root[data-apparence] body .barre-nav a[aria-current="page"] { color: var(--palette-accent, #755b00); font-weight: 600; text-decoration: none; }
-:root:root[data-apparence] body .barre-nav a > svg { background: none; padding: 0; }
-:root:root[data-apparence] body .barre-nav a[aria-current="page"] > svg,
-:root:root[data-apparence] body .barre-nav a[aria-current="page"] .nav-plus > svg { background: var(--palette-or-doux, #e3e6fb); border-radius: 12px; box-sizing: content-box; padding: 4px 12px; }
-:root:root[data-apparence] body .barre-nav .nav-plus { display: inline-flex; align-items: center; justify-content: center; width: auto; height: auto; padding: 0; background: none; color: inherit; border: 0; border-radius: 0; box-shadow: none; transform: none; margin: 0; }
-
-:root:root[data-apparence="sombre"] body .barre-nav { background: var(--palette-nuit-surface, #1d1b18); border-top-color: var(--palette-nuit-ligne, #363531); box-shadow: none; }
-:root:root[data-apparence="sombre"] body .barre-nav a { color: var(--palette-nuit-secondaire, #d1c5b3); }
-:root:root[data-apparence="sombre"] body .barre-nav a[aria-current="page"] { color: var(--palette-nuit-accent, #ffd482); }
-:root:root[data-apparence="sombre"] body .barre-nav a[aria-current="page"] > svg,
-:root:root[data-apparence="sombre"] body .barre-nav a[aria-current="page"] .nav-plus > svg { background: var(--palette-nuit-haut, #2b2a26); }
+/* Modèle bleu lavande étendu à toute l'application (demande de Dr Justin du 29/10/2026).
+   Le 30/10/2026, à sa demande, le logo, les titres (écriture) et les icônes (en-tête, barre du bas) sont revenus comme avant.
+   Restent ici : le bouton principal en couleur principale de la palette (Lavande par défaut). */
 
 /* Bouton principal : couleur principale de la palette, coins arrondis comme sur le modèle. */
 :root:root[data-apparence] body .btn:not(.link):not(.btn-secondaire):not(:disabled) { background: var(--palette-accent, #755b00); color: #fff; border-radius: 999px; }
 :root:root[data-apparence="sombre"] body .btn:not(.link):not(.btn-secondaire):not(:disabled) { background: var(--palette-nuit-accent, #ffd482); color: var(--palette-nuit, #141310); }
-
-/* Avatar de l'en-tête : cercle clair, initiale en couleur principale (comme l'icône profil du modèle). */
-:root:root[data-apparence] body header .photo-participant { width: 40px; height: 40px; border-radius: 50%; background: var(--palette-or-doux, #e3e6fb); color: var(--palette-accent, #755b00); border: 1.5px solid var(--palette-accent, #755b00); box-shadow: none; font: 600 16px/1 Poppins, Outfit, system-ui, sans-serif; box-sizing: border-box; overflow: hidden; }
-:root:root[data-apparence="sombre"] body header .photo-participant { background: var(--palette-nuit-haut, #2b2a26); color: var(--palette-nuit-accent, #ffd482); border-color: var(--palette-nuit-accent, #ffd482); }
-
-/* Grands titres de page : sans empattement, gras, petit trait de couleur principale dessous. */
-:root:root[data-apparence] body :is(.page-tete, .parcours-intro, .bb-base, .bl-intro, .coach-editorial, .nt-tete, .rn-contenu) > h1,
-:root:root[data-apparence] body .oa-content > .oa-title { font-family: Poppins, Outfit, system-ui, sans-serif; font-weight: 700; letter-spacing: -.01em; }
-:root:root[data-apparence] body :is(.page-tete, .parcours-intro, .bb-base, .bl-intro, .coach-editorial, .rn-contenu) > h1::after,
-:root:root[data-apparence] body .oa-content > .oa-title::after { content: ""; display: block; width: 40px; height: 3px; margin-top: 8px; border-radius: 3px; background: var(--palette-accent, #755b00); }
-:root:root[data-apparence="sombre"] body :is(.page-tete, .parcours-intro, .bb-base, .bl-intro, .coach-editorial, .rn-contenu) > h1::after,
-:root:root[data-apparence="sombre"] body .oa-content > .oa-title::after { background: var(--palette-nuit-accent, #ffd482); }
-:root:root[data-apparence] body header :is(.today-profil, .bl-profil, .bb-profil, .parcours-avatar, .journal-profil, .coach-initiale, .aide-initiale, .rn-profil):has(.photo-participant) { background: none !important; border: 0; box-shadow: none; outline: 0; padding: 0; width: auto; height: auto; min-width: 44px; min-height: 44px; border-radius: 50% !important; display: inline-flex; align-items: center; justify-content: center; }
