@@ -1,0 +1,79 @@
+/* Mon parcours : inscriptions et bilans existants, surfaces bleu lavande. */
+:root:root:root[data-apparence] body:has(.parcours-page){background:#f5f7fe;color:#151b36}
+:root:root:root[data-apparence] .parcours-page{--vivant-fond:#f5f7fe;--vivant-surface:rgb(255 255 255);--vivant-encre:#151b36;--vivant-secondaire:#59627e;--vivant-vert:#49439b;--vivant-sur-accent:rgb(255 255 255);--vivant-ligne:#dce3f0;--vivant-miel:#e3efff;--vivant-sauge:#e3efff;--vivant-argile:#edf2fc;--vivant-lavande:#eee8fc;--background:var(--vivant-fond);--surface:var(--vivant-surface);--foreground:var(--vivant-encre);--muted:var(--vivant-secondaire);--gold:var(--vivant-vert);--primary-fill:var(--vivant-vert);--on-primary:var(--vivant-sur-accent);--line:var(--vivant-ligne);max-width:1080px;padding:0 24px 124px;margin:auto;background:var(--vivant-fond);color:var(--vivant-encre);font:400 14px/1.7 Poppins,system-ui,sans-serif;overflow-wrap:anywhere}
+:root:root:root[data-apparence=sombre] body:has(.parcours-page){background:#111528;color:#eef0ff}
+:root:root:root[data-apparence=sombre] .parcours-page{--vivant-fond:#111528;--vivant-surface:#1c2238;--vivant-encre:#eef0ff;--vivant-secondaire:#bbc4de;--vivant-vert:#bcb2ff;--vivant-sur-accent:#201a4d;--vivant-ligne:#3b4460;--vivant-miel:#24334d;--vivant-sauge:#24334d;--vivant-argile:#252d45;--vivant-lavande:#332d4f}
+:root:root[data-apparence] .parcours-page .parcours-marque{min-height:68px;color:var(--vivant-encre);margin:0}
+:root:root[data-apparence] .parcours-page .parcours-marque strong{font:600 14px/1.5 Poppins,sans-serif;letter-spacing:.1em}
+:root:root[data-apparence] .parcours-page .parcours-avatar{min-width:44px;min-height:44px;border:1px solid var(--vivant-ligne);background:var(--vivant-lavande);color:var(--vivant-vert);border-radius:16px}
+:root:root[data-apparence] .parcours-page .parcours-intro{margin:6px 0 18px;gap:5px}
+:root:root[data-apparence] .parcours-page .parcours-repere{font:500 10px/1.6 Poppins,sans-serif;color:var(--vivant-vert)}
+:root:root[data-apparence] .parcours-page .parcours-repere>span{background:var(--vivant-vert)}
+:root:root[data-apparence] .parcours-page h1{font:600 28px/1.3 Poppins,sans-serif;letter-spacing:-.035em;color:var(--vivant-encre)}
+:root:root[data-apparence] .parcours-page :is(h2,h3,h4,button,a,summary){font-family:Poppins,sans-serif}
+:root:root[data-apparence] .parcours-page .page-illustration{display:flex;flex-direction:column;border:1px solid var(--vivant-ligne);border-radius:24px;background:var(--vivant-surface);overflow:hidden;margin:0 0 16px;box-shadow:none}
+:root:root[data-apparence] .parcours-page .page-illustration>img{order:0;display:block;position:static;width:100%;height:210px;min-height:0;object-fit:cover;object-position:center;mask:none;-webkit-mask:none}
+:root:root[data-apparence] .parcours-page .page-illustration-texte{padding:16px 20px;position:static}
+:root:root[data-apparence] .parcours-page .page-illustration-repere{font:500 10px/1.5 Poppins,sans-serif;letter-spacing:.07em;color:var(--vivant-vert);margin:0 0 5px}
+:root:root[data-apparence] .parcours-page .page-illustration-titre{font:600 21px/1.4 Poppins,sans-serif;letter-spacing:-.02em;color:var(--vivant-encre);margin:0 0 5px}
+:root:root[data-apparence] .parcours-page .page-illustration-note{font:400 13px/1.7 Lora,Georgia,serif;color:var(--vivant-secondaire);margin:0;max-width:670px}
+:root:root[data-apparence] .parcours-page .raccourcis-parcours{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px}
+:root:root[data-apparence] .parcours-page .raccourcis-parcours a{display:flex;gap:10px;align-items:center;min-height:66px;padding:12px;border:1px solid var(--vivant-ligne);background:var(--vivant-miel);color:var(--vivant-encre);font:500 12px/1.7 Poppins,sans-serif;border-radius:20px;overflow-wrap:normal}
+:root:root[data-apparence] .parcours-page .raccourcis-parcours a:last-child{background:var(--vivant-lavande)}
+:root:root[data-apparence] .parcours-page .raccourcis-parcours svg{flex-shrink:0;width:22px;height:22px;color:var(--vivant-vert)}
+:root:root[data-apparence] .parcours-page .progres-intro{font:400 13px/1.7 Lora,Georgia,serif;color:var(--vivant-secondaire);margin:0 0 14px}
+:root:root[data-apparence] .parcours-page .prog-tabs{display:flex;gap:10px;align-items:stretch;overflow-x:auto;margin:0 0 18px;padding:0 0 4px;scroll-snap-type:x proximity;max-width:100%}
+:root:root[data-apparence] .parcours-page .prog-tab{flex:0 0 238px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;padding:14px 16px;min-height:86px;border:1px solid var(--vivant-ligne);border-radius:20px;background:var(--vivant-surface);color:var(--vivant-encre);font:500 13px/1.6 Poppins,sans-serif;white-space:normal;text-align:left;scroll-snap-align:start}
+:root:root[data-apparence] .parcours-page .prog-tab[aria-selected=true]{background:var(--vivant-lavande);border-color:var(--vivant-vert);color:var(--vivant-encre)}
+:root:root[data-apparence] .parcours-page .prog-tab small{display:block;background:transparent;padding:0;color:var(--vivant-vert);font:400 11px/1.6 Poppins,sans-serif;text-transform:none;letter-spacing:0}
+:root:root[data-apparence] .parcours-page :is(.card,.bilan-jour,.repere-parcours,.hc-carte,.hd-bilan){border:1px solid var(--vivant-ligne);border-radius:22px;background:var(--vivant-surface);color:var(--vivant-encre);padding:18px;box-shadow:none;margin:0 0 18px}
+:root:root[data-apparence] .parcours-page .progres-carte{gap:14px}
+:root:root[data-apparence] .parcours-page .parcours-synthese-titre{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+:root:root[data-apparence] .parcours-page h2{font:600 18px/1.5 Poppins,sans-serif;color:var(--vivant-encre);margin:0 0 10px}
+:root:root[data-apparence] .parcours-page .parcours-synthese-titre h2{font-size:17px;margin:0}
+:root:root[data-apparence] .parcours-page .parcours-synthese-titre>span{font:400 11px/1.7 Poppins,sans-serif;color:var(--vivant-secondaire);white-space:normal}
+:root:root[data-apparence] .parcours-page .progres-compte{font:400 12px/1.6 Poppins,sans-serif;color:var(--vivant-secondaire);margin:0}
+.pc-participation{margin:0;color:var(--vivant-encre)}
+.pc-participation>div{display:flex;justify-content:space-between;gap:10px;font:400 12px/1.7 Poppins,sans-serif}
+.pc-participation strong{font-weight:500}
+.pc-participation progress{display:block;width:100%;height:9px;border:0;border-radius:999px;appearance:none;overflow:hidden;accent-color:var(--vivant-vert);background:var(--vivant-miel);margin:8px 0}
+.pc-participation progress::-webkit-progress-bar{background:var(--vivant-miel);border-radius:999px}
+.pc-participation progress::-webkit-progress-value{background:var(--vivant-vert);border-radius:999px}
+.pc-participation progress::-moz-progress-bar{background:var(--vivant-vert);border-radius:999px}
+.pc-participation p{font:400 11px/1.7 Poppins,sans-serif;color:var(--vivant-secondaire);margin:0}
+:root:root[data-apparence] .parcours-page .progres-chiffres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0;margin:0;list-style:none}
+:root:root[data-apparence] .parcours-page .progres-chiffres li{padding:12px 8px;border:0;border-radius:16px;background:var(--vivant-miel);color:var(--vivant-encre);min-width:0}
+:root:root[data-apparence] .parcours-page .progres-chiffres li:nth-child(2){background:var(--vivant-lavande)}
+:root:root[data-apparence] .parcours-page .progres-chiffres li strong{font:600 23px/1.5 Poppins,sans-serif}
+:root:root[data-apparence] .parcours-page .progres-chiffres li span{font:400 10px/1.6 Poppins,sans-serif;white-space:normal;color:var(--vivant-secondaire)}
+:root:root[data-apparence] .parcours-page .progres-tuiles{display:flex;gap:6px;flex-wrap:wrap;padding:0;margin:0}
+:root:root[data-apparence] .parcours-page .progres-tuiles .day-tile{background:var(--vivant-fond);color:var(--vivant-secondaire);border:0;border-radius:12px;flex:1 0 34px;max-width:90px;min-width:0;min-height:57px;box-shadow:none;padding:8px 4px}
+:root:root[data-apparence] .parcours-page .progres-tuiles .is-today{background:var(--vivant-lavande);color:var(--vivant-vert)}
+:root:root[data-apparence] .parcours-page .parcours-rond{color:var(--vivant-vert);background:none;font:500 13px/1.5 Poppins,sans-serif}
+:root:root[data-apparence] .parcours-page .parcours-jour{font:400 9px/1.5 Poppins,sans-serif}
+:root:root[data-apparence] .parcours-page :is(.moment-btn,.btn.action-btn){min-height:48px;padding:12px 16px;border:0;background:var(--vivant-vert);color:var(--vivant-sur-accent);border-radius:16px;font:500 13px/1.6 Poppins,sans-serif;text-transform:none;letter-spacing:0;white-space:normal}
+:root:root[data-apparence] .parcours-page .progres-suite{background:var(--vivant-lavande);border-radius:18px;padding:14px;margin:0}
+:root:root[data-apparence] .parcours-page .progres-suite p{color:var(--vivant-encre);font:400 13px/1.7 Poppins,sans-serif;margin:0 0 10px}
+:root:root[data-apparence] .parcours-page :is(.bilan-list,.parcours-semaines>p,.parcours-consigne,.pc-indisponible){font:400 13px/1.8 Lora,Georgia,serif;color:var(--vivant-secondaire)}
+:root:root[data-apparence] .parcours-page .parcours-etapes{margin:0 0 20px}
+:root:root[data-apparence] .parcours-page .bilan-jours{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+:root:root[data-apparence] .parcours-page .bilan-jour{display:flex;gap:12px;align-items:flex-start;margin:0;padding:16px}
+:root:root[data-apparence] .parcours-page .bilan-theme{font:500 15px/1.6 Poppins,sans-serif;color:var(--vivant-encre);margin:5px 0}
+:root:root[data-apparence] .parcours-page .bilan-pastille{flex-shrink:0;background:var(--vivant-miel);color:var(--vivant-vert);border-radius:14px;min-width:44px;min-height:50px}
+:root:root[data-apparence] .parcours-page :is(.bilan-etat,.bilan-num,.parcours-jour-titre,.parcours-revoir,.parcours-notes){font:400 11px/1.7 Poppins,sans-serif;color:var(--vivant-secondaire)}
+:root:root[data-apparence] .parcours-page .parcours-consigne{margin:5px 0}
+:root:root[data-apparence] .parcours-page .parcours-revoir{display:inline-flex;align-items:center;min-height:44px;color:var(--vivant-vert);gap:8px}
+:root:root[data-apparence] .parcours-page .bilan-etat a{display:inline-flex;align-items:center;min-height:44px;color:var(--vivant-vert);white-space:normal}
+:root:root[data-apparence] .parcours-page .jardin-card{flex-direction:row;align-items:center;text-align:left;padding:16px;border-radius:22px;background:var(--vivant-miel);border:1px solid var(--vivant-ligne)}
+:root:root[data-apparence] .parcours-page .jardin-illus{width:70px;height:70px;min-width:70px;background:var(--vivant-surface);border-radius:18px}
+:root:root[data-apparence] .parcours-page .jardin-message{font:400 13px/1.7 Lora,Georgia,serif;color:var(--vivant-encre)}
+:root:root[data-apparence] .parcours-page .pc-etat{padding:18px;border-radius:22px;background:var(--vivant-surface);border:1px solid var(--vivant-ligne);margin:0 0 18px;color:var(--vivant-encre)}
+.pc-squelette{display:grid;gap:12px;margin-top:18px}.pc-squelette span{height:14px;display:block;border-radius:8px;background:var(--vivant-miel)}.pc-squelette span:nth-child(2){width:75%}.pc-squelette span:nth-child(3){height:80px;background:var(--vivant-lavande)}
+:root:root[data-apparence] .parcours-page .hc-bandeau{border-radius:22px;border:1px solid var(--vivant-ligne);background:var(--vivant-lavande);color:var(--vivant-encre);padding:16px}
+:root:root[data-apparence] .parcours-page>.barre-nav{background:var(--vivant-surface);color:var(--vivant-encre);border-top:1px solid var(--vivant-ligne);max-width:1080px;margin:auto}
+:root:root[data-apparence] .parcours-page>.barre-nav a{font:500 10px/1.5 Poppins,sans-serif;color:var(--vivant-secondaire);min-height:48px;white-space:normal}
+:root:root[data-apparence] .parcours-page>.barre-nav a[aria-current=page]{color:var(--vivant-vert)}
+:root:root[data-apparence] .parcours-page>.barre-nav .nav-plus{background:var(--vivant-lavande);color:var(--vivant-vert);border-radius:14px}
+:root:root[data-apparence] .parcours-page :is(a,button,summary):focus-visible{outline:3px solid #8275d4;outline-offset:3px}
+@media(max-width:760px){:root:root:root[data-apparence] .parcours-page{padding:0 18px 124px}:root:root[data-apparence] .parcours-page h1{font-size:26px}:root:root[data-apparence] .parcours-page .page-illustration>img{height:140px}:root:root[data-apparence] .parcours-page .page-illustration-texte{padding:14px 16px}:root:root[data-apparence] .parcours-page .page-illustration-titre{font-size:20px}:root:root[data-apparence] .parcours-page>.barre-nav a{font-size:9px}}
+@media(min-width:900px){:root:root[data-apparence] .parcours-page .bilan-jours{grid-template-columns:1fr 1fr}:root:root[data-apparence] .parcours-page .raccourcis-parcours a{min-height:58px;padding:14px 18px}:root:root[data-apparence] .parcours-page .progres-chiffres{grid-template-columns:repeat(4,minmax(0,1fr))}:root:root[data-apparence] .parcours-page .progres-carte{padding:24px}:root:root[data-apparence] .parcours-page .page-illustration>img{height:250px}}

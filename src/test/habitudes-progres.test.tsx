@@ -36,7 +36,7 @@ it('sépare l’aide et la réalisation partielle',async()=>{
  expect(within(midi).getByText('Réalisée en partie')).toBeInTheDocument();expect(within(midi).getByText('Aide demandée')).toBeInTheDocument();
 });
 it('ne présente pas un contenu inaccessible comme un bilan de zéros',async()=>{
- tables.contents=[];page();expect(await screen.findByRole('status')).toHaveTextContent('Aucune activité');expect(screen.queryByText(/sur 0/)).toBeNull();
+ tables.contents=[];page();expect(await screen.findByText(/Aucune activité n’est disponible ici/)).toHaveAttribute('role','status');expect(screen.queryByText(/sur 0/)).toBeNull();
 });
 it('affiche une erreur si le registre est indisponible',async()=>{
  registryError=true;page();expect(await screen.findByRole('alert')).toHaveTextContent('Impossible');

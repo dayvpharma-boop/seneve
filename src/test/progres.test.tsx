@@ -129,6 +129,29 @@ describe('page Mes progrès', () => {
     expect(screen.getByRole('link', { name: 'Réalisée en partie · aide demandée' })).toHaveAttribute('href', '/espace?parcours=E14&jour=1');
   });
 
+  it('la participation compte une déclaration partielle avec aide une seule fois et exclut les jours fermés', async () => {
+    tables['activity_state'] = [
+      { enrollment_id: 'E7', activity_id: 'A1', etat: 'partielle', aide_demandee: true, realisee_le: null },
+      { enrollment_id: 'E7', activity_id: 'A2', etat: 'non_commencee', aide_demandee: true, realisee_le: null },
+      { enrollment_id: 'E7', activity_id: 'A5', etat: 'realisee', aide_demandee: false, realisee_le: null },
+    ];
+    render(<MemoryRouter><Progres /></MemoryRouter>);
+    const barre=await screen.findByRole('progressbar',{name:'Actions déclarées'});
+    expect(barre).toHaveAttribute('value','2');
+    expect(barre).toHaveAttribute('max','3');
+    expect(screen.getByRole('heading',{name:'0 action réalisée sur 3'})).toBeInTheDocument();
+    expect(screen.getByRole('link',{name:'Mes achats et accès'})).toHaveAttribute('href','/acces');
+    expect(screen.getByRole('link',{name:'Parcours & offres'})).toHaveAttribute('href','/offres');
+  });
+
+  it('un contenu indisponible ne produit pas une barre à zéro ni un faux bilan', async () => {
+    tables['contents']=[];tables['activities']=[];tables['activity_state']=[];
+    render(<MemoryRouter><Progres /></MemoryRouter>);
+    expect(await screen.findByRole('heading',{name:'Bilan indisponible'})).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    expect(screen.queryByText('0 action réalisée sur 0')).not.toBeInTheDocument();
+  });
+
   it('bilan factuel, sans jugement, avec reprise', async () => {
     render(<MemoryRouter initialEntries={['/progres']}><Routes><Route path="/progres" element={<Progres />} /></Routes></MemoryRouter>);
     expect(await screen.findByText('3 jours ouverts sur 7')).toBeInTheDocument();

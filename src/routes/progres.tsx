@@ -1,3 +1,4 @@
+import './progres-moderne.css';
 import {calendrierHabitudes,dureeHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
 import {lignesPaginees,parPaquets} from '@/lib/lignes-paginees';
 import {calendrierPeriodes,dateDuJourHabitudes,type PeriodeHabitudes} from '@/lib/habitudes-periodes';
@@ -9,7 +10,7 @@ import {chargerHorairesHabitudes} from '@/lib/habitudes-horaires-api';
 import { RaccourcisParcours } from '@/components/RaccourcisParcours';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode, type KeyboardEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
@@ -108,6 +109,15 @@ function dateCourte(iso: string, locale: string) {
   return new Intl.DateTimeFormat(locale, { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long' }).format(new Date(iso));
 }
 
+/** Les flèches changent d’inscription et déplacent le focus sans rien enregistrer. */
+function parcourirOnglets(e:KeyboardEvent<HTMLDivElement>){
+ if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+ const onglets=Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('button[role=tab]'));
+ const i=onglets.findIndex(x=>x===e.target);if(i<0)return;
+ e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?onglets.length-1:(i+(e.key==='ArrowRight'?1:-1)+onglets.length)%onglets.length;
+ onglets[n]?.focus();onglets[n]?.click();
+}
+
 export function Progres() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -135,27 +145,27 @@ export function Progres() {
   const enr = data ? (data.parcours.find(x => x.enrollment_id === chosen) ?? pickDefault(data.parcours) ?? data.parcours[0] ?? null) : null;
   // Un choix explicite de langue prime ; sans choix, on suit le parcours, puis le profil.
   const demande = params.get('lang');
-  const langue = demande === 'en' || demande === 'fr' ? demande : (enr?.langue ?? data?.langue ?? 'fr');
+  const langue = demande === 'en' || demande === 'fr' ? demande : (enr?.langue ?? data?.langue ?? copie?.parcours[0]?.langue ?? 'fr');
   const T = progresTextes(langue);
   useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = langue === 'en' ? 'en' : 'fr'; }, [T, langue]);
 
-  const back = <Link className="link" to="/espace">← {T.retour}</Link>;
+  const back = <Link className="link" to={langue==='en'?'/espace?lang=en':'/espace'}>← {T.retour}</Link>;
   // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026) : marque puis titre.
   const en = langue === 'en';
-  const tete = <><header className="parcours-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span>{data && <Link className="parcours-avatar" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header><IllustrationPage theme="parcours" langue={langue} /><RaccourcisParcours langue={langue} /></>;
+  const tete = <><header className="parcours-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span>{data && <Link className="parcours-avatar" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header><IllustrationPage theme="parcours" langue={langue} photoAvantTexte /><RaccourcisParcours langue={langue} /></>;
   if (failed && copie) return <ProgresHorsLigne copie={copie} langue={langue} tete={tete} reessayer={() => void refresh()} />;
   if (failed && !enLigne) return <main className="wrap avec-nav parcours-page">{tete}<CarteHorsConnexion langue={langue} texte={en ? 'There is no saved copy of your progress on this device.' : 'Aucune copie de tes progrès n’est disponible sur cet appareil.'} reessayer={() => void refresh()} /><BarreNav langue={langue} maquette iconesJournee /></main>;
   if (failed) return <main className="wrap avec-nav parcours-page">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
-  if (!data) return <main className="wrap avec-nav parcours-page">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langue} maquette iconesJournee /></main>;
-  if (!enr) return <main className="wrap avec-nav parcours-page">{tete}<p className="muted">{T.aucun}</p>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
+  if (!data) return <main className="wrap avec-nav parcours-page">{tete}<section className="pc-etat pc-chargement" aria-busy="true"><p role="status">{T.chargement}</p><div aria-hidden="true" className="pc-squelette"><span/><span/><span/></div></section><BarreNav langue={langue} maquette iconesJournee /></main>;
+  if (!enr) return <main className="wrap avec-nav parcours-page">{tete}<section className="card pc-etat"><p role="status">{T.aucun}</p></section>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
 
   const b = data.bilans[enr.enrollment_id]!;
-  const tabs = <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.titre}>
-    {data.parcours.map(x => <button type="button" role="tab" key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => setChosen(x.enrollment_id)}><span>{x.nom}</span>{x.enrollment_id === enr.enrollment_id && <small>{x.etat === 'en_pause' ? (en ? 'Paused' : 'En pause') : b.termine ? (en ? 'Completed' : 'Terminé') : b.pasCommence ? (en ? 'Upcoming' : 'À venir') : (en ? 'In progress' : 'En cours')}</small>}</button>)}
+  const tabs = <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.titre} onKeyDown={parcourirOnglets}>
+    {data.parcours.map(x => {const bx=data.bilans[x.enrollment_id]!;return <button type="button" role="tab" id={`pc-inscription-${x.enrollment_id}`} aria-controls="pc-bilan" tabIndex={x.enrollment_id === enr.enrollment_id?0:-1} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => setChosen(x.enrollment_id)}><span>{x.nom}</span><small>{x.etat === 'en_pause' ? (en ? 'Paused' : 'En pause') : x.etat==='terminee'||bx.termine ? (en ? 'Completed' : 'Terminé') : bx.pasCommence ? (en ? 'Upcoming' : 'À venir') : (en ? 'In progress' : 'En cours')} · {bx.pasCommence?(en?`${bx.duree} days`:`${bx.duree} jours`):`${en?'Day':'Jour'} ${bx.joursOuverts} / ${bx.duree}`}</small></button>;})}
   </div>;
   if(data.habitudes[enr.enrollment_id]) return <main className="wrap avec-nav parcours-page">
     {tete}<p className="progres-intro">{T.intro}</p>{tabs}
-    <BilanHabitudes jours={data.habitudes[enr.enrollment_id]!} langue={langue} inscription={enr.enrollment_id}/>
+    <div role="tabpanel" id="pc-bilan" aria-labelledby={`pc-inscription-${enr.enrollment_id}`}><BilanHabitudes jours={data.habitudes[enr.enrollment_id]!} langue={langue} inscription={enr.enrollment_id}/></div>
     {back}<BarreNav langue={langue} maquette iconesJournee/>
   </main>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;
@@ -166,14 +176,16 @@ export function Progres() {
     {b.jours.map(j => <span key={j.jour} className={['day-tile',j.jour === aujourdhui && 'is-today',j.etat === 'realisee' && 'is-done',!j.ouvert && 'is-locked',j.etat === 'partielle' && 'is-partial',j.etat === 'preparee' && 'is-prepared'].filter(Boolean).join(' ')}><span className="parcours-rond">{symboleJour(j)}</span><span className="parcours-jour">{en ? "D" : "J"}{j.jour}</span></span>)}
   </div>;
   const semainesDuParcours = semaines(b);
+  const declarees=b.jours.filter(j=>j.ouvert&&j.etat!==null&&(j.etat!=='non_commencee'||j.aide)).length;
 
   return <main className="wrap avec-nav parcours-page">
     {tete}<p className="progres-intro">{T.intro}</p>{tabs}
-    {!b.pasCommence && <JardinCard realisees={b.realisees} total={b.jours.filter(j => j.etat !== null).length} langue={langue} />}
-    <section className="card progres-carte" aria-label={enr.nom}>
-      {b.pasCommence ? <p>{T.pasCommence}</p> : <>
-        <div className="parcours-synthese-titre"><h2>{T.realisees(b.realisees, b.actionsOuvertes)}</h2><span>{en ? 'Week' : 'Semaine'} {Math.max(1, Math.ceil(b.joursOuverts / 7))}</span></div>
+    <section className="card progres-carte" role="tabpanel" id="pc-bilan" aria-labelledby={`pc-inscription-${enr.enrollment_id}`}>
+      {b.pasCommence ? <div className="pc-etat"><p>{T.pasCommence}</p><p>{en?'Planned start: ':'Début prévu : '}<time dateTime={enr.date_debut}>{dateCourte(enr.date_debut,T.locale)}</time></p></div> : <>
+        <div className="parcours-synthese-titre"><h2>{b.actionsOuvertes>0?T.realisees(b.realisees, b.actionsOuvertes):(en?'Summary unavailable':'Bilan indisponible')}</h2><span>{en ? 'Week' : 'Semaine'} {Math.max(1, Math.ceil(b.joursOuverts / 7))}</span></div>
         <p className="progres-compte">{b.termine ? T.termine : T.joursOuverts(b.joursOuverts, b.duree)}</p>{carte}
+        {b.actionsOuvertes>0&&<div className="pc-participation"><div><strong>{en?'My participation':'Ma participation'}</strong><span>{declarees} / {b.actionsOuvertes}</span></div><progress max={b.actionsOuvertes} value={declarees} aria-label={en?'Actions declared':'Actions déclarées'} aria-describedby="pc-participation-note"/><p id="pc-participation-note">{en?'This bar reflects only your declared actions.':'Cette barre décrit uniquement tes actions déclarées.'}</p></div>}
+        {b.actionsOuvertes===0&&<p className="pc-indisponible" role="status">{en?'No action is currently available for the opened days. Your saved records are preserved.':'Aucune action n’est disponible pour les jours ouverts pour le moment. Tes enregistrements sont conservés.'}</p>}
         <ul className="progres-chiffres">
           <li><div><IconeProgres nom="check_circle" taille={16} /><strong>{b.realisees}</strong></div><span>{en ? 'Actions completed' : 'Actions réalisées'}</span></li>
           <li><div><IconeProgres nom="hourglass_bottom" taille={16} /><strong>{b.partielles}</strong></div><span>{en ? 'Partly done' : 'En partie'}</span></li>
@@ -197,6 +209,7 @@ export function Progres() {
       </li>)}
       {fermes.length > 0 && <li className="bilan-jour bilan-ferme"><span className="bilan-pastille" aria-hidden="true"><IconeProgres nom="lock" taille={16} /></span><div className="parcours-jour-contenu"><span className="bilan-num">{fermes.length === 1 ? T.jour(fermes[0]!.jour) : T.jours(fermes[0]!.jour,fermes[fermes.length-1]!.jour)}</span><p className="bilan-etat etat-aucune">{fermes.length === 1 ? T.ferme : T.fermes}</p></div></li>}
     </ol></section>
+    {!b.pasCommence && <JardinCard realisees={b.realisees} total={b.jours.filter(j => j.etat !== null).length} langue={langue} />}
     <RepereParcours contexte="progres" langue={langue} />
     <footer className="parcours-confidentialite"><IconeProgres nom="verified_user" taille={16} /><Link to={en ? '/confidentialite?lang=en' : '/confidentialite'}>{en ? 'Your progress is recorded in your space.' : 'Tes progrès sont enregistrés dans ton espace.'}</Link></footer>
     <BarreNav langue={langue} maquette iconesJournee />

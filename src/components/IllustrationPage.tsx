@@ -14,8 +14,9 @@ const CARTES:Record<ThemeImage,{image:string;fr:[string,string,string];en:[strin
  administration:{image:'pages/administration-v1',fr:['PILOTAGE','Organiser et accompagner.','Retrouve les outils de suivi selon les droits de ton compte.'],en:['ADMINISTRATION','Organise and support.','Find the management tools permitted for your account.']},
  reprise:{image:'pages/reprise-v1',fr:['RETROUVER SON CHEMIN','Repartir du bon endroit.','Reviens vers une page disponible pour continuer.'],en:['FIND YOUR WAY','Start from the right place.','Return to an available page to continue.']},
 };
-export function IllustrationPage({theme,langue='fr'}:{theme:ThemeImage;langue?:string}){
+export function IllustrationPage({theme,langue='fr',photoAvantTexte=false}:{theme:ThemeImage;langue?:string;photoAvantTexte?:boolean}){
  const carte=CARTES[theme],t=langue==='en'?carte.en:carte.fr;
  const base=`${import.meta.env.BASE_URL}illustrations/${carte.image}`;
- return <aside className="page-illustration" aria-label={t[0]} data-theme={theme}><div className="page-illustration-texte"><p className="page-illustration-repere"><i aria-hidden="true"/>{t[0]}</p><p className="page-illustration-titre">{t[1]}</p><p className="page-illustration-note">{t[2]}</p></div><img src={`${base}-720.webp`} srcSet={`${base}-360.webp 360w, ${base}-720.webp 720w`} sizes="(max-width:600px) 42vw,280px" width={720} height={480} alt="" decoding="async" loading="lazy"/></aside>;
+ const image=<img src={`${base}-720.webp`} srcSet={`${base}-360.webp 360w, ${base}-720.webp 720w`} sizes={photoAvantTexte?'(max-width:600px) calc(100vw - 36px), 1000px':'(max-width:600px) 42vw,280px'} width={720} height={480} alt="" decoding="async" loading="lazy"/>;
+ return <aside className="page-illustration" aria-label={t[0]} data-theme={theme}>{photoAvantTexte&&image}<div className="page-illustration-texte"><p className="page-illustration-repere"><i aria-hidden="true"/>{t[0]}</p><p className="page-illustration-titre">{t[1]}</p><p className="page-illustration-note">{t[2]}</p></div>{!photoAvantTexte&&image}</aside>;
 }
