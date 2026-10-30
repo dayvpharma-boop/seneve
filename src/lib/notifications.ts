@@ -41,6 +41,13 @@ export function afficherPastilleApplication(n: number): void {
   } catch { /* non pris en charge */ }
 }
 
+/** Nouvelle journée (30/10/2026) : demande au service du téléphone de retirer les rappels d'une journée passée encore affichés. */
+export function retirerRappelsPerimes(): void {
+  try {
+    void navigator.serviceWorker?.getRegistration?.()?.then(reg => reg?.active?.postMessage({ type: 'seneve-retirer-rappels-perimes' }), () => undefined);
+  } catch { /* service non pris en charge */ }
+}
+
 /** Tout est lu : les notifications SÉNEVÉ encore affichées sur le téléphone sont retirées, et le chiffre de l'icône aussi. */
 export async function effacerNotificationsTelephone(): Promise<void> {
   try {
@@ -55,6 +62,7 @@ export async function effacerNotificationsTelephone(): Promise<void> {
 export function useNonLues(): number | null {
   const [n, setN] = useState<number | null>(null);
   const lire = useCallback(() => {
+    retirerRappelsPerimes();
     if (typeof navigator !== 'undefined' && navigator.onLine === false) { setN(null); return; }
     void chargerNotifications(1).then(r => { setN(r.non_lues); afficherPastilleApplication(r.non_lues); }, () => setN(null));
   }, []);

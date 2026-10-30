@@ -4,7 +4,7 @@
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v71-habitudes-plus-rapide-20261030';
+const CACHE = 'seneve-site-v72-rappels-minuit-20261030';
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -125,6 +125,29 @@ self.addEventListener('fetch', e => {
 });
 
 
+/* Changement de journée (demande de Dr Justin du 30/10/2026) : à minuit, les rappels de la veille s'arrêtent.
+ * Chaque rappel (habitudes et moments matin/midi/soir) garde sa journée ; les annonces ne sont pas concernées.
+ * `fin` (envoyée par le serveur) = minuit chez le participant ; sinon, la journée du téléphone au moment de l'affichage. */
+const RAPPEL_DU_JOUR = /^seneve-(hd-|matin$|midi$|soir$)/;
+function jourLocal(ms) { const d = new Date(ms); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function rappelPerime(n, maintenant) {
+  if (!n || typeof n.tag !== 'string' || !RAPPEL_DU_JOUR.test(n.tag)) return false;
+  const d = n.data || {};
+  if (typeof d.fin === 'number') return d.fin <= maintenant;
+  return typeof d.jour === 'string' && d.jour < jourLocal(maintenant);
+}
+/** Retire les rappels d'une journée passée encore affichés ; renvoie le nombre de notifications SÉNEVÉ restantes. */
+async function retirerRappelsPerimes() {
+  const maintenant = Date.now();
+  const liste = typeof self.registration.getNotifications === 'function' ? await self.registration.getNotifications() : [];
+  let restantes = 0;
+  for (const n of liste) { if (rappelPerime(n, maintenant)) n.close(); else restantes++; }
+  return restantes;
+}
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'seneve-retirer-rappels-perimes') e.waitUntil(retirerRappelsPerimes().catch(() => undefined));
+});
+
 /* Rappels sur le téléphone (validés le 22/10/2026) : le serveur n'envoie que le titre, un texte sans rien
  * de privé et le lien de l'espace. Toucher la notification ouvre (ou ramène) SÉNEVÉ. */
 self.addEventListener('push', e => {
@@ -132,15 +155,16 @@ self.addEventListener('push', e => {
   try { m = e.data ? e.data.json() : {}; } catch { m = {}; }
   const lien = typeof m.url === 'string' && m.url.startsWith(BASE) ? m.url : BASE + 'espace';
   e.waitUntil(self.registration.showNotification(m.title || 'SÉNEVÉ', {
-    body: m.body || '', tag: m.tag || 'seneve-rappel', renotify: typeof m.tag === 'string' && m.tag.startsWith('seneve-hd-'), icon: BASE + 'icons/icon-192.png', badge: BASE + 'icons/favicon-48.png', data: { url: lien },
+    body: m.body || '', tag: m.tag || 'seneve-rappel', renotify: typeof m.tag === 'string' && m.tag.startsWith('seneve-hd-'), icon: BASE + 'icons/icon-192.png', badge: BASE + 'icons/favicon-48.png', data: { url: lien, jour: jourLocal(Date.now()), ...(typeof m.fin === 'number' ? { fin: m.fin } : {}) },
   }).then(async () => {
     // La cloche des pages ouvertes se relit (29/10/2026) : rien de privé n'est transmis, seulement un signal.
     // Un échec ici ne doit jamais empêcher l'affichage du rappel, déjà fait.
     // Chiffre sur l'icône (iPhone écran d'accueil, ordinateur) : nombre de notifications SÉNEVÉ affichées ;
     // la page le remplace par le compte exact de la cloche dès qu'elle est ouverte.
+    // Les rappels d'une journée passée sont retirés au passage (et le rappel lui-même, s'il arrive après minuit).
     try {
-      const affichees = await self.registration.getNotifications();
-      if (self.navigator && typeof self.navigator.setAppBadge === 'function') await self.navigator.setAppBadge(affichees.length);
+      const restantes = await retirerRappelsPerimes();
+      if (self.navigator && typeof self.navigator.setAppBadge === 'function') await self.navigator.setAppBadge(restantes);
     } catch { /* non pris en charge */ }
     try {
       const fenetres = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
