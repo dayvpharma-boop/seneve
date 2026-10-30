@@ -8,11 +8,13 @@ import {IconeHD} from './IconeHabitudes';
 import {EtatSauvegarde} from './EtatSauvegarde';
 import {envoyerFile,garderAction,useEntreeFile,type TransportFile} from '@/lib/file-actions';
 
-function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu,horsLigne=false,ignorer}:{
+function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu,horsLigne=false,ignorer,complement}:{
  /** Sans réseau (décision du 29/10/2026) : la déclaration est gardée sur l'appareil puis envoyée au retour du réseau. */
  horsLigne?:boolean;
  /** Choix « Ignorer les rappels pour aujourd'hui », affiché en bas de la carte (demande de Dr Justin du 30/10/2026). */
  ignorer?:ReactNode;
+ /** Contenu propre à l'activité affiché dans la carte (ex. repère et « Durée de lecture », demande du 30/10/2026). */
+ complement?:ReactNode;
  /** « stitch » : carte des maquettes Stitch HD ; « culte » : « J'y ai participé » de la maquette 07 (même mécanisme d'enregistrement). */
  variante?:'stitch'|'priere'|'culte';heure?:string;attenue?:boolean;
  /** Culte : « Je n'ai pas pu » n'enregistre rien sur le serveur ; le parent ouvre son panneau. */
@@ -51,7 +53,7 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
   }catch{setErreur(true);}finally{verrou.current=false;setOccupe(false);}
  }
  const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
- if(variante==='stitch')return <><CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule:verrouLocal,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true),ignorer}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>{badge}</>;
+ if(variante==='stitch')return <><CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule:verrouLocal,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true),ignorer,complement}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>{badge}</>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
  if(variante==='culte')return <div className="flex flex-col gap-2" aria-busy={occupe}>
   <p role="status" className={valeur==='realisee'||attente?'font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant':'sr-only'}>{attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation. This declaration is not confirmed yet.':'En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.')):valeur==='realisee'?(en?'Participation recorded · Synchronised':'Participation déclarée · Synchronisée'):labels[valeur]}</p>
@@ -90,7 +92,7 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
 
 type ValeurEtat='non_commencee'|'preparee'|'partielle'|'realisee';
 /** Rendu Stitch : mêmes actions, mêmes messages d'attente et d'erreur que la carte d'origine. */
-function CarteStitch(p:{ignorer?:ReactNode;en:boolean;consigne:string;lienEcriture?:{href:string;label:string};lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
+function CarteStitch(p:{ignorer?:ReactNode;complement?:ReactNode;en:boolean;consigne:string;lienEcriture?:{href:string;label:string};lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
  const {en,consigne,critere,heure,valeur,aide}=p,l=(fr:string,english:string)=>en?english:fr;
  const etatTexte={non_commencee:l('Pas encore enregistrée','Not recorded yet'),preparee:l('Préparée','Prepared'),partielle:l('Réalisée en partie','Partly done'),realisee:l('Réalisée','Completed')}[valeur]+(p.synchronise?l(' · Synchronisée',' · Synchronised'):'');
  const heureEl=heure?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0"><time dateTime={heure}>{heure}</time></span>:null;
@@ -105,14 +107,15 @@ function CarteStitch(p:{ignorer?:ReactNode;en:boolean;consigne:string;lienEcritu
   <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0">{l('À faire','To do')}</span>
   <button type="button" onClick={p.deplier} aria-expanded={false} aria-label={l(`Déclarer : ${consigne}`,`Record: ${consigne}`)} className="absolute inset-0 rounded-xl"/>
   {lecture}
-  {p.ignorer&&<div className="relative z-[1] w-full">{p.ignorer}</div>}
+  {(p.complement||p.ignorer)&&<div className="relative z-[1] w-full">{p.complement}{p.ignorer}</div>}
  </article>;
- if(valeur==='realisee'&&!aide&&!p.attente&&!p.erreur)return <article aria-label={consigne} className="bg-hd-surface-container-lowest rounded-2xl px-hd-space-md py-3 shadow-[0_1px_6px_rgba(29,28,19,0.03)] flex items-center justify-between">
+ if(valeur==='realisee'&&!aide&&!p.attente&&!p.erreur)return <article aria-label={consigne} className="bg-hd-surface-container-lowest rounded-2xl px-hd-space-md py-3 shadow-[0_1px_6px_rgba(29,28,19,0.03)] flex flex-wrap items-center justify-between gap-y-2">
   {statut}<div className="flex items-center gap-3 min-w-0">
    <span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="done" className="text-[17px]"/></span>
    <div className="flex items-baseline gap-2 min-w-0 truncate">{heureEl}<h3 className="font-hd-label-lg text-hd-label-lg text-hd-on-surface truncate">{consigne}</h3></div>
   </div>
   <div className="flex items-center gap-2"><div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-secondary shrink-0"><IconeHD nom="verified" className="text-[15px]"/><span className="font-hd-label-sm text-hd-label-sm">{l('Fait','Done')}</span></div>{lecture}</div>
+  {p.complement&&<div className="w-full">{p.complement}</div>}
  </article>;
  const cercle=aide?<span className="w-7 h-7 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center shrink-0"><IconeHD nom="support_agent" className="text-[18px]"/></span>
   :valeur==='realisee'?<span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="done" className="text-[17px]"/></span>
@@ -143,6 +146,7 @@ function CarteStitch(p:{ignorer?:ReactNode;en:boolean;consigne:string;lienEcritu
   {p.attente&&<p role="status" className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{p.nettoyageIncomplet?l('Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.','Record confirmed. Retry to finish updating this device.'):l('En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.','Waiting for server confirmation. This declaration is not confirmed yet.')}</p>}
   {p.autres&&!p.lectureSeule&&!p.attente&&choix.length>0&&<div className="flex flex-wrap gap-2">{choix.map(c=><button key={c.a} type="button" disabled={p.occupe} onClick={()=>p.declarer(c.a)} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium disabled:opacity-60">{c.t}</button>)}</div>}
   {p.erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{p.nettoyageIncomplet?l('L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.','The record is already confirmed. Retry to finish the update.'):l('Confirmation indisponible. Réessaie cette même déclaration quand tu peux.','Confirmation unavailable. Retry this same declaration when you can.')}</p>}
+  {p.complement}
   {p.ignorer}
  </article>;
 }
