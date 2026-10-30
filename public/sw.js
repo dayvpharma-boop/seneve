@@ -1,10 +1,11 @@
 /* SÉNEVÉ — consultation hors connexion de l'espace web.
- * - Pages : le réseau a 3 secondes pour répondre ; sinon (ou sans réseau), la dernière version enregistrée du site.
+ * - Pages : la version du site enregistrée sur le téléphone s'ouvre tout de suite (30/10/2026) ; une nouvelle
+ *   version publiée est téléchargée en arrière-plan et sert à la visite suivante. Sans copie : le réseau.
  * - Fichiers du site (assets, icônes) : gardés après le premier chargement.
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v72-rappels-minuit-20261030';
+const CACHE = 'seneve-site-v73-retour-immediat-20261030';
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -45,7 +46,6 @@ small{font:400 13px/19px system-ui,sans-serif;color:#48473e}
   return new Response(html, { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
 
-const ATTENTE_RESEAU = 3000;
 let dernierInventaire = 0;
 /** Garde les fichiers des pages chargées à la demande (sauf l'administration), pour qu'elles s'ouvrent aussi
  *  hors connexion. Seuls les fichiers absents du téléphone sont téléchargés ; au plus une fois toutes les 10 min. */
@@ -81,22 +81,26 @@ self.addEventListener('fetch', e => {
   if (url.pathname.startsWith(BASE + 'recette-hd/')) return;
 
   if (req.mode === 'navigate') {
-    // Le réseau a 3 secondes pour répondre ; au-delà, la copie du téléphone s'affiche. La réponse du réseau,
-    // même tardive, remplace la copie pour la visite suivante.
     const reseau = fetch(req).then(async res => {
-      // INDEX reste la page cohérente téléchargée avec les fichiers à l'installation.
-      // Les autres routes (dont la recette) ne doivent jamais l'écraser.
-      if (res.ok) garderLesPages().catch(() => undefined);
+      // INDEX reste la page cohérente téléchargée avec ses fichiers (precache) ; jamais écrasée par une autre route.
+      if (res.ok) {
+        garderLesPages().catch(() => undefined);
+        // Le site publié diffère de la copie (publication sans changement de ce fichier) : la nouvelle version
+        // et ses fichiers sont téléchargés ensemble, pour la visite suivante.
+        const copie = await caches.match(INDEX);
+        // Seule la page d'accueil du site est comparée (les autres adresses ont leur propre page statique).
+        if ((url.pathname === BASE || url.pathname === INDEX) && copie && (await copie.text()) !== (await res.clone().text())) await precache().catch(() => undefined);
+      }
       return res;
     });
     e.waitUntil(reseau.then(() => undefined, () => undefined));
+    // Retour dans SÉNEVÉ (demande de Dr Justin du 30/10/2026) : plus d'attente du réseau quand le téléphone a
+    // déjà le site. La recherche d'une nouvelle version se fait en arrière-plan (installée pour la visite suivante).
+    e.waitUntil(Promise.resolve().then(() => self.registration.update()).catch(() => undefined));
     e.respondWith((async () => {
       const copie = await caches.match(INDEX);
-      const horsLigne = () => pageHorsLigne(url);
-      if (!copie) return reseau.catch(horsLigne);
-      const delai = new Promise(r => setTimeout(() => r(null), ATTENTE_RESEAU));
-      const reponse = await Promise.race([reseau.catch(() => null), delai]);
-      return reponse && reponse.ok ? reponse : copie;
+      if (copie) return copie;
+      return reseau.catch(() => pageHorsLigne(url));
     })());
     return;
   }

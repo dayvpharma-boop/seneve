@@ -34,6 +34,31 @@ export function lireEspace<T>(userId: string): { le: string; donnees: T } | null
   } catch { return null; }
 }
 
+/** Retour dans l'espace (demande de Dr Justin du 30/10/2026) : pendant 30 minutes, la copie de l'appareil
+ *  s'affiche sans recharger depuis le serveur. Au-delà, ou dès que la journée a changé, elle s'affiche
+ *  quand même tout de suite et les vraies données sont relues en arrière-plan. */
+export const FRAICHEUR_ESPACE_MS = 30 * 60 * 1000;
+
+export function copieEncoreFraiche(le: string, maintenant = Date.now()): boolean {
+  const t = Date.parse(le);
+  if (!Number.isFinite(t)) return false;
+  const age = maintenant - t;
+  if (age < 0 || age >= FRAICHEUR_ESPACE_MS) return false;
+  const jour = (ms: number) => { const d = new Date(ms); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; };
+  return jour(t) === jour(maintenant);
+}
+
+/** Met à jour la copie après une action notée à l'écran, sans changer sa date (la copie ne paraît pas plus récente). */
+export function modifierEspace<T>(userId: string, modifier: (donnees: T) => T): void {
+  const copie = lireEspace<T>(userId);
+  if (!copie) return;
+  try {
+    const nouvelle = retirerHabitudesDuCache(modifier(copie.donnees));
+    if (nouvelle === null) { localStorage.removeItem(PREFIXE + userId); return; }
+    localStorage.setItem(PREFIXE + userId, JSON.stringify({ le: copie.le, donnees: nouvelle }));
+  } catch { /* stockage indisponible : la copie sera remplacée au prochain chargement */ }
+}
+
 /** À la déconnexion : aucune copie ne reste sur l'appareil. */
 export function effacerEspaces(): void {
   effacerProfils();

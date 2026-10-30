@@ -54,7 +54,7 @@ import { AccueilVivant } from '@/components/AccueilVivant';
 import { BarreNav } from '@/components/BarreNav';
 import { AccueilDecouverte } from '@/components/AccueilDecouverte';
 import { IconeLecture } from '@/components/IconeLecture';
-import { effacerEspaces, enregistrerEspace, lireEspace, useEnLigne } from '@/lib/hors-ligne';
+import { copieEncoreFraiche, effacerEspaces, enregistrerEspace, lireEspace, modifierEspace, useEnLigne } from '@/lib/hors-ligne';
 import { estProgrammeHdReel } from '@/lib/habitudes-programmes';
 import { copiesJourHdValides } from '@/lib/habitudes-copie-jour';
 import { EtatSauvegarde } from '@/components/EtatSauvegarde';
@@ -220,7 +220,23 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       else setFailed(true);
     }
   }, [navigate, langueDemandee]);
-  useEffect(() => { void refresh(); }, [refresh]);
+  // Retour dans l'espace (30/10/2026) : la dernière copie de l'appareil s'affiche tout de suite, sans écran de chargement.
+  // Moins de 30 minutes et même journée : rien n'est rechargé. Sinon, les données sont relues en arrière-plan.
+  // Habitudes & Défis : sa journée n'est jamais dans cette copie, donc ces espaces se chargent comme avant.
+  useEffect(() => {
+    const copie = lireEspace<Data>(userId);
+    if (copie && !copie.donnees.habitudes?.length) {
+      setData(copie.donnees);
+      if (copieEncoreFraiche(copie.le)) {
+        // Achat fait entre-temps avec la même adresse : l'accès s'ouvre quand même tout de suite.
+        void Promise.resolve(supabase.rpc('claim_my_purchases')).then(r => {
+          if (Number((r?.data as { acces_ouverts?: number } | null)?.acces_ouverts) > 0) void refresh();
+        }).catch(() => undefined);
+        return;
+      }
+    }
+    void refresh();
+  }, [refresh, userId]);
   // Retour du réseau : on recharge les vraies données.
   const etaitHorsLigne = useRef(false);
   // Les actions notées sans réseau partent d'abord (même identifiant, aucun doublon), puis les données sont relues.
@@ -346,7 +362,12 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   };
   const etatDe = (a: Activity) => data.states.find(s => s.enrollment_id === enr.enrollment_id && s.activity_id === a.activity_id);
   // Une action enregistrée met à jour les données de l'espace (le message de reprise disparaît aussitôt).
-  const surEnregistre = (st: State) => { setRepriseFaite(true); setData(prev => prev ? { ...prev, states: [...prev.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] } : prev); };
+  const surEnregistre = (st: State) => {
+    const noter = (d: Data): Data => ({ ...d, states: [...d.states.filter(x => !(x.enrollment_id === st.enrollment_id && x.activity_id === st.activity_id)), st] });
+    setRepriseFaite(true); setData(prev => prev ? noter(prev) : prev);
+    // La copie de l'appareil suit l'action notée : au retour dans les 30 minutes, l'action reste affichée comme faite.
+    modifierEspace<Data>(userId, noter);
+  };
   const lienJournal = (q: Activity) => `/journal?inscription=${enr.enrollment_id}&activite=${q.activity_id}`;
   const carteAction = (a: Activity, titre: boolean) => <ActionCard key={`${enr.enrollment_id}:${a.activity_id}`} enrollmentId={enr.enrollment_id} activity={a} lecture={momentParam > 0} readOnly={lectureSeule && !actionLocale} horsLigne={horsLigne} userId={userId} langue={enr.langue} titre={titre} onEnregistre={surEnregistre} state={etatDe(a)} />;
 

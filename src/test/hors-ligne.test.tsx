@@ -3,8 +3,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 let reseau = true;
+let lectures = 0;
 const tables: Record<string, unknown[]> = {};
 function builder(table: string) {
+  if (['enrollments', 'programmes', 'contents', 'activities', 'activity_state'].includes(table)) lectures++;
   const res = () => reseau ? { data: tables[table] ?? [], error: null } : { data: null, error: { message: 'Failed to fetch' } };
   const b: Record<string, unknown> = {};
   for (const m of ['select', 'eq', 'neq', 'in', 'order', 'range']) b[m] = () => b;
@@ -22,7 +24,7 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 import { Espace } from '@/routes/espace';
-import { effacerEspaces } from '@/lib/hors-ligne';
+import { copieEncoreFraiche, effacerEspaces, enregistrerEspace, lireEspace, modifierEspace } from '@/lib/hors-ligne';
 
 const P = 'PROSPECT_LIVRE_7J_FR_V1';
 const ouvrir = () => render(<MemoryRouter><Espace /></MemoryRouter>);
@@ -49,6 +51,8 @@ describe('Espace hors connexion', () => {
     expect(await screen.findByText('Texte du jour 2')).toBeInTheDocument();
     premier.unmount();
 
+    // Copie de plus de 30 minutes : l'espace tente le serveur, échoue, et passe en mode hors connexion.
+    vi.setSystemTime(new Date('2026-10-12T12:31:00Z'));
     reseau = false;
     ouvrir();
     expect(await screen.findByText(/Tu n’as pas de connexion. Tes brouillons restent sur cet appareil./)).toBeInTheDocument();
@@ -72,5 +76,55 @@ describe('Espace hors connexion', () => {
     expect(Object.keys(localStorage).some(k => k.startsWith('seneve:espace:'))).toBe(true);
     effacerEspaces();
     expect(Object.keys(localStorage).some(k => k.startsWith('seneve:espace:'))).toBe(false);
+  });
+});
+
+describe('Retour dans l’espace : copie affichée tout de suite (demande du 30/10/2026)', () => {
+  it('moins de 30 minutes : la copie s’affiche sans rien recharger', async () => {
+    const premier = ouvrir();
+    await screen.findByText('Jour 2 sur 7');
+    premier.unmount();
+    tables['contents'] = (tables['contents'] as { texte_officiel: string }[]).map(c => ({ ...c, texte_officiel: c.texte_officiel + ' (nouveau)' }));
+    vi.setSystemTime(new Date('2026-10-12T12:20:00Z'));
+    lectures = 0;
+    ouvrir();
+    expect(await screen.findByText('Jour 2 sur 7')).toBeInTheDocument();
+    // Aucune lecture des journées sur le serveur.
+    expect(lectures).toBe(0);
+    fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
+    expect(await screen.findByText('Texte du jour 2')).toBeInTheDocument();
+    expect(screen.queryByText('Texte du jour 2 (nouveau)')).not.toBeInTheDocument();
+  });
+
+  it('plus de 30 minutes : la copie s’affiche tout de suite, puis les données du serveur la remplacent', async () => {
+    const premier = ouvrir();
+    await screen.findByText('Jour 2 sur 7');
+    premier.unmount();
+    tables['contents'] = (tables['contents'] as { texte_officiel: string }[]).map(c => ({ ...c, texte_officiel: c.texte_officiel + ' (nouveau)' }));
+    vi.setSystemTime(new Date('2026-10-12T12:45:00Z'));
+    ouvrir();
+    expect(await screen.findByText('Jour 2 sur 7')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Lire et agir' }));
+    expect(await screen.findByText('Texte du jour 2 (nouveau)')).toBeInTheDocument();
+    expect(screen.queryByText(/Mode hors connexion/)).not.toBeInTheDocument();
+  });
+
+  it('la règle des 30 minutes et du changement de journée', () => {
+    const t = Date.parse('2026-10-12T10:00:00');
+    expect(copieEncoreFraiche(new Date(t).toISOString(), t + 29 * 60000)).toBe(true);
+    expect(copieEncoreFraiche(new Date(t).toISOString(), t + 30 * 60000)).toBe(false);
+    expect(copieEncoreFraiche(new Date(Date.parse('2026-10-12T23:50:00')).toISOString(), Date.parse('2026-10-13T00:05:00'))).toBe(false);
+    expect(copieEncoreFraiche(new Date(t).toISOString(), t - 60000)).toBe(false);
+    expect(copieEncoreFraiche('pas une date', t)).toBe(false);
+  });
+
+  it('une action notée met la copie à jour sans la rendre plus récente', () => {
+    enregistrerEspace('U1', { parcours: [], contents: [], activities: [], states: [] });
+    const avant = lireEspace<{ states: unknown[] }>('U1')!;
+    vi.setSystemTime(new Date('2026-10-12T12:10:00Z'));
+    modifierEspace<{ states: unknown[] }>('U1', d => ({ ...d, states: [{ activity_id: 'A2', etat: 'realisee' }] }));
+    const apres = lireEspace<{ states: unknown[] }>('U1')!;
+    expect(apres.le).toBe(avant.le);
+    expect(apres.donnees.states).toEqual([{ activity_id: 'A2', etat: 'realisee' }]);
   });
 });

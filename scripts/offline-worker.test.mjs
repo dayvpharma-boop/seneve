@@ -36,3 +36,24 @@ test('une route ne remplace jamais la copie principale',async()=>{
  let p;w.listeners.fetch({request:{url:'https://example.org/seneve/espace',method:'GET',mode:'navigate'},waitUntil:()=>{},respondWith:v=>p=v});await p;
  assert.equal(await w.entries.get('/seneve/index.html').text(),'copie');
 });
+test('retour dans SÉNEVÉ : la copie s’ouvre sans attendre un réseau lent (30/10/2026)',async()=>{
+ const w=worker();w.entries.set('/seneve/index.html',new Response('copie'));
+ w.context.fetch=()=>new Promise(()=>{}); // réseau qui ne répond jamais
+ let p;w.listeners.fetch({request:{url:'https://example.org/seneve/espace',method:'GET',mode:'navigate'},waitUntil:()=>{},respondWith:v=>p=v});
+ const r=await Promise.race([p,new Promise(ok=>setTimeout(()=>ok('attente'),200))]);
+ assert.notEqual(r,'attente');assert.equal(await r.text(),'copie');
+});
+test('sans copie sur le téléphone, la page vient du réseau',async()=>{
+ const w=worker();w.context.fetch=async()=>new Response('reseau');
+ let p;w.listeners.fetch({request:{url:'https://example.org/seneve/espace',method:'GET',mode:'navigate'},waitUntil:()=>{},respondWith:v=>p=v});
+ assert.equal(await(await p).text(),'reseau');
+});
+test('accueil publié différent de la copie : nouvelle version gardée pour la visite suivante',async()=>{
+ const w=worker();w.entries.set('/seneve/index.html',new Response('ancienne'));
+ const base=w.context.fetch;w.context.fetch=async u=>String(u.url??u).endsWith('/seneve/')?new Response('nouvelle'):base(u);
+ const attentes=[];let p;
+ w.listeners.fetch({request:{url:'https://example.org/seneve/',method:'GET',mode:'navigate'},waitUntil:v=>attentes.push(v),respondWith:v=>p=v});
+ assert.equal(await(await p).text(),'ancienne');
+ await Promise.all(attentes);
+ assert.match(await w.entries.get('/seneve/index.html').text(),/app\.js/);
+});
