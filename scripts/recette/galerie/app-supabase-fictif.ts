@@ -33,6 +33,16 @@ if (new URLSearchParams(location.search).get('parcours') === 'hd') {
   tables.hd_programme_links = [{ programme_id: hd, version: 1, langue }];
   tables.activities = []; // la journée affichée vient de jour-fictif.ts
 }
+// ?parcours=fini / ?parcours=avenir : un second parcours terminé ou pas encore commencé, pour vérifier que le haut d'Aujourd'hui ne change pas.
+{ const choix = new URLSearchParams(location.search).get('parcours');
+  if (choix === 'fini' || choix === 'avenir') {
+    const p2 = en ? 'ACHETEUR_LIVRE_14J_EN_V1' : 'ACHETEUR_LIVRE_14J_FR_V1';
+    const debut2 = new Date(Date.now() + (choix === 'fini' ? -20 : 3) * 864e5).toISOString().slice(0, 10);
+    tables.enrollments.push({ enrollment_id: 'APERCU2', programme_id: p2, version: 1, langue, date_debut: debut2, etat: 'active' });
+    tables.programmes.push({ programme_id: p2, nom: en ? 'Book companion — 14 days' : 'Accompagnement du livre — 14 jours', duree_jours: 14 });
+    const modele = tables.contents[0] as Record<string, unknown>;
+    for (let j = 1; j <= 14; j++) tables.contents.push({ ...modele, content_id: `L${j}`, programme_id: p2, jour: j });
+  } }
 const rpc: Record<string, unknown> = {
   ensure_participant: 'APERCU', staff_me: { admin: true, roles: ['admin'] },
   mes_notifications: { vu_jusqu_a: null, non_lues: 2, elements: [

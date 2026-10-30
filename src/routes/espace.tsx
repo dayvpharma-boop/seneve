@@ -310,7 +310,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   </div>;
 
   const { day, finished, notStarted } = calendrierDe(enr);
-  if (notStarted) return page(enr.langue,<ParcoursAVenir langue={enr.langue} prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer(enr.langue)}/>, 'journee-nouvelle');
+  if (notStarted) return page(enr.langue,<ParcoursAVenir entete={<>{header()}{accueil}{tabs}</>} langue={enr.langue} prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer(enr.langue)}/>, 'journee-nouvelle');
   if (notStarted) return page(enr.langue, <>{header()}{accueil}{tabs}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
@@ -425,10 +425,10 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   }
 
   const moments = momentsDuJour(current);
-  if (!moments.length) return page(enr.langue, <>{header()}{accueil}{tabs}{errorCard}{footer(enr.langue)}</>);
+  if (!moments.length) return page(enr.langue, <>{header()}{accueil}{tabs}{errorCard}{footer(enr.langue)}</>, 'journee-nouvelle');
   const { action, question } = activitesDu(current);
   const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
-  if ((finished || cloture) && selected===null && !params.has('jour') && !horsLigne) return page(enr.langue,<BilanTermine langue={enr.langue} cloture={cloture} prenom={data.prenom} nom={enr.nom} b={bilanEnr} inscription={enr.enrollment_id} dateFin={new Intl.DateTimeFormat(enr.langue==='en'?'en-GB':'fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long'}).format(dateDuJour(enr.date_debut,total))} onglets={tabs} suite={<SuiteCard programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x=>x.programme_id)} maquette/>} reglages={reglages(enr.langue,false,true)} footer={footer(enr.langue)}/>, 'journee-nouvelle');
+  if ((finished || cloture) && selected===null && !params.has('jour') && !horsLigne) return page(enr.langue,<BilanTermine entete={<>{header()}{accueil}{tabs}</>} langue={enr.langue} cloture={cloture} prenom={data.prenom} nom={enr.nom} b={bilanEnr} inscription={enr.enrollment_id} dateFin={new Intl.DateTimeFormat(enr.langue==='en'?'en-GB':'fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long'}).format(dateDuJour(enr.date_debut,total))} onglets={tabs} suite={<SuiteCard programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x=>x.programme_id)} maquette/>} reglages={reglages(enr.langue,false,true)} footer={footer(enr.langue)}/>, 'journee-nouvelle');
   if ((finished || cloture) && selected === null && !params.has('jour') && !horsLigne) return page(enr.langue, <FinParcours prenom={data.prenom} nom={enr.nom} enrollmentId={enr.enrollment_id} programmeId={enr.programme_id} langue={enr.langue} b={bilanEnr} cloture={cloture} dejaInscrit={data.parcours.map(x=>x.programme_id)} onglets={tabs} reglages={reglages(enr.langue,false,true)} footer={footer(enr.langue)}/>, 'fin-page');
   const jourCal = rawDay(enr.date_debut, new Date());
   const jardin = compteJardin(bilanEnr);
