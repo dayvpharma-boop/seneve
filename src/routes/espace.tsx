@@ -1,3 +1,4 @@
+import './espace-moderne.css';
 import {PlanningJourHabitudes} from '@/components/PlanningJourHabitudes';
 import {SimulateurDime} from '@/components/SimulateurDime';
 import {calendrierHabitudes,dureeHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
@@ -272,11 +273,12 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     if (charge) document.documentElement.lang = enTete ? 'en' : 'fr';
   }, [charge, enTete]);
   const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
-    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={data?.parcours[0]?.langue??'fr'} compact/><ClocheNotifications langue={enTete ? 'en' : 'fr'} /><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div>
-    {notice}{repere}
+    <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={enTete ? 'en' : 'fr'} compact/><ClocheNotifications langue={enTete ? 'en' : 'fr'} /><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div>
+    {notice}
     {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<Link className="jn-avatar-grand" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom.charAt(0).toUpperCase()}</AvatarParticipant></Link>}
-    {data && <AccueilVivant langue={enTete ? 'en' : 'fr'} />}
+    {repere}
   </header>;
+  const accueil = data ? <AccueilVivant langue={enTete ? 'en' : 'fr'} /> : null;
   // Pied de page dans la langue du parcours ; les pages publiques reçoivent ?lang=en pour rester en anglais.
   const footer = (l: string) => { const en = l === 'en', s = en ? '?lang=en' : ''; return <div className="today-foot"><Link className="link" to={`/acces${s}`}>{en ? 'My access' : 'Mes accès'}</Link><Link className="link" to={`/confidentialite${s}`}>{en ? 'Privacy' : 'Confidentialité'}</Link><button type="button" className="link" onClick={signOut}>{en ? 'Sign out' : 'Se déconnecter'}</button></div>; };
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
@@ -309,7 +311,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
 
   const { day, finished, notStarted } = calendrierDe(enr);
   if (notStarted) return page(enr.langue,<ParcoursAVenir langue={enr.langue} prenom={data.prenom} nom={enr.nom} date={enr.date_debut} objectif={<GoalCard langue={enr.langue}/>} reglages={reglages(enr.langue,true)} onglets={tabs} footer={footer(enr.langue)}/>, 'journee-nouvelle');
-  if (notStarted) return page(enr.langue, <>{header()}{tabs}
+  if (notStarted) return page(enr.langue, <>{header()}{tabs}{accueil}
     <div className="card"><p className="tag">{enr.nom}</p>
       <p>{T.commence(formatStart(enr.date_debut, T.locale))}</p>
     </div><GoalCard langue={enr.langue} />{reglages(enr.langue, true)}{footer(enr.langue)}</>);
@@ -350,6 +352,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
 
   if(habitudesActivees() && data.habitudes?.includes(enr.enrollment_id)){
     const en=enr.langue==='en';
+    const repereHabitudes=<p className="today-parcours today-hd-repere">{enr.nom} · {T.jourSur(current,total)} · {en?'Week':'Semaine'} {Math.ceil(current/7)}</p>;
     const periodesEnr=data.periodesHabitudes?.[enr.enrollment_id];
     const date_locale=periodesEnr?.length?dateDuJourHabitudes(enr.date_debut,calendrierPeriodes(enr.date_debut,periodesEnr,data.fuseauHabitudes??'Africa/Kinshasa',enr.duree).debuts,current)
       :new Date(Date.UTC(Number(enr.date_debut.slice(0,4)),Number(enr.date_debut.slice(5,7))-1,Number(enr.date_debut.slice(8,10))+current-1)).toISOString().slice(0,10);
@@ -359,7 +362,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities.filter(a=>culte(a.note_source,date_locale,Boolean(etatDe(a)))));
     // Programme réel, journée du jour et en ligne : l'écran « Aujourd'hui » des maquettes Stitch, directement.
     if(!lectureSeule&&estProgrammeHdReel(enr.programme_id)&&current===day&&data.participantId&&enr.etat==='active')
-      return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
+      return page(enr.langue,<>{header()}{tabs}{accueil}{repereHabitudes}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
         {rappelsHabitudesActifs()&&<div className="px-hd-margin pt-hd-space-md"><FuseauVoyage langue={enr.langue}/></div>}
         <ActivitesJourRecette key={`${enr.enrollment_id}:${date_locale}`} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>
         <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2">
@@ -372,11 +375,11 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     // Sans réseau (décision du 29/10/2026) : la journée HD gardée sur cet appareil, relue et notée comme en ligne.
     const copieHd=horsLigne&&!paused&&!cloture&&!habitudesTerminees&&estProgrammeHdReel(enr.programme_id)&&current===day&&enr.etat==='active'?copiesJourHdValides(userId).find(c=>c.enrollmentId===enr.enrollment_id):undefined;
     if(copieHd)
-      return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
+      return page(enr.langue,<>{header()}{tabs}{accueil}{repereHabitudes}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
         <ActivitesJourRecette key={`${enr.enrollment_id}:${copieHd.dateLocale}:hors-ligne`} enrollmentId={enr.enrollment_id} participantId={copieHd.participantId} dateLocale={copieHd.dateLocale} langue={enr.langue} fuseau={copieHd.fuseau} finExclue={copieHd.finExclue} copie={copieHd}/>
         <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2"><Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aide${en?'?lang=en':''}`}>{en?'Help and privacy':'Aide et confidentialité'}</Link></div>
       </div>{footer(enr.langue)}</>,'journee-nouvelle');
-    return page(enr.langue,<>{header()}{tabs}<section><p className="tag">{enr.nom}</p>
+    return page(enr.langue,<>{header()}{tabs}{accueil}{repereHabitudes}<section><p className="tag">{enr.nom}</p>
 <h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
       {!horsLigne&&<Link className="oa-secondary" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>}
       {!horsLigne&&<label className="hd-jour-choix">{en?'Journey day':'Jour du parcours'}<select value={current} onChange={e=>setSelected(Number(e.target.value))}>{Array.from({length:maxOpen},(_,k)=><option key={k+1} value={k+1}>{en?'Day':'Jour'} {k+1}</option>)}</select></label>}
@@ -422,7 +425,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   }
 
   const moments = momentsDuJour(current);
-  if (!moments.length) return page(enr.langue, <>{header()}{tabs}{errorCard}{footer(enr.langue)}</>);
+  if (!moments.length) return page(enr.langue, <>{header()}{tabs}{accueil}{errorCard}{footer(enr.langue)}</>);
   const { action, question } = activitesDu(current);
   const bilanEnr = bilanParcours(enr.date_debut, total, contents, data.activities, data.states.filter(st => st.enrollment_id === enr.enrollment_id).map(st => ({ ...st, aide_demandee: Boolean(st.aide_demandee) })));
   if ((finished || cloture) && selected===null && !params.has('jour') && !horsLigne) return page(enr.langue,<BilanTermine langue={enr.langue} cloture={cloture} prenom={data.prenom} nom={enr.nom} b={bilanEnr} inscription={enr.enrollment_id} dateFin={new Intl.DateTimeFormat(enr.langue==='en'?'en-GB':'fr-FR',{timeZone:'Africa/Kinshasa',day:'numeric',month:'long'}).format(dateDuJour(enr.date_debut,total))} onglets={tabs} suite={<SuiteCard programmeId={enr.programme_id} langue={enr.langue} dejaInscrit={data.parcours.map(x=>x.programme_id)} maquette/>} reglages={reglages(enr.langue,false,true)} footer={footer(enr.langue)}/>, 'journee-nouvelle');
@@ -476,11 +479,10 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const dateCopie = copieDu ? new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(copieDu)) : null;
   const bandeauHorsLigne = horsLigne && <aside className="offline-bandeau" role="status"><span className="offline-nuage" aria-hidden="true"><IconeJournee nom="cloud_off" taille={18} /></span><div><div className="offline-bandeau-tete"><strong>{enr.langue === 'en' ? 'Offline mode' : 'Mode hors connexion'}</strong><span>{enr.langue === 'en' ? 'Local copy' : 'Copie locale'}</span></div><p>{dateCopie ? <>{enr.langue === 'en' ? 'You are viewing the copy saved on ' : 'Tu consultes la copie enregistrée le '}<strong>{dateCopie}</strong>.</> : (enr.langue === 'en' ? 'You are viewing the days already loaded.' : 'Tu consultes les journées déjà chargées.')}</p><p className="offline-note">{enr.langue === 'en' ? 'You are offline. Your drafts stay on this device.' : 'Tu n’as pas de connexion. Tes brouillons restent sur cet appareil.'}</p></div></aside>;
   const enteteHorsLigne = <header className="offline-entete"><div className="erreur-header"><div><strong>SÉNEVÉ</strong></div><span className="erreur-avatar" aria-hidden="true"><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></span></div>{bandeauHorsLigne}<div className="offline-profil"><div><small>{enr.langue === 'en' ? 'Daily companion' : 'Compagnon de chemin'}</small><h1>{salut}</h1></div><p><span>{nomRepere}</span><strong>{T.jourSur(current,total)}</strong></p></div></header>;
-  return page(enr.langue, <>{horsLigne ? enteteHorsLigne : header(<><p className="today-date">{new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, current))}</p><p className="today-parcours">{current === 1 ? <IconeJournee nom="explore" taille={18} /> : <IconeMaquette nom="spa" taille={18} />}{`${nomRepere} · ${T.jourSur(current, total)}`}</p></>, bandeauHorsLigne)}{tabs}
-    {/* Colonnes de l'ordinateur (maquette validée le 30/10/2026) ; sans effet sur téléphone. */}
+  return page(enr.langue, <>{horsLigne ? enteteHorsLigne : header(undefined, bandeauHorsLigne)}{tabs}{!horsLigne && accueil}{!horsLigne && <div className="today-reperes"><><p className="today-date">{new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, current))}</p><p className="today-parcours">{current === 1 ? <IconeJournee nom="explore" taille={18} /> : <IconeMaquette nom="spa" taille={18} />}{`${nomRepere} · ${T.jourSur(current, total)}`}</p></></div>}
     <div className="jn-colonnes"><div className="jn-colonne jn-colonne-journee">
     {!horsLigne && total>14 ? <ProgressionLongue langue={enr.langue} b={bilanEnr} current={current} jour={day} choisir={choisirJour}/> : <section className="today-progress" aria-labelledby="progression-semaine">
-      <div className="weekly-head"><h2 id="progression-semaine">{T.progressionHebdomadaire}</h2>{horsLigne ? <p className="offline-copie-prete"><IconeJournee nom="offline_pin" taille={14} />{enr.langue === 'en' ? 'Local copy ready' : 'Copie locale prête'}</p> : <p>{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p>}</div>
+      <div className="weekly-head"><h2 id="progression-semaine">{T.progressionHebdomadaire}</h2><span className="today-week">{enr.langue==='en'?'Week':'Semaine'} {Math.ceil(current/7)}</span>{horsLigne ? <p className="offline-copie-prete"><IconeJournee nom="offline_pin" taille={14} />{enr.langue === 'en' ? 'Local copy ready' : 'Copie locale prête'}</p> : <p>{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p>}</div>
       {tuiles}
       {horsLigne ? <p className="offline-progression-compte">{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p> : finished ? <p className="today-done">{T.termine(total)}</p> : <div className="count"><span className="count-main">{T.jourSur(day, total)}</span>{maxOpen < total && <span>{T.ouvreDemain(maxOpen + 1)}</span>}</div>}
     </section>}
@@ -492,6 +494,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
         <div className="sec-titre"><h2 id="titre-journee"><IconeJournee nom="menu_book" taille={22} />{estAujourdhui ? T.taJournee : T.jour(current)}</h2><p className="moment-compte">{T.nombreEtapes(moments.length)}</p></div>
         <button type="button" className="link" aria-label={T.tousLesJours} aria-expanded={tousJours} aria-controls="tous-les-jours" onClick={() => setTousJours(v => !v)}><IconeJourneeSuite nom="swap_horiz" taille={18}/></button>
       </div>
+      {moments.length===0&&<p className="card today-indisponible" role="status">{enr.langue==='en'?'No content is available for this day yet.':'Aucun contenu n’est disponible pour cette journée pour le moment.'}</p>}
       {/* Nouvelle liste à chaque jour choisi : elle repart de la carte du matin (et non de la carte vue avant). */}
       <ul key={`rail-${enr.enrollment_id}-${current}`} className={moments.length > 1 ? 'moment-rail' : 'moment-rail is-seul'}>
         {moments.map(m => {
@@ -502,8 +505,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
                 {(m.heure || moments.length > 1) ? <span className="time-chip"><IconeJournee nom={m.periode === "matin" ? "wb_sunny" : m.periode === "soir" ? "bedtime" : "schedule"} taille={16} />{m.heure?`${T.periodes[m.periode]} · ${T.moment(m.n,m.heure)}`:T.moment(m.n,null)}</span> : <IconeMaquette nom="menu_book" taille={20} />}
                 {m.ouvert ? <span className="dispo-chip">{enr.langue === 'en' ? 'Available' : 'Disponible'}</span> : <IconeJournee nom="lock_clock" taille={22} />}
               </div>
-              <h3 id={id}>{m.content.theme}</h3>
               <div className="moment-illus">{m.principal ? <IllustrationLecture /> : <ImageMoment periode={m.periode} />}</div>
+              <h3 id={id}>{m.content.theme}</h3>
               {!horsLigne && <p className="jn-moment-extrait">{m.content.explication || apercuMoment(m.content.texte_officiel, m.content.theme, data.prenom)}</p>}
               {m.ouvert
                 ? <button type="button" className="btn moment-btn" aria-describedby={id} onClick={() => ouvrirMoment(m.n)}>{m.principal && action ? T.lireEtAgir : T.lire}<IconeJournee nom={horsLigne ? "menu_book" : "arrow_forward"} taille={20} /></button>
