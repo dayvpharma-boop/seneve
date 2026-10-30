@@ -9,6 +9,7 @@ export default {
  cacheDir:path.join(racine,'.vite-cache-apercu'),
  resolve:{...configuration.resolve,alias:[
   {find:/^(@\/lib|\.)\/supabase$/,replacement:path.join(g,'app-supabase-fictif.ts')},
+  {find:/^(@\/lib|\.)\/habitudes-jour-recette$/,replacement:path.join(g,'jour-fictif.ts')},
   {find:'@',replacement:path.join(racine,'src')},
  ]},
  build:{...configuration.build,outDir:path.join(racine,'dist-apercu/seneve'),emptyOutDir:true},

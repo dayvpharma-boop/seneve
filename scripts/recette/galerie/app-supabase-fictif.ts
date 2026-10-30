@@ -24,6 +24,15 @@ if (new URLSearchParams(location.search).get('parcours') === '2') {
   tables.enrollments.push({ enrollment_id: 'APERCU2', programme_id: p2, version: 1, langue, date_debut: debut, etat: 'active' });
   tables.programmes.push({ programme_id: p2, nom: en ? 'Book companion — 14 days' : 'Accompagnement du livre — 14 jours', duree_jours: 14 });
 }
+// ?parcours=hd : programme Habitudes & Défis réel, journée fictive (jour-fictif.ts), pour la recette d'Aujourd'hui.
+if (new URLSearchParams(location.search).get('parcours') === 'hd') {
+  const hd = en ? 'HABITUDES_DEFIS_30J_EN_V1' : 'HABITUDES_DEFIS_30J_FR_V1';
+  Object.assign(tables.enrollments[0] as Record<string, unknown>, { programme_id: hd });
+  Object.assign(tables.programmes[0] as Record<string, unknown>, { programme_id: hd, nom: en ? 'Habits & Challenges' : 'Habitudes & Défis', duree_jours: 181 });
+  for (const c of tables.contents as Record<string, unknown>[]) c.programme_id = hd;
+  tables.hd_programme_links = [{ programme_id: hd, version: 1, langue }];
+  tables.activities = []; // la journée affichée vient de jour-fictif.ts
+}
 const rpc: Record<string, unknown> = {
   ensure_participant: 'APERCU', staff_me: { admin: true, roles: ['admin'] },
   mes_notifications: { vu_jusqu_a: null, non_lues: 2, elements: [
