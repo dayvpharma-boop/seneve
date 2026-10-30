@@ -123,6 +123,16 @@ export function eventIdFor(pending: string | null | undefined, generate: () => s
 }
 
 /** Onglets des parcours sur une ligne : à l'ouverture, l'onglet choisi est ramené en vue (sans faire défiler la page). */
+/** Onglet de parcours touché : il glisse doucement jusqu'au bord gauche de la rangée (demande de Dr Justin du 30/10/2026). */
+export function amenerOngletAuDebut(onglet: HTMLElement): void {
+  const liste = onglet.parentElement;
+  if (!liste) return;
+  const gauche = onglet.getBoundingClientRect().left - liste.getBoundingClientRect().left + liste.scrollLeft;
+  let doux = true;
+  try { doux = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* navigateur sans cette information */ }
+  if (typeof liste.scrollTo === 'function') liste.scrollTo({ left: Math.max(0, gauche), behavior: doux ? 'smooth' : 'auto' });
+  else liste.scrollLeft = Math.max(0, gauche);
+}
 export function placerOngletActif(liste: HTMLElement | null): void {
   const placer = () => {
     const actif = liste?.querySelector<HTMLElement>('[aria-selected="true"]');
