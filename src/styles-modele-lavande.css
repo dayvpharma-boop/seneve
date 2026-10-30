@@ -20,13 +20,6 @@
 :root:root[data-apparence] body .btn:not(.link):not(.btn-secondaire):not(:disabled) { background: var(--palette-accent, #755b00); color: #fff; border-radius: 999px; }
 :root:root[data-apparence="sombre"] body .btn:not(.link):not(.btn-secondaire):not(:disabled) { background: var(--palette-nuit-accent, #ffd482); color: var(--palette-nuit, #141310); }
 
-/* En-tête : pousse verte du modèle à la place du carré sombre du logo. */
-:root:root[data-apparence] body header img[src$="icons/icon.svg"] {
-  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 29V15' stroke='%234E8B5C' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M16 16c0-5 3-9 9-10 0 5-3 9-9 10Z' fill='%235E9E6B'/%3E%3Cpath d='M16 19c0-4-2.5-7.5-8-8.5 0 4.5 2.5 8 8 8.5Z' fill='%237DB386'/%3E%3C/svg%3E");
-  background: none; border-radius: 0; box-shadow: none; padding: 0;
-}
-:root:root[data-apparence] body header .logo-marque > span { letter-spacing: .18em; font-weight: 500; }
-
 /* Avatar de l'en-tête : cercle clair, initiale en couleur principale (comme l'icône profil du modèle). */
 :root:root[data-apparence] body header .photo-participant { width: 40px; height: 40px; border-radius: 50%; background: var(--palette-or-doux, #e3e6fb); color: var(--palette-accent, #755b00); border: 1.5px solid var(--palette-accent, #755b00); box-shadow: none; font: 600 16px/1 Poppins, Outfit, system-ui, sans-serif; box-sizing: border-box; overflow: hidden; }
 :root:root[data-apparence="sombre"] body header .photo-participant { background: var(--palette-nuit-haut, #2b2a26); color: var(--palette-nuit-accent, #ffd482); border-color: var(--palette-nuit-accent, #ffd482); }
