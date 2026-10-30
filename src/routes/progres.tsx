@@ -4,6 +4,7 @@ import {lignesPaginees,parPaquets} from '@/lib/lignes-paginees';
 import {calendrierPeriodes,dateDuJourHabitudes,type PeriodeHabitudes} from '@/lib/habitudes-periodes';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {BilanHabitudes} from '@/components/BilanHabitudes';
+import {CalendrierHabitudes} from '@/components/CalendrierHabitudes';
 import {joursHabitudesLecture, type JourHabitudesLecture, type EtatLecture} from '@/lib/habitudes-lecture';
 import {filtreCultesPrevus} from '@/lib/habitudes-cultes';
 import {chargerHorairesHabitudes} from '@/lib/habitudes-horaires-api';
@@ -176,7 +177,7 @@ export function Progres() {
   </div>;
   if(data.habitudes[enr.enrollment_id]) return <main className="wrap avec-nav parcours-page">
     {tete}<p className="progres-intro">{T.intro}</p>{tabs}
-    <div role="tabpanel" id="pc-bilan" aria-labelledby={`pc-inscription-${enr.enrollment_id}`}><BilanHabitudes jours={data.habitudes[enr.enrollment_id]!} langue={langue} inscription={enr.enrollment_id}/></div>
+    <div role="tabpanel" id="pc-bilan" aria-labelledby={`pc-inscription-${enr.enrollment_id}`}>{data.bilans[enr.enrollment_id]&&!data.bilans[enr.enrollment_id]!.pasCommence&&<CalendrierHabitudes jours={data.habitudes[enr.enrollment_id]!} b={data.bilans[enr.enrollment_id]!} langue={langue}/>}<BilanHabitudes jours={data.habitudes[enr.enrollment_id]!} langue={langue} inscription={enr.enrollment_id}/></div>
     {back}<BarreNav langue={langue} maquette iconesJournee/>
   </main>;
   const lienJour = (j: number) => `/espace?parcours=${enr.enrollment_id}&jour=${j}`;

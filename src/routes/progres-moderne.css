@@ -83,3 +83,17 @@
 :root:root[data-apparence] .parcours-page .page-illustration>.page-illustration-texte{position:relative;z-index:1;max-width:70%;padding:26px 0 26px 24px}
 :root:root[data-apparence] .parcours-page .page-illustration>img{position:absolute;z-index:0;top:0;right:0;bottom:0;order:0;width:62%;height:100%;min-height:0;max-height:none;aspect-ratio:auto;margin:0;border-radius:0;object-fit:cover;object-position:50% center;-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 34%,rgba(0,0,0,.42) 56%,rgba(0,0,0,.86) 74%,#000 88%);mask-image:linear-gradient(90deg,transparent 0%,transparent 34%,rgba(0,0,0,.42) 56%,rgba(0,0,0,.86) 74%,#000 88%)}
 @media(max-width:420px){:root:root[data-apparence] .parcours-page .page-illustration>.page-illustration-texte{max-width:72%;padding:22px 0 22px 20px}:root:root[data-apparence] .parcours-page .page-illustration>img{width:64%}}
+
+/* Calendrier Habitudes & Défis (31/10/2026) : mêmes tuiles que les autres parcours, liste numérotée sans puces, légende discrète. */
+:root:root[data-apparence] .parcours-page .hd-calendrier .progres-tuiles{list-style:none}
+:root:root[data-apparence] .parcours-page .hd-calendrier{margin-bottom:18px}
+:root:root[data-apparence] .parcours-page .hd-calendrier-legende{display:flex;flex-wrap:wrap;gap:6px 16px;margin:10px 0 0;font:400 12px/1.5 Poppins,sans-serif;color:var(--vivant-secondaire)}
+:root:root[data-apparence] .parcours-page .hd-calendrier-legende span{display:inline-flex;align-items:center;gap:4px}
+:root:root[data-apparence] .parcours-page .hd-calendrier .progres-tuiles .day-tile.is-done{background:var(--vivant-vert);color:var(--vivant-sur-accent,#fff)}
+:root:root[data-apparence] .parcours-page .hd-calendrier .progres-tuiles .day-tile.is-done svg{color:currentColor}
+:root:root[data-apparence] .parcours-page .hd-calendrier .progres-tuiles .day-tile.is-partial:not(.is-today){background:color-mix(in srgb,var(--vivant-vert) 16%,var(--vivant-fond))}
+:root:root[data-apparence] .parcours-page .hd-calendrier .progres-tuiles .day-tile.is-locked{opacity:.65}
+:root:root[data-apparence] .parcours-page .hd-calendrier-legende .hd-pastille{display:inline-block;width:12px;height:12px;border-radius:4px}
+:root:root[data-apparence] .parcours-page .hd-calendrier .progres-tuiles .day-tile.is-done :is(.parcours-rond,.parcours-jour){color:var(--vivant-sur-accent,#fff)}
+:root:root[data-apparence="sombre"] .parcours-page .hd-calendrier .progres-tuiles .day-tile.is-done :is(.parcours-rond,.parcours-jour){color:var(--vivant-fond)}
+:root:root[data-apparence="sombre"] .parcours-page .hd-calendrier .progres-tuiles .day-tile .parcours-rond{background:none!important;box-shadow:none!important}
