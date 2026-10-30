@@ -17,3 +17,14 @@ it('sans réseau, le catalogue et les filtres restent consultables sans activer 
  Object.defineProperty(navigator,'onLine',{configurable:true,value:false});
  try{const {container}=afficher('/bibliotheque?lang=en');expect(screen.getByRole('status')).toHaveTextContent('Offline library');fireEvent.click(screen.getByRole('button',{name:'PDF'}));expect(screen.getByRole('link',{name:/Digital book · PDF In preparation/})).toHaveAttribute('href','/livre/pdf?lang=en');expect(container.querySelector('audio,iframe')).toBeNull();expect(screen.queryByText(/purchased|active access/i)).toBeNull();}finally{Object.defineProperty(navigator,'onLine',{configurable:true,value:true});}
 });
+
+it('la page audio anglaise conserve l’aide et les sept chapitres sans annoncer un droit de lecture',()=>{
+ const {container}=afficher('/livre/audio?lang=en');
+ expect(document.title).toBe('Audiobook · Stop Begging for Miracles — SÉNEVÉ');
+ expect(screen.getByRole('link',{name:'Back to library'})).toHaveAttribute('href','/bibliotheque?lang=en');
+ expect(screen.getByRole('link',{name:'A question about this format? →'})).toHaveAttribute('href','/aide?motif=livre-audio&lang=en');
+ expect(screen.getByRole('button',{name:'Audio not yet available'})).toBeDisabled();
+ expect(screen.getAllByRole('heading',{level:3})).toHaveLength(7);
+ expect(container.querySelector('audio,[download]')).toBeNull();
+ expect(screen.queryByText(/access confirmed|activity completed/i)).toBeNull();
+});
