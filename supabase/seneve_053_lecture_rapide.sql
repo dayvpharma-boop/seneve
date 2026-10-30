@@ -11,6 +11,10 @@
 --     hd_programme_links.(programme_id,version,langue) et contents.(…) sont NOT NULL : NOT IN est sûr.
 --     La fonction seneve.hd_content_allowed est conservée (plus utilisée par aucune règle, gardée pour le retour arrière).
 -- Retour arrière : voir le bloc commenté en fin de fichier.
+-- APPLIQUÉE en production le 30/10/2026 vers 23 h (Kinshasa) par Dr Justin (SQL Editor). Vérifié ensuite sur son compte :
+--   contenus, activités et ressources visibles identiques à l'octet près (2 488 / 5 483 / 13, empreintes md5 égales) ;
+--   activités d'une journée : 505 ms -> 14 ms ; activités des 30 jours de l'historique : ~1 s -> 29 ms (temps base).
+-- Base de test (rlojnuaajeubzlwofwhn) : PAS encore appliquée.
 begin;
 
 drop policy if exists activites_de_mes_contenus on seneve.activities;
