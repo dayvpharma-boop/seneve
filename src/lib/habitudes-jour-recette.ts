@@ -14,13 +14,17 @@ const PREFIXE='RECETTE_HD_QUOTIDIEN_V1:';
 /** Six mois de 30 jours (le dernier finit le 181e jour civil). Au-delà, ou sans journée publiée : refus explicite. */
 const JOURS_MAX=181;
 /** Débuts locaux des mois de l'inscription (périodes d'accès lisibles par leur seul titulaire). */
-async function debutsDe(enrollmentId:string,dateDebut:string,fuseau:string):Promise<DebutMois[]>{
- const r=await supabase.from('hd_access_periods').select('mois,debut,fin_exclue').eq('enrollment_id',enrollmentId);
+/** Lecture lancée en même temps que l'inscription et les horaires (un aller-retour réseau de moins, 30/10/2026). */
+// Promise.resolve : la requête part une seule fois (une requête Supabase relancée à chaque « await » sinon).
+const periodesDe=(enrollmentId:string)=>{const p=Promise.resolve(supabase.from('hd_access_periods').select('mois,debut,fin_exclue').eq('enrollment_id',enrollmentId));p.catch(()=>undefined);return p;};
+async function debutsDe(periodes:ReturnType<typeof periodesDe>,dateDebut:string,fuseau:string):Promise<DebutMois[]>{
+ const r=await periodes;
  if(r.error)throw Error('Périodes indisponibles');
  return debutsMois(dateDebut,(r.data??[]) as PeriodeHabitudes[],fuseau);
 }
 /** Uniquement les UUID techniques effectivement publiés ; aucune activité inventée depuis un horaire. */
 export async function chargerJourRecette(enrollmentId:string,participantId:string,dateLocale:string):Promise<JourRecette>{
+ const periodes=periodesDe(enrollmentId);
  const [session,e,horaires]=await Promise.all([supabase.auth.getSession(),supabase.from('enrollments').select('enrollment_id,participant_id,programme_id,version,langue,date_debut,etat').eq('enrollment_id',enrollmentId).single(),chargerHorairesHabitudes(enrollmentId)]);
  if(session.error||!session.data.session||e.error)throw Error('Session ou inscription indisponible');
  const enr=e.data;
@@ -28,7 +32,7 @@ export async function chargerJourRecette(enrollmentId:string,participantId:strin
  // L'horloge du serveur fournit la journée courante ; le composant ne réutilise pas celle d'hier.
  if(horaires.date_locale!==dateLocale)throw Error('Journée à actualiser');
  // Jour du parcours d'après les périodes d'accès : identique au jour civil sans coupure, reprise après un retard.
- const debuts=await debutsDe(enrollmentId,enr.date_debut,horaires.fuseau);
+ const debuts=await debutsDe(periodes,enr.date_debut,horaires.fuseau);
  const jourCivil=jourHabitudes(enr.date_debut,debuts,dateLocale);
  const moisEnCours=[...debuts].sort((a,b)=>b.mois-a.mois).find(x=>x.debut<=dateLocale)?.mois;
  if(!Number.isInteger(jourCivil)||jourCivil<1||jourCivil>JOURS_MAX)throw Error('Jour hors parcours');
@@ -77,11 +81,12 @@ export function assemblerJourRecette(enrollmentId:string,participantId:string,da
 
 /** Lecture bornée au mois en cours (30 jours au plus). Aucun appel record_progress, aucune date future. */
 export async function chargerHistoriqueRecette(enrollmentId:string,participantId:string,dateLocale:string):Promise<JourRecette[]>{
+ const periodes=periodesDe(enrollmentId);
  const [session,e,horaires]=await Promise.all([supabase.auth.getSession(),supabase.from('enrollments').select('enrollment_id,participant_id,programme_id,version,langue,date_debut,etat').eq('enrollment_id',enrollmentId).single(),chargerHorairesHabitudes(enrollmentId)]);
  if(session.error||!session.data.session||e.error)throw Error('Session ou inscription indisponible');
  const enr=e.data;
  if(!enr||enr.participant_id!==participantId||!programmeHdLisible(enr.programme_id,enr.langue)||enr.version!==1||enr.etat!=='active'||horaires.date_locale!==dateLocale)throw Error('Historique non accessible');
- const debuts=await debutsDe(enrollmentId,enr.date_debut,horaires.fuseau);
+ const debuts=await debutsDe(periodes,enr.date_debut,horaires.fuseau);
  const raw=jourHabitudes(enr.date_debut,debuts,dateLocale);
  if(!Number.isInteger(raw)||raw<1)throw Error('Calendrier invalide');
  const ouverts=Math.min(JOURS_MAX,raw),premier=Math.floor((ouverts-1)/30)*30+1,attendus=ouverts-premier+1;
