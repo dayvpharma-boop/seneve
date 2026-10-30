@@ -1,5 +1,5 @@
 import {IgnorerRappelHabitude} from './IgnorerRappelHabitude';
-import {useEffect,useRef,useState,type ComponentProps} from 'react';
+import {useEffect,useRef,useState,type ComponentProps,type ReactNode} from 'react';
 import {CorrectionRealisationHabitude} from './CorrectionRealisationHabitude';
 import {enregistrerHabitude,type ActionHabitude,type TransportProgression} from '@/lib/habitudes-api';
 import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
@@ -8,9 +8,11 @@ import {IconeHD} from './IconeHabitudes';
 import {EtatSauvegarde} from './EtatSauvegarde';
 import {envoyerFile,garderAction,useEntreeFile,type TransportFile} from '@/lib/file-actions';
 
-function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu,horsLigne=false}:{
+function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu,horsLigne=false,ignorer}:{
  /** Sans réseau (décision du 29/10/2026) : la déclaration est gardée sur l'appareil puis envoyée au retour du réseau. */
  horsLigne?:boolean;
+ /** Choix « Ignorer les rappels pour aujourd'hui », affiché en bas de la carte (demande de Dr Justin du 30/10/2026). */
+ ignorer?:ReactNode;
  /** « stitch » : carte des maquettes Stitch HD ; « culte » : « J'y ai participé » de la maquette 07 (même mécanisme d'enregistrement). */
  variante?:'stitch'|'priere'|'culte';heure?:string;attenue?:boolean;
  /** Culte : « Je n'ai pas pu » n'enregistre rien sur le serveur ; le parent ouvre son panneau. */
@@ -49,7 +51,7 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
   }catch{setErreur(true);}finally{verrou.current=false;setOccupe(false);}
  }
  const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
- if(variante==='stitch')return <><CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule:verrouLocal,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true)}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>{badge}</>;
+ if(variante==='stitch')return <><CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule:verrouLocal,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true),ignorer}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>{badge}</>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
  if(variante==='culte')return <div className="flex flex-col gap-2" aria-busy={occupe}>
   <p role="status" className={valeur==='realisee'||attente?'font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant':'sr-only'}>{attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation. This declaration is not confirmed yet.':'En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.')):valeur==='realisee'?(en?'Participation recorded · Synchronised':'Participation déclarée · Synchronisée'):labels[valeur]}</p>
@@ -58,6 +60,7 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
    {!attente&&onPasPu&&<button type="button" disabled={occupe} onClick={onPasPu} className="min-h-[48px] rounded-xl bg-hd-surface-container text-hd-on-surface font-hd-label-lg text-hd-label-lg font-medium flex items-center justify-center gap-2 disabled:opacity-60"><IconeHD nom="event_busy" className="text-[18px]"/>{en?'I couldn’t go':'Je n’ai pas pu'}</button>}
   </>}
   {erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{nettoyageIncomplet?(en?'The record is already confirmed. Retry to finish the update.':'L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.'):(en?'Confirmation unavailable. Retry this same declaration when you can.':'Confirmation indisponible. Réessaie cette même déclaration quand tu peux.')}</p>}
+  {ignorer}
  </div>;
  if(variante==='priere')return <section className="ap-actions" aria-label={consigne} aria-busy={occupe}>
   <p role="status" className="ap-etat">{valeur==='realisee'?(en?'Prayer recorded · Synchronised':'Prière déclarée · Synchronisée'):attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation.':'En attente de confirmation du serveur.')):labels[valeur]}</p>
@@ -67,6 +70,7 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
    <button type="button" className="ap-confirmer" disabled={occupe||lectureSeule||(!attente&&valeur==='realisee')} onClick={()=>void declarer(attente?.action??'realisee')}><IconeHD nom={valeur==='realisee'?'done_all':'check'}/><span>{occupe?(en?'Saving…':'Enregistrement…'):attente?(en?'Retry declaration':'Réessayer la déclaration'):valeur==='realisee'?(en?'Prayer recorded':'Prière déclarée'):(en?'I prayed':'J’ai prié')}</span></button>
   </div>
   {erreur&&<p role="alert" className="ap-erreur">{nettoyageIncomplet?(en?'Already confirmed. Retry to finish updating this device.':'Déjà confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Not confirmed. Check your connection and retry the same declaration.':'Non confirmé. Vérifie ta connexion et réessaie cette même déclaration.')}</p>}
+  {ignorer}
  </section>;
  return <section className="card hd-declaration" aria-label={consigne} aria-busy={occupe}>
   <h3>{consigne}</h3>{critere&&<p>{critere}</p>}{lienLecture&&<a className="btn-secondaire" href={lienLecture.href}>{lienLecture.label}</a>}
@@ -80,12 +84,13 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
    {aideDisponible&&!aide&&<button type="button" className="btn-secondaire" disabled={occupe} onClick={()=>void declarer('aide_demandee')}>{en?'I need help':'J’ai besoin d’aide'}</button>}
   </div>}
   {erreur&&<p role="alert">{nettoyageIncomplet?(en?'The record is already confirmed. Retry to finish the update.':'L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.'):(en?'Confirmation unavailable. Retry this same declaration when you can.':'Confirmation indisponible. Réessaie cette même déclaration quand tu peux.')}</p>}
+  {ignorer}
  </section>;
 }
 
 type ValeurEtat='non_commencee'|'preparee'|'partielle'|'realisee';
 /** Rendu Stitch : mêmes actions, mêmes messages d'attente et d'erreur que la carte d'origine. */
-function CarteStitch(p:{en:boolean;consigne:string;lienEcriture?:{href:string;label:string};lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
+function CarteStitch(p:{ignorer?:ReactNode;en:boolean;consigne:string;lienEcriture?:{href:string;label:string};lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
  const {en,consigne,critere,heure,valeur,aide}=p,l=(fr:string,english:string)=>en?english:fr;
  const etatTexte={non_commencee:l('Pas encore enregistrée','Not recorded yet'),preparee:l('Préparée','Prepared'),partielle:l('Réalisée en partie','Partly done'),realisee:l('Réalisée','Completed')}[valeur]+(p.synchronise?l(' · Synchronisée',' · Synchronised'):'');
  const heureEl=heure?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0"><time dateTime={heure}>{heure}</time></span>:null;
@@ -100,6 +105,7 @@ function CarteStitch(p:{en:boolean;consigne:string;lienEcriture?:{href:string;la
   <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0">{l('À faire','To do')}</span>
   <button type="button" onClick={p.deplier} aria-expanded={false} aria-label={l(`Déclarer : ${consigne}`,`Record: ${consigne}`)} className="absolute inset-0 rounded-xl"/>
   {lecture}
+  {p.ignorer&&<div className="relative z-[1] w-full">{p.ignorer}</div>}
  </article>;
  if(valeur==='realisee'&&!aide&&!p.attente&&!p.erreur)return <article aria-label={consigne} className="bg-hd-surface-container-lowest rounded-2xl px-hd-space-md py-3 shadow-[0_1px_6px_rgba(29,28,19,0.03)] flex items-center justify-between">
   {statut}<div className="flex items-center gap-3 min-w-0">
@@ -137,6 +143,7 @@ function CarteStitch(p:{en:boolean;consigne:string;lienEcriture?:{href:string;la
   {p.attente&&<p role="status" className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{p.nettoyageIncomplet?l('Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.','Record confirmed. Retry to finish updating this device.'):l('En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.','Waiting for server confirmation. This declaration is not confirmed yet.')}</p>}
   {p.autres&&!p.lectureSeule&&!p.attente&&choix.length>0&&<div className="flex flex-wrap gap-2">{choix.map(c=><button key={c.a} type="button" disabled={p.occupe} onClick={()=>p.declarer(c.a)} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium disabled:opacity-60">{c.t}</button>)}</div>}
   {p.erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{p.nettoyageIncomplet?l('L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.','The record is already confirmed. Retry to finish the update.'):l('Confirmation indisponible. Réessaie cette même déclaration quand tu peux.','Confirmation unavailable. Retry this same declaration when you can.')}</p>}
+  {p.ignorer}
  </article>;
 }
 
@@ -146,8 +153,8 @@ export function DeclarationHabitude(props:ComponentProps<typeof CarteDeclaration
  function confirmer(e:EtatOccurrence){setEtat(e);props.onConfirme(e);}
  let saisieEnAttente=true;
  try{saisieEnAttente=!!sessionStorage.getItem(cleSaisie(props.userId,props.occurrence.enrollment_id,props.occurrence.occurrence_id))||!!sessionStorage.getItem('seneve:habitudes:lecture:v1:'+props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id);}catch{/* correction indisponible si le stockage est illisible */}
- return <><CarteDeclarationHabitude {...props} etat={etat} onConfirme={confirmer}/>
- {import.meta.env.VITE_HABITUDES_RELANCES==='true'&&!props.lectureSeule&&!props.horsLigne&&etat?.etat!=='realisee'&&<IgnorerRappelHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} enrollmentId={props.occurrence.enrollment_id} activityId={props.occurrence.occurrence_id} langue={props.langue}/>}
+ const ignorer=import.meta.env.VITE_HABITUDES_RELANCES==='true'&&!props.lectureSeule&&!props.horsLigne&&etat?.etat!=='realisee'&&<IgnorerRappelHabitude dansCarte key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} enrollmentId={props.occurrence.enrollment_id} activityId={props.occurrence.occurrence_id} langue={props.langue}/>;
+ return <><CarteDeclarationHabitude {...props} etat={etat} onConfirme={confirmer} ignorer={ignorer||undefined}/>
  {!props.lectureSeule&&!props.horsLigne&&!saisieEnAttente&&etat?.synchronisation==='synchronise'&&etat.etat==='realisee'&&
  <CorrectionRealisationHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} userId={props.userId} occurrence={props.occurrence} langue={props.langue} transport={props.transport} onConfirme={confirmer}/>}</>;
 }

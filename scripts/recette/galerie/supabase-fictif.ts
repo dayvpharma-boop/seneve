@@ -3,6 +3,7 @@ const vide={data:null,error:{message:'galerie hors réseau'}};
 const chaine:any=new Proxy({},{get:(_c,p)=>p==='then'?undefined:()=>chaine});
 // Écran Engagements : une inscription fictive et un compteur fictif, au jour 26 du parcours (série depuis le 1er octobre).
 const E='11111111-1111-4111-8111-111111111111';
+const sansIgnore:any=new Proxy({},{get:(_c,p)=>p==='then'?(ok:(v:unknown)=>void)=>ok({data:[],error:null}):()=>sansIgnore});
 const inscriptions:any=new Proxy({},{get:(_c,p)=>p==='then'?(ok:(v:unknown)=>void)=>ok({data:[{enrollment_id:E}],error:null}):()=>inscriptions});
 const fidelite={debut:'2026-10-01',masque:!location.hash.includes('visible'),precedent:null as string|null};
 const jours=(d:string)=>Math.round((Date.parse('2026-10-26')-Date.parse(d))/864e5);
@@ -24,7 +25,8 @@ function choixRappels(nom:string,args:Record<string,unknown>){
 }
 export const supabase:any={
  rpc:async(nom:string,args:Record<string,unknown>)=>nom.startsWith('hd_fidelite_')?compteur(nom,args):nom.startsWith('hd_rappels_')||nom==='hd_changer_fuseau'?choixRappels(nom,args):vide,
- from:(table:string)=>table==='enrollments'&&location.hash.startsWith('#engagements')?inscriptions:chaine,
+ // Choix « Ignorer les rappels pour aujourd'hui » : rien d'ignoré dans la galerie.
+ from:(table:string)=>table==='hd_reminder_skips'?sansIgnore:table==='enrollments'&&location.hash.startsWith('#engagements')?inscriptions:chaine,
  auth:{getSession:async()=>({data:{session:null},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},
 };
 export function siteUrl(path:string):string{return path;}
