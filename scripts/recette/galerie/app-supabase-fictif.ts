@@ -18,6 +18,12 @@ if (new URLSearchParams(location.search).get('apercu') === 'journee') {
   tables.activities.push({ activity_id: 'Q2', content_id: 'C2', type_activite: 'question', consigne: en ? 'Example question for the journal.' : 'Question d’exemple pour le journal.', obligatoire: false },
     { activity_id: 'Q1', content_id: 'C1', type_activite: 'question', consigne: en ? 'Example question from yesterday.' : 'Question d’exemple de la veille.', obligatoire: false });
 }
+// ?parcours=2 : deux parcours suivis, pour voir les onglets de parcours sur Aujourd'hui.
+if (new URLSearchParams(location.search).get('parcours') === '2') {
+  const p2 = en ? 'ACHETEUR_LIVRE_14J_EN_V1' : 'ACHETEUR_LIVRE_14J_FR_V1';
+  tables.enrollments.push({ enrollment_id: 'APERCU2', programme_id: p2, version: 1, langue, date_debut: debut, etat: 'active' });
+  tables.programmes.push({ programme_id: p2, nom: en ? 'Book companion — 14 days' : 'Accompagnement du livre — 14 jours', duree_jours: 14 });
+}
 const rpc: Record<string, unknown> = {
   ensure_participant: 'APERCU', staff_me: { admin: true, roles: ['admin'] },
   mes_notifications: { vu_jusqu_a: null, non_lues: 2, elements: [
