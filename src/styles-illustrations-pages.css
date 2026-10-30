@@ -12,12 +12,12 @@
 @media(forced-colors:active){:root[data-apparence] .page-illustration{background:Canvas;color:CanvasText;border:1px solid CanvasText}.page-illustration :is(p,i){color:CanvasText}}
 /* Photo à côté du texte (demande de Dr Justin du 30/10/2026) : la photo part du bord droit et se fond sous le texte ;
    on n'en voit qu'une partie, la carte est moins haute. Ne concerne pas la variante « photo au-dessus du texte ». */
-:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img){display:block;min-height:188px}
-:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte{position:relative;z-index:1;max-width:60%;padding:24px 0 24px 22px}
+:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img){display:block;min-height:204px}
+:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte{position:relative;z-index:1;max-width:70%;padding:26px 0 26px 24px}
 :root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte .page-illustration-repere{margin-bottom:12px}
 :root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte .page-illustration-titre{margin-bottom:10px}
-:root[data-apparence] .page-illustration>.page-illustration-texte+img{position:absolute;z-index:0;top:0;right:0;bottom:0;width:66%;height:100%;min-height:0;object-fit:cover;object-position:35% center;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.18) 24%,rgba(0,0,0,.75) 50%,#000 72%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.18) 24%,rgba(0,0,0,.75) 50%,#000 72%)}
-@media(max-width:420px){:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte{max-width:62%;padding:20px 0 20px 18px}:root[data-apparence] .page-illustration>.page-illustration-texte+img{width:68%}}
+:root[data-apparence] .page-illustration>.page-illustration-texte+img{position:absolute;z-index:0;top:0;right:0;bottom:0;width:62%;height:100%;min-height:0;object-fit:cover;object-position:35% center;-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 34%,rgba(0,0,0,.42) 56%,rgba(0,0,0,.86) 74%,#000 88%);mask-image:linear-gradient(90deg,transparent 0%,transparent 34%,rgba(0,0,0,.42) 56%,rgba(0,0,0,.86) 74%,#000 88%)}
+@media(max-width:420px){:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte{max-width:72%;padding:22px 0 22px 20px}:root[data-apparence] .page-illustration>.page-illustration-texte+img{width:64%}}
 /* Écriture des cartes à photo (demande de Dr Justin du 30/10/2026) : même famille que le titre du Test des 7 Racines —
    petit surtitre très espacé, grand titre à empattements, seconde moitié en italique vert olive, note en Poppins. */
 :root:root:root[data-apparence] :is(.page-illustration,.espace-page.journee-nouvelle .accueil-vivant) :is(.page-illustration-repere,.accueil-vivant-repere){display:block;font:500 10px/1.6 Poppins,Outfit,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#4a463f;margin:0 0 12px}
