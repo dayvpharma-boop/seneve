@@ -97,3 +97,7 @@
 :root:root[data-apparence] .parcours-page .hd-calendrier .progres-tuiles .day-tile.is-done :is(.parcours-rond,.parcours-jour){color:var(--vivant-sur-accent,#fff)}
 :root:root[data-apparence="sombre"] .parcours-page .hd-calendrier .progres-tuiles .day-tile.is-done :is(.parcours-rond,.parcours-jour){color:var(--vivant-fond)}
 :root:root[data-apparence="sombre"] .parcours-page .hd-calendrier .progres-tuiles .day-tile .parcours-rond{background:none!important;box-shadow:none!important}
+
+/* Cadres des parcours : le cadre touché glisse en première place, comme sur Aujourd'hui (demande de Dr Justin du 31/10/2026). */
+:root:root[data-apparence] .parcours-page .prog-tabs{scroll-padding-inline-start:44px}
+:root:root[data-apparence] .parcours-page .prog-tabs::after{content:"";flex:0 0 calc(100% - 248px)}

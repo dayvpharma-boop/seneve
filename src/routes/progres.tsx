@@ -15,7 +15,7 @@ import { useCallback, useEffect, useState, type ReactNode, type KeyboardEvent } 
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
-import { dateDuJour, pickDefault, placerOngletActif } from '@/lib/espace';
+import { amenerOngletAuDebut, dateDuJour, pickDefault, placerOngletAujourdhui } from '@/lib/espace';
 import { Icone } from '@/components/Icone';
 import { nomParcours } from '@/lib/espace-textes';
 import { bilan, progresTextes, semaines, semaineTextes, type Bilan } from '@/lib/progres';
@@ -172,8 +172,8 @@ export function Progres() {
   if (!enr) return <main className="wrap avec-nav parcours-page">{tete}<section className="card pc-etat"><p role="status">{T.aucun}</p></section>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
 
   const b = data.bilans[enr.enrollment_id]!;
-  const tabs = <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.titre} onKeyDown={parcourirOnglets}>
-    {data.parcours.map(x => {const bx=data.bilans[x.enrollment_id]!;return <button type="button" role="tab" id={`pc-inscription-${x.enrollment_id}`} aria-controls="pc-bilan" tabIndex={x.enrollment_id === enr.enrollment_id?0:-1} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={() => setChosen(x.enrollment_id)}><span>{x.nom}</span><small>{x.etat === 'en_pause' ? (en ? 'Paused' : 'En pause') : x.etat==='terminee'||bx.termine ? (en ? 'Completed' : 'Terminé') : bx.pasCommence ? (en ? 'Upcoming' : 'À venir') : (en ? 'In progress' : 'En cours')} · {bx.pasCommence?(en?`${bx.duree} days`:`${bx.duree} jours`):`${en?'Day':'Jour'} ${bx.joursOuverts} / ${bx.duree}`}</small></button>;})}
+  const tabs = <div className="prog-tabs" ref={placerOngletAujourdhui} role="tablist" aria-label={T.titre} onKeyDown={parcourirOnglets}>
+    {data.parcours.map(x => {const bx=data.bilans[x.enrollment_id]!;return <button type="button" role="tab" id={`pc-inscription-${x.enrollment_id}`} aria-controls="pc-bilan" tabIndex={x.enrollment_id === enr.enrollment_id?0:-1} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); }}><span>{x.nom}</span><small>{x.etat === 'en_pause' ? (en ? 'Paused' : 'En pause') : x.etat==='terminee'||bx.termine ? (en ? 'Completed' : 'Terminé') : bx.pasCommence ? (en ? 'Upcoming' : 'À venir') : (en ? 'In progress' : 'En cours')} · {bx.pasCommence?(en?`${bx.duree} days`:`${bx.duree} jours`):`${en?'Day':'Jour'} ${bx.joursOuverts} / ${bx.duree}`}</small></button>;})}
   </div>;
   if(data.habitudes[enr.enrollment_id]) return <main className="wrap avec-nav parcours-page">
     {tete}<p className="progres-intro">{T.intro}</p>{tabs}
