@@ -10,3 +10,11 @@
 :root[data-apparence] .bb-page-lecture>.page-illustration{display:none}
 @media(max-width:420px){.page-illustration .page-illustration-texte{padding:24px 0 24px 18px}.page-illustration .page-illustration-repere{font-size:9px;letter-spacing:.06em}.page-illustration .page-illustration-titre{font-size:25px}.page-illustration .page-illustration-note{font-size:12px}}
 @media(forced-colors:active){:root[data-apparence] .page-illustration{background:Canvas;color:CanvasText;border:1px solid CanvasText}.page-illustration :is(p,i){color:CanvasText}}
+/* Photo à côté du texte (demande de Dr Justin du 30/10/2026) : la photo part du bord droit et se fond sous le texte ;
+   on n'en voit qu'une partie, la carte est moins haute. Ne concerne pas la variante « photo au-dessus du texte ». */
+:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img){display:block;min-height:188px}
+:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte{position:relative;z-index:1;max-width:60%;padding:24px 0 24px 22px}
+:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte .page-illustration-repere{margin-bottom:12px}
+:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte .page-illustration-titre{margin-bottom:10px}
+:root[data-apparence] .page-illustration>.page-illustration-texte+img{position:absolute;z-index:0;top:0;right:0;bottom:0;width:66%;height:100%;min-height:0;object-fit:cover;object-position:35% center;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.18) 24%,rgba(0,0,0,.75) 50%,#000 72%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.18) 24%,rgba(0,0,0,.75) 50%,#000 72%)}
+@media(max-width:420px){:root[data-apparence] .page-illustration:has(>.page-illustration-texte+img)>.page-illustration-texte{max-width:62%;padding:20px 0 20px 18px}:root[data-apparence] .page-illustration>.page-illustration-texte+img{width:68%}}
