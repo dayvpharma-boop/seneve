@@ -23,7 +23,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ComptePrive } from '@/components/ComptePrive';
 import { supabase } from '@/lib/supabase';
-import { apercuMoment, avecLangue, dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletActif, amenerOngletAuDebut, rawDay, webText } from '@/lib/espace';
+import { apercuMoment, avecLangue, dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletAujourdhui, amenerOngletAuDebut, rawDay, webText } from '@/lib/espace';
 import {ParcoursAVenir,PauseParcours,ProgressionLongue,BilanTermine} from '@/components/VariantesJournee';
 import {IconeJourneeSuite} from '@/components/IconeJourneeSuite';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
@@ -305,7 +305,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const calendrierDe=(x:Parcours)=>!(habitudesActivees()&&data.habitudes?.includes(x.enrollment_id))?dayInfo(x.date_debut,new Date(),x.duree)
     :data.periodesHabitudes?.[x.enrollment_id]?.length?calendrierPeriodes(x.date_debut,data.periodesHabitudes[x.enrollment_id]!,data.fuseauHabitudes??'Africa/Kinshasa',x.duree)
     :calendrierHabitudes(x.date_debut,x.duree,data.fuseauHabitudes??'Africa/Kinshasa');
-  const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletActif} role="tablist" aria-label={T.mesParcours}>
+  const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletAujourdhui} role="tablist" aria-label={T.mesParcours}>
     {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{calendrierDe(x).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:calendrierDe(x).finished?T.ongletTermine:T.ongletJour(calendrierDe(x).day)}</span>{' '}{x.nom}</button>)}
   </div>;
 

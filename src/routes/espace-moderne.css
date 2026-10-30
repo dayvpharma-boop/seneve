@@ -118,3 +118,4 @@
 
 /* Onglets de parcours : un espace après le dernier onglet pour qu'il puisse venir en première position (demande de Dr Justin du 30/10/2026). */
 :root:root[data-apparence] .espace-page .prog-tabs::after{content:"";flex:0 0 calc(100% - 250px)}
+:root:root[data-apparence] .espace-page .prog-tabs{scroll-padding-inline-start:44px}

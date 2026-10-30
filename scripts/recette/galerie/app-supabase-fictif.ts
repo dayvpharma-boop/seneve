@@ -33,6 +33,15 @@ if (new URLSearchParams(location.search).get('parcours') === 'hd') {
   tables.hd_programme_links = [{ programme_id: hd, version: 1, langue }];
   tables.activities = []; // la journée affichée vient de jour-fictif.ts
 }
+// ?parcours=4 : quatre parcours (en cours, en cours, terminé, à venir), comme le compte de Dr Justin le 30/10/2026.
+if (new URLSearchParams(location.search).get('parcours') === '4') {
+  const modele = tables.contents[0] as Record<string, unknown>;
+  ([['P30', 'Formation 30 jours', 30, -17], ['P14', 'Accompagnement du livre — 14 jours', 14, -20], ['P90', 'Programme 90 jours', 90, 3]] as const).forEach(([id, nom, duree, decalage], k) => {
+    tables.enrollments.push({ enrollment_id: `APERCU${k + 2}`, programme_id: id, version: 1, langue, date_debut: new Date(Date.now() + decalage * 864e5).toISOString().slice(0, 10), etat: 'active' });
+    tables.programmes.push({ programme_id: id, nom, duree_jours: duree });
+    for (let j = 1; j <= duree; j++) tables.contents.push({ ...modele, content_id: `${id}-${j}`, programme_id: id, jour: j });
+  });
+}
 // ?parcours=fini / ?parcours=avenir : un second parcours terminé ou pas encore commencé, pour vérifier que le haut d'Aujourd'hui ne change pas.
 { const choix = new URLSearchParams(location.search).get('parcours');
   if (choix === 'fini' || choix === 'avenir') {

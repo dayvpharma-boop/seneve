@@ -122,23 +122,47 @@ export function eventIdFor(pending: string | null | undefined, generate: () => s
   return pending ?? generate();
 }
 
-/** Onglets des parcours sur une ligne : à l'ouverture, l'onglet choisi est ramené en vue (sans faire défiler la page). */
-/** Onglet de parcours touché : il glisse doucement jusqu'au bord gauche de la rangée (demande de Dr Justin du 30/10/2026). */
-export function amenerOngletAuDebut(onglet: HTMLElement): void {
+/** Onglets des parcours sur une ligne : à l'ouverture, l'onglet choisi est ramené en vue (sans faire défiler la page).
+ *  Aujourd'hui (demande de Dr Justin du 30/10/2026) : l'onglet touché glisse jusqu'à la première place, en laissant voir
+ *  le bord de l'onglet précédent pour pouvoir revenir en arrière d'un simple toucher. */
+export const MARGE_ONGLET_AUJOURDHUI = 44;
+let glissement: { depart: number; quand: number } | null = null;
+const positionOnglet = (liste: HTMLElement, onglet: HTMLElement, marge: number) =>
+  Math.max(0, onglet.getBoundingClientRect().left - liste.getBoundingClientRect().left + liste.scrollLeft - marge);
+const animationsPermises = () => { try { return !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; } };
+const defiler = (liste: HTMLElement, left: number, doux: boolean) => {
+  if (typeof liste.scrollTo === 'function') liste.scrollTo({ left, behavior: doux && animationsPermises() ? 'smooth' : 'auto' });
+  else liste.scrollLeft = left;
+};
+const apresAffichage = (f: () => void) => { if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => requestAnimationFrame(f)); else setTimeout(f, 0); };
+
+/** Onglet touché : il glisse doucement vers la première place de la rangée. */
+export function amenerOngletAuDebut(onglet: HTMLElement, marge = MARGE_ONGLET_AUJOURDHUI): void {
   const liste = onglet.parentElement;
   if (!liste) return;
-  const gauche = onglet.getBoundingClientRect().left - liste.getBoundingClientRect().left + liste.scrollLeft;
-  let doux = true;
-  try { doux = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* navigateur sans cette information */ }
-  if (typeof liste.scrollTo === 'function') liste.scrollTo({ left: Math.max(0, gauche), behavior: doux ? 'smooth' : 'auto' });
-  else liste.scrollLeft = Math.max(0, gauche);
+  // Si la page reconstruit la rangée (parcours terminé ou à venir), la nouvelle rangée repart d'ici et glisse à son tour.
+  glissement = { depart: liste.scrollLeft, quand: Date.now() };
+  defiler(liste, positionOnglet(liste, onglet, marge), true);
 }
-export function placerOngletActif(liste: HTMLElement | null): void {
-  const placer = () => {
-    const actif = liste?.querySelector<HTMLElement>('[aria-selected="true"]');
-    if (liste && actif) liste.scrollLeft = Math.max(0, actif.offsetLeft - liste.offsetLeft - 16);
+
+export function placerOngletActif(liste: HTMLElement | null, marge = 16): void {
+  if (!liste) return;
+  const cible = () => {
+    const actif = liste.querySelector<HTMLElement>('[aria-selected="true"]');
+    return actif ? positionOnglet(liste, actif, marge) : 0;
   };
-  placer();
+  const recent = glissement && Date.now() - glissement.quand < 2000 ? glissement : null;
+  glissement = null;
+  if (recent) {
+    liste.scrollLeft = recent.depart;
+    apresAffichage(() => defiler(liste, cible(), true));
+    return;
+  }
+  liste.scrollLeft = cible();
+  // Certains téléphones ignorent la position donnée avant le premier affichage : on la redonne juste après.
+  apresAffichage(() => { liste.scrollLeft = cible(); });
   // Les polices du site arrivent parfois après l'affichage et changent la largeur des onglets : on recale une fois.
-  try { void document.fonts?.ready.then(placer); } catch { /* navigateur sans cette information */ }
+  try { void document.fonts?.ready.then(() => { liste.scrollLeft = cible(); }); } catch { /* navigateur sans cette information */ }
 }
+/** Version d'Aujourd'hui (référence stable pour React). */
+export const placerOngletAujourdhui = (liste: HTMLElement | null): void => placerOngletActif(liste, MARGE_ONGLET_AUJOURDHUI);
