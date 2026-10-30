@@ -477,6 +477,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const bandeauHorsLigne = horsLigne && <aside className="offline-bandeau" role="status"><span className="offline-nuage" aria-hidden="true"><IconeJournee nom="cloud_off" taille={18} /></span><div><div className="offline-bandeau-tete"><strong>{enr.langue === 'en' ? 'Offline mode' : 'Mode hors connexion'}</strong><span>{enr.langue === 'en' ? 'Local copy' : 'Copie locale'}</span></div><p>{dateCopie ? <>{enr.langue === 'en' ? 'You are viewing the copy saved on ' : 'Tu consultes la copie enregistrée le '}<strong>{dateCopie}</strong>.</> : (enr.langue === 'en' ? 'You are viewing the days already loaded.' : 'Tu consultes les journées déjà chargées.')}</p><p className="offline-note">{enr.langue === 'en' ? 'You are offline. Your drafts stay on this device.' : 'Tu n’as pas de connexion. Tes brouillons restent sur cet appareil.'}</p></div></aside>;
   const enteteHorsLigne = <header className="offline-entete"><div className="erreur-header"><div><strong>SÉNEVÉ</strong></div><span className="erreur-avatar" aria-hidden="true"><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></span></div>{bandeauHorsLigne}<div className="offline-profil"><div><small>{enr.langue === 'en' ? 'Daily companion' : 'Compagnon de chemin'}</small><h1>{salut}</h1></div><p><span>{nomRepere}</span><strong>{T.jourSur(current,total)}</strong></p></div></header>;
   return page(enr.langue, <>{horsLigne ? enteteHorsLigne : header(<><p className="today-date">{new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, current))}</p><p className="today-parcours">{current === 1 ? <IconeJournee nom="explore" taille={18} /> : <IconeMaquette nom="spa" taille={18} />}{`${nomRepere} · ${T.jourSur(current, total)}`}</p></>, bandeauHorsLigne)}{tabs}
+    {/* Colonnes de l'ordinateur (maquette validée le 30/10/2026) ; sans effet sur téléphone. */}
+    <div className="jn-colonnes"><div className="jn-colonne jn-colonne-journee">
     {!horsLigne && total>14 ? <ProgressionLongue langue={enr.langue} b={bilanEnr} current={current} jour={day} choisir={choisirJour}/> : <section className="today-progress" aria-labelledby="progression-semaine">
       <div className="weekly-head"><h2 id="progression-semaine">{T.progressionHebdomadaire}</h2>{horsLigne ? <p className="offline-copie-prete"><IconeJournee nom="offline_pin" taille={14} />{enr.langue === 'en' ? 'Local copy ready' : 'Copie locale prête'}</p> : <p>{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p>}</div>
       {tuiles}
@@ -511,6 +513,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
         })}
       </ul>
     </section>
+    </div><div className="jn-colonne jn-colonne-suite">
 
     {/* Écran allégé (19/10/2026) : l'essentiel du jour d'abord (moments, action, journal), le reste replié. */}
     {!horsLigne && <AudioCard maquette key={`audio-${enr.enrollment_id}-${current}`} contentIds={moments.filter(m => m.ouvert).map(m => m.content.content_id)} langue={enr.langue} />}
@@ -556,6 +559,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
 
     {!horsLigne && <details className="repli"><summary>{T.plusLoin}<IconeRegistre nom="expand_more"/></summary><RepereParcours contexte="journee" langue={enr.langue}/></details>}
     {!horsLigne && reglages(enr.langue,true,true)}
+    </div></div>
     {footer(enr.langue)}
   </>, horsLigne ? 'espace-horsligne' : `journee-nouvelle ${data.parcours.length>1?'journee-multiple':''} ${paused?'journee-pause':''} ${total>14?'journee-longue':''} ${current===1?'espace-premier-jour':''}`);
 }

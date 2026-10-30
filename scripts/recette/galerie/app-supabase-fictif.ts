@@ -11,6 +11,13 @@ const tables: Record<string, unknown[]> = {
   goals: [{ goal_id: 'G1', texte: en ? 'Set aside the tithe every week' : 'Mettre de côté la dîme chaque semaine', racine: 2, confirme_le: '2026-10-20T10:00:00Z' }],
   journal_entries: [], help_requests: [], channel_links: [],
 };
+// ?apercu=journee : journée complète (trois moments Matin · Midi · Soir, action et question du journal) pour la recette d'Aujourd'hui.
+if (new URLSearchParams(location.search).get('apercu') === 'journee') {
+  (tables.programmes[0] as Record<string, unknown>).heures_messages = ['06:00', '12:00', '19:00'];
+  for (let j = 1; j <= 7; j++) for (const n of [2, 3]) tables.contents.push({ content_id: `C${j}-${n}`, programme_id: p, version: 1, langue, jour: j, numero_message: n, theme: en ? `Example moment ${n}` : `Moment d’exemple ${n}`, texte_officiel: en ? 'Example text for visual checks.' : 'Texte d’exemple pour la vérification visuelle.', reference_livre: null, explication: null });
+  tables.activities.push({ activity_id: 'Q2', content_id: 'C2', type_activite: 'question', consigne: en ? 'Example question for the journal.' : 'Question d’exemple pour le journal.', obligatoire: false },
+    { activity_id: 'Q1', content_id: 'C1', type_activite: 'question', consigne: en ? 'Example question from yesterday.' : 'Question d’exemple de la veille.', obligatoire: false });
+}
 const rpc: Record<string, unknown> = {
   ensure_participant: 'APERCU', staff_me: { admin: true, roles: ['admin'] },
   mes_notifications: { vu_jusqu_a: null, non_lues: 2, elements: [

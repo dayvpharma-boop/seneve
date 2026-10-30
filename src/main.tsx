@@ -141,3 +141,4 @@ import './styles-bleu-lavande.css';
 import './styles-modele-lavande.css';
 
 import './styles-test-accueil-moderne.css';
+import './styles-aujourdhui-lavande.css';
