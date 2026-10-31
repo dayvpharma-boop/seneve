@@ -41,6 +41,7 @@ import { TestPage } from '@/routes/index';
 import { GarderLangue } from '@/components/GarderLangue';
 import './styles-introuvable.css';
 import './styles-accents.css';
+import './styles-ilots-clairs.css';
 import { enregistrerServiceWorker } from '@/lib/hors-ligne';
 
 // Pages chargées à la demande : seul le Test des 7 Racines (la page d'arrivée) reste dans le fichier principal.
