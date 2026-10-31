@@ -99,15 +99,16 @@ function CarteStitch(p:{ignorer?:ReactNode;complement?:ReactNode;en:boolean;cons
  const statut=<p role="status" className="sr-only">{etatTexte}</p>;
  const lien=p.lienEcriture??p.lienLecture;
  const lecture=lien?<a href={lien.href} aria-label={lien.label} className="relative z-10 min-h-[44px] px-3 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 inline-flex items-center justify-center gap-1.5"><IconeHD nom={p.lienEcriture?'edit_note':'menu_book'} className="text-[17px]"/><span>{p.lienEcriture?l('Écrire','Write'):l('Lire','Read')}</span></a>:null;
- if(p.attenue)return <article aria-label={consigne} className="relative bg-hd-surface-container/60 rounded-xl px-hd-space-md py-2.5 flex items-center justify-between">
-  {statut}<div className="flex items-center gap-3 min-w-0">
-   <IconeHD nom="radio_button_unchecked" className="text-[18px] text-hd-outline"/>
-   <div className="flex items-baseline gap-2 truncate">{heureEl}<h3 className="font-hd-label-md text-hd-label-md text-hd-on-surface truncate">{consigne}</h3></div>
+ // Carte repliée « plus tard » (31/10/2026) : le nom de l'activité reste lisible en entier sur la première ligne ;
+ // « Lire », « Écrire », la durée et « Ignorer » passent dessous, sur toute la largeur.
+ if(p.attenue)return <article aria-label={consigne} className="relative bg-hd-surface-container/60 rounded-xl px-hd-space-md py-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+  {statut}<div className="flex items-center gap-3 min-w-0 flex-1">
+   <IconeHD nom="radio_button_unchecked" className="text-[18px] text-hd-outline shrink-0"/>
+   <div className="flex items-baseline gap-2 min-w-0">{heureEl}<h3 className="font-hd-label-md text-hd-label-md text-hd-on-surface break-words">{consigne}</h3></div>
   </div>
   <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0">{l('À faire','To do')}</span>
   <button type="button" onClick={p.deplier} aria-expanded={false} aria-label={l(`Déclarer : ${consigne}`,`Record: ${consigne}`)} className="absolute inset-0 rounded-xl"/>
-  {lecture}
-  {(p.complement||p.ignorer)&&<div className="relative z-[1] w-full">{p.complement}{p.ignorer}</div>}
+  {(lecture||p.complement||p.ignorer)&&<div className="relative z-[1] basis-full w-full flex flex-col items-start gap-1.5 [&>*:last-child]:self-stretch">{lecture}{p.complement}{p.ignorer}</div>}
  </article>;
  if(valeur==='realisee'&&!aide&&!p.attente&&!p.erreur)return <article aria-label={consigne} className="bg-hd-surface-container-lowest rounded-2xl px-hd-space-md py-3 shadow-[0_1px_6px_rgba(29,28,19,0.03)] flex flex-wrap items-center justify-between gap-y-2">
   {statut}<div className="flex items-center gap-3 min-w-0">
