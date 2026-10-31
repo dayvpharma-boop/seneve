@@ -4,7 +4,7 @@ import {beforeEach,afterEach,it,expect,vi} from 'vitest';
 const m=vi.hoisted(()=>({user:{id:'U1',email:'marie@example.invalid'},load:vi.fn(),save:vi.fn(),signOut:vi.fn(),listener:null as null|((event:string,session:unknown)=>void),staff:vi.fn()}));
 vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:()=>Promise.resolve({data:{session:m.user?{user:m.user}:null},error:null}),onAuthStateChange:(f:typeof m.listener)=>{m.listener=f;return{data:{subscription:{unsubscribe:vi.fn()}}};},signOut:(a:unknown)=>m.signOut(a)},rpc:(n:string)=>m.staff(n)}}));
 vi.mock('@/lib/profil',async(importOriginal)=>({...await importOriginal<typeof import('@/lib/profil')>(),chargerProfil:(...a:unknown[])=>m.load(...a),modifierProfil:(...a:unknown[])=>m.save(...a)}));
-vi.mock('@/components/GoalCard',()=>({GoalCard:()=> <p>Objectif réel</p>}));vi.mock('@/components/EmailMatinCard',()=>({EmailMatinCard:()=> <p>Rappels réels</p>}));vi.mock('@/components/WhatsAppLink',()=>({WhatsAppLink:()=> <p>Liaison réelle</p>}));vi.mock('@/components/CodePlaceCard',()=>({CodePlaceCard:()=> <p>Code réel</p>}));
+vi.mock('@/components/ClocheNotifications',()=>({ClocheNotifications:()=> <a href="/notifications">Notifications</a>}));vi.mock('@/components/GoalCard',()=>({GoalCard:()=> <p>Objectif réel</p>}));vi.mock('@/components/EmailMatinCard',()=>({EmailMatinCard:()=> <p>Rappels réels</p>}));vi.mock('@/components/WhatsAppLink',()=>({WhatsAppLink:()=> <p>Liaison réelle</p>}));vi.mock('@/components/CodePlaceCard',()=>({CodePlaceCard:()=> <p>Code réel</p>}));
 import {Profil} from '@/routes/profil';
 import {enregistrerProfil,lireProfil,effacerProfils,type Profil as Donnees} from '@/lib/profil';
 import {effacerEspaces} from '@/lib/hors-ligne';
