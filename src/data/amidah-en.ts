@@ -153,7 +153,7 @@ export const amidahEn = [
   },
   {
     "type": "priere",
-    "texte": "May it be Your will, Lord our G-d and G-d of our fathers, grant us our portion in Your Torah."
+    "texte": "He who makes peace in His heavens, may He make peace upon us and upon all Israel. Amen. May it be Your will, Lord our G-d and G-d of our fathers, and grant us our portion in Your Torah."
   },
   {
     "type": "fin",
