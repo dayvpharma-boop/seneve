@@ -70,6 +70,10 @@ const PAGES = [
   ['accent-or', '/profil', '/profil?lang=en'],
   ['fenetre-lectures', '/espace?parcours=hd', '/espace?parcours=hd&lang=en'],
   ['fenetre-duree', '/espace?parcours=hd', '/espace?parcours=hd&lang=en'],
+  ['accent-orancien', '/espace?parcours=hd', '/espace?parcours=hd&lang=en'],
+  ['accent-miel', '/bible', '/bible?lang=en'],
+  ['accent-pin', '/espace?parcours=hd', '/espace?parcours=hd&lang=en'],
+  ['accent-olive', '/bible/joh/3', '/bible/joh/3?lang=en'],
   ['introuvable', '/page-qui-n-existe-pas', '/page-qui-n-existe-pas?lang=en'],
 ];
 

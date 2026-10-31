@@ -2,8 +2,8 @@ import {useEffect,useState} from 'react';
 
 export type Palette = 'ivoire'|'sable'|'sauge'|'argile'|'ardoise';
 export type TailleTexte = 'petite'|'normale'|'grande'|'tres-grande';
-export type Accent = 'lavande'|'menthe'|'foret'|'ciel'|'turquoise'|'or'|'corail'|'rose';
-export const ACCENTS:Accent[]=['lavande','menthe','foret','ciel','turquoise','or','corail','rose'];
+export type Accent = 'lavande'|'menthe'|'foret'|'pin'|'olive'|'ciel'|'turquoise'|'or'|'orancien'|'miel'|'corail'|'rose';
+export const ACCENTS:Accent[]=['lavande','menthe','foret','pin','olive','ciel','turquoise','or','orancien','miel','corail','rose'];
 export type PreferencesVisuelles = {palette:Palette;taille:TailleTexte;accent?:Accent};
 const CLE='seneve:preferences-visuelles:v1';
 const EVENEMENT='seneve:preferences-visuelles';
