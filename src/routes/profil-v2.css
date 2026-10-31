@@ -93,3 +93,4 @@
 .pv-page .pf-photo-avatar .pf-avatar img{width:100%;height:100%;object-fit:cover}
 :root:root .pv-page .pf-photo-choisir{position:absolute;right:-6px;bottom:-2px;width:38px;height:38px;border-radius:50%;border:2px solid var(--vivant-fond);background:var(--vivant-argile,var(--vivant-lavande));color:var(--vivant-encre);display:grid;place-items:center;padding:0;cursor:pointer}
 .pv-identite-reglage .pf-photo{align-items:flex-start}
+.pv-identite .pf-photo{margin:0 6px 0 0}
