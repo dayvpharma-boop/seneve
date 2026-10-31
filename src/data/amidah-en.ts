@@ -53,7 +53,7 @@ export const amidahEn = [
   },
   {
     "type": "priere",
-    "texte": "You are holy and Your Name is holy, and holy beings praise You every day, forever. Blessed are You, Lord, the holy G-d. (During the Ten Days of Repentance, say instead: the holy King.)"
+    "texte": "You are holy and Your Name is holy, and holy beings praise You every day, forever. Blessed are You, Lord, the holy G-d."
   },
   {
     "type": "priere",
@@ -85,7 +85,7 @@ export const amidahEn = [
   },
   {
     "type": "priere",
-    "texte": "Restore our judges as at first, and our counselors as at the beginning; remove from us sorrow and sighing, and reign over us, You alone, Lord, with kindness and compassion, with righteousness and justice. Blessed are You, Lord, King who loves righteousness and justice. (During the Ten Days of Repentance, say instead: the King of judgment.)"
+    "texte": "Restore our judges as at first, and our counselors as at the beginning; remove from us sorrow and sighing, and reign over us, You alone, Lord, with kindness and compassion, with righteousness and justice. Blessed are You, Lord, King who loves righteousness and justice."
   },
   {
     "type": "priere",
