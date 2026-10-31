@@ -68,6 +68,8 @@ const PAGES = [
   ['accent-corail', '/espace?apercu=journee', '/espace?apercu=journee&lang=en'],
   ['accent-ciel', '/reglages#accent', '/reglages?lang=en#accent'],
   ['accent-or', '/profil', '/profil?lang=en'],
+  ['fenetre-lectures', '/espace?parcours=hd', '/espace?parcours=hd&lang=en'],
+  ['fenetre-duree', '/espace?parcours=hd', '/espace?parcours=hd&lang=en'],
   ['introuvable', '/page-qui-n-existe-pas', '/page-qui-n-existe-pas?lang=en'],
 ];
 
@@ -122,10 +124,19 @@ for (const [nom, fr, en] of PAGES) for (const mode of ['light', 'dark']) for (co
   if (nom === 'profil' || nom === 'profil-carnet') await ctx.addInitScript(l => { try { localStorage.setItem('seneve:graines-partagees', '2'); localStorage.setItem('seneve:bible:annotations', JSON.stringify({ 'MAT.13.31': { cle: 'MAT.13.31', livre: 'MAT', chapitre: 13, verset: 31, version: l === 'en' ? 'web' : 'lsg', extrait: l === 'en' ? 'He set another parable before them, saying, “The Kingdom of Heaven is like a grain of mustard seed…' : 'Il leur proposa une autre parabole, et il dit: Le royaume des cieux est semblable à un grain de sénevé…', couleur: 'or', modifie: new Date(Date.now() - 5 * 864e5).toISOString() } })); } catch {} }, langue);
   // Couleur d'accent choisie sur ce téléphone (pages « accent-<couleur> »).
   if (nom.startsWith('accent-')) await ctx.addInitScript(a => { try { localStorage.setItem('seneve:preferences-visuelles:v1', JSON.stringify({ palette: 'ivoire', taille: 'normale', accent: a })); } catch {} }, nom.slice(7));
+  // Fenêtres « Lectures du jour » et « Combien de temps ? » avec la palette Ardoise et l'accent Or.
+  if (nom.startsWith('fenetre-')) await ctx.addInitScript(() => { try { localStorage.setItem('seneve:preferences-visuelles:v1', JSON.stringify({ palette: 'ardoise', taille: 'normale', accent: 'or' })); } catch {} });
   const p = await ctx.newPage(), erreurs = [];
   p.on('pageerror', x => erreurs.push(x.message.slice(0, 200)));
   await p.goto(BASE + adr, {waitUntil: 'networkidle'}).catch(x => erreurs.push('navigation : ' + x.message.slice(0, 120)));
   await p.waitForTimeout(1500);
+  if (nom.startsWith('fenetre-')) {
+    try {
+      await p.getByRole('button', {name: langue === 'en' ? /Today.s readings/i : /Lectures du jour/i}).first().click({timeout: 5000});
+      await p.waitForTimeout(800);
+      if (nom === 'fenetre-duree') { await p.locator('dialog[open]').getByRole('button', {name: langue === 'en' ? /^(Time|Reading time|Done)/ : /^(Durée|Fait)/}).first().click({timeout: 5000}); await p.waitForTimeout(800); }
+    } catch (x) { erreurs.push('fenêtre : ' + x.message.slice(0, 160)); }
+  }
   const fichier = `${nom}-${langue}-${mode === 'light' ? 'clair' : 'sombre'}.png`;
   await p.screenshot({path: path.join(sortie, fichier), fullPage: true}).catch(x => erreurs.push('capture : ' + x.message.slice(0, 120)));
   const m = await p.evaluate(mesurer, langue).catch(x => ({erreurMesure: x.message}));
