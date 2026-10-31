@@ -61,6 +61,9 @@ const PAGES = [
   ['hd-engagements', '/habitudes/engagements?parcours=hd', '/habitudes/engagements?parcours=hd&lang=en'],
   ['hd-aide', '/habitudes/aide?parcours=hd', '/habitudes/aide?parcours=hd&lang=en'],
   ['admin', '/admin', '/admin?lang=en'],
+  ['admin-demandes', '/admin?vue=demandes', '/admin?vue=demandes&lang=en'],
+  ['admin-participants', '/admin?vue=participants', '/admin?vue=participants&lang=en'],
+  ['admin-contenus', '/admin?vue=contenus', '/admin?vue=contenus&lang=en'],
   ['introuvable', '/page-qui-n-existe-pas', '/page-qui-n-existe-pas?lang=en'],
 ];
 

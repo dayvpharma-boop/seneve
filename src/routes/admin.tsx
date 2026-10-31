@@ -3,6 +3,7 @@ import { IllustrationPage } from '@/components/IllustrationPage';
 import '@/styles-administration-tableau.css';
 import '@/styles-administration-bureau.css';
 import '@/styles-administration-mobile.css';
+import '@/styles-administration-sombre.css';
 import '@/styles-tableau-fidele.css';
 import '@/styles-registres-administration.css';
 import '@/styles-registres-fideles.css';
