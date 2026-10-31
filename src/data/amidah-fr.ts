@@ -13,11 +13,11 @@ export const amidahFr = [
   },
   {
     "type": "geste",
-    "texte": "Pliez les genoux à « Béni » ; Redressez-vous à « Eternel notre D.ieu » :"
+    "texte": "Pliez les genoux à « Béni » ; Redressez-vous à « Eternel notre Dieu » :"
   },
   {
     "type": "priere",
-    "texte": "Béni sois-Tu, Eternel notre D.ieu et D.ieu de nos pères, D.ieu d’Abraham, D.ieu d’Isaac et D.ieu de Jacob, le D.ieu grand, puissant et redoutable, D.ieu exalté, qui accorde une bonté abondante, qui crée toutes choses, qui se souvient de la piété des patriarches, et qui, dans l’amour, apporte un rédempteur aux enfants de leurs enfants, pour l’amour de Son Nom."
+    "texte": "Béni sois-Tu, Eternel notre Dieu et Dieu de nos pères, Dieu d’Abraham, Dieu d’Isaac et Dieu de Jacob, le Dieu grand, puissant et redoutable, Dieu exalté, qui accorde une bonté abondante, qui crée toutes choses, qui se souvient de la piété des patriarches, et qui, dans l’amour, apporte un rédempteur aux enfants de leurs enfants, pour l’amour de Son Nom."
   },
   {
     "type": "geste",
@@ -53,7 +53,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Tu es Saint et Ton Nom est Saint, et des êtres Saints Te louent quotidiennement pour toute l’éternité. Béni sois-Tu Eternel, le Saint D.ieu. (Pendant les dix jours de pénitence, remplacer : le Saint Roi.)"
+    "texte": "Tu es Saint et Ton Nom est Saint, et des êtres Saints Te louent quotidiennement pour toute l’éternité. Béni sois-Tu Eternel, le Saint Dieu. (Pendant les dix jours de pénitence, remplacer : le Saint Roi.)"
   },
   {
     "type": "priere",
@@ -65,11 +65,11 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Pardonne-nous, notre Père, car nous avons péché ; pardonne-nous, notre Roi, car nous avons transgressé; car Tu es un D.ieu bon et indulgent. Béni sois-Tu Eternel, gracieux qui pardonne abondamment."
+    "texte": "Pardonne-nous, notre Père, car nous avons péché ; pardonne-nous, notre Roi, car nous avons transgressé; car Tu es un Dieu bon et indulgent. Béni sois-Tu Eternel, gracieux qui pardonne abondamment."
   },
   {
     "type": "priere",
-    "texte": "O vois notre affliction et livre notre combat ; rachète-nous rapidement à cause de Ton Nom, car Toi, D.ieu, Tu es le puissant rédempteur. Béni sois-Tu Eternel, Rédempteur d’ Israël."
+    "texte": "O vois notre affliction et livre notre combat ; rachète-nous rapidement à cause de Ton Nom, car Toi, Dieu, Tu es le puissant rédempteur. Béni sois-Tu Eternel, Rédempteur d’ Israël."
   },
   {
     "type": "priere",
@@ -77,7 +77,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Bénis pour nous, Eternel notre D.ieu, cette année et toutes les variétés de ses produits pour de bon ; et accorde (Pendant la saison d’été, dis:) bénédiction (Pendant la saison d’hiver, dis : rosée et pluie pour bénédiction) sur la face de la terre. Satisfaits-nous de Ta bonté et bénis notre année comme d’autres bonnes années, pour la bénédiction ; car Tu es un D.ieu généreux qui accorde le bien et bénit les années. Béni sois-Tu Eternel, qui bénis les années."
+    "texte": "Bénis pour nous, Eternel notre Dieu, cette année et toutes les variétés de ses produits pour de bon ; et accorde (Pendant la saison d’été, dis:) bénédiction (Pendant la saison d’hiver, dis : rosée et pluie pour bénédiction) sur la face de la terre. Satisfaits-nous de Ta bonté et bénis notre année comme d’autres bonnes années, pour la bénédiction ; car Tu es un Dieu généreux qui accorde le bien et bénit les années. Béni sois-Tu Eternel, qui bénis les années."
   },
   {
     "type": "priere",
@@ -93,7 +93,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Que Ta miséricorde s’éveille, Éternel notre D.ieu, sur les justes, sur les pieux, sur les anciens de Ton peuple, la Maison d’Israël, sur le reste de leurs sages, sur les justes prosélytes et sur nous. Accorde une ample récompense à tous ceux qui ont vraiment confiance en Ton Nom, et place notre sort parmi eux ; puissions-nous ne jamais être déshonorés, car nous avons mis notre confiance en Toi. Béni sois-Tu Eternel, le soutien et la sécurité des justes."
+    "texte": "Que Ta miséricorde s’éveille, Éternel notre Dieu, sur les justes, sur les pieux, sur les anciens de Ton peuple, la Maison d’Israël, sur le reste de leurs sages, sur les justes prosélytes et sur nous. Accorde une ample récompense à tous ceux qui ont vraiment confiance en Ton Nom, et place notre sort parmi eux ; puissions-nous ne jamais être déshonorés, car nous avons mis notre confiance en Toi. Béni sois-Tu Eternel, le soutien et la sécurité des justes."
   },
   {
     "type": "priere",
@@ -105,11 +105,11 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Écoute notre voix, Seigneur notre D.ieu ; Père miséricordieux, aie pitié de nous et accepte nos prières avec miséricorde et grâce, car Tu es D.ieu qui entend les prières et les supplications ; ne nous détourne pas de Toi, notre Roi, les mains vides, car Tu écoutes la prière de tous. Béni sois-Tu Eternel, qui entend la prière."
+    "texte": "Écoute notre voix, Seigneur notre Dieu ; Père miséricordieux, aie pitié de nous et accepte nos prières avec miséricorde et grâce, car Tu es Dieu qui entend les prières et les supplications ; ne nous détourne pas de Toi, notre Roi, les mains vides, car Tu écoutes la prière de tous. Béni sois-Tu Eternel, qui entend la prière."
   },
   {
     "type": "priere",
-    "texte": "Regarde avec faveur, Éternel notre D.ieu, Ton peuple d’Israël et sois attentif à sa prière ; Rétablis le service de Ton Sanctuaire et accepte avec amour et faveur les offrandes par le feu et la prière d’Israël. et que le service de Ton peuple Israël trouve toujours grâce."
+    "texte": "Regarde avec faveur, Éternel notre Dieu, Ton peuple d’Israël et sois attentif à sa prière ; Rétablis le service de Ton Sanctuaire et accepte avec amour et faveur les offrandes par le feu et la prière d’Israël. et que le service de Ton peuple Israël trouve toujours grâce."
   },
   {
     "type": "priere",
@@ -117,11 +117,11 @@ export const amidahFr = [
   },
   {
     "type": "geste",
-    "texte": "Pliez les genoux à « Nous reconnaissons que Tu es le Seigneur notre D.ieu.. » ; Redressez-vous avant « le Seigneur notre D.ieu.. » :"
+    "texte": "Pliez les genoux à « Nous reconnaissons que Tu es le Seigneur notre Dieu.. » ; Redressez-vous avant « le Seigneur notre Dieu.. » :"
   },
   {
     "type": "priere",
-    "texte": "Nous reconnaissons avec gratitude que Tu es le Seigneur notre D.ieu et D.ieu de nos pères pour toujours. Tu es la force de notre vie, le bouclier de notre salut à chaque génération. Nous te rendrons grâce et nous raconterons Ta louange, soir, matin et midi, pour nos vies qui sont confiées entre Tes mains, pour nos âmes qui te sont confiées, pour tes miracles qui nous accompagnent chaque jour et pour tes continuelles merveilles et bienfaisances. Tu es le Bienfaisant, car Tes miséricordes ne cessent jamais ; le Miséricordieux, car Tes bontés ne finissent jamais; car nous plaçons toujours notre espérance en Toi."
+    "texte": "Nous reconnaissons avec gratitude que Tu es le Seigneur notre Dieu et Dieu de nos pères pour toujours. Tu es la force de notre vie, le bouclier de notre salut à chaque génération. Nous te rendrons grâce et nous raconterons Ta louange, soir, matin et midi, pour nos vies qui sont confiées entre Tes mains, pour nos âmes qui te sont confiées, pour tes miracles qui nous accompagnent chaque jour et pour tes continuelles merveilles et bienfaisances. Tu es le Bienfaisant, car Tes miséricordes ne cessent jamais ; le Miséricordieux, car Tes bontés ne finissent jamais; car nous plaçons toujours notre espérance en Toi."
   },
   {
     "type": "priere",
@@ -129,11 +129,11 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Et tous les êtres vivants te remercieront à jamais et loueront éternellement Ton grand Nom, car Tu es bon. D.ieu, Tu es notre salut et notre aide éternels, ô D.ieu bienveillant."
+    "texte": "Et tous les êtres vivants te remercieront à jamais et loueront éternellement Ton grand Nom, car Tu es bon. Dieu, Tu es notre salut et notre aide éternels, ô Dieu bienveillant."
   },
   {
     "type": "geste",
-    "texte": "Pliez les genoux à « Béni » ; Redressez-vous à « Eternel notre D.ieu » :"
+    "texte": "Pliez les genoux à « Béni » ; Redressez-vous à « Eternel notre Dieu » :"
   },
   {
     "type": "priere",
@@ -141,7 +141,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Accorde la paix, la bonté et la bénédiction, la vie, la grâce, la bonté et la miséricorde, sur nous et sur tout Ton peuple Israël. Bénis-nous, notre Père, nous tous comme un, avec la lumière de Ton visage. Car par la lumière de Ton visage Tu nous as donné, Éternel notre D.ieu, la Torah de vie et de bonté de cœur, de justice, de bénédiction, de miséricorde, de vie et de paix. Qu’il soit favorable à tes yeux de bénir Ton peuple Israël, en tout temps et à chaque instant, de Ta paix."
+    "texte": "Accorde la paix, la bonté et la bénédiction, la vie, la grâce, la bonté et la miséricorde, sur nous et sur tout Ton peuple Israël. Bénis-nous, notre Père, nous tous comme un, avec la lumière de Ton visage. Car par la lumière de Ton visage Tu nous as donné, Éternel notre Dieu, la Torah de vie et de bonté de cœur, de justice, de bénédiction, de miséricorde, de vie et de paix. Qu’il soit favorable à tes yeux de bénir Ton peuple Israël, en tout temps et à chaque instant, de Ta paix."
   },
   {
     "type": "priere",
@@ -149,7 +149,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Mon D.ieu, préserve ma langue du mal et mes lèvres des paroles trompeuses. Que mon âme garde le silence devant ceux qui me maudissent. Que mon cœur demeure humble devant tous, dans la douceur, la patience et le respect. Ouvre mon cœur à Ta Torah et que mon âme suive avec empressement Tes commandements. Quant à tous ceux qui complotent le mal contre moi, hâtez-vous d’annuler leur conseil et de contrecarrer leur dessein. Qu’ils soient comme de la paille devant le vent ; que l’ange de l’Éternel les repousse. Afin que tes bien-aimés soient délivrés, aide-moi de Ta Main droite et réponds-moi. Fais-le pour l’amour de Ton Nom; Fais-le à cause de Ta droite; Fais-le pour l’amour de Ta Torah; Fais-le pour Ta Sainteté. Que les paroles de ma bouche et la méditation de mon cœur soient agréables devant Toi, Éternel, ma Force et mon Rédempteur."
+    "texte": "Mon Dieu, préserve ma langue du mal et mes lèvres des paroles trompeuses. Que mon âme garde le silence devant ceux qui me maudissent. Que mon cœur demeure humble devant tous, dans la douceur, la patience et le respect. Ouvre mon cœur à Ta Torah et que mon âme suive avec empressement Tes commandements. Quant à tous ceux qui complotent le mal contre moi, hâtez-vous d’annuler leur conseil et de contrecarrer leur dessein. Qu’ils soient comme de la paille devant le vent ; que l’ange de l’Éternel les repousse. Afin que tes bien-aimés soient délivrés, aide-moi de Ta Main droite et réponds-moi. Fais-le pour l’amour de Ton Nom; Fais-le à cause de Ta droite; Fais-le pour l’amour de Ta Torah; Fais-le pour Ta Sainteté. Que les paroles de ma bouche et la méditation de mon cœur soient agréables devant Toi, Éternel, ma Force et mon Rédempteur."
   },
   {
     "type": "priere",
