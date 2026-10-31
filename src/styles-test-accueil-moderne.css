@@ -12,8 +12,8 @@
 :root[data-apparence] .jardin-accueil #s-home .home-start #start{background:var(--primary-fill);color:var(--on-primary);border-radius:20px;min-height:52px;white-space:normal}
 :root[data-apparence] .jardin-accueil #s-home .home-ouverture{background:var(--soft-gold);border-radius:22px}
 .test-public-connexion{text-align:center;margin:8px 0 16px}.test-public-connexion a{display:inline-flex;align-items:center;min-height:44px;color:var(--muted);text-decoration:underline;text-underline-offset:4px}
-:root[data-apparence=sombre] body:has(.jardin-accueil #s-home:not([hidden])),:root[data-apparence=sombre] .wrap.jardin-accueil{background:#111528;color:#eef0ff}
-:root[data-apparence=sombre] .jardin-accueil #s-home{--foreground:#eef0ff;--muted:#b9c1dc;--surface:#1c2238;--line:#353d58;--primary-fill:#bdb4ff;--on-primary:#201a4d;--chip:#232f4b;--on-chip:#eef0ff;--soft-gold:#302b49}
+:root[data-apparence=sombre] body:has(.jardin-accueil #s-home:not([hidden])),:root[data-apparence=sombre] .wrap.jardin-accueil{background:#121212;color:#f5f5f5}
+:root[data-apparence=sombre] .jardin-accueil #s-home{--foreground:#f5f5f5;--muted:#bfbdbe;--surface:#232122;--line:#3d3b3c;--primary-fill:#bdb4ff;--on-primary:#201a4d;--chip:#353334;--on-chip:#f5f5f5;--soft-gold:#2c2933}
 @media(max-width:760px){:root[data-apparence] .jardin-accueil #s-home .jardin-hero{display:flex;flex-direction:column;align-items:stretch;gap:28px;padding:16px 0 24px}:root[data-apparence] .wrap.jardin-accueil{padding-inline:18px}}
 /* Rythme plus compact, sans changer les textes ni leur typographie. */
 :root[data-apparence] .jardin-accueil #s-home .home-head{min-height:72px;padding-block:12px}

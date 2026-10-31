@@ -1,8 +1,8 @@
 /* Bibliothèque : le livre existant, ses formats et ses destinations, sans droit inventé. */
 :root:root:root[data-apparence] body:has(.bl-page){background:#f5f7fe;color:#151b36}
 :root:root:root[data-apparence] .bl-page{--bl-fond:#f5f7fe;--bl-carte:rgb(255 255 255);--bl-encre:#151b36;--bl-second:#59627e;--bl-or:#49439b;--bl-accent:#eee8fc;--bl-doux:#e3efff;--bl-trait:#dce3f0;--bl-sur-accent:rgb(255 255 255);max-width:1080px;margin:auto;padding:0 24px 124px;min-height:100dvh;background:var(--bl-fond);color:var(--bl-encre);border:0;font:400 14px/1.7 Poppins,system-ui,sans-serif;overflow-wrap:anywhere}
-:root:root:root[data-apparence=sombre] body:has(.bl-page){background:#111528;color:#eef0ff}
-:root:root:root[data-apparence=sombre] .bl-page{--bl-fond:#111528;--bl-carte:#1c2238;--bl-encre:#eef0ff;--bl-second:#bbc4de;--bl-or:#bcb2ff;--bl-accent:#332d4f;--bl-doux:#24334d;--bl-trait:#3b4460;--bl-sur-accent:#201a4d}
+:root:root:root[data-apparence=sombre] body:has(.bl-page){background:#121212;color:#f5f5f5}
+:root:root:root[data-apparence=sombre] .bl-page{--bl-fond:#121212;--bl-carte:#232122;--bl-encre:#f5f5f5;--bl-second:#bbc4de;--bl-or:#bcb2ff;--bl-accent:#2c2933;--bl-doux:#353334;--bl-trait:#3d3b3c;--bl-sur-accent:#201a4d}
 :root:root[data-apparence] .bl-page :is(h1,h2,h3,button,a,.bl-label,.bl-statut,.bl-header,.bl-footer){font-family:Poppins,system-ui,sans-serif}
 :root:root[data-apparence] .bl-page :is(h1,h2,h3){color:var(--bl-encre)}
 :root:root[data-apparence] .bl-page .bl-header{position:static;min-height:74px;padding:12px 0;margin:0;gap:12px;background:var(--bl-fond)}

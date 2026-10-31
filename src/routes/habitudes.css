@@ -6,4 +6,4 @@
 .hd-public-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}.hd-public .hd-public-cta{min-height:48px;padding:10px 18px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;background:#f2dfaa;color:#244238;font-weight:600}.hd-public .hd-public-cta-secondary{background:transparent;border:1px solid #a7b9ab;color:#fffdf5}.hd-public .hd-public-cta:focus-visible{outline:3px solid #fffdf5;outline-offset:4px}
 
 /* Mode sombre (31/10/2026) : textes clairs sur le fond sombre ; le cadre vert et le bouton or ne changent pas. */
-:root[data-apparence="sombre"] .hd-public{--text:#edf0ff;--muted:#bdc7e0;color:#edf0ff}
+:root[data-apparence="sombre"] .hd-public{--text:#f5f5f5;--muted:#bfbdbe;color:#f5f5f5}

@@ -12,16 +12,16 @@
   --chip:var(--vivant-argile);--soft-gold:var(--vivant-miel);
 }
 :root[data-palette="ivoire"][data-apparence="sombre"] :is(.espace-page,.parcours-page,.hd-stitch) {
-  --vivant-fond:#13172a;--vivant-surface:#1d243b;--vivant-encre:#edf0ff;
-  --vivant-secondaire:#bdc7e0;--vivant-vert:#c5bbff;--vivant-sur-accent:#252048;
-  --vivant-ligne:#3b4562;--vivant-sauge:#203c40;--vivant-miel:#233555;
-  --vivant-argile:#29324c;--vivant-lavande:#352c50;
+  --vivant-fond:#121212;--vivant-surface:#232122;--vivant-encre:#f5f5f5;
+  --vivant-secondaire:#bfbdbe;--vivant-vert:#c5bbff;--vivant-sur-accent:#252048;
+  --vivant-ligne:#3d3b3c;--vivant-sauge:#2a2d2c;--vivant-miel:#2a2829;
+  --vivant-argile:#353334;--vivant-lavande:#2c2933;
 }
 :root[data-palette="ivoire"] body:has(:is(.espace-page,.parcours-page,.hd-ecran)) {
   background:linear-gradient(145deg,#edf3ff,#f2edfd);color:#151b36;
 }
 :root[data-palette="ivoire"][data-apparence="sombre"] body:has(:is(.espace-page,.parcours-page,.hd-ecran)) {
-  background:#13172a;color:#edf0ff;
+  background:#121212;color:#f5f5f5;
 }
 :root[data-apparence] :is(.espace-page,.parcours-page) {
   background:var(--vivant-fond);color:var(--vivant-encre);
