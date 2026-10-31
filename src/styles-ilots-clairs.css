@@ -77,5 +77,6 @@
 :root:root:root[data-apparence] body>dialog.hd-stitch{background:var(--vivant-fond);color:var(--vivant-encre)}
 
 /* Amidah : Matin, Midi et Soir côte à côte sur une seule ligne, même sur téléphone (01/11). */
-:root:root:root .hd-amidah-ligne>button{min-width:0!important;flex-direction:column;gap:2px!important;padding:8px 4px!important;white-space:nowrap!important;line-height:1.2}
-/* L'icône passe au-dessus du mot : « Morning / Midday / Evening » tiennent aussi en anglais et en grand texte. */
+:root:root:root .hd-amidah-ligne>button{min-width:0!important;min-height:48px;gap:4px!important;padding:0 4px!important;white-space:nowrap!important}
+:root:root:root .hd-amidah-ligne>button>*:first-child{font-size:18px!important;flex:none}
+/* Même hauteur qu'avant (48 px), icône à côté du mot ; les trois boutons ont la même largeur. */
