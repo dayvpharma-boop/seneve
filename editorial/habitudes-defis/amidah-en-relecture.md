@@ -2,7 +2,7 @@
 
 > **Pour Dr Justin (en français).** Version anglaise préparée le 28 octobre 2026 à ta demande (« Traduis quand même »). Elle suit, passage par passage, les 61 passages du texte français affiché sur le site (source : PDF hassidout.org). Elle est rédigée d'après le sens de la prière traditionnelle, sans reprendre mot à mot une traduction anglaise publiée.
 >
-> - « D.ieu » est rendu par « G-d », la même convention en anglais.
+> - « Dieu » est rendu par « G-d », la même convention en anglais.
 > - Les gestes et indications (genoux, fêtes, dix jours de pénitence) sont traduits comme en français.
 > - Les droits du texte français de hassidout.org restent à confirmer, comme noté le 25/10.
 >
