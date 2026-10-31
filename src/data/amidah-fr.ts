@@ -153,7 +153,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Que ce soit Ta volonté, Éternel notre D.ieu et D.ieu de nos pères, accorde-nous notre part dans Ta Torah."
+    "texte": "Celui qui fait la paix dans Ses Cieux, qu’Il fasse la paix sur nous et sur tout Israël. Amen. Que ce soit Ta volonté, Éternel notre D.ieu et D.ieu de nos pères, et accorde-nous notre part dans Ta Torah."
   },
   {
     "type": "fin",
