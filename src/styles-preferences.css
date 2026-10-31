@@ -7,8 +7,8 @@
   --palette-doux:#F1F3FC;--palette-carte:#E9ECFA;--palette-haut:#DFE4F6;--palette-ligne:#DDE3F2;
   --palette-encre:#151B36;--palette-secondaire:#4D5874;--palette-accent:var(--accent,#49439B);--palette-sur-accent:var(--accent-fonce,#37327E);
   --palette-or:var(--accent-moyen,#7C74D6);--palette-or-doux:var(--accent-pale,#E3E6FB);--palette-or-pale:var(--accent-doux,#EEE8FC);--palette-contour:#8790AE;
-  --palette-nuit:#121212;--palette-nuit-surface:#232122;--palette-nuit-doux:#2a2829;--palette-nuit-haut:#353334;
-  --palette-nuit-ligne:#3d3b3c;--palette-nuit-contour:#8a8788;--palette-nuit-texte:#f5f5f5;--palette-nuit-secondaire:#bfbdbe;--palette-nuit-accent:var(--accent-nuit,#C5BBFF);
+  --palette-nuit:var(--nuit-fond,#121212);--palette-nuit-surface:var(--nuit-surface,#232122);--palette-nuit-doux:var(--nuit-doux,#2a2829);--palette-nuit-haut:var(--nuit-haut,#353334);
+  --palette-nuit-ligne:var(--nuit-ligne,#3d3b3c);--palette-nuit-contour:#8a8788;--palette-nuit-texte:#f5f5f5;--palette-nuit-secondaire:#bfbdbe;--palette-nuit-accent:var(--accent-nuit,#C5BBFF);
 }
 /* Le fond extérieur rejoint celui des pages, indépendamment de leur langue. */
 :root[data-apparence="clair"] body {background:var(--palette-papier);color:var(--palette-encre)}
