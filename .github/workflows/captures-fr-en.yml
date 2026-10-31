@@ -1,0 +1,46 @@
+name: Captures FR/EN clair/sombre (sans mise en ligne)
+
+# Construit l'aperçu de l'application (compte fictif, sans réseau, mêmes options que le site publié)
+# et capture chaque page en français et en anglais, en mode clair et sombre.
+# Ne publie rien : les images et le rapport vont dans la branche captures/fr-en-sombre.
+on:
+  push:
+    branches: [verification/fr-en-sombre]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: captures-fr-en
+  cancel-in-progress: true
+
+jobs:
+  captures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Installer
+        run: npm install --no-audit --no-fund && npm install --no-save --no-audit --no-fund playwright@1.49.1 && npx playwright install --with-deps chromium
+      - name: Construire l'aperçu (mêmes options que le site publié)
+        env:
+          VITE_HABITUDES_DEFIS: 'true'
+          VITE_HABITUDES_COMPTEUR: 'true'
+          VITE_HABITUDES_RAPPELS: 'true'
+          VITE_HABITUDES_RELANCES: 'true'
+          VITE_HABITUDES_INSCRIPTION: ouverte
+        run: npx vite build --config scripts/recette/vite-apercu-app.config.ts
+      - name: Capturer
+        run: node scripts/recette/captures-fr-en.mjs dist-apercu _captures
+      - name: Envoyer les captures dans captures/fr-en-sombre
+        run: |
+          cd _captures
+          git init -q -b captures/fr-en-sombre
+          git config user.name "captures-fr-en"
+          git config user.email "captures-fr-en@users.noreply.github.com"
+          echo "Source : ${GITHUB_SHA}" > SOURCE.txt
+          git add -A && git commit -q -m "Captures FR/EN clair/sombre pour ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" HEAD:captures/fr-en-sombre
