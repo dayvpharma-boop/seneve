@@ -5,7 +5,7 @@
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v77-cartes-plus-tard-lisibles-20261031';
+const CACHE = 'seneve-site-v78-priere-mise-a-jour-20261031';
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -17,7 +17,7 @@ async function precache() {
   const html = await res.clone().text();
   // Ne publier la nouvelle page qu'après ses fichiers indispensables.
 
-  const urls = new Set([BASE + 'manifest.webmanifest', BASE + 'icons/icon-192.png']);
+  const urls = new Set([BASE + 'manifest.webmanifest', BASE + 'icons/icon-192.png', BASE + 'amidah.html']);
   for (const m of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
     const u = new URL(m[1], self.location.origin + BASE);
     if (u.origin === self.location.origin && u.pathname.startsWith(BASE + 'assets/')) urls.add(u.pathname);
@@ -50,7 +50,7 @@ let dernierInventaire = 0;
 /** Garde les fichiers des pages chargées à la demande (sauf l'administration), pour qu'elles s'ouvrent aussi
  *  hors connexion. Seuls les fichiers absents du téléphone sont téléchargés ; au plus une fois toutes les 10 min. */
 async function garderLesPages(obligatoire = false) {
-  if (Date.now() - dernierInventaire < 600000) return;
+  if (!obligatoire && Date.now() - dernierInventaire < 600000) return;
   dernierInventaire = Date.now();
   const r = await fetch(BASE + 'asset-manifest.json', { cache: 'no-store' });
   if (!r.ok) throw new Error('Inventaire indisponible');
@@ -81,16 +81,25 @@ self.addEventListener('fetch', e => {
   if (url.pathname.startsWith(BASE + 'recette-hd/')) return;
 
   if (req.mode === 'navigate') {
+    // La page de lecture autonome est un vrai document HTML : ne jamais la remplacer par le test des 7 racines.
+    if (url.pathname === BASE + 'amidah.html') {
+      e.respondWith(fetch(req).catch(async () => (await caches.match(req)) || pageHorsLigne(url)));
+      return;
+    }
     const reseau = fetch(req).then(async res => {
-      // INDEX reste la page cohérente téléchargée avec ses fichiers (precache) ; jamais écrasée par une autre route.
-      if (res.ok) {
-        garderLesPages().catch(() => undefined);
-        // Le site publié diffère de la copie (publication sans changement de ce fichier) : la nouvelle version
-        // et ses fichiers sont téléchargés ensemble, pour la visite suivante.
+      // INDEX reste une copie cohérente téléchargée avec tous ses fichiers, jamais remplacée par une autre route.
+      if (res.ok) garderLesPages().catch(() => undefined);
+      // La plupart des participants reviennent directement dans /espace ou /habitudes :
+      // comparer aussi ces visites à l'accueil publié pour éviter de garder indéfiniment l'ancienne version.
+      try {
         const copie = await caches.match(INDEX);
-        // Seule la page d'accueil du site est comparée (les autres adresses ont leur propre page statique).
-        if ((url.pathname === BASE || url.pathname === INDEX) && copie && (await copie.text()) !== (await res.clone().text())) await precache().catch(() => undefined);
-      }
+        if (copie) {
+          const versionPublique = (url.pathname === BASE || url.pathname === INDEX) && res.ok
+            ? res.clone() : await fetch(INDEX, { cache: 'no-store' });
+          if (versionPublique.ok && (await copie.text()) !== (await versionPublique.text()))
+            await precache().catch(() => undefined);
+        }
+      } catch { /* hors connexion : conserver la copie sans interrompre l'ouverture de l'app */ }
       return res;
     });
     e.waitUntil(reseau.then(() => undefined, () => undefined));
