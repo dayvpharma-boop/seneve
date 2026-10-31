@@ -132,9 +132,9 @@ for (const [nom, fr, en] of PAGES) for (const mode of ['light', 'dark']) for (co
   await p.waitForTimeout(1500);
   if (nom.startsWith('fenetre-')) {
     try {
-      await p.getByRole('button', {name: langue === 'en' ? /Today.s readings/i : /Lectures du jour/i}).first().click({timeout: 5000});
+      if (nom === 'fenetre-duree') await p.getByRole('button', {name: langue === 'en' ? /^Reading time/ : /^Durée de lecture/}).first().click({timeout: 5000});
+      else await p.getByRole('button', {name: langue === 'en' ? /Today.s readings/i : /Lectures du jour/i}).first().click({timeout: 5000});
       await p.waitForTimeout(800);
-      if (nom === 'fenetre-duree') { await p.locator('dialog[open]').getByRole('button', {name: langue === 'en' ? /^(Time|Reading time|Done)/ : /^(Durée|Fait)/}).first().click({timeout: 5000}); await p.waitForTimeout(800); }
     } catch (x) { erreurs.push('fenêtre : ' + x.message.slice(0, 160)); }
   }
   const fichier = `${nom}-${langue}-${mode === 'light' ? 'clair' : 'sombre'}.png`;
