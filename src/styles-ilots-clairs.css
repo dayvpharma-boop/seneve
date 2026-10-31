@@ -26,6 +26,8 @@
   --hdc-on-secondary-fixed-variant:var(--accent-fonce,#3a3580);--hdc-tertiary:var(--vivant-secondaire);
   --background:var(--vivant-surface);--surface:var(--vivant-surface);--foreground:var(--vivant-encre);
   --muted:var(--vivant-secondaire);--line:var(--vivant-ligne);--gold:var(--vivant-vert);
+  /* Les couleurs Tailwind HD sont calculées à la racine : on les recalcule ici. */
+  --color-hd-secondary-fixed-dim:var(--hdc-secondary-fixed-dim);--color-hd-outline-variant:var(--hdc-outline-variant);--color-hd-primary-container:var(--hdc-primary-container);--color-hd-on-primary-fixed:var(--hdc-on-primary-fixed);--color-hd-surface-container:var(--hdc-surface-container);--color-hd-on-background:var(--hdc-on-background);--color-hd-error-container:var(--hdc-error-container);--color-hd-on-surface:var(--hdc-on-surface);--color-hd-on-error:var(--hdc-on-error);--color-hd-on-secondary-container:var(--hdc-on-secondary-container);--color-hd-on-tertiary-fixed-variant:var(--hdc-on-tertiary-fixed-variant);--color-hd-inverse-on-surface:var(--hdc-inverse-on-surface);--color-hd-on-tertiary-fixed:var(--hdc-on-tertiary-fixed);--color-hd-secondary-container:var(--hdc-secondary-container);--color-hd-on-error-container:var(--hdc-on-error-container);--color-hd-surface-container-low:var(--hdc-surface-container-low);--color-hd-outline:var(--hdc-outline);--color-hd-tertiary-fixed-dim:var(--hdc-tertiary-fixed-dim);--color-hd-tertiary-fixed:var(--hdc-tertiary-fixed);--color-hd-tertiary-container:var(--hdc-tertiary-container);--color-hd-on-tertiary:var(--hdc-on-tertiary);--color-hd-on-surface-variant:var(--hdc-on-surface-variant);--color-hd-surface-container-highest:var(--hdc-surface-container-highest);--color-hd-surface:var(--hdc-surface);--color-hd-on-secondary-fixed-variant:var(--hdc-on-secondary-fixed-variant);--color-hd-background:var(--hdc-background);--color-hd-on-primary:var(--hdc-on-primary);--color-hd-inverse-surface:var(--hdc-inverse-surface);--color-hd-on-tertiary-container:var(--hdc-on-tertiary-container);--color-hd-on-primary-container:var(--hdc-on-primary-container);--color-hd-on-primary-fixed-variant:var(--hdc-on-primary-fixed-variant);--color-hd-error:var(--hdc-error);--color-hd-inverse-primary:var(--hdc-inverse-primary);--color-hd-surface-dim:var(--hdc-surface-dim);--color-hd-surface-container-high:var(--hdc-surface-container-high);--color-hd-surface-bright:var(--hdc-surface-bright);--color-hd-on-secondary:var(--hdc-on-secondary);--color-hd-secondary:var(--hdc-secondary);--color-hd-surface-container-lowest:var(--hdc-surface-container-lowest);--color-hd-primary:var(--hdc-primary);--color-hd-on-secondary-fixed:var(--hdc-on-secondary-fixed);--color-hd-primary-fixed:var(--hdc-primary-fixed);--color-hd-surface-variant:var(--hdc-surface-variant);--color-hd-surface-tint:var(--hdc-surface-tint);--color-hd-secondary-fixed:var(--hdc-secondary-fixed);--color-hd-tertiary:var(--hdc-tertiary);--color-hd-primary-fixed-dim:var(--hdc-primary-fixed-dim);
   color-scheme:light;
 }
 /* Cartes d'activités : fond blanc franc (les cartes « plus tard » aussi). */
@@ -36,7 +38,7 @@
 
 /* Bible : le texte du chapitre devient une page blanche (ambiance « Ivoire » uniquement :
  * les ambiances Sépia et Nuit choisies dans la Bible restent telles quelles). */
-:root[data-apparence="sombre"] .bb-ambiance-ivoire :is(.bb-texte, .bb-reprendre) {
+:root[data-apparence="sombre"] .bb-ambiance-ivoire :is(.bb-texte, .bb-reprendre, .bb-racine) {
   --bb-carte:#ffffff;--bb-bas:#f3f5fa;--bb-milieu:#eef1f8;--bb-haut:#e9edf6;
   --bb-encre:#151b36;--bb-second:#4d5874;--bb-trait:#dde3f2;
   --bb-noir:#151b36;--bb-sur-noir:#ffffff;
@@ -48,7 +50,7 @@
 :root[data-apparence="sombre"] .bb-ambiance-ivoire .bb-texte {
   padding:20px 16px;border-radius:20px;box-shadow:0 2px 12px rgb(0 0 0 / .3);
 }
-:root[data-apparence="sombre"] .bb-ambiance-ivoire .bb-reprendre { border-color:transparent; }
+:root[data-apparence="sombre"] .bb-ambiance-ivoire :is(.bb-reprendre, .bb-racine) { border-color:transparent; }
 
 /* Amidah : la page de prière devient blanche, l'en-tête et les commandes restent sombres. */
 :root[data-apparence="sombre"] .hd-lecteur-priere .ap-texte {
