@@ -11,3 +11,6 @@
 .jardin-accueil #s-home .home-intro{font:400 16px/1.8 Outfit,Arial,sans-serif;color:var(--muted);max-width:390px}
 html[data-apparence=sombre] .jardin-accueil #s-home .jardin-titre em{color:#c5cb9d}
 @media(max-width:700px){.jardin-accueil #s-home .home-head{min-height:78px;gap:12px}.jardin-accueil #s-home .home-head .brand{font-size:21px}.jardin-accueil #s-home .jardin-hero{padding-top:36px}.jardin-accueil #s-home h2.jardin-titre{font-size:46px}}
+
+/* Mode sombre (31/10/2026) : le surtitre « Le Test des 7 Racines » garde la même petite taille qu'en mode clair. */
+:root[data-apparence="sombre"] .jardin-accueil #s-home .jardin-message>h1{font:400 12px/1.5 Outfit,Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}

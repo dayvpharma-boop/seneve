@@ -52,7 +52,7 @@ export function HabitudesAide(){
     <h2 id="hd-mes-rappels" className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface flex items-center gap-2"><IconeHD nom="spa" className="text-[20px] text-hd-secondary"/>{l('Mes rappels','My reminders')}</h2>
     <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Choisis comment recevoir les invitations à tes temps de prière et d’action.','Choose how to receive invitations to your times of prayer and action.')}</p>
     {rappelsHabitudesActifs()&&<RappelsHabitudes langue={langue}/>}
-    <div className="bg-hd-surface-container-lowest rounded-xl p-hd-space-md shadow-sm"><EmailMatinCard langue={langue} maquette/></div>
+    <div className="hd-email-matin bg-hd-surface-container-lowest rounded-xl p-hd-space-md shadow-sm"><EmailMatinCard langue={langue} maquette/></div>
    </section>
 
    <section aria-labelledby="hd-confidentialite" className="flex flex-col gap-hd-space-sm">
