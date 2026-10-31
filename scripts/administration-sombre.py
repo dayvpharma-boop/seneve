@@ -2,7 +2,7 @@
 dérivée des feuilles existantes (couleurs claires -> couleurs sombres SÉNEVÉ), limitée à l'administration."""
 import re,sys
 FICHIERS=['styles-administration-bureau.css','styles-administration-mobile.css','styles-administration-tableau.css','styles-pilotage-maquette.css','styles-etats-administration.css','styles-edition-administration.css','styles-registres-administration.css','styles-recommandations-administration.css','styles-registres-fideles.css','styles-tableau-fidele.css']
-RACINES=['.admin-maquette','.am-page','.af-page','.admin-fidele']
+RACINES=['.admin-maquette','.am-page','.af-page','.admin-fidele','.ae-page']
 TEXTE={'000':'f5f5f5','000000':'f5f5f5','1d1c13':'f5f5f5','4a463f':'bfbdbe','755b00':'e6c364','785d00':'e6c364','ba1a1a':'ffb4ab','93000a':'ffdad6','fff':'121212','ffffff':'121212'}
 FOND={'fff':'232122','ffffff':'232122','f9f3e4':'2a2829','f3edde':'2a2829','eee8d9':'353334','e8e2d3':'353334','fff9ea':'121212','fffdf6':'232122','f5f7fe':'121212','000':'f5f5f5','000000':'f5f5f5','1d1c13':'f5f5f5','ffdad6':'5c1a16','755b00':'e6c364','785d00':'e6c364'}
 TRAIT={'ccc6bd':'3d3b3c','eee8d9':'3d3b3c','e8e2d3':'3d3b3c','d0c5b2':'3d3b3c','ded6c4':'3d3b3c','aaa08a':'8a8788','000':'8a8788','000000':'8a8788','1d1c13':'8a8788','4a463f':'8a8788','755b00':'e6c364','fff':'232122','ffffff':'232122'}
@@ -38,16 +38,17 @@ def regles(css):
     j=css.find('{',i)
     if j<0:break
     tete=css[i:j].strip()
-    if tete.startswith('@media') or tete.startswith('@supports'):
+    if tete.startswith('@'):
       prof=1;k=j+1
       while prof and k<n:
         prof+= {'{':1,'}':-1}.get(css[k],0);k+=1
-      for s,d in regles(css[j+1:k-1]):yield (tete+'|'+s if '|' not in s else s),d
+      if tete.startswith('@media') or tete.startswith('@supports'):
+        for s,d in regles(css[j+1:k-1]):yield (tete+'|'+s if '|' not in s else s),d
       i=k;continue
     k=css.find('}',j);yield tete,css[j+1:k];i=k+1
 def generer(dossier):
   sortie=['/* Mode sombre de l’administration (31/10/2026), généré par scripts/administration-sombre.py (python3 scripts/administration-sombre.py src) à partir des feuilles claires. */',
-   ':root[data-apparence="sombre"] body:has(:is(.admin-maquette,.am-page,.af-page)){background:#121212;color:#f5f5f5}']
+   ':root[data-apparence="sombre"] body:has(:is(.admin-maquette,.am-page,.af-page,.ae-page)){background:#121212;color:#f5f5f5}']
   for f in FICHIERS:
     for tete,corps in regles(open(dossier+'/'+f).read()):
       if tete.startswith('@') and '|' not in tete:continue

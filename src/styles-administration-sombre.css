@@ -1,672 +1,670 @@
 /* Mode sombre de l’administration (31/10/2026), généré par scripts/administration-sombre.py (python3 scripts/administration-sombre.py src) à partir des feuilles claires. */
-:root[data-apparence="sombre"] body:has(:is(.admin-maquette,.am-page,.af-page)){background:#121212;color:#f5f5f5}
+:root[data-apparence="sombre"] body:has(:is(.admin-maquette,.am-page,.af-page,.ae-page)){background:#121212;color:#f5f5f5}
 :root[data-apparence="sombre"] .admin-fidele{color:#f5f5f5;background:#121212}
 :root[data-apparence="sombre"] .admin-fidele button{background:#2a2829}
 :root[data-apparence="sombre"] .admin-fidele :is(button,a,input,select,textarea):focus-visible{outline:3px solid #e6c364}
 :root[data-apparence="sombre"] .admin-fidele .af-menu{background:#2a2829}
 :root[data-apparence="sombre"] .admin-fidele .af-logo{background:#35333499}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-logo span{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-registre{color:#bfbdbeb3}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-logo span{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-registre{color:#bfbdbeb3}
 :root[data-apparence="sombre"] .admin-fidele .af-menu nav button{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-menu nav button.af-actif{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-menu nav button small{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-menu-prive{background:#2a2829cc}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-menu-prive svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-menu-prive p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-menu nav button.af-actif{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-menu nav button small{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-menu-prive{background:#2a2829cc}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-menu-prive svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-menu-prive p{color:#bfbdbe}
 :root[data-apparence="sombre"] .admin-fidele .af-barre{background:#2a2829e6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-administration{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-barre-gauche>a{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-identite small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-identite b{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-administration{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-barre-gauche>a{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-identite small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-identite b{background:#f5f5f5;color:#121212}
 :root[data-apparence="sombre"] .admin-fidele .af-page{background:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-confidentialite{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-confidentialite>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-confidentialite>span{background:#353334;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-erreur{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-fil{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-fil strong{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-periode-texte{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-periodes{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-periodes button{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-periodes button[aria-pressed=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-cartes>article{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-carte-entete{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-carte-entete svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-cartes>article:nth-child(2) .af-carte-entete svg{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-carte-valeur{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-carte-valeur>strong{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-tendance{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-cartes footer{background:#2a282980;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-cartes footer>span:last-child{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-etiquette{background:#353334;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-etiquette.af-urgent{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-etiquette.af-or{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-priorites{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-priorites>header{background:#2a282966}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-priorites header p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-priorites header>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-confidentialite{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-confidentialite>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-confidentialite>span{background:#353334;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-erreur{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-fil{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-fil strong{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-periode-texte{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-periodes{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-periodes button{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-periodes button[aria-pressed=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-cartes>article{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-carte-entete{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-carte-entete svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-cartes>article:nth-child(2) .af-carte-entete svg{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-carte-valeur{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-carte-valeur>strong{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-tendance{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-cartes footer{background:#2a282980;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-cartes footer>span:last-child{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-etiquette{background:#353334;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-etiquette.af-urgent{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-etiquette.af-or{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-priorites{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-priorites>header{background:#2a282966}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-priorites header p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-priorites header>span{color:#bfbdbe}
 :root[data-apparence="sombre"] .admin-fidele th{background:#2a2829;color:#bfbdbe}
 :root[data-apparence="sombre"] .admin-fidele td{border-bottom:1px solid #3d3b3c}
 :root[data-apparence="sombre"] .admin-fidele td>strong{color:#f5f5f5}
 :root[data-apparence="sombre"] .admin-fidele td>small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-bas>section{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-bas h2 svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-bas header p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-places td>button{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-bas>section>footer{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-chronologie{border-left:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-chronologie article:before{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-chronologie article>div{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-chronologie hr{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-pied{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-pied>span:first-child{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-vide{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-bas>section{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-bas h2 svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-bas header p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-places td>button{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-bas>section>footer{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-chronologie{border-left:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-chronologie article:before{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-chronologie article>div{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-chronologie hr{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-pied{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-pied>span:first-child{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-vide{color:#bfbdbe}
 :root[data-apparence="sombre"] .admin-fidele .af-dialogue{border:1px solid #3d3b3c;background:#121212;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-dialogue>header{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-dialogue>header>button{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-dialogue-contenu .card{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-dialogue-contenu button[type=submit]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-dialogue-contenu a{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .af-dialogue-contenu article{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-mobile{background:#121212;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-mobile button:focus-visible,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-mobile a:focus-visible{outline:2px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-entete{background:#121212e6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-compte>a{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-compte small{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-compte b{background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-identite i{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-identite>div>span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-identite>small{background:#2a2829;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-entete nav{background:#2a2829b3}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-entete nav button{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-entete nav .am-actif{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-entete nav b{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-prive{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-prive>span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-prive svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-prive>b{background:#353334;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-titre p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-titre>[role=group]{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-titre button[aria-pressed=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-erreur{color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-compteurs article{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-compteurs header{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-compteurs article>div>span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-compteurs strong small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-mobile .am-rouge{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-mobile .am-or{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-urgences>header>span{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-urgences article{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-dossier small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-dossier p{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-dossier b{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-dossier>div:last-child>small{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-motif{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-motif>strong{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-repondre button:first-child{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-repondre button:last-child{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-apercu>header>span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-apercu>div{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-apercu svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-attente{background:#2a2829!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-attente i{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-attente small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-attente>b{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-fin>button{background:#353334;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-fin svg{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-fin p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-pied{background:#121212e6;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-pied svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-vues button{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-vues button[aria-pressed=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-dialogue>header{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-dialogue>header>button{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-dialogue-contenu .card{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-dialogue-contenu button[type=submit]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-dialogue-contenu a{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .af-dialogue-contenu article{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-mobile{background:#121212;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-mobile button:focus-visible,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-mobile a:focus-visible{outline:2px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete{background:#121212e6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compte>a{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compte small{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compte b{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-identite i{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-identite>div>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-identite>small{background:#2a2829;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav{background:#2a2829b3}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav button{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav .am-actif{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav b{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-prive{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-prive>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-prive svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-prive>b{background:#353334;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-titre p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-titre>[role=group]{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-titre button[aria-pressed=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-erreur{color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compteurs article{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compteurs header{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compteurs article>div>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compteurs strong small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-mobile .am-rouge{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-mobile .am-or{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-urgences>header>span{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-urgences article{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-dossier small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-dossier p{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-dossier b{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-dossier>div:last-child>small{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-motif{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-motif>strong{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-repondre button:first-child{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-repondre button:last-child{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-apercu>header>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-apercu>div{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-apercu svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-attente{background:#2a2829!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-attente i{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-attente small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-attente>b{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-fin>button{background:#353334;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-fin svg{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-fin p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-pied{background:#121212e6;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-pied svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-vues button{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-vues button[aria-pressed=true]{background:#f5f5f5;color:#121212}
 :root[data-apparence="sombre"] .admin-tableau .admin-maquette-nav a:first-child{background:#f5f5f5;color:#121212}
 :root[data-apparence="sombre"] .admin-tableau .admin-maquette-header{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-administration,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-administration{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-surtitre{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-periode{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-periode button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-onglets button{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-periode button[aria-pressed=true],:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-onglets button[aria-pressed=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-actualisation{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-actualisation button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-panne button{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-panne{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-panne>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-panne button{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-prive{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-prive svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-administration h3 small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-priorites article{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-badge{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-badge.urgent{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-priorites p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-priorites a{color:#f5f5f5;background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-priorites a.principal{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-kpi>div{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-kpi>div>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-kpi dt{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-kpi p{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-note{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-bloc{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-bloc h3 svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-entonnoir li{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-entonnoir small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-barre{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-barre>span{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-sources li{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-pratique>div{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-onglets button{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-registres li{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-contacts a{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-details{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-administration{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-entete a{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-kpi>div{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-kpi dt svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-kpi dd a{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-dossiers article{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-dossiers article>a{background:#353334;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-tableau #places-admin .convention{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-tableau #places-admin .tag{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-administration,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-administration{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-surtitre{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-periode{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-periode button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-onglets button{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-periode button[aria-pressed=true],:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-onglets button[aria-pressed=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-actualisation{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-actualisation button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-panne button{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-panne{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-panne>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-panne button{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-prive{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-prive svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-administration h3 small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-priorites article{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-badge{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-badge.urgent{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-priorites p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-priorites a{color:#f5f5f5;background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-priorites a.principal{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-kpi>div{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-kpi>div>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-kpi dt{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-kpi p{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-note{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-bloc{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-bloc h3 svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-entonnoir li{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-entonnoir small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-barre{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-barre>span{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-sources li{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-pratique>div{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-onglets button{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-registres li{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-contacts a{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-details{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-administration{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-entete a{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-kpi>div{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-kpi dt svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-kpi dd a{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-dossiers article{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-dossiers article>a{background:#353334;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-tableau #places-admin .convention{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-tableau #places-admin .tag{color:#f5f5f5}
 @media(max-width:767px){:root[data-apparence="sombre"] .admin-tableau .admin-maquette-nav a{background:#2a2829}}
-@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-kpi>div:last-child{background:#353334}}
-@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-priorites{background:#2a2829}}
-@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-priorites article{background:#121212}}
-@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-priorites article>a{color:#f5f5f5}}
-@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-priorites article>a.principal{color:#f5f5f5}}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-table th{color:#bfbdbe;border-bottom:1px solid #3d3b3c;background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-table td{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-table small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-table td>a{background:#353334;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-intervention .intervention-places,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-incidents{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-incidents h2 svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-places>table th{color:#bfbdbe;background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-places>table td{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-places>table small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-incidents li{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-incidents li p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-outils-demandes,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-autres{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-outils-demandes>summary,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-autres>summary,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-places>details>summary{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .intervention-places>details[open]{border-top:1px solid #3d3b3c}
-@media(min-width:1024px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-intervention .intervention-kpi>div{background:#232122}}
-@media(min-width:1024px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-intervention .intervention-kpi dt{color:#bfbdbe}}
-@media(min-width:1024px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-intervention .intervention-table-scroll{background:#232122}}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tableau-export button{background:#2a2829;color:#f5f5f5}
+@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-kpi>div:last-child{background:#353334}}
+@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-priorites{background:#2a2829}}
+@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-priorites article{background:#121212}}
+@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-priorites article>a{color:#f5f5f5}}
+@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-priorites article>a.principal{color:#f5f5f5}}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-table th{color:#bfbdbe;border-bottom:1px solid #3d3b3c;background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-table td{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-table small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-table td>a{background:#353334;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-intervention .intervention-places,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-incidents{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-incidents h2 svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-places>table th{color:#bfbdbe;background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-places>table td{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-places>table small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-incidents li{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-incidents li p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-outils-demandes,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-autres{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-outils-demandes>summary,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-autres>summary,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-places>details>summary{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .intervention-places>details[open]{border-top:1px solid #3d3b3c}
+@media(min-width:1024px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-intervention .intervention-kpi>div{background:#232122}}
+@media(min-width:1024px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-intervention .intervention-kpi dt{color:#bfbdbe}}
+@media(min-width:1024px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-intervention .intervention-table-scroll{background:#232122}}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tableau-export button{background:#2a2829;color:#f5f5f5}
 :root[data-apparence="sombre"] .admin-maquette{background:#121212;color:#f5f5f5}
 :root[data-apparence="sombre"] .admin-maquette :is(button,a,input,select,textarea):focus-visible{outline:3px solid #e6c364}
 :root[data-apparence="sombre"] .admin-maquette .card{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-identite{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-profil{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-identite{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-profil{background:#f5f5f5;color:#121212}
 :root[data-apparence="sombre"] .admin-maquette-nav a{background:#2a2829;color:#f5f5f5}
 :root[data-apparence="sombre"] .admin-maquette-nav a:first-child{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .pilotage-kicker{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-kicker>span:first-child{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-kicker>span:last-child{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .pilotage-head button{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .prog-tabs{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .prog-tab{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .prog-tab[aria-selected=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .pilotage-conf{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-conf svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette h3 svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .muted{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-priorites article{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-priorites h4 svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-priorites p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-priorites a{background:#353334;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-priorites a.pilotage-principal{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .pilotage-stats>div{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette dt{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .pilotage-evo{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-suivi a{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-suivi a:first-child{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .pilotage-list>li{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-avatar{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .row-actions a{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .pilotage-kicker{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-kicker>span:first-child{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-kicker>span:last-child{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .pilotage-head button{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .prog-tabs{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .prog-tab{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .prog-tab[aria-selected=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .pilotage-conf{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-conf svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette h3 svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .muted{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-priorites article{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-priorites h4 svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-priorites p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-priorites a{background:#353334;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-priorites a.pilotage-principal{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .pilotage-stats>div{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette dt{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .pilotage-evo{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-suivi a{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-suivi a:first-child{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .pilotage-list>li{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-avatar{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .row-actions a{color:#e6c364}
 :root[data-apparence="sombre"] .admin-maquette .error{color:#ffdad6;background:#5c1a16}
-@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-priorites strong{background:#353334}}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .pilotage-date{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-maquette .pilotage-precision{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .pilotage-conversion>div:last-child{background:#353334}
+@media(max-width:767px){:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-priorites strong{background:#353334}}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .pilotage-date{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-maquette .pilotage-precision{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .pilotage-conversion>div:last-child{background:#353334}
 @media(max-width:767px){:root[data-apparence="sombre"] .admin-maquette-nav{background:#121212;border-top:1px solid #3d3b3c}}
 @media(max-width:767px){:root[data-apparence="sombre"] .admin-maquette-nav a:first-child{background:#2a2829;color:#f5f5f5}}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-page{background:#121212;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-page :is(button,a):focus-visible{outline:3px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-etiquette{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-entete nav{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-profil{background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-page p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-page small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-expire{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-symbole{background:#353334;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-sablier>span{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-puce{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-puce:before,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-puce-sobre:before{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-intro{color:#f5f5f5!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-page .ae-actions :is(button,a),:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-page .ae-principal{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-page .ae-principal{background:#f5f5f5!important;color:#121212!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-erreur .ae-carte{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-erreur .ae-carte:before,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-erreur .ae-carte:after{background:#35333499}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-erreur .ae-actions>button:not(.ae-principal){background:#35333480}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-diagnostic{background:#35333480}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-diagnostic svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-liens button{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-anneaux>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-anneaux>svg:nth-child(2){color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-anneaux>span{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-anneaux>span svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-or{color:#e6c364!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-avancement{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-avancement span{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-note{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-note>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-bouclier{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-refus .ae-puce{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-refus .ae-actions>button{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-contacts{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-confidentialite{border-left:4px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-confidentialite small{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-reperes{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-auth{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-pied{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-pied svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) }
-
-.ae-page h1{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-marque{color:#f5f5f5!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-page .ae-principal,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-profil,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ae-sablier>span{background:#f5f5f5!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin button{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin :is(button,input,textarea,select,summary):focus-visible{outline:2px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin .ed-principal{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-titre p:not(.ed-surtitre){color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin .ed-surtitre{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-badge{background:#353334;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-badge.ed-erreur{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-feuille{background:#2a2829;border-left:3px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-feuille p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-feuille>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-programmes button{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-programmes button span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-programmes button[aria-pressed=true]{background:#353334;border-left:3px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-historique button{border-left:2px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-historique button.ed-version-active{border-left-color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-programme-titre p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-jours{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-jours button{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-jours button[aria-pressed=true]{border:1px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-jour-titre{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-moment{background:#232122;border-left:3px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-moment-icone{background:#2a2829;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-moment header p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-source{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-action-question>div{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-action-question h4{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-autres-jours button{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-resume{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-confidentialite{background:#353334;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-confidentialite>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-vide{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-alerte{border-left:3px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-alerte.ed-erreur{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-alerte button{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-alerte .ed-confirmation-inline{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-statistiques article{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-communication-filtres [role=tab]{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-communication-filtres [role=tab][aria-selected=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-canaux button[aria-pressed=true]{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-communication-filtres select,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-filtres-secondaires select{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin table{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin th{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin td{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-selectionnee{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-envoi-fiche,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-incident-fiche{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-envoi-fiche h3,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-incident-fiche h3{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-envoi-fiche blockquote,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-dialogue blockquote{background:#2a2829;border-left:2px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-envoi-fiche section>p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-livraisons>div{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-point{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-cause{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-note,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-portee{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-envoi-carte,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-incident-carte{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-envoi-resume p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-switch{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-switch>i:before{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-switch:has(input:checked)>i{background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-switch:focus-within{outline:2px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-filtres-incidents [aria-pressed=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-incident-carte{border:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-incident-carte.ed-selectionnee{border-left:3px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-type{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-incident-resume p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-ouvrir{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-impact{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-journal-actions ol{border-left:2px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-journal-actions li:before{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-journal-actions p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-incident-fiche textarea{background:#2a2829;border:1px solid #3d3b3c;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-regle{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .edition-admin .ed-dialogue{background:#121212;color:#f5f5f5;border:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-dialogue :is(input:not([type=checkbox]),select,textarea){background:#2a2829;border:1px solid #3d3b3c;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-programmes button{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-programmes button[aria-pressed=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-publication-rapide{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-historique-mobile{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-enseignement-details{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-enseignement-details .ed-enseignement{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-programme-titre{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-programme-titre h2{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-version-publiee{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-jours button{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-jours button[aria-pressed=true]{background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-edition-mobile:has(.ed-contenus) .am-entete nav button{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-edition-mobile:has(.ed-contenus) .am-entete nav .am-actif{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile.ed-communications .ed-alerte.ed-erreur{background:#353334;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile.ed-communications .ed-alerte.ed-erreur>div:first-child>svg{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-echec-compte{color:#ffb4ab!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-priorite{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile.ed-communications [role=tab]{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile.ed-communications [role=tab][aria-selected=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile.ed-communications [role=tab]:nth-child(2):not([aria-selected=true]){color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-canaux [aria-pressed=true]{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-canaux button:first-of-type>svg,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-envoi-resume>header svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-repartition{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-repartition>i{background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-repartition>i:nth-child(3){background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-livraisons>div,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-livraisons>div{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-switch{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-switch>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-type{background:#353334;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-resume{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-resume h3,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-resume p{color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-resume .ed-badge{background:#35333433;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-resume>.ed-principal{background:#e6c364;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-source svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-moment footer>button:last-child{background:#e6c364;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-moment footer>button:first-child{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-pagination{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-description-impact{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ed-mobile .ed-description-impact>h3:nth-of-type(2){border-top:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-edition-mobile:has(.ed-incidents) .am-identite>div>span{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-edition-mobile:has(.ed-incidents) .am-identite .am-rubrique{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres button{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres :is(button,input,textarea,select):focus-visible{outline:2px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-entete>div>p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-sur-titre{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres h1 small,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-badge{color:#e6c364;background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-attribution{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-prive{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-prive svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-prive strong{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-outils [role=tablist]{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-outils [aria-selected=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-outils [role=tab] b{background:#353334;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-outils [aria-selected=true] b{background:#e6c364;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-recherche>span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-recherche input{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-ticket{background:#232122!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-ticket.ar-selection{background:#2a2829!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-ticket>p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-ticket footer{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-fiche{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-fiche header p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-fiche>p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres .admin-demande{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres .admin-demande .tag{background:#353334;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres .admin-demande>.muted{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres .admin-demande>.day-text{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres .admin-demande details{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres .admin-demande summary{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres .field{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres .field :is(input,select,textarea){border:1px solid #3d3b3c;background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres form>.muted{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres form button[type=submit],:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-principal{background:#f5f5f5!important;color:#121212!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres a{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-vide{color:#bfbdbe;background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-vide svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-filtres select{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-information{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-information svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-personnes,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-transactions{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-personnes header span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres th{color:#bfbdbe;background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres td{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres td small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-registres tr.ar-selection{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-avatar{background:#353334;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-progression{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-progression span{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-actions button:first-child{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-plus{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-transactions>footer{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-fiche dl>div{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-fiche dt{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-achat-carte{background:#2a2829!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-achat-carte p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-outils [role=tablist]{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-ticket{background:#2a2829!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-ticket summary small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-ticket .admin-demande{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .admin-demande>.day-text{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .field :is(input,select){background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-fiche{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-filtres select{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-participant{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-participant summary p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-participant summary>span{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-prive{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-recherche input{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile h1 small{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-ticket,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-ticket .admin-demande{background:#232122!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .admin-demande>.day-text{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .admin-demande>.day-text:before{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-parcours-filtres button{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-parcours-filtres button[aria-pressed=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-etat-parcours{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-portee{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-participants .ar-participant,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-participants .ar-fiche{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .recommandations-admin [role=alert]{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ra-formulaire,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ra-liste article,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ra-information{background:#232122;border:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ra-formulaire :is(input:not([type=checkbox]),textarea,select){border:1px solid #8a8788;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ra-liste a{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-fiche{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-identite{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-identite p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-badge{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-message{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-message>span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-notes{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-notes summary{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-contacts>a,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-contacts>span{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-contacts>a:nth-child(2) svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-parcours{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-field{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-field small{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-field select{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-field textarea{background:#2a2829;border:1px solid #3d3b3c;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-etats legend{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-etats>div{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-etats>div label{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-etats label:focus-within{outline:2px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-etats .fd-choisi{background:#232122;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-etats .fd-choisi i{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-etat-complet{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-etat-complet select{background:#121212;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-info{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-info svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-actions button[type=submit]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-actions button[type=button]{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fd-retire{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .fd-field textarea{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-outils [role=tab][aria-selected=true]{background:#232122;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-outils [role=tab][aria-selected=true] b{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-ticket>summary>span:first-child:before{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-ticket>summary>.ar-langue{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-fiche,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-fiche{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-fiche h3,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-fiche h3{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-identite p,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-identite small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-actions button{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-actions button:last-child{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-actions-haut button:last-child:disabled{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-inscription{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-inscription small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-infos>div{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-infos span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-jours>div{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-note{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-audio{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-audio header h4 svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-audio button{background:#e6c364;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-audio>div>span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-onde i{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-parcours>div:first-of-type{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-parcours p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-parcours b{color:#e6c364;background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-progression{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-progression span{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-assistance{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-assistance>div{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-assistance p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-assistance button{color:#e6c364!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-controle{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-controle p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-pagination{border-top:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-pagination button{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-surtitre{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-fiche>header p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-fiche>header>b{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-compte{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-compte>header{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-compte>header b{background:#353334;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-compte p,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-compte small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-produit p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-montants>div{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-montants span,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-montants small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-commandes details>summary{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-commandes details.fa-revoquer>summary{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-revoquer>summary svg{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-confirmation{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-confirmation h3{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-confirmation p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-confirmation :is(select,textarea){background:#232122;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-confirmation button{color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-aide{background:#2a2829!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-cloisonnement{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-cloisonnement p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-evenements ul{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-evenements p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fa-filtres select{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-recherche>svg{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .fa-fiche{background:#232122;border-left:5px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-achats [role=tab]{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-achats [role=tab][aria-selected=true]{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-icone-participants{background:#353334;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-participants .ar-prive{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .ar-filtres select{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-header-actions>button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-header-actions summary{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-header-actions details[open]{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-achat-mobile{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .rf-achat-mobile>.ar-achat-carte{background:#232122!important}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-achats .rf-achat-mobile{border-left:5px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-fonctions select,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-filtres-demandes select{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-fonctions button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-selection button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .fp-actions a{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-outils-registre{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-participants h1 small{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-participants .ar-personnes>header>span{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile.ar-participants .rf-carte-source{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-carte-identite p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-carte-jour b small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-carte-jour>span{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-carte-avance>div{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-carte-avance strong{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-carte-jauge{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-carte-jauge i{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .rf-carte-signal>b{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .ar-mobile .rf-carte-source .rf-choisir{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .am-mobile:has(.ar-participants) .am-identite>div>span{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-echanges-titre{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-echange{background:#121212;border-left:2px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-echange-qui{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-suppression-ouvrir{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-suppression .admin-suppression-titre{color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-suppression input{border:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .admin-suppression .admin-suppression-confirmer{color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-tableau{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-tableau button:focus-visible{outline:2px solid #e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-tableau header>span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-surtitre{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-surtitre span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-titre>div>p:last-child{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-titre>[role=group]{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-titre button{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-titre button[aria-pressed=true]{color:#121212;background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-reseau{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-reseau>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-reseau span{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-reseau button{background:#232122;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-actualiser button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-autres button{background:#2a2829;color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-priorites{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-priorites>header b{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-priorites>div>button{background:#232122;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-badge{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-badge-1{background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-priorites small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-priorites p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-priorites footer{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-kpi article{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-kpi-haut i{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-kpi-haut b{background:#353334;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-kpi h3{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-kpi p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-analyse>section{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-analyse header p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-entree ol li{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-barre{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-barre span{background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-entree li:nth-child(2) .tf-barre span{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-entree li:nth-child(3) .tf-barre span{background:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-sources ul li{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-note{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-pratique>p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-pratique-visuel>div{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-pratique-visuel strong{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-pratique dt i{background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-registres>section{background:#232122}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-registres header>b{background:#2a2829;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-registres header svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-registres li{border-bottom:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-registres li p,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-registres small{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-registres li>button{background:#2a2829;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-registres footer button{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-confidentialite{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-confidentialite svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-confidentialite p{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-autres{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-reseau{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-reseau button{background:#353334;color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-priorites>div>button{background:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-badge{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile :is(.tf-badge-0,.tf-badge-1){background:#5c1a16;color:#ffdad6}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-priorites p{color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-priorites footer{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-vue>header>span{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-kpi article{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-kpi-haut i{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-kpi article:last-child i{background:#353334;color:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-kpi article:last-child .tf-kpi-haut b{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-analyse>section{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-entree header>svg{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-sources{background:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-sources ul li{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-pratique header>span{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-pratique-visuel{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-pratique dl>div:last-child{color:#ffb4ab}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-onglets{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-onglets button{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-onglets button[aria-pressed=true]{background:#f5f5f5}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-registres h2{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-registres li{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-initiale{background:#353334}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-registres li>button{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-mobile .tf-confidentialite{background:#2a2829}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele) .tf-pratique-barre>span{background:#f5f5f5}
+:root[data-apparence="sombre"] .ae-page{background:#121212;color:#f5f5f5}
+:root[data-apparence="sombre"] .ae-page :is(button,a):focus-visible{outline:3px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-etiquette{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-entete nav{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-profil{background:#f5f5f5}
+:root[data-apparence="sombre"] .ae-page p{color:#bfbdbe}
+:root[data-apparence="sombre"] .ae-page small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-expire{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-symbole{background:#353334;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-sablier>span{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-puce{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-puce:before,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-puce-sobre:before{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-intro{color:#f5f5f5!important}
+:root[data-apparence="sombre"] .ae-page .ae-actions :is(button,a),:root[data-apparence="sombre"] .ae-page .ae-principal{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] .ae-page .ae-principal{background:#f5f5f5!important;color:#121212!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-erreur .ae-carte{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-erreur .ae-carte:before,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-erreur .ae-carte:after{background:#35333499}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-erreur .ae-actions>button:not(.ae-principal){background:#35333480}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-diagnostic{background:#35333480}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-diagnostic svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-liens button{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-anneaux>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-anneaux>svg:nth-child(2){color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-anneaux>span{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-anneaux>span svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-or{color:#e6c364!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-avancement{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-avancement span{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-note{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-note>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-bouclier{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-refus .ae-puce{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-refus .ae-actions>button{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-contacts{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-confidentialite{border-left:4px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-confidentialite small{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-reperes{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-auth{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-pied{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-pied svg{color:#e6c364}
+:root[data-apparence="sombre"] .ae-page h1{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-marque{color:#f5f5f5!important}
+:root[data-apparence="sombre"] .ae-page .ae-principal,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-profil,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-sablier>span{background:#f5f5f5!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin button{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin :is(button,input,textarea,select,summary):focus-visible{outline:2px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin .ed-principal{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-titre p:not(.ed-surtitre){color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin .ed-surtitre{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-badge{background:#353334;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-badge.ed-erreur{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-feuille{background:#2a2829;border-left:3px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-feuille p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-feuille>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-programmes button{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-programmes button span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-programmes button[aria-pressed=true]{background:#353334;border-left:3px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-historique button{border-left:2px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-historique button.ed-version-active{border-left-color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-programme-titre p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-jours{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-jours button{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-jours button[aria-pressed=true]{border:1px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-jour-titre{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-moment{background:#232122;border-left:3px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-moment-icone{background:#2a2829;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-moment header p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-source{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-action-question>div{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-action-question h4{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-autres-jours button{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-resume{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-confidentialite{background:#353334;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-confidentialite>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-vide{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-alerte{border-left:3px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-alerte.ed-erreur{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-alerte button{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-alerte .ed-confirmation-inline{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-statistiques article{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-communication-filtres [role=tab]{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-communication-filtres [role=tab][aria-selected=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-canaux button[aria-pressed=true]{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-communication-filtres select,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-filtres-secondaires select{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin table{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin th{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin td{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-selectionnee{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-envoi-fiche,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-incident-fiche{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-envoi-fiche h3,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-incident-fiche h3{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-envoi-fiche blockquote,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-dialogue blockquote{background:#2a2829;border-left:2px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-envoi-fiche section>p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-livraisons>div{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-point{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-cause{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-note,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-portee{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-envoi-carte,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-incident-carte{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-envoi-resume p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-switch{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-switch>i:before{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-switch:has(input:checked)>i{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-switch:focus-within{outline:2px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-filtres-incidents [aria-pressed=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-incident-carte{border:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-incident-carte.ed-selectionnee{border-left:3px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-type{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-incident-resume p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-ouvrir{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-impact{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-journal-actions ol{border-left:2px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-journal-actions li:before{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-journal-actions p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-incident-fiche textarea{background:#2a2829;border:1px solid #3d3b3c;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-regle{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .edition-admin .ed-dialogue{background:#121212;color:#f5f5f5;border:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-dialogue :is(input:not([type=checkbox]),select,textarea){background:#2a2829;border:1px solid #3d3b3c;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-programmes button{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-programmes button[aria-pressed=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-publication-rapide{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-historique-mobile{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-enseignement-details{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-enseignement-details .ed-enseignement{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-programme-titre{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-programme-titre h2{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-version-publiee{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-jours button{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-jours button[aria-pressed=true]{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-edition-mobile:has(.ed-contenus) .am-entete nav button{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-edition-mobile:has(.ed-contenus) .am-entete nav .am-actif{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile.ed-communications .ed-alerte.ed-erreur{background:#353334;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile.ed-communications .ed-alerte.ed-erreur>div:first-child>svg{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-echec-compte{color:#ffb4ab!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-priorite{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile.ed-communications [role=tab]{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile.ed-communications [role=tab][aria-selected=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile.ed-communications [role=tab]:nth-child(2):not([aria-selected=true]){color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-canaux [aria-pressed=true]{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-canaux button:first-of-type>svg,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-envoi-resume>header svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-repartition{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-repartition>i{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-repartition>i:nth-child(3){background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-livraisons>div,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-livraisons>div{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-switch{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-switch>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-type{background:#353334;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-resume{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-resume h3,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-resume p{color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-resume .ed-badge{background:#35333433;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-resume>.ed-principal{background:#e6c364;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-source svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-moment footer>button:last-child{background:#e6c364;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-moment footer>button:first-child{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-pagination{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-description-impact{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ed-mobile .ed-description-impact>h3:nth-of-type(2){border-top:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-edition-mobile:has(.ed-incidents) .am-identite>div>span{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-edition-mobile:has(.ed-incidents) .am-identite .am-rubrique{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres button{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres :is(button,input,textarea,select):focus-visible{outline:2px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-entete>div>p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-sur-titre{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres h1 small,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-badge{color:#e6c364;background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-attribution{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-prive{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-prive svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-prive strong{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-outils [role=tablist]{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-outils [aria-selected=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-outils [role=tab] b{background:#353334;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-outils [aria-selected=true] b{background:#e6c364;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-recherche>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-recherche input{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-ticket{background:#232122!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-ticket.ar-selection{background:#2a2829!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-ticket>p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-ticket footer{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-fiche{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-fiche header p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-fiche>p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres .admin-demande{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres .admin-demande .tag{background:#353334;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres .admin-demande>.muted{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres .admin-demande>.day-text{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres .admin-demande details{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres .admin-demande summary{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres .field{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres .field :is(input,select,textarea){border:1px solid #3d3b3c;background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres form>.muted{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres form button[type=submit],:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-principal{background:#f5f5f5!important;color:#121212!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres a{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-vide{color:#bfbdbe;background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-vide svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-filtres select{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-information{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-information svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-personnes,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-transactions{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-personnes header span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres th{color:#bfbdbe;background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres td{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres td small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-registres tr.ar-selection{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-avatar{background:#353334;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-progression{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-progression span{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-actions button:first-child{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-plus{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-transactions>footer{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-fiche dl>div{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-fiche dt{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-achat-carte{background:#2a2829!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-achat-carte p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-outils [role=tablist]{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-ticket{background:#2a2829!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-ticket summary small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-ticket .admin-demande{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .admin-demande>.day-text{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .field :is(input,select){background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-fiche{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-filtres select{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-participant{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-participant summary p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-participant summary>span{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-prive{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-recherche input{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile h1 small{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-ticket,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-ticket .admin-demande{background:#232122!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .admin-demande>.day-text{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .admin-demande>.day-text:before{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-parcours-filtres button{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-parcours-filtres button[aria-pressed=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-etat-parcours{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-portee{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-participants .ar-participant,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-participants .ar-fiche{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .recommandations-admin [role=alert]{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-formulaire,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-liste article,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-information{background:#232122;border:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-formulaire :is(input:not([type=checkbox]),textarea,select){border:1px solid #8a8788;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-liste a{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-fiche{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-identite{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-identite p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-badge{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-message{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-message>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-notes{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-notes summary{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-contacts>a,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-contacts>span{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-contacts>a:nth-child(2) svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-parcours{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-field{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-field small{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-field select{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-field textarea{background:#2a2829;border:1px solid #3d3b3c;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-etats legend{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-etats>div{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-etats>div label{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-etats label:focus-within{outline:2px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-etats .fd-choisi{background:#232122;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-etats .fd-choisi i{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-etat-complet{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-etat-complet select{background:#121212;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-info{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-info svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-actions button[type=submit]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-actions button[type=button]{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-retire{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .fd-field textarea{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-outils [role=tab][aria-selected=true]{background:#232122;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-outils [role=tab][aria-selected=true] b{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-ticket>summary>span:first-child:before{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-ticket>summary>.ar-langue{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-fiche,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-fiche{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-fiche h3,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-fiche h3{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-identite p,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-identite small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-actions button{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-actions button:last-child{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-actions-haut button:last-child:disabled{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-inscription{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-inscription small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-infos>div{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-infos span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-jours>div{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-note{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-audio{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-audio header h4 svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-audio button{background:#e6c364;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-audio>div>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-onde i{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-parcours>div:first-of-type{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-parcours p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-parcours b{color:#e6c364;background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-progression{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-progression span{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-assistance{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-assistance>div{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-assistance p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-assistance button{color:#e6c364!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-controle{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-controle p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-pagination{border-top:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-pagination button{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-surtitre{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-fiche>header p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-fiche>header>b{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-compte{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-compte>header{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-compte>header b{background:#353334;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-compte p,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-compte small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-produit p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-montants>div{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-montants span,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-montants small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-commandes details>summary{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-commandes details.fa-revoquer>summary{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-revoquer>summary svg{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-confirmation{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-confirmation h3{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-confirmation p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-confirmation :is(select,textarea){background:#232122;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-confirmation button{color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-aide{background:#2a2829!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-cloisonnement{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-cloisonnement p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-evenements ul{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-evenements p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fa-filtres select{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-recherche>svg{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .fa-fiche{background:#232122;border-left:5px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-achats [role=tab]{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-achats [role=tab][aria-selected=true]{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-icone-participants{background:#353334;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-participants .ar-prive{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .ar-filtres select{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-header-actions>button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-header-actions summary{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-header-actions details[open]{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-achat-mobile{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .rf-achat-mobile>.ar-achat-carte{background:#232122!important}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-achats .rf-achat-mobile{border-left:5px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-fonctions select,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-filtres-demandes select{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-fonctions button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-selection button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fp-actions a{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-outils-registre{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-participants h1 small{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-participants .ar-personnes>header>span{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-participants .rf-carte-source{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-carte-identite p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-carte-jour b small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-carte-jour>span{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-carte-avance>div{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-carte-avance strong{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-carte-jauge{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-carte-jauge i{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .rf-carte-signal>b{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile .rf-carte-source .rf-choisir{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-mobile:has(.ar-participants) .am-identite>div>span{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-echanges-titre{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-echange{background:#121212;border-left:2px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-echange-qui{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-suppression-ouvrir{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-suppression .admin-suppression-titre{color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-suppression input{border:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .admin-suppression .admin-suppression-confirmer{color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-tableau{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-tableau button:focus-visible{outline:2px solid #e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-tableau header>span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-surtitre{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-surtitre span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-titre>div>p:last-child{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-titre>[role=group]{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-titre button{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-titre button[aria-pressed=true]{color:#121212;background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-reseau{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-reseau>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-reseau span{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-reseau button{background:#232122;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-actualiser button,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-autres button{background:#2a2829;color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites>header b{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites>div>button{background:#232122;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-badge{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-badge-1{background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites footer{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-kpi article{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-kpi-haut i{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-kpi-haut b{background:#353334;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-kpi h3{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-kpi p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-analyse>section{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-analyse header p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-entree ol li{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-barre{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-barre span{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-entree li:nth-child(2) .tf-barre span{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-entree li:nth-child(3) .tf-barre span{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-sources ul li{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-note{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-pratique>p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-pratique-visuel>div{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-pratique-visuel strong{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-pratique dt i{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-registres>section{background:#232122}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-registres header>b{background:#2a2829;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-registres header svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-registres li{border-bottom:1px solid #3d3b3c}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-registres li p,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-registres small{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-registres li>button{background:#2a2829;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-registres footer button{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-confidentialite{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-confidentialite svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-confidentialite p{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-autres{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-reseau{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-reseau button{background:#353334;color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-priorites>div>button{background:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-badge{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile :is(.tf-badge-0,.tf-badge-1){background:#5c1a16;color:#ffdad6}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-priorites p{color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-priorites footer{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-vue>header>span{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-kpi article{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-kpi-haut i{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-kpi article:last-child i{background:#353334;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-kpi article:last-child .tf-kpi-haut b{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-analyse>section{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-entree header>svg{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-sources{background:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-sources ul li{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-pratique header>span{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-pratique-visuel{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-pratique dl>div:last-child{color:#ffb4ab}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-onglets{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-onglets button{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-onglets button[aria-pressed=true]{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-registres h2{color:#bfbdbe}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-registres li{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-initiale{background:#353334}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-registres li>button{background:#f5f5f5;color:#121212}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-confidentialite{background:#2a2829}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-pratique-barre>span{background:#f5f5f5}
