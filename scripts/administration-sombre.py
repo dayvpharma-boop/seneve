@@ -19,7 +19,14 @@ def convertir(valeur,t):
     h=m.group(1).lower();base,alpha=(h[:6],h[6:]) if len(h)==8 else (h,'')
     if base in t: ok[0]=True;return '#'+t[base]+alpha
     return m.group(0)
-  v=HEX.sub(r,valeur);return v if ok[0] else None
+  v=HEX.sub(r,valeur)
+  # Couleurs nommées (white, black) : mêmes équivalences que #fff et #000.
+  def nom(m):
+    h={'white':'fff','black':'000'}[m.group(1).lower()]
+    if h in t: ok[0]=True;return '#'+t[h]
+    return m.group(0)
+  v=re.sub(r'(?<![-\w])(white|black)(?![-\w])',nom,v,flags=re.I)
+  return v if ok[0] else None
 def separer(t):
   parts,prof,cur=[],0,''
   for c in t:

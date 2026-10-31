@@ -73,14 +73,14 @@
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete{background:#121212e6}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compte>a{color:#bfbdbe}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compte small{color:#e6c364}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compte b{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-compte b{background:#f5f5f5;color:#121212}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-identite i{color:#e6c364}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-identite>div>span{color:#bfbdbe}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-identite>small{background:#2a2829;color:#e6c364}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav{background:#2a2829b3}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav button{color:#bfbdbe}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav .am-actif{background:#f5f5f5;color:#121212}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav b{background:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-entete nav b{background:#e6c364;color:#121212}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-prive{background:#2a2829}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-prive>span{color:#bfbdbe}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .am-prive svg{color:#e6c364}
@@ -232,7 +232,7 @@
 :root[data-apparence="sombre"] .ae-page :is(button,a):focus-visible{outline:3px solid #e6c364}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-etiquette{background:#353334}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-entete nav{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-profil{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-profil{background:#f5f5f5;color:#121212!important}
 :root[data-apparence="sombre"] .ae-page p{color:#bfbdbe}
 :root[data-apparence="sombre"] .ae-page small{color:#bfbdbe}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ae-expire{background:#232122}
@@ -465,7 +465,7 @@
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-participants .ar-participant,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ar-mobile.ar-participants .ar-fiche{background:#232122}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .recommandations-admin [role=alert]{background:#5c1a16;color:#ffdad6}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-formulaire,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-liste article,:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-information{background:#232122;border:1px solid #3d3b3c}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-formulaire :is(input:not([type=checkbox]),textarea,select){border:1px solid #8a8788;color:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-formulaire :is(input:not([type=checkbox]),textarea,select){border:1px solid #8a8788;background:#232122;color:#f5f5f5}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .ra-liste a{color:#e6c364}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-fiche{background:#232122}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .fd-identite{border-bottom:1px solid #3d3b3c}
@@ -607,6 +607,7 @@
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites>header b{background:#5c1a16;color:#ffdad6}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites>div>button{background:#232122;color:#f5f5f5}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-badge{color:#e6c364}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-badge-0{color:#121212}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-badge-1{background:#5c1a16;color:#ffdad6}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites small{color:#bfbdbe}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-priorites p{color:#bfbdbe}
@@ -661,7 +662,7 @@
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-pratique dl>div:last-child{color:#ffb4ab}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-onglets{background:#2a2829}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-onglets button{color:#bfbdbe}
-:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-onglets button[aria-pressed=true]{background:#f5f5f5}
+:root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-onglets button[aria-pressed=true]{background:#f5f5f5;color:#121212}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-registres h2{color:#bfbdbe}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-registres li{background:#2a2829}
 :root[data-apparence="sombre"] :is(.admin-maquette,.am-page,.af-page,.admin-fidele,.ae-page) .tf-mobile .tf-initiale{background:#353334}
