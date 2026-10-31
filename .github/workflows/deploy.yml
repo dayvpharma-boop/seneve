@@ -28,6 +28,8 @@ jobs:
         run: npx tsc --noEmit
       - name: Contrôles automatiques
         run: npm test
+      - name: Vérifier les mises à jour hors connexion
+        run: node --test scripts/offline-worker.test.mjs
       - name: Construire le site
         # Habitudes & Défis : inscription publique ouverte en français et en anglais (décision de Dr Justin du 28/10/2026).
         # Compteur de fidélité : fonctions installées sur seneve-prod le 27/10/2026 (habitudes_compteur_fidelite).
