@@ -21,7 +21,7 @@ export function PreferencesProfil({langue,langueCompte,indisponible=false,lectur
   const [modifie,setModifie]=useState(false),[nonConserve,setNonConserve]=useState(false);
   function appliquer(changements:Partial<typeof preferences>){setNonConserve(!choisir({...preferences,...changements}));setModifie(true);}
   function retablir(){setNonConserve(!choisir(DEFAUT_VISUEL));choisirApparence('systeme');setModifie(true);}
-  const tailles:[TailleTexte,string][]=[['normale',en?'Standard':'Normale'],['grande',en?'Large':'Grande'],['tres-grande',en?'Extra large':'Très grande']];
+  const tailles:[TailleTexte,string][]=[['petite',en?'Small':'Petite'],['normale',en?'Standard':'Normale'],['grande',en?'Large':'Grande'],['tres-grande',en?'Extra large':'Très grande']];
   return <section className="pf-card pf-preferences" id="preferences" aria-labelledby={`${id}-titre`}>
     {!seul&&<div className="pf-section-heading"><span className="pf-section-icon"><I nom="tune"/></span><div><p className="pf-eyebrow">{en?'Make yourself at home':'Un espace à ton rythme'}</p><h2 id={`${id}-titre`}>{en?'My preferences':'Mes préférences'}</h2></div></div>}
     {voir('langue')&&<div className="pf-preference-block"><h3><I nom="language" taille={22}/>{en?'Language':'Langue'}</h3>

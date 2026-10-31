@@ -108,7 +108,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
   const hd=params.get('parcours')??(habitudesActivees()?data.parcours.find(x=>x.programme?.startsWith('HABITUDES_DEFIS')&&x.etat==='active')?.id:undefined);
   const emailMasque=data.email.replace(/^(.{4})[^@]*@/,'$1***@');
   const nomApparence=apparence==='sombre'?(en?'Dark':'Sombre'):apparence==='clair'?(en?'Light':'Clair'):(en?'Like my phone':'Comme mon téléphone');
-  const tailles={normale:en?'Standard':'Normale',grande:en?'Large':'Grande','tres-grande':en?'Extra large':'Très grande'};
+  const tailles={petite:en?'Small':'Petite',normale:en?'Standard':'Normale',grande:en?'Large':'Grande','tres-grande':en?'Extra large':'Très grande'};
   return <main className="pf-page pv-page avec-nav">
   <header className="pv-haut"><Link className="pv-rond" to={`/profil${suffixe}`} aria-label={en?'Back to my profile':'Revenir à mon profil'}><T nom="retour"/></Link><button type="button" className="pv-pastille" disabled={busy} onClick={()=>void deconnecter()}>{en?'Sign me out':'Me déconnecter'}</button></header>
   {bandeaux}

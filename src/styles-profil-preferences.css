@@ -28,7 +28,7 @@
 .pf-size-options input,.pf-palette-options input{position:absolute;opacity:0;width:1px!important;height:1px!important}
 .pf-preferences label:has(input:focus-visible){outline:3px solid var(--gold);outline-offset:3px}
 .pf-size-aa{height:36px;display:flex;align-items:center;font-family:Literata,Georgia,serif;font-weight:600}
-.pf-size-aa-0{font-size:20px}.pf-size-aa-1{font-size:24px}.pf-size-aa-2{font-size:28px}
+.pf-size-aa-0{font-size:16px}.pf-size-aa-1{font-size:20px}.pf-size-aa-2{font-size:24px}
 .pf-palette-swatches{display:flex;justify-content:center;align-items:center;height:36px}
 .pf-palette-swatches i{display:block;width:22px;height:28px;border:1px solid #8c836d}.pf-palette-swatches i:first-child{border-radius:8px 0 0 8px}.pf-palette-swatches i:last-child{border-radius:0 8px 8px 0}
 .pf-palette-options label>svg{position:absolute;right:5px;top:5px}
@@ -49,3 +49,6 @@
 @media(max-width:360px){.pf-page{padding-left:14px;padding-right:14px}.pf-card{padding:16px}.pf-section-heading{gap:8px}}
 
 .pf-photo .pf-avatar{width:88px;height:88px;overflow:hidden;margin-bottom:4px}.pf-photo .pf-avatar img{width:100%;height:100%;object-fit:cover}.pf-page .pf-photo .link{font-size:16px;line-height:24px;min-height:48px}.pf-photo-choisir,.pf-photo-retirer{display:block!important;margin:auto}.pf-page .pf-photo-note{font:400 13px/20px Outfit,sans-serif;color:var(--muted);margin:0 0 12px}.pf-photo-preview,.pf-photo-confirm{background:#f9f3e4;border:1px solid var(--line);padding:16px;border-radius:14px;margin:8px 0 16px}.pf-photo-preview>img{display:block;width:144px;height:144px;object-fit:cover;border-radius:50%;margin:12px auto}.pf-photo-preview .btn{width:100%}.pf-photo-preview>.link{display:flex!important;justify-content:center}.pf-page .pf-photo-status{font:500 16px/24px Outfit,sans-serif}.pf-raccourcis{display:flex;gap:10px;margin:0 0 20px}.pf-raccourcis>a{display:flex;align-items:center;justify-content:center;flex:1;min-height:48px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font:500 16px/24px Outfit,sans-serif}.pf-notifications .rappels-carte{margin-bottom:20px!important;padding-bottom:20px!important;border-bottom:1px solid var(--line)!important}.pf-notifications .rappels-moment{min-height:56px;border-radius:10px}.pf-notifications .rappels-moment select{min-height:48px}.pf-notifications .rappels-carte .btn{font-size:16px;border-radius:12px}:root[data-apparence=sombre] .pf-photo-preview,:root[data-apparence=sombre] .pf-photo-confirm{background:#211f1c}
+.pf-size-aa-3{font-size:28px}
+/* Quatre tailles depuis le 31/10/2026 (Petite ajoutée). */
+.pf-size-options{grid-template-columns:repeat(4,minmax(0,1fr))}

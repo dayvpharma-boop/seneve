@@ -1,17 +1,17 @@
 import {useEffect,useState} from 'react';
 
 export type Palette = 'ivoire'|'sable'|'sauge'|'argile'|'ardoise';
-export type TailleTexte = 'normale'|'grande'|'tres-grande';
+export type TailleTexte = 'petite'|'normale'|'grande'|'tres-grande';
 export type PreferencesVisuelles = {palette:Palette;taille:TailleTexte};
 const CLE='seneve:preferences-visuelles:v1';
 const EVENEMENT='seneve:preferences-visuelles';
 let temporaire:PreferencesVisuelles|null=null;
 export const DEFAUT_VISUEL:PreferencesVisuelles={palette:'ivoire',taille:'normale'};
-export const ECHELLES_TEXTE:Record<TailleTexte,number>={normale:1,grande:1.125,'tres-grande':1.25};
+export const ECHELLES_TEXTE:Record<TailleTexte,number>={petite:0.9,normale:1,grande:1.125,'tres-grande':1.25};
 
 function valider(v:unknown):PreferencesVisuelles {
   const p=v&&typeof v==='object'?v as Record<string,unknown>:{};
-  return {palette:p.palette==='sable'||p.palette==='sauge'||p.palette==='argile'||p.palette==='ardoise'?p.palette:'ivoire',taille:p.taille==='grande'||p.taille==='tres-grande'?p.taille:'normale'};
+  return {palette:p.palette==='sable'||p.palette==='sauge'||p.palette==='argile'||p.palette==='ardoise'?p.palette:'ivoire',taille:p.taille==='petite'||p.taille==='grande'||p.taille==='tres-grande'?p.taille:'normale'};
 }
 export function lirePreferencesVisuelles():PreferencesVisuelles {
   if(temporaire)return {...temporaire};
