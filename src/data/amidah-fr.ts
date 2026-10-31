@@ -149,7 +149,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Mon D.ieu, préserve ma langue du mal et mes lèvres des paroles trompeuses. Que mon âme se taise à ceux qui me maudissent ; que mon âme soit comme de la poussière pour tous. Ouvre mon cœur à Ta Torah, et laisse mon âme suivre avec empressement tes commandements. Quant à tous ceux qui complotent le mal contre moi, hâtez-vous d’annuler leur conseil et de contrecarrer leur dessein. Qu’ils soient comme de la paille devant le vent ; que l’ange de l’Éternel les repousse. Afin que tes bien-aimés soient délivrés, aide-moi de Ta Main droite et réponds-moi. Fais-le pour l’amour de Ton Nom; Fais-le à cause de Ta droite; Fais-le pour l’amour de Ta Torah; Fais-le pour Ta Sainteté. Que les paroles de ma bouche et la méditation de mon cœur soient agréables devant Toi, Éternel, ma Force et mon Rédempteur."
+    "texte": "Mon D.ieu, préserve ma langue du mal et mes lèvres des paroles trompeuses. Que mon âme garde le silence devant ceux qui me maudissent. Que mon cœur demeure humble devant tous, dans la douceur, la patience et le respect. Ouvre mon cœur à Ta Torah et que mon âme suive avec empressement Tes commandements. Quant à tous ceux qui complotent le mal contre moi, hâtez-vous d’annuler leur conseil et de contrecarrer leur dessein. Qu’ils soient comme de la paille devant le vent ; que l’ange de l’Éternel les repousse. Afin que tes bien-aimés soient délivrés, aide-moi de Ta Main droite et réponds-moi. Fais-le pour l’amour de Ton Nom; Fais-le à cause de Ta droite; Fais-le pour l’amour de Ta Torah; Fais-le pour Ta Sainteté. Que les paroles de ma bouche et la méditation de mon cœur soient agréables devant Toi, Éternel, ma Force et mon Rédempteur."
   },
   {
     "type": "priere",
