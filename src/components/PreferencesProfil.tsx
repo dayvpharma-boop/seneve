@@ -5,7 +5,7 @@ import {choisirApparence} from '@/lib/apparence';
 import {ACCENTS,DEFAUT_VISUEL,usePreferencesVisuelles,type Accent,type Palette,type TailleTexte} from '@/lib/preferences-visuelles';
 import type {CSSProperties} from 'react';
 /** Couleurs d'accent (31/10/2026) : [nom FR, nom EN, accent en mode clair, accent en mode sombre]. */
-export const NOMS_ACCENTS:Record<Accent,[string,string,string,string]>={lavande:['Lavande','Lavender','#49439b','#c5bbff'],menthe:['Menthe','Mint','#2a7548','#8fdba8'],foret:['Forêt','Forest','#2f5d3a','#a9d1a3'],ciel:['Ciel','Sky','#1f5f9e','#9cc8f5'],turquoise:['Turquoise','Turquoise','#0f6b6b','#7fd6d0'],or:['Or','Gold','#7d5b00','#f0c860'],corail:['Corail','Coral','#ad3a2d','#ffad9f'],rose:['Rose','Pink','#9c3068','#f5a8cf']};
+export const NOMS_ACCENTS:Record<Accent,[string,string,string,string]>={lavande:['Lavande (d’origine)','Lavender (original)','#49439b','#c5bbff'],menthe:['Menthe','Mint','#2a7548','#8fdba8'],foret:['Forêt','Forest','#2f5d3a','#a9d1a3'],ciel:['Ciel','Sky','#1f5f9e','#9cc8f5'],turquoise:['Turquoise','Turquoise','#0f6b6b','#7fd6d0'],or:['Or','Gold','#7d5b00','#f0c860'],corail:['Corail','Coral','#ad3a2d','#ffad9f'],rose:['Rose','Pink','#9c3068','#f5a8cf']};
 
 const PALETTES:{id:Palette;fr:string;en:string;couleurs:string[]}[]=[
   {id:'ivoire',fr:'Lavande',en:'Lavender',couleurs:['#F5F7FE','#151B36','#49439B']},
