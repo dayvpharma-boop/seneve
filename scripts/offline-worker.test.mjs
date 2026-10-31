@@ -36,6 +36,28 @@ test('une route ne remplace jamais la copie principale',async()=>{
  let p;w.listeners.fetch({request:{url:'https://example.org/seneve/espace',method:'GET',mode:'navigate'},waitUntil:()=>{},respondWith:v=>p=v});await p;
  assert.equal(await w.entries.get('/seneve/index.html').text(),'copie');
 });
+test('une visite directe de la page Amidah montre son vrai texte HTML, pas la page d’accueil',async()=>{
+ const w=worker();w.entries.set('/seneve/index.html',new Response('copie du test'));
+ w.context.fetch=async()=>new Response('Prière du matin · conclusion publiée');
+ let p;
+ w.listeners.fetch({request:{url:'https://example.org/seneve/amidah.html',method:'GET',mode:'navigate'},respondWith:v=>p=v});
+ assert.match(await(await p).text(),/conclusion publiée/);
+});
+test('visite de /espace : nouvelle version de la prière détectée sans passage par l’accueil',async()=>{
+ const w=worker();w.entries.set('/seneve/index.html',new Response('ancienne'));
+ const base=w.context.fetch;
+ w.context.fetch=async u=>{
+  const url=String(u.url??u);
+  if(url.endsWith('/seneve/espace'))return new Response('page espace');
+  if(url.endsWith('/seneve/index.html'))return new Response('<script src="/seneve/assets/nouveau.js"></script>');
+  return base(u);
+ };
+ const attentes=[];let p;
+ w.listeners.fetch({request:{url:'https://example.org/seneve/espace',method:'GET',mode:'navigate'},waitUntil:v=>attentes.push(v),respondWith:v=>p=v});
+ assert.equal(await(await p).text(),'ancienne');
+ await Promise.all(attentes);
+ assert.match(await w.entries.get('/seneve/index.html').text(),/nouveau.js/);
+});
 test('retour dans SÉNEVÉ : la copie s’ouvre sans attendre un réseau lent (30/10/2026)',async()=>{
  const w=worker();w.entries.set('/seneve/index.html',new Response('copie'));
  w.context.fetch=()=>new Promise(()=>{}); // réseau qui ne répond jamais
