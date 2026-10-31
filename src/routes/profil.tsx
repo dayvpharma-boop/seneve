@@ -16,6 +16,7 @@ import {WhatsAppLink} from '@/components/WhatsAppLink';
 import {CodePlaceCard} from '@/components/CodePlaceCard';
 import {IconeConfidentialite as C} from '@/components/IconeConfidentialite';
 import {BarreNav} from '@/components/BarreNav';
+import {ClocheNotifications} from '@/components/ClocheNotifications';
 import {IconeProfilModerne as P} from '@/components/IconeProfilModerne';
 import {useApparence} from '@/lib/apparence';
 import {IconeTrait as T,type SymboleTrait} from '@/components/IconeTrait';
@@ -201,7 +202,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
  const filtres:[Filtre,string,SymboleTrait|null][]=[['tout',en?'All':'Tout',null],['versets',en?'Verses':'Versets','verset'],['reflexions',en?'Reflections':'Réflexions','note'],['parcours',en?'Journeys':'Parcours','parcours']];
  const extrait=(a:Annotation)=><><blockquote className="pv-verset"><sup>{a.verset}</sup> {a.extrait}</blockquote><p className="pv-ref">{reference(a,langue)} · {VERSIONS[a.version]?.nom??a.version}</p></>;
  return <main className="pf-page pv-page avec-nav">
- <header className="pv-haut"><Link className="pv-pastille" to={`/aide${suffixe}`}><T nom="aide"/>{en?'Need help?':'Besoin d’aide ?'}</Link><span className="pv-pastille pv-icones"><Link to={`/notifications${suffixe}`} aria-label="Notifications"><T nom="cloche"/></Link><Link to={`/reglages${suffixe}`} aria-label={en?'My settings':'Mes réglages'}><T nom="reglages"/></Link></span></header>
+ <header className="pv-haut"><Link className="pv-pastille" to={`/aide${suffixe}`}><T nom="aide"/>{en?'Need help?':'Besoin d’aide ?'}</Link><span className="pv-pastille pv-icones"><ClocheNotifications langue={langue}/><Link to={`/reglages${suffixe}`} aria-label={en?'My settings':'Mes réglages'}><T nom="reglages"/></Link></span></header>
  {bandeaux}
  <section className="pv-identite" aria-label={en?'My identity':'Mon identité'}>
   <div><h1>{data.prenom||(en?'My space':'Mon espace')}</h1>

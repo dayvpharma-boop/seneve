@@ -82,3 +82,14 @@
 :root[data-apparence="sombre"] .pv-supprimer{color:#ffb4ab}
 .pv-marque{margin:22px 0 0;text-align:center;font:600 11px Poppins,system-ui,sans-serif;letter-spacing:.14em;color:var(--vivant-secondaire)}
 @media (max-width:360px){.pv-identite h1{font-size:28px}.pv-onglets{gap:16px}.pv-onglets button{font-size:15px}}
+/* Liens en ligne : même encre que les boutons (la couleur générale des liens ne s'applique pas ici). */
+:root:root .pv-page a.pv-ligne{color:var(--vivant-encre)}
+.pv-icones .cloche-notifications{position:relative;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:var(--vivant-encre)}
+.pv-icones .cloche-notifications svg{width:22px;height:22px}
+/* Photo : cercle au trait, appareil photo en pastille (comme la maquette). */
+.pv-page .pf-photo{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.pv-page .pf-photo-avatar{position:relative}
+:root:root .pv-page .pf-photo-avatar .pf-avatar{width:96px;height:96px;border-radius:50%;border:3px solid var(--vivant-secondaire);background:transparent;color:var(--vivant-secondaire);font:600 30px/1 Poppins,system-ui,sans-serif;display:grid;place-items:center;overflow:hidden;box-shadow:none}
+.pv-page .pf-photo-avatar .pf-avatar img{width:100%;height:100%;object-fit:cover}
+:root:root .pv-page .pf-photo-choisir{position:absolute;right:-6px;bottom:-2px;width:38px;height:38px;border-radius:50%;border:2px solid var(--vivant-fond);background:var(--vivant-argile,var(--vivant-lavande));color:var(--vivant-encre);display:grid;place-items:center;padding:0;cursor:pointer}
+.pv-identite-reglage .pf-photo{align-items:flex-start}
