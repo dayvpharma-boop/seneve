@@ -2,16 +2,18 @@ import {useEffect,useState} from 'react';
 
 export type Palette = 'ivoire'|'sable'|'sauge'|'argile'|'ardoise';
 export type TailleTexte = 'petite'|'normale'|'grande'|'tres-grande';
-export type PreferencesVisuelles = {palette:Palette;taille:TailleTexte};
+export type Accent = 'lavande'|'menthe'|'foret'|'ciel'|'turquoise'|'or'|'corail'|'rose';
+export const ACCENTS:Accent[]=['lavande','menthe','foret','ciel','turquoise','or','corail','rose'];
+export type PreferencesVisuelles = {palette:Palette;taille:TailleTexte;accent?:Accent};
 const CLE='seneve:preferences-visuelles:v1';
 const EVENEMENT='seneve:preferences-visuelles';
 let temporaire:PreferencesVisuelles|null=null;
-export const DEFAUT_VISUEL:PreferencesVisuelles={palette:'ivoire',taille:'normale'};
+export const DEFAUT_VISUEL:PreferencesVisuelles={palette:'ivoire',taille:'normale',accent:'lavande'};
 export const ECHELLES_TEXTE:Record<TailleTexte,number>={petite:0.9,normale:1,grande:1.125,'tres-grande':1.25};
 
 function valider(v:unknown):PreferencesVisuelles {
   const p=v&&typeof v==='object'?v as Record<string,unknown>:{};
-  return {palette:p.palette==='sable'||p.palette==='sauge'||p.palette==='argile'||p.palette==='ardoise'?p.palette:'ivoire',taille:p.taille==='petite'||p.taille==='grande'||p.taille==='tres-grande'?p.taille:'normale'};
+  return {palette:p.palette==='sable'||p.palette==='sauge'||p.palette==='argile'||p.palette==='ardoise'?p.palette:'ivoire',taille:p.taille==='petite'||p.taille==='grande'||p.taille==='tres-grande'?p.taille:'normale',accent:ACCENTS.includes(p.accent as Accent)?p.accent as Accent:'lavande'};
 }
 export function lirePreferencesVisuelles():PreferencesVisuelles {
   if(temporaire)return {...temporaire};
@@ -21,6 +23,7 @@ export function appliquerPreferencesVisuelles(p:PreferencesVisuelles) {
   const valeur=valider(p);
   document.documentElement.dataset.palette=valeur.palette;
   document.documentElement.dataset.tailleTexte=valeur.taille;
+  if(valeur.accent==='lavande')delete document.documentElement.dataset.accent;else document.documentElement.dataset.accent=valeur.accent;
   document.documentElement.style.setProperty('--texte-echelle',String(ECHELLES_TEXTE[valeur.taille]));
 }
 /** Préférences propres à ce navigateur, sans donnée de compte ni appel serveur. */

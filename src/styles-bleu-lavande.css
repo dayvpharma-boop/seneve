@@ -3,9 +3,9 @@
  * Les palettes personnelles alternatives et les états d'erreur sont conservés. */
 :root[data-palette="ivoire"] :is(.espace-page,.parcours-page,.hd-stitch) {
   --vivant-fond:#f5f7fe;--vivant-surface:rgb(255 255 255);--vivant-encre:#151b36;
-  --vivant-secondaire:#4d5874;--vivant-vert:#49439b;--vivant-sur-accent:rgb(255 255 255);
+  --vivant-secondaire:#4d5874;--vivant-vert:var(--accent,#49439b);--vivant-sur-accent:rgb(255 255 255);
   --vivant-ligne:#dde3f2;--vivant-sauge:#e6f3f2;--vivant-miel:#e3efff;
-  --vivant-argile:#edf2fc;--vivant-lavande:#eee8fc;
+  --vivant-argile:#edf2fc;--vivant-lavande:var(--accent-doux,#eee8fc);
   --background:var(--vivant-fond);--surface:var(--vivant-surface);
   --foreground:var(--vivant-encre);--muted:var(--vivant-secondaire);
   --gold:var(--vivant-vert);--brand:var(--vivant-vert);--line:var(--vivant-ligne);
@@ -13,9 +13,9 @@
 }
 :root[data-palette="ivoire"][data-apparence="sombre"] :is(.espace-page,.parcours-page,.hd-stitch) {
   --vivant-fond:#121212;--vivant-surface:#232122;--vivant-encre:#f5f5f5;
-  --vivant-secondaire:#bfbdbe;--vivant-vert:#c5bbff;--vivant-sur-accent:#252048;
+  --vivant-secondaire:#bfbdbe;--vivant-vert:var(--accent-nuit,#c5bbff);--vivant-sur-accent:var(--accent-nuit-sur,#252048);
   --vivant-ligne:#3d3b3c;--vivant-sauge:#2a2d2c;--vivant-miel:#2a2829;
-  --vivant-argile:#353334;--vivant-lavande:#2c2933;
+  --vivant-argile:#353334;--vivant-lavande:var(--accent-nuit-doux,#2c2933);
 }
 :root[data-palette="ivoire"] body:has(:is(.espace-page,.parcours-page,.hd-ecran)) {
   background:linear-gradient(145deg,#edf3ff,#f2edfd);color:#151b36;

@@ -1,8 +1,8 @@
 /* Bibliothèque : le livre existant, ses formats et ses destinations, sans droit inventé. */
 :root:root:root[data-apparence] body:has(.bl-page){background:#f5f7fe;color:#151b36}
-:root:root:root[data-apparence] .bl-page{--bl-fond:#f5f7fe;--bl-carte:rgb(255 255 255);--bl-encre:#151b36;--bl-second:#59627e;--bl-or:#49439b;--bl-accent:#eee8fc;--bl-doux:#e3efff;--bl-trait:#dce3f0;--bl-sur-accent:rgb(255 255 255);max-width:1080px;margin:auto;padding:0 24px 124px;min-height:100dvh;background:var(--bl-fond);color:var(--bl-encre);border:0;font:400 14px/1.7 Poppins,system-ui,sans-serif;overflow-wrap:anywhere}
+:root:root:root[data-apparence] .bl-page{--bl-fond:#f5f7fe;--bl-carte:rgb(255 255 255);--bl-encre:#151b36;--bl-second:#59627e;--bl-or:var(--accent,#49439b);--bl-accent:var(--accent-doux,#eee8fc);--bl-doux:#e3efff;--bl-trait:#dce3f0;--bl-sur-accent:rgb(255 255 255);max-width:1080px;margin:auto;padding:0 24px 124px;min-height:100dvh;background:var(--bl-fond);color:var(--bl-encre);border:0;font:400 14px/1.7 Poppins,system-ui,sans-serif;overflow-wrap:anywhere}
 :root:root:root[data-apparence=sombre] body:has(.bl-page){background:#121212;color:#f5f5f5}
-:root:root:root[data-apparence=sombre] .bl-page{--bl-fond:#121212;--bl-carte:#232122;--bl-encre:#f5f5f5;--bl-second:#bbc4de;--bl-or:#bcb2ff;--bl-accent:#2c2933;--bl-doux:#353334;--bl-trait:#3d3b3c;--bl-sur-accent:#201a4d}
+:root:root:root[data-apparence=sombre] .bl-page{--bl-fond:#121212;--bl-carte:#232122;--bl-encre:#f5f5f5;--bl-second:#bbc4de;--bl-or:var(--accent-nuit,#bcb2ff);--bl-accent:var(--accent-nuit-doux,#2c2933);--bl-doux:#353334;--bl-trait:#3d3b3c;--bl-sur-accent:var(--accent-nuit-sur,#201a4d)}
 :root:root[data-apparence] .bl-page :is(h1,h2,h3,button,a,.bl-label,.bl-statut,.bl-header,.bl-footer){font-family:Poppins,system-ui,sans-serif}
 :root:root[data-apparence] .bl-page :is(h1,h2,h3){color:var(--bl-encre)}
 :root:root[data-apparence] .bl-page .bl-header{position:static;min-height:74px;padding:12px 0;margin:0;gap:12px;background:var(--bl-fond)}
@@ -66,7 +66,7 @@
 :root:root[data-apparence] .bl-page>.barre-nav a{font:500 10px/1.5 Poppins,sans-serif;color:var(--bl-second);min-height:48px;white-space:normal}
 :root:root[data-apparence] .bl-page>.barre-nav a[aria-current=page]{color:var(--bl-or)}
 :root:root[data-apparence] .bl-page>.barre-nav .nav-plus{background:var(--bl-accent);color:var(--bl-or);border-radius:14px}
-:root:root[data-apparence] .bl-page :is(a,button,summary):focus-visible{outline:3px solid #8275d4;outline-offset:3px}
+:root:root[data-apparence] .bl-page :is(a,button,summary):focus-visible{outline:3px solid var(--accent-moyen,#8275d4);outline-offset:3px}
 @media(max-width:760px){:root:root:root[data-apparence] .bl-page{padding:0 18px 124px}:root:root[data-apparence] .bl-page h1{font-size:26px}:root:root[data-apparence] .bl-page>.barre-nav a{font-size:9px}}
 @media(min-width:900px){:root:root[data-apparence] .bl-page .page-illustration{display:grid;grid-template-columns:1.15fr 1fr;align-items:center}:root:root[data-apparence] .bl-page .page-illustration>img{height:230px;aspect-ratio:auto}:root:root[data-apparence] .bl-page .page-illustration-texte{padding:24px 28px}:root:root[data-apparence] .bl-page .bl-rayonnage{grid-template-columns:1.1fr 1fr;gap:24px}:root:root[data-apparence] .bl-page .bl-livre-carte{padding:24px}:root:root[data-apparence] .bl-page .bl-livre-identite h2{font-size:24px}}
 

@@ -64,6 +64,10 @@ const PAGES = [
   ['admin-demandes', '/admin?vue=demandes', '/admin?vue=demandes&lang=en'],
   ['admin-participants', '/admin?vue=participants', '/admin?vue=participants&lang=en'],
   ['admin-contenus', '/admin?vue=contenus', '/admin?vue=contenus&lang=en'],
+  ['accent-menthe', '/espace?parcours=hd', '/espace?parcours=hd&lang=en'],
+  ['accent-corail', '/espace?apercu=journee', '/espace?apercu=journee&lang=en'],
+  ['accent-ciel', '/reglages#accent', '/reglages?lang=en#accent'],
+  ['accent-or', '/profil', '/profil?lang=en'],
   ['introuvable', '/page-qui-n-existe-pas', '/page-qui-n-existe-pas?lang=en'],
 ];
 
@@ -116,6 +120,8 @@ for (const [nom, fr, en] of PAGES) for (const mode of ['light', 'dark']) for (co
   const ctx = await b.newContext({viewport: {width: 390, height: 844}, colorScheme: mode, deviceScaleFactor: 1, serviceWorkers: 'block', locale: langue === 'en' ? 'en-GB' : 'fr-FR'});
   // Profil : versets gardés et graines partagées de ce téléphone, pour voir le fil et le carnet remplis.
   if (nom === 'profil' || nom === 'profil-carnet') await ctx.addInitScript(l => { try { localStorage.setItem('seneve:graines-partagees', '2'); localStorage.setItem('seneve:bible:annotations', JSON.stringify({ 'MAT.13.31': { cle: 'MAT.13.31', livre: 'MAT', chapitre: 13, verset: 31, version: l === 'en' ? 'web' : 'lsg', extrait: l === 'en' ? 'He set another parable before them, saying, “The Kingdom of Heaven is like a grain of mustard seed…' : 'Il leur proposa une autre parabole, et il dit: Le royaume des cieux est semblable à un grain de sénevé…', couleur: 'or', modifie: new Date(Date.now() - 5 * 864e5).toISOString() } })); } catch {} }, langue);
+  // Couleur d'accent choisie sur ce téléphone (pages « accent-<couleur> »).
+  if (nom.startsWith('accent-')) await ctx.addInitScript(a => { try { localStorage.setItem('seneve:preferences-visuelles:v1', JSON.stringify({ palette: 'ivoire', taille: 'normale', accent: a })); } catch {} }, nom.slice(7));
   const p = await ctx.newPage(), erreurs = [];
   p.on('pageerror', x => erreurs.push(x.message.slice(0, 200)));
   await p.goto(BASE + adr, {waitUntil: 'networkidle'}).catch(x => erreurs.push('navigation : ' + x.message.slice(0, 120)));

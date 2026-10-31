@@ -52,3 +52,10 @@
 .pf-size-aa-3{font-size:28px}
 /* Quatre tailles depuis le 31/10/2026 (Petite ajoutée). */
 .pf-size-options{grid-template-columns:repeat(4,minmax(0,1fr))}
+/* Couleur d'accent (31/10/2026) : chaque pastille montre l'accent du mode clair et celui du mode sombre. */
+.pf-accent-options{border:0;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.pf-accent-options label{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border:1px solid var(--line,#dde3f2);border-radius:14px;font-size:13px;text-align:center;cursor:pointer;min-height:76px}
+.pf-accent-options label:has(:checked){border:2px solid var(--accent,var(--gold));padding:9px 3px}
+.pf-accent-options input{position:absolute;opacity:0;width:1px!important;height:1px!important}
+.pf-accent-options label:has(:focus-visible){outline:3px solid var(--accent,var(--gold));outline-offset:2px}
+.pf-accent-pastille{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent-c) 0 50%,var(--accent-n) 50% 100%);box-shadow:0 0 0 1px #0000001f}
