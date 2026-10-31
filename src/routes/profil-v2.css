@@ -1,0 +1,84 @@
+/* Profil et Mes réglages (maquette validée par Dr Justin le 31/10/2026). Couleurs de la palette choisie, clair et sombre. */
+:root:root[data-apparence] body:has(.pv-page){background:var(--vivant-fond);color:var(--vivant-encre)}
+:root:root[data-apparence] .pf-page.pv-page{background:var(--vivant-fond);color:var(--vivant-encre);max-width:560px;margin:0 auto;padding:0 20px 120px;font-family:Poppins,system-ui,sans-serif}
+.pv-page .icone-trait{flex:none}
+.pv-haut{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 14px}
+.pv-pastille{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 18px;border-radius:999px;background:var(--vivant-surface);border:1px solid var(--vivant-ligne);box-shadow:0 2px 8px #151b3612;font:500 15px/1.2 Poppins,system-ui,sans-serif;color:var(--vivant-encre);text-decoration:none;white-space:nowrap;cursor:pointer}
+.pv-pastille:disabled{opacity:.6}
+.pv-icones{gap:6px;padding:0 8px}
+.pv-icones a{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:var(--vivant-encre)}
+.pv-rond{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--vivant-surface);border:1px solid var(--vivant-ligne);color:var(--vivant-encre);box-shadow:0 2px 8px #151b3612;cursor:pointer;flex:none}
+.pv-page :is(a,button):focus-visible{outline:3px solid var(--vivant-vert);outline-offset:2px}
+/* Identité */
+.pv-identite{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:8px 0 4px}
+.pv-identite h1{margin:0;font:600 34px/1.15 Poppins,system-ui,sans-serif;letter-spacing:-.01em;color:var(--vivant-encre);overflow-wrap:anywhere}
+.pv-objectif{display:flex;gap:8px;align-items:flex-start;margin:12px 0 0;font-size:15px;line-height:1.45;color:var(--vivant-encre)}
+.pv-identite .pf-pastilles{margin:12px 0 0;justify-content:flex-start}
+.pv-identite > :last-child{flex:none}
+/* Onglets */
+.pv-onglets{display:flex;gap:24px;border-bottom:1px solid var(--vivant-ligne);margin:22px 0 18px}
+.pv-onglets button{background:none;border:0;border-bottom:3px solid transparent;padding:0 0 10px;margin-bottom:-1px;font:400 17px Poppins,system-ui,sans-serif;color:var(--vivant-secondaire);cursor:pointer;min-height:44px}
+.pv-onglets button[aria-selected="true"]{color:var(--vivant-encre);border-bottom-color:var(--vivant-encre);font-weight:500}
+/* Cartes */
+.pv-carte{background:var(--vivant-surface);border:1px solid var(--vivant-ligne);border-radius:18px;padding:16px;color:var(--vivant-encre)}
+.pv-grille{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pv-label{margin:0;font-size:14px;line-height:1.35}
+.pv-chiffre{margin:12px 0 8px;font:600 38px/1 Poppins,system-ui,sans-serif}
+.pv-carte small{display:block;color:var(--vivant-secondaire);font-size:12.5px;line-height:1.4}
+.pv-honnete{display:flex;gap:6px;align-items:flex-start;margin:8px 2px 12px;font-size:12px;line-height:1.5;color:var(--vivant-secondaire)}
+.pv-honnete .icone-trait{margin-top:2px}
+.pv-graines{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pv-graines .pv-chiffre{margin:0 0 4px;font-size:30px}
+/* Mon jardin */
+.pv-jardin{margin-top:12px}
+.pv-jardin-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.pv-jardin h2{margin:0;font:600 18px Poppins,system-ui,sans-serif}
+.pv-jardin-tete span{font-size:13px;color:var(--vivant-secondaire)}
+.pv-etapes{list-style:none;display:flex;justify-content:space-between;margin:14px 0 0;padding:0;position:relative}
+.pv-etapes::before{content:'';position:absolute;left:35px;right:35px;top:26px;height:2px;background:var(--vivant-ligne)}
+.pv-etapes li{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;width:70px;text-align:center;font-size:11.5px;line-height:1.35;color:var(--vivant-secondaire)}
+.pv-etape{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--vivant-lavande);color:var(--vivant-vert);border:2px solid var(--vivant-surface)}
+.pv-etapes li.atteinte .pv-etape{background:var(--vivant-vert);color:var(--vivant-sur-accent,#fff)}
+.pv-etapes li.atteinte{color:var(--vivant-encre)}
+/* Filtres et fil */
+.pv-puces{display:flex;gap:8px;overflow-x:auto;margin:22px -20px 14px 0;padding:0 20px 2px 0;scrollbar-width:none}
+.pv-puces button{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--vivant-ligne);background:var(--vivant-surface);color:var(--vivant-encre);font:500 15px Poppins,system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.pv-puces button[aria-pressed="true"]{background:var(--vivant-encre);color:var(--vivant-fond);border-color:var(--vivant-encre)}
+.pv-fil .pv-carte,.pv-carnet{margin-bottom:12px;padding:18px}
+.pv-fil-tete{display:flex;gap:12px;align-items:flex-start}
+.pv-fil-tete p{flex:1;margin:2px 0 0;font-size:16px;line-height:1.35}
+.pv-fil-tete time{font-size:12px;color:var(--vivant-secondaire);white-space:nowrap}
+.pv-tuile-fil{width:44px;height:44px;border-radius:14px}
+.pv-verset{margin:14px 0 4px;border-left:4px solid var(--vivant-encre);padding-left:14px;font:400 18px/1.5 Lora,Literata,Georgia,serif;color:var(--vivant-encre)}
+.pv-verset sup{font:400 11px Poppins,system-ui,sans-serif;color:var(--vivant-secondaire)}
+.pv-ref{margin:8px 0 0 18px;font-weight:600;font-size:13px}
+.pv-note-texte{margin:12px 0 0;font:400 15px/1.55 Lora,Literata,Georgia,serif;color:var(--vivant-secondaire)}
+.pv-lien{display:inline-flex;align-items:center;gap:6px;margin-top:10px;color:var(--vivant-vert);font-weight:500;font-size:14px;text-decoration:none;min-height:32px}
+.pv-vide{margin:8px 2px;color:var(--vivant-secondaire);font:400 15px/1.55 Lora,Literata,Georgia,serif}
+/* Réglages */
+.pv-surtitre{margin:26px 4px 0;font:600 11.5px Poppins,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--vivant-secondaire)}
+.pv-titre{margin:6px 0 4px;font:600 30px/1.2 Poppins,system-ui,sans-serif;color:var(--vivant-encre)}
+.pv-intro{margin:0;font:400 16px/1.5 Lora,Literata,Georgia,serif;color:var(--vivant-secondaire)}
+.pv-groupe{background:var(--vivant-surface);border:1px solid var(--vivant-ligne);border-radius:20px;padding:4px 14px;margin-top:10px}
+.pv-groupe>*:not(:last-child){border-bottom:1px solid var(--vivant-ligne)}
+.pv-ligne{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:8px 0;background:none;border:0;text-align:left;font:400 17px/1.25 Poppins,system-ui,sans-serif;color:var(--vivant-encre);text-decoration:none;cursor:pointer}
+.pv-ligne:disabled{opacity:.55;cursor:default}
+.pv-ligne-titre{flex:1;min-width:0}
+.pv-ligne-titre small{display:block;margin-top:3px;font-size:12.5px;color:var(--vivant-secondaire);overflow-wrap:anywhere}
+.pv-tuile{width:38px;height:38px;border-radius:12px;background:var(--vivant-lavande);color:var(--vivant-vert);display:grid;place-items:center;flex:none}
+.pv-chevron{color:var(--vivant-secondaire);display:grid;place-items:center}
+.pv-reglage.est-ouvert .pv-chevron-bas{transform:rotate(180deg)}
+.pv-panneau{padding:4px 0 16px}
+.pv-panneau .card,.pv-panneau .pf-card{background:none;border:0;box-shadow:none;padding:0;margin:0}
+.pv-identite-reglage{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.pv-choix{border:0;margin:0;padding:0;display:grid;gap:8px}
+.pv-choix label{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 14px;border:1px solid var(--vivant-ligne);border-radius:14px;cursor:pointer}
+.pv-choix input{width:20px;height:20px;accent-color:var(--vivant-vert)}
+.pv-admin .pv-tuile{background:var(--vivant-vert);color:var(--vivant-sur-accent,#fff)}
+.pv-page .pf-note-privee{margin:10px 4px 0}
+.pv-recharger{display:block;width:100%;min-height:56px;margin:26px 0 12px;border:0;border-radius:999px;background:var(--vivant-argile,var(--vivant-lavande));color:var(--vivant-encre);font:600 16px Poppins,system-ui,sans-serif;cursor:pointer}
+.pv-note{margin:0 4px;font-size:13px;line-height:1.5;color:var(--vivant-secondaire)}
+.pv-supprimer{display:block;margin:26px 0 0;text-align:center;font-size:14px;color:#b3261e;text-decoration:underline}
+:root[data-apparence="sombre"] .pv-supprimer{color:#ffb4ab}
+.pv-marque{margin:22px 0 0;text-align:center;font:600 11px Poppins,system-ui,sans-serif;letter-spacing:.14em;color:var(--vivant-secondaire)}
+@media (max-width:360px){.pv-identite h1{font-size:28px}.pv-onglets{gap:16px}.pv-onglets button{font-size:15px}}

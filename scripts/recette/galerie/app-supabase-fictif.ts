@@ -52,6 +52,8 @@ if (new URLSearchParams(location.search).get('parcours') === '4') {
     const modele = tables.contents[0] as Record<string, unknown>;
     for (let j = 1; j <= 14; j++) tables.contents.push({ ...modele, content_id: `L${j}`, programme_id: p2, jour: j });
   } }
+// Profil « Mes pas » (31/10/2026) : quelques actions déclarées, datées par rapport à aujourd'hui.
+tables.activity_state = [0, 1, 2, 4, 6, 8, 11, 15].map((j, k) => ({ enrollment_id: 'APERCU', activity_id: `A${k}`, etat: k === 1 ? 'partielle' : 'realisee', aide_demandee: false, realisee_le: new Date(Date.now() - j * 864e5).toISOString() }));
 const rpc: Record<string, unknown> = {
   ensure_participant: 'APERCU', staff_me: { admin: true, roles: ['admin'] },
   mes_notifications: { vu_jusqu_a: null, non_lues: 2, elements: [

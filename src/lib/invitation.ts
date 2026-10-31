@@ -42,3 +42,31 @@ export const invitationTextes = (langue?: string) => TEXTES[langue === 'en' ? 'e
 export function lienWhatsAppInvitation(message: string): string {
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
+
+/** « Graines partagées » du profil : invitations envoyées ou liens copiés depuis ce téléphone.
+ *  Compteur local seulement : rien n'est envoyé à SÉNEVÉ, il ne suit ni le destinataire ni sa visite. */
+const CLE_GRAINES = 'seneve:graines-partagees';
+export const EVENEMENT_GRAINES = 'seneve:graines-partagees';
+export function lireGraines(): number {
+  try { const n = Number(localStorage.getItem(CLE_GRAINES)); return Number.isInteger(n) && n > 0 ? n : 0; } catch { return 0; }
+}
+export function compterGraine(): number {
+  const n = lireGraines() + 1;
+  try { localStorage.setItem(CLE_GRAINES, String(n)); } catch { /* stockage indisponible : rien n'est compté */ }
+  window.dispatchEvent(new CustomEvent(EVENEMENT_GRAINES, { detail: n }));
+  return n;
+}
+/** Partage du téléphone si disponible, sinon WhatsApp. Renvoie false si la personne a fermé le menu. */
+export async function envoyerInvitation(langue?: string): Promise<boolean> {
+  const T = invitationTextes(langue);
+  const message = T.message(lienInvitation(window.location.origin, import.meta.env.BASE_URL, langue ?? 'fr'));
+  const nav = navigator as Navigator & { share?: (data: ShareData) => Promise<void> };
+  if (nav.share) {
+    try { await nav.share({ title: T.titre, text: message }); compterGraine(); return true; } catch (e) {
+      if ((e as DOMException)?.name === 'AbortError') return false;
+    }
+  }
+  window.open(lienWhatsAppInvitation(message), '_blank', 'noopener,noreferrer');
+  compterGraine();
+  return true;
+}

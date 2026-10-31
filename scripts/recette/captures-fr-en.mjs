@@ -52,6 +52,9 @@ const PAGES = [
   ['aide', '/aide', '/aide?lang=en'],
   ['notifications', '/notifications', '/notifications?lang=en'],
   ['profil', '/profil', '/profil?lang=en'],
+  ['profil-carnet', '/profil?onglet=carnet', '/profil?onglet=carnet&lang=en'],
+  ['profil-chemin', '/profil?onglet=chemin', '/profil?onglet=chemin&lang=en'],
+  ['reglages-horaires', '/reglages?parcours=APERCU', '/reglages?parcours=APERCU&lang=en'],
   ['reglages', '/reglages', '/reglages?lang=en'],
   ['hd-inscription', '/habitudes/inscription', '/habitudes/inscription?lang=en'],
   ['hd-aujourdhui', '/habitudes/aujourdhui?parcours=hd', '/habitudes/aujourdhui?parcours=hd&lang=en'],
@@ -108,6 +111,8 @@ const b = await chromium.launch();
 const resultats = [];
 for (const [nom, fr, en] of PAGES) for (const mode of ['light', 'dark']) for (const [langue, adr] of [['fr', fr], ['en', en]]) {
   const ctx = await b.newContext({viewport: {width: 390, height: 844}, colorScheme: mode, deviceScaleFactor: 1, serviceWorkers: 'block', locale: langue === 'en' ? 'en-GB' : 'fr-FR'});
+  // Profil : versets gardés et graines partagées de ce téléphone, pour voir le fil et le carnet remplis.
+  if (nom === 'profil' || nom === 'profil-carnet') await ctx.addInitScript(l => { try { localStorage.setItem('seneve:graines-partagees', '2'); localStorage.setItem('seneve:bible:annotations', JSON.stringify({ 'MAT.13.31': { cle: 'MAT.13.31', livre: 'MAT', chapitre: 13, verset: 31, version: l === 'en' ? 'web' : 'lsg', extrait: l === 'en' ? 'He set another parable before them, saying, “The Kingdom of Heaven is like a grain of mustard seed…' : 'Il leur proposa une autre parabole, et il dit: Le royaume des cieux est semblable à un grain de sénevé…', couleur: 'or', modifie: new Date(Date.now() - 5 * 864e5).toISOString() } })); } catch {} }, langue);
   const p = await ctx.newPage(), erreurs = [];
   p.on('pageerror', x => erreurs.push(x.message.slice(0, 200)));
   await p.goto(BASE + adr, {waitUntil: 'networkidle'}).catch(x => erreurs.push('navigation : ' + x.message.slice(0, 120)));

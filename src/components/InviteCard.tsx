@@ -3,7 +3,7 @@ import {IconeEditionDemarrage as IconeEdition} from './IconesDemarrage';
 import {IconeConfidentialiteDemarrage as IconeConfidentialite} from './IconesDemarrage';
 import {IconeJourneeSuite} from './IconeJourneeSuite';
 import { useState } from 'react';
-import { invitationTextes, lienInvitation, lienWhatsAppInvitation } from '@/lib/invitation';
+import { compterGraine, envoyerInvitation, invitationTextes, lienInvitation } from '@/lib/invitation';
 
 /** Inviter un proche à faire le test : partage du téléphone si disponible, sinon WhatsApp ; lien copiable. */
 export function InviteCard({ langue, resultat = false }: { langue?: string; resultat?: boolean }) {
@@ -11,21 +11,12 @@ export function InviteCard({ langue, resultat = false }: { langue?: string; resu
   const [copie, setCopie] = useState(false);
   const [erreurCopie,setErreurCopie] = useState(false);
   const lien = lienInvitation(window.location.origin, import.meta.env.BASE_URL, langue ?? 'fr');
-  const message = T.message(lien);
-
-  async function envoyer() {
-    const nav = navigator as Navigator & { share?: (data: ShareData) => Promise<void> };
-    if (nav.share) {
-      try { await nav.share({ title: T.titre, text: message }); return; } catch (e) {
-        if ((e as DOMException)?.name === 'AbortError') return; // menu fermé par la personne
-      }
-    }
-    window.open(lienWhatsAppInvitation(message), '_blank', 'noopener,noreferrer');
-  }
+  
+  async function envoyer() { await envoyerInvitation(langue); }
 
   async function copier() {
     setErreurCopie(false);
-    try { await navigator.clipboard.writeText(lien); setCopie(true); window.setTimeout(() => setCopie(false), 2500); } catch { setCopie(false); setErreurCopie(true); }
+    try { await navigator.clipboard.writeText(lien); compterGraine(); setCopie(true); window.setTimeout(() => setCopie(false), 2500); } catch { setCopie(false); setErreurCopie(true); }
   }
 
   return <section className="card invite-card" aria-label={T.tag}>
