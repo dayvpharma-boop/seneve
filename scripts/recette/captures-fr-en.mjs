@@ -132,13 +132,24 @@ for (const [nom, fr, en] of PAGES) for (const mode of ['light', 'dark']) for (co
   await p.waitForTimeout(1500);
   if (nom.startsWith('fenetre-')) {
     try {
-      if (nom === 'fenetre-duree') await p.getByRole('button', {name: langue === 'en' ? /^Reading time/ : /^Durée de lecture/}).first().click({timeout: 5000});
+      // La saisie de durée demande des données serveur : on ouvre ici une copie fidèle de la fenêtre (mêmes classes).
+      if (nom === 'fenetre-duree') await p.evaluate(en => {
+        const d = document.createElement('dialog');
+        d.className = 'hd-stitch fixed inset-x-0 bottom-0 top-auto m-0 w-full max-w-none max-h-[90dvh] overflow-auto rounded-t-3xl border-0 bg-hd-surface p-hd-space-lg text-hd-on-surface backdrop:bg-hd-inverse-surface/50';
+        const t = (fr, enT) => en ? enT : fr, puce = (x, on) => `<button type="button" class="min-h-[44px] px-4 rounded-full font-hd-label-md text-hd-label-md ${on ? 'bg-hd-secondary text-hd-on-secondary' : 'bg-hd-surface-container'}">${x}</button>`;
+        d.innerHTML = `<div class="max-w-2xl mx-auto flex flex-col gap-4"><header class="flex justify-between items-start gap-3"><div><p class="font-hd-label-sm text-hd-label-sm text-hd-secondary">${t('Écoute d’une prédication','Listening to a sermon')}</p><h2 class="font-hd-headline-md text-hd-headline-md">${t('Combien de temps ?','How much time?')}</h2></div><button type="button" class="min-w-[44px] min-h-[44px] flex items-center justify-center">✕</button></header>
+        <fieldset class="flex flex-col gap-3"><legend class="font-hd-label-lg text-hd-label-lg mb-2">${t('Durée consacrée','Time spent')}</legend><div class="flex flex-wrap gap-2">${puce('10 min')}${puce('20 min')}${puce('30 min', true)}${puce(t('Autre','Other'))}</div>
+        <label class="flex flex-col gap-1 font-hd-label-md text-hd-label-md">${t('Titre ou référence (facultatif)','Title or reference (optional)')}<input type="text" class="min-h-[48px] px-3 rounded-xl border border-hd-outline-variant bg-hd-surface-container-lowest"></label></fieldset>
+        <p class="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">${t('Indique le temps total pour cette activité aujourd’hui. Choisir une durée ne valide rien : confirme seulement ce que tu as réellement pratiqué.','Enter the total time for this activity today. Choosing a time completes nothing: confirm only what you actually did.')}</p>
+        <div class="flex gap-3 pb-safe"><button type="button" class="min-h-[48px] px-4 flex-1 rounded-xl bg-hd-surface-container font-hd-label-lg text-hd-label-lg">${t('En partie','Partly done')}</button><button type="button" class="min-h-[48px] px-4 flex-1 rounded-xl bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg">${t('Fait','Done')}</button></div></div>`;
+        document.body.append(d); d.showModal();
+      }, langue === 'en');
       else await p.getByRole('button', {name: langue === 'en' ? /Today.s readings/i : /Lectures du jour/i}).first().click({timeout: 5000});
       await p.waitForTimeout(800);
     } catch (x) { erreurs.push('fenêtre : ' + x.message.slice(0, 160)); }
   }
   const fichier = `${nom}-${langue}-${mode === 'light' ? 'clair' : 'sombre'}.png`;
-  await p.screenshot({path: path.join(sortie, fichier), fullPage: true}).catch(x => erreurs.push('capture : ' + x.message.slice(0, 120)));
+  await p.screenshot({path: path.join(sortie, fichier), fullPage: !nom.startsWith('fenetre-')}).catch(x => erreurs.push('capture : ' + x.message.slice(0, 120)));
   const m = await p.evaluate(mesurer, langue).catch(x => ({erreurMesure: x.message}));
   resultats.push({nom, langue, mode: mode === 'light' ? 'clair' : 'sombre', adresse: p.url().replace('http://localhost:4180', ''), fichier, erreurs, ...m});
   await ctx.close();
