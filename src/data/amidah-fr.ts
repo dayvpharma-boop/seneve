@@ -53,7 +53,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Tu es Saint et Ton Nom est Saint, et des êtres Saints Te louent quotidiennement pour toute l’éternité. Béni sois-Tu Eternel, le Saint Dieu. (Pendant les dix jours de pénitence, remplacer : le Saint Roi.)"
+    "texte": "Tu es Saint et Ton Nom est Saint, et des êtres Saints Te louent quotidiennement pour toute l’éternité. Béni sois-Tu Eternel, le Saint Dieu."
   },
   {
     "type": "priere",
@@ -85,7 +85,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Rétablissez nos juges comme autrefois, et nos conseillers comme autrefois ; éloigne de nous le chagrin et les soupirs, et règne sur nous, Toi seul, ô Éternel, avec bonté et compassion, avec droiture et justice. Béni sois-Tu Eternel, Roi qui aime la droiture et la justice. ( Pendant les dix jours de pénitence, remplacer par : le Roi du jugement.)"
+    "texte": "Rétablissez nos juges comme autrefois, et nos conseillers comme autrefois ; éloigne de nous le chagrin et les soupirs, et règne sur nous, Toi seul, ô Éternel, avec bonté et compassion, avec droiture et justice. Béni sois-Tu Eternel, Roi qui aime la droiture et la justice."
   },
   {
     "type": "priere",
