@@ -77,7 +77,7 @@ export const amidahFr = [
   },
   {
     "type": "priere",
-    "texte": "Bénis pour nous, Eternel notre Dieu, cette année et toutes les variétés de ses produits pour de bon ; et accorde (Pendant la saison d’été, dis:) bénédiction (Pendant la saison d’hiver, dis : rosée et pluie pour bénédiction) sur la face de la terre. Satisfaits-nous de Ta bonté et bénis notre année comme d’autres bonnes années, pour la bénédiction ; car Tu es un Dieu généreux qui accorde le bien et bénit les années. Béni sois-Tu Eternel, qui bénis les années."
+    "texte": "Bénis pour nous, Eternel notre Dieu, cette année et toutes les variétés de ses produits pour de bon ; et accorde (Pendant la saison d’été) bénédiction (Pendant la saison d’hiver rosée et pluie pour bénédiction) sur la face de la terre. Satisfaits-nous de Ta bonté et bénis notre année comme d’autres bonnes années, pour la bénédiction ; car Tu es un Dieu généreux qui accorde le bien et bénit les années. Béni sois-Tu Eternel, qui bénis les années."
   },
   {
     "type": "priere",
