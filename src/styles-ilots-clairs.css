@@ -1,4 +1,5 @@
 /* Mode sombre — « îlots clairs » (modèle du 31/10, non publié tant que non validé).
+ * NB : le blanc est écrit rgb(255 255 255) car le greffon des palettes remplace #fff/#ffffff par la surface de la palette.
  * Le fond et les autres cadres restent sombres ; seuls les cadres où l'on lit ou fait
  * l'activité passent en blanc avec écriture noire :
  *  - les cartes d'activités de « Ma journée » (Habitudes & Défis) ;
@@ -8,8 +9,8 @@
  * Les couleurs claires réutilisent les jetons du mode clair et la couleur d'accent choisie. */
 
 :root[data-apparence="sombre"] :is([id^="hd-activite-"] article, .hd-lectures-bloc, .ilot-clair) {
-  --vivant-fond:#f5f7fe;--vivant-surface:#ffffff;--vivant-encre:#151b36;
-  --vivant-secondaire:#4d5874;--vivant-vert:var(--accent,#49439b);--vivant-sur-accent:#ffffff;
+  --vivant-fond:#f5f7fe;--vivant-surface:rgb(255 255 255);--vivant-encre:#151b36;
+  --vivant-secondaire:#4d5874;--vivant-vert:var(--accent,#49439b);--vivant-sur-accent:rgb(255 255 255);
   --vivant-ligne:#dde3f2;--vivant-sauge:#e6f3f2;--vivant-miel:#eef1f8;
   --vivant-argile:#edf2fc;--vivant-lavande:var(--accent-doux,#eee8fc);
   --hdc-surface:var(--vivant-surface);--hdc-background:var(--vivant-surface);
@@ -21,7 +22,7 @@
   --hdc-on-surface-variant:var(--vivant-secondaire);--hdc-outline-variant:var(--vivant-ligne);
   --hdc-outline:#9aa3b8;--hdc-primary:var(--vivant-vert);
   --hdc-secondary:var(--vivant-vert);--hdc-primary-container:var(--vivant-vert);
-  --hdc-on-primary:#ffffff;--hdc-on-secondary:#ffffff;--hdc-on-primary-container:#ffffff;
+  --hdc-on-primary:rgb(255 255 255);--hdc-on-secondary:rgb(255 255 255);--hdc-on-primary-container:rgb(255 255 255);
   --hdc-secondary-container:var(--vivant-lavande);--hdc-on-secondary-container:var(--vivant-vert);
   --hdc-on-secondary-fixed-variant:var(--accent-fonce,#3a3580);--hdc-tertiary:var(--vivant-secondaire);
   --background:var(--vivant-surface);--surface:var(--vivant-surface);--foreground:var(--vivant-encre);
@@ -32,20 +33,20 @@
 }
 /* Cartes d'activités : fond blanc franc (les cartes « plus tard » aussi). */
 :root[data-apparence="sombre"] [id^="hd-activite-"] article {
-  background:#ffffff !important;color:#151b36;
+  background:rgb(255 255 255) !important;color:#151b36;
   box-shadow:0 1px 0 rgb(255 255 255 / .06),0 2px 10px rgb(0 0 0 / .25);
 }
 
 /* Bible : le texte du chapitre devient une page blanche (ambiance « Ivoire » uniquement :
  * les ambiances Sépia et Nuit choisies dans la Bible restent telles quelles). */
 :root[data-apparence="sombre"] .bb-ambiance-ivoire :is(.bb-texte, .bb-reprendre, .bb-racine) {
-  --bb-carte:#ffffff;--bb-bas:#f3f5fa;--bb-milieu:#eef1f8;--bb-haut:#e9edf6;
+  --bb-carte:rgb(255 255 255);--bb-bas:#f3f5fa;--bb-milieu:#eef1f8;--bb-haut:#e9edf6;
   --bb-encre:#151b36;--bb-second:#4d5874;--bb-trait:#dde3f2;
-  --bb-noir:#151b36;--bb-sur-noir:#ffffff;
+  --bb-noir:#151b36;--bb-sur-noir:rgb(255 255 255);
   --bb-or:var(--accent,#49439b);--bb-or-clair:var(--accent-pale,#e2dcfb);--bb-or-moyen:var(--accent-doux,#eee8fc);
   --bb-sur-or:var(--accent-fonce,#2a2566);
   --bb-or-surligne:rgba(255,224,143,.6);--bb-sauge:#d2e5d0;--bb-ciel:#cfe2fe;--bb-aurore:#fcd5ce;
-  background:#ffffff;color:#151b36;color-scheme:light;
+  background:rgb(255 255 255);color:#151b36;color-scheme:light;
 }
 :root[data-apparence="sombre"] .bb-ambiance-ivoire .bb-texte {
   padding:20px 16px;border-radius:20px;box-shadow:0 2px 12px rgb(0 0 0 / .3);
@@ -54,7 +55,7 @@
 
 /* Amidah : la page de prière devient blanche, l'en-tête et les commandes restent sombres. */
 :root[data-apparence="sombre"] .hd-lecteur-priere .ap-texte {
-  background:#ffffff;color:#151b36;padding:22px 18px;border-radius:20px;color-scheme:light;
+  background:rgb(255 255 255);color:#151b36;padding:22px 18px;border-radius:20px;color-scheme:light;
   box-shadow:0 2px 12px rgb(0 0 0 / .3);
 }
 :root[data-apparence="sombre"] .hd-lecteur-priere .ap-texte :is(.ap-geste,.ap-indication) {
@@ -64,5 +65,5 @@
 
 /* Lectures du jour : chaque bloc de lecture en carte blanche. */
 :root[data-apparence="sombre"] .hd-lectures-bloc {
-  background:#ffffff;color:#151b36;padding:16px;border-radius:20px;
+  background:rgb(255 255 255);color:#151b36;padding:16px;border-radius:20px;
 }
