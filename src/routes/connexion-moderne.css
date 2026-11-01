@@ -59,3 +59,6 @@
 .auth-maquette form[aria-busy=true] .moment-btn::before{content:'';width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:auth-attente .9s linear infinite;flex:none}
 @keyframes auth-attente{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.auth-maquette form[aria-busy=true] .moment-btn::before{animation:none}}
+/* Lisibilité (inventaire du 01/11/2026) : aucun texte de la page de connexion sous 13 px ; 14 px pour les textes à lire. */
+:root:root[data-apparence] main.connexion.auth-maquette :is(.auth-repere,.auth-hint,.mdp-voir,.connexion-aide,.choix-double button,.auth-language span,.auth-social-cadre span,.connexion-securite span){font-size:13px}
+:root:root[data-apparence] main.connexion.auth-maquette :is(.auth-decouverte p,.connexion-achat,.connexion-achat span,.connexion-legal,.connexion-legal a,.auth-rythme strong,.auth-rythme p){font-size:14px;line-height:1.55}
