@@ -1,7 +1,8 @@
 /* Habitudes & Défis — polices et utilitaires de base des maquettes Stitch (26/10/2026).
  * Work Sans : Google Fonts, licence SIL OFL 1.1 (src/assets/fonts/WorkSans-OFL.txt), sous-ensemble latin.
+ * Format woff2 (50 Ko, fichier latin de fonts.gstatic.com, 01/11/2026) en premier ; woff (93 Ko) gardé en secours.
  */
-@font-face{font-family:"Work Sans";font-style:normal;font-weight:100 900;font-display:swap;src:url("./assets/fonts/WorkSans-latin-wght.woff") format("woff")}
+@font-face{font-family:"Work Sans";font-style:normal;font-weight:100 900;font-display:swap;src:url("./assets/fonts/WorkSans-latin-wght.woff2") format("woff2"),url("./assets/fonts/WorkSans-latin-wght.woff") format("woff")}
 .pt-safe{padding-top:env(safe-area-inset-top,0px)}
 .pb-safe{padding-bottom:env(safe-area-inset-bottom,0px)}
 .hd-ecran{min-height:100dvh;-webkit-font-smoothing:antialiased}
