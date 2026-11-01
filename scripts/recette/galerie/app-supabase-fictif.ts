@@ -66,7 +66,7 @@ const rpc: Record<string, unknown> = {
   mon_affiche: new URLSearchParams(location.search).get('affiche') === '1' ? {
     id: 'AFF1', titre: en ? '7 days of gratitude (example)' : '7 jours de gratitude (exemple)',
     texte: en ? 'Each evening, write down three things you are thankful for. Optional, at your own pace.' : 'Chaque soir, note trois sujets de reconnaissance. Facultatif, à ton rythme.',
-    langue, image: null, bouton_texte: en ? 'Join' : 'Je participe', bouton_lien: en ? '/bible?lang=en' : '/bible',
+    langue, image: `${import.meta.env.BASE_URL}illustrations/lecture-aube-photo-v1-720.webp`, bouton_texte: en ? 'Join' : 'Je participe', bouton_lien: en ? '/bible?lang=en' : '/bible',
     debut: new Date().toISOString(), fin: new Date(Date.now() + 6 * 864e5).toISOString() } : null,
   staff_annonces: [
     { annonce_id: 'AN1', titre: '7 jours de gratitude (exemple)', texte: 'Chaque soir, note trois sujets de reconnaissance.', langue: 'fr', cible: 'tous', programme_id: null,
