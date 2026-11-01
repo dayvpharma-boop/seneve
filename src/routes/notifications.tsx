@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { analyserLienVideo, lienImageAnnonce } from '@/lib/annonces-medias';
+import { lienInterne } from '@/components/AfficheAnnonce';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ComptePrive } from '@/components/ComptePrive';
 import { BarreNav } from '@/components/BarreNav';
@@ -62,7 +63,7 @@ function NotificationsDuCompte() {
 function Element({ e, en, nouveau }: { e: ElementNotification; en: boolean; nouveau: boolean }) {
   const date = new Intl.DateTimeFormat(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(e.date));
   let icone: SymboleNotification = 'notifications', titre = '', texte = '', lien: { to: string; label: string } | null = null;
-  if (e.type === 'annonce') { icone = 'campaign'; titre = e.titre; texte = e.texte; }
+  if (e.type === 'annonce') { icone = 'campaign'; titre = e.titre; texte = e.texte; if (e.bouton_texte && e.bouton_lien && lienInterne(e.bouton_lien)) lien = { to: e.bouton_lien, label: e.bouton_texte }; }
   else if (e.type === 'reponse') { icone = 'support_agent'; titre = en ? 'The team answered you' : 'L’équipe t’a répondu'; texte = e.texte; lien = { to: en ? '/aide?lang=en' : '/aide', label: en ? 'Open my help requests' : 'Ouvrir mes demandes d’aide' }; }
   else if (e.type === 'rappel_moment') { icone = 'alarm'; titre = en ? `${e.moment === 'midi' ? 'Midday' : e.moment === 'soir' ? 'Evening' : 'Morning'} reminder` : `Rappel du ${e.moment === 'midi' ? 'midi' : e.moment === 'soir' ? 'soir' : 'matin'}`; texte = TEXTES_MOMENTS[en ? 'en' : 'fr'][e.moment] ?? ''; lien = { to: en ? '/espace?lang=en' : '/espace', label: en ? 'Open my day' : 'Ouvrir ma journée' }; }
   else { icone = 'alarm'; const nom = e.habit_key ? NOMS_HABITUDES[e.habit_key]?.[en ? 1 : 0] : undefined; titre = nom ?? (en ? 'Scheduled activity' : 'Activité prévue'); texte = en ? `It was time for: ${titre}.` : `C’était l’heure : ${titre}.`; lien = { to: `/habitudes/aujourdhui${en ? '?lang=en' : ''}`, label: en ? 'Open my habits' : 'Ouvrir mes habitudes' }; }
@@ -75,6 +76,7 @@ function Element({ e, en, nouveau }: { e: ElementNotification; en: boolean; nouv
       {e.type === 'annonce' && e.image && <ImageAnnonce src={lienImageAnnonce(e.image)} titre={e.titre} en={en} />}
       {e.type === 'annonce' && e.video && <VideoAnnonce lien={e.video} titre={e.titre} en={en} />}
       {lien && <Link to={lien.to}>{lien.label}</Link>}
+      {e.type === 'annonce' && e.bouton_texte && e.bouton_lien && !lienInterne(e.bouton_lien) && <a href={e.bouton_lien} target="_blank" rel="noopener noreferrer">{e.bouton_texte}</a>}
     </div>
   </li>;
 }

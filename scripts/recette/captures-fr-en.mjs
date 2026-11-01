@@ -74,6 +74,8 @@ const PAGES = [
   ['accent-miel', '/bible', '/bible?lang=en'],
   ['accent-pin', '/espace?parcours=hd', '/espace?parcours=hd&lang=en'],
   ['accent-olive', '/bible/joh/3', '/bible/joh/3?lang=en'],
+  ['affiche-ouverture', '/espace?affiche=1', '/espace?affiche=1&lang=en'],
+  ['admin-annonces', '/admin?vue=annonces', '/admin?vue=annonces&lang=en'],
   ['introuvable', '/page-qui-n-existe-pas', '/page-qui-n-existe-pas?lang=en'],
 ];
 
@@ -134,6 +136,7 @@ for (const [nom, fr, en] of PAGES) for (const mode of ['light', 'dark']) for (co
   p.on('pageerror', x => erreurs.push(x.message.slice(0, 200)));
   await p.goto(BASE + adr, {waitUntil: 'networkidle'}).catch(x => erreurs.push('navigation : ' + x.message.slice(0, 120)));
   await p.waitForTimeout(1500);
+  if (nom === 'affiche-ouverture') await p.waitForTimeout(2000);
   if (nom.startsWith('fenetre-')) {
     try {
       // La saisie de durée demande des données serveur : on ouvre ici une copie fidèle de la fenêtre (mêmes classes).
@@ -153,7 +156,7 @@ for (const [nom, fr, en] of PAGES) for (const mode of ['light', 'dark']) for (co
     } catch (x) { erreurs.push('fenêtre : ' + x.message.slice(0, 160)); }
   }
   const fichier = `${nom}-${langue}-${mode === 'light' ? 'clair' : 'sombre'}.png`;
-  await p.screenshot({path: path.join(sortie, fichier), fullPage: !nom.startsWith('fenetre-')}).catch(x => erreurs.push('capture : ' + x.message.slice(0, 120)));
+  await p.screenshot({path: path.join(sortie, fichier), fullPage: !nom.startsWith('fenetre-') && nom !== 'affiche-ouverture'}).catch(x => erreurs.push('capture : ' + x.message.slice(0, 120)));
   const m = await p.evaluate(mesurer, langue).catch(x => ({erreurMesure: x.message}));
   resultats.push({nom, langue, mode: mode === 'light' ? 'clair' : 'sombre', adresse: p.url().replace('http://localhost:4180', ''), fichier, erreurs, ...m});
   await ctx.close();

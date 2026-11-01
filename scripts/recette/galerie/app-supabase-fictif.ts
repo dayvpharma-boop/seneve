@@ -62,6 +62,20 @@ const rpc: Record<string, unknown> = {
   ] },
   rappels_etat: { actif: true, cet_appareil: false, appareils: 1, moments: { matin: '07:30', midi: null, soir: '19:30' }, fuseau: 'Africa/Kinshasa', annonces: true, cle_publique: 'CLE' },
   email_matin_etat: { concerne: true, actif: false, email: 'justin@exemple.com' },
+  // Affiche à l'ouverture (01/11/2026) : seulement avec ?affiche=1, pour ne pas changer les autres captures.
+  mon_affiche: new URLSearchParams(location.search).get('affiche') === '1' ? {
+    id: 'AFF1', titre: en ? '7 days of gratitude (example)' : '7 jours de gratitude (exemple)',
+    texte: en ? 'Each evening, write down three things you are thankful for. Optional, at your own pace.' : 'Chaque soir, note trois sujets de reconnaissance. Facultatif, à ton rythme.',
+    langue, image: null, bouton_texte: en ? 'Join' : 'Je participe', bouton_lien: en ? '/bible?lang=en' : '/bible',
+    debut: new Date().toISOString(), fin: new Date(Date.now() + 6 * 864e5).toISOString() } : null,
+  staff_annonces: [
+    { annonce_id: 'AN1', titre: '7 jours de gratitude (exemple)', texte: 'Chaque soir, note trois sujets de reconnaissance.', langue: 'fr', cible: 'tous', programme_id: null,
+      publie_le: new Date(Date.now() + 2 * 864e5).toISOString(), fin_le: new Date(Date.now() + 9 * 864e5).toISOString(), retire_le: null, affiche: true,
+      bouton_texte: 'Je participe', bouton_lien: '/bible', sonner: true, envois: { acceptes: 0, en_attente: 0, echecs: 0 }, affichages: { vues: 0, fermees: 0, bouton: 0 } },
+    { annonce_id: 'AN0', titre: 'Culte spécial (exemple)', texte: 'Rejoins-nous dimanche.', langue: 'fr', cible: 'tous', programme_id: null,
+      publie_le: new Date(Date.now() - 3 * 864e5).toISOString(), fin_le: null, retire_le: null, affiche: true, bouton_texte: null, bouton_lien: null,
+      sonner: true, envois: { acceptes: 12, en_attente: 0, echecs: 1 }, affichages: { vues: 20, fermees: 15, bouton: 5 } },
+  ],
 };
 function builder(table: string) {
   const b: any = {};

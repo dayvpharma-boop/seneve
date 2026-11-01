@@ -117,13 +117,13 @@ describe('annonces dans l’administration', () => {
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Ouverture lundi.' } });
     fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
     expect(screen.getByText(/Publier « Nouvelle formation » pour tous les participants \(français\)/)).toBeInTheDocument();
-    expect(m.rpc).not.toHaveBeenCalledWith('staff_annonce_publier', expect.anything());
+    expect(m.rpc).not.toHaveBeenCalledWith('staff_annonce_programmer', expect.anything());
     m.rpc.mockImplementationOnce(async () => ({ data: null, error: { message: 'Failed to fetch' } }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText(/L’annonce n’a pas été publiée/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
-    expect(await screen.findByText(/^Annonce publiée. Elle apparaît dans la page Notifications des participants concernés./)).toBeInTheDocument();
-    const appels = m.rpc.mock.calls.filter(c => c[0] === 'staff_annonce_publier').map(c => (c[1] as { p_client_id: string }).p_client_id);
+    expect(await screen.findByText(/^Annonce publiée. Elle apparaît dans la cloche des participants concernés, et en grand/)).toBeInTheDocument();
+    const appels = m.rpc.mock.calls.filter(c => c[0] === 'staff_annonce_programmer').map(c => (c[1] as { p_client_id: string }).p_client_id);
     expect(appels).toHaveLength(2);
     expect(appels[0]).toBe(appels[1]);
   });
@@ -186,7 +186,7 @@ describe('image et vidéo dans les annonces (décision du 29/10/2026)', () => {
     expect(screen.getByText(/Publier « Culte » avec son image et sa vidéo pour tous les participants/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText(/Annonce publiée/)).toBeInTheDocument();
-    const appel = m.rpc.mock.calls.find(c => c[0] === 'staff_annonce_publier')![1] as { p_client_id: string; p_image_path: string; p_video_url: string };
+    const appel = m.rpc.mock.calls.find(c => c[0] === 'staff_annonce_programmer')![1] as { p_client_id: string; p_image_path: string; p_video_url: string };
     expect(m.upload).toHaveBeenCalledWith('annonces', `${appel.p_client_id}.jpg`, expect.any(Blob), expect.objectContaining({ contentType: 'image/jpeg', upsert: false }));
     expect(appel.p_image_path).toBe(`${appel.p_client_id}.jpg`);
     expect(appel.p_video_url).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
@@ -203,13 +203,13 @@ describe('image et vidéo dans les annonces (décision du 29/10/2026)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText(/L’image n’a pas pu être envoyée/)).toBeInTheDocument();
-    expect(m.rpc).not.toHaveBeenCalledWith('staff_annonce_publier', expect.anything());
+    expect(m.rpc).not.toHaveBeenCalledWith('staff_annonce_programmer', expect.anything());
   });
 });
 
 describe('annonce qui fait sonner les téléphones (décision du 29/10/2026)', () => {
   it('sonne par défaut et dit combien de téléphones sonnent maintenant et à 7 h', async () => {
-    m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [], error: null } : n === 'staff_annonce_publier' ? { data: { telephones: 3, differes: 1 }, error: null } : { data: null, error: null });
+    m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [], error: null } : n === 'staff_annonce_programmer' ? { data: { telephones: 3, differes: 1 }, error: null } : { data: null, error: null });
     render(<AnnoncesAdministration />);
     await screen.findByText('Aucune annonce pour le moment.');
     expect(screen.getByLabelText('Faire sonner les téléphones')).toBeChecked();
@@ -219,10 +219,10 @@ describe('annonce qui fait sonner les téléphones (décision du 29/10/2026)', (
     expect(screen.getByText(/en faisant sonner leurs téléphones/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText(/Elle sonne sur 2 téléphones maintenant, et sur 1 autre à 7 h/)).toBeInTheDocument();
-    expect(m.rpc).toHaveBeenCalledWith('staff_annonce_publier', expect.objectContaining({ p_sonner: true }));
+    expect(m.rpc).toHaveBeenCalledWith('staff_annonce_programmer', expect.objectContaining({ p_sonner: true }));
   });
   it('case décochée : publiée sans faire sonner', async () => {
-    m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [], error: null } : n === 'staff_annonce_publier' ? { data: { telephones: 0, differes: 0 }, error: null } : { data: null, error: null });
+    m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [], error: null } : n === 'staff_annonce_programmer' ? { data: { telephones: 0, differes: 0 }, error: null } : { data: null, error: null });
     render(<AnnoncesAdministration />);
     await screen.findByText('Aucune annonce pour le moment.');
     fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'Culte' } });
@@ -231,11 +231,63 @@ describe('annonce qui fait sonner les téléphones (décision du 29/10/2026)', (
     fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
     expect(await screen.findByText(/Aucun téléphone ne sonne \(case décochée\)/)).toBeInTheDocument();
-    expect(m.rpc).toHaveBeenCalledWith('staff_annonce_publier', expect.objectContaining({ p_sonner: false }));
+    expect(m.rpc).toHaveBeenCalledWith('staff_annonce_programmer', expect.objectContaining({ p_sonner: false }));
   });
   it('la liste montre le bilan des téléphones', async () => {
     m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [{ annonce_id: 'A1', titre: 'Culte', texte: 'T', langue: 'fr', cible: 'tous', programme_id: null, publie_le: '2026-10-29T17:00:00Z', retire_le: null, envois: { acceptes: 2, en_attente: 1, echecs: 0 } }], error: null } : { data: null, error: null });
     render(<AnnoncesAdministration />);
     expect(await screen.findByText('Téléphones : 2 sonnés · 1 en attente')).toBeInTheDocument();
+  });
+});
+
+describe('annonces programmées et affiche à l’ouverture (décision du 01/11/2026)', () => {
+  it('français et anglais : deux annonces reliées, même image, bouton et période', async () => {
+    m.rpc.mockImplementation(async (n: string) => n === 'staff_annonces' ? { data: [], error: null } : n === 'staff_annonce_programmer' ? { data: { telephones: 0, differes: 0 }, error: null } : { data: null, error: null });
+    render(<AnnoncesAdministration />);
+    await screen.findByText('Aucune annonce pour le moment.');
+    fireEvent.change(screen.getByLabelText('Langue'), { target: { value: 'fr+en' } });
+    fireEvent.change(screen.getByLabelText('Titre en français'), { target: { value: 'Défi' } });
+    fireEvent.change(screen.getByLabelText('Message en français'), { target: { value: 'Sept jours.' } });
+    expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Titre en anglais'), { target: { value: 'Challenge' } });
+    fireEvent.change(screen.getByLabelText('Message en anglais'), { target: { value: 'Seven days.' } });
+    fireEvent.change(screen.getByLabelText('Ouvre'), { target: { value: '/bible' } });
+    expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Texte du bouton en français'), { target: { value: 'Je participe' } });
+    fireEvent.change(screen.getByLabelText('Texte du bouton en anglais'), { target: { value: 'Join' } });
+    fireEvent.change(screen.getByLabelText('Fin (facultatif)'), { target: { value: '2099-01-07T23:59' } });
+    expect(screen.getByLabelText('Afficher en grand à l’ouverture de SÉNEVÉ')).toBeChecked();
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer l’annonce' }));
+    expect(screen.getByText(/pour tous les participants \(français et anglais\) jusqu’au .*avec l’affiche à l’ouverture/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer l’envoi' }));
+    expect(await screen.findByText(/^Annonce publiée/)).toBeInTheDocument();
+    const appels = m.rpc.mock.calls.filter(c => c[0] === 'staff_annonce_programmer').map(c => c[1] as Record<string, unknown>);
+    expect(appels).toHaveLength(2);
+    expect(appels[0]).toMatchObject({ p_langue: 'fr', p_titre: 'Défi', p_bouton_texte: 'Je participe', p_bouton_lien: '/bible', p_affiche: true });
+    expect(appels[1]).toMatchObject({ p_langue: 'en', p_titre: 'Challenge', p_bouton_texte: 'Join', p_bouton_lien: '/bible?lang=en', p_affiche: true });
+    expect(appels[0].p_groupe_id).toBeTruthy();
+    expect(appels[0].p_groupe_id).toBe(appels[1].p_groupe_id);
+    expect(appels[0].p_fin).toBe(new Date('2099-01-07T23:59').toISOString());
+    expect(appels[0].p_client_id).not.toBe(appels[1].p_client_id);
+  });
+  it('un lien internet doit commencer par https://', async () => {
+    render(<AnnoncesAdministration />);
+    await screen.findByText('Aucune annonce pour le moment.');
+    fireEvent.change(screen.getByLabelText('Titre'), { target: { value: 'T' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'X' } });
+    fireEvent.change(screen.getByLabelText('Ouvre'), { target: { value: 'lien' } });
+    fireEvent.change(screen.getByLabelText('Texte du bouton'), { target: { value: 'Voir' } });
+    fireEvent.change(screen.getByLabelText('Adresse'), { target: { value: 'javascript:alert(1)' } });
+    expect(screen.getByText('Colle une adresse qui commence par https://')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Adresse'), { target: { value: 'https://drjustintshims.com/defi' } });
+    expect(screen.getByRole('button', { name: 'Envoyer l’annonce' })).toBeEnabled();
+  });
+  it('la cloche montre le bouton de l’annonce', async () => {
+    m.rpc.mockImplementation(async (n: string) => n === 'mes_notifications' ? { data: { vu_jusqu_a: null, non_lues: 1, elements: [
+      { type: 'annonce', id: 'A7', date: '2026-11-01T09:00:00Z', titre: 'Défi', texte: 'Sept jours.', langue: 'fr', nouveau: true, bouton_texte: 'Je participe', bouton_lien: '/bible' },
+    ] }, error: null } : { data: null, error: null });
+    page();
+    expect(await screen.findByRole('link', { name: 'Je participe' })).toHaveAttribute('href', '/bible');
   });
 });

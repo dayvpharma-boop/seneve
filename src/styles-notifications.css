@@ -64,3 +64,10 @@
 /* Faire sonner les téléphones (seneve_052). */
 .admin-annonce-sonner, .rappels-annonces { display:flex; align-items:center; gap:10px; min-height:44px; margin-top:8px; font:500 15px/22px Outfit,sans-serif; cursor:pointer; }
 :root:root .admin-annonce-sonner input, .rappels-annonces input { width:22px; height:22px; min-height:0; margin:0; padding:0; accent-color:#755b00; flex:none; }
+/* Annonces programmées (01/11/2026) : bouton, période, état. */
+.admin-annonce-bouton, .admin-annonce-periode { display:grid; gap:6px; margin:12px 0 0; padding:12px; border:1px solid var(--line, #dde3f2); border-radius:12px; }
+.admin-annonce-bouton legend, .admin-annonce-periode legend { padding:0 6px; font:600 14px Outfit,sans-serif; }
+.admin-annonce-etat { font-weight:600; }
+.admin-annonce-etat.is-programmee { color:#1f5f9e; }
+.admin-annonce-etat.is-en { color:#2a7548; }
+.admin-annonce-etat.is-terminee, .admin-annonce-etat.is-retiree { color:#6b6b6b; }

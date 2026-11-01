@@ -39,6 +39,7 @@ import './styles-confidentialite-maquette.css';
 import './styles-polices-validees.css';
 import { TestPage } from '@/routes/index';
 import { GarderLangue } from '@/components/GarderLangue';
+import { AfficheAnnonce } from '@/components/AfficheAnnonce';
 import './styles-introuvable.css';
 import './styles-accents.css';
 import './styles-ilots-clairs.css';
@@ -82,7 +83,7 @@ const root = document.getElementById('root');
 if (root) createRoot(root).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-      <PhotosParticipant><GarderLangue />
+      <PhotosParticipant><GarderLangue /><AfficheAnnonce />
       <Suspense fallback={null}><Routes>
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
