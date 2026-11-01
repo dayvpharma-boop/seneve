@@ -69,5 +69,5 @@
 .admin-annonce-bouton legend, .admin-annonce-periode legend { padding:0 6px; font:600 14px Outfit,sans-serif; }
 .admin-annonce-etat { font-weight:600; }
 .admin-annonce-etat.is-programmee { color:#1f5f9e; }
-.admin-annonce-etat.is-en { color:#2a7548; }
+.admin-annonce-etat.is-en-cours { color:#2a7548; }
 .admin-annonce-etat.is-terminee, .admin-annonce-etat.is-retiree { color:#6b6b6b; }

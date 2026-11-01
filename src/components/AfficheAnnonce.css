@@ -26,3 +26,5 @@
   font:14px Poppins,sans-serif;text-decoration:underline;cursor:pointer}
 .aa-periode{margin:4px 0 0;font:12px Poppins,sans-serif;color:var(--aa-second)}
 @media(forced-colors:active){.aa-carte{border:1px solid CanvasText}}
+.aa-corps.sans-image{padding-top:44px}
+.aa-corps h2:focus{outline:none}

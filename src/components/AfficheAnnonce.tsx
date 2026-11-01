@@ -82,9 +82,9 @@ export function AfficheAnnonce() {
       <button type="button" className="aa-fermer" aria-label={en ? 'Close' : 'Fermer'} onClick={() => fermer('fermee')}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
       </button>
-      <div className="aa-corps">
+      <div className={`aa-corps${a.image ? '' : ' sans-image'}`}>
         <p className="aa-etiquette">{en ? 'SÉNEVÉ ANNOUNCEMENT' : 'ANNONCE SÉNEVÉ'}</p>
-        <h2 id="aa-titre">{a.titre}</h2>
+        <h2 id="aa-titre" tabIndex={-1} autoFocus>{a.titre}</h2>
         <p className="aa-texte">{a.texte}</p>
         {a.bouton_texte && a.bouton_lien && <button type="button" className="aa-bouton" onClick={ouvrir}>{a.bouton_texte}</button>}
         <button type="button" className="aa-plus-tard" onClick={() => fermer('plus_tard')}>{en ? 'Later' : 'Plus tard'}</button>
