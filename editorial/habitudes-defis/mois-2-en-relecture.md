@@ -283,7 +283,7 @@ The book distinguishes two voices: "Urgency pushes; the Spirit leads. Urgency cr
 
 Working source: Stop Begging for Miracles, English edition provided, chapter 7.
 
-## Day 58 — Look back over four weeks
+## Day 58 — Look back on the month: seven keys
 
 **Aim:** See the road traveled this month.
 

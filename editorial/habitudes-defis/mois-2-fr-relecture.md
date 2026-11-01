@@ -278,7 +278,7 @@ Le livre distingue deux voix : l'urgence pousse, l'Esprit conduit ; l'urgence cr
 
 Source de travail : Arrête de mendier des miracles, PDF français révisé fourni, chapitre 7, pages imprimées 137–140.
 
-## Jour 58 — Relire quatre semaines
+## Jour 58 — Relire le mois : sept clés
 
 **Objectif :** Regarder le chemin parcouru pendant le mois.
 

@@ -192,7 +192,7 @@ export const lecturesHabitudesFrMois2 = [
   },
   {
     "jour": 58,
-    "titre": "Relire quatre semaines",
+    "titre": "Relire le mois : sept clés",
     "objectif": "Regarder le chemin parcouru pendant le mois.",
     "texte_pedagogique": "Ce mois a traversé tout le livre : Dieu premier, la dîme et l'offrande, le travail, l'argent, le partage, la fidélité et la conduite de l'Esprit. Relis tes bilans de semaine. Remarque ce que tu as compris, ce que tu as commencé, et ce qui reste difficile. Le chemin n'est pas une course : reprendre après une pause fait aussi partie de la fidélité.",
     "question_reflexion": "Quelle partie de ce mois t'a le plus parlé ?"

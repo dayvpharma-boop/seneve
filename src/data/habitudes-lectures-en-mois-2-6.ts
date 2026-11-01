@@ -192,7 +192,7 @@ export const lecturesHabitudesEnMois2a6 = [
   },
   {
     "jour": 58,
-    "titre": "Look back over four weeks",
+    "titre": "Look back on the month: seven keys",
     "objectif": "See the road traveled this month.",
     "texte_pedagogique": "This month has gone through the whole book: God first, tithes and offerings, work, money, sharing, faithfulness and the leading of the Spirit. Read over your weekly reviews. Notice what you have understood, what you have begun, and what remains difficult. The journey is not a race: starting again after a break is also part of faithfulness.",
     "question_reflexion": "Which part of this month spoke to you most?"
