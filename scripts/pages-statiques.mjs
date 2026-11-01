@@ -35,10 +35,48 @@ function sansPhotoAccueil(html) {
   if (sortie === html) throw new Error('Préchargement de la photo de l’accueil introuvable dans index.html');
   return sortie;
 }
+// Aperçu de lien propre à une page : sans lui, partager /habitudes sur WhatsApp montrait le Test des 7 Racines.
+const SITE = 'https://dayvpharma-boop.github.io/seneve/';
+function apercu(html, route, { titre, description, titreLien, image, alt }) {
+  const rempl = [
+    ['<title>Test des 7 Racines — SÉNEVÉ</title>', `<title>${titre}</title>`],
+    ['<meta name="description" content="21 questions courtes, tirées du livre « Arrête de mendier des miracles »." />', `<meta name="description" content="${description}" />`],
+    ['<meta property="og:description" content="21 questions courtes, tirées du livre « Arrête de mendier des miracles »." />', `<meta property="og:description" content="${description}" />`],
+    ['content="Test des 7 Racines — Ce qui grandit commence à l’intérieur."', `content="${titreLien}"`],
+    [`<meta property="og:url" content="${SITE}" />`, `<meta property="og:url" content="${SITE}${route}" />`],
+  ];
+  if (image) rempl.push(['/seneve/og-image-v3.jpg', `/seneve/${image}`], ['content="SÉNEVÉ — Test des 7 Racines : Ce qui grandit commence à l’intérieur, avec la photo de racines dans la terre"', `content="${alt}"`]);
+  let sortie = html;
+  for (const [avant, apres] of rempl) {
+    if (!sortie.includes(avant)) throw new Error(`Aperçu de /${route} : balise introuvable dans index.html : ${avant}`);
+    sortie = sortie.split(avant).join(apres);
+  }
+  return sortie;
+}
+const HABITUDES = {
+  titre: 'Habitudes & Défis — SÉNEVÉ',
+  description: 'Un parcours prévu sur six mois pour faire une place à la prière, à la lecture, à la gratitude et aux actions concrètes dans ton quotidien.',
+  titreLien: 'Habitudes & Défis — De petits actes. Un rythme qui prend racine.',
+  image: 'og-image-habitudes-v1.jpg',
+  alt: 'SÉNEVÉ — Habitudes & Défis : De petits actes. Un rythme qui prend racine. 30 jours gratuits.',
+};
+const ESPACE = {
+  titre: 'Mon espace — SÉNEVÉ',
+  description: 'Tes lectures, tes actions et ton journal pour mettre en pratique les principes du Royaume au quotidien.',
+  titreLien: 'SÉNEVÉ — Ton espace',
+};
+function pageDe(route) {
+  if (route === 'en') return versionAnglaise(page);
+  if (ACCUEILS.has(route)) return page;
+  const html = sansPhotoAccueil(page);
+  if (route === 'habitudes' || route.startsWith('habitudes/')) return apercu(html, route, HABITUDES);
+  if (route === 'connexion' || route === 'espace') return apercu(html, route, ESPACE);
+  return html;
+}
 for (const route of routes) {
   const fichier = `dist/${route}.html`;
   mkdirSync(dirname(fichier), { recursive: true });
-  writeFileSync(fichier, route === 'en' ? versionAnglaise(page) : ACCUEILS.has(route) ? page : sansPhotoAccueil(page));
+  writeFileSync(fichier, pageDe(route));
 }
 // 404.html sert les adresses profondes (Bible, etc.) : elles n'affichent pas la photo de l'accueil.
 writeFileSync('dist/404.html', sansPhotoAccueil(readFileSync('dist/404.html', 'utf8')));
