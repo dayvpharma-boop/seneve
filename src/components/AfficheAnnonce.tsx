@@ -59,7 +59,7 @@ export function AfficheAnnonce() {
 
   useEffect(() => {
     const d = dialogue.current;
-    if (affiche && d && !d.open) { try { d.showModal(); } catch { d.setAttribute('open', ''); } }
+    if (affiche && d && !d.open) { try { d.showModal(); } catch { d.setAttribute('open', ''); } d.querySelector<HTMLElement>('#aa-titre')?.focus(); }
   }, [affiche]);
 
   // La page change pendant que l'affiche est ouverte (lecture de la Bible, connexion…) : elle se referme sans rien noter de plus.
@@ -84,7 +84,7 @@ export function AfficheAnnonce() {
       </button>
       <div className={`aa-corps${a.image ? '' : ' sans-image'}`}>
         <p className="aa-etiquette">{en ? 'SÉNEVÉ ANNOUNCEMENT' : 'ANNONCE SÉNEVÉ'}</p>
-        <h2 id="aa-titre" tabIndex={-1} autoFocus>{a.titre}</h2>
+        <h2 id="aa-titre" tabIndex={-1}>{a.titre}</h2>
         <p className="aa-texte">{a.texte}</p>
         {a.bouton_texte && a.bouton_lien && <button type="button" className="aa-bouton" onClick={ouvrir}>{a.bouton_texte}</button>}
         <button type="button" className="aa-plus-tard" onClick={() => fermer('plus_tard')}>{en ? 'Later' : 'Plus tard'}</button>
