@@ -4,7 +4,7 @@ export type Root = { n: string; p: string; a: string; j: number; s?: string; o?:
 // phrase-seuil avant chaque racine et phrase d'ouverture du chapitre, mot pour mot du livre.
 const frenchRoots: Root[] = [
  {n:"Priorité au Royaume", p:"Cherche le Roi, et les miracles retrouveront leur juste place.", a:"Identifie une décision que tu dois prendre cette semaine. Prie spécifiquement dessus avant d'agir.", j:2,
-  s:"Le vrai chrétien ne met pas Dieu dans son agenda — il met son agenda dans les mains de Dieu.", o:"Tant que Dieu n'est pas premier, tout le reste est en désordre — même ce qui semble réussir.", c:1},
+  s:"Le vrai chrétien ne met pas Dieu dans son agenda, il met son agenda dans les mains de Dieu.", o:"Tant que Dieu n'est pas premier, tout le reste est en désordre — même ce qui semble réussir.", c:1},
  {n:"Dîme et offrande", p:"La dîme n'a jamais enrichi Dieu. Elle a toujours libéré l'homme.", a:"Calcule exactement ta dîme du mois en cours. Mets-la de côté aujourd'hui.", j:8,
   s:"Si Dieu ne règne pas sur ton portefeuille, Il ne règne pas vraiment sur ton cœur.", o:"La dîme n'a jamais enrichi Dieu. Elle a toujours libéré l'homme.", c:2},
  {n:"Travail et intégrité", p:"Dieu ne bénit pas l'inaction — Il bénit l'effort consacré.", a:"Identifie une pratique professionnelle à corriger. Prends la décision de la changer.", j:16,

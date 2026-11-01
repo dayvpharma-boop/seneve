@@ -32,7 +32,7 @@ Source de travail : Arrête de mendier des miracles, PDF français révisé four
 
 **Objectif :** Relier le temps de prière au reste de la journée.
 
-Le livre met en garde contre une idée confortable : avoir prié le matin suffirait à rendre Dieu premier. Il propose une autre image : « le vrai chrétien ne met pas Dieu dans son agenda — il met son agenda dans les mains de Dieu. » Ton temps de prière reste précieux ; il peut aussi devenir le moment où tu regardes ta journée avec Lui. « Reconnais-Le dans toutes tes voies » (Proverbes 3:6). Avant de commencer tes activités, relis ton programme dans la prière.
+Le livre met en garde contre une idée confortable : avoir prié le matin suffirait à rendre Dieu premier. Il propose une autre image : « le vrai chrétien ne met pas Dieu dans son agenda, il met son agenda dans les mains de Dieu. » Ton temps de prière reste précieux ; il peut aussi devenir le moment où tu regardes ta journée avec Lui. « Reconnais-Le dans toutes tes voies » (Proverbes 3:6). Avant de commencer tes activités, relis ton programme dans la prière.
 
 **Pour réfléchir :** Quel moment de ta journée as-tu le plus de mal à confier à Dieu ?
 
