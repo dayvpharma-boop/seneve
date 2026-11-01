@@ -263,12 +263,13 @@ describe('annonces programmées et affiche à l’ouverture (décision du 01/11/
     expect(await screen.findByText(/^Annonce publiée/)).toBeInTheDocument();
     const appels = m.rpc.mock.calls.filter(c => c[0] === 'staff_annonce_programmer').map(c => c[1] as Record<string, unknown>);
     expect(appels).toHaveLength(2);
-    expect(appels[0]).toMatchObject({ p_langue: 'fr', p_titre: 'Défi', p_bouton_texte: 'Je participe', p_bouton_lien: '/bible', p_affiche: true });
-    expect(appels[1]).toMatchObject({ p_langue: 'en', p_titre: 'Challenge', p_bouton_texte: 'Join', p_bouton_lien: '/bible?lang=en', p_affiche: true });
-    expect(appels[0].p_groupe_id).toBeTruthy();
-    expect(appels[0].p_groupe_id).toBe(appels[1].p_groupe_id);
-    expect(appels[0].p_fin).toBe(new Date('2099-01-07T23:59').toISOString());
-    expect(appels[0].p_client_id).not.toBe(appels[1].p_client_id);
+    const [fr, en] = appels as [Record<string, unknown>, Record<string, unknown>];
+    expect(fr).toMatchObject({ p_langue: 'fr', p_titre: 'Défi', p_bouton_texte: 'Je participe', p_bouton_lien: '/bible', p_affiche: true });
+    expect(en).toMatchObject({ p_langue: 'en', p_titre: 'Challenge', p_bouton_texte: 'Join', p_bouton_lien: '/bible?lang=en', p_affiche: true });
+    expect(fr.p_groupe_id).toBeTruthy();
+    expect(fr.p_groupe_id).toBe(en.p_groupe_id);
+    expect(fr.p_fin).toBe(new Date('2099-01-07T23:59').toISOString());
+    expect(fr.p_client_id).not.toBe(en.p_client_id);
   });
   it('un lien internet doit commencer par https://', async () => {
     render(<AnnoncesAdministration />);
