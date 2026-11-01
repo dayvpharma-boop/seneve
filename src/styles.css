@@ -161,10 +161,11 @@ body { margin:0; background:var(--background); color:var(--foreground); font-fam
 #s-home .home-steps li { counter-increment:etape; display:flex; align-items:center; gap:12px; margin:0; font-size:16px; line-height:1.4; }
 #s-home .home-steps li::before { content:counter(etape); flex:none; width:32px; height:32px; border-radius:50%; background:var(--primary-fill); color:var(--on-primary); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:15px; }
 #s-home .home-note { font-size:14px; line-height:1.6; margin:16px 0 0; }
-/* Bouton « Commencer » fixé en bas sur téléphone, dans la zone du pouce ; à sa place sur ordinateur. */
+/* Bouton « Commencer » fixé en bas sur téléphone, dans la zone du pouce ; sur ordinateur et tablette, il reste
+   aussi visible en bas de l'écran dès l'arrivée (inventaire du 01/11/2026 : aucun bouton au premier écran). */
 .home-start { position:sticky; bottom:0; margin:20px -16px -48px; padding:16px 16px calc(24px + env(safe-area-inset-bottom)); background:var(--background); border-top:1px solid var(--line); }
 .home-start .btn { min-height:56px; font-size:17px; }
-@media (min-width:640px) { .home-start { position:static; margin:24px 0 0; padding:0; border-top:0; background:none; } }
+@media (min-width:640px) { .home-start { z-index:5; margin:24px 0 0; padding:14px 0; display:flex; justify-content:center; } .home-start .btn { width:auto; min-width:320px; } }
 .home-card { position:relative; overflow:hidden; padding:22px; border:1px solid var(--line); border-radius:var(--r-carte); background:var(--surface); }
 .home-kicker { color:var(--brand); font-family:Poppins,system-ui,sans-serif; font-size:20px; line-height:1.35; margin:0 0 12px; }
 .home-card ul.plain { padding:14px 16px 7px; margin:0 0 15px; border:1px solid var(--line); border-radius:var(--r-commande); background:color-mix(in srgb,var(--surface) 88%,var(--background)); }
