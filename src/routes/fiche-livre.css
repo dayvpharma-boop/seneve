@@ -39,3 +39,6 @@
 :root:root[data-apparence] .bl-fiche .bl-citation blockquote{font:400 14px/1.9 Lora,Georgia,serif;color:var(--bl-encre);margin:6px 0 10px}
 :root:root[data-apparence] .bl-fiche .bl-citation figcaption{font:500 10px/1.7 Poppins,sans-serif;letter-spacing:0;color:var(--bl-or)}
 @media(min-width:900px){:root:root[data-apparence] .bl-fiche .bl-fiche-identite{display:grid;grid-template-columns:190px minmax(0,1fr);align-items:center;padding:24px;gap:28px}:root:root[data-apparence] .bl-fiche .bl-detail-cover .bl-couverture{width:154px}:root:root[data-apparence] .bl-fiche .bl-detail-titre h1{font-size:32px}:root:root[data-apparence] .bl-fiche .bl-detail-titre>p{font-size:17px}:root:root[data-apparence] .bl-fiche .bl-fiche-formats{grid-template-columns:1fr 1fr;gap:18px}:root:root[data-apparence] .bl-fiche .bl-fiche-formats:has(>.bl-format:only-child){grid-template-columns:1fr}:root:root[data-apparence] .bl-fiche .bl-sommaire ol{grid-template-columns:1fr 1fr}}
+
+/* Couverture image (02/11/2026) : l’image remplace le dessin, on garde les largeurs ci-dessus. */
+:root:root[data-apparence] .bl-page img.bl-couverture.bl-couverture-image{display:block;padding:0;background:none;height:auto;object-fit:cover;border-radius:3px;box-shadow:0 12px 24px -10px rgba(10,9,7,.45)}

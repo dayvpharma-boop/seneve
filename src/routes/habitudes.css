@@ -7,3 +7,7 @@
 
 /* Mode sombre (31/10/2026) : textes clairs sur le fond sombre ; le cadre lavande et son bouton blanc ne changent pas ; teintes choisies hors de scripts/preferences-css.ts pour ne pas suivre la couleur d’accent (lavande demandée par Dr Justin le 01/11/2026). */
 :root[data-apparence="sombre"] .hd-public{--text:#f5f5f5;--muted:#bfbdbe;color:#f5f5f5}
+
+/* Couverture « De la graine à l’arbre » (FR) / « From seed to tree » (EN), 02/11/2026 : sous l’accroche sur téléphone, à droite du texte sur grand écran. */
+.hd-public-couverture{display:block;width:min(200px,60%);height:auto;margin:20px auto 22px;border-radius:6px;box-shadow:0 18px 36px -12px rgba(10,9,7,.55)}
+@media(min-width:760px){.hd-public-hero{display:grid;grid-template-columns:minmax(0,1fr) 240px;column-gap:40px;align-items:start}.hd-public-hero>*{grid-column:1}.hd-public-hero>.hd-public-couverture{grid-column:2;grid-row:1/span 7;width:100%;margin:0;align-self:center}}

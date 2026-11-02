@@ -15,9 +15,9 @@ import {BarreNav} from '@/components/BarreNav';
 
 function Couverture({petite=false,en=false}:{petite?:boolean;en?:boolean}){
  const L=en?BOOK:LIVRE;
- return <div className={`bl-couverture ${petite?'bl-petite':''}`} role="img" aria-label={`${L.titre}, ${L.auteur}`}>
-  <span className="bl-marque">SÉNEVÉ</span><I nom="spa" taille={36}/><strong>{en?<>Stop<br/>Begging for<br/>Miracles</>:<>Arrête de<br/>mendier des<br/>miracles</>}</strong><span className="bl-filet"/><small>{L.sousTitre}</small><span className="bl-auteur">{L.auteur}</span>
- </div>;
+ // Couverture peinte de novembre 2026 (même image que drjustintshims.com).
+ const base=`${import.meta.env.BASE_URL}illustrations/couverture-livre-${en?'en':'fr'}-v1-`;
+ return <img className={`bl-couverture bl-couverture-image ${petite?'bl-petite':''}`} src={`${base}683.webp`} srcSet={`${base}200.webp 200w, ${base}683.webp 683w`} sizes={petite?'100px':'154px'} width={683} height={1024} alt={en?`Cover of ${L.titre}, by ${L.auteur}`:`Couverture du livre ${L.titre}, par ${L.auteur}`}/>;
 }
 
 export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'audio'|'pdf'}){
