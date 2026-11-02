@@ -65,6 +65,18 @@ const ESPACE = {
   description: 'Tes lectures, tes actions et ton journal pour mettre en pratique les principes du Royaume au quotidien.',
   titreLien: 'SÉNEVÉ — Ton espace',
 };
+// Pages lisibles sans compte : elles seules vont dans le plan du site (sitemap.xml) pour Google.
+// Les autres (espace, journal, réglages, /p qui double l'accueil…) portent « noindex » : sans compte, elles renvoient à la connexion.
+// GitHub Pages ne permet pas de robots.txt sous /seneve/ (il n'est lu qu'à la racine du domaine) : le plan se déclare dans Search Console.
+const PUBLIQUES = ['', 'en', 'habitudes', 'livre', 'livre/audio', 'livre/pdf', 'offres', 'bible', 'bible/livres', 'confidentialite'];
+for (const route of PUBLIQUES) {
+  if (route && !routes.includes(route)) throw new Error(`Plan du site : /${route} n'est plus une route de src/main.tsx`);
+}
+function sansIndex(html) {
+  const avant = '<meta name="viewport" content="width=device-width, initial-scale=1" />';
+  if (!html.includes(avant)) throw new Error('Balise viewport introuvable dans index.html');
+  return html.replace(avant, `${avant}\n    <meta name="robots" content="noindex" />`);
+}
 function pageDe(route) {
   if (route === 'en') return versionAnglaise(page);
   if (ACCUEILS.has(route)) return page;
@@ -76,8 +88,13 @@ function pageDe(route) {
 for (const route of routes) {
   const fichier = `dist/${route}.html`;
   mkdirSync(dirname(fichier), { recursive: true });
-  writeFileSync(fichier, pageDe(route));
+  writeFileSync(fichier, PUBLIQUES.includes(route) ? pageDe(route) : sansIndex(pageDe(route)));
 }
+writeFileSync('dist/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${PUBLIQUES.map(route => `  <url><loc>${SITE}${route}</loc></url>`).join('\n')}
+</urlset>
+`);
 // 404.html sert les adresses profondes (Bible, etc.) : elles n'affichent pas la photo de l'accueil.
 writeFileSync('dist/404.html', sansPhotoAccueil(readFileSync('dist/404.html', 'utf8')));
 console.log(`${routes.length} pages fixes : ${routes.join(', ')}`);
