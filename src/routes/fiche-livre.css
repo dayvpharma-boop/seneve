@@ -42,3 +42,6 @@
 
 /* Couverture image (02/11/2026) : l’image remplace le dessin, on garde les largeurs ci-dessus. */
 :root:root[data-apparence] .bl-page img.bl-couverture.bl-couverture-image{display:block;padding:0;background:none;height:auto;object-fit:cover;border-radius:3px;box-shadow:0 12px 24px -10px rgba(10,9,7,.45)}
+
+/* Bibliothèque : le livre et Habitudes & Défis empilés dans la même colonne (02/11/2026). */
+:root:root[data-apparence] .bl-page .bl-ouvrages{display:grid;gap:18px;min-width:0}
