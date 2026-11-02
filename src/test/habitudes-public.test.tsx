@@ -73,3 +73,7 @@ it('une inscription fermée ne bloque pas le lien vers la journée des participa
 it('le choix Français prime sur la conservation globale de l’anglais',async()=>{
  render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><GarderLangue/><Habitudes/></MemoryRouter>);expect(screen.getByRole('article')).toHaveAttribute('lang','en');fireEvent.change(screen.getByRole('combobox',{name:'Choose a reading'}),{target:{value:'17'}});expect(screen.getByRole('link',{name:'Français'})).toHaveAttribute('href','/habitudes?lang=fr');fireEvent.click(screen.getByRole('link',{name:'Français'}));await waitFor(()=>expect(screen.getByRole('article')).toHaveAttribute('lang','fr'));expect(screen.getByRole('combobox',{name:'Choisir une lecture'})).toHaveValue('17');
 });
+it('la couverture « De la graine à l’arbre » suit la langue de la page',()=>{
+ render(<MemoryRouter><Habitudes/></MemoryRouter>);expect(screen.getByRole('img',{name:/^Couverture De la graine à l’arbre/})).toHaveAttribute('src',expect.stringContaining('illustrations/couverture-habitudes-fr-v1-683.webp'));cleanup();
+ render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><Habitudes/></MemoryRouter>);expect(screen.getByRole('img',{name:/^Cover From seed to tree/})).toHaveAttribute('src',expect.stringContaining('illustrations/couverture-habitudes-en-v1-683.webp'));
+});

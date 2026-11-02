@@ -39,3 +39,8 @@ it('le PDF anglais distingue livraison et ouverture dans l’application sans ex
  expect(container.querySelector('iframe,object,embed,[download],a[href$=".pdf"]')).toBeNull();
  expect(screen.queryByRole('button',{name:/open pdf|resume reading/i})).toBeNull();
 });
+
+it('la couverture peinte du livre suit la langue, en petit dans le catalogue comme dans la fiche',()=>{
+ afficher();expect(screen.getByRole('img',{name:'Couverture du livre Arrête de mendier des miracles, par Dr Justin Tshims'})).toHaveAttribute('src',expect.stringContaining('illustrations/couverture-livre-fr-v1-683.webp'));cleanup();
+ afficher('/livre?lang=en');expect(screen.getByRole('img',{name:/^Cover of Stop Begging for Miracles/})).toHaveAttribute('srcset',expect.stringContaining('couverture-livre-en-v1-200.webp 200w'));
+});
