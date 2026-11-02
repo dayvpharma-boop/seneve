@@ -15,6 +15,8 @@ import {BarreNav} from '@/components/BarreNav';
 
 function Couverture({petite=false,en=false}:{petite?:boolean;en?:boolean}){
  const L=en?BOOK:LIVRE;
+ // Couverture peinte (version C, choisie par Dr Justin le 02/11/2026) : son texte est en français, l'édition anglaise garde la couverture dessinée.
+ if(!en){const base=`${import.meta.env.BASE_URL}illustrations/couverture-livre-fr-v1-`;return <img className={`bl-couverture bl-couverture-photo ${petite?'bl-petite':''}`} src={`${base}480.webp`} srcSet={`${base}240.webp 240w, ${base}480.webp 480w`} sizes={petite?'100px':'(min-width:900px) 154px, 124px'} width={480} height={720} alt={`${L.titre}, ${L.auteur}`} decoding="async"/>;}
  return <div className={`bl-couverture ${petite?'bl-petite':''}`} role="img" aria-label={`${L.titre}, ${L.auteur}`}>
   <span className="bl-marque">SÉNEVÉ</span><I nom="spa" taille={36}/><strong>{en?<>Stop<br/>Begging for<br/>Miracles</>:<>Arrête de<br/>mendier des<br/>miracles</>}</strong><span className="bl-filet"/><small>{L.sousTitre}</small><span className="bl-auteur">{L.auteur}</span>
  </div>;
