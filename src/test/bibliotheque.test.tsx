@@ -44,3 +44,8 @@ it('la couverture peinte du livre suit la langue, en petit dans le catalogue com
  afficher();expect(screen.getByRole('img',{name:'Couverture du livre Arrête de mendier des miracles, par Dr Justin Tshims'})).toHaveAttribute('src',expect.stringContaining('illustrations/couverture-livre-fr-v1-683.webp'));cleanup();
  afficher('/livre?lang=en');expect(screen.getByRole('img',{name:/^Cover of Stop Begging for Miracles/})).toHaveAttribute('srcset',expect.stringContaining('couverture-livre-en-v1-200.webp 200w'));
 });
+it('Habitudes & Défis apparaît dans la bibliothèque comme le livre, dans la langue choisie',()=>{
+ afficher();expect(screen.getByRole('heading',{name:'De la graine à l’arbre'})).toBeTruthy();expect(screen.getByRole('img',{name:/^Couverture De la graine à l’arbre/})).toHaveAttribute('src',expect.stringContaining('illustrations/couverture-habitudes-fr-v1-683.webp'));expect(screen.getByRole('link',{name:/Découvrir le parcours/})).toHaveAttribute('href','/habitudes');
+ fireEvent.click(screen.getByRole('button',{name:'Audio'}));expect(screen.queryByRole('heading',{name:'De la graine à l’arbre'})).toBeNull();cleanup();
+ afficher('/bibliotheque?lang=en');expect(screen.getByRole('heading',{name:'From seed to tree'})).toBeTruthy();expect(screen.getByRole('link',{name:/Discover the journey/})).toHaveAttribute('href','/habitudes?lang=en');
+});

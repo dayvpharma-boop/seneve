@@ -13,11 +13,12 @@ import {LIVRE,BOOK,FORMATS_LIVRE} from '@/lib/livre';
 import {Apparence} from '@/components/Apparence';
 import {BarreNav} from '@/components/BarreNav';
 
-function Couverture({petite=false,en=false}:{petite?:boolean;en?:boolean}){
+function Couverture({petite=false,en=false,ouvrage='livre'}:{petite?:boolean;en?:boolean;ouvrage?:'livre'|'habitudes'}){
  const L=en?BOOK:LIVRE;
- // Couverture peinte de novembre 2026 (même image que drjustintshims.com).
- const base=`${import.meta.env.BASE_URL}illustrations/couverture-livre-${en?'en':'fr'}-v1-`;
- return <img className={`bl-couverture bl-couverture-image ${petite?'bl-petite':''}`} src={`${base}683.webp`} srcSet={`${base}200.webp 200w, ${base}683.webp 683w`} sizes={petite?'100px':'154px'} width={683} height={1024} alt={en?`Cover of ${L.titre}, by ${L.auteur}`:`Couverture du livre ${L.titre}, par ${L.auteur}`}/>;
+ // Couvertures peintes de novembre 2026 (mêmes images que drjustintshims.com).
+ const base=`${import.meta.env.BASE_URL}illustrations/couverture-${ouvrage}-${en?'en':'fr'}-v1-`;
+ const alt=ouvrage==='habitudes'?(en?'Cover From seed to tree, Habits & Challenges 180 days, by Dr Justin Tshims':'Couverture De la graine à l’arbre, Habitudes & Défis 180 jours, par Dr Justin Tshims'):(en?`Cover of ${L.titre}, by ${L.auteur}`:`Couverture du livre ${L.titre}, par ${L.auteur}`);
+ return <img className={`bl-couverture bl-couverture-image ${petite?'bl-petite':''}`} src={`${base}683.webp`} srcSet={`${base}200.webp 200w, ${base}683.webp 683w`} sizes={petite?'100px':'154px'} width={683} height={1024} alt={alt}/>;
 }
 
 export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'audio'|'pdf'}){
@@ -38,10 +39,14 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
     <div className="bl-intro"><p className="bl-label"><IconeRayonnage taille={18}/>{en?'The book and its formats':'Le livre et ses formats'}</p><h1>{en?'My library':'Ma bibliothèque'}</h1><p className="bl-soustitre">{en?'Read, listen, and walk a little further.':'Lire, écouter et avancer un peu plus loin.'}</p></div>
     <IllustrationPage theme="bibliotheque" langue={lang} />
     <nav className="bl-filtres" aria-label={en?'Book formats':'Formats du livre'}>{(['tous','audio','pdf'] as const).map(f=><button key={f} type="button" aria-pressed={actif===f} onClick={()=>setParams(p=>{const n=new URLSearchParams(p);if(f==='tous')n.delete('format');else n.set('format',f);return n;})}>{f==='tous'?(en?'All':'Tous'):f==='audio'?'Audio':'PDF'}</button>)}</nav>
-    <div className="bl-rayonnage"><article className="bl-card bl-livre-carte"><div className="bl-livre-identite"><Couverture petite en={en}/><div><span className="bl-label">{en?'English edition':'Édition française'}</span><h2>{L.titre}</h2><p>{L.auteur}</p><span className="bl-statut"><I nom="schedule" taille={16}/>{en?'Formats in preparation':'Formats en préparation'}</span></div></div>
+    <div className="bl-rayonnage"><div className="bl-ouvrages"><article className="bl-card bl-livre-carte"><div className="bl-livre-identite"><Couverture petite en={en}/><div><span className="bl-label">{en?'English edition':'Édition française'}</span><h2>{L.titre}</h2><p>{L.auteur}</p><span className="bl-statut"><I nom="schedule" taille={16}/>{en?'Formats in preparation':'Formats en préparation'}</span></div></div>
      <div className="bl-liste-formats">{FORMATS_LIVRE.filter(f=>actif==='tous'||f.id===actif).map(f=><Link key={f.id} to={`/livre/${f.id}${suffixe}`}><I nom={f.icone}/><span><strong>{f.id==='audio'?(en?'Audiobook':'Livre audio'):(en?'Digital book · PDF':'Livre numérique · PDF')}</strong><small>{en?'In preparation':'En préparation'}</small></span><I nom="chevron_right"/></Link>)}</div>
      <Link className="bl-principal" to={`/livre${suffixe}`}>{en?'Discover the book':'Découvrir le livre'}<I nom="east" taille={20}/></Link>
     </article>
+    {/* Habitudes & Défis présenté comme le livre (demande du 02/11/2026) ; les filtres Audio et PDF ne concernent que le livre. */}
+    {actif==='tous'&&<article className="bl-card bl-livre-carte bl-hd-carte"><div className="bl-livre-identite"><Couverture petite en={en} ouvrage="habitudes"/><div><span className="bl-label">{en?'Habits & Challenges · 180 days':'Habitudes & Défis · 180 jours'}</span><h2>{en?'From seed to tree':'De la graine à l’arbre'}</h2><p>{en?'Every small, faithful habit becomes a great tree.':'Chaque petite habitude fidèle devient un grand arbre.'}</p><span className="bl-statut"><I nom="spa" taille={16}/>{en?'30 days free':'30 jours gratuits'}</span></div></div>
+     <Link className="bl-principal" to={`/habitudes${suffixe}`}>{en?'Discover the journey':'Découvrir le parcours'}<I nom="east" taille={20}/></Link>
+    </article>}</div>
     <div className="bl-complements">
     {/* « Parcours & offres » déplacé du bas de l'espace vers la bibliothèque (demande du 24/10/2026). */}
     <aside className="bl-acces bl-parcours"><img className="bl-formation-image" src={`${import.meta.env.BASE_URL}illustrations/formation-groupe-v1-720.webp`} srcSet={`${import.meta.env.BASE_URL}illustrations/formation-groupe-v1-360.webp 360w, ${import.meta.env.BASE_URL}illustrations/formation-groupe-v1-720.webp 720w`} sizes="(max-width:560px) calc(100vw - 72px), 448px" width={720} height={314} alt={en?'An instructor guiding a small group of adult learners with books and notebooks':'Un formateur accompagne un groupe d’adultes avec des livres et des carnets'} loading="lazy" decoding="async"/><IconeRayonnage taille={24}/><div><h2>{en?'Journeys & offers':'Parcours & offres'}</h2><p>{en?'Paths of spiritual practice, at the pace of your daily life.':'Des chemins d’enracinement intérieur, au rythme de ton quotidien.'}</p><Link className="bl-acces-bouton" to={`/offres${suffixe}`}><IconeRayonnage taille={20}/><span>{en?'View the journeys and offers':'Voir les parcours et offres'}</span><I nom="east" taille={20}/></Link></div></aside>
