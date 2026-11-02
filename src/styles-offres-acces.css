@@ -7,3 +7,5 @@
 @media(max-width:800px){.freins-heading{flex-direction:column;gap:0}.freins-heading h1{font-size:26px;line-height:34px}.freins-stats{grid-template-columns:repeat(2,1fr);gap:12px}.freins-stats article{padding:14px}.freins-grille{grid-template-columns:1fr}.freins-pistes>div{grid-template-columns:1fr}.freins-prive>svg:last-child{display:none}.freins-motifs{padding:16px}.freins-motifs li>div{gap:8px}}
 
 #s-result .choix-etat dl{margin:0}#s-result .choix-etat dl>div{display:flex;align-items:center;gap:8px;background:white;border-radius:4px;padding:10px;margin:6px 0;font:500 14px/20px Outfit,sans-serif}#s-result .choix-etat dt{flex:1}#s-result .choix-etat dd{font-size:12px;margin:0;white-space:nowrap}
+/* Visuel Chariow des formations 30 et 90 jours (03/11/2026). */
+.oa-offer-image{display:block;width:150px;max-width:50%;height:auto;margin:0 auto 18px;border-radius:6px;box-shadow:0 14px 28px -12px rgba(10,9,7,.5)}
