@@ -1,3 +1,4 @@
+import {retourPrecedent} from '@/lib/retour-precedent';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { analyserLienVideo, lienImageAnnonce } from '@/lib/annonces-medias';
 import { lienInterne } from '@/components/AfficheAnnonce';
@@ -32,7 +33,7 @@ function NotificationsDuCompte() {
   useEffect(() => { document.title = `Notifications — SÉNEVÉ`; document.documentElement.lang = langue; }, [langue]);
 
   const tete = <header className="nt-tete">
-    <Link to={en ? '/espace?lang=en' : '/espace'} aria-label={en ? 'Back to my day' : 'Revenir à ma journée'}><IconeNotification nom="arrow_back_ios_new" taille={20} /></Link>
+    <Link onClick={retourPrecedent} to={en ? '/espace?lang=en' : '/espace'} aria-label={en ? 'Back to my day' : 'Revenir à ma journée'}><IconeNotification nom="arrow_back_ios_new" taille={20} /></Link>
     <h1>Notifications</h1>
   </header>;
   const pied = <BarreNav langue={langue} maquette iconesJournee />;

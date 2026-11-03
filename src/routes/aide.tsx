@@ -1,3 +1,4 @@
+import {retourPrecedent} from '@/lib/retour-precedent';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
@@ -148,7 +149,7 @@ function AideDuCompte({ userId }: { userId: string }) {
   }
 
   const tete = <><header className="today-head page-tete"><div className="aide-barre"><p className="brand"><Icone nom="graine" taille={24} /><span>SÉNEVÉ</span></p><span className="aide-initiale" aria-hidden="true"><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></div><p className="aide-repere"><span />{en?'Listening & support':'Écoute & Soutien'}</p><h1>{en?'Help & Contact':'Aide & Contact'}</h1></header><IllustrationPage theme="aide" langue={langueUI} /></>;
-  const back = <Link className="link" to="/espace">← {T.retour}</Link>;
+  const back = <Link className="link" onClick={retourPrecedent} to="/espace">← {T.retour}</Link>;
   if (failed && !enLigne) return <main className="wrap avec-nav aide-page">{tete}<CarteHorsConnexion langue={langueUI} texte={horsLigneAide(langueUI)} reessayer={() => void refresh()} /><BarreNav langue={langueUI} iconesAide /></main>;
   if (failed) return <main className="wrap avec-nav aide-page">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langueUI} iconesAide /></main>;
   if (!data) return <main className="wrap avec-nav aide-page">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langueUI} iconesAide /></main>;

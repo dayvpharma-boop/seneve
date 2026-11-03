@@ -1,3 +1,4 @@
+import {retourPrecedent} from '@/lib/retour-precedent';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
@@ -76,7 +77,7 @@ function Page({ titre, retour, enfants, classe = '', reglages, droite }: { titre
   return <main className={`bb-page bb-ambiance-${reglages?.ambiance ?? 'ivoire'} ${classe}`}>
     <header className="bb-tete">
       {retour
-        ? <Link className="bb-rond" to={retour} aria-label={t('Retour', 'Back')}><I nom="arrow_back" /></Link>
+        ? <Link onClick={retourPrecedent} className="bb-rond" to={retour} aria-label={t('Retour', 'Back')}><I nom="arrow_back" /></Link>
         : <img className="bb-logo" src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" />}
       <div className="bb-tete-titre"><span>SÉNEVÉ</span><strong>{titre}</strong></div>
       {droite}

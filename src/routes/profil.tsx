@@ -1,3 +1,4 @@
+import {retourPrecedent} from '@/lib/retour-precedent';
 import {PhotoProfil} from '@/components/PhotoProfil';
 import {useCallback,useEffect,useRef,useState,type FormEvent,type ReactNode} from 'react';
 import {Link,useLocation,useNavigate,useSearchParams} from 'react-router-dom';
@@ -96,7 +97,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
  async function recharger(){try{const r=await navigator.serviceWorker?.getRegistration?.();await r?.update();}catch{/* la page se recharge quand même */}window.location.reload();}
  const suffixe=en?'?lang=en':'';
  const titrePage=vue==='reglages'?(en?'My settings':'Mes réglages'):(en?'My profile':'Mon profil');
- const tete=<header className="pf-header pf-header-moderne"><Link to={vue==='reglages'?`/profil${suffixe}`:'/espace'} aria-label={en?'Back':'Revenir'}><P nom="arrow_back" taille={24}/></Link><h1>{titrePage}</h1><span className="pf-header-espace" aria-hidden="true"/></header>;
+ const tete=<header className="pf-header pf-header-moderne"><Link onClick={retourPrecedent} to={vue==='reglages'?`/profil${suffixe}`:'/espace'} aria-label={en?'Back':'Revenir'}><P nom="arrow_back" taille={24}/></Link><h1>{titrePage}</h1><span className="pf-header-espace" aria-hidden="true"/></header>;
  if(etat==='chargement')return <main className="pf-page">{tete}<section className="pf-loading" role="status" aria-label={en?'Loading your profile':'Chargement de ton profil'}><span className="pf-avatar pf-squelette"/><p>{en?'Loading your profile…':'Chargement de ton profil…'}</p>{[0,1,2].map(k=><div className="pf-squelette pf-loading-card" key={k}/>)}</section></main>;
  if(etat==='erreur'||!data)return <main className="pf-page">{tete}<section className="pf-error"><C nom={enLigne?'wifi_off':'wifi_off'} taille={64}/><h2>{en?(enLigne?'Unable to load your profile':'You are offline'):(enLigne?'Impossible de charger ton profil':'Tu es hors connexion')}</h2><p role="alert">{en?(enLigne?'Check your connection, then try again.':'There is no saved profile available on this device.'):(enLigne?'Vérifie ta connexion, puis réessaie.':'Aucune copie de ton profil n’est disponible sur cet appareil.')}</p><button className="btn" onClick={()=>void refresh()}>{en?'Try again':'Réessayer'}</button><Link to="/espace">{en?'Back to today':'Revenir à ma journée'}</Link></section><Apparence langue={langue}/></main>;
  const bandeaux=<>{lectureSeule&&<aside className="pf-offline" role="status"><C nom="wifi_off"/><div><strong>{en?(enLigne?'Connection interrupted':'Offline mode'):(enLigne?'Connexion interrompue':'Mode hors connexion')}</strong><p>{copie?<>{en?'Saved copy from ':'Copie enregistrée le '}<time dateTime={copie}>{new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Africa/Kinshasa'}).format(new Date(copie))}</time>.</>:null} {en?'Reconnect to edit your profile.':'Reconnecte-toi pour modifier ton profil.'}</p>{enLigne&&<button className="link" onClick={()=>void refresh()}>{en?'Try again':'Réessayer'}</button>}</div></aside>}
@@ -110,7 +111,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
   const nomApparence=apparence==='sombre'?(en?'Dark':'Sombre'):apparence==='clair'?(en?'Light':'Clair'):(en?'Like my phone':'Comme mon téléphone');
   const tailles={petite:en?'Small':'Petite',normale:en?'Standard':'Normale',grande:en?'Large':'Grande','tres-grande':en?'Extra large':'Très grande'};
   return <main className="pf-page pv-page avec-nav">
-  <header className="pv-haut"><Link className="pv-rond" to={`/profil${suffixe}`} aria-label={en?'Back to my profile':'Revenir à mon profil'}><T nom="retour"/></Link><button type="button" className="pv-pastille" disabled={busy} onClick={()=>void deconnecter()}>{en?'Sign me out':'Me déconnecter'}</button></header>
+  <header className="pv-haut"><Link onClick={retourPrecedent} className="pv-rond" to={`/profil${suffixe}`} aria-label={en?'Back to my profile':'Revenir à mon profil'}><T nom="retour"/></Link><button type="button" className="pv-pastille" disabled={busy} onClick={()=>void deconnecter()}>{en?'Sign me out':'Me déconnecter'}</button></header>
   {bandeaux}
   <p className="pv-surtitre">{en?'Preferences & access':'Préférences & accès'}</p>
   <h1 className="pv-titre">{titrePage}</h1>

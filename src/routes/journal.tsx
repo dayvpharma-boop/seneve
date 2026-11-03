@@ -1,3 +1,4 @@
+import {retourPrecedent} from '@/lib/retour-precedent';
 import {contexteBilanHabitudes,cleBrouillonBilan} from '@/lib/habitudes-journal-bilan';
 import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
@@ -143,7 +144,7 @@ function JournalDuCompte({ userId }: { userId: string }) {
   const retourJour = gratitude && <Link className="link" to={en ? '/habitudes/aujourdhui?lang=en' : '/habitudes/aujourdhui'}>← {en ? 'Back to my day' : 'Revenir à ma journée'}</Link>;
   const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><Link className="journal-profil" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
   const intro = <div className="journal-confidentialite"><IconeJournal nom="lock" taille={20} /><p className="journal-intro">{T.introJournal}</p></div>;
-  const back = <Link className="link" to="/espace">← {T.retour}</Link>;
+  const back = <Link className="link" onClick={retourPrecedent} to="/espace">← {T.retour}</Link>;
   if (failed && !enLigne) return <main className="wrap avec-nav journal-page journal-nouveau journal-horsligne">{tete}
     <div className="hc-bandeau" role="status"><IconeJournee nom="wifi_off" taille={20} /><p>{en ? 'Offline. Your saved notes will appear when you are back online.' : 'Hors connexion. Tes notes déjà enregistrées s’afficheront au retour du réseau.'}</p></div>
     <section className="hc-carte hc-brouillon">
