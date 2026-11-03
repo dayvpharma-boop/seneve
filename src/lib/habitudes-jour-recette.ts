@@ -10,7 +10,7 @@ export type ActiviteJourRecette={habit_key?:string;occurrence:OccurrenceHabitude
 /** `mois` : mois d'accès en cours pour cette journée (le jour 31 d'un mois gratuit non renouvelé reste au mois 1). */
 export type JourRecette={userId:string;date:string;jour:number;mois?:number;activites:ActiviteJourRecette[]};
 /** Programmes HD lus par cet écran : l'essai technique et le programme réel, en français ou en anglais (habitudes-programmes). */
-const PREFIXE='RECETTE_HD_QUOTIDIEN_V1:';
+const PREFIXE='RECETTE_HD_QUOTIDIEN_V1:',DIME='RECETTE_HD_DIME_V1:dime';
 /** Six mois de 30 jours (le dernier finit le 181e jour civil). Au-delà, ou sans journée publiée : refus explicite. */
 const JOURS_MAX=181;
 /** Débuts locaux des mois de l'inscription (périodes d'accès lisibles par leur seul titulaire). */
@@ -51,20 +51,22 @@ type EtatPublie={activity_id:string;etat:string;aide_demandee:boolean};
 /** Le même calcul daté pour la journée et son historique, notamment les cultes personnels. */
 export function assemblerJourRecette(enrollmentId:string,participantId:string,dateLocale:string,jourCivil:number,userId:string,horaires:ConfigurationHoraires,lignes:ActivitePubliee[],etats:EtatPublie[]):JourRecette{
  const modele=horaires.modeles[0];if(!modele)throw Error('Planning absent');
- const planning=planningHabitudesPourDate({participant_id:participantId,module_id:modele.module_id,version:modele.version,langue:modele.langue,date_locale:dateLocale,fuseau:horaires.fuseau},horaires.modeles,horaires.horaires);
+ const planning=planningHabitudesPourDate({participant_id:participantId,module_id:modele.module_id,version:modele.version,langue:modele.langue,date_locale:dateLocale,fuseau:horaires.fuseau,dime:horaires.dime},horaires.modeles,horaires.horaires);
  const quotidien=horaires.modeles.filter(m=>m.jours_iso.length===7).map(m=>m.habit_key);
  if(quotidien.length!==13)throw Error('Catalogue quotidien incomplet');
  const vus=new Set<string>();
  const quotidiennes=lignes.filter(row=>row.note_source?.startsWith(PREFIXE));
  const cultes=lignes.filter(row=>row.note_source?.startsWith('RECETTE_HD_CULTE_V1:'));
- if(quotidiennes.length!==13||cultes.length!==3||lignes.length!==16)throw Error('Catalogue de cultes incomplet');
+ // La dîme (03/11/2026) est publiée chaque jour, comme les cultes ; elle n'apparaît que le jour prévu.
+ const dimes=lignes.filter(row=>row.note_source===DIME);
+ if(quotidiennes.length!==13||cultes.length!==3||dimes.length>1||lignes.length!==16+dimes.length)throw Error('Catalogue de cultes incomplet');
  const activites=lignes.flatMap(row=>{
   const source=row.note_source??'';
-  const culte=/^RECETTE_HD_CULTE_V1:(culte_semaine|culte_dimanche):([12])$/.exec(source);
+  const culte=/^RECETTE_HD_CULTE_V1:(culte_semaine|culte_dimanche):([12])$/.exec(source)??(source===DIME?[source,'dime','1'] as const:null);
   const habit=culte?culte[1]!:source.startsWith(PREFIXE)?source.slice(PREFIXE.length):'';
   if(!habit||(!culte&&!quotidien.includes(habit)))throw Error('Activité non identifiée');
   const rang=culte?Number(culte[2]):1;
-  if(habit==='culte_dimanche'&&rang!==1)throw Error('Rang de culte invalide');
+  if((habit==='culte_dimanche'||habit==='dime')&&rang!==1)throw Error('Rang de culte invalide');
   const identite=`${habit}:${rang}`;if(vus.has(identite))throw Error('Correspondance horaire ambiguë');vus.add(identite);
   const rdv=planning.rendezVous.filter(r=>r.habit_key===habit);
   if(culte&&rdv.length>(habit==='culte_semaine'?2:1))throw Error('Trop de créneaux');

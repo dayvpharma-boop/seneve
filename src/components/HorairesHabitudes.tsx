@@ -1,6 +1,7 @@
 import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
-import {chargerHorairesHabitudes,enregistrerHorairesHabitudes,type ConfigurationHoraires,type CreneauPersonnel,type DemandeHoraires} from '@/lib/habitudes-horaires-api';
-import type {ModelePlanningHabitude} from '@/lib/habitudes-planning';
+import {chargerHorairesHabitudes,enregistrerHorairesHabitudes,reglerRythmeDime,type ConfigurationHoraires,type CreneauPersonnel,type DemandeHoraires} from '@/lib/habitudes-horaires-api';
+import type {ModelePlanningHabitude,RythmeDime} from '@/lib/habitudes-planning';
+import {ChoixRythmeDime} from './ChoixRythmeDime';
 import {creneauxRespectentFrequence} from '@/lib/habitudes-creneaux';
 import './HorairesHabitudes.css';
 
@@ -15,6 +16,7 @@ export function HorairesHabitudes({enrollmentId,langue}:{enrollmentId:string;lan
   {erreur?<><p role="alert">{l('Tes horaires ne peuvent pas être vérifiés. Vérifie ta connexion et ton accès au parcours.','Your schedule cannot be verified. Check your connection and journey access.')}</p><button type="button" className="oa-secondary" onClick={()=>void charger()}>{l('Réessayer','Try again')}</button></>:!data?<p role="status">{l('Chargement des horaires…','Loading schedule…')}</p>:<>
    <p>{l('Les modifications s’appliquent le','Changes take effect on')} <time dateTime={data.modifications_a_partir_du}>{data.modifications_a_partir_du}</time> ({data.fuseau}). {l('Ta journée en cours et ton historique sont conservés. Ces horaires n’activent aucun rappel.','Your current day and history are preserved. These times do not enable reminders.')}</p>
    {data.modeles.map(modele=><FormulaireHoraire key={`${modele.habit_key}:${data.revisions.find(r=>r.habit_key===modele.habit_key)?.revision??'initial'}`} modele={modele} data={data} langue={langue} onEnregistre={()=>{setAnnonce(l('Horaires enregistrés pour le lendemain.','Schedule saved for tomorrow.'));void charger();}}/>)}
+   {data.modeles.some(m=>m.habit_key==='dime')&&<RythmeDimeHoraires key={JSON.stringify(data.dime)} actuel={data.dime??{rythme:'semaine'}} langue={langue} onEnregistre={()=>{setAnnonce(l('Rythme de la dîme enregistré.','Tithe rhythm saved.'));void charger();}}/>}
   </>}
  </section>;
 }
@@ -47,5 +49,19 @@ function FormulaireHoraire({modele,data,langue,onEnregistre}:{modele:ModelePlann
    {creneaux.length<Math.min(7,modele.jours_iso.length)&&<button type="button" className="oa-secondary" onClick={()=>setCreneaux(cs=>[...cs,{creneau_id:'c_'+crypto.randomUUID().replaceAll('-','').slice(0,16),heure_locale:'',jours_iso:[]}])}>{l('Ajouter un créneau','Add a time slot')}</button>}
   </fieldset>
   {erreur&&<p role="alert">{erreur}</p>}<button type="submit" className="oa-primary" disabled={occupe}>{occupe?l('Enregistrement…','Saving…'):enAttente?l('Réessayer l’enregistrement','Retry saving'):l('Enregistrer pour demain','Save for tomorrow')}</button>
+ </form></details>;
+}
+/** Dîme (03/11/2026) : commerçant chaque semaine (jour et heure ci-dessus), salarié une fois par mois. */
+function RythmeDimeHoraires({actuel,langue,onEnregistre}:{actuel:RythmeDime;langue:string;onEnregistre:()=>void}){
+ const l=(fr:string,english:string)=>langue==='en'?english:fr;
+ const [valeur,setValeur]=useState<RythmeDime>(actuel),[occupe,setOccupe]=useState(false),[erreur,setErreur]=useState('');
+ const change=JSON.stringify(valeur)!==JSON.stringify(actuel);
+ async function enregistrer(e:FormEvent){e.preventDefault();if(occupe||!change)return;setOccupe(true);setErreur('');
+  try{await reglerRythmeDime(valeur);onEnregistre();}catch{setErreur(l('Rythme non enregistré. Vérifie ta connexion et réessaie.','Rhythm not saved. Check your connection and try again.'));}finally{setOccupe(false);}
+ }
+ return <details><summary>{l('Rythme de la dîme','Tithe rhythm')}</summary><form onSubmit={e=>void enregistrer(e)}>
+  <ChoixRythmeDime langue={langue} valeur={valeur} onChange={setValeur} desactive={occupe}/>
+  <p>{l('Le jour de la semaine et l’heure se règlent dans « Dîme » ci-dessus ; pour un salaire, seule l’heure est utilisée.','The weekday and time are set in “Tithe” above; for a salary, only the time is used.')}</p>
+  {erreur&&<p role="alert">{erreur}</p>}<button type="submit" className="oa-primary" disabled={occupe||!change}>{occupe?l('Enregistrement…','Saving…'):l('Enregistrer le rythme','Save the rhythm')}</button>
  </form></details>;
 }
