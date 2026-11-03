@@ -74,6 +74,8 @@ const ecrans:Record<string,()=>ReactElement>={
 };
 // Même journée, avec la correction d'un « Fait » ouverte et le volet « Ma dîme » déplié (03/11/2026).
 ecrans['aujourdhui-ouvert']=ecrans.aujourdhui!;
+// Même journée avec le bandeau « Nouvelle version prête » (04/11/2026).
+ecrans['aujourdhui-version']=ecrans.aujourdhui!;
 const nom=decodeURIComponent(location.hash.slice(1)),Ecran=ecrans[nom];
 if(nom.startsWith('rappels')){void import('@/styles-journee-nouvelle.css');void import('@/styles-mode-sombre.css');}
 createRoot(document.getElementById('root')!).render(<MemoryRouter initialEntries={[(nom==='design-progres'?'/progres':'/espace')+location.search]}>{Ecran?<Ecran/>:<ul>{Object.keys(ecrans).map(n=><li key={n}><a href={'#'+n}>{n}</a></li>)}</ul>}</MemoryRouter>);
@@ -82,6 +84,7 @@ function saisir(sel:string,valeur:string){const el=document.querySelector(sel) a
 setTimeout(()=>{
  if(nom==='engagements-declaration-visible'){[...document.querySelectorAll('button')].find(b=>b.textContent?.includes('Faire une déclaration'))?.click();setTimeout(()=>{document.body.dataset.pret='1';},200);}
  else if(nom==='aujourdhui-ouvert'){([...document.querySelectorAll('button')].find(b=>b.getAttribute('aria-label')==='Fait — corriger') as HTMLButtonElement|undefined)?.click();document.querySelectorAll('details.hd-volet').forEach(d=>{(d as HTMLDetailsElement).open=true;});setTimeout(()=>{document.body.dataset.pret='1';},700);}
+ else if(nom==='aujourdhui-version'){void import('@/styles-hors-connexion.css');void import('@/lib/hors-ligne').then(m=>{m.afficherNouvelleVersion();setTimeout(()=>{document.body.dataset.pret='1';},700);});}
  else if(nom==='dime'){(document.querySelector('[role=radio]') as HTMLButtonElement)?.click();
   setTimeout(()=>{saisir('#hd-dime-periode','semaine');saisir('#hd-dime-recu','1000');saisir('#hd-dime-cout','650');saisir('#hd-dime-charges','150');
    setTimeout(()=>{(document.querySelector('.hd-simulateur form button[type=submit]') as HTMLButtonElement)?.click();setTimeout(()=>{document.body.dataset.pret='1';},300);},200);},200);}
