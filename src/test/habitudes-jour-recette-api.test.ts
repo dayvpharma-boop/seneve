@@ -64,3 +64,19 @@ it('historique du mois 2 : seulement les journées du mois en cours',async()=>{
  const jours=await chargerHistoriqueRecette('E1','P1','2026-10-26');
  expect(jours.map(j=>j.jour)).toEqual([31,32]);expect(jours.map(j=>j.date)).toEqual(['2026-10-25','2026-10-26']);
 });
+
+// Dîme (03/11/2026) : publiée chaque jour, affichée seulement le jour prévu ; un jour sans dîme publiée reste valide.
+const ajouterDime=async(dime?:{rythme:'mois';jour_mois:number})=>{
+ const h=await mocks.horaires();h.modeles.push({module_id:'HD',version:1,langue:'fr',habit_key:'dime',libelle:'Dîme',jours_iso:[7],heure_proposee:'12:00'});if(dime)h.dime=dime;
+ mocks.tables.activities!.push({activity_id:'DIME',content_id:'C1',type_activite:'action',consigne:'Dîme',note_source:'RECETTE_HD_DIME_V1:dime',obligatoire:true,critere_realisation:null});
+};
+it('dîme hebdomadaire : absente un lundi, sans casser la journée',async()=>{
+ await ajouterDime();const d=await chargerJourRecette('E1','P1','2026-10-26');expect(d.activites).toHaveLength(13);expect(d.activites.some(a=>a.habit_key==='dime')).toBe(false);
+});
+it('dîme mensuelle : présente le jour du mois choisi, à l’heure proposée',async()=>{
+ await ajouterDime({rythme:'mois',jour_mois:26});const d=await chargerJourRecette('E1','P1','2026-10-26');expect(d.activites).toHaveLength(14);expect(d.activites.find(a=>a.habit_key==='dime')).toMatchObject({heure:'12:00',consigne:'Dîme'});
+});
+it('refuse deux dîmes publiées le même jour',async()=>{
+ await ajouterDime();mocks.tables.activities!.push({activity_id:'DIME2',content_id:'C1',type_activite:'action',consigne:'Dîme',note_source:'RECETTE_HD_DIME_V1:dime',obligatoire:true,critere_realisation:null});
+ await expect(chargerJourRecette('E1','P1','2026-10-26')).rejects.toThrow('incomplet');
+});

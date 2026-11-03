@@ -5,6 +5,9 @@ import {SemaineAvantInscription} from '@/components/SemaineAvantInscription';
 import './HorairesHabitudes.css';
 import {IconeHD} from './IconeHabitudes';
 import {ENGAGEMENTS,ETAPES} from '@/lib/habitudes-engagements';
+import {reglerRythmeDime} from '@/lib/habitudes-horaires-api';
+import type {RythmeDime} from '@/lib/habitudes-planning';
+import {ChoixRythmeDime} from './ChoixRythmeDime';
 
 // Le parent doit fournir le catalogue autorisé par le serveur, jamais une offre de démonstration.
 // La clé inclut le compte pour ne pas réutiliser un formulaire après un changement de session.
@@ -19,6 +22,8 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
  // Demande de Dr Justin (03/11/2026) : lire les engagements, puis les accepter, avant de pouvoir s'inscrire.
  const [engagementsLus,setEngagementsLus]=useState(false),[engagementsAcceptes,setEngagementsAcceptes]=useState(false);
  const [accord,setAccord]=useState(false),[occupe,setOccupe]=useState(false),[attente,setAttente]=useState(false),[erreur,setErreur]=useState(''),[resultat,setResultat]=useState<ResultatInscription|null>(null),[refus,setRefus]=useState(false);
+ // Dîme (décision du 03/11/2026) : commerçant chaque semaine, salarié une fois par mois.
+ const [rythmeDime,setRythmeDime]=useState<RythmeDime>({rythme:'semaine'}),[dimeARegler,setDimeARegler]=useState(false);
  const verrou=useRef(false),demande=useRef<DemandeInscription|null>(null);
  const jours=en?['Mon','Tue','Wed','Thu','Fri','Sat','Sun']:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
  const frequence=(i:number)=>c.planning[i]!.creneaux.reduce((n,s)=>n+s.jours_iso.length,0);
@@ -30,7 +35,11 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
    demande.current={p_programme_id:c.programmeId,p_version:c.version,p_langue:c.langue,p_offre_id:c.offreId,p_confirmation:true,p_horaires:planning.map(h=>({habit_key:h.habit_key,creneaux:h.creneaux.map(s=>({...s,jours_iso:[...s.jours_iso]}))}))};
   }
   verrou.current=true;setOccupe(true);setAttente(true);setErreur('');
-  try{setResultat(await inscrireHabitudesGratuit(demande.current));}
+  try{
+   const r=await inscrireHabitudesGratuit(demande.current);
+   if('enrollment_id'in r&&r.cree&&rythmeDime.rythme==='mois')try{await reglerRythmeDime(rythmeDime);}catch{setDimeARegler(true);}
+   setResultat(r);
+  }
   catch(e){const code=e&&typeof e==='object'&&'code'in e?String(e.code):'';
    if(code==='42501'||code==='22023'){setRefus(true);setErreur(l('L’inscription a été refusée. Recharge la page pour vérifier ton compte et la disponibilité du parcours.','Enrollment was declined. Reload the page to check your account and journey availability.'));}
    else setErreur(l('Inscription non confirmée. Réessaie pour vérifier le résultat de la même demande.','Enrollment is not confirmed. Retry to verify the result of the same request.'));
@@ -53,10 +62,11 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
     <IconeHD nom="chevron_right" className="text-[20px] text-hd-outline transition-transform group-open:rotate-90"/>
    </summary>
    <div className="px-3 pb-3 flex flex-col gap-2.5">
-    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l(`Rendez-vous par semaine : ${frequence(i)}.`,`Weekly appointments: ${frequence(i)}.`)}</p>
+    {h.habit_key==='dime'&&<ChoixRythmeDime langue={c.langue} valeur={rythmeDime} onChange={v=>{setAccord(false);setRythmeDime(v);}}/>}
+    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{h.habit_key==='dime'&&rythmeDime.rythme==='mois'?l(`Une fois par mois, le ${rythmeDime.jour_mois}.`,`Once a month, on day ${rythmeDime.jour_mois}.`):l(`Rendez-vous par semaine : ${frequence(i)}.`,`Weekly appointments: ${frequence(i)}.`)}</p>
     {h.creneaux.map((s,k)=><fieldset className="border border-hd-outline-variant/60 rounded-xl p-3 flex flex-col gap-2.5 min-w-0" key={s.creneau_id}><legend className="px-1 font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{l(`${h.libelle} — créneau ${k+1}`,`${h.libelle} — slot ${k+1}`)}</legend>
      <label className="flex flex-col gap-1.5 font-hd-label-md text-hd-label-md text-hd-on-surface-variant">{h.libelle} — {s.jours_iso.map(j=>jours[j-1]).join(', ')}<input type="time" required value={s.heure_locale} onChange={e=>modifier(i,h.creneaux.map((t,m)=>m===k?{...t,heure_locale:e.target.value}:t))} className="min-h-[44px] w-full rounded-lg bg-hd-surface-container-low px-3 text-hd-on-surface font-hd-label-lg text-hd-label-lg font-semibold tracking-wide border border-hd-outline-variant/60 focus:outline-2 focus:outline-hd-secondary"/></label>
-     <div className="flex flex-wrap gap-1.5">{jours.map((j,n)=><label key={j} className="relative cursor-pointer"><input type="checkbox" className="peer sr-only" checked={s.jours_iso.includes(n+1)} onChange={e=>modifier(i,h.creneaux.map((t,m)=>m===k?{...t,jours_iso:e.target.checked?[...t.jours_iso,n+1].sort((a,b)=>a-b):t.jours_iso.filter(v=>v!==n+1)}:t))}/><span className="flex items-center justify-center min-w-[44px] min-h-[40px] px-2 rounded-lg border border-hd-outline-variant/60 bg-hd-surface-container-lowest text-hd-on-surface-variant font-hd-label-md text-hd-label-md peer-checked:bg-hd-secondary-container/40 peer-checked:border-hd-secondary peer-checked:text-hd-secondary peer-focus-visible:outline-2 peer-focus-visible:outline-hd-secondary">{j}</span></label>)}</div>
+     {!(h.habit_key==='dime'&&rythmeDime.rythme==='mois')&&<div className="flex flex-wrap gap-1.5">{jours.map((j,n)=><label key={j} className="relative cursor-pointer"><input type="checkbox" className="peer sr-only" checked={s.jours_iso.includes(n+1)} onChange={e=>modifier(i,h.creneaux.map((t,m)=>m===k?{...t,jours_iso:e.target.checked?[...t.jours_iso,n+1].sort((a,b)=>a-b):t.jours_iso.filter(v=>v!==n+1)}:t))}/><span className="flex items-center justify-center min-w-[44px] min-h-[40px] px-2 rounded-lg border border-hd-outline-variant/60 bg-hd-surface-container-lowest text-hd-on-surface-variant font-hd-label-md text-hd-label-md peer-checked:bg-hd-secondary-container/40 peer-checked:border-hd-secondary peer-checked:text-hd-secondary peer-focus-visible:outline-2 peer-focus-visible:outline-hd-secondary">{j}</span></label>)}</div>}
      {h.creneaux.length>1&&<button type="button" className="self-start min-h-[44px] px-3 rounded-lg bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md" onClick={()=>modifier(i,h.creneaux.filter((_,n)=>n!==k))}>{l(`Retirer le créneau ${k+1}`,`Remove slot ${k+1}`)}</button>}
     </fieldset>)}
     {h.creneaux.length<Math.min(7,frequence(i))&&<button type="button" className="self-start min-h-[44px] px-3 rounded-lg bg-hd-surface-container-low text-hd-secondary font-hd-label-md text-hd-label-md flex items-center gap-1.5" onClick={()=>modifier(i,[...h.creneaux,{creneau_id:'c_'+crypto.randomUUID().replaceAll('-','').slice(0,16),heure_locale:'',jours_iso:[]}])}><IconeHD nom="schedule" className="text-[16px]"/>{l('Ajouter un créneau','Add a time slot')}</button>}
@@ -78,6 +88,7 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
    <div className="flex items-center gap-2"><span className="w-8 h-8 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center"><IconeHD nom="check_circle" className="text-[20px]"/></span><p className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{resultat.cree?l('Inscription confirmée. Tes horaires ont été enregistrés.','Enrollment confirmed. Your schedule has been saved.'):l('Une inscription existe déjà. Ses dates et ses horaires ont été conservés.','An enrollment already exists. Its dates and schedule have been preserved.')}</p></div>
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Fin de la période gratuite :','Free period ends:')} <time dateTime={resultat.fin_exclue}>{new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:c.fuseau,dateStyle:'long',timeStyle:'short'}).format(new Date(resultat.fin_exclue))}</time> ({c.fuseau}).</p>
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Consulte tes accès pour vérifier l’état actuel du parcours.','Check your access page for the current journey status.')}</p>
+   {dimeARegler&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-on-surface">{l('Le rythme mensuel de ta dîme n’a pas pu être enregistré : choisis-le à nouveau dans tes horaires. En attendant, elle revient chaque semaine.','Your monthly tithe rhythm could not be saved: choose it again in your schedule. Until then, it comes every week.')}</p>}
   </>}<a className={bouton} href={`${import.meta.env.BASE_URL}acces?lang=${en?'en':'fr'}`}>{l('Consulter mes accès','View my access')}<IconeHD nom="arrow_forward" className="text-[20px]"/></a></div>:<form onSubmit={e=>void soumettre(e)} className="flex flex-col">
    <fieldset disabled={occupe||attente||refus} className="min-w-0 border-0 p-0 m-0 flex flex-col disabled:opacity-70"><legend className="mb-2 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant uppercase tracking-wider">{l('Mes horaires','My schedule')} ({c.fuseau})</legend>
     <div className="flex flex-col gap-2.5 mb-5">{planning.map((h,i)=>culte(h.habit_key)?null:carteHabitude(h,i))}</div>

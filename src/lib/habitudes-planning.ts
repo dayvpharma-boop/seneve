@@ -2,7 +2,14 @@
  * Les dates sont des dates civiles déjà calculées dans le fuseau du participant.
  * Dans ce modèle, valide_au est inclusif ; tout adaptateur doit conserver cette convention.
  */
-export type ContextePlanningHabitudes={participant_id:string;module_id:string;version:number;langue:string;date_locale:string;fuseau:string};
+/** Dîme (décision de Dr Justin, 03/11/2026) : chaque semaine pour les commerçants (jours du planning),
+ * une fois par mois pour les salariés (jour du mois choisi ; le dernier jour si le mois est plus court). */
+export type RythmeDime={rythme:'semaine'}|{rythme:'mois';jour_mois:number};
+export type ContextePlanningHabitudes={participant_id:string;module_id:string;version:number;langue:string;date_locale:string;fuseau:string;dime?:RythmeDime|undefined};
+export function jourDimeDuMois(date_locale:string,jour_mois:number){
+ const [a,m]=date_locale.split('-').map(Number);const dernier=new Date(Date.UTC(a!,m!,0)).getUTCDate();
+ return Math.min(Math.max(1,Math.trunc(jour_mois)),dernier);
+}
 type VersionPlanning={module_id:string;version:number;langue:string};
 export type ModelePlanningHabitude=VersionPlanning&{habit_key:string;libelle:string;heure_proposee:string|null;jours_iso:readonly number[]};
 export type HorairePersonnelHabitude=VersionPlanning&{participant_id:string;habit_key:string;creneau_id:string;heure_locale:string;jours_iso:readonly number[];fuseau:string;valide_du:string;valide_au:string|null};
@@ -36,6 +43,12 @@ export function planningHabitudesPourDate(ctx:ContextePlanningHabitudes,modeles:
  const rendezVous:RendezVousHabitude[]=[];
  for(const m of refs.values()){
   const groupe=personnels.get(m.habit_key);
+  if(m.habit_key==='dime'&&ctx.dime?.rythme==='mois'){
+   // Mensuelle : le jour du mois remplace les jours de la semaine ; l'heure reste celle du planning.
+   const h=groupe?.[0],heureDime=h?h.heure_locale:m.heure_proposee;
+   if(heureDime!==null&&date.getUTCDate()===jourDimeDuMois(ctx.date_locale,ctx.dime.jour_mois))rendezVous.push({habit_key:m.habit_key,creneau_id:h?h.creneau_id:'proposition',libelle:m.libelle,heure_locale:heure(heureDime),origine:h?'personnel':'proposition'});
+   continue;
+  }
   if(groupe){
    // Un ensemble personnel remplace entièrement la proposition de cette habitude.
    for(const h of groupe)if(h.jours_iso.includes(jour))rendezVous.push({habit_key:m.habit_key,creneau_id:h.creneau_id,libelle:m.libelle,heure_locale:heure(h.heure_locale),origine:'personnel'});

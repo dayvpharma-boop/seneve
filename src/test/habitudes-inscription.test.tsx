@@ -76,3 +76,16 @@ it('exige de lire puis d’accepter les engagements avant l’inscription (03/11
  expect(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'})).toBeEnabled();
  fireEvent.submit(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'}).closest('form')!);expect(mock.rpc).toHaveBeenCalledTimes(1);
 });
+it('dîme : un salarié choisit « une fois par mois, le 25 », enregistré après l’inscription (03/11/2026)',async()=>{
+ const avecDime:ConfigurationInscriptionHabitudes={...config,planning:[...config.planning,{habit_key:'dime',libelle:'Dîme',creneaux:[{creneau_id:'principal',heure_locale:'12:00',jours_iso:[7]}]}]};
+ mock.rpc.mockImplementation((nom:string)=>Promise.resolve(nom==='hd_dime_regler'?{data:{rythme:'mois',jour_mois:25},error:null}:{data:confirmation,error:null}));
+ const r=ouvrir(avecDime);const carte=screen.getByText('Ma situation pour la dîme').closest('details')!;carte.open=true;
+ fireEvent.click(within(carte).getByRole('radio',{name:/Je reçois un salaire/}));
+ fireEvent.change(within(carte).getByRole('combobox',{name:/Jour du mois/}),{target:{value:'25'}});
+ expect(within(carte).getByText('Une fois par mois, le 25.')).toBeInTheDocument();
+ expect(within(carte).queryByRole('checkbox',{name:'Dim'})).toBeNull();
+ confirmer();await screen.findByText(/Inscription confirmée/);
+ expect(mock.rpc).toHaveBeenNthCalledWith(1,'hd_start_free',expect.objectContaining({p_horaires:expect.arrayContaining([{habit_key:'dime',creneaux:[{creneau_id:'principal',heure_locale:'12:00',jours_iso:[7]}]}])}));
+ expect(mock.rpc).toHaveBeenNthCalledWith(2,'hd_dime_regler',{p_rythme:'mois',p_jour_mois:25});
+ r.unmount();
+});

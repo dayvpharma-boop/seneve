@@ -13,7 +13,7 @@ export function PlanningJourHabitudes({enrollmentId,participantId,dateLocale,lan
  let planning:ReturnType<typeof planningHabitudesPourDate>|null=null,invalide=false;
  if(data){try{
   const modele=data.modeles[0];
-  if(modele)planning=planningHabitudesPourDate({participant_id:participantId,module_id:modele.module_id,version:modele.version,langue:modele.langue,date_locale:dateLocale,fuseau:data.fuseau},data.modeles,data.horaires);
+  if(modele)planning=planningHabitudesPourDate({participant_id:participantId,module_id:modele.module_id,version:modele.version,langue:modele.langue,date_locale:dateLocale,fuseau:data.fuseau,dime:data.dime},data.modeles,data.horaires);
  }catch{invalide=true;}}
  const indisponible=!!courante&&(courante.erreur||invalide);
  return <section className="hd-planning-jour" aria-label={l('Mes repères horaires','My schedule')}><h3>{l('Mes repères horaires','My schedule')}</h3>

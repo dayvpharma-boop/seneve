@@ -1,7 +1,8 @@
 import {planningHabitudesPourDate} from './habitudes-planning';
 import type {ConfigurationHoraires} from './habitudes-horaires-api';
 
-const CULTE=/^RECETTE_HD_CULTE_V1:(culte_semaine|culte_dimanche):([12])$/;
+// La dîme (03/11/2026) suit la même règle : publiée chaque jour, comptée seulement le jour prévu.
+const CULTE=/^RECETTE_HD_(?:CULTE_V1:(culte_semaine|culte_dimanche):([12])|DIME_V1:(dime)())$/;
 export type FiltreCultes=(noteSource:string|null|undefined,dateLocale:string,declaree:boolean)=>boolean;
 
 /** Cultes d'un jour passé ou du suivi : seuls ceux prévus ce jour-là dans le planning personnel sont affichés et comptés,
@@ -18,7 +19,7 @@ export function filtreCultesPrevus(horaires:ConfigurationHoraires|null):FiltreCu
    if(horaires&&modele)try{
     // Le planning ne renvoie que les horaires du titulaire ; à défaut, les heures proposées s'appliquent.
     const participant=horaires.horaires[0]?.participant_id??'titulaire';
-    const planning=planningHabitudesPourDate({participant_id:participant,module_id:modele.module_id,version:modele.version,langue:modele.langue,date_locale:dateLocale,fuseau:horaires.fuseau},horaires.modeles,horaires.horaires);
+    const planning=planningHabitudesPourDate({participant_id:participant,module_id:modele.module_id,version:modele.version,langue:modele.langue,date_locale:dateLocale,fuseau:horaires.fuseau,dime:horaires.dime},horaires.modeles,horaires.horaires);
     compte=new Map();
     for(const r of planning.rendezVous)compte.set(r.habit_key,(compte.get(r.habit_key)??0)+1);
    }catch{compte=null;}
@@ -30,6 +31,7 @@ export function filtreCultesPrevus(horaires:ConfigurationHoraires|null):FiltreCu
   const culte=CULTE.exec(noteSource??'');
   if(!culte||declaree)return true;
   const compte=rendezVous(dateLocale);
-  return compte!==null&&Number(culte[2])<=(compte.get(culte[1]!)??0);
+  const habit=culte[1]??culte[3]!,rang=culte[3]?1:Number(culte[2]);
+  return compte!==null&&rang<=(compte.get(habit)??0);
  };
 }
