@@ -101,5 +101,34 @@ export function enregistrerServiceWorker(): void {
     window.location.reload();
   });
   window.addEventListener('load', () => { void navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch(() => undefined); });
+  // Nouvelle version publiée pendant que la page était ouverte (03/11/2026) : proposer d'actualiser,
+  // sans recharger d'office (une saisie en cours ne doit pas être perdue).
+  navigator.serviceWorker.addEventListener('message', e => {
+    if ((e.data as { type?: string } | null)?.type === 'seneve-nouvelle-version') afficherNouvelleVersion();
+  });
+  // Retour dans l'app restée ouverte : demander une vérification, au plus une fois par minute.
+  let derniereVerification = 0;
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible' || Date.now() - derniereVerification < 60000) return;
+    derniereVerification = Date.now();
+    navigator.serviceWorker.controller?.postMessage({ type: 'seneve-verifier-version' });
+  });
+}
+
+function afficherNouvelleVersion(): void {
+  if (document.getElementById('seneve-nouvelle-version')) return;
+  const en = document.documentElement.lang === 'en';
+  const bandeau = document.createElement('div');
+  bandeau.id = 'seneve-nouvelle-version';
+  bandeau.className = 'seneve-maj';
+  bandeau.setAttribute('role', 'status');
+  const texte = document.createElement('span');
+  texte.textContent = en ? 'A new version is ready.' : 'Nouvelle version prête.';
+  const bouton = document.createElement('button');
+  bouton.type = 'button';
+  bouton.textContent = en ? 'Refresh' : 'Actualiser';
+  bouton.addEventListener('click', () => window.location.reload());
+  bandeau.append(texte, bouton);
+  document.body.append(bandeau);
 }
 
