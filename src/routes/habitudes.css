@@ -11,3 +11,7 @@
 /* Couverture « De la graine à l’arbre » (FR) / « From seed to tree » (EN), 02/11/2026 : sous l’accroche sur téléphone, à droite du texte sur grand écran. */
 .hd-public-couverture{display:block;width:min(200px,60%);height:auto;margin:20px auto 22px;border-radius:6px;box-shadow:0 18px 36px -12px rgba(10,9,7,.55)}
 @media(min-width:760px){.hd-public-hero{display:grid;grid-template-columns:minmax(0,1fr) 240px;column-gap:40px;align-items:start}.hd-public-hero>*{grid-column:1}.hd-public-hero>.hd-public-couverture{grid-column:2;grid-row:1/span 7;width:100%;margin:0;align-self:center}}
+/* Bouton retour à gauche de SÉNEVÉ (03/11/2026). */
+.hd-public-gauche{display:flex;align-items:center;gap:12px}
+.hd-public-retour{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:1px solid currentColor;background:transparent;color:inherit;font-size:22px;line-height:1;cursor:pointer}
+.hd-public-retour:focus-visible{outline:3px solid #c9a84c;outline-offset:2px}
