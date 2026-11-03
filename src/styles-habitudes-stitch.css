@@ -129,3 +129,30 @@
 .hd-acces h2{font-family:var(--hd-serif);color:var(--hd-encre)}
 .hd-acces .oa-card{border:0;border-radius:var(--hd-rayon);background:var(--hd-carte);box-shadow:var(--hd-ombre)}
 
+
+/* ---------- Fluidité (03/11/2026, demande de Dr Justin : « Les 4 premières ») ---------- */
+/* 1. Appui : le bouton répond dès que le doigt se pose. */
+.hd-appui{transition-property:transform,background-color,color;transition-duration:100ms;transition-timing-function:ease-out;-webkit-tap-highlight-color:transparent}
+.hd-appui:active:not(:disabled){transform:scale(.97)}
+/* 2. Moment « Fait » : la coche se remplit. */
+@keyframes hd-coche{0%{transform:scale(.55);opacity:.4}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+.hd-coche-arrive{animation:hd-coche 360ms cubic-bezier(.32,.72,0,1) both}
+/* Ce qui apparaît dans une carte (correction, autres choix) glisse doucement. */
+@keyframes hd-apparait{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.hd-apparait{animation:hd-apparait 220ms cubic-bezier(.32,.72,0,1) both}
+.hd-chevron{transition:transform 250ms cubic-bezier(.32,.72,0,1)}
+.hd-chevron-ouvert{transform:rotate(180deg)}
+/* 3. Volets : s'ouvrent en douceur (navigateurs récents), chevron qui tourne partout. */
+.hd-volet{interpolate-size:allow-keywords}
+.hd-volet::details-content{block-size:0;overflow:hidden;opacity:0;transition:block-size 300ms cubic-bezier(.32,.72,0,1),opacity 200ms ease,content-visibility 300ms allow-discrete}
+.hd-volet[open]::details-content{block-size:auto;opacity:1}
+.hd-volet-chevron{transition:transform 250ms cubic-bezier(.32,.72,0,1)}
+.hd-volet[open]>summary .hd-volet-chevron{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){
+ .hd-appui:active:not(:disabled){transform:none}
+ .hd-coche-arrive{animation:hd-fondu 150ms ease both}
+ .hd-apparait{animation:hd-fondu 150ms ease both}
+ .hd-chevron,.hd-volet-chevron{transition:none}
+ .hd-volet::details-content{block-size:auto;transition:opacity 150ms ease,content-visibility 150ms allow-discrete}
+}
+@keyframes hd-fondu{from{opacity:0}to{opacity:1}}

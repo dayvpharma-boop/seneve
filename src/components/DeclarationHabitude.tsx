@@ -1,5 +1,5 @@
 import {IgnorerRappelHabitude} from './IgnorerRappelHabitude';
-import {useEffect,useRef,useState,type ComponentProps,type ReactNode} from 'react';
+import {useEffect,useLayoutEffect,useRef,useState,type ComponentProps,type ReactNode} from 'react';
 import {CorrectionRealisationHabitude} from './CorrectionRealisationHabitude';
 import {enregistrerHabitude,type ActionHabitude,type TransportProgression} from '@/lib/habitudes-api';
 import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
@@ -8,7 +8,9 @@ import {IconeHD} from './IconeHabitudes';
 import {EtatSauvegarde} from './EtatSauvegarde';
 import {envoyerFile,garderAction,useEntreeFile,type TransportFile} from '@/lib/file-actions';
 
-function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu,horsLigne=false,ignorer,complement}:{
+function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLecture,lienEcriture,etat,langue,lectureSeule,transport,onConfirme,onDemanderLecture,aideDisponible=true,variante,heure,attenue=false,onPasPu,horsLigne=false,ignorer,complement,correction}:{
+ /** Carte « stitch » réalisée : la correction s'ouvre en touchant la pastille « Fait » (03/11/2026). */
+ correction?:{ouverte:boolean;basculer:()=>void;contenu:ReactNode};
  /** Sans réseau (décision du 29/10/2026) : la déclaration est gardée sur l'appareil puis envoyée au retour du réseau. */
  horsLigne?:boolean;
  /** Choix « Ignorer les rappels pour aujourd'hui », affiché en bas de la carte (demande de Dr Justin du 30/10/2026). */
@@ -26,7 +28,7 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
  const [attente,setAttente]=useState<SaisieEnAttente|null>(()=>{try{return lireSaisie(sessionStorage,cle);}catch{return null;}});
  const [erreur,setErreur]=useState(false),[occupe,setOccupe]=useState(false);
  const verrou=useRef(false);
- const [nettoyageIncomplet,setNettoyageIncomplet]=useState(false);
+ const [nettoyageIncomplet,setNettoyageIncomplet]=useState(false),[vientDeFinir,setVientDeFinir]=useState(false);
  const [confirmation,setConfirmation]=useState<EtatOccurrence|undefined>();
  useEffect(()=>{setConfirmation(etat);},[etat]);
  // File locale : même identifiant à chaque envoi ; la réponse du serveur est appliquée à son arrivée.
@@ -47,13 +49,16 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
    const saisie=preparerSaisie(sessionStorage,cle,action);setAttente(saisie);
    const r=await enregistrerHabitude(transport,occurrence,saisie.eventId,saisie.action);
    setConfirmation(r.etat);onConfirme(r.etat);
+   // Moment « Fait » (03/11/2026) : légère vibration sur Android, au même instant que la coche (sans effet sur iPhone).
+   if(r.etat.etat==='realisee'){setVientDeFinir(true);try{navigator.vibrate?.(12);}catch{/* vibration facultative */}}
    // Un échec de nettoyage conserve la même clé : un rejeu reste idempotent.
    try{sessionStorage.removeItem(cle);setAttente(null);setNettoyageIncomplet(false);}
    catch{setNettoyageIncomplet(true);}
   }catch{setErreur(true);}finally{verrou.current=false;setOccupe(false);}
  }
  const [autres,setAutres]=useState(false),[deplie,setDeplie]=useState(false);
- if(variante==='stitch')return <><CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule:verrouLocal,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true),ignorer,complement}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/>{badge}</>;
+ const cadre=useHauteurFluide<HTMLDivElement>(variante==='stitch'?valeur+':'+(attenue&&!deplie)+':'+!!attente:'');
+ if(variante==='stitch')return <><div ref={cadre}><CarteStitch {...{en,consigne,critere,lienLecture,lienEcriture,heure,valeur,aide:!!aide,synchronise:courant?.synchronisation==='synchronise',attente:!!attente,nettoyageIncomplet,erreur,occupe,lectureSeule:verrouLocal,aideDisponible,autres,setAutres,attenue:attenue&&!deplie&&!attente&&!aide&&valeur==='non_commencee',deplier:()=>setDeplie(true),ignorer,complement,vientDeFinir,correction}} declarer={a=>void declarer(a)} rejouer={()=>attente&&void declarer(attente.action)}/></div>{badge}</>;
  const labels=en?{non_commencee:'Not recorded yet',preparee:'Prepared',partielle:'Partly done',realisee:'Completed'}:{non_commencee:'Pas encore enregistrée',preparee:'Préparée',partielle:'Réalisée en partie',realisee:'Réalisée'};
  if(variante==='culte')return <div className="flex flex-col gap-2" aria-busy={occupe}>
   <p role="status" className={valeur==='realisee'||attente?'font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant':'sr-only'}>{attente?(nettoyageIncomplet?(en?'Record confirmed. Retry to finish updating this device.':'Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.'):(en?'Waiting for server confirmation. This declaration is not confirmed yet.':'En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.')):valeur==='realisee'?(en?'Participation recorded · Synchronised':'Participation déclarée · Synchronisée'):labels[valeur]}</p>
@@ -90,15 +95,27 @@ function CarteDeclarationHabitude({userId,occurrence,consigne,critere,lienLectur
  </section>;
 }
 
+/** Hauteur qui glisse d'une forme de carte à l'autre (ex. « À faire » → « Fait ») au lieu de sauter (03/11/2026). */
+function useHauteurFluide<T extends HTMLElement>(cle:string){
+ const ref=useRef<T>(null),avant=useRef<number|null>(null),cleAvant=useRef(cle);
+ useLayoutEffect(()=>{
+  const el=ref.current;if(!el)return;const h=el.offsetHeight,a=avant.current;avant.current=h;
+  if(cleAvant.current===cle)return;cleAvant.current=cle;
+  if(a===null||Math.abs(a-h)<2||typeof el.animate!=='function'||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  el.animate([{height:a+'px',overflow:'hidden'},{height:h+'px',overflow:'hidden'}],{duration:280,easing:'cubic-bezier(0.32,0.72,0,1)'});
+ });
+ return ref;
+}
+
 type ValeurEtat='non_commencee'|'preparee'|'partielle'|'realisee';
 /** Rendu Stitch : mêmes actions, mêmes messages d'attente et d'erreur que la carte d'origine. */
-function CarteStitch(p:{ignorer?:ReactNode;complement?:ReactNode;en:boolean;consigne:string;lienEcriture?:{href:string;label:string};lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
+function CarteStitch(p:{vientDeFinir?:boolean;correction?:{ouverte:boolean;basculer:()=>void;contenu:ReactNode};ignorer?:ReactNode;complement?:ReactNode;en:boolean;consigne:string;lienEcriture?:{href:string;label:string};lienLecture?:{href:string;label:string};critere?:string|null;heure?:string;valeur:ValeurEtat;aide:boolean;synchronise:boolean;attente:boolean;nettoyageIncomplet:boolean;erreur:boolean;occupe:boolean;lectureSeule:boolean;aideDisponible:boolean;autres:boolean;setAutres:(b:boolean)=>void;attenue:boolean;deplier:()=>void;declarer:(a:ActionHabitude)=>void;rejouer:()=>void}){
  const {en,consigne,critere,heure,valeur,aide}=p,l=(fr:string,english:string)=>en?english:fr;
  const etatTexte={non_commencee:l('Pas encore enregistrée','Not recorded yet'),preparee:l('Préparée','Prepared'),partielle:l('Réalisée en partie','Partly done'),realisee:l('Réalisée','Completed')}[valeur]+(p.synchronise?l(' · Synchronisée',' · Synchronised'):'');
  const heureEl=heure?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant shrink-0"><time dateTime={heure}>{heure}</time></span>:null;
  const statut=<p role="status" className="sr-only">{etatTexte}</p>;
  const lien=p.lienEcriture??p.lienLecture;
- const lecture=lien?<a href={lien.href} aria-label={lien.label} className="relative z-10 min-h-[44px] px-3 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 inline-flex items-center justify-center gap-1.5"><IconeHD nom={p.lienEcriture?'edit_note':'menu_book'} className="text-[17px]"/><span>{p.lienEcriture?l('Écrire','Write'):l('Lire','Read')}</span></a>:null;
+ const lecture=lien?<a href={lien.href} aria-label={lien.label} className="relative z-10 min-h-[44px] px-3 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 inline-flex items-center justify-center gap-1.5 hd-appui"><IconeHD nom={p.lienEcriture?'edit_note':'menu_book'} className="text-[17px]"/><span>{p.lienEcriture?l('Écrire','Write'):l('Lire','Read')}</span></a>:null;
  // Carte repliée « plus tard » (31/10/2026) : le nom de l'activité reste lisible en entier sur la première ligne ;
  // « Lire », « Écrire », la durée et « Ignorer » passent dessous, sur toute la largeur.
  if(p.attenue)return <article aria-label={consigne} className="relative bg-hd-surface-container/60 rounded-xl px-hd-space-md py-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
@@ -112,10 +129,11 @@ function CarteStitch(p:{ignorer?:ReactNode;complement?:ReactNode;en:boolean;cons
  </article>;
  if(valeur==='realisee'&&!aide&&!p.attente&&!p.erreur)return <article aria-label={consigne} className="bg-hd-surface-container-lowest rounded-2xl px-hd-space-md py-3 shadow-[0_1px_6px_rgba(29,28,19,0.03)] flex flex-wrap items-center justify-between gap-y-2">
   {statut}<div className="flex items-center gap-3 min-w-0">
-   <span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center shrink-0"><IconeHD nom="done" className="text-[17px]"/></span>
+   <span className={`w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center shrink-0${p.vientDeFinir?' hd-coche-arrive':''}`}><IconeHD nom="done" className="text-[17px]"/></span>
    <div className="flex items-baseline gap-2 min-w-0 truncate">{heureEl}<h3 className="font-hd-label-lg text-hd-label-lg text-hd-on-surface truncate">{consigne}</h3></div>
   </div>
-  <div className="flex items-center gap-2"><div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-secondary shrink-0"><IconeHD nom="verified" className="text-[15px]"/><span className="font-hd-label-sm text-hd-label-sm">{l('Fait','Done')}</span></div>{lecture}</div>
+  <div className="flex items-center gap-2">{p.correction?<button type="button" aria-expanded={p.correction.ouverte} aria-label={l('Fait — corriger','Done — correct')} onClick={p.correction.basculer} className="min-h-[44px] -my-1.5 inline-flex items-center gap-1.5 px-3 rounded-full bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-secondary shrink-0 hd-appui"><IconeHD nom="verified" className="text-[15px]"/><span className="font-hd-label-sm text-hd-label-sm">{l('Fait','Done')}</span><IconeHD nom="expand_more" className={`text-[16px] text-hd-on-surface-variant hd-chevron${p.correction.ouverte?' hd-chevron-ouvert':''}`}/></button>:<div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-secondary shrink-0"><IconeHD nom="verified" className="text-[15px]"/><span className="font-hd-label-sm text-hd-label-sm">{l('Fait','Done')}</span></div>}{lecture}</div>
+  {p.correction?.ouverte&&<div className="w-full hd-apparait">{p.correction.contenu}</div>}
   {p.complement&&<div className="w-full">{p.complement}</div>}
  </article>;
  const cercle=aide?<span className="w-7 h-7 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center shrink-0"><IconeHD nom="support_agent" className="text-[18px]"/></span>
@@ -130,23 +148,24 @@ function CarteStitch(p:{ignorer?:ReactNode;complement?:ReactNode;en:boolean;cons
   :<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant px-2 py-0.5 rounded-full bg-hd-surface-container flex items-center gap-1 shrink-0"><IconeHD nom="hourglass_empty" className="text-[14px]"/>{l('À faire','To do')}</span>;
  const nomFait=l('J’ai réalisé cette activité','I completed this activity');
  const principal=p.lectureSeule?<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">{l('Lecture seule','Read only')}</span>
-  :p.attente?<button type="button" disabled={p.occupe} onClick={p.rejouer} className="min-h-[44px] px-3.5 rounded-xl bg-hd-secondary text-hd-on-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60"><IconeHD nom="refresh" className="text-[16px]"/><span>{p.occupe?l('Enregistrement…','Saving…'):l('Réessayer cette déclaration','Retry this declaration')}</span></button>
+  :p.attente?<button type="button" disabled={p.occupe} onClick={p.rejouer} className="min-h-[44px] px-3.5 rounded-xl bg-hd-secondary text-hd-on-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60 hd-appui"><IconeHD nom="refresh" className="text-[16px]"/><span>{p.occupe?l('Enregistrement…','Saving…'):l('Réessayer cette déclaration','Retry this declaration')}</span></button>
   :valeur==='realisee'?null
-  :valeur==='partielle'?<button type="button" aria-label={nomFait} disabled={p.occupe} onClick={()=>p.declarer('realisee')} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-on-surface font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60"><IconeHD nom="edit_calendar" className="text-[16px]"/><span>{l('Compléter','Complete')}</span></button>
-  :<button type="button" aria-label={nomFait} disabled={p.occupe} onClick={()=>p.declarer('realisee')} className="min-h-[44px] px-3.5 rounded-xl bg-hd-secondary hover:bg-hd-on-secondary-fixed-variant text-hd-on-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60"><IconeHD nom="done" className="text-[16px]"/><span>{l('Fait','Done')}</span></button>;
+  :valeur==='partielle'?<button type="button" aria-label={nomFait} disabled={p.occupe} onClick={()=>p.declarer('realisee')} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-on-surface font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60 hd-appui"><IconeHD nom="edit_calendar" className="text-[16px]"/><span>{l('Compléter','Complete')}</span></button>
+  :<button type="button" aria-label={nomFait} disabled={p.occupe} onClick={()=>p.declarer('realisee')} className="min-h-[44px] px-3.5 rounded-xl bg-hd-secondary hover:bg-hd-on-secondary-fixed-variant text-hd-on-secondary font-hd-label-md text-hd-label-md font-medium shrink-0 flex items-center gap-1.5 transition-colors disabled:opacity-60 hd-appui"><IconeHD nom="done" className="text-[16px]"/><span>{l('Fait','Done')}</span></button>;
  const choix=[aide&&valeur!=='realisee'&&!p.lectureSeule&&{a:'realisee' as const,t:nomFait},valeur==='non_commencee'&&{a:'preparee' as const,t:l('Je l’ai préparée','I prepared it')},['non_commencee','preparee'].includes(valeur)&&{a:'partielle' as const,t:l('Je l’ai réalisée en partie','I did part of it')},p.aideDisponible&&!aide&&{a:'aide_demandee' as const,t:l('J’ai besoin d’aide','I need help')}].filter(Boolean) as {a:ActionHabitude;t:string}[];
  return <article aria-label={consigne} aria-busy={p.occupe} className="bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col gap-2.5">
   {statut}
   <div className="flex items-center justify-between gap-2">
    <div className="flex items-center gap-2.5 min-w-0">{cercle}<div className="flex items-baseline gap-2 min-w-0">{heureEl}<h3 className="font-hd-label-lg text-hd-label-lg font-medium text-hd-on-surface truncate">{consigne}</h3></div></div>
-   {pastille}
+   {valeur==='realisee'&&p.correction?<button type="button" aria-expanded={p.correction.ouverte} aria-label={l('Fait — corriger','Done — correct')} onClick={p.correction.basculer} className="min-h-[44px] -my-1.5 inline-flex items-center gap-1.5 px-3 rounded-full bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-secondary font-hd-label-sm text-hd-label-sm shrink-0 hd-appui"><IconeHD nom="verified" className="text-[15px]"/>{l('Fait','Done')}<IconeHD nom="expand_more" className={`text-[16px] text-hd-on-surface-variant hd-chevron${p.correction.ouverte?' hd-chevron-ouvert':''}`}/></button>:pastille}
   </div>
-  {(()=>{const reglages=!p.lectureSeule&&!p.attente&&choix.length>0?<button type="button" aria-expanded={p.autres} aria-label={l('Autres choix','Other choices')} onClick={()=>p.setAutres(!p.autres)} className={`min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center transition-colors shrink-0 ${p.autres?'bg-hd-surface-container-high text-hd-on-surface':'bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-on-surface-variant'}`}><IconeHD nom="tune" className="text-[20px]"/></button>:null;
+  {(()=>{const reglages=!p.lectureSeule&&!p.attente&&choix.length>0?<button type="button" aria-expanded={p.autres} aria-label={l('Autres choix','Other choices')} onClick={()=>p.setAutres(!p.autres)} className={`min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center transition-colors shrink-0 hd-appui ${p.autres?'bg-hd-surface-container-high text-hd-on-surface':'bg-hd-surface-container hover:bg-hd-surface-container-high text-hd-on-surface-variant'}`}><IconeHD nom="tune" className="text-[20px]"/></button>:null;
    return aide?<div className="flex items-center justify-between gap-2 text-hd-on-surface-variant pl-9"><span className="font-hd-body-sm text-hd-body-sm italic flex items-center gap-1.5">{l('Demande envoyée à l’équipe','Request sent to the team')}<IconeHD nom="mark_email_read" className="text-[16px] text-[#0369A1]"/></span><div className="flex items-center gap-2 shrink-0">{lecture}{reglages}</div></div>
    :(critere||principal||reglages||lecture)&&<div className="flex items-center justify-between gap-hd-space-sm pt-1"><p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant min-w-0 flex-1">{critere}</p><div className="flex items-center gap-2 shrink-0">{lecture}{principal}{reglages}</div></div>;})()}
   {p.attente&&<p role="status" className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{p.nettoyageIncomplet?l('Enregistrement confirmé. Réessaie pour terminer la mise à jour sur cet appareil.','Record confirmed. Retry to finish updating this device.'):l('En attente de confirmation du serveur. Cette déclaration n’est pas encore confirmée.','Waiting for server confirmation. This declaration is not confirmed yet.')}</p>}
-  {p.autres&&!p.lectureSeule&&!p.attente&&choix.length>0&&<div className="flex flex-wrap gap-2">{choix.map(c=><button key={c.a} type="button" disabled={p.occupe} onClick={()=>p.declarer(c.a)} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium disabled:opacity-60">{c.t}</button>)}</div>}
+  {p.autres&&!p.lectureSeule&&!p.attente&&choix.length>0&&<div className="flex flex-wrap gap-2 hd-apparait">{choix.map(c=><button key={c.a} type="button" disabled={p.occupe} onClick={()=>p.declarer(c.a)} className="min-h-[44px] px-3.5 rounded-xl bg-hd-surface-container-low hover:bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md font-medium disabled:opacity-60 hd-appui">{c.t}</button>)}</div>}
   {p.erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{p.nettoyageIncomplet?l('L’enregistrement est déjà confirmé. Réessaie pour terminer la mise à jour.','The record is already confirmed. Retry to finish the update.'):l('Confirmation indisponible. Réessaie cette même déclaration quand tu peux.','Confirmation unavailable. Retry this same declaration when you can.')}</p>}
+  {valeur==='realisee'&&p.correction?.ouverte&&<div className="hd-apparait">{p.correction.contenu}</div>}
   {p.complement}
   {p.ignorer}
  </article>;
@@ -155,11 +174,15 @@ function CarteStitch(p:{ignorer?:ReactNode;complement?:ReactNode;en:boolean;cons
 export function DeclarationHabitude(props:ComponentProps<typeof CarteDeclarationHabitude>){
  const [etat,setEtat]=useState(props.etat);
  useEffect(()=>{setEtat(props.etat);},[props.etat]);
- function confirmer(e:EtatOccurrence){setEtat(e);props.onConfirme(e);}
+ const [corriger,setCorriger]=useState(false);
+ function confirmer(e:EtatOccurrence){setEtat(e);setCorriger(false);props.onConfirme(e);}
  let saisieEnAttente=true;
  try{saisieEnAttente=!!sessionStorage.getItem(cleSaisie(props.userId,props.occurrence.enrollment_id,props.occurrence.occurrence_id))||!!sessionStorage.getItem('seneve:habitudes:lecture:v1:'+props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id);}catch{/* correction indisponible si le stockage est illisible */}
  const ignorer=import.meta.env.VITE_HABITUDES_RELANCES==='true'&&!props.lectureSeule&&!props.horsLigne&&etat?.etat!=='realisee'&&<IgnorerRappelHabitude dansCarte key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} enrollmentId={props.occurrence.enrollment_id} activityId={props.occurrence.occurrence_id} langue={props.langue}/>;
+ const corrigeable=!props.lectureSeule&&!props.horsLigne&&!saisieEnAttente&&etat?.synchronisation==='synchronise'&&etat.etat==='realisee';
+ const cleCorrection=props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id;
+ // Carte « stitch » : plus de grande barre sous chaque activité faite ; on touche « Fait » pour corriger.
+ if(props.variante==='stitch')return <CarteDeclarationHabitude {...props} etat={etat} onConfirme={confirmer} ignorer={ignorer||undefined} correction={corrigeable?{ouverte:corriger,basculer:()=>setCorriger(v=>!v),contenu:<CorrectionRealisationHabitude key={cleCorrection} direct userId={props.userId} occurrence={props.occurrence} langue={props.langue} transport={props.transport} onConfirme={confirmer} onFermer={()=>setCorriger(false)}/>}:undefined}/>;
  return <><CarteDeclarationHabitude {...props} etat={etat} onConfirme={confirmer} ignorer={ignorer||undefined}/>
- {!props.lectureSeule&&!props.horsLigne&&!saisieEnAttente&&etat?.synchronisation==='synchronise'&&etat.etat==='realisee'&&
- <CorrectionRealisationHabitude key={props.userId+':'+props.occurrence.enrollment_id+':'+props.occurrence.occurrence_id} userId={props.userId} occurrence={props.occurrence} langue={props.langue} transport={props.transport} onConfirme={confirmer}/>}</>;
+ {corrigeable&&<CorrectionRealisationHabitude key={cleCorrection} userId={props.userId} occurrence={props.occurrence} langue={props.langue} transport={props.transport} onConfirme={confirmer}/>}</>;
 }

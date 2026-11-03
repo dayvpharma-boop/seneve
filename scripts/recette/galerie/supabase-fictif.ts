@@ -24,7 +24,8 @@ function choixRappels(nom:string,args:Record<string,unknown>){
  return {data:{inscrit:true,push_pret:true,actif:rappels.actif,habitudes:HABITUDES.map(([habit_key,libelle])=>({habit_key,libelle,recu:!rappels.coupees.includes(habit_key)})),fuseau:fuseauHoraires},error:null};
 }
 export const supabase:any={
- rpc:async(nom:string,args:Record<string,unknown>)=>nom.startsWith('hd_fidelite_')?compteur(nom,args):nom.startsWith('hd_rappels_')||nom==='hd_changer_fuseau'?choixRappels(nom,args):vide,
+ // Correction d'un « Fait » : la demande de confirmation s'affiche (rien n'est enregistré).
+ rpc:async(nom:string,args:Record<string,unknown>)=>nom==='hd_corriger_realisation'&&!args.p_confirmation?{data:{confirmation:'a'.repeat(32)},error:null}:nom.startsWith('hd_fidelite_')?compteur(nom,args):nom.startsWith('hd_rappels_')||nom==='hd_changer_fuseau'?choixRappels(nom,args):vide,
  // Choix « Ignorer les rappels pour aujourd'hui » : rien d'ignoré dans la galerie.
  from:(table:string)=>table==='hd_reminder_skips'?sansIgnore:table==='enrollments'&&location.hash.startsWith('#engagements')?inscriptions:chaine,
  auth:{getSession:async()=>({data:{session:null},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},
