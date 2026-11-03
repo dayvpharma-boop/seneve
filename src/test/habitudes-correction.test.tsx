@@ -10,16 +10,16 @@ beforeEach(()=>{sessionStorage.clear();vi.clearAllMocks();});
 afterEach(()=>{cleanup();vi.restoreAllMocks();});
 it('prépare sans changer Fait, permet de renoncer, puis attend la confirmation serveur',async()=>{
  render(<DeclarationHabitude {...props} variante="stitch"/>);
- fireEvent.click(screen.getByRole('button',{name:'Corriger ce « Fait »'}));
+ fireEvent.click(screen.getByRole('button',{name:'Fait — corriger'}));
  await screen.findByRole('button',{name:'Garder « Fait »'});expect(onConfirme).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'Garder « Fait »'}));expect(rpc).toHaveBeenCalledTimes(1);
- fireEvent.click(screen.getByRole('button',{name:'Corriger ce « Fait »'}));await screen.findByRole('button',{name:'Confirmer la correction'});
+ fireEvent.click(screen.getByRole('button',{name:'Fait — corriger'}));await screen.findByRole('button',{name:'Confirmer la correction'});
  let resolve!:(x:{data:unknown;error:unknown})=>void;rpc.mockImplementationOnce(()=>new Promise(r=>{resolve=r;}));
  fireEvent.click(screen.getByRole('button',{name:'Confirmer la correction'}));expect(onConfirme).not.toHaveBeenCalled();
  expect(screen.getByRole('button',{name:'Réessayer la correction'})).toBeDisabled();
  const p=rpc.mock.calls.at(-1)![1];resolve({data:{event_id:p.p_client_event_id,etat:'non_commencee',aide_demandee:false,repetition:false},error:null});
  await waitFor(()=>expect(onConfirme).toHaveBeenCalledWith(expect.objectContaining({etat:'non_commencee'})));
- expect(screen.queryByRole('button',{name:'Corriger ce « Fait »'})).toBeNull();
+ expect(screen.queryByRole('button',{name:'Fait — corriger'})).toBeNull();
  expect(await screen.findByRole('button',{name:'J’ai réalisé cette activité'})).toBeEnabled();
 });
 it('conserve la même demande après erreur et remontage',async()=>{

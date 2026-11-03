@@ -1,11 +1,13 @@
-import {useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import type {EtatOccurrence,OccurrenceHabitude} from '@/lib/habitudes';
 import type {TransportProgression} from '@/lib/habitudes-api';
 
 type Attente={eventId:string;confirmation:string};
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TOKEN=/^[0-9a-f]{32}$/;
-export function CorrectionRealisationHabitude({userId,occurrence,langue,transport,onConfirme}:{
+export function CorrectionRealisationHabitude({userId,occurrence,langue,transport,onConfirme,direct=false,onFermer}:{
+ /** Ouverte depuis la pastille « Fait » : la demande de confirmation s'affiche tout de suite. */
+ direct?:boolean;onFermer?:()=>void;
  userId:string;occurrence:OccurrenceHabitude;langue:string;transport:TransportProgression;onConfirme:(e:EtatOccurrence)=>void;
 }){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
@@ -25,6 +27,8 @@ export function CorrectionRealisationHabitude({userId,occurrence,langue,transpor
   }catch{setErreur(l('Impossible de préparer la correction. Actualise les activités et réessaie.','Unable to prepare this correction. Refresh activities and try again.'));}
   finally{setOccupe(false);}
  }
+ const lance=useRef(false);
+ useEffect(()=>{if(direct&&!attente&&!lance.current){lance.current=true;void preparer();}},[]); // eslint-disable-line react-hooks/exhaustive-deps
  async function confirmer(){
   if(occupe||!confirmation)return;setOccupe(true);setErreur(null);
   try{
@@ -44,13 +48,15 @@ export function CorrectionRealisationHabitude({userId,occurrence,langue,transpor
   }catch{setErreur(l('Correction non confirmée. Réessaie la même demande ; si l’activité a changé, actualise les activités.','Correction not confirmed. Retry this request; if the activity changed, refresh activities.'));}
   finally{setOccupe(false);}
  }
- const style='min-h-[44px] px-3 rounded-xl font-hd-label-md text-hd-label-md bg-hd-surface-container text-hd-on-surface disabled:opacity-60';
+ const style='min-h-[44px] px-3 rounded-xl font-hd-label-md text-hd-label-md bg-hd-surface-container text-hd-on-surface disabled:opacity-60 hd-appui';
+ // Lien discret plutôt qu'une grande barre sous chaque activité faite (03/11/2026).
+ const discret='self-start min-h-[44px] px-1 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant underline underline-offset-4 decoration-hd-outline/50 disabled:opacity-60 hd-appui';
  return <div aria-busy={occupe} className="flex flex-col gap-2 mt-1">
-  {!confirmation?<button type="button" disabled={occupe||conflit} className={style} onClick={()=>void preparer()}>{l('Corriger ce « Fait »','Correct this completion')}</button>:<div role="group" aria-label={l('Corriger une réalisation','Correct a completion')} className="p-3 rounded-xl bg-hd-surface-container-low flex flex-col gap-2">
+  {!confirmation?(direct&&!erreur&&!conflit?<p role="status" className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Préparation de la correction…','Preparing the correction…')}</p>:<button type="button" disabled={occupe||conflit} className={discret} onClick={()=>void preparer()}>{l('Corriger ce « Fait »','Correct this completion')}</button>):<div role="group" aria-label={l('Corriger une réalisation','Correct a completion')} className="p-3 rounded-xl bg-hd-surface-container-low flex flex-col gap-2">
    <p className="font-hd-body-sm text-hd-body-sm">{l('Tu as appuyé sur « Fait » par erreur ? Confirme pour remettre cette activité à « À faire ». Sa durée de lecture éventuelle sera retirée des bilans.','Marked this done by mistake? Confirm to mark this activity as not done. Any recorded reading time will be removed from summaries.')}</p>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={occupe} className={style} onClick={()=>void confirmer()}>{attente?l('Réessayer la correction','Retry correction'):l('Confirmer la correction','Confirm correction')}</button>
-    {!attente&&<button type="button" disabled={occupe} className={style} onClick={()=>{setConfirmation(null);setErreur(null);}}>{l('Garder « Fait »','Keep completed')}</button>}
+    {!attente&&<button type="button" disabled={occupe} className={style} onClick={()=>{setConfirmation(null);setErreur(null);onFermer?.();}}>{l('Garder « Fait »','Keep completed')}</button>}
    </div>
   </div>}
   {erreur&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-error">{erreur}</p>}

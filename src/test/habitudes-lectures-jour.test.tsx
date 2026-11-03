@@ -73,7 +73,7 @@ it('une correction dans le panneau retire aussi la durée affichée',async()=>{
  mocks.rpc.mockImplementation((n,p)=>n==='hd_corriger_realisation'?Promise.resolve(p.p_confirmation?{data:{event_id:p.p_client_event_id,etat:'non_commencee',aide_demandee:false,repetition:false},error:null}:{data:{confirmation:'a'.repeat(32)},error:null}):normal(n,p));
  ouvrir();fireEvent.click(await screen.findByRole('button',{name:'Lectures du jour'}));
  const d=screen.getByRole('dialog');await within(d).findByText('30 min');
- fireEvent.click(within(d).getByRole('button',{name:'Corriger ce « Fait »'}));await within(d).findByRole('button',{name:'Confirmer la correction'});
+ fireEvent.click(within(d).getByRole('button',{name:'Fait — corriger'}));await within(d).findByRole('button',{name:'Confirmer la correction'});
  fireEvent.click(within(d).getByRole('button',{name:'Confirmer la correction'}));
  await within(d).findByText('0 sur 5 réalisées');expect(within(d).queryByText('30 min')).toBeNull();expect(screen.getByRole('progressbar')).toHaveAttribute('value','0');
 });

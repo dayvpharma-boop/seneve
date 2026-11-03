@@ -24,8 +24,8 @@ export function prochaineDime(config:ConfigurationHoraires,participantId:string,
 export function MaDimeHabitudes({enrollmentId,participantId,dateLocale,langue,lienReglages}:{enrollmentId:string;participantId:string;dateLocale:string;langue:string;lienReglages:string}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [ouvert,setOuvert]=useState(false);
- return <details className="mb-hd-space-lg rounded-2xl bg-hd-surface-container-lowest p-hd-space-md shadow-sm" onToggle={e=>setOuvert(e.currentTarget.open)}>
-  <summary className="min-h-[48px] cursor-pointer flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="volunteer_activism" className="text-[20px] text-hd-secondary"/>{l('Ma dîme','My tithe')}</summary>
+ return <details className="hd-volet mb-hd-space-lg rounded-2xl bg-hd-surface-container-lowest p-hd-space-md shadow-sm" onToggle={e=>setOuvert(e.currentTarget.open)}>
+  <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[48px] cursor-pointer flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="volunteer_activism" className="text-[20px] text-hd-secondary"/><span className="flex-1">{l('Ma dîme','My tithe')}</span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-on-surface-variant"/></summary>
   {ouvert&&<ContenuDime key={enrollmentId+dateLocale} {...{enrollmentId,participantId,dateLocale,langue,lienReglages}}/>}
  </details>;
 }
