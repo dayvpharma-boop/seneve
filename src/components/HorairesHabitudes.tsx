@@ -2,6 +2,7 @@ import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
 import {chargerHorairesHabitudes,enregistrerHorairesHabitudes,reglerRythmeDime,type ConfigurationHoraires,type CreneauPersonnel,type DemandeHoraires} from '@/lib/habitudes-horaires-api';
 import type {ModelePlanningHabitude,RythmeDime} from '@/lib/habitudes-planning';
 import {ChoixRythmeDime} from './ChoixRythmeDime';
+import {creneauxDepuisJours,heuresDifferentes,heuresParJour} from '@/lib/habitudes-heures-jour';
 import {creneauxRespectentFrequence} from '@/lib/habitudes-creneaux';
 import './HorairesHabitudes.css';
 
@@ -49,13 +50,14 @@ function FormulaireHoraire({modele,data,langue,confirmation,onEnregistre}:{model
  const changer=(i:number,p:Partial<CreneauPersonnel>)=>setCreneaux(cs=>cs.map((c,k)=>k===i?{...c,...p}:c));
  return <details open={confirmation?true:undefined}><summary>{modele.libelle}</summary><form onSubmit={e=>void soumettre(e)}>
   {modele.habit_key==='dime'&&<p>{l('Choisis un ou plusieurs jours, par exemple tes jours de culte.','Choose one or more days, for example your worship days.')}</p>}
+  {!modele.habit_key.startsWith('culte_')?<HeuresParJourHabitude modele={modele} creneaux={creneaux} onChange={setCreneaux} langue={langue} desactive={occupe||enAttente}/>:
   <fieldset disabled={occupe||enAttente}><legend>{l('Créneaux de la semaine','Weekly time slots')}</legend>
    {creneaux.map((c,i)=><div className="hd-horaire-creneau" key={c.creneau_id}><label>{l(`Heure du créneau ${i+1}`,`Time for slot ${i+1}`)}<input type="time" required value={c.heure_locale} onChange={e=>changer(i,{heure_locale:e.target.value})}/></label>
     <fieldset><legend>{l(`Jours du créneau ${i+1}`,`Days for slot ${i+1}`)}</legend><div className="hd-horaire-jours">{jours.map((j,k)=><label key={j}><input type="checkbox" checked={c.jours_iso.includes(k+1)} onChange={e=>changer(i,{jours_iso:e.target.checked?[...c.jours_iso,k+1].sort((a,b)=>a-b):c.jours_iso.filter(n=>n!==k+1)})}/>{j}</label>)}</div></fieldset>
     {creneaux.length>1&&<button type="button" className="oa-secondary" onClick={()=>setCreneaux(cs=>cs.filter((_,k)=>k!==i))}>{l(`Retirer le créneau ${i+1}`,`Remove slot ${i+1}`)}</button>}
    </div>)}
    {creneaux.length<Math.min(7,modele.jours_iso.length)&&<button type="button" className="oa-secondary" onClick={()=>setCreneaux(cs=>[...cs,{creneau_id:'c_'+crypto.randomUUID().replaceAll('-','').slice(0,16),heure_locale:'',jours_iso:[]}])}>{l('Ajouter un créneau','Add a time slot')}</button>}
-  </fieldset>
+  </fieldset>}
   {erreur&&<p role="alert">{erreur}</p>}<button type="submit" className="oa-primary" disabled={occupe}>{occupe?l('Enregistrement…','Saving…'):enAttente?l('Réessayer l’enregistrement','Retry saving'):l('Enregistrer pour demain','Save for tomorrow')}</button>
   {confirmation&&<p role="status" className="hd-horaire-confirme">✓ {confirmation}</p>}
  </form></details>;
@@ -73,4 +75,22 @@ function RythmeDimeHoraires({actuel,langue,onEnregistre}:{actuel:RythmeDime;lang
   <p>{l('Le jour de la semaine et l’heure se règlent dans « Dîme » ci-dessus ; pour un salaire, seule l’heure est utilisée.','The weekday and time are set in “Tithe” above; for a salary, only the time is used.')}</p>
   {erreur&&<p role="alert">{erreur}</p>}<button type="submit" className="oa-primary" disabled={occupe||!change}>{occupe?l('Enregistrement…','Saving…'):l('Enregistrer le rythme','Save the rhythm')}</button>
  </form></details>;
+}
+/** Habitudes hors cultes (03/11/2026) : une heure commune, ou une heure différente pour chaque jour.
+ * Les jours ne se choisissent que pour la dîme ; les autres habitudes gardent les jours de leur modèle. */
+function HeuresParJourHabitude({modele,creneaux,onChange,langue,desactive}:{modele:ModelePlanningHabitude;creneaux:CreneauPersonnel[];onChange:(c:CreneauPersonnel[])=>void;langue:string;desactive:boolean}){
+ const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
+ const noms=en?['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']:['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+ const courts=en?['Mon','Tue','Wed','Thu','Fri','Sat','Sun']:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+ const heures=heuresParJour(creneaux);
+ const [parJour,setParJour]=useState(()=>heuresDifferentes(creneaux));
+ const premiere=[...heures.values()][0]??modele.heure_proposee?.slice(0,5)??'';
+ const choixJours=modele.habit_key==='dime';
+ const appliquer=(m:Map<number,string>,p=parJour)=>onChange(creneauxDepuisJours(m,p));
+ return <fieldset disabled={desactive}><legend>{l('Jours et heures','Days and times')}</legend>
+  {choixJours&&<fieldset><legend>{l('Jours','Days')}</legend><div className="hd-horaire-jours">{courts.map((j,k)=><label key={j}><input type="checkbox" checked={heures.has(k+1)} onChange={e=>{const m=new Map(heures);if(e.target.checked)m.set(k+1,premiere);else m.delete(k+1);appliquer(m);}}/>{j}</label>)}</div></fieldset>}
+  <label className="hd-horaire-parjour"><input type="checkbox" checked={parJour} onChange={e=>{setParJour(e.target.checked);appliquer(new Map([...heures].map(([j])=>[j,e.target.checked?(heures.get(j)??premiere):premiere])),e.target.checked);}}/>{l('Une heure différente selon le jour','A different time for each day')}</label>
+  {parJour?<div className="hd-horaire-jourliste">{[...heures].map(([j,h])=><label key={j}>{noms[j-1]}<input type="time" required value={h} onChange={e=>{const m=new Map(heures);m.set(j,e.target.value);appliquer(m);}}/></label>)}</div>
+   :<label>{l('Heure','Time')}{heures.size>0&&<span className="hd-horaire-resume"> — {[...heures.keys()].map(j=>courts[j-1]).join(', ')}</span>}<input type="time" required value={premiere} onChange={e=>appliquer(new Map([...heures.keys()].map(j=>[j,e.target.value])))}/></label>}
+ </fieldset>;
 }
