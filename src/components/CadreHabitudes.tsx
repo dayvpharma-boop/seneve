@@ -1,3 +1,4 @@
+import {retourPrecedent} from '@/lib/retour-precedent';
 import type {ReactNode} from 'react';
 import {Link} from 'react-router-dom';
 import {IconeHD} from './IconeHabitudes';
@@ -21,14 +22,14 @@ export function CadreHabitudes({titre,langue,actif,liens={},retour,retourLibelle
  return <div className="hd-ecran hd-stitch bg-hd-surface text-hd-on-surface antialiased flex flex-col min-h-screen font-hd-body-md">
   {sousTitreCentre?<header className="sticky top-0 inset-x-0 z-40 bg-hd-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(29,28,19,0.04)] pt-safe">
    <div className="h-20 px-hd-margin grid grid-cols-[auto_1fr_auto] items-center gap-2">
-    <div className="flex items-center gap-hd-space-xs">{retour&&<Link to={retour} aria-label={retourLibelle??(en?'Back':'Retour')} className="w-11 h-11 -ml-1 rounded-xl flex items-center justify-center text-hd-on-surface hover:bg-hd-surface-container/60 transition-colors"><IconeHD nom="arrow_back_ios_new" className="text-[22px]"/></Link>}<img alt="" className="h-8 w-8 object-contain rounded-lg" src={`${import.meta.env.BASE_URL}icons/icon.svg`}/></div>
+    <div className="flex items-center gap-hd-space-xs">{retour&&<Link onClick={retourPrecedent} to={retour} aria-label={retourLibelle??(en?'Back':'Retour')} className="w-11 h-11 -ml-1 rounded-xl flex items-center justify-center text-hd-on-surface hover:bg-hd-surface-container/60 transition-colors"><IconeHD nom="arrow_back_ios_new" className="text-[22px]"/></Link>}<img alt="" className="h-8 w-8 object-contain rounded-lg" src={`${import.meta.env.BASE_URL}icons/icon.svg`}/></div>
     <div className="flex flex-col items-center justify-center text-center min-w-0"><span className="font-hd-headline-md text-hd-headline-sm tracking-wide text-hd-on-surface leading-none">{titre}</span><span className="font-hd-label-sm text-hd-label-sm uppercase tracking-wider text-hd-secondary mt-1">{sousTitreCentre}</span></div>
     <div className="flex items-center justify-end min-w-11">{droite??<div className="flex items-center gap-1">{cloche&&<ClocheNotifications langue={langue} className="cloche-hd"/>}<div className="w-8 h-8 rounded-full bg-hd-primary flex items-center justify-center shadow-[0_2px_6px_rgba(88,68,0,0.18)]"><IconeHD nom="person" className="text-hd-on-primary text-[18px]"/></div></div>}</div>
    </div>
   </header>:<header className="sticky top-0 w-full z-40 pt-safe bg-hd-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(29,28,19,0.04)]">
    <div className="h-14 px-hd-margin flex items-center justify-between">
     <div className="flex items-center gap-hd-space-sm min-w-0">
-     {retour?<><Link to={retour} aria-label={retourLibelle??(en?'Back':'Retour')} className="w-11 h-11 flex items-center justify-center -ml-2 text-hd-on-surface hover:text-hd-primary-container transition-colors"><IconeHD nom="arrow_back" className="text-[22px]"/></Link><img alt="" className="h-8 w-8 object-contain rounded-lg" src={`${import.meta.env.BASE_URL}icons/icon.svg`}/></>
+     {retour?<><Link onClick={retourPrecedent} to={retour} aria-label={retourLibelle??(en?'Back':'Retour')} className="w-11 h-11 flex items-center justify-center -ml-2 text-hd-on-surface hover:text-hd-primary-container transition-colors"><IconeHD nom="arrow_back" className="text-[22px]"/></Link><img alt="" className="h-8 w-8 object-contain rounded-lg" src={`${import.meta.env.BASE_URL}icons/icon.svg`}/></>
       :<img alt="" className="h-8 w-8 object-contain rounded-lg" src={`${import.meta.env.BASE_URL}icons/icon.svg`}/>}
      <div className="flex flex-col min-w-0">
       <span className="font-hd-label-sm text-hd-label-sm uppercase tracking-wider text-hd-secondary">SÉNEVÉ</span>

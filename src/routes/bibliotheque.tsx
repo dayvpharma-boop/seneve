@@ -1,3 +1,4 @@
+import {retourPrecedent} from '@/lib/retour-precedent';
 import './bibliotheque-moderne.css';
 import './fiche-livre.css';
 import './livre-audio.css';
@@ -29,7 +30,7 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
  const formatNom=format==='audio'?(en?'Audiobook':'Livre audio'):(en?'Digital book · PDF':'Livre numérique · PDF');
  return <main className={detail?`bl-page bl-fiche${format==='audio'?' bl-audio':format==='pdf'?' bl-pdf':''}`:'bl-page'}>
   <header className="bl-header">
-   {detail?<Link to={`/bibliotheque${suffixe}`} aria-label={en?'Back to library':'Revenir à la bibliothèque'}><I nom="arrow_back"/></Link>:<img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt=""/>}
+   {detail?<Link onClick={retourPrecedent} to={`/bibliotheque${suffixe}`} aria-label={en?'Back to library':'Revenir à la bibliothèque'}><I nom="arrow_back"/></Link>:<img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt=""/>}
    <div><span>SÉNEVÉ</span><strong>{format?(format==='audio'?(en?'Audiobook':'Livre audio'):(en?'Digital book · PDF':'Livre numérique · PDF')):detail?(en?'The book':'Le livre'):(en?'Library':'Bibliothèque')}</strong></div>
    <Link className="bl-profil" to={`/profil${suffixe}`} aria-label={en?'My profile':'Mon profil'}><AvatarParticipant><I nom="person" taille={22}/></AvatarParticipant></Link>
   </header>
