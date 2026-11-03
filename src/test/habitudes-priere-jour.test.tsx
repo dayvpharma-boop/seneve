@@ -19,3 +19,15 @@ it('le lecteur de midi ne déclare ni le matin ni le soir et met à jour la jour
  expect(within(screen.getByRole('article',{name:'Prière du matin'})).getByRole('status')).toHaveTextContent('Pas encore enregistrée');
  expect(within(screen.getByRole('article',{name:'Prière du soir'})).getByRole('status')).toHaveTextContent('Pas encore enregistrée');
 });
+it('un rappel touché (#hd-activite-…) ouvre directement le lecteur de la prière concernée (03/11/2026)',async()=>{
+ const actions=['matin','midi','soir'].map((m,i)=>({occurrence:{...occurrence,occurrence_id:`30000000-0000-4000-8000-00000000000${i+1}`},habit_key:`priere_${m}`,consigne:m==='midi'?'Prière de midi':m==='soir'?'Prière du soir':'Prière du matin',critere:null,heure:['06:00','13:10','21:10'][i]!}));
+ mocks.charger.mockResolvedValue({...jour,activites:actions});
+ window.history.replaceState(null,'','/habitudes/aujourdhui#hd-activite-30000000-0000-4000-8000-000000000002');
+ try{ouvrir();expect(await screen.findByRole('dialog',{name:'Prière de midi'})).toBeInTheDocument();expect(screen.queryByRole('dialog',{name:'Prière du matin'})).toBeNull();}
+ finally{window.history.replaceState(null,'','/');}
+});
+it('sans rappel dans l’adresse, aucun lecteur ne s’ouvre tout seul',async()=>{
+ const actions=[{occurrence,habit_key:'priere_midi',consigne:'Prière de midi',critere:null,heure:'13:10'}];
+ mocks.charger.mockResolvedValue({...jour,activites:actions});ouvrir();
+ await screen.findByRole('button',{name:'Lire et prier — midi'});expect(screen.queryByRole('dialog')).toBeNull();
+});

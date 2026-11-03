@@ -3,7 +3,7 @@ import {CultesSemaineHabitudes} from './CultesSemaineHabitudes';
 import {MaDimeHabitudes} from './MaDimeHabitudes';
 import {LecteurPriereHabitudes,momentPriere} from './LecteurPriereHabitudes';
 import {LecturesJourHabitudes,estLectureHabitudes} from './LecturesJourHabitudes';
-import {useEffect,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {chargerJourRecette,type JourRecette} from '@/lib/habitudes-jour-recette';
 import {bilanHabitudes,type EtatOccurrence} from '@/lib/habitudes';
 import {supabase} from '@/lib/supabase';
@@ -48,6 +48,26 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  useEffect(()=>{if(copie||lecture?.cle!==cle)return;enregistrerCopieJourHd(lecture.data.userId,{enrollmentId,participantId,dateLocale,fuseau,finExclue,data:lecture.data});},[lecture,copie,cle,enrollmentId,participantId,dateLocale,fuseau,finExclue]);
  useEffect(()=>{const t=window.setInterval(()=>setMaintenant(Date.now()),60000);return()=>window.clearInterval(t);},[]);
  const data=lecture?.cle===cle?lecture.data:null;
+ // Demande de Dr Justin (03/11/2026) : un rappel touché (#hd-activite-<id>) ouvre directement son activité :
+ // la prière dans son lecteur, la Bible dans la lecture du jour, sinon la carte de l'activité, mise en évidence.
+ const cibleOuverte=useRef<string|null>(null);
+ useEffect(()=>{
+  if(!data)return;
+  const m=/^#hd-activite-([0-9a-f-]{36})$/i.exec(window.location.hash);
+  if(!m||cibleOuverte.current===m[1])return;
+  const id=m[1]!,a=data.activites.find(x=>x.occurrence.occurrence_id===id);
+  if(!a)return;
+  cibleOuverte.current=id;
+  if(momentPriere(a.habit_key))setPriereId(id);
+  else if(!horsLigne&&estLectureHabitudes(a.habit_key)){setLectureInitialeId(id);setLecturesOuvertes(true);}
+  const t=window.setTimeout(()=>{
+   const el=document.getElementById(`hd-activite-${id}`);if(!el)return;
+   el.scrollIntoView?.({block:'center'});
+   el.style.outline='3px solid #c9a84c';el.style.outlineOffset='4px';el.style.borderRadius='16px';
+   window.setTimeout(()=>{el.style.outline='';el.style.outlineOffset='';},4000);
+  },50);
+  return()=>window.clearTimeout(t);
+ },[data,horsLigne]);
  const bilan=data?bilanHabitudes({enrollment_id:enrollmentId,version:1,date_locale:dateLocale},data.activites.map(a=>a.occurrence),data.activites.flatMap(a=>a.etat?[a.etat]:[])):null;
  function confirmer(etat:EtatOccurrence){setRevision(n=>n+1);setLecture(ancien=>ancien?.cle===cle?{...ancien,data:{...ancien.data,activites:ancien.data.activites.map(a=>a.occurrence.occurrence_id===etat.occurrence_id?{...a,etat}:a)}}:ancien);}
  if(erreur)return <section className="hd-jour-stitch px-hd-margin py-hd-space-md flex flex-col gap-hd-space-md" aria-label={l('Mes activités quotidiennes','My daily activities')}>
