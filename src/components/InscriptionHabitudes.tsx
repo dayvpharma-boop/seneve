@@ -4,6 +4,7 @@ import {creneauxRespectentFrequence} from '@/lib/habitudes-creneaux';
 import {SemaineAvantInscription} from '@/components/SemaineAvantInscription';
 import './HorairesHabitudes.css';
 import {IconeHD} from './IconeHabitudes';
+import {ENGAGEMENTS,ETAPES} from '@/lib/habitudes-engagements';
 
 // Le parent doit fournir le catalogue autorisé par le serveur, jamais une offre de démonstration.
 // La clé inclut le compte pour ne pas réutiliser un formulaire après un changement de session.
@@ -15,13 +16,15 @@ export function InscriptionHabitudes({configuration}:{configuration:Configuratio
 function FormulaireInscription({configuration:c}:{configuration:ConfigurationInscriptionHabitudes}){
  const en=c.langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [planning,setPlanning]=useState(()=>c.planning.map(h=>({...h,creneaux:h.creneaux.map(s=>({...s,jours_iso:[...s.jours_iso]}))})));
+ // Demande de Dr Justin (03/11/2026) : lire les engagements, puis les accepter, avant de pouvoir s'inscrire.
+ const [engagementsLus,setEngagementsLus]=useState(false),[engagementsAcceptes,setEngagementsAcceptes]=useState(false);
  const [accord,setAccord]=useState(false),[occupe,setOccupe]=useState(false),[attente,setAttente]=useState(false),[erreur,setErreur]=useState(''),[resultat,setResultat]=useState<ResultatInscription|null>(null),[refus,setRefus]=useState(false);
  const verrou=useRef(false),demande=useRef<DemandeInscription|null>(null);
  const jours=en?['Mon','Tue','Wed','Thu','Fri','Sat','Sun']:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
  const frequence=(i:number)=>c.planning[i]!.creneaux.reduce((n,s)=>n+s.jours_iso.length,0);
  function modifier(i:number,creneaux:PlanningInscription[number]['creneaux']){setAccord(false);setErreur('');setPlanning(p=>p.map((h,n)=>n===i?{...h,creneaux}:h));}
  async function soumettre(e:FormEvent){
-  e.preventDefault();if(verrou.current||resultat||refus||!accord)return;
+  e.preventDefault();if(verrou.current||resultat||refus||!accord||!engagementsAcceptes)return;
   if(!demande.current){
    if(!planning.length||planning.some((h,i)=>!creneauxRespectentFrequence(h.habit_key,h.creneaux,frequence(i)))){setErreur(l('Vérifie les jours et les heures : conserve la fréquence proposée pour chaque habitude.','Check days and times: keep the suggested frequency for each habit.'));return;}
    demande.current={p_programme_id:c.programmeId,p_version:c.version,p_langue:c.langue,p_offre_id:c.offreId,p_confirmation:true,p_horaires:planning.map(h=>({habit_key:h.habit_key,creneaux:h.creneaux.map(s=>({...s,jours_iso:[...s.jours_iso]}))}))};
@@ -88,11 +91,21 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
     </details>}
     <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant flex items-start gap-1.5 mb-4"><IconeHD nom="notifications_off" className="text-[16px] text-hd-outline mt-0.5"/>{l('Adapte les jours et les heures à ton rythme. Ces horaires n’activent aucun rappel.','Adjust days and times to your rhythm. These times do not enable reminders.')}</p>
     <div className="mb-4"><SemaineAvantInscription planning={planning} frequences={Object.fromEntries(c.planning.map((h,i)=>[h.habit_key,frequence(i)]))} fuseau={c.fuseau} langue={c.langue}/></div>
+    <details className="group bg-hd-surface-container-lowest rounded-2xl shadow-[0_2px_10px_rgba(29,28,19,0.04)] mb-3" onToggle={e=>{if(e.currentTarget.open)setEngagementsLus(true);}}>
+     <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer p-4 min-h-[44px] flex items-center justify-between gap-2"><span className="flex items-center gap-2.5"><span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center"><IconeHD nom="spa" className="text-[18px]"/></span><span className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Lire mes engagements','Read my commitments')}</span></span><IconeHD nom="chevron_right" className="text-[20px] text-hd-secondary transition-transform rotate-90 group-open:-rotate-90"/></summary>
+     <div className="px-4 pb-4 flex flex-col gap-3">
+      <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Des repères posés devant Dieu pour garder le cœur libre et la conscience paisible. En t’inscrivant, tu t’engages à les respecter.','Markers set before God to keep a free heart and a peaceful conscience. By enrolling, you commit to keeping them.')}</p>
+      <ul className="flex flex-col gap-2">{ENGAGEMENTS.map(x=><li key={x.icone} className="bg-hd-surface-container-low rounded-xl p-3 flex items-start gap-3"><IconeHD nom={x.icone} className="text-[18px] text-hd-secondary mt-0.5 shrink-0"/><span className="flex flex-col"><span className="font-hd-label-lg text-hd-label-lg text-hd-on-surface">{(en?x.en:x.fr)[0]}</span><span className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{(en?x.en:x.fr)[1]}</span></span></li>)}</ul>
+      <p className="font-hd-label-md text-hd-label-md text-hd-on-surface">{l('Si je manque à un engagement','If I fall short of a commitment')}</p>
+      <ol className="flex flex-col gap-2 pl-1">{ETAPES.map((x,i)=><li key={x.icone} className="flex items-start gap-2.5"><span className="w-6 h-6 rounded-full bg-hd-surface-container-high flex items-center justify-center text-hd-secondary shrink-0 text-xs font-hd-label-sm">{i+1}</span><span className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant"><span className="text-hd-on-surface font-medium">{(en?x.en:x.fr)[0]}</span> · {(en?x.en:x.fr)[1]}</span></li>)}</ol>
+     </div>
+    </details>
+    <label className={`flex items-start gap-3 p-3.5 mb-3 rounded-xl bg-hd-secondary-container/30 min-h-[44px] ${engagementsLus?'cursor-pointer':'opacity-70'}`}><input type="checkbox" className="mt-0.5 w-5 h-5 accent-hd-secondary shrink-0" disabled={!engagementsLus} checked={engagementsAcceptes} onChange={e=>setEngagementsAcceptes(e.target.checked)}/><span className="flex flex-col gap-0.5"><span className="font-hd-body-sm text-hd-body-sm text-hd-on-surface">{l('J’ai lu mes engagements et je m’engage à les respecter.','I have read my commitments and I commit to keeping them.')}</span>{!engagementsLus&&<span className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Ouvre d’abord « Lire mes engagements ».','First open “Read my commitments”.')}</span>}</span></label>
     <label className="flex items-start gap-3 p-3.5 rounded-xl bg-hd-secondary-container/30 cursor-pointer min-h-[44px]"><input type="checkbox" className="mt-0.5 w-5 h-5 accent-hd-secondary shrink-0" checked={accord} onChange={e=>setAccord(e.target.checked)}/><span className="font-hd-body-sm text-hd-body-sm text-hd-on-surface">{l('Je confirme mon inscription aux 30 jours gratuits à partir de maintenant.','I confirm my enrollment in the 30 free days starting now.')}</span></label>
    </fieldset>
    {erreur&&<p role="alert" className="mt-3 font-hd-body-sm text-hd-body-sm text-hd-error">{erreur}</p>}
    <div className="sticky bottom-0 -mx-hd-margin px-hd-margin pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] mt-4 bg-gradient-to-t from-hd-surface via-hd-surface/95 to-transparent">
-    <button type="submit" className={bouton} disabled={!accord||occupe||refus}>{occupe?l('Vérification…','Checking…'):attente?l('Vérifier mon inscription','Verify my enrollment'):l('Commencer mes 30 jours gratuits','Start my 30 free days')}<IconeHD nom="arrow_forward" className="text-[20px]"/></button>
+    <button type="submit" className={bouton} disabled={!accord||!engagementsAcceptes||occupe||refus}>{occupe?l('Vérification…','Checking…'):attente?l('Vérifier mon inscription','Verify my enrollment'):l('Commencer mes 30 jours gratuits','Start my 30 free days')}<IconeHD nom="arrow_forward" className="text-[20px]"/></button>
    </div>
   </form>}
  </section>;
