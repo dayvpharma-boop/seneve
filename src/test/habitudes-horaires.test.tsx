@@ -53,3 +53,30 @@ it('dîme : plusieurs jours de la semaine (mercredi, vendredi, dimanche) et conf
   expect(mock.appels[0]).toMatchObject({p_habit_key:'dime',p_creneaux:[{heure_locale:'12:00',jours_iso:[3,5,7]}]});
  }finally{configuration.modeles.pop();}
 });
+it('heure différente selon le jour : dîme mercredi 16:00, vendredi 08:00, dimanche 12:00 (03/11/2026)',async()=>{
+ const dime={module_id:'HABITUDES_DEFIS',version:1,langue:'fr',habit_key:'dime',libelle:'Dîme',heure_proposee:'12:00:00',jours_iso:[7]};
+ configuration.modeles.push(dime);
+ try{
+  render(<HorairesHabitudes enrollmentId="EF" langue="fr"/>);const d=(await screen.findByText('Dîme')).closest('details')!;d.open=true;const dans=within(d);
+  fireEvent.click(dans.getByLabelText('Mer'));fireEvent.click(dans.getByLabelText('Ven'));
+  fireEvent.click(dans.getByLabelText('Une heure différente selon le jour'));
+  fireEvent.change(dans.getByLabelText('Mercredi'),{target:{value:'16:00'}});fireEvent.change(dans.getByLabelText('Vendredi'),{target:{value:'08:00'}});
+  fireEvent.click(dans.getByRole('button',{name:'Enregistrer pour demain'}));
+  await screen.findByText('✓ Enregistré : Mer à 16:00 · Ven à 08:00 · Dim à 12:00. Appliqué à partir du mardi 27 octobre.');
+  expect(mock.appels[0]).toMatchObject({p_habit_key:'dime',p_creneaux:[{creneau_id:'jour_3',heure_locale:'16:00',jours_iso:[3]},{creneau_id:'jour_5',heure_locale:'08:00',jours_iso:[5]},{creneau_id:'jour_7',heure_locale:'12:00',jours_iso:[7]}]});
+ }finally{configuration.modeles.pop();}
+});
+it('heure différente selon le jour pour une habitude quotidienne : les 7 jours restent, chacun avec son heure',async()=>{
+ const priere={module_id:'HABITUDES_DEFIS',version:1,langue:'fr',habit_key:'priere_matin',libelle:'Prière du matin',heure_proposee:'06:00:00',jours_iso:[1,2,3,4,5,6,7]};
+ configuration.modeles.push(priere);
+ try{
+  render(<HorairesHabitudes enrollmentId="EF" langue="fr"/>);const d=(await screen.findByText('Prière du matin')).closest('details')!;d.open=true;const dans=within(d);
+  expect(dans.queryByLabelText('Mer')).toBeNull();
+  fireEvent.click(dans.getByLabelText('Une heure différente selon le jour'));
+  fireEvent.change(dans.getByLabelText('Lundi'),{target:{value:'16:00'}});fireEvent.change(dans.getByLabelText('Mardi'),{target:{value:'09:00'}});
+  fireEvent.click(dans.getByRole('button',{name:'Enregistrer pour demain'}));
+  await screen.findByText(/✓ Enregistré : Lun à 16:00 · Mar à 09:00 · Mer à 06:00/);
+  const c=(mock.appels[0] as {p_creneaux:{jours_iso:number[];heure_locale:string}[]}).p_creneaux;
+  expect(c).toHaveLength(7);expect(c.flatMap(x=>x.jours_iso)).toEqual([1,2,3,4,5,6,7]);
+ }finally{configuration.modeles.pop();}
+});

@@ -4,3 +4,4 @@
 
 .hd-horaire-confirme{margin:.75rem 0 0;padding:.75rem 1rem;border-radius:10px;background:#e7f4ea;color:#1f5130;font-weight:500}
 :root[data-apparence="sombre"] .hd-horaire-confirme{background:#1f3326;color:#b9e5c4}
+.hd-horaire-parjour{display:flex;align-items:center;gap:.6rem;min-height:44px;margin:.75rem 0;cursor:pointer}.hd-horaire-parjour input{width:20px;height:20px}.hd-horaire-jourliste{display:grid;gap:.5rem}.hd-horaire-jourliste label{display:grid;grid-template-columns:minmax(6rem,1fr) 2fr;align-items:center;gap:.75rem}.hd-horaire-jourliste input[type=time]{margin-top:0}.hd-horaire-resume{opacity:.75}
