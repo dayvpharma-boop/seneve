@@ -1,6 +1,6 @@
 import {GarderLangue} from '@/components/GarderLangue';
 import {cleanup,fireEvent,render,screen,within,waitFor} from '@testing-library/react';
-import {MemoryRouter} from 'react-router-dom';
+import {MemoryRouter,Route,Routes} from 'react-router-dom';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {Habitudes} from '@/routes/habitudes';
 beforeEach(()=>{vi.stubEnv('VITE_HABITUDES_DEFIS','false');vi.stubEnv('VITE_HABITUDES_INSCRIPTION','fermee');});
@@ -76,4 +76,10 @@ it('le choix Français prime sur la conservation globale de l’anglais',async()
 it('la couverture « De la graine à l’arbre » suit la langue de la page',()=>{
  render(<MemoryRouter><Habitudes/></MemoryRouter>);expect(screen.getByRole('img',{name:/^Couverture De la graine à l’arbre/})).toHaveAttribute('src',expect.stringContaining('illustrations/couverture-habitudes-fr-v1-683.webp'));cleanup();
  render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><Habitudes/></MemoryRouter>);expect(screen.getByRole('img',{name:/^Cover From seed to tree/})).toHaveAttribute('src',expect.stringContaining('illustrations/couverture-habitudes-en-v1-683.webp'));
+});
+it('le bouton retour ramène à la page précédente, ou à la bibliothèque depuis un lien partagé',()=>{
+ render(<MemoryRouter initialEntries={['/bibliotheque','/habitudes']} initialIndex={1}><Routes><Route path="/bibliotheque" element={<p>Page bibliothèque</p>}/><Route path="/habitudes" element={<Habitudes/>}/></Routes></MemoryRouter>);
+ fireEvent.click(screen.getByRole('button',{name:'Revenir à la page précédente'}));expect(screen.getByText('Page bibliothèque')).toBeVisible();cleanup();
+ render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><Routes><Route path="/bibliotheque" element={<p>Library page</p>}/><Route path="/habitudes" element={<Habitudes/>}/></Routes></MemoryRouter>);
+ fireEvent.click(screen.getByRole('button',{name:'Back to the previous page'}));expect(screen.getByText('Library page')).toBeVisible();
 });
