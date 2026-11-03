@@ -1,5 +1,6 @@
 import {RepereDureeHabitudes,aRepereDuree} from './RepereDureeHabitudes';
 import {CultesSemaineHabitudes} from './CultesSemaineHabitudes';
+import {MaDimeHabitudes} from './MaDimeHabitudes';
 import {LecteurPriereHabitudes,momentPriere} from './LecteurPriereHabitudes';
 import {LecturesJourHabitudes,estLectureHabitudes} from './LecturesJourHabitudes';
 import {useEffect,useState} from 'react';
@@ -95,6 +96,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   </aside>}
   {!horsLigne&&activites.some(a=>estLectureHabitudes(a.habit_key))&&<button type="button" onClick={()=>{setLectureInitialeId(null);setLecturesOuvertes(true);}} className="mb-hd-space-lg min-h-[48px] px-4 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-lg text-hd-label-lg flex items-center justify-center gap-2"><IconeHD nom="menu_book"/>{l('Lectures du jour','Today’s readings')}<IconeHD nom="chevron_right"/></button>}
   {!horsLigne&&<CultesSemaineHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} onConfirme={confirmer}/>}
+  {!horsLigne&&<MaDimeHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} lienReglages={`/reglages?parcours=${encodeURIComponent(enrollmentId)}${en?'&lang=en':''}#horaires`}/>}
   {/* Prochain rendez-vous */}
   {prochain&&<section className="hd-prochain-rendez-vous mt-hd-space-xs mb-hd-space-lg" aria-label={l('Prochain rendez-vous','Next appointment')}>
    <div className="relative bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_4px_20px_rgba(117,91,0,0.06)] overflow-hidden">
