@@ -34,3 +34,9 @@ it('le suivi ne compte la dîme que le jour prévu, et garde une dîme déjà d�
  const mensuel=filtreCultesPrevus(config({rythme:'mois',jour_mois:3}));
  expect(mensuel(source,'2026-11-03',false)).toBe(true);expect(mensuel(source,'2026-11-01',false)).toBe(false);
 });
+it('les créneaux de la dîme acceptent de 1 à 7 jours ; les autres habitudes gardent leur fréquence',async()=>{
+ const {creneauxRespectentFrequence}=await import('@/lib/habitudes-creneaux');
+ expect(creneauxRespectentFrequence('dime',[{creneau_id:'principal',heure_locale:'12:00',jours_iso:[3,5,7]}],1)).toBe(true);
+ expect(creneauxRespectentFrequence('dime',[{creneau_id:'principal',heure_locale:'12:00',jours_iso:[]}],1)).toBe(false);
+ expect(creneauxRespectentFrequence('culte_dimanche',[{creneau_id:'principal',heure_locale:'09:00',jours_iso:[3,7]}],1)).toBe(false);
+});
