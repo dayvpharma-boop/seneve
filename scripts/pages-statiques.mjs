@@ -57,9 +57,30 @@ const HABITUDES = {
   titre: 'Habitudes & Défis — SÉNEVÉ',
   description: 'Un parcours prévu sur six mois pour faire une place à la prière, à la lecture, à la gratitude et aux actions concrètes dans ton quotidien.',
   titreLien: 'Habitudes & Défis — De petits actes. Un rythme qui prend racine.',
-  image: 'og-image-habitudes-v1.jpg',
-  alt: 'SÉNEVÉ — Habitudes & Défis : De petits actes. Un rythme qui prend racine. 30 jours gratuits.',
+  image: 'og-image-habitudes-v2.jpg',
+  alt: 'SÉNEVÉ — Habitudes & Défis : De petits actes. Un rythme qui prend racine. 30 jours gratuits. Avec la couverture « De la graine à l’arbre ».',
 };
+// /habitudes/en : même aperçu, en anglais, avec la couverture « From seed to tree ».
+const HABITUDES_EN = {
+  titre: 'Habits & Challenges — SÉNEVÉ',
+  description: 'A planned six-month journey making room for prayer, reading, gratitude and practical actions in everyday life.',
+  titreLien: 'Habits & Challenges — Small actions. A rhythm that takes root.',
+  image: 'og-image-habitudes-en-v1.jpg',
+  alt: 'SÉNEVÉ — Habits & Challenges: Small actions. A rhythm that takes root. 30 days free. With the cover “From seed to tree”.',
+};
+function enAnglais(html) {
+  const rempl = [
+    ['<html lang="fr">', '<html lang="en">'],
+    ['<meta property="og:locale" content="fr_FR" />', '<meta property="og:locale" content="en_GB" />'],
+    ['<meta property="og:locale:alternate" content="en_GB" />', '<meta property="og:locale:alternate" content="fr_FR" />'],
+  ];
+  let sortie = html;
+  for (const [avant, apres] of rempl) {
+    if (!sortie.includes(avant)) throw new Error(`Aperçu anglais de Habitudes : balise introuvable dans index.html : ${avant}`);
+    sortie = sortie.split(avant).join(apres);
+  }
+  return sortie;
+}
 const ESPACE = {
   titre: 'Mon espace — SÉNEVÉ',
   description: 'Tes lectures, tes actions et ton journal pour mettre en pratique les principes du Royaume au quotidien.',
@@ -68,7 +89,7 @@ const ESPACE = {
 // Pages lisibles sans compte : elles seules vont dans le plan du site (sitemap.xml) pour Google.
 // Les autres (espace, journal, réglages, /p qui double l'accueil…) portent « noindex » : sans compte, elles renvoient à la connexion.
 // GitHub Pages ne permet pas de robots.txt sous /seneve/ (il n'est lu qu'à la racine du domaine) : le plan se déclare dans Search Console.
-const PUBLIQUES = ['', 'en', 'habitudes', 'livre', 'livre/audio', 'livre/pdf', 'offres', 'bible', 'bible/livres', 'confidentialite'];
+const PUBLIQUES = ['', 'en', 'habitudes', 'habitudes/en', 'livre', 'livre/audio', 'livre/pdf', 'offres', 'bible', 'bible/livres', 'confidentialite'];
 for (const route of PUBLIQUES) {
   if (route && !routes.includes(route)) throw new Error(`Plan du site : /${route} n'est plus une route de src/main.tsx`);
 }
@@ -81,6 +102,7 @@ function pageDe(route) {
   if (route === 'en') return versionAnglaise(page);
   if (ACCUEILS.has(route)) return page;
   const html = sansPhotoAccueil(page);
+  if (route === 'habitudes/en') return enAnglais(apercu(html, route, HABITUDES_EN));
   if (route === 'habitudes' || route.startsWith('habitudes/')) return apercu(html, route, HABITUDES);
   if (route === 'connexion' || route === 'espace') return apercu(html, route, ESPACE);
   return html;
