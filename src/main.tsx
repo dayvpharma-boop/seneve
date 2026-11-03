@@ -4,7 +4,7 @@ import {suivreApparence} from './lib/apparence';
 import './styles-offres-acces.css';
 import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 // Polices hébergées avec le site (et non chez Google) : elles restent disponibles hors connexion.
 import '@fontsource/lora/latin-400.css';
 import '@fontsource/lora/latin-500.css';
@@ -103,6 +103,8 @@ if (root) createRoot(root).render(
         <Route path="/bible/annotations" element={<BibleAnnotations/>}/>
         <Route path="/bible/:livre/:chapitre" element={<BibleLecture/>}/>
         <Route path="/habitudes" element={<Habitudes/>}/>
+        {/* Adresse anglaise à partager : sa page fixe porte l’aperçu en anglais, puis la page s’ouvre en anglais. */}
+        <Route path="/habitudes/en" element={<Navigate to="/habitudes?lang=en" replace/>}/>
         <Route path="/offres" element={<Offres/>}/><Route path="/acces" element={<Offres mode="acces"/>}/><Route path="/paiement" element={<Offres mode="paiement"/>}/><Route path="/reglages" element={<Reglages/>}/>
         <Route path="/profil" element={<Profil/>}/><Route path="/espace" element={<Espace />} />
         <Route path="/journal" element={<Journal />} />
