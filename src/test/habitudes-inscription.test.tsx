@@ -1,4 +1,4 @@
-import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 const mock=vi.hoisted(()=>({rpc:vi.fn()}));
 vi.mock('@/lib/supabase',()=>({supabase:{rpc:mock.rpc}}));
@@ -6,7 +6,9 @@ import {InscriptionHabitudes,type ConfigurationInscriptionHabitudes} from '@/com
 const config:ConfigurationInscriptionHabitudes={compteId:'compte-a',programmeId:'HD_TEST',version:1,langue:'fr',offreId:'OFFRE_TEST',fuseau:'Africa/Kinshasa',planning:[{habit_key:'culte_semaine',libelle:'Culte en semaine',creneaux:[{creneau_id:'mercredi',heure_locale:'18:30',jours_iso:[3]},{creneau_id:'vendredi',heure_locale:'19:00',jours_iso:[5]}]}]};
 const confirmation={cree:true,existant:false,enrollment_id:'11111111-1111-4111-8111-111111111111',entitlement_id:'22222222-2222-4222-8222-222222222222',debut:'2026-10-26T08:00:00+00:00',fin_exclue:'2026-11-25T08:00:00+00:00',etat:'actif',horaires_appliques:true};
 beforeEach(()=>{mock.rpc.mockReset();mock.rpc.mockResolvedValue({data:confirmation,error:null});});afterEach(cleanup);
-function ouvrir(c=config){const r=render(<InscriptionHabitudes configuration={c}/>);r.container.querySelector('details')!.open=true;return r;}
+// 03/11/2026 : les engagements sont lus (section ouverte) puis acceptés avant l'inscription.
+function engager(){const d=screen.getByText(/^(Lire mes engagements|Read my commitments)$/).closest('details')!;act(()=>{d.open=true;d.dispatchEvent(new Event('toggle'));});fireEvent.click(screen.getByRole('checkbox',{name:/J’ai lu mes engagements|I have read my commitments/}));}
+function ouvrir(c=config,engage=true){const r=render(<InscriptionHabitudes configuration={c}/>);r.container.querySelector('details')!.open=true;if(engage)engager();return r;}
 function confirmer(){fireEvent.click(screen.getByRole('checkbox',{name:/Je confirme|I confirm/}));fireEvent.click(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'}));}
 it('exige la confirmation puis transmet les horaires personnalisés sans le libellé ni un identifiant de participant',async()=>{
  ouvrir();expect(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'})).toBeDisabled();expect(mock.rpc).not.toHaveBeenCalled();
@@ -60,4 +62,17 @@ it('une modification après confirmation demande de confirmer à nouveau',()=>{
 it('une habitude quotidienne ne peut pas remplacer un jour manquant par deux passages le même jour',async()=>{
  ouvrir({...config,planning:[{habit_key:'priere_matin',libelle:'Prière du matin',creneaux:[{creneau_id:'principal',heure_locale:'06:00',jours_iso:[1,2,3,4,5,6,7]}]}]});
  fireEvent.click(screen.getByLabelText('Dim'));fireEvent.click(screen.getByRole('button',{name:'Ajouter un créneau'}));const b=within(screen.getByRole('group',{name:'Prière du matin — créneau 2'}));fireEvent.click(b.getByLabelText('Lun'));fireEvent.change(b.getByLabelText('Prière du matin — Lun'),{target:{value:'07:00'}});confirmer();await screen.findByRole('alert');expect(mock.rpc).not.toHaveBeenCalled();
+});
+it('exige de lire puis d’accepter les engagements avant l’inscription (03/11/2026)',()=>{
+ ouvrir(config,false);
+ const engagement=screen.getByRole('checkbox',{name:/J’ai lu mes engagements/});
+ expect(engagement).toBeDisabled();expect(screen.getByText('Ouvre d’abord « Lire mes engagements ».')).toBeInTheDocument();
+ fireEvent.click(screen.getByRole('checkbox',{name:/Je confirme/}));
+ expect(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'})).toBeDisabled();
+ const d=screen.getByText('Lire mes engagements').closest('details')!;act(()=>{d.open=true;d.dispatchEvent(new Event('toggle'));});
+ expect(within(d).getByText('Vérité')).toBeInTheDocument();expect(within(d).getByText('Pureté : abstinence hors mariage')).toBeInTheDocument();expect(within(d).getByText('Si je manque à un engagement')).toBeInTheDocument();
+ expect(engagement).toBeEnabled();expect(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'})).toBeDisabled();
+ fireEvent.click(engagement);
+ expect(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'})).toBeEnabled();
+ fireEvent.submit(screen.getByRole('button',{name:'Commencer mes 30 jours gratuits'}).closest('form')!);expect(mock.rpc).toHaveBeenCalledTimes(1);
 });
