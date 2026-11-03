@@ -115,8 +115,11 @@ export function enregistrerServiceWorker(): void {
   });
 }
 
-function afficherNouvelleVersion(): void {
-  if (document.getElementById('seneve-nouvelle-version')) return;
+// Fermé par la croix : le bandeau ne revient pas avant le prochain chargement (qui installe la nouvelle version).
+let majRemiseAPlusTard = false;
+
+export function afficherNouvelleVersion(): void {
+  if (majRemiseAPlusTard || document.getElementById('seneve-nouvelle-version')) return;
   const en = document.documentElement.lang === 'en';
   const bandeau = document.createElement('div');
   bandeau.id = 'seneve-nouvelle-version';
@@ -128,7 +131,21 @@ function afficherNouvelleVersion(): void {
   bouton.type = 'button';
   bouton.textContent = en ? 'Refresh' : 'Actualiser';
   bouton.addEventListener('click', () => window.location.reload());
-  bandeau.append(texte, bouton);
+  // Demande de Dr Justin (04/11/2026) : pouvoir fermer le bandeau et actualiser plus tard.
+  const fermer = document.createElement('button');
+  fermer.type = 'button';
+  fermer.className = 'seneve-maj-fermer';
+  fermer.setAttribute('aria-label', en ? 'Later' : 'Plus tard');
+  fermer.textContent = '×';
+  fermer.addEventListener('click', () => {
+    majRemiseAPlusTard = true;
+    bandeau.classList.add('seneve-maj-sort');
+    window.setTimeout(() => bandeau.remove(), 260);
+  });
+  const actions = document.createElement('span');
+  actions.className = 'seneve-maj-actions';
+  actions.append(bouton, fermer);
+  bandeau.append(texte, actions);
   document.body.append(bandeau);
 }
 
