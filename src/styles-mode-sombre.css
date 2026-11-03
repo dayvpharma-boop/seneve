@@ -763,3 +763,8 @@
 :root[data-apparence="sombre"] .nt-section h2,:root[data-apparence="sombre"] .nt-corps a{color:#ffd482;}
 :root[data-apparence="sombre"] .nt-corps time,:root[data-apparence="sombre"] .nt-note{color:#b5ab9a;}
 :root[data-apparence="sombre"] .nt-video-lancer{background:#ffd482;color:#3f2e00;}
+:root[data-apparence="sombre"] .decouverte-hd{background:#1d1b18;border-color:#363531;}
+:root[data-apparence="sombre"] .decouverte-hd-badge{background:#2b2a26;color:#ffd482;}
+:root[data-apparence="sombre"] .decouverte-hd p{color:#d1c5b3;}
+:root[data-apparence="sombre"] .espace-page a.decouverte-hd-activer{background:#ffd482;color:#1d1b18;}
+:root[data-apparence="sombre"] .espace-page a.decouverte-hd-plus{color:#ffd482;}
