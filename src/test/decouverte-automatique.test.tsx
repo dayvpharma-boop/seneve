@@ -79,6 +79,13 @@ describe('Premier accès : Découverte sans clic supplémentaire', () => {
     await screen.findByRole('button', { name: 'Commencer ma Découverte' });
     expect(appels).not.toContain('start_discovery');
   });
+  it('montre Habitudes & Défis en haut de la première journée (03/11/2026)', async () => {
+    vi.stubEnv('VITE_HABITUDES_DEFIS', 'true');
+    render(<MemoryRouter initialEntries={['/espace']}><Espace /></MemoryRouter>);
+    expect(await screen.findByText('Jour 1 sur 7')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Activer mes 30 jours gratuits/ })).toHaveAttribute('href', '/habitudes/inscription?lang=fr');
+    vi.unstubAllEnvs();
+  });
   it('affiche une erreur réessayable si le démarrage échoue', async () => {
     erreurDemarrage = true;
     render(<MemoryRouter><Espace /></MemoryRouter>);

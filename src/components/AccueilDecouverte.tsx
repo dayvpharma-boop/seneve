@@ -5,6 +5,7 @@ import { Icone } from './Icone';
 import { IconeJournee } from './IconeJournee';
 import { IconeAccueilEspace } from './IconeAccueilEspace';
 import { PenseeLivre } from './RepereParcours';
+import { habitudesActivees } from '@/lib/habitudes-configuration';
 
 // Version anglaise (?lang=en, test du 23/10/2026) : même carte, la Découverte anglaise en premier, le parcours français en second.
 const TEXTES = {
@@ -18,6 +19,7 @@ const TEXTES = {
     instant: 'Un instant…', commencer: 'Commencer ma Découverte',
     autre: { langue: 'en' as const, titre: 'English track available', texte: 'A free 7-day journey based on the book “Stop Begging for Miracles”.', bouton: 'Start in English' },
     reglages: 'Mes réglages', reglagesDetail: 'Liaison WhatsApp et code de place offerte.',
+    hd: { badge: '30 jours gratuits', titre: 'Habitudes & Défis', texte: 'Installe, jour après jour, des habitudes qui durent. À suivre en même temps que ta Découverte.', bouton: 'Activer mes 30 jours gratuits', plus: 'En savoir plus' },
   },
   en: {
     bonjour: 'Hello', pret: 'Your space is ready. Choose your first step to take root.',
@@ -29,8 +31,26 @@ const TEXTES = {
     instant: 'One moment…', commencer: 'Start my Discovery',
     autre: { langue: 'fr' as const, titre: 'Parcours en français disponible', texte: 'Un parcours gratuit de 7 jours d’après le livre « Arrête de mendier des miracles ».', bouton: 'Commencer en français' },
     reglages: 'My settings', reglagesDetail: 'WhatsApp link and sponsored place code.',
+    hd: { badge: '30 days free', titre: 'Habits & Challenges', texte: 'Build, day after day, habits that last. Follow it alongside your Discovery.', bouton: 'Activate my 30 free days', plus: 'Learn more' },
   },
 };
+
+/** Demande de Dr Justin (03/11/2026) : dès la première connexion, Habitudes & Défis visible en haut, à côté de la Découverte. */
+export function CarteHabitudes({ langue }: { langue: string }) {
+  const l = langue === 'en' ? 'en' : 'fr';
+  const t = TEXTES[l].hd;
+  if (!habitudesActivees()) return null;
+  return <aside className="decouverte-hd" aria-labelledby="titre-decouverte-hd">
+    <img src={`${import.meta.env.BASE_URL}illustrations/couverture-habitudes-${l}-v1-200.webp`} width={200} height={300} alt="" />
+    <div>
+      <span className="decouverte-hd-badge"><IconeAccueilEspace nom="spa" taille={14} />{t.badge}</span>
+      <h2 id="titre-decouverte-hd">{t.titre}</h2>
+      <p>{t.texte}</p>
+      <Link className="decouverte-hd-activer" to={`/habitudes/inscription?lang=${l}`}>{t.bouton}<IconeAccueilEspace nom="east" taille={18} /></Link>
+      <Link className="decouverte-hd-plus" to={`/habitudes?lang=${l}`}>{t.plus}</Link>
+    </div>
+  </aside>;
+}
 
 /** Accueil de l’espace avant la première inscription à un parcours. */
 export function AccueilDecouverte({ prenom, starting, commencer, reglages, footer, langue = 'fr' }: {
@@ -42,6 +62,7 @@ export function AccueilDecouverte({ prenom, starting, commencer, reglages, foote
   return <>
     <header className="decouverte-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span><Link className="decouverte-avatar" to={langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={langue === 'en' ? 'My profile' : 'Mon profil'}><AvatarParticipant>{prenom ? prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link></header>
     <section className="decouverte-bienvenue"><h1>{prenom ? `${t.bonjour} ${prenom}` : t.bonjour}</h1><p>{t.pret}</p></section>
+    <CarteHabitudes langue={l} />
     <article className="decouverte-carte" aria-labelledby="titre-decouverte">
       <div className="decouverte-meta"><span>{t.recommande}</span><span><IconeJournee nom="schedule" taille={16} />{t.rythme}</span></div>
       <div className="decouverte-illustration"><img src={`${import.meta.env.BASE_URL}illustrations/decouverte-maquette.jpg`} width={512} height={279} alt="" /><span><IconeAccueilEspace nom="spa" taille={18} />{t.ancrage}</span></div>
