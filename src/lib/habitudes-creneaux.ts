@@ -12,5 +12,6 @@ export function creneauxRespectentFrequence(habitKey:string,creneaux:readonly Cr
    if(rendezVous.has(cle))return false;rendezVous.add(cle);total++;
   }
  }
- return total===frequence;
+ // Dîme (03/11/2026) : un ou plusieurs jours par semaine, par exemple les jours de culte.
+ return habitKey==='dime'?total>=1&&total<=7:total===frequence;
 }
