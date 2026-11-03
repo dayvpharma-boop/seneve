@@ -1,11 +1,14 @@
 /* SÉNEVÉ — consultation hors connexion de l'espace web.
- * - Pages : la version du site enregistrée sur le téléphone s'ouvre tout de suite (30/10/2026) ; une nouvelle
- *   version publiée est téléchargée en arrière-plan et sert à la visite suivante. Sans copie : le réseau.
+ * - Pages (03/11/2026) : avec du réseau, la version publiée s'ouvre directement, donc toujours à jour.
+ *   La copie enregistrée sert hors connexion, ou si le réseau ne répond pas en ATTENTE_RESEAU_MS
+ *   (retour rapide dans SÉNEVÉ, demande du 30/10/2026). Dans ce cas, la nouvelle version est téléchargée
+ *   en arrière-plan et les pages ouvertes sont prévenues (« Nouvelle version prête · Actualiser »).
  * - Fichiers du site (assets, icônes) : gardés après le premier chargement.
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v78-priere-mise-a-jour-20261031';
+const CACHE = 'seneve-site-v79-mise-a-jour-immediate-20261103';
+const ATTENTE_RESEAU_MS = 1500;
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
@@ -65,6 +68,26 @@ async function garderLesPages(obligatoire = false) {
   for (const u of fichiers) if (!(await cache.match(u))) await cache.add(u).catch(err => { if (obligatoire) throw err; });
 }
 
+/** Compare la copie enregistrée à la version publiée ; si elle a changé, la télécharge et prévient les pages
+ *  ouvertes. Renvoie true quand une nouvelle version vient d'être enregistrée. */
+let verificationEnCours = null;
+function verifierVersion(publiee = null) {
+  if (verificationEnCours) return verificationEnCours;
+  verificationEnCours = (async () => {
+    const copie = await caches.match(INDEX);
+    if (!copie) return false;
+    const enLigne = publiee || await fetch(INDEX, { cache: 'no-store' });
+    if (!enLigne.ok || (await copie.text()) === (await enLigne.text())) return false;
+    await precache();
+    try {
+      const fenetres = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      for (const f of fenetres) f.postMessage({ type: 'seneve-nouvelle-version' });
+    } catch { /* aucune page à prévenir */ }
+    return true;
+  })().catch(() => false).finally(() => { verificationEnCours = null; });
+  return verificationEnCours;
+}
+
 self.addEventListener('install', e => { e.waitUntil(precache().then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== CACHE_BIBLE && (k.startsWith('seneve-site-') || k.includes('-seneve-site-'))).map(k => caches.delete(k))))
@@ -86,30 +109,22 @@ self.addEventListener('fetch', e => {
       e.respondWith(fetch(req).catch(async () => (await caches.match(req)) || pageHorsLigne(url)));
       return;
     }
-    const reseau = fetch(req).then(async res => {
+    const reseau = fetch(req).then(res => {
       // INDEX reste une copie cohérente téléchargée avec tous ses fichiers, jamais remplacée par une autre route.
       if (res.ok) garderLesPages().catch(() => undefined);
-      // La plupart des participants reviennent directement dans /espace ou /habitudes :
-      // comparer aussi ces visites à l'accueil publié pour éviter de garder indéfiniment l'ancienne version.
-      try {
-        const copie = await caches.match(INDEX);
-        if (copie) {
-          const versionPublique = (url.pathname === BASE || url.pathname === INDEX) && res.ok
-            ? res.clone() : await fetch(INDEX, { cache: 'no-store' });
-          if (versionPublique.ok && (await copie.text()) !== (await versionPublique.text()))
-            await precache().catch(() => undefined);
-        }
-      } catch { /* hors connexion : conserver la copie sans interrompre l'ouverture de l'app */ }
       return res;
     });
-    e.waitUntil(reseau.then(() => undefined, () => undefined));
-    // Retour dans SÉNEVÉ (demande de Dr Justin du 30/10/2026) : plus d'attente du réseau quand le téléphone a
-    // déjà le site. La recherche d'une nouvelle version se fait en arrière-plan (installée pour la visite suivante).
+    // La plupart des participants reviennent directement dans /espace ou /habitudes :
+    // comparer aussi ces visites à l'accueil publié pour ne jamais garder l'ancienne version.
+    e.waitUntil(reseau.then(res => verifierVersion(res.ok && (url.pathname === BASE || url.pathname === INDEX) ? res.clone() : null), () => false).catch(() => undefined));
     e.waitUntil(Promise.resolve().then(() => self.registration.update()).catch(() => undefined));
     e.respondWith((async () => {
       const copie = await caches.match(INDEX);
-      if (copie) return copie;
-      return reseau.catch(() => pageHorsLigne(url));
+      if (!copie) return reseau.catch(() => pageHorsLigne(url));
+      // Réseau rapide : la page publiée (à jour). Réseau absent, en erreur ou trop lent : la copie, sans attendre.
+      const delai = new Promise(ok => setTimeout(() => ok(null), ATTENTE_RESEAU_MS));
+      const frais = await Promise.race([reseau.then(r => r.ok ? r : null, () => null), delai]);
+      return frais || copie;
     })());
     return;
   }
@@ -159,6 +174,8 @@ async function retirerRappelsPerimes() {
 }
 self.addEventListener('message', e => {
   if (e.data && e.data.type === 'seneve-retirer-rappels-perimes') e.waitUntil(retirerRappelsPerimes().catch(() => undefined));
+  // Retour dans l'app restée ouverte (sans nouvelle navigation) : vérifier s'il y a une version plus récente.
+  if (e.data && e.data.type === 'seneve-verifier-version') e.waitUntil(verifierVersion());
 });
 
 /* Rappels sur le téléphone (validés le 22/10/2026) : le serveur n'envoie que le titre, un texte sans rien
