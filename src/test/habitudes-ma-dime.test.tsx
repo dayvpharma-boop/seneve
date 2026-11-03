@@ -1,4 +1,4 @@
-import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 const mock=vi.hoisted(()=>({charger:vi.fn(),regler:vi.fn()}));
@@ -37,5 +37,5 @@ it('un salarié passe à « une fois par mois, le 25 » et l’enregistre',async
  fireEvent.click(bouton);
  await screen.findByText('Rythme enregistré.');
  expect(mock.regler).toHaveBeenCalledWith({rythme:'mois',jour_mois:25});
- expect(mock.charger).toHaveBeenCalledTimes(2);
+ await waitFor(()=>expect(mock.charger).toHaveBeenCalledTimes(2));
 });
