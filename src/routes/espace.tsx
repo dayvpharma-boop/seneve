@@ -1,3 +1,4 @@
+import {requiseCeJour} from '@/lib/habitudes-dimanche';
 import './espace-moderne.css';
 import {PlanningJourHabitudes} from '@/components/PlanningJourHabitudes';
 import {SimulateurDime} from '@/components/SimulateurDime';
@@ -403,7 +404,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const duJour=contents.filter(c=>c.jour===current&&c.langue===enr.langue).sort((a,b)=>a.numero_message-b.numero_message);
     const ctx={enrollment_id:enr.enrollment_id,programme_id:enr.programme_id,version:Number(enr.version),langue:enr.langue,jour:current,date_locale};
     const culte=filtreCultesPrevus(data.horairesHabitudes?.[enr.enrollment_id]??null);
-    const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities.filter(a=>culte(a.note_source,date_locale,Boolean(etatDe(a)))));
+    const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities.filter(a=>culte(a.note_source,date_locale,Boolean(etatDe(a)))).map(a=>({...a,obligatoire:requiseCeJour(a.note_source,date_locale,a.obligatoire)})));
     // Programme réel, journée du jour et en ligne : l'écran « Aujourd'hui » des maquettes Stitch, directement.
     if(!lectureSeule&&estProgrammeHdReel(enr.programme_id)&&current===day&&data.participantId&&enr.etat==='active')
       return page(enr.langue,<>{header()}{accueil}{tabs}{repereHabitudes}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">

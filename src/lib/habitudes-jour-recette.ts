@@ -1,3 +1,4 @@
+import {requiseCeJour} from '@/lib/habitudes-dimanche';
 import {supabase} from './supabase';
 import type {ConfigurationHoraires} from './habitudes-horaires-api';
 import {chargerHorairesHabitudes} from './habitudes-horaires-api';
@@ -73,7 +74,7 @@ export function assemblerJourRecette(enrollmentId:string,participantId:string,da
   if(!culte&&rdv.length!==1)throw Error('Correspondance horaire ambiguë');
   if(culte&&!rdv[rang-1])return [];
   const rendezVous=rdv[rang-1]!;
-  const occurrence={occurrence_id:row.activity_id,enrollment_id:enrollmentId,version:1,date_locale:dateLocale,requise:row.obligatoire};
+  const occurrence={occurrence_id:row.activity_id,enrollment_id:enrollmentId,version:1,date_locale:dateLocale,requise:requiseCeJour(source,dateLocale,row.obligatoire)};
   const st=etats.find(x=>x.activity_id===row.activity_id);
   if(st&&!['non_commencee','preparee','partielle','realisee'].includes(st.etat))throw Error('État invalide');
   return [{habit_key:habit,occurrence,consigne:culte?`${row.consigne}${rdv.length>1?' — '+rang:''}`:row.consigne,critere:row.critere_realisation,heure:rendezVous.heure_locale,etat:st?{...occurrence,etat:st.etat,aide_demandee:st.aide_demandee,synchronisation:'synchronise'} as EtatOccurrence:undefined}];

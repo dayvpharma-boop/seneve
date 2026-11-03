@@ -1,3 +1,4 @@
+import {requiseCeJour} from '@/lib/habitudes-dimanche';
 import {bilanHabitudes, type BilanHabitudes, type EtatHabitude, type EtatOccurrence} from './habitudes.ts';
 import {occurrencesDepuisContenus} from './habitudes-api.ts';
 import type {FiltreCultes} from './habitudes-cultes.ts';
@@ -26,7 +27,7 @@ export function joursHabitudesLecture(inscription:InscriptionLecture, joursOuver
   const acts=cts.flatMap(c=>activites.filter(a=>a.content_id===c.content_id&&a.type_activite==='action'))
    // Cultes non prévus ce jour-là : ni affichés, ni comptés parmi les activités requises.
    .filter(a=>!cultes||cultes(a.note_source,ctx.date_locale,etats.some(e=>e.enrollment_id===ctx.enrollment_id&&e.activity_id===a.activity_id)));
-  const occurrences=occurrencesDepuisContenus(ctx,cts,acts);
+  const occurrences=occurrencesDepuisContenus(ctx,cts,acts.map(a=>({...a,obligatoire:requiseCeJour(a.note_source,ctx.date_locale,a.obligatoire)})));
   const states:EtatOccurrence[]=etats.filter(e=>e.enrollment_id===ctx.enrollment_id&&acts.some(a=>a.activity_id===e.activity_id)).map(e=>({occurrence_id:e.activity_id,enrollment_id:ctx.enrollment_id,version:ctx.version,date_locale:ctx.date_locale,etat:e.etat,aide_demandee:e.aide_demandee,synchronisation:'synchronise'}));
   const bilan=bilanHabitudes(ctx,occurrences,states);
   const lignes=occurrences.map(o=>{
