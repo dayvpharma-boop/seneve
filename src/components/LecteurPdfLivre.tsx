@@ -112,6 +112,9 @@ export function LecteurPdfLivre({url,cleMemoire,cleAnnotations,en,pageDemandee}:
   {plein&&<div className="lp-barre-haut"><span>{total?l(`Page ${page} sur ${total}`,`Page ${page} of ${total}`):''}</span><button type="button" onClick={()=>setPlein(false)} aria-label={l('Quitter le plein écran','Exit full screen')}><B nom="fullscreen_exit" taille={22}/></button></div>}
   <div ref={zone} className="lp-zone">
    {doc&&!plein&&<button type="button" className="lp-agrandir" onClick={()=>setPlein(true)} aria-label={l('Lire en plein écran','Read full screen')}><B nom="fullscreen" taille={22}/></button>}
+   {/* Flèches sur les bords, à mi-hauteur (demande de Dr Justin du 04/11/2026) : à gauche pour revenir, à droite pour avancer. */}
+   {doc&&<button type="button" className="lp-cote lp-cote-gauche" onClick={()=>aller(page-1)} disabled={page<=1} aria-label={l('Page précédente','Previous page')}><I nom="arrow_back" taille={22}/></button>}
+   {doc&&<button type="button" className="lp-cote lp-cote-droite" onClick={()=>aller(page+1)} disabled={page>=total} aria-label={l('Page suivante','Next page')}><I nom="east" taille={22}/></button>}
    <div ref={cadre} className="lp-page" onContextMenu={e=>e.preventDefault()} onPointerDown={poser} onPointerUp={lever} onPointerCancel={()=>{doigt.current=null;}}>
     {!doc&&<p role="status" className="lp-chargement">{l('Ouverture du livre…','Opening the book…')}</p>}
     <canvas ref={toile} aria-hidden="true"/>
@@ -125,9 +128,7 @@ export function LecteurPdfLivre({url,cleMemoire,cleAnnotations,en,pageDemandee}:
    </div>
   </div>
   {doc&&<nav className="lp-commandes" aria-label={l('Pages et outils','Pages and tools')}>
-   <button type="button" onClick={()=>aller(page-1)} disabled={page<=1} aria-label={l('Page précédente','Previous page')}><I nom="arrow_back" taille={20}/></button>
    <label className="lp-numero"><span className="sr-only">{l('Aller à la page','Go to page')}</span><input type="number" inputMode="numeric" min={1} max={total} value={page} onChange={e=>aller(Number(e.target.value)||1)}/><span>/ {total}</span></label>
-   <button type="button" onClick={()=>aller(page+1)} disabled={page>=total} aria-label={l('Page suivante','Next page')}><I nom="east" taille={20}/></button>
    <span className="lp-separateur" aria-hidden="true"/>
    <button type="button" aria-pressed={signet} className={signet?'lp-actif':undefined} onClick={()=>changerCarnet(basculerSignet(carnet,page))} aria-label={signet?l('Retirer le marque-page','Remove bookmark'):l('Marquer cette page','Bookmark this page')}><B nom="bookmark" taille={20}/></button>
    <button type="button" onClick={()=>setListe(true)} aria-label={l('Mes notes et marque-pages','My notes and bookmarks')}><B nom="draw" taille={20}/></button>
