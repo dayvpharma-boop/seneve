@@ -1,4 +1,5 @@
 import type {SymboleTrait} from '@/components/IconeTrait';
+import {supabase} from './supabase';
 
 /** Formules d'abonnement proposées à Dr Justin le 04/11/2026 (maquette, prix et noms à valider).
  * De la graine à l'arbre : chaque formule comprend la précédente. Aucun prélèvement automatique :
@@ -22,3 +23,24 @@ export const VALEUR_SEPAREE_PLUS=89+39+2.99+4.99;
 /** Économie de l'année par rapport à 12 mois payés au mois. */
 export const economieAn=(f:Formule)=>f.an?f.mois*12-f.an:0;
 export const prixAnnuelMensualise=(f:Formule)=>f.an?Math.round(f.an/12*100)/100:null;
+
+/** Ce que renvoie seneve.mon_abonnement() (seneve_063) : formule en cours ou la dernière, période payée
+ * (ou le mois gratuit), achats hors abonnement, et liens Chariow déjà créés par Dr Justin. */
+export type AchatAbonnement={offre_id:string;produit:string;type_offre:string;le:string};
+export type MonAbonnement={formule:IdFormule;periode:'mois'|'an'|null;debut:string|null;fin:string|null;achats:AchatAbonnement[];liens:Record<string,string>};
+const CODES:Record<Exclude<IdFormule,'graine'>,string>={senev:'SENEVE',plus:'PLUS',accompagnement:'ACCOMP'};
+/** Offre Chariow d'une formule : ABONNEMENT_PLUS_AN_FR… */
+export const offreAbonnement=(f:Exclude<IdFormule,'graine'>,periode:'mois'|'an',langue:'fr'|'en')=>`ABONNEMENT_${CODES[f]}_${periode==='an'?'AN':'MOIS'}_${langue.toUpperCase()}`;
+export function lireMonAbonnement(d:unknown):MonAbonnement{
+ const o=(d&&typeof d==='object'?d:{}) as Record<string,unknown>;
+ const formule=FORMULES.some(f=>f.id===o.formule)?o.formule as IdFormule:'graine';
+ const texte=(v:unknown)=>typeof v==='string'&&v?v:null;
+ const achats=Array.isArray(o.achats)?o.achats.filter((a):a is AchatAbonnement=>!!a&&typeof a.offre_id==='string'&&typeof a.produit==='string'):[];
+ const liens=o.liens&&typeof o.liens==='object'?Object.fromEntries(Object.entries(o.liens as Record<string,unknown>).filter((e):e is [string,string]=>typeof e[1]==='string'&&/^https:\/\//.test(e[1]))):{};
+ return {formule,periode:o.periode==='an'||o.periode==='mois'?o.periode:null,debut:texte(o.debut),fin:texte(o.fin),achats,liens};
+}
+export async function chargerMonAbonnement():Promise<MonAbonnement>{
+ const r=await supabase.rpc('mon_abonnement');
+ if(r.error)throw r.error;
+ return lireMonAbonnement(r.data);
+}

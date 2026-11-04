@@ -67,11 +67,17 @@ const MODELES: Record<'fr' | 'en', Record<string, string>> = {
     'suppression-compte': 'Je souhaite demander la suppression de mon compte SÉNEVÉ.',
     'adresse-email': 'Je souhaite modifier l’adresse e-mail de mon compte.',
     'export-donnees': 'Je souhaite recevoir une copie de toutes mes données personnelles.',
+    accompagnement: 'Je souhaite demander une place dans la formule Accompagnement.',
+    offrir: 'Je souhaite offrir un mois de Sénevé à quelqu’un.',
+    paiement: 'J’ai une question sur un paiement.',
   },
   en: {
     'suppression-compte': 'I would like to request the deletion of my SÉNEVÉ account.',
     'adresse-email': 'I would like to change my account’s email address.',
     'export-donnees': 'I would like to receive a copy of all my personal data.',
+    accompagnement: 'I would like to ask for a place in the Mentoring plan.',
+    offrir: 'I would like to give a month of Sénevé to someone.',
+    paiement: 'I have a question about a payment.',
   },
 };
 export function Aide() {

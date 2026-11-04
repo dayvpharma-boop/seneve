@@ -57,6 +57,7 @@ const Notifications = lazy(() => import('@/routes/notifications').then(m => ({ d
 const Progres = lazy(() => import('@/routes/progres').then(m => ({ default: m.Progres })));
 const Profil = lazy(() => import('@/routes/profil').then(m => ({ default: m.Profil })));
 const Reglages = lazy(() => import('@/routes/reglages').then(m => ({ default: m.Reglages })));
+const Abonnement = lazy(() => import('@/routes/abonnement').then(m => ({ default: m.Abonnement })));
 const Habitudes = lazy(() => import('@/routes/habitudes').then(m => ({ default: m.Habitudes })));
 const HabitudesInscription = lazy(() => import('@/routes/habitudes-inscription').then(m => ({ default: m.HabitudesInscription })));
 const HabitudesAujourdhui = lazy(() => import('@/routes/habitudes-aujourdhui').then(m => ({ default: m.HabitudesAujourdhui })));
@@ -105,7 +106,7 @@ if (root) createRoot(root).render(
         <Route path="/habitudes" element={<Habitudes/>}/>
         {/* Adresse anglaise à partager : sa page fixe porte l’aperçu en anglais, puis la page s’ouvre en anglais. */}
         <Route path="/habitudes/en" element={<Navigate to="/habitudes?lang=en" replace/>}/>
-        <Route path="/offres" element={<Offres/>}/><Route path="/acces" element={<Offres mode="acces"/>}/><Route path="/paiement" element={<Offres mode="paiement"/>}/><Route path="/reglages" element={<Reglages/>}/>
+        <Route path="/offres" element={<Offres/>}/><Route path="/acces" element={<Offres mode="acces"/>}/><Route path="/paiement" element={<Offres mode="paiement"/>}/><Route path="/reglages" element={<Reglages/>}/><Route path="/reglages/abonnement" element={<Abonnement/>}/>
         <Route path="/profil" element={<Profil/>}/><Route path="/espace" element={<Espace />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/aide" element={<Aide />} />
