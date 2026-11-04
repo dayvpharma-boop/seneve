@@ -1,12 +1,22 @@
-import {useCallback,useEffect,useState} from 'react';
+import {useCallback,useEffect,useState,type ReactNode} from 'react';
 import {Link,useSearchParams} from 'react-router-dom';
 import {retourPrecedent} from '@/lib/retour-precedent';
 import {supabase} from '@/lib/supabase';
 import {IconeTrait as T} from '@/components/IconeTrait';
 import {BarreNav} from '@/components/BarreNav';
-import {FORMULES,VALEUR_SEPAREE_PLUS,chargerMonAbonnement,economieAn,offreAbonnement,prixAnnuelMensualise,type MonAbonnement} from '@/lib/abonnements';
+import {FORMULES,VALEUR_SEPAREE_PLUS,chargerMonAbonnement,economieAn,offreAbonnement,prixAnnuelMensualise,type IdFormule,type MonAbonnement} from '@/lib/abonnements';
 import './profil-v2.css';
 import './abonnement.css';
+
+/** Emblème plein de chaque formule (dessins originaux, 04/11/2026) : de la graine à l'arbre, chaque palier se reconnaît. */
+const EMBLEMES:Record<IdFormule,ReactNode>={
+ graine:<path d="M12 4.5c3.6 3 5.4 6 5.4 8.8a5.4 5.4 0 0 1-10.8 0c0-2.8 1.8-5.8 5.4-8.8z"/>,
+ senev:<><path d="M11.2 20.5v-7.3c-4.6.2-7.2-2.3-7.4-6.9 4.6-.1 7.2 2.3 7.4 6.6z"/><path d="M12.8 20.5v-9.2c.2-4 2.6-6.4 7.4-6.6-.1 4.4-2.6 6.9-7.4 6.9z"/><rect x="11" y="12" width="2" height="9" rx="1"/></>,
+ plus:<><rect x="11" y="11" width="2" height="10.5" rx="1"/><path d="M12 2.8c2.2 2 3.2 4 3.2 5.8a3.2 3.2 0 0 1-6.4 0c0-1.8 1-3.8 3.2-5.8z"/><path d="M11.3 15.6C7.5 16 4.6 14.4 3.4 10.6c3.7-.6 6.6 1 7.9 5zM12.7 15.6c1.3-4 4.2-5.6 7.9-5-1.2 3.8-4.1 5.4-7.9 5z"/></>,
+ accompagnement:<><circle cx="12" cy="8.6" r="5.6"/><circle cx="7.4" cy="11.4" r="3.6"/><circle cx="16.6" cy="11.4" r="3.6"/><rect x="11" y="12" width="2" height="9.5" rx="1"/><path d="M8 21.5h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></>,
+};
+const Embleme=({id}:{id:IdFormule})=><span className={`ab-embleme ab-embleme-${id}`} aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">{EMBLEMES[id]}</svg></span>;
+const Coche=()=><svg className="ab-coche" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="10"/><path d="m6 10.2 2.7 2.7L14.2 7.4" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 
 /** « Mon abonnement », dans Mes réglages (maquette validée par Dr Justin le 04/11/2026). Les données viennent de
  * seneve.mon_abonnement() (seneve_063) ; un bouton d'achat n'apparaît que lorsque le produit Chariow existe. */
@@ -18,6 +28,7 @@ export function Abonnement(){
  useEffect(()=>{charger();},[charger]);
  useEffect(()=>{document.title=`${l('Mon abonnement','My subscription')} — SÉNEVÉ`;document.documentElement.lang=langue;},[en]);
  const format=(d:Date)=>new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',year:'numeric'}).format(d);
+ const montant=(m:number)=>{const n=m.toLocaleString(en?'en-US':'fr-FR',{maximumFractionDigits:2});return <strong className="ab-montant">{en?<><sup>$</sup>{n}</>:<>{n}<sup>$</sup></>}</strong>;};
  const prix=(m:number)=>m===0?l('Gratuit','Free'):en?`$${m.toLocaleString('en-US',{maximumFractionDigits:2})}`:`${m.toLocaleString('fr-FR',{maximumFractionDigits:2})} $`;
  const tete=<><header className="pv-haut"><Link onClick={retourPrecedent} className="pv-rond" to={`/reglages${suffixe}`} aria-label={l('Revenir à mes réglages','Back to my settings')}><T nom="retour"/></Link></header>
   <p className="pv-surtitre">{l('Mes réglages','My settings')}</p>
@@ -39,18 +50,18 @@ export function Abonnement(){
 
   {/* 1. Formule actuelle */}
   <section className={`ab-actuelle${termine?' ab-terminee':bientot?' ab-bientot':''}`} aria-label={l('Ma formule actuelle','My current plan')}>
-   <div className="ab-actuelle-haut"><span className="ab-icone"><T nom={f.icone} taille={26}/></span><div><span className="ab-etiquette">{l('Ta formule','Your plan')}{donnees.periode==='an'?l(' · à l’année',' · yearly'):donnees.periode==='mois'?l(' · au mois',' · monthly'):''}</span><h2>{l(...f.nom)}</h2></div><span className="ab-etat">{termine?l('Terminée','Ended'):l('Active','Active')}</span></div>
+   <div className="ab-actuelle-haut"><Embleme id={f.id}/><div><span className="ab-etiquette">{l('Ta formule','Your plan')}</span><h2>{l(...f.nom)}</h2>{donnees.periode&&<span className="ab-duree">{donnees.periode==='an'?l('À l’année','Yearly'):l('Au mois','Monthly')}</span>}</div><span className="ab-etat">{termine?l('Terminée','Ended'):l('Active','Active')}</span></div>
    {dateFin&&restants!==null&&(termine?<p className="ab-message">{l(`Ta formule s’est terminée le ${format(dateFin)}. Tout ce que tu as vécu est gardé : choisis une formule pour continuer.`,`Your plan ended on ${format(dateFin)}. Everything you have lived is kept: choose a plan to continue.`)}</p>
     :<><div className="ab-jauge" role="meter" aria-valuemin={0} aria-valuemax={total} aria-valuenow={restants} aria-label={l('Jours restants','Days left')}><span style={{width:`${Math.min(100,restants/total*100)}%`}}/></div>
      <p className="ab-message"><strong>{l(`${restants} jour${restants>1?'s':''} restant${restants>1?'s':''}`,`${restants} day${restants>1?'s':''} left`)}</strong> · {l(`jusqu’au ${format(dateFin)}`,`until ${format(dateFin)}`)}</p>
      {bientot&&<p className="ab-alerte">{l('Ta formule se termine bientôt. Rien n’est prélevé automatiquement : renouvelle quand tu veux.','Your plan ends soon. Nothing is charged automatically: renew whenever you like.')}</p>}</>)}
-   <ul className="ab-inclus">{f.avantages.map(a=><li key={a[0]}><T nom="graine" taille={14}/>{l(...a)}</li>)}</ul>
+   <ul className="ab-inclus">{f.avantages.map(a=><li key={a[0]}><Coche/>{l(...a)}</li>)}</ul>
    {(termine||bientot)&&<a className="ab-bouton ab-principal" href="#formules">{actuelle==='graine'?l('Choisir une formule','Choose a plan'):l('Renouveler','Renew')}</a>}
   </section>
 
   {/* 2. Les formules */}
   <h2 className="pv-surtitre" id="formules">{l('Les formules','Plans')}</h2>
-  <div className="ab-periode" role="radiogroup" aria-label={l('Durée','Duration')}>
+  <div className={`ab-periode ab-periode-${periode}`} role="radiogroup" aria-label={l('Durée','Duration')}><span className="ab-curseur" aria-hidden="true"/>
    <button type="button" role="radio" aria-checked={periode==='mois'} onClick={()=>setPeriode('mois')}>{l('Au mois','Monthly')}</button>
    <button type="button" role="radio" aria-checked={periode==='an'} onClick={()=>setPeriode('an')}>{l('À l’année','Yearly')}<span className="ab-cadeau">{l('2 mois offerts','2 months free')}</span></button>
   </div>
@@ -58,11 +69,11 @@ export function Abonnement(){
    {FORMULES.map(x=>{const annuel=periode==='an'&&x.an!==null,est=x.id===actuelle,lien=x.id==='graine'?null:donnees.liens[offreAbonnement(x.id,periode,langue)];
     return <article key={x.id} className={`ab-formule ab-${x.id}${est?' ab-courante':''}`} aria-label={l(...x.nom)}>
      {x.badge&&<span className="ab-badge">{l(...x.badge)}</span>}
-     <div className="ab-formule-haut"><span className="ab-icone"><T nom={x.icone} taille={24}/></span><div><h3>{l(...x.nom)}</h3><p>{l(...x.accroche)}</p></div></div>
-     <p className="ab-prix">{x.mois===0?<strong>{l('Gratuit','Free')}</strong>:annuel?<><strong>{prix(x.an!)}</strong><span>{l(' / an',' / year')}</span><small>{l(`soit ${prix(prixAnnuelMensualise(x)!)} par mois`,`i.e. ${prix(prixAnnuelMensualise(x)!)} a month`)}</small></>:<><strong>{prix(x.mois)}</strong><span>{l(' / mois',' / month')}</span></>}{x.mois===0&&<small>{l('1 mois','1 month')}</small>}</p>
-     {annuel&&<div className="ab-bonus"><p className="ab-economie">{l(`Tu économises ${prix(economieAn(x))} par an`,`You save ${prix(economieAn(x))} a year`)}</p><p className="ab-bonus-titre"><T nom="ticket" taille={16}/>{l('Inclus avec l’année','Included with the year')}</p><ul>{x.bonusAn?.map(b=><li key={b[0]}><T nom="graine" taille={14}/>{l(...b)}</li>)}</ul></div>}
+     <div className="ab-formule-haut"><Embleme id={x.id}/><div><h3>{l(...x.nom)}</h3><p>{l(...x.accroche)}</p></div></div>
+     <p className="ab-prix">{x.mois===0?<strong>{l('Gratuit','Free')}</strong>:annuel?<>{montant(x.an!)}<span>{l(' / an',' / year')}</span><small>{l(`soit ${prix(prixAnnuelMensualise(x)!)} par mois`,`i.e. ${prix(prixAnnuelMensualise(x)!)} a month`)}</small></>:<>{montant(x.mois)}<span>{l(' / mois',' / month')}</span></>}{x.mois===0&&<small>{l('1 mois','1 month')}</small>}</p>
+     {annuel&&<div className="ab-bonus"><p className="ab-economie">{l(`Tu économises ${prix(economieAn(x))} par an`,`You save ${prix(economieAn(x))} a year`)}</p><p className="ab-bonus-titre"><T nom="ticket" taille={16}/>{l('Inclus avec l’année','Included with the year')}</p><ul>{x.bonusAn?.map(b=><li key={b[0]}><Coche/>{l(...b)}</li>)}</ul></div>}
      {x.id==='plus'&&<p className="ab-valeur">{l(`Valeur des contenus achetés séparément : ${prix(Math.round(VALEUR_SEPAREE_PLUS))}`,`Value of the content bought separately: ${prix(Math.round(VALEUR_SEPAREE_PLUS))}`)}</p>}
-     <ul>{x.avantages.map(a=><li key={a[0]}><T nom="graine" taille={14}/>{l(...a)}</li>)}</ul>
+     <ul className="ab-liste">{x.avantages.map(a=><li key={a[0]}><Coche/>{l(...a)}</li>)}</ul>
      {x.places&&<p className="ab-places">{l(...x.places)}</p>}
      {est&&!termine&&x.id==='graine'?<span className="ab-bouton ab-desactive">{l('Ta formule actuelle','Your current plan')}</span>
       :x.id==='graine'?null
