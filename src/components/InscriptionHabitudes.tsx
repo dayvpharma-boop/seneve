@@ -8,6 +8,7 @@ import {ENGAGEMENTS,ETAPES} from '@/lib/habitudes-engagements';
 import {reglerRythmeDime} from '@/lib/habitudes-horaires-api';
 import type {RythmeDime} from '@/lib/habitudes-planning';
 import {ChoixRythmeDime} from './ChoixRythmeDime';
+import {creneauxDepuisJours,heuresDifferentes,heuresParJour} from '@/lib/habitudes-heures-jour';
 
 // Le parent doit fournir le catalogue autorisé par le serveur, jamais une offre de démonstration.
 // La clé inclut le compte pour ne pas réutiliser un formulaire après un changement de session.
@@ -24,10 +25,17 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
  const [accord,setAccord]=useState(false),[occupe,setOccupe]=useState(false),[attente,setAttente]=useState(false),[erreur,setErreur]=useState(''),[resultat,setResultat]=useState<ResultatInscription|null>(null),[refus,setRefus]=useState(false);
  // Dîme (décision du 03/11/2026) : commerçant chaque semaine, salarié une fois par mois.
  const [rythmeDime,setRythmeDime]=useState<RythmeDime>({rythme:'semaine'}),[dimeARegler,setDimeARegler]=useState(false);
+ // Demande de Dr Justin (04/11/2026) : dès l'inscription, une heure différente selon le jour (comme dans les réglages).
+ const [parJour,setParJour]=useState<Record<string,boolean>>(()=>Object.fromEntries(c.planning.map(h=>[h.habit_key,heuresDifferentes(h.creneaux)])));
  const verrou=useRef(false),demande=useRef<DemandeInscription|null>(null);
  const jours=en?['Mon','Tue','Wed','Thu','Fri','Sat','Sun']:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
  const frequence=(i:number)=>c.planning[i]!.creneaux.reduce((n,s)=>n+s.jours_iso.length,0);
  function modifier(i:number,creneaux:PlanningInscription[number]['creneaux']){setAccord(false);setErreur('');setPlanning(p=>p.map((h,n)=>n===i?{...h,creneaux}:h));}
+ function basculerParJour(i:number,h:PlanningInscription[number],actif:boolean){
+  const heures=heuresParJour(h.creneaux),premiere=[...heures.values()].find(Boolean)??'';
+  setParJour(p=>({...p,[h.habit_key]:actif}));
+  modifier(i,creneauxDepuisJours(actif?heures:new Map([...heures.keys()].map(j=>[j,premiere])),actif));
+ }
  async function soumettre(e:FormEvent){
   e.preventDefault();if(verrou.current||resultat||refus||!accord||!engagementsAcceptes)return;
   if(!demande.current){
@@ -64,12 +72,19 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
    <div className="px-3 pb-3 flex flex-col gap-2.5">
     {h.habit_key==='dime'&&<ChoixRythmeDime langue={c.langue} valeur={rythmeDime} onChange={v=>{setAccord(false);setRythmeDime(v);}}/>}
     <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{h.habit_key==='dime'&&rythmeDime.rythme==='mois'?l(`Une fois par mois, le ${rythmeDime.jour_mois}.`,`Once a month, on day ${rythmeDime.jour_mois}.`):h.habit_key==='dime'?l('Choisis un ou plusieurs jours par semaine.','Choose one or more days per week.'):l(`Rendez-vous par semaine : ${frequence(i)}.`,`Weekly appointments: ${frequence(i)}.`)}</p>
+    {!culte(h.habit_key)&&!(h.habit_key==='dime'&&rythmeDime.rythme==='mois')&&<label className="flex items-center gap-2.5 min-h-[44px] font-hd-label-md text-hd-label-md text-hd-on-surface cursor-pointer"><input type="checkbox" className="w-5 h-5 shrink-0 accent-current text-hd-secondary" checked={!!parJour[h.habit_key]} onChange={e=>basculerParJour(i,h,e.target.checked)}/>{l('Une heure différente selon le jour','A different time for each day')}</label>}
+    {parJour[h.habit_key]&&!culte(h.habit_key)&&!(h.habit_key==='dime'&&rythmeDime.rythme==='mois')?(()=>{const heures=heuresParJour(h.creneaux),premiere=[...heures.values()].find(Boolean)??'';const changer=(m:Map<number,string>)=>modifier(i,creneauxDepuisJours(m,true));
+     return <fieldset className="border border-hd-outline-variant/60 rounded-xl p-3 flex flex-col gap-2.5 min-w-0"><legend className="px-1 font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{l(`${h.libelle} — jours et heures`,`${h.libelle} — days and times`)}</legend>
+      <div className="flex flex-wrap gap-1.5">{jours.map((j,n)=><label key={j} className="relative cursor-pointer"><input type="checkbox" className="peer sr-only" checked={heures.has(n+1)} onChange={e=>{const m=new Map(heures);if(e.target.checked)m.set(n+1,premiere);else m.delete(n+1);changer(m);}}/><span className="flex items-center justify-center min-w-[44px] min-h-[40px] px-2 rounded-lg border border-hd-outline-variant/60 bg-hd-surface-container-lowest text-hd-on-surface-variant font-hd-label-md text-hd-label-md peer-checked:bg-hd-secondary-container/40 peer-checked:border-hd-secondary peer-checked:text-hd-secondary peer-focus-visible:outline-2 peer-focus-visible:outline-hd-secondary">{j}</span></label>)}</div>
+      {[...heures].map(([j,heure])=><label key={j} className="flex items-center justify-between gap-3 font-hd-label-md text-hd-label-md text-hd-on-surface">{joursLongs[j-1]}<input type="time" required aria-label={l(`${h.libelle} — ${joursLongs[j-1]}`,`${h.libelle} — ${joursLongs[j-1]}`)} value={heure} onChange={e=>{const m=new Map(heures);m.set(j,e.target.value);changer(m);}} className="min-h-[44px] w-[8.5rem] rounded-lg bg-hd-surface-container-low px-3 text-hd-on-surface font-hd-label-lg text-hd-label-lg font-semibold tracking-wide tabular-nums border border-hd-outline-variant/60 focus:outline-2 focus:outline-hd-secondary"/></label>)}
+     </fieldset>;})():<>
     {h.creneaux.map((s,k)=><fieldset className="border border-hd-outline-variant/60 rounded-xl p-3 flex flex-col gap-2.5 min-w-0" key={s.creneau_id}><legend className="px-1 font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{l(`${h.libelle} — créneau ${k+1}`,`${h.libelle} — slot ${k+1}`)}</legend>
      <label className="flex flex-col gap-1.5 font-hd-label-md text-hd-label-md text-hd-on-surface-variant">{h.libelle} — {s.jours_iso.map(j=>jours[j-1]).join(', ')}<input type="time" required value={s.heure_locale} onChange={e=>modifier(i,h.creneaux.map((t,m)=>m===k?{...t,heure_locale:e.target.value}:t))} className="min-h-[44px] w-full rounded-lg bg-hd-surface-container-low px-3 text-hd-on-surface font-hd-label-lg text-hd-label-lg font-semibold tracking-wide border border-hd-outline-variant/60 focus:outline-2 focus:outline-hd-secondary"/></label>
      {!(h.habit_key==='dime'&&rythmeDime.rythme==='mois')&&<div className="flex flex-wrap gap-1.5">{jours.map((j,n)=><label key={j} className="relative cursor-pointer"><input type="checkbox" className="peer sr-only" checked={s.jours_iso.includes(n+1)} onChange={e=>modifier(i,h.creneaux.map((t,m)=>m===k?{...t,jours_iso:e.target.checked?[...t.jours_iso,n+1].sort((a,b)=>a-b):t.jours_iso.filter(v=>v!==n+1)}:t))}/><span className="flex items-center justify-center min-w-[44px] min-h-[40px] px-2 rounded-lg border border-hd-outline-variant/60 bg-hd-surface-container-lowest text-hd-on-surface-variant font-hd-label-md text-hd-label-md peer-checked:bg-hd-secondary-container/40 peer-checked:border-hd-secondary peer-checked:text-hd-secondary peer-focus-visible:outline-2 peer-focus-visible:outline-hd-secondary">{j}</span></label>)}</div>}
      {h.creneaux.length>1&&<button type="button" className="self-start min-h-[44px] px-3 rounded-lg bg-hd-surface-container text-hd-on-surface font-hd-label-md text-hd-label-md" onClick={()=>modifier(i,h.creneaux.filter((_,n)=>n!==k))}>{l(`Retirer le créneau ${k+1}`,`Remove slot ${k+1}`)}</button>}
     </fieldset>)}
     {h.creneaux.length<Math.min(7,frequence(i))&&<button type="button" className="self-start min-h-[44px] px-3 rounded-lg bg-hd-surface-container-low text-hd-secondary font-hd-label-md text-hd-label-md flex items-center gap-1.5" onClick={()=>modifier(i,[...h.creneaux,{creneau_id:'c_'+crypto.randomUUID().replaceAll('-','').slice(0,16),heure_locale:'',jours_iso:[]}])}><IconeHD nom="schedule" className="text-[16px]"/>{l('Ajouter un créneau','Add a time slot')}</button>}
+    </>}
    </div>
   </details>;};
  const bouton='w-full min-h-[52px] bg-hd-secondary hover:bg-hd-on-secondary-fixed-variant text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-55';
