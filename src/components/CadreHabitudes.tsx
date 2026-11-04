@@ -5,9 +5,11 @@ import {IconeHD} from './IconeHabitudes';
 import {ClocheNotifications} from './ClocheNotifications';
 
 /** Barre du haut et barre du bas des maquettes Stitch Habitudes & Défis, reproduites telles quelles.
- * Les onglets sans lien fourni restent visibles mais inactifs (hors du périmètre de l'écran).
+ * Parcours, Bibliothèque, Bible et Journal mènent aux mêmes pages que la barre de l'espace (BarreNav) :
+ * demande de Dr Justin du 04/11/2026, ces onglets ne répondaient pas après l'ouverture d'un rappel.
  */
 export type OngletHD='aujourdhui'|'parcours'|'bibliotheque'|'bible'|'journal';
+const PAGES:Partial<Record<OngletHD,string>>={parcours:'/progres',bibliotheque:'/bibliotheque',bible:'/bible',journal:'/journal'};
 const ONGLETS:{id:OngletHD;icone:string;fr:string;en:string}[]=[
  {id:'aujourdhui',icone:'wb_twilight',fr:'Aujourd’hui',en:'Today'},
  {id:'parcours',icone:'route',fr:'Parcours',en:'Journey'},
@@ -45,7 +47,7 @@ export function CadreHabitudes({titre,langue,actif,liens={},retour,retourLibelle
     {ONGLETS.map(o=>{
      const courant=o.id===actif,cl=`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] gap-1 transition-colors ${courant?'text-hd-secondary font-semibold':'text-hd-on-surface-variant hover:text-hd-on-surface'}`;
      const contenu=<><IconeHD nom={o.icone} className="text-[22px]"/><span className="font-hd-label-nav text-hd-label-nav">{en?o.en:o.fr}</span></>;
-     const lien=liens[o.id];
+     const page=PAGES[o.id],lien=liens[o.id]??(page&&(en?`${page}?lang=en`:page));
      return lien?<Link key={o.id} to={lien} aria-current={courant?'page':undefined} className={cl}>{contenu}</Link>:<span key={o.id} aria-disabled="true" className={cl}>{contenu}</span>;
     })}
    </div>
