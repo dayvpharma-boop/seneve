@@ -3,6 +3,7 @@ import {Link,useSearchParams} from 'react-router-dom';
 import {supabase} from '@/lib/supabase';
 import {chargerMesLivres,cheminPdf,lienLivre,type LangueLivre,type MesLivres} from '@/lib/livre-fichiers';
 import {IconeBibliotheque as I} from './IconeBibliotheque';
+import {cleCarnet} from '@/lib/livre-annotations';
 const LecteurPdfLivre=lazy(()=>import('./LecteurPdfLivre').then(m=>({default:m.LecteurPdfLivre})));
 const LecteurAudioLivre=lazy(()=>import('./LecteurAudioLivre').then(m=>({default:m.LecteurAudioLivre})));
 
@@ -18,7 +19,7 @@ export function LivreFormatAcces({format,langue}:{format:'pdf'|'audio';langue:La
  if(erreur)return <p role="alert" className="lf-message">{l('Impossible de vérifier ton accès au livre pour le moment. Vérifie ta connexion puis réessaie.','Unable to check your access to the book right now. Check your connection and try again.')}</p>;
  if(!droits)return <p role="status" className="lf-message">{l('Vérification de ton accès…','Checking your access…')}</p>;
  if(autorise)return <Suspense fallback={<p role="status" className="lf-message">{l('Ouverture…','Opening…')}</p>}>
-  {format==='pdf'?(pdfUrl?<LecteurPdfLivre url={pdfUrl} cleMemoire={`seneve:livre-pdf:v1:${userId}:${langue}`} en={en} pageDemandee={pageDemandee&&pageDemandee>0?Math.floor(pageDemandee):undefined}/>:<p role="status" className="lf-message">{l('Ouverture du livre…','Opening the book…')}</p>)
+  {format==='pdf'?(pdfUrl?<LecteurPdfLivre url={pdfUrl} cleMemoire={`seneve:livre-pdf:v1:${userId}:${langue}`} cleAnnotations={cleCarnet(userId,langue)} en={en} pageDemandee={pageDemandee&&pageDemandee>0?Math.floor(pageDemandee):undefined}/>:<p role="status" className="lf-message">{l('Ouverture du livre…','Opening the book…')}</p>)
    :<LecteurAudioLivre langue={langue} userId={userId}/>}
  </Suspense>;
  const nom=format==='pdf'?l('le livre numérique (PDF)','the digital book (PDF)'):l('le livre audio','the audiobook');
