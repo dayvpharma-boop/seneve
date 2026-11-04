@@ -126,6 +126,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
    </Reglage>
    <LigneLien to="/aide?motif=adresse-email" icone="arobase" valeur={emailMasque}>{en?'Email address':'Adresse e-mail'}</LigneLien>
    <LigneLien to={`/mot-de-passe-oublie?lang=${langue}`} icone="cadenas">{en?'Password':'Mot de passe'}</LigneLien>
+   <LigneLien to={`/reglages/abonnement${suffixe}`} icone="graine">{en?'My subscription':'Mon abonnement'}</LigneLien>
    <LigneLien to={`/acces?lang=${langue}`} icone="cle">{en?'My access and purchases':'Mes accès et achats'}</LigneLien>
    {equipe&&<LigneLien to="/admin" icone="equipe" className="pv-admin">Administration</LigneLien>}
   </div>
