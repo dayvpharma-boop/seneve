@@ -1,0 +1,64 @@
+/* « Mon abonnement » (maquette du 04/11/2026), mêmes couleurs que Mes réglages, clair et sombre. */
+.ab-page .pv-intro{margin:0 0 18px}
+.ab-icone{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--vivant-lavande,#eee8fc);color:var(--vivant-vert,#49439b);flex:none}
+.ab-actuelle{background:var(--vivant-surface,#fff);border:1px solid var(--vivant-ligne,#dde3f2);border-radius:22px;padding:18px;box-shadow:0 6px 24px #151b3610;display:flex;flex-direction:column;gap:12px}
+.ab-actuelle-haut{display:flex;align-items:center;gap:12px}
+.ab-actuelle-haut h2{margin:2px 0 0;font:600 22px/1.2 Poppins,system-ui,sans-serif;color:var(--vivant-encre,#151b36)}
+.ab-etiquette{font:500 12px/1 Poppins,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--vivant-secondaire,#4d5874)}
+.ab-etat{margin-left:auto;padding:5px 12px;border-radius:999px;background:#e3f4e8;color:#1f6b3a;font:600 13px/1.2 Poppins,system-ui,sans-serif}
+.ab-terminee .ab-etat{background:#fde7e4;color:#a1261b}
+.ab-jauge{height:8px;border-radius:999px;background:var(--vivant-lavande,#eee8fc);overflow:hidden}
+.ab-jauge span{display:block;height:100%;border-radius:inherit;background:var(--vivant-vert,#49439b);transition:width 400ms cubic-bezier(.32,.72,0,1)}
+.ab-bientot .ab-jauge span{background:#d08a00}
+.ab-message{margin:0;font-size:15px;line-height:1.5;color:var(--vivant-encre,#151b36)}
+.ab-alerte{margin:0;padding:10px 12px;border-radius:12px;background:#fff4dc;color:#6b4a00;font-size:14px;line-height:1.5}
+.ab-inclus,.ab-formule ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14.5px;line-height:1.45;color:var(--vivant-encre,#151b36)}
+.ab-inclus li,.ab-formule li{display:flex;gap:8px;align-items:flex-start}
+.ab-inclus li svg,.ab-formule li svg{margin-top:3px;color:var(--vivant-vert,#49439b);flex:none}
+.ab-periode{display:inline-flex;gap:4px;padding:4px;margin:10px 0 14px;border-radius:999px;background:var(--vivant-surface,#fff);border:1px solid var(--vivant-ligne,#dde3f2)}
+.ab-periode button{min-height:44px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--vivant-encre,#151b36);font:500 15px Poppins,system-ui,sans-serif;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:background-color 150ms ease}
+.ab-periode button[aria-checked="true"]{background:var(--vivant-vert,#49439b);color:var(--vivant-sur-accent,#fff)}
+.ab-cadeau{padding:2px 8px;border-radius:999px;background:#ffd482;color:#241a00;font-size:11.5px;font-weight:600}
+.ab-formules{display:flex;flex-direction:column;gap:14px}
+.ab-formule{position:relative;background:var(--vivant-surface,#fff);border:1px solid var(--vivant-ligne,#dde3f2);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.ab-formule.ab-plus{border:2px solid var(--vivant-vert,#49439b);box-shadow:0 10px 30px #151b361a}
+.ab-formule.ab-courante{outline:3px solid #ffd482;outline-offset:-1px}
+.ab-badge{position:absolute;top:-12px;right:16px;padding:4px 12px;border-radius:999px;background:var(--vivant-vert,#49439b);color:var(--vivant-sur-accent,#fff);font:600 12px/1.4 Poppins,system-ui,sans-serif}
+.ab-formule-haut{display:flex;align-items:center;gap:12px}
+.ab-formule-haut h3{margin:0;font:600 20px/1.2 Poppins,system-ui,sans-serif;color:var(--vivant-encre,#151b36)}
+.ab-formule-haut p{margin:2px 0 0;font-size:14px;color:var(--vivant-secondaire,#4d5874)}
+.ab-prix{margin:0;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;color:var(--vivant-encre,#151b36)}
+.ab-prix strong{font:600 30px/1 Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.ab-prix span{font-size:15px;color:var(--vivant-secondaire,#4d5874)}
+.ab-prix small{flex-basis:100%;font-size:13px;color:var(--vivant-secondaire,#4d5874)}
+.ab-valeur{margin:-4px 0 0;font-size:13px;color:#1f6b3a;font-weight:500}
+.ab-places{margin:0;font-size:13px;font-weight:600;color:#a15c00}
+.ab-bouton{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:14px;background:var(--vivant-lavande,#eee8fc);color:var(--vivant-vert,#49439b);font:600 15px Poppins,system-ui,sans-serif;text-decoration:none;transition:transform 100ms ease-out}
+.ab-bouton:active{transform:scale(.97)}
+.ab-principal{background:var(--vivant-vert,#49439b);color:var(--vivant-sur-accent,#fff)}
+.ab-desactive{background:transparent;border:1px dashed var(--vivant-ligne,#dde3f2);color:var(--vivant-secondaire,#4d5874)}
+.ab-offrir{margin:22px 0 4px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px;border-radius:22px;background:linear-gradient(135deg,#fff4dc,#fbe9f0);color:#241a00}
+.ab-offrir>div{flex:1;min-width:180px}
+.ab-offrir h2{margin:0;font:600 17px/1.3 Poppins,system-ui,sans-serif}
+.ab-offrir p{margin:4px 0 0;font-size:14px;line-height:1.45}
+.ab-offrir .ab-icone{background:#ffd482;color:#241a00}
+.ab-offrir .ab-bouton{background:#241a00;color:#fff4dc}
+.ab-achat{display:flex;align-items:center;gap:12px;min-height:58px;padding:8px 0;color:var(--vivant-encre,#151b36);border-bottom:1px solid var(--vivant-ligne,#dde3f2)}
+.ab-achat:last-child{border-bottom:0}
+.ab-achat span{flex:1;font-size:15px}
+.ab-achat small{font-size:12.5px;color:var(--vivant-secondaire,#4d5874)}
+.ab-vide{margin:14px 0;color:var(--vivant-secondaire,#4d5874)}
+@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]) .ab-offrir{background:linear-gradient(135deg,#3a2f12,#3a2230);color:#fff4dc}:root:not([data-apparence="clair"]) .ab-offrir .ab-bouton{background:#ffd482;color:#241a00}}
+:root[data-apparence="sombre"] .ab-offrir{background:linear-gradient(135deg,#3a2f12,#3a2230);color:#fff4dc}
+:root[data-apparence="sombre"] .ab-offrir .ab-bouton{background:#ffd482;color:#241a00}
+@media (prefers-reduced-motion:reduce){.ab-bouton:active{transform:none}.ab-jauge span{transition:none}}
+/* Avantages de l'année (04/11/2026) : économie visible et bonus réservés à l'abonnement annuel. */
+.ab-bonus{border-radius:16px;padding:12px 14px;background:linear-gradient(135deg,#fff4dc,#fdf0e4);color:#241a00;display:flex;flex-direction:column;gap:8px;animation:ab-apparait 260ms cubic-bezier(.32,.72,0,1) both}
+@keyframes ab-apparait{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ab-economie{margin:0;font:600 15px/1.3 Poppins,system-ui,sans-serif;color:#1f6b3a}
+.ab-bonus-titre{margin:0;display:flex;align-items:center;gap:6px;font:600 12px/1 Poppins,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#6b4a00}
+.ab-bonus ul{color:#241a00}
+.ab-bonus li svg{color:#a15c00!important}
+:root[data-apparence="sombre"] .ab-bonus{background:linear-gradient(135deg,#3a2f12,#3a2a20);color:#fff4dc}
+:root[data-apparence="sombre"] .ab-bonus ul{color:#fff4dc}
+@media (prefers-reduced-motion:reduce){.ab-bonus{animation:none}}
