@@ -66,7 +66,7 @@ begin
 end $$;
 
 -- 5 bis. Le contrôle des périodes HD accepte aussi ces droits enfants d'abonnement annuel.
-do $
+do $$
 declare s text;
   a1 text := 'if d.origine<>''achat'' or d.payment_event_id is null or d.etat=''revoque'' then';
   a2 text := '(new.mois>1 and (d.origine<>''achat'' or d.payment_event_id is null))';
@@ -79,7 +79,7 @@ begin
     s := replace(s, a2, '(new.mois>1 and not ' || ok || ')');
     execute s;
   end if;
-end $;
+end $$;
 
 -- 6. Ouverture d'un abonnement payé : période, premier mois HD, et 11 mois à venir pour l'année.
 do $$
@@ -183,7 +183,7 @@ revoke all on function seneve.mon_abonnement() from public, anon;
 grant execute on function seneve.mon_abonnement() to authenticated;
 
 -- Retour arrière (dans l'ordre) :
--- select cron.unschedule('abonnements-mois-suivants');  -- si la tâche a été planifiée
+-- select cron.unschedule('abonnements-mois-suivants');  -- planifiée chaque heure (20 * * * *) le 04/11/2026
 -- drop function if exists seneve.mon_abonnement(); drop function if exists seneve_private.abonnements_ouvrir_mois_suivants();
 -- remettre seneve.livre_acces, hd_validate_access_period, _ouvrir_mois_habitudes et _ouvrir_acces depuis seneve_061 et la sauvegarde précédente ;
 -- delete from seneve.hd_offres_mensuelles where offre_id like 'ABONNEMENT_%'; drop table seneve.abonnements;
