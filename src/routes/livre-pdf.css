@@ -111,7 +111,8 @@
 .lp-numero{white-space:nowrap;font-size:14px;gap:4px}
 .lp-numero input{width:3.2em}
 .lp-separateur{margin:0 2px}
-.lp-plein{display:flex;flex-direction:column;justify-content:center}
+.lp-plein{display:flex;flex-direction:column}
+.lp-plein .lp-zone{margin-block:auto}
 /* Flèches de page sur les bords gauche et droit, à mi-hauteur (04/11/2026). */
 .lp-cote{position:absolute;top:50%;z-index:4;width:44px;height:44px;margin-top:-22px;border:0;border-radius:50%;background:rgb(29 28 19 / .55);color:#fef9ea;display:grid;place-items:center;backdrop-filter:blur(8px);transition:transform 100ms ease-out,opacity 150ms ease}
 .lp-cote-gauche{left:4px}.lp-cote-droite{right:4px}
@@ -119,3 +120,9 @@
 .lp-cote:disabled{opacity:0;pointer-events:none}
 .lp-plein .lp-cote{position:fixed}
 @media (prefers-reduced-motion:reduce){.lp-cote:active:not(:disabled){transform:none}}
+/* Tourner la page (04/11/2026) : l'ancienne page glisse et s'efface, la nouvelle arrive ; plus de clignotement. */
+.lp-page canvas.lp-toile{animation:none}
+.lp-page canvas.lp-ombre{position:absolute;inset:0;z-index:1;animation:none;pointer-events:none;background:#fff}
+.lp-page canvas.lp-ombre[hidden]{display:none}
+.lp-zone{overflow-x:clip}
+.lp-page{background:#fff}

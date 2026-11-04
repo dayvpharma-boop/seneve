@@ -14,13 +14,19 @@ export function LecteurPdfLivre({url,cleMemoire,cleAnnotations,en,pageDemandee}:
  const [doc,setDoc]=useState<PDFDocumentProxy|null>(null),[erreur,setErreur]=useState(false);
  const [page,setPage]=useState(()=>{if(pageDemandee)return pageDemandee;try{return Math.max(1,Number(localStorage.getItem(cleMemoire))||1);}catch{return 1;}});
  const [plein,setPlein]=useState(false),[largeur,setLargeur]=useState(0);
+ // Zoom à deux doigts (04/11/2026) : la page est redessinée plus finement pour rester nette (palier de 0,5, jusqu'à 3×).
+ const [zoom,setZoom]=useState(1);
+ useEffect(()=>{const v=window.visualViewport;if(!v)return;let minuterie=0;const suivre=()=>{window.clearTimeout(minuterie);minuterie=window.setTimeout(()=>setZoom(Math.min(3,Math.max(1,Math.ceil(v.scale*2)/2))),250);};v.addEventListener('resize',suivre);return()=>{window.clearTimeout(minuterie);v.removeEventListener('resize',suivre);};},[]);
  const [carnet,setCarnet]=useState<CarnetLivre>(()=>lireCarnet(cleAnnotations));
  const [selection,setSelection]=useState<Selection|null>(null),[edition,setEdition]=useState<AnnotationLivre|null>(null),[liste,setListe]=useState(false);
  const toile=useRef<HTMLCanvasElement>(null),texte=useRef<HTMLDivElement>(null),cadre=useRef<HTMLDivElement>(null),zone=useRef<HTMLDivElement>(null),racine=useRef<HTMLElement>(null);
  const doigt=useRef<{x:number;y:number}|null>(null);
+ // Tourner la page (04/11/2026, demande de Dr Justin : « pas quelque chose qui clignote ») : l'ancienne page, copiée
+ // dans « ombre », glisse et s'efface du côté où l'on va pendant que la nouvelle arrive de l'autre côté.
+ const ombre=useRef<HTMLCanvasElement>(null),sens=useRef(0);
  const total=doc?.numPages??0;
  const changerCarnet=useCallback((c:CarnetLivre)=>{setCarnet(c);ecrireCarnet(cleAnnotations,c);},[cleAnnotations]);
- const aller=useCallback((n:number)=>{setSelection(null);window.getSelection()?.removeAllRanges();setPage(p=>{const max=doc?.numPages||p;return Math.min(Math.max(1,n),max);});},[doc]);
+ const aller=useCallback((n:number)=>{setSelection(null);window.getSelection()?.removeAllRanges();setPage(p=>{const max=doc?.numPages||p,suivante=Math.min(Math.max(1,n),max);sens.current=suivante>p?1:suivante<p?-1:0;return suivante;});},[doc]);
 
  useEffect(()=>{if(pageDemandee){setPage(doc?Math.min(pageDemandee,doc.numPages):pageDemandee);racine.current?.scrollIntoView({block:'start',behavior:'smooth'});}},[pageDemandee]); // eslint-disable-line react-hooks/exhaustive-deps
  useEffect(()=>{
@@ -43,21 +49,30 @@ export function LecteurPdfLivre({url,cleMemoire,cleAnnotations,en,pageDemandee}:
    const pdfjs=await import('pdfjs-dist');
    const p=await doc.getPage(page);if(!actif)return;
    const base=p.getViewport({scale:1});
-   // En plein écran, la page entière tient dans la hauteur ; sinon elle prend toute la largeur.
-   const hauteurDispo=plein?window.innerHeight-132:Infinity;
-   const echelle=Math.min(largeur/base.width,hauteurDispo/base.height);
-   const vue=p.getViewport({scale:echelle}),dpr=Math.min(2,window.devicePixelRatio||1),vueNette=p.getViewport({scale:echelle*dpr});
-   const c=toile.current!,k=cadre.current!;
+   // La page prend toute la largeur, en portrait comme en paysage (téléphone tourné : on fait défiler la page).
+   const echelle=largeur/base.width;
+   // Netteté : densité de l'écran × zoom à deux doigts, sans dépasser environ 12 millions de pixels.
+   const dpr=Math.min(3,window.devicePixelRatio||1),voulu=dpr*zoom,plafond=Math.sqrt(12e6/(base.width*base.height))/echelle;
+   const vue=p.getViewport({scale:echelle}),vueNette=p.getViewport({scale:echelle*Math.max(1,Math.min(voulu,plafond))});
+   const c=toile.current!,k=cadre.current!,o=ombre.current;
+   const direction=sens.current;sens.current=0;
+   if(o){if(direction&&c.width){o.width=c.width;o.height=c.height;o.style.width=c.style.width;o.style.height=c.style.height;o.getContext('2d')?.drawImage(c,0,0);o.hidden=false;}else o.hidden=true;}
    c.width=Math.floor(vueNette.width);c.height=Math.floor(vueNette.height);
    k.style.width=c.style.width=`${Math.floor(vue.width)}px`;k.style.height=c.style.height=`${Math.floor(vue.height)}px`;
    rendu=p.render({canvas:c,viewport:vueNette});
    const t=texte.current!;t.replaceChildren();t.style.setProperty('--total-scale-factor',String(echelle));t.style.setProperty('--scale-round-x','1px');t.style.setProperty('--scale-round-y','1px');
    couche=new pdfjs.TextLayer({textContentSource:p.streamTextContent(),container:t,viewport:vue});
-   await Promise.all([rendu.promise,couche.render()]);
+   await rendu.promise;
+   if(direction&&o&&!o.hidden&&typeof c.animate==='function'){
+    const doux=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,courbe='cubic-bezier(0.32,0.72,0,1)';
+    c.animate(doux?[{opacity:0},{opacity:1}]:[{transform:`translateX(${direction*28}%)`,opacity:0.2},{transform:'none',opacity:1}],{duration:doux?160:340,easing:courbe});
+    void o.animate(doux?[{opacity:1},{opacity:0}]:[{transform:'none',opacity:1},{transform:`translateX(${-direction*28}%)`,opacity:0}],{duration:doux?160:300,easing:courbe,fill:'forwards'}).finished.then(()=>{o.hidden=true;},()=>undefined);
+   }else if(o)o.hidden=true;
+   await couche.render();
   })().catch(()=>{/* rendu annulé en changeant de page */});
   try{localStorage.setItem(cleMemoire,String(page));}catch{/* page non retenue */}
   return()=>{actif=false;rendu?.cancel();couche?.cancel();};
- },[doc,page,largeur,plein,cleMemoire]);
+ },[doc,page,largeur,plein,zoom,cleMemoire]);
  // Plein écran : vrai plein écran quand le navigateur le permet, sinon le lecteur couvre l'écran de l'application.
  useEffect(()=>{
   if(!plein)return;
@@ -117,7 +132,8 @@ export function LecteurPdfLivre({url,cleMemoire,cleAnnotations,en,pageDemandee}:
    {doc&&<button type="button" className="lp-cote lp-cote-droite" onClick={()=>aller(page+1)} disabled={page>=total} aria-label={l('Page suivante','Next page')}><I nom="east" taille={22}/></button>}
    <div ref={cadre} className="lp-page" onContextMenu={e=>e.preventDefault()} onPointerDown={poser} onPointerUp={lever} onPointerCancel={()=>{doigt.current=null;}}>
     {!doc&&<p role="status" className="lp-chargement">{l('Ouverture du livre…','Opening the book…')}</p>}
-    <canvas ref={toile} aria-hidden="true"/>
+    <canvas ref={toile} className="lp-toile" aria-hidden="true"/>
+    <canvas ref={ombre} className="lp-ombre" hidden aria-hidden="true"/>
     <div className="lp-marques" aria-hidden="true">{annotationsPage.flatMap(a=>a.zones.map((z,i)=><span key={a.id+i} className={`${a.couleur?`lp-surligne lp-c-${a.couleur}`:''}${a.souligne?' lp-souligne':''}${a.note&&i===a.zones.length-1?' lp-a-note':''}`} style={{left:`${z[0]*100}%`,top:`${z[1]*100}%`,width:`${z[2]*100}%`,height:`${z[3]*100}%`}}/>))}</div>
     <div ref={texte} className="lp-texte" aria-label={total?l(`Texte de la page ${page} sur ${total}`,`Text of page ${page} of ${total}`):undefined}/>
     {selection&&<div className="lp-outils" role="toolbar" aria-label={l('Annoter la sélection','Annotate the selection')} style={{top:`max(4px, calc(${selection.zones[0]![1]*100}% - 56px))`}}>
