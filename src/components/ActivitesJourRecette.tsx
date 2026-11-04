@@ -2,6 +2,7 @@ import {estDimanche} from '@/lib/habitudes-dimanche';
 import {RepereDureeHabitudes,aRepereDuree} from './RepereDureeHabitudes';
 import {CultesSemaineHabitudes} from './CultesSemaineHabitudes';
 import {MaDimeHabitudes} from './MaDimeHabitudes';
+import {DimancheHabitudes} from './DimancheHabitudes';
 import {LecteurPriereHabitudes,momentPriere} from './LecteurPriereHabitudes';
 import {LecturesJourHabitudes,estLectureHabitudes} from './LecturesJourHabitudes';
 import {useEffect,useRef,useState} from 'react';
@@ -117,6 +118,8 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Choisis ta prière. Lire ne valide rien : appuie sur « J’ai prié » après avoir prié.','Choose your prayer. Reading completes nothing: press “I prayed” after praying.')}</p>
   </aside>}
   {!horsLigne&&activites.some(a=>estLectureHabitudes(a.habit_key))&&<button type="button" onClick={()=>{setLectureInitialeId(null);setLecturesOuvertes(true);}} className="mb-hd-space-lg min-h-[48px] px-4 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-lg text-hd-label-lg flex items-center justify-center gap-2"><IconeHD nom="menu_book"/>{l('Lectures du jour','Today’s readings')}<IconeHD nom="chevron_right"/></button>}
+  {/* Extras du dimanche (04/11/2026), facultatifs et jamais comptés. */}
+  {!horsLigne&&estDimanche(dateLocale)&&<DimancheHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue}/>}
   {!horsLigne&&<CultesSemaineHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} onConfirme={confirmer}/>}
   {!horsLigne&&<MaDimeHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} lienReglages={`/reglages?parcours=${encodeURIComponent(enrollmentId)}${en?'&lang=en':''}#horaires`}/>}
   {/* Prochain rendez-vous */}
