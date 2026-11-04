@@ -78,6 +78,8 @@ ecrans['aujourdhui-ouvert']=ecrans.aujourdhui!;
 ecrans['aujourdhui-version']=ecrans.aujourdhui!;
 // Inscription avec « Une heure différente selon le jour » cochée sur l'exercice (04/11/2026).
 ecrans['horaires-jour']=ecrans.horaires!;
+// Dimanche 25 octobre : extras du dimanche, résumé de la semaine ouvert (04/11/2026).
+ecrans.dimanche=()=><CadreHabitudes titre="Aujourd’hui" langue="fr" actif="aujourdhui" liens={{aujourdhui:'/'}}><ActivitesJourRecette enrollmentId={E} participantId={P} dateLocale="2026-10-25" langue="fr" fuseau="Africa/Kinshasa"/></CadreHabitudes>;
 const nom=decodeURIComponent(location.hash.slice(1)),Ecran=ecrans[nom];
 if(nom.startsWith('rappels')){void import('@/styles-journee-nouvelle.css');void import('@/styles-mode-sombre.css');}
 createRoot(document.getElementById('root')!).render(<MemoryRouter initialEntries={[(nom==='design-progres'?'/progres':'/espace')+location.search]}>{Ecran?<Ecran/>:<ul>{Object.keys(ecrans).map(n=><li key={n}><a href={'#'+n}>{n}</a></li>)}</ul>}</MemoryRouter>);
@@ -89,6 +91,7 @@ setTimeout(()=>{
  else if(nom==='aujourdhui-version'){void import('@/styles-hors-connexion.css');void import('@/lib/hors-ligne').then(m=>{m.afficherNouvelleVersion();setTimeout(()=>{document.body.dataset.pret='1';},700);});}
  else if(nom==='horaires-jour'){const d=[...document.querySelectorAll('details')].find(x=>x.querySelector('summary')?.textContent?.includes('Exercice')) as HTMLDetailsElement|undefined;if(d){d.open=true;(d.querySelector('input[type=checkbox]:not(.sr-only):not(.peer)') as HTMLInputElement|null)?.click();}
   setTimeout(()=>{const champs=[...(d?.querySelectorAll('input[type=time]')??[])] as HTMLInputElement[];const v=['06:45','16:00','08:00'];champs.forEach((c,k)=>saisir('#'+(c.id||(c.id='hd-heure-'+k)),v[k%3]!));d?.scrollIntoView();setTimeout(()=>{document.body.dataset.pret='1';},300);},300);}
+ else if(nom==='dimanche'){const d=[...document.querySelectorAll('details')].find(x=>x.querySelector('summary')?.textContent?.includes('Résumé de ma semaine')) as HTMLDetailsElement|undefined;if(d)d.open=true;setTimeout(()=>{d?.closest('section')?.scrollIntoView();document.body.dataset.pret='1';},700);}
  else if(nom==='dime'){(document.querySelector('[role=radio]') as HTMLButtonElement)?.click();
   setTimeout(()=>{saisir('#hd-dime-periode','semaine');saisir('#hd-dime-recu','1000');saisir('#hd-dime-cout','650');saisir('#hd-dime-charges','150');
    setTimeout(()=>{(document.querySelector('.hd-simulateur form button[type=submit]') as HTMLButtonElement)?.click();setTimeout(()=>{document.body.dataset.pret='1';},300);},200);},200);}
