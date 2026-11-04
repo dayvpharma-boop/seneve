@@ -1,6 +1,6 @@
 /* « Mon abonnement » : style Apple demandé par Dr Justin le 04/11/2026. Quatre paliers bien distincts
  * (emblèmes pleins, Plus en indigo profond, Accompagnement noir et or), grands prix, coches rondes, sélecteur segmenté. */
-.ab-page{--ab-encre:var(--vivant-encre,#151b36);--ab-doux:var(--vivant-secondaire,#4d5874);--ab-surface:var(--vivant-surface,#fff);--ab-ligne:var(--vivant-ligne,#e3e6f0);--ab-accent:var(--vivant-vert,#4b3fd1);--ab-ressort:cubic-bezier(.32,.72,0,1)}
+.ab-page{--ab-encre:var(--vivant-encre,#151b36);--ab-doux:var(--vivant-secondaire,#4d5874);--ab-surface:var(--vivant-surface,#fff);--ab-ligne:var(--vivant-ligne,#e3e6f0);--ab-accent:#4b3fd1;--ab-ressort:cubic-bezier(.32,.72,0,1)}
 .ab-page .pv-intro{margin:0 0 22px;font-size:16px;line-height:1.5;color:var(--ab-doux)}
 
 /* Emblèmes : un dessin plein par palier, sur un fond dégradé qui s'enrichit d'une formule à l'autre. */
@@ -122,7 +122,10 @@
 .ab-vide{margin:14px 0;color:var(--ab-doux)}
 
 /* Mode sombre : surfaces claires assombries ; Plus et Accompagnement gardent leur matière. */
-@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]) .ab-offrir{background:linear-gradient(135deg,#3a2f12,#3a2230);color:#fff4dc}:root:not([data-apparence="clair"]) .ab-offrir .ab-bouton{background:#ffd482;color:#241a00}:root:not([data-apparence="clair"]) .ab-bonus{background:linear-gradient(135deg,#3a2f12,#3a2a20);color:#fff4dc}:root:not([data-apparence="clair"]) .ab-bonus ul{color:#fff4dc}:root:not([data-apparence="clair"]) .ab-economie{color:#9df0bd}:root:not([data-apparence="clair"]) .ab-etat{background:#1c6b3a40;color:#9df0bd}:root:not([data-apparence="clair"]) .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-bonus-titre{color:#ffd98a}:root:not([data-apparence="clair"]) .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-bonus .ab-coche path{stroke:#ffd98a}}
+:root[data-apparence] .ab-page{--ab-accent:#4b3fd1}
+:root[data-apparence="sombre"] .ab-page{--ab-accent:#b4aaff}
+@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]) .ab-page{--ab-accent:#b4aaff}:root:not([data-apparence="clair"]) .ab-offrir{background:linear-gradient(135deg,#3a2f12,#3a2230);color:#fff4dc}:root:not([data-apparence="clair"]) .ab-offrir .ab-bouton{background:#ffd482;color:#241a00}:root:not([data-apparence="clair"]) .ab-bonus{background:linear-gradient(135deg,#3a2f12,#3a2a20);color:#fff4dc}:root:not([data-apparence="clair"]) .ab-bonus ul{color:#fff4dc}:root:not([data-apparence="clair"]) .ab-economie{color:#9df0bd}:root:not([data-apparence="clair"]) .ab-etat{background:#1c6b3a40;color:#9df0bd}:root:not([data-apparence="clair"]) .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-bonus-titre{color:#ffd98a}:root:not([data-apparence="clair"]) .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-bonus .ab-coche path{stroke:#ffd98a}}
+:root[data-apparence="sombre"] .ab-page{--ab-accent:#b4aaff}
 :root[data-apparence="sombre"] .ab-offrir{background:linear-gradient(135deg,#3a2f12,#3a2230);color:#fff4dc}
 :root[data-apparence="sombre"] .ab-offrir .ab-bouton{background:#ffd482;color:#241a00}
 :root[data-apparence="sombre"] .ab-bonus{background:linear-gradient(135deg,#3a2f12,#3a2a20);color:#fff4dc}
