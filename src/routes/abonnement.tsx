@@ -44,7 +44,7 @@ export function Abonnement(){
  const maintenant=Date.now(),dateFin=donnees.fin?new Date(donnees.fin):null,dateDebut=donnees.debut?new Date(donnees.debut):null;
  const restants=dateFin?Math.max(0,Math.ceil((+dateFin-maintenant)/864e5)):null,total=dateFin&&dateDebut?Math.max(1,Math.round((+dateFin-+dateDebut)/864e5)):1;
  const termine=restants===0,bientot=!termine&&restants!==null&&restants<=7;
- return <main className="pf-page pv-page ab-page avec-nav">
+ return <main className={`pf-page pv-page ab-page avec-nav ab-mode-${periode}`}>
   {tete}
   <p className="pv-intro">{l('De la graine à l’arbre : choisis la formule qui t’aide à avancer. Tu peux changer à tout moment.','From seed to tree: choose the plan that helps you grow. You can change at any time.')}</p>
 

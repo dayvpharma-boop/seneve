@@ -137,3 +137,32 @@
 
 @media (prefers-reduced-motion:reduce){.ab-bouton:active,.ab-formule:hover{transform:none}.ab-jauge span,.ab-curseur,.ab-formule{transition:none}.ab-bonus{animation:none}}
 @media (prefers-contrast:more){.ab-formule,.ab-actuelle{border:2px solid currentColor}}
+
+/* À l'année (demande de Dr Justin du 04/11/2026) : la page se pare d'or pour qu'on sente vraiment le changement.
+ * Un voile doré apparaît en fondu sur chaque carte (les dégradés ne s'animent pas, l'opacité si). */
+.ab-formule{isolation:isolate}
+.ab-formule::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;transition:opacity 420ms var(--ab-ressort);background:radial-gradient(90% 60% at 100% 0%,#ffd77a59,transparent 70%),linear-gradient(180deg,#fff3d6 0%,transparent 55%)}
+.ab-mode-an .ab-formule::after{opacity:1}
+.ab-mode-an .ab-formule:not(.ab-plus,.ab-accompagnement){border-color:#f2c14e;box-shadow:0 0 0 1px #f2c14e,0 14px 34px -14px #c9973c66}
+.ab-mode-an .ab-formule.ab-courante{box-shadow:0 0 0 3px #f2c14e,0 14px 34px -14px #c9973c66}
+.ab-formule.ab-plus::after{background:radial-gradient(90% 55% at 100% 0%,#f6c75acc,transparent 65%),radial-gradient(70% 45% at 0% 100%,#f2bd4a40,transparent 70%)}
+.ab-formule.ab-accompagnement::after{background:radial-gradient(100% 60% at 100% 0%,#f3d58a66,transparent 65%),linear-gradient(180deg,#e9c46a1f,transparent 60%)}
+.ab-mode-an .ab-plus{box-shadow:0 0 0 2px #f2c14e,0 24px 50px -18px #c9973ccc}
+.ab-mode-an .ab-accompagnement{box-shadow:0 0 0 2px #e9c46a,0 24px 50px -18px #000c}
+.ab-formule .ab-prix span{transition:color 300ms ease}
+.ab-mode-an .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-prix span{color:#a15c00;font-weight:600}
+.ab-mode-an .ab-plus .ab-prix span,.ab-mode-an .ab-accompagnement .ab-prix span{color:#ffd98a;font-weight:600}
+.ab-mode-an .ab-formule:not(.ab-plus,.ab-accompagnement,.ab-graine) .ab-bouton:not(.ab-desactive){background:linear-gradient(180deg,#ffe08f,#f0b63f);color:#3a2800;box-shadow:inset 0 1px 0 #ffffff80,0 8px 20px -8px #c9973caa}
+.ab-mode-an .ab-plus .ab-bouton:not(.ab-desactive){background:linear-gradient(180deg,#ffe08f,#f0b63f);color:#2a1f0c}
+.ab-mode-an .ab-embleme-senev{background:linear-gradient(145deg,#ffe08f,#d99a2b);--ab-ombre:#d99a2b99}
+.ab-mode-an .ab-plus .ab-embleme-plus{background:linear-gradient(145deg,#ffe08f,#d99a2b);color:#2a1f0c}
+/* Le curseur du sélecteur devient or à l'année. */
+.ab-curseur{background-clip:padding-box;transition:transform 380ms var(--ab-ressort),background-color 300ms ease}
+.ab-mode-an .ab-curseur{background:linear-gradient(180deg,#ffe08f,#f0b63f);box-shadow:0 4px 12px -2px #c9973c88}
+.ab-mode-an .ab-periode button[aria-checked="true"]{color:#3a2800}
+.ab-mode-an .ab-cadeau{background:#2a1f0c;color:#ffe08f}
+/* Mode sombre : voile doré plus discret sur les cartes sombres. */
+:root[data-apparence="sombre"] .ab-formule:not(.ab-plus,.ab-accompagnement)::after{background:radial-gradient(90% 60% at 100% 0%,#f2bd4a33,transparent 70%),linear-gradient(180deg,#f2bd4a14,transparent 55%)}
+:root[data-apparence="sombre"] .ab-mode-an .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-prix span{color:#ffd98a}
+@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]) .ab-formule:not(.ab-plus,.ab-accompagnement)::after{background:radial-gradient(90% 60% at 100% 0%,#f2bd4a33,transparent 70%),linear-gradient(180deg,#f2bd4a14,transparent 55%)}:root:not([data-apparence="clair"]) .ab-mode-an .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-prix span{color:#ffd98a}}
+@media (prefers-reduced-motion:reduce){.ab-formule::after{transition:opacity 150ms linear}}
