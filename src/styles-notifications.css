@@ -3,7 +3,13 @@
 .cloche-notifications:hover { background:rgb(117 91 0 / .08); }
 .cloche-notifications:focus-visible { outline:2px solid #755b00; outline-offset:2px; }
 .cloche-pastille { position:absolute; top:4px; right:2px; min-width:18px; height:18px; padding:0 5px; box-sizing:border-box; border-radius:999px; background:#ba1a1a; color:#fff; font:600 11px/18px 'Work Sans',Outfit,system-ui,sans-serif; text-align:center; box-shadow:0 0 0 2px #fef9ea; }
-.cloche-hd { color:#48473e; }
+/* 04/11/2026 (Dr Justin : « en mode clair, la cloche n’est pas vraiment visible ») : trait plus épais et léger fond rond,
+   pour que la cloche se lise comme un bouton. Sur les écrans Habitudes & Défis, la remise à zéro .hd-stitch
+   effaçait sa taille, sa forme et son fond : la règle ci-dessous est plus précise pour les rétablir. */
+.cloche-notifications { background:rgb(29 28 19 / .07); }
+.cloche-notifications:hover { background:rgb(29 28 19 / .12); }
+.cloche-notifications svg path { stroke:currentColor; stroke-width:26; stroke-linejoin:round; paint-order:stroke; }
+.hd-stitch .cloche-notifications.cloche-hd { position:relative; display:inline-grid; place-items:center; width:44px; height:44px; border-radius:50%; color:#1d1c13; background:rgb(29 28 19 / .07); }
 
 .nt-page { padding-bottom:96px; }
 .nt-tete { display:flex; align-items:center; gap:8px; min-height:56px; margin-bottom:8px; }
