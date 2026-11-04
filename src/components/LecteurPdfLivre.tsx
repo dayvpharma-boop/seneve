@@ -14,7 +14,7 @@ export function LecteurPdfLivre({url,cleMemoire,en}:{url:string;cleMemoire:strin
   void(async()=>{
    const pdfjs=await import('pdfjs-dist');
    pdfjs.GlobalWorkerOptions.workerSrc=(await import('pdfjs-dist/build/pdf.worker.min.mjs?url')).default;
-   tache=pdfjs.getDocument({url,isEvalSupported:false});
+   tache=pdfjs.getDocument({url});
    const d=await tache.promise;
    if(actif){setDoc(d);setPage(p=>Math.min(p,d.numPages));}
   })().catch(()=>{if(actif)setErreur(true);});
