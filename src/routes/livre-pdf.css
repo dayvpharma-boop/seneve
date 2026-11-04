@@ -10,3 +10,39 @@
 :root:root[data-apparence] .bl-pdf .bl-pdf-livraison h2{font:600 15px/1.6 Poppins,sans-serif;margin:0 0 8px}
 :root:root[data-apparence] .bl-pdf .bl-pdf-livraison p{font:400 13px/1.8 Lora,Georgia,serif;margin:0;color:var(--bl-second)}
 @media(min-width:900px){:root:root[data-apparence] .bl-pdf .bl-fiche-formats>.bl-format{padding:24px}:root:root[data-apparence] .bl-pdf .bl-format>a{align-self:flex-start;min-width:260px}}
+
+/* Livre PDF et livre audio dans l'application (04/11/2026) : lecteur PDF, lecteur audio, carte « Réservé aux acheteurs ». */
+.lf-message,.lp-chargement,.la-chargement{margin:16px 0;color:var(--bl-second,#5b5f73)}
+.lp-erreur,.la-erreur{margin:16px 0;color:#ba1a1a}
+.lf-reserve{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.lf-titre{display:flex;align-items:center;gap:10px;color:var(--bl-accent,#4a3f9b)}
+.lf-titre h2{margin:0}
+.lf-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.lf-actions>a:not(.bl-principal),.lf-autre a{color:var(--bl-accent,#4a3f9b);text-underline-offset:4px;min-height:44px;display:inline-flex;align-items:center}
+.lp-lecteur{margin:16px 0;display:flex;flex-direction:column;gap:12px}
+.lp-page{background:#fff;border-radius:12px;box-shadow:0 2px 14px rgb(21 27 54/.08);overflow:hidden;min-height:200px;user-select:none;-webkit-user-select:none;scroll-margin-top:72px}
+.lp-page canvas{display:block}
+.lp-commandes,.la-commandes{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;border-radius:999px;background:var(--bl-carte,#fff);box-shadow:0 2px 14px rgb(21 27 54/.1);align-self:center}
+.lp-commandes button,.la-commandes button{min-width:44px;min-height:44px;border:0;border-radius:999px;background:var(--bl-doux,#eef0fb);color:var(--bl-encre,#151b36);display:grid;place-items:center;transition:transform 100ms ease-out}
+.lp-commandes button:active:not(:disabled),.la-commandes button:active:not(:disabled){transform:scale(.97)}
+.lp-commandes button:disabled,.la-commandes button:disabled{opacity:.4}
+.lp-numero{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums;color:var(--bl-encre,#151b36)}
+.lp-numero input{width:4.2em;min-height:40px;border:1px solid var(--bl-trait,#d7dbec);border-radius:10px;text-align:center;font:inherit;background:transparent;color:inherit}
+.la-lecteur{margin:16px 0;display:flex;flex-direction:column;gap:16px}
+.la-en-cours{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:16px;background:var(--bl-carte,#fff);box-shadow:0 2px 14px rgb(21 27 54/.06)}
+.la-titre{display:flex;align-items:center;gap:8px;margin:0;font-weight:600;color:var(--bl-encre,#151b36)}
+.la-titre span{margin-left:auto;font-weight:400;font-variant-numeric:tabular-nums;color:var(--bl-second,#5b5f73)}
+.la-en-cours audio{width:100%}
+.la-commandes{position:static;align-self:center;box-shadow:none;background:transparent}
+.la-vitesse{min-width:56px!important;font-weight:600;font-variant-numeric:tabular-nums}
+.la-pistes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.la-pistes button{width:100%;min-height:48px;display:flex;align-items:center;gap:12px;padding:8px 12px;border:0;border-radius:12px;background:var(--bl-carte,#fff);color:var(--bl-encre,#151b36);font:inherit;text-align:left}
+.la-pistes button[aria-current="true"]{background:var(--bl-doux,#eef0fb);color:var(--bl-accent,#4a3f9b);font-weight:600}
+.la-pistes button svg{margin-left:auto}
+.la-numero{font-variant-numeric:tabular-nums;color:var(--bl-second,#5b5f73);min-width:2ch}
+.dl-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.dl-depot fieldset{display:flex;flex-direction:column;gap:8px;border:1px solid #d7dbec;border-radius:12px;padding:12px}
+.dl-depot label{display:flex;flex-direction:column;gap:6px;font-weight:600}
+@media (prefers-reduced-motion:reduce){.lp-commandes button:active,.la-commandes button:active{transform:none}}
+.lf-aide{margin:4px 0 16px}
+.lf-aide a{color:var(--bl-accent,#4a3f9b);text-underline-offset:4px}
