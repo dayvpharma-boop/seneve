@@ -1,41 +1,43 @@
-import {afterEach,it,expect} from 'vitest';
+import {afterEach,it,expect,vi} from 'vitest';
 import {render,screen,fireEvent,cleanup,within} from '@testing-library/react';
 import {MemoryRouter,Route,Routes} from 'react-router-dom';
 import {Bibliotheque} from '@/routes/bibliotheque';
 import {LIVRE} from '@/lib/livre';
+// 04/11/2026 : PDF et audio réservés aux acheteurs ; ici, un compte sans achat.
+vi.mock('@/lib/livre-fichiers',async orig=>({...(await orig<typeof import('@/lib/livre-fichiers')>()),chargerMesLivres:async()=>({pdf_fr:false,pdf_en:false,audio_fr:false,audio_en:false}),lienLivre:vi.fn(),pistesAudio:vi.fn()}));
+vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:async()=>({data:{session:null}})}}}));
 afterEach(cleanup);
 function afficher(chemin='/bibliotheque'){return render(<MemoryRouter initialEntries={[chemin]}><Routes><Route path="/bibliotheque" element={<Bibliotheque/>}/><Route path="/livre" element={<Bibliotheque detail/>}/><Route path="/livre/audio" element={<Bibliotheque detail format="audio"/>}/><Route path="/livre/pdf" element={<Bibliotheque detail format="pdf"/>}/></Routes></MemoryRouter>);}
 it('le catalogue reste consultable sans compte et ne prétend pas à un achat',()=>{afficher();expect(screen.getByRole('heading',{name:'Ma bibliothèque'})).toBeTruthy();expect(screen.queryByText(/acheté|acquis|accès actif/i)).toBeNull();expect(screen.getByRole('link',{name:'Consulter mes accès'}).getAttribute('href')).toBe('/acces');});
-it('les filtres changent réellement les formats présentés et gardent la langue',()=>{afficher('/bibliotheque?lang=en');fireEvent.click(screen.getByRole('button',{name:'Audio'}));expect(screen.getByRole('link',{name:/Audiobook In preparation/}).getAttribute('href')).toBe('/livre/audio?lang=en');expect(screen.queryByRole('link',{name:/Digital book · PDF In preparation/})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'PDF'}));expect(screen.queryByRole('link',{name:/Audiobook In preparation/})).toBeNull();expect(screen.getByRole('button',{name:'PDF'}).getAttribute('aria-pressed')).toBe('true');});
-it('le détail présente les sept chapitres vérifiés sans créer un lecteur fictif',()=>{const{container}=afficher('/livre');expect(within(screen.getByRole('heading',{name:'Sommaire de l’enseignement'}).closest('section')!).getAllByRole('listitem')).toHaveLength(7);for(const c of LIVRE.chapitres)expect(screen.getByRole('heading',{name:c.titre})).toBeTruthy();expect(container.querySelector('audio,iframe,object')).toBeNull();expect(screen.getByRole('button',{name:'Audio bientôt disponible'})).toBeDisabled();expect(screen.getByRole('button',{name:'PDF bientôt disponible'})).toBeDisabled();expect(screen.queryByText(/vos achats|acquis|abonnement confirmé/i)).toBeNull();});
-it('le PDF indisponible ne propose ni lien public intégral ni faux téléchargement',()=>{const{container}=afficher('/livre/pdf');expect(screen.getByRole('button',{name:'PDF bientôt disponible'})).toBeDisabled();expect(container.querySelector('[download],iframe,object')).toBeNull();expect(container.querySelector('a[href$=".pdf"]')).toBeNull();expect(screen.getByRole('link',{name:'Une question sur ce format ? →'}).getAttribute('href')).toBe('/aide?motif=livre-pdf');});
-it('un audio du parcours ne transforme pas le livre complet en audio publié',()=>{const{container}=afficher('/livre/audio');expect(screen.getByRole('button',{name:'Audio bientôt disponible'})).toBeDisabled();expect(screen.queryByRole('button',{name:/pause|lecture|écouter/i})).toBeNull();expect(container.querySelector('audio')).toBeNull();expect(screen.queryByRole('textbox')).toBeNull();});
+it('les filtres changent réellement les formats présentés et gardent la langue',()=>{afficher('/bibliotheque?lang=en');fireEvent.click(screen.getByRole('button',{name:'Audio'}));expect(screen.getByRole('link',{name:/Audiobook For buyers/}).getAttribute('href')).toBe('/livre/audio?lang=en');expect(screen.queryByRole('link',{name:/Digital book · PDF For buyers/})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'PDF'}));expect(screen.queryByRole('link',{name:/Audiobook For buyers/})).toBeNull();expect(screen.getByRole('button',{name:'PDF'}).getAttribute('aria-pressed')).toBe('true');});
+it('le détail présente les sept chapitres vérifiés sans créer un lecteur fictif',()=>{const{container}=afficher('/livre');expect(within(screen.getByRole('heading',{name:'Sommaire de l’enseignement'}).closest('section')!).getAllByRole('listitem')).toHaveLength(7);for(const c of LIVRE.chapitres)expect(screen.getByRole('heading',{name:c.titre})).toBeTruthy();expect(container.querySelector('audio,iframe,object')).toBeNull();expect(screen.getByRole('link',{name:'Écouter le livre'})).toHaveAttribute('href','/livre/audio');expect(screen.getByRole('link',{name:'Lire le livre'})).toHaveAttribute('href','/livre/pdf');expect(screen.queryByText(/vos achats|acquis|abonnement confirmé/i)).toBeNull();});
+it('sans achat, le PDF ne propose ni lien public intégral ni téléchargement',async()=>{const{container}=afficher('/livre/pdf');expect(await screen.findByRole('heading',{name:'Réservé aux acheteurs'})).toBeTruthy();expect(container.querySelector('[download],iframe,object')).toBeNull();expect(container.querySelector('a[href$=".pdf"]')).toBeNull();expect(screen.getByRole('link',{name:'Une question sur ce format ? →'}).getAttribute('href')).toBe('/aide?motif=livre-pdf');});
+it('sans achat, le livre audio ne propose aucun lecteur',async()=>{const{container}=afficher('/livre/audio');expect(await screen.findByRole('heading',{name:'Réservé aux acheteurs'})).toBeTruthy();expect(screen.queryByRole('button',{name:/pause|lecture|écouter/i})).toBeNull();expect(container.querySelector('audio')).toBeNull();expect(screen.queryByRole('textbox')).toBeNull();});
 it('le lien du catalogue ouvre le détail approuvé',()=>{afficher();fireEvent.click(screen.getByRole('link',{name:/Découvrir le livre/}));expect(screen.getByRole('heading',{name:'Sommaire de l’enseignement'})).toBeTruthy();expect(screen.getByRole('link',{name:'Revenir à la bibliothèque'})).toBeTruthy();});
 it('les anglophones voient l’édition anglaise et ses vrais chapitres',()=>{afficher('/livre?lang=en');expect(screen.getByRole('heading',{level:1,name:'Stop Begging for Miracles'})).toBeTruthy();const sommaire=within(screen.getByRole('heading',{name:'Contents'}).closest('section')!);expect(sommaire.getAllByRole('listitem')).toHaveLength(7);expect(sommaire.getByText('Seek First the Kingdom of God')).toBeTruthy();expect(sommaire.getByText('Led by the Spirit, Not by Urgency')).toBeTruthy();expect(screen.getByText('“God does not examine your dreams. He examines your habits.”')).toBeTruthy();expect(screen.queryByText(LIVRE.titre)).toBeNull();});
 
 it('sans réseau, le catalogue et les filtres restent consultables sans activer de lecteur',()=>{
  Object.defineProperty(navigator,'onLine',{configurable:true,value:false});
- try{const {container}=afficher('/bibliotheque?lang=en');expect(screen.getByRole('status')).toHaveTextContent('Offline library');fireEvent.click(screen.getByRole('button',{name:'PDF'}));expect(screen.getByRole('link',{name:/Digital book · PDF In preparation/})).toHaveAttribute('href','/livre/pdf?lang=en');expect(container.querySelector('audio,iframe')).toBeNull();expect(screen.queryByText(/purchased|active access/i)).toBeNull();}finally{Object.defineProperty(navigator,'onLine',{configurable:true,value:true});}
+ try{const {container}=afficher('/bibliotheque?lang=en');expect(screen.getByRole('status')).toHaveTextContent('Offline library');fireEvent.click(screen.getByRole('button',{name:'PDF'}));expect(screen.getByRole('link',{name:/Digital book · PDF For buyers/})).toHaveAttribute('href','/livre/pdf?lang=en');expect(container.querySelector('audio,iframe')).toBeNull();expect(screen.queryByText(/purchased|active access/i)).toBeNull();}finally{Object.defineProperty(navigator,'onLine',{configurable:true,value:true});}
 });
 
-it('la page audio anglaise conserve l’aide et les sept chapitres sans annoncer un droit de lecture',()=>{
+it('la page audio anglaise conserve l’aide et les sept chapitres sans annoncer un droit de lecture',async()=>{
  const {container}=afficher('/livre/audio?lang=en');
  expect(document.title).toBe('Audiobook · Stop Begging for Miracles — SÉNEVÉ');
  expect(screen.getByRole('link',{name:'Back to library'})).toHaveAttribute('href','/bibliotheque?lang=en');
  expect(screen.getByRole('link',{name:'A question about this format? →'})).toHaveAttribute('href','/aide?motif=livre-audio&lang=en');
- expect(screen.getByRole('button',{name:'Audio not yet available'})).toBeDisabled();
+ expect(await screen.findByRole('heading',{name:'For buyers only'})).toBeTruthy();
  expect(screen.getAllByRole('heading',{level:3})).toHaveLength(7);
  expect(container.querySelector('audio,[download]')).toBeNull();
  expect(screen.queryByText(/access confirmed|activity completed/i)).toBeNull();
 });
 
-it('le PDF anglais distingue livraison et ouverture dans l’application sans exposer de fichier',()=>{
+it('le PDF anglais réservé aux acheteurs invite à l’achat sans exposer de fichier',async()=>{
  const {container}=afficher('/livre/pdf?lang=en');
  expect(document.title).toBe('Digital book · PDF · Stop Begging for Miracles — SÉNEVÉ');
- expect(screen.getByRole('heading',{name:'Delivery after an order'})).toBeTruthy();
- expect(screen.getByText(/This is separate from opening the PDF in the app/)).toBeTruthy();
+ expect(await screen.findByRole('heading',{name:'For buyers only'})).toBeTruthy();
+ expect(screen.getByRole('link',{name:/View the offers/})).toHaveAttribute('href','/offres?lang=en');
  expect(screen.getByRole('link',{name:'A question about this format? →'})).toHaveAttribute('href','/aide?motif=livre-pdf&lang=en');
- expect(screen.getByRole('button',{name:'PDF not yet available'})).toBeDisabled();
  expect(container.querySelector('iframe,object,embed,[download],a[href$=".pdf"]')).toBeNull();
  expect(screen.queryByRole('button',{name:/open pdf|resume reading/i})).toBeNull();
 });
