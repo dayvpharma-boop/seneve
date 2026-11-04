@@ -4,13 +4,13 @@ import {MemoryRouter} from 'react-router-dom';
 const m=vi.hoisted(()=>({droits:vi.fn(),lien:vi.fn(),pistes:vi.fn(),upload:vi.fn(),remove:vi.fn(),list:vi.fn()}));
 vi.mock('@/lib/livre-fichiers',async orig=>({...(await orig<typeof import('@/lib/livre-fichiers')>()),chargerMesLivres:m.droits,lienLivre:m.lien,pistesAudio:m.pistes}));
 vi.mock('@/lib/supabase',()=>({supabase:{auth:{getSession:async()=>({data:{session:{user:{id:'u1'}}}})},storage:{from:()=>({upload:m.upload,remove:m.remove,list:m.list})}}}));
-vi.mock('@/components/LecteurPdfLivre',()=>({LecteurPdfLivre:({url}:{url:string})=><p>lecteur pdf {url}</p>}));
+vi.mock('@/components/LecteurPdfLivre',()=>({LecteurPdfLivre:({url,pageDemandee}:{url:string;pageDemandee?:number})=><p>lecteur pdf {url} page {pageDemandee??'retenue'}</p>}));
 import {LivreFormatAcces} from '@/components/LivreFormatAcces';
 import {DepotLivresAdministration} from '@/components/DepotLivresAdministration';
 const aucun={pdf_fr:false,pdf_en:false,audio_fr:false,audio_en:false};
 beforeEach(()=>{Object.values(m).forEach(f=>f.mockReset());m.lien.mockImplementation(async(c:string)=>'https://coffre/'+c);});
 afterEach(cleanup);
-const afficher=(format:'pdf'|'audio',langue:'fr'|'en')=>render(<MemoryRouter><LivreFormatAcces format={format} langue={langue}/></MemoryRouter>);
+const afficher=(format:'pdf'|'audio',langue:'fr'|'en',chemin='/')=>render(<MemoryRouter initialEntries={[chemin]}><LivreFormatAcces format={format} langue={langue}/></MemoryRouter>);
 
 // Décision de Dr Justin du 04/11/2026 : le livre PDF et le livre audio, seulement pour les acheteurs.
 it('sans achat : aucun lien demandé, invitation à acheter avec la même adresse e-mail',async()=>{
@@ -21,8 +21,12 @@ it('sans achat : aucun lien demandé, invitation à acheter avec la même adress
 });
 it('acheteur du PDF français : le livre s’ouvre dans l’application',async()=>{
  m.droits.mockResolvedValue({...aucun,pdf_fr:true});afficher('pdf','fr');
- expect(await screen.findByText('lecteur pdf https://coffre/pdf/fr/livre.pdf')).toBeInTheDocument();
+ expect(await screen.findByText('lecteur pdf https://coffre/pdf/fr/livre.pdf page retenue')).toBeInTheDocument();
  expect(m.lien).toHaveBeenCalledWith('pdf/fr/livre.pdf',3600);
+});
+it('depuis le sommaire, le livre s’ouvre à la page choisie',async()=>{
+ m.droits.mockResolvedValue({...aucun,pdf_fr:true});afficher('pdf','fr','/livre/pdf?page=41');
+ expect(await screen.findByText('lecteur pdf https://coffre/pdf/fr/livre.pdf page 41')).toBeInTheDocument();
 });
 it('acheteur de l’édition française qui regarde l’anglaise : lien vers son édition',async()=>{
  m.droits.mockResolvedValue({...aucun,pdf_fr:true});afficher('pdf','en');

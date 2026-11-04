@@ -4,10 +4,12 @@ import {IconeBibliotheque as I} from './IconeBibliotheque';
 
 /** Lecture du livre PDF page par page dans l'application, sans bouton de téléchargement (décision du 04/11/2026).
  * pdf.js n'est chargé qu'à l'ouverture du lecteur ; la page lue est retenue sur l'appareil. */
-export function LecteurPdfLivre({url,cleMemoire,en}:{url:string;cleMemoire:string;en:boolean}){
+/** `pageDemandee` : page du PDF choisie dans le sommaire (prioritaire sur la page retenue). */
+export function LecteurPdfLivre({url,cleMemoire,en,pageDemandee}:{url:string;cleMemoire:string;en:boolean;pageDemandee?:number}){
  const l=(fr:string,english:string)=>en?english:fr;
  const [doc,setDoc]=useState<PDFDocumentProxy|null>(null),[erreur,setErreur]=useState(false);
- const [page,setPage]=useState(()=>{try{return Math.max(1,Number(localStorage.getItem(cleMemoire))||1);}catch{return 1;}});
+ const [page,setPage]=useState(()=>{if(pageDemandee)return pageDemandee;try{return Math.max(1,Number(localStorage.getItem(cleMemoire))||1);}catch{return 1;}});
+ useEffect(()=>{if(pageDemandee){setPage(doc?Math.min(pageDemandee,doc.numPages):pageDemandee);cadre.current?.scrollIntoView({block:'start',behavior:'smooth'});}},[pageDemandee]); // eslint-disable-line react-hooks/exhaustive-deps
  const toile=useRef<HTMLCanvasElement>(null),cadre=useRef<HTMLDivElement>(null);
  useEffect(()=>{
   let actif=true,tache:PDFDocumentLoadingTask|null=null;setDoc(null);setErreur(false);
