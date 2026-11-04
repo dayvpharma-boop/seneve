@@ -42,7 +42,7 @@ it('Sénevé Plus à l’année bientôt fini : alerte, renouveler, achats list�
  m.rpc.mockResolvedValue({data:{formule:'plus',periode:'an',debut:iso(-360),fin:iso(5),achats:[{offre_id:'LIVRE_PDF_FR',produit:'Livre PDF',type_offre:'livre',le:'2026-10-16T10:00:00Z'}],liens:{ABONNEMENT_PLUS_MOIS_FR:'https://chariow/plus-mois'}},error:null});
  afficher();
  expect(await screen.findByRole('heading',{level:2,name:'Sénevé Plus'})).toBeInTheDocument();
- expect(screen.getByText(/à l’année/)).toBeInTheDocument();
+ expect(screen.getByText('À l’année',{selector:'.ab-duree'})).toBeInTheDocument();
  expect(screen.getByText(/se termine bientôt/)).toBeInTheDocument();
  expect(screen.getAllByRole('link',{name:'Renouveler'}).map(a=>a.getAttribute('href'))).toEqual(['#formules','https://chariow/plus-mois']);
  expect(screen.getByText('Acheté le 16 octobre 2026')).toBeInTheDocument();
