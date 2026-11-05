@@ -38,14 +38,14 @@ function NotificationsDuCompte() {
   </header>;
   const pied = <BarreNav langue={langue} maquette iconesJournee />;
 
-  if (echec && !data && !enLigne) return <main className="wrap avec-nav nt-page">{tete}<CarteHorsConnexion langue={langue} texte={en ? 'Your notifications need a connection. Reminders already received stay on your phone.' : 'Tes notifications demandent une connexion. Les rappels déjà reçus restent sur ton téléphone.'} reessayer={() => void charger()} />{pied}</main>;
-  if (echec && !data) return <main className="wrap avec-nav nt-page">{tete}<div className="card"><p role="alert">{en ? 'Your notifications cannot be loaded right now.' : 'Tes notifications ne peuvent pas être chargées pour le moment.'}</p><button type="button" className="btn action-btn" onClick={() => void charger()}>{en ? 'Try again' : 'Réessayer'}</button></div>{pied}</main>;
-  if (!data) return <main className="wrap avec-nav nt-page">{tete}<p className="muted" role="status">{en ? 'Loading…' : 'Chargement…'}</p>{pied}</main>;
+  if (echec && !data && !enLigne) return <main className="wrap avec-nav nt-page ios">{tete}<CarteHorsConnexion langue={langue} texte={en ? 'Your notifications need a connection. Reminders already received stay on your phone.' : 'Tes notifications demandent une connexion. Les rappels déjà reçus restent sur ton téléphone.'} reessayer={() => void charger()} />{pied}</main>;
+  if (echec && !data) return <main className="wrap avec-nav nt-page ios">{tete}<div className="card"><p role="alert">{en ? 'Your notifications cannot be loaded right now.' : 'Tes notifications ne peuvent pas être chargées pour le moment.'}</p><button type="button" className="btn action-btn" onClick={() => void charger()}>{en ? 'Try again' : 'Réessayer'}</button></div>{pied}</main>;
+  if (!data) return <main className="wrap avec-nav nt-page ios">{tete}<p className="muted" role="status">{en ? 'Loading…' : 'Chargement…'}</p>{pied}</main>;
 
   const messages = data.elements.filter(e => e.type === 'annonce' || e.type === 'reponse');
   const rappels = data.elements.filter(e => e.type === 'rappel_moment' || e.type === 'rappel_habitude');
   const nouveau = (e: ElementNotification & { nouveau?: boolean }) => e.nouveau === true;
-  return <main className="wrap avec-nav nt-page">{tete}
+  return <main className="wrap avec-nav nt-page ios">{tete}
     <section className="nt-section" aria-labelledby="nt-messages">
       <h2 id="nt-messages">{en ? 'Messages from the team' : 'Messages de l’équipe'}</h2>
       {messages.length ? <ul className="nt-liste">{messages.map(e => <Element key={e.type + e.id} e={e} en={en} nouveau={nouveau(e)} />)}</ul>
