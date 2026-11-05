@@ -247,3 +247,64 @@
 :root:root:root:root .bl-page.ios .bl-parcours::before{background:linear-gradient(180deg,rgb(0 0 0 / 0) 5%,rgb(0 0 0 / .35) 40%,rgb(0 0 0 / .8) 100%)}
 :root:root:root:root .bl-page.ios .bl-parcours a{align-self:stretch!important;width:100%!important;max-width:none!important;justify-content:center!important;gap:8px!important}
 :root:root:root:root .bl-page.ios .bl-parcours>div{width:100%!important;max-width:none!important;margin:auto 0 0!important;padding:0!important;flex:none!important;height:auto!important}
+
+/* ── Bible (style iPhone, 05/11/2026) ; la lecture d'un chapitre garde ses ambiances ── */
+:root:root:root .bb-page.ios{background:var(--ios-fond)!important;color:var(--ios-encre)}
+:root:root:root body:has(.bb-page.ios){background:var(--ios-fond)!important}
+:root:root:root:root[data-apparence="sombre"] :is(body:has(.bb-page.ios),.bb-page.ios){background:rgb(0 0 0)!important}
+:root:root:root .bb-page.ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,li,label,input,em):not(blockquote,blockquote *,.bb-citation,.bb-citation *){font-family:var(--ios-police)!important}
+:root:root:root .bb-page.ios blockquote{font-family:Lora,Georgia,serif!important}
+/* Barre du haut */
+:root:root:root .bb-page.ios .bb-tete{background:none!important;border:0!important;box-shadow:none!important}
+:root:root:root .bb-page.ios .bb-tete-titre strong{font:600 13px var(--ios-police)!important;color:var(--ios-doux)!important}
+:root:root:root .bb-page.ios .bb-tete-titre span{color:var(--ios-doux)!important}
+/* Grand titre, version et recherche */
+:root:root:root .bb-page.ios .bb-intro .bb-etiquette{font:600 13px var(--ios-police)!important;letter-spacing:.02em!important;color:var(--ios-doux)!important}
+:root:root:root .bb-page.ios .bb-intro h1{font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important;margin:0!important}
+:root:root:root .bb-page.ios .bb-intro .bb-petit{color:var(--ios-doux)!important;font:500 14px var(--ios-police)!important}
+:root:root:root .bb-page.ios .bb-intro :is(button,select){border:0!important;border-radius:999px!important;background:var(--ios-carte)!important;color:var(--ios-accent)!important;box-shadow:0 1px 2px rgb(0 0 0 / .06)!important;font:600 14px var(--ios-police)!important;min-height:36px!important}
+:root:root:root .bb-page.ios .bb-recherche{border:0!important;border-radius:12px!important;background:#7676801f!important;box-shadow:none!important;min-height:42px!important}
+:root:root:root .bb-page.ios .bb-recherche input{background:transparent!important;border:0!important;font:400 16px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .bb-page.ios .bb-recherche svg{color:var(--ios-doux)!important}
+/* Cartes */
+:root:root:root .bb-page.ios :is(.bb-carte,.bb-testaments a,.bb-outils a){background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
+:root:root:root .bb-page.ios :is(.bb-carte h2,.bb-carte h3,.bb-racines>h2,.bb-outils>h2){font:700 21px/1.2 var(--ios-police)!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
+:root:root:root .bb-page.ios :is(.bb-racines>h2,.bb-outils>h2) svg{display:none}
+:root:root:root .bb-page.ios .bb-citation{background:#7676800f!important;border:0!important;border-left:3px solid var(--ios-accent)!important;border-radius:4px 14px 14px 4px!important;color:var(--ios-encre)!important}
+/* « Pour commencer » : la carte du verset, en dégradé profond */
+:root:root:root .bb-page.ios .bb-carte.bb-reprendre{background:radial-gradient(120% 80% at 100% 0%,#7b62ff 0%,transparent 55%),linear-gradient(160deg,#2a1f7a,#151040)!important;color:rgb(255 255 255)!important;box-shadow:0 20px 44px -20px #2a1f7acc!important;padding:20px!important}
+:root:root:root .bb-page.ios .bb-reprendre :is(h2,span,p,svg){color:rgb(255 255 255)!important}
+:root:root:root .bb-page.ios .bb-reprendre .bb-puce-or{background:rgb(255 255 255 / .16)!important;border:0!important;border-radius:999px!important;backdrop-filter:blur(12px);font:600 12px var(--ios-police)!important;letter-spacing:.04em}
+:root:root:root .bb-page.ios .bb-reprendre h2{font:800 28px/1.1 var(--ios-police)!important}
+:root:root:root .bb-page.ios .bb-reprendre .bb-sous-ref{opacity:.8}
+:root:root:root .bb-page.ios .bb-reprendre .bb-citation{background:rgb(255 255 255 / .1)!important;border-left-color:#ffd98a!important;color:rgb(255 255 255)!important}
+:root:root:root .bb-page.ios .bb-reprendre .bb-bouton-noir{background:rgb(255 255 255)!important;color:#1c1c1e!important;border:0!important;border-radius:14px!important;min-height:50px!important;font:600 16px var(--ios-police)!important;box-shadow:none!important}
+:root:root:root .bb-page.ios .bb-reprendre .bb-bouton-noir *{color:#1c1c1e!important}
+/* Testaments : deux tuiles colorées */
+:root:root:root .bb-page.ios .bb-testaments a{padding:16px!important}
+:root:root:root .bb-page.ios .bb-testaments a svg{box-sizing:content-box;width:20px!important;height:20px!important;padding:8px;border-radius:10px;color:rgb(255 255 255)!important;background:linear-gradient(180deg,#d6a35c,#a8742f)}
+:root:root:root .bb-page.ios .bb-testaments a+a svg{background:linear-gradient(180deg,#4aa8ff,#0a7aff)}
+:root:root:root .bb-page.ios .bb-testaments strong{font:700 20px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .bb-page.ios .bb-testaments :is(small,span:not(.bb-ligne)){color:var(--ios-doux)!important}
+/* Racines */
+:root:root:root .bb-page.ios .bb-racine{border:0!important}
+:root:root:root .bb-page.ios .bb-puce-claire{background:linear-gradient(180deg,#7d7bff,#5856d6)!important;color:rgb(255 255 255)!important;border:0!important;border-radius:999px!important;font:600 12px var(--ios-police)!important}
+:root:root:root .bb-page.ios .bb-ref-or{color:var(--ios-accent)!important;font:600 13px var(--ios-police)!important}
+:root:root:root .bb-page.ios .bb-lien-chapitre{color:var(--ios-accent)!important;font:600 15px var(--ios-police)!important}
+/* Outils personnels : liste groupée à tuiles */
+:root:root:root .bb-page.ios .bb-outils{display:flex;flex-direction:column;gap:0!important}
+:root:root:root .bb-page.ios .bb-outils a{border-radius:0!important;box-shadow:none!important;position:relative;margin:0!important;min-height:60px}
+:root:root:root .bb-page.ios .bb-outils h2+a{border-radius:22px 22px 0 0!important}
+:root:root:root .bb-page.ios .bb-outils a:last-of-type{border-radius:0 0 22px 22px!important}
+:root:root:root .bb-page.ios .bb-outils a+a::before{content:"";position:absolute;top:0;left:62px;right:0;height:.5px;background:var(--ios-ligne)}
+:root:root:root .bb-page.ios .bb-carre{width:36px!important;height:36px!important;border-radius:10px!important;border:0!important;background:linear-gradient(180deg,#ff6482,#ff2d55)!important;color:rgb(255 255 255)!important}
+:root:root:root .bb-page.ios .bb-outils a+a .bb-carre{background:linear-gradient(180deg,#ffb340,#ff9500)!important}
+:root:root:root .bb-page.ios .bb-carre svg{color:rgb(255 255 255)!important}
+:root:root:root .bb-page.ios .bb-outils a>svg:last-child{color:#c7c7cc!important}
+:root:root:root .bb-page.ios .bb-outils strong{font:600 16px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .bb-page.ios .bb-outils small{color:var(--ios-doux)!important}
+/* Téléchargement */
+:root:root:root .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *){background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border:0!important;border-radius:14px!important;min-height:50px!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *) *{color:rgb(255 255 255)!important}
+:root:root:root .bb-page.ios .bb-pied{color:var(--ios-doux)!important}
+:root:root:root:root[data-apparence="sombre"] .bb-page.ios :is(.bb-carte:not(.bb-reprendre),.bb-testaments a,.bb-outils a) :is(h2,h3,strong,blockquote,p){color:var(--ios-encre)!important}
