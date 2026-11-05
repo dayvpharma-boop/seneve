@@ -20,15 +20,26 @@ export function pasCetteSemaine(pas:readonly Pas[],now=new Date()){const debut=l
 /** Jours distincts du mois en cours avec au moins un pas. */
 export function joursCeMois(pas:readonly Pas[],now=new Date()){const mois=dateLocale(now).slice(0,7);return new Set(pasDates(pas).map(d=>dateLocale(new Date(d))).filter(l=>l.startsWith(mois))).size;}
 
+/** Durée réelle d'un parcours : Habitudes & Défis se prolonge mois par mois, sa date de fin prévue
+ *  dépasse alors la durée du programme (30 jours). Sans date de fin valable, on garde la durée du programme. */
+export function dureeReelle(p:{debut:string;duree:number;fin?:string|null}):number{
+ const date=/^\d{4}-\d{2}-\d{2}$/;if(!p.fin||!date.test(p.fin)||!date.test(p.debut))return p.duree;
+ const jours=Math.round((Date.parse(`${p.fin}T00:00:00Z`)-Date.parse(`${p.debut}T00:00:00Z`))/864e5)+1;
+ return Number.isFinite(jours)?Math.max(p.duree,jours):p.duree;
+}
+
 /** Les quatre étapes du jardin (Matthieu 13:31-32). Elles ne reculent jamais.
  *  Graine semée : un parcours commencé. Première pousse : un premier pas déclaré.
- *  Tige affermie : sept jours différents avec un pas. Arbre accueillant : un parcours mené jusqu'à son dernier jour. */
+ *  Tige affermie : sept jours différents avec un pas.
+ *  Arbre accueillant : un parcours mené jusqu'à son dernier jour, avec au moins un pas déclaré dans ce parcours
+ *  (un parcours arrivé à sa date de fin sans aucun pas ne fait pas pousser l'arbre). */
 export function etapesJardin(parcours:readonly ParcoursPas[],pas:readonly Pas[],now=new Date()):Etape[]{
  const aujourdhui=dateLocale(now);
  const debuts=parcours.map(p=>p.debut).filter(d=>d<=aujourdhui).sort();
  const dates=pasDates(pas);const premier=dates[0];
  const jours:string[]=[];for(const d of dates){const l=dateLocale(new Date(d));if(!jours.includes(l))jours.push(l);}
- const fins=parcours.map(p=>p.termineLe).filter((d):d is string=>Boolean(d)&&d!<=aujourdhui).sort();
+ const avecPas=new Set(pas.filter(p=>pasDates([p]).length>0).map(p=>p.enrollment_id));
+ const fins=parcours.filter(p=>avecPas.has(p.id)).map(p=>p.termineLe).filter((d):d is string=>Boolean(d)&&d!<=aujourdhui).sort();
  return [
   {id:'graine',atteinte:debuts.length>0,le:debuts[0]??null},
   {id:'pousse',atteinte:dates.length>0,le:premier?dateLocale(new Date(premier)):null},

@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest';
-import {etapesJardin,joursCeMois,lundi,pasCetteSemaine,type Pas} from '@/lib/profil-pas';
+import {dureeReelle,etapesJardin,joursCeMois,lundi,pasCetteSemaine,type Pas} from '@/lib/profil-pas';
 import {compterGraine,lireGraines} from '@/lib/invitation';
 
 // Profil « Mes pas » validé le 31/10/2026 : uniquement ce qui a été déclaré, rien ne recule.
@@ -26,10 +26,22 @@ describe('Mon jardin', () => {
   });
   it('la tige demande sept jours différents ; l’arbre un parcours mené à son dernier jour', () => {
     const sept=Array.from({length:7},(_,i)=>pas('realisee',`2026-10-${String(20+i).padStart(2,'0')}T08:00:00Z`));
-    const e=etapesJardin([...parcours,{id:'E2',debut:'2026-10-01',duree:14,termineLe:'2026-10-14'}],sept,maintenant);
+    const dansE2:Pas={enrollment_id:'E2',etat:'realisee',realisee_le:'2026-10-03T08:00:00Z'};
+    const e=etapesJardin([...parcours,{id:'E2',debut:'2026-10-01',duree:14,termineLe:'2026-10-14'}],[...sept,dansE2],maintenant);
     expect(e.map(x=>x.atteinte)).toEqual([true,true,true,true]);
-    expect(e[2]?.le).toBe('2026-10-26');
+    expect(e[2]?.le).toBe('2026-10-25'); // 7e jour distinct : 03/10 puis 20 au 25/10
     expect(e[3]?.le).toBe('2026-10-14');
+  });
+  it('un parcours arrivé à sa date de fin sans aucun pas ne fait pas pousser l’arbre', () => {
+    const sept=Array.from({length:7},(_,i)=>pas('realisee',`2026-10-${String(20+i).padStart(2,'0')}T08:00:00Z`));
+    const e=etapesJardin([...parcours,{id:'E2',debut:'2026-10-01',duree:14,termineLe:'2026-10-14'}],sept,maintenant);
+    expect(e[3]?.atteinte).toBe(false);
+  });
+  it('Habitudes & Défis prolongé mois par mois garde sa vraie date de fin', () => {
+    expect(dureeReelle({debut:'2026-10-26',duree:30,fin:'2026-12-25'})).toBe(61);
+    expect(dureeReelle({debut:'2026-10-13',duree:30,fin:'2026-11-11'})).toBe(30);
+    expect(dureeReelle({debut:'2026-10-13',duree:14,fin:null})).toBe(14);
+    expect(dureeReelle({debut:'2026-10-13',duree:14,fin:'pas une date'})).toBe(14);
   });
   it('six jours ne suffisent pas pour la tige', () => {
     const six=Array.from({length:6},(_,i)=>pas('realisee',`2026-10-${String(20+i).padStart(2,'0')}T08:00:00Z`));
