@@ -36,7 +36,7 @@ export function ForgotPassword() {
     finally { verrou.current = false; setBusy(false); }
   }
 
-  return <main className="wrap connexion auth-maquette recup-page recup-demande">
+  return <main className="wrap connexion auth-maquette recup-page recup-demande ios">
     <EnteteRecuperation langue={langue} />
     <section className="recup-shell">
     <span className="recup-disque recup-entete-icone"><IconeRecuperation nom="mark_email_unread" taille={24}/></span>
