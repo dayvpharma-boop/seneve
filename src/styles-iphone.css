@@ -768,3 +768,5 @@
 :root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-meta{color:rgb(255 255 255 / .8)!important}
 @media (prefers-reduced-motion:reduce){:root:root:root .espace-page.ios .prog-tab{transition:none}}
 :root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{background:#5b4ee8!important}
+/* Aujourd'hui (Habitudes & Défis) : plus de cadre gris autour de la journée, les cartes sont alignées sur les boutons de parcours */
+:root:root:root .espace-page.ios .hd-stitch{border:0!important;border-radius:0!important;background:transparent!important}
