@@ -617,3 +617,29 @@
 :root:root:root:root[data-apparence="sombre"] .espace-page.ios :is(.card,.audio-card,.objectif-card,.jardin-card,.today-progress) :is(h2,h3,p,strong,span:not(.tag)){color:var(--ios-encre)}
 :root:root:root:root .espace-page.ios :is(.today-section,.card) .tag{display:inline-flex!important;width:max-content!important;max-width:100%;align-items:center;gap:6px;padding:4px 10px!important}
 :root:root:root:root .espace-page.ios :is(.card,.audio-card,.objectif-card,.jardin-card) h2.tag{background:none!important;padding:0!important;font:700 18px/1.2 var(--ios-police)!important;color:var(--ios-encre)!important;letter-spacing:-.01em!important}
+
+/* ── Pages de compte : confidentialité et page introuvable (style iPhone, 05/11/2026) ;
+ *    mot de passe oublié et nouveau mot de passe reprennent le style de la Connexion (.connexion.ios). ── */
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios{background:var(--ios-fond)!important;color:var(--ios-encre)}
+:root:root:root body:has(:is(.confidentialite,.introuvable-maquette).ios){background:var(--ios-fond)!important}
+:root:root:root:root[data-apparence="sombre"] :is(body:has(:is(.confidentialite,.introuvable-maquette).ios),.confidentialite.ios,.introuvable-maquette.ios){background:rgb(0 0 0)!important}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,li,label,td,th,summary):not(blockquote,blockquote *){font-family:var(--ios-police)!important}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios h1{font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios h2{font:700 21px/1.2 var(--ios-police)!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios :is(.card,section>div,details,article,blockquote){border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios :is(.card,details,article){background:var(--ios-carte)!important;color:var(--ios-encre)!important}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios details>summary{min-height:52px;font:600 17px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .confidentialite.ios table{border-collapse:separate!important;border-spacing:0;background:var(--ios-carte)!important;border-radius:16px!important;overflow:hidden;border:0!important}
+:root:root:root .confidentialite.ios :is(td,th){border:0!important;border-bottom:.5px solid var(--ios-ligne)!important;padding:10px 12px!important;font-size:14px!important}
+:root:root:root .confidentialite.ios th{color:var(--ios-doux)!important;font-weight:600!important;text-transform:uppercase;font-size:12px!important;letter-spacing:.02em}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action){min-height:50px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action) *{color:rgb(255 255 255)!important}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios a:not(.btn):not(.introuvable-action):not(.introuvable-principal){color:var(--ios-accent)!important}
+/* Page introuvable : la graine dans une pastille douce, le reste en cartes iPhone */
+:root:root:root .introuvable-maquette.ios blockquote{background:var(--ios-carte)!important;border-left:3px solid var(--ios-accent)!important;border-radius:4px 16px 16px 4px!important}
+/* Mot de passe : titres et repère comme la Connexion */
+:root:root:root .recup-page.ios h1{font:800 32px/1.08 var(--ios-police)!important;letter-spacing:-.025em!important}
+:root:root:root:root .introuvable-maquette.ios .introuvable-principal{min-height:52px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root:root .introuvable-maquette.ios .introuvable-principal *{color:rgb(255 255 255)!important}
+:root:root:root:root .introuvable-maquette.ios .introuvable-accueil{border:0!important;border-radius:14px!important;background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;min-height:48px;font:600 16px var(--ios-police)!important}
+:root:root:root:root .introuvable-maquette.ios .introuvable-embleme{border-radius:28px!important;box-shadow:0 12px 30px -16px rgb(0 0 0 / .35)!important}

@@ -1,4 +1,3 @@
-import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useEffect } from 'react';
 import { Icone } from '@/components/Icone';
@@ -154,13 +153,12 @@ export function Confidentialite() {
   const revenir=()=>{if(typeof window.history.state?.idx==='number'&&window.history.state.idx>0)navigate(-1);else navigate(`/${suffixe}`);};
   useEffect(() => { document.title = `${T.titreOnglet} — SÉNEVÉ`; document.documentElement.lang = langue; }, [T, langue]);
   const donnees = DONNEES[langue];
-  return <main className="wrap confidentialite">
+  return <main className="wrap confidentialite ios">
     <header className="conf-entete"><button type="button" onClick={revenir}><IconeConfidentialite nom="arrow_back" taille={20}/><span>{T.revenir}</span></button><p className="brand"><Icone nom="graine" taille={22}/>SÉNEVÉ</p><Link className="conf-profil" to={`/profil${suffixe}`} aria-label={langue==='en'?'My profile':'Mon profil'}><AvatarParticipant><IconeConfidentialite nom="person" taille={18}/></AvatarParticipant></Link></header>
     <header className="conf-intro"><p className="conf-repere"><IconeConfidentialite nom="verified_user" taille={16}/>{T.repere}</p><h1>{T.titre}</h1>
     <p className="muted">{T.maj(langue==='en'?DATE_POLITIQUE_EN:DATE_POLITIQUE)}</p>
     {T.traduction && <p className="muted">{T.traduction} <Link to="/confidentialite?lang=fr">Version française</Link></p>}
     </header>
-    <IllustrationPage theme="securite" langue={langue} />
     <section className="conf-resume" aria-labelledby="conf-resume-titre"><h2 id="conf-resume-titre"><IconeConfidentialite nom="auto_stories" taille={22}/>{T.resume}</h2><ol>
       <li><span className="conf-numero">1</span><div><h3>{T.gardons}</h3><p>{donnees[1]?.donnees}</p><p>{donnees[2]?.donnees}</p></div></li>
       <li><span className="conf-numero">2</span><div><h3>{T.jamais}</h3><p>{T.jamaisTexte}</p></div></li>

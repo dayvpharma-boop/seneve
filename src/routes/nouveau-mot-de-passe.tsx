@@ -43,7 +43,7 @@ export function NewPassword() {
     finally { verrou.current = false; setBusy(false); }
   }
 
-  return <main className="wrap connexion auth-maquette recup-page recup-nouveau">
+  return <main className="wrap connexion auth-maquette recup-page recup-nouveau ios">
     <EnteteRecuperation langue={langue} nouveau />
     <section className="recup-shell">
     <span className="recup-disque recup-entete-icone"><IconeRecuperation nom="lock" taille={24}/></span>
