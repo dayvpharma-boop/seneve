@@ -643,3 +643,34 @@
 :root:root:root:root .introuvable-maquette.ios .introuvable-principal *{color:rgb(255 255 255)!important}
 :root:root:root:root .introuvable-maquette.ios .introuvable-accueil{border:0!important;border-radius:14px!important;background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;min-height:48px;font:600 16px var(--ios-police)!important}
 :root:root:root:root .introuvable-maquette.ios .introuvable-embleme{border-radius:28px!important;box-shadow:0 12px 30px -16px rgb(0 0 0 / .35)!important}
+
+/* ── Lecture d'un chapitre (ambiances gardées) et lecteurs du livre : barres d'outils iPhone, 05/11/2026 ── */
+:root:root:root .bb-page.ios-lecture .bb-tete{background:none!important;border:0!important;box-shadow:none!important}
+:root:root:root .bb-page.ios-lecture .bb-tete :is(span,strong){font-family:var(--ios-police)!important}
+:root:root:root .bb-page.ios-lecture .bb-barre-lecture{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bb-fond,var(--ios-fond)) 78%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;border:0!important;box-shadow:0 .5px 0 color-mix(in srgb,currentColor 18%,transparent)!important}
+:root:root:root .bb-page.ios-lecture .bb-barre-lecture :is(button,a){font-family:var(--ios-police)!important}
+:root:root:root .bb-page.ios-lecture .bb-choix-chapitre{border:0!important;border-radius:999px!important;background:color-mix(in srgb,currentColor 8%,transparent)!important;padding:6px 14px!important;font:600 17px var(--ios-police)!important;letter-spacing:-.01em}
+:root:root:root .bb-page.ios-lecture .bb-barre-lecture .bb-rond{width:38px!important;height:38px!important;border-radius:50%!important;border:0!important;background:color-mix(in srgb,currentColor 8%,transparent)!important;box-shadow:none!important}
+:root:root:root .bb-page.ios-lecture .bb-entete-chapitre h1{font-family:var(--ios-police)!important;font-weight:800!important;letter-spacing:-.025em!important}
+:root:root:root .bb-page.ios-lecture .bb-entete-chapitre :is(.bb-etiquette,.bb-puce-claire){font-family:var(--ios-police)!important}
+:root:root:root .bb-page.ios-lecture .bb-texte sup{color:var(--ios-accent)!important;font-family:var(--ios-police)!important;font-weight:600!important}
+/* Lecteur PDF : barre de pages en verre, boutons ronds teintés */
+:root:root:root .bl-page.ios .lp-commandes{background:color-mix(in srgb,var(--ios-carte) 72%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;border:.5px solid var(--ios-ligne)!important;border-radius:999px!important;box-shadow:0 10px 30px -12px rgb(0 0 0 / .25)!important}
+:root:root:root .bl-page.ios .lp-commandes :is(button,input){border-radius:999px!important;border:0!important;font-family:var(--ios-police)!important}
+:root:root:root .bl-page.ios .lp-commandes button{background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important}
+:root:root:root .bl-page.ios .lp-numero{background:#7676801f!important;color:var(--ios-encre)!important}
+:root:root:root .bl-page.ios :is(.lp-agrandir,.lp-cote){background:rgb(28 28 30 / .55)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important;color:rgb(255 255 255)!important;border:0!important}
+:root:root:root .bl-page.ios .lp-feuille{border-radius:22px 22px 0 0!important;background:color-mix(in srgb,var(--ios-carte) 92%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important}
+:root:root:root .bl-page.ios .lp-feuille :is(button,textarea,h2,p,li,span){font-family:var(--ios-police)!important}
+:root:root:root .bl-page.ios .lp-feuille .lp-principal{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border:0!important;border-radius:14px!important}
+:root:root:root .bl-page.ios .lp-feuille .lp-supprimer{color:#ff3b30!important;background:transparent!important;border:0!important}
+:root:root:root .bl-page.ios .lp-feuille textarea{background:#7676801f!important;border:0!important;border-radius:12px!important}
+:root:root:root .bl-page.ios .lp-astuce{color:var(--ios-doux)!important;font-family:var(--ios-police)!important}
+/* Lecteur audio : carte de lecture et pistes en liste groupée */
+:root:root:root .bl-page.ios .la-lecteur{background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
+:root:root:root .bl-page.ios .la-lecteur :is(button,span,p,strong,label,select){font-family:var(--ios-police)!important}
+:root:root:root .bl-page.ios .la-commandes button{border-radius:50%!important;border:0!important;background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important}
+:root:root:root .bl-page.ios .la-pistes{background:var(--ios-carte)!important;border-radius:20px!important;overflow:hidden;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;padding:0!important}
+:root:root:root .bl-page.ios .la-pistes button{border:0!important;border-radius:0!important;background:none!important;border-bottom:.5px solid var(--ios-ligne)!important;min-height:52px;font-family:var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .bl-page.ios .la-pistes .la-en-cours,:root:root:root .bl-page.ios .la-pistes [aria-current]{color:var(--ios-accent)!important;font-weight:600!important}
+:root:root:root .bl-page.ios .la-numero{color:var(--ios-doux)!important}

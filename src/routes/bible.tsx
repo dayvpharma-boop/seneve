@@ -73,8 +73,8 @@ function Embleme({ taille = 48, anime = false }: { taille?: number; anime?: bool
 
 function Page({ titre, retour, enfants, classe = '', reglages, droite }: { titre: string; retour?: string; enfants: ReactNode; classe?: string; reglages?: Reglages; droite?: ReactNode }) {
   const { langue, t, lien, lectureHabitudes } = useLangue();
-  // Style iPhone (05/11/2026) sur les pages de la Bible, sauf la lecture qui garde ses ambiances.
-  return <main className={`bb-page bb-ambiance-${reglages?.ambiance ?? 'ivoire'} ${classe}${classe==='bb-page-lecture'?'':' ios'}`}>
+  // Style iPhone (05/11/2026) sur les pages de la Bible ; la lecture garde ses ambiances, seule sa barre d’outils change (ios-lecture).
+  return <main className={`bb-page bb-ambiance-${reglages?.ambiance ?? 'ivoire'} ${classe}${classe==='bb-page-lecture'?' ios-lecture':' ios'}`}>
     <header className="bb-tete">
       {retour
         ? <Link onClick={retourPrecedent} className="bb-rond" to={retour} aria-label={t('Retour', 'Back')}><I nom="arrow_back" /></Link>
