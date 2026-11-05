@@ -96,7 +96,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  const h=heureLocale(fuseau,maintenant);
  const momentHeure=h?(minutes(h)<11*60?'matin':minutes(h)<17*60?'midi':'soir'):'matin';
  const priereChoisie=prieres.find(a=>a.occurrence.occurrence_id===moment)??prieres.find(a=>momentPriere(a.habit_key)===momentHeure)??prieres[0];
- const nomMoment=(k:string)=>momentPriere(k)==='matin'?l('Matin','Morning'):momentPriere(k)==='midi'?l('Midi','Midday'):l('Soir','Evening');
+ const nomMoment=(k?:string)=>momentPriere(k)==='matin'?l('Matin','Morning'):momentPriere(k)==='midi'?l('Midi','Midday'):l('Soir','Evening');
  const prochain=activites.find(a=>ouverte(a)&&h!==null&&a.heure>=h)??activites.find(ouverte)??null;
  const ecart=prochain&&h?minutes(prochain.heure)-minutes(h):null;
  const iProchain=prochain?activites.indexOf(prochain):-1;
