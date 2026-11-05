@@ -346,7 +346,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     :data.periodesHabitudes?.[x.enrollment_id]?.length?calendrierPeriodes(x.date_debut,data.periodesHabitudes[x.enrollment_id]!,data.fuseauHabitudes??'Africa/Kinshasa',x.duree)
     :calendrierHabitudes(x.date_debut,x.duree,data.fuseauHabitudes??'Africa/Kinshasa');
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletAujourdhui} role="tablist" aria-label={T.mesParcours}>
-    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{calendrierDe(x).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:calendrierDe(x).finished?T.ongletTermine:T.ongletJour(calendrierDe(x).day)}</span>{' '}{x.nom}</button>)}
+    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{calendrierDe(x).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:calendrierDe(x).finished?T.ongletTermine:T.ongletJour(calendrierDe(x).day)}</span><span className="jn-tab-nom">{x.nom}</span></button>)}
   </div>;
 
   const { day, finished, notStarted } = calendrierDe(enr);

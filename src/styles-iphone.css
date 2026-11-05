@@ -759,6 +759,8 @@
 :root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-jardin-pratique strong{color:#30d158!important}
 @media (prefers-reduced-motion:reduce){:root:root:root .pv-page.ios .pv-jardin-barre span{transition:none}}
 :root:root:root .pv-page.ios .pv-jardin-pratique small{display:block;margin-top:2px;font:400 12.5px var(--ios-police)!important;color:var(--ios-doux)!important}
-/* Aujourd'hui : textes des boutons de parcours alignés (même forme qu'avant ; le texte part du haut, quelle que soit la longueur du nom) */
-:root:root:root .espace-page.ios .prog-tab{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:flex-start!important;padding:12px 20px 10px!important}
+/* Aujourd'hui : textes des boutons de parcours centrés et alignés (même forme qu'avant).
+   Le nom garde toujours la place de deux lignes : un nom court se centre dans cet espace, le petit titre reste à la même hauteur partout. */
+:root:root:root .espace-page.ios .prog-tab{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;padding:8px 18px!important}
 :root:root:root .espace-page.ios .prog-tab .jn-tab-meta{margin:0 0 2px!important}
+:root:root:root .espace-page.ios .prog-tab .jn-tab-nom{display:flex;align-items:center;justify-content:center;min-height:2.5em;line-height:1.25}
