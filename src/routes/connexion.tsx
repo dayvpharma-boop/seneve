@@ -149,7 +149,7 @@ export function Connexion() {
 
   function choose(next: 'signup' | 'signin') { setTab(next); setError(''); setInfo(''); setAConfirmer(null); }
 
-  return <main className={`wrap connexion auth-maquette auth-${tab}`}>
+  return <main className={`wrap connexion auth-maquette auth-${tab} ios`}>
     <header className="auth-header">
       <Link className="auth-back" to="/" aria-label={langue === 'en' ? 'Back to the test' : 'Revenir au test'}><IconeConnexion nom="arrow_back" taille={22} /></Link>
       <span className="auth-brand"><Icone nom="graine" taille={22} /><strong>SÉNEVÉ</strong></span>
