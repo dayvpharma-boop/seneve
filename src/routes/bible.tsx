@@ -1,5 +1,4 @@
 import {retourPrecedent} from '@/lib/retour-precedent';
-import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -74,7 +73,8 @@ function Embleme({ taille = 48, anime = false }: { taille?: number; anime?: bool
 
 function Page({ titre, retour, enfants, classe = '', reglages, droite }: { titre: string; retour?: string; enfants: ReactNode; classe?: string; reglages?: Reglages; droite?: ReactNode }) {
   const { langue, t, lien, lectureHabitudes } = useLangue();
-  return <main className={`bb-page bb-ambiance-${reglages?.ambiance ?? 'ivoire'} ${classe}`}>
+  // Style iPhone (05/11/2026) sur les pages de la Bible, sauf la lecture qui garde ses ambiances.
+  return <main className={`bb-page bb-ambiance-${reglages?.ambiance ?? 'ivoire'} ${classe}${classe==='bb-page-lecture'?'':' ios'}`}>
     <header className="bb-tete">
       {retour
         ? <Link onClick={retourPrecedent} className="bb-rond" to={retour} aria-label={t('Retour', 'Back')}><I nom="arrow_back" /></Link>
@@ -82,7 +82,7 @@ function Page({ titre, retour, enfants, classe = '', reglages, droite }: { titre
       <div className="bb-tete-titre"><span>SÉNEVÉ</span><strong>{titre}</strong></div>
       {droite}
       <Link className="bb-profil" to={lien('/profil')} aria-label={t('Mon profil', 'My profile')}><AvatarParticipant><I nom="person" taille={20} /></AvatarParticipant></Link>
-    </header>{!retour && <IllustrationPage theme="lecture" langue={langue} />}
+    </header>
     <div className="bb-contenu">{lectureHabitudes&&<aside className="bb-carte" aria-label={t('Lecture biblique des habitudes','Habit Bible reading')}>
       <p className="bb-etiquette">{t('Habitudes & Défis','Habits & Challenges')} · {lectureHabitudes==='matin'?t('Bible du matin','Morning Bible reading'):t('Bible du soir','Evening Bible reading')}</p>
       <p className="bb-petit">{t('Choisis ton livre et ton chapitre. Lire ne marque aucune activité comme réalisée.','Choose your book and chapter. Reading does not mark any activity as completed.')}</p>
