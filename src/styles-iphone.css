@@ -193,3 +193,57 @@
 :root:root:root .parcours-page.ios :is(.bilan-num,.parcours-jour-titre time,.bilan-etat,.parcours-consigne){color:var(--ios-doux)!important}
 :root:root:root .parcours-page.ios :is(.parcours-revoir,.bilan-etat a){color:var(--ios-accent)!important}
 :root:root:root:root[data-apparence="sombre"] .parcours-page.ios :is(.card,.hd-bilan,.parcours-semaines,.bilan-jours,.raccourcis-parcours) *:not(svg,svg *,.btn,.btn *,.bilan-pastille,.bilan-pastille *,.parcours-jour-titre small,.progres-chiffres strong,.progres-chiffres svg,.progres-chiffres svg *){color:var(--ios-encre)}
+
+/* ── Bibliothèque (style iPhone, 05/11/2026), dans l'esprit de l'app Livres ── */
+:root:root:root .bl-page.ios{background:var(--ios-fond)!important;font-family:var(--ios-police)!important;color:var(--ios-encre)}
+:root:root:root body:has(.bl-page.ios){background:var(--ios-fond)!important}
+:root:root:root:root[data-apparence="sombre"] :is(body:has(.bl-page.ios),.bl-page.ios){background:rgb(0 0 0)!important}
+:root:root:root .bl-page.ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,time,li,label,summary,figcaption):not(blockquote,blockquote *){font-family:var(--ios-police)!important}
+/* Barre du haut et grand titre */
+:root:root:root .bl-page.ios .bl-header{background:none!important;border:0!important;box-shadow:none!important}
+:root:root:root .bl-page.ios .bl-header strong{font:600 13px var(--ios-police)!important;color:var(--ios-doux)!important}
+:root:root:root .bl-page.ios .bl-intro .bl-label{font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .bl-page.ios .bl-intro .bl-label svg{display:none}
+:root:root:root .bl-page.ios .bl-intro h1{margin:2px 0 0!important;font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
+:root:root:root .bl-page.ios .bl-soustitre{font:400 15px/1.45 var(--ios-police)!important;color:var(--ios-doux)!important}
+/* Filtres : sélecteur segmenté */
+:root:root:root .bl-page.ios .bl-filtres{display:grid!important;grid-template-columns:repeat(3,1fr);gap:0!important;padding:2px!important;margin:16px 0!important;border-radius:10px!important;background:#7676801f!important}
+:root:root:root .bl-page.ios .bl-filtres button{min-height:34px!important;border:0!important;border-radius:8px!important;background:transparent!important;color:var(--ios-encre)!important;box-shadow:none!important;font:600 14px var(--ios-police)!important;padding:0!important;transition:background-color 200ms var(--ios-ressort)}
+:root:root:root .bl-page.ios .bl-filtres button[aria-pressed="true"]{background:var(--ios-carte)!important;box-shadow:0 3px 8px rgb(0 0 0 / .12),0 1px 1px rgb(0 0 0 / .06)!important}
+:root:root:root:root[data-apparence="sombre"] .bl-page.ios .bl-filtres button[aria-pressed="true"]{background:#636366!important}
+/* Cartes de livres */
+:root:root:root .bl-page.ios :is(.bl-card,.bl-acces,.bl-edition,.bl-sommaire,.bl-citation){background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
+:root:root:root .bl-page.ios .bl-livre-identite img,:root:root:root .bl-page.ios .bl-livre-identite .couverture,:root:root:root .bl-page.ios .bl-detail-cover img{border-radius:6px!important;box-shadow:0 12px 24px -8px rgb(0 0 0 / .45),0 2px 4px rgb(0 0 0 / .15)!important}
+:root:root:root .bl-page.ios .bl-card h2,:root:root:root .bl-page.ios .bl-acces h2,:root:root:root .bl-page.ios .bl-edition h2{font:700 21px/1.2 var(--ios-police)!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
+:root:root:root .bl-page.ios .bl-label{font:600 11.5px/1.2 var(--ios-police)!important;letter-spacing:.06em!important;color:var(--ios-accent)!important}
+:root:root:root .bl-page.ios :is(.bl-card p,.bl-acces p,.bl-edition p){color:var(--ios-doux)!important;font-size:14.5px!important}
+/* Formats : liste groupée à tuiles */
+:root:root:root .bl-page.ios .bl-liste-formats{display:flex!important;flex-direction:column!important;gap:0!important;border-radius:16px!important;overflow:hidden;background:#7676800f!important}
+:root:root:root .bl-page.ios .bl-liste-formats a{position:relative;display:flex!important;align-items:center!important;gap:12px!important;min-height:58px!important;padding:9px 38px 9px 12px!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;color:var(--ios-encre)!important;text-decoration:none!important}
+:root:root:root .bl-page.ios .bl-liste-formats a+a::before{content:"";position:absolute;top:0;left:60px;right:0;height:.5px;background:var(--ios-ligne)}
+:root:root:root .bl-page.ios .bl-liste-formats a>svg:first-child,:root:root:root .bl-page.ios .bl-liste-formats a>:first-child:is(i,span[class*="icone"]){box-sizing:content-box;width:20px!important;height:20px!important;padding:8px;border-radius:10px;color:rgb(255 255 255)!important;background:linear-gradient(180deg,#ffb340,#ff9500);flex:none;font-size:20px!important;line-height:20px!important;text-align:center}
+:root:root:root .bl-page.ios .bl-liste-formats a+a>svg:first-child,:root:root:root .bl-page.ios .bl-liste-formats a+a>:first-child:is(i,span[class*="icone"]){background:linear-gradient(180deg,#ff6482,#ff2d55)}
+:root:root:root .bl-page.ios .bl-liste-formats a>svg:last-child{display:none}
+:root:root:root .bl-page.ios .bl-liste-formats a::after{content:"";position:absolute;right:16px;top:50%;width:8px;height:8px;border-right:2px solid #c7c7cc;border-top:2px solid #c7c7cc;transform:translateY(-50%) rotate(45deg)}
+:root:root:root .bl-page.ios .bl-liste-formats strong{font:600 16px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .bl-page.ios .bl-liste-formats small,:root:root:root .bl-page.ios .bl-liste-formats span span{color:var(--ios-doux)!important}
+/* Boutons */
+:root:root:root .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a){min-height:50px!important;border-radius:14px!important;border:0!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important;transition:transform 120ms ease-out}
+:root:root:root .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a) *{color:rgb(255 255 255)!important}
+:root:root:root .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a):active{transform:scale(.97)}
+/* Parcours & offres : grande photo plein cadre */
+:root:root:root .bl-page.ios .bl-parcours{position:relative;overflow:hidden;min-height:260px;display:flex!important;flex-direction:column;justify-content:flex-end;padding:18px!important;background:#2c2a5e!important;color:rgb(255 255 255)!important;box-shadow:0 18px 40px -20px rgb(0 0 0 / .6)!important}
+:root:root:root .bl-page.ios .bl-parcours .bl-formation-image{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover;border-radius:0!important;mask-image:none!important;-webkit-mask-image:none!important;opacity:1!important}
+:root:root:root .bl-page.ios .bl-parcours::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgb(0 0 0 / 0) 15%,rgb(0 0 0 / .75) 100%);z-index:1}
+:root:root:root .bl-page.ios .bl-parcours>:not(img){position:relative;z-index:2}
+:root:root:root .bl-page.ios .bl-parcours :is(h2,p,span,svg){color:rgb(255 255 255)!important}
+:root:root:root .bl-page.ios .bl-parcours a{background:rgb(255 255 255)!important;box-shadow:none!important}
+:root:root:root .bl-page.ios .bl-parcours a,:root:root:root .bl-page.ios .bl-parcours a *{color:#1c1c1e!important}
+/* Édition anglaise et pied de page */
+:root:root:root .bl-page.ios .bl-edition a{color:var(--ios-accent)!important;font-weight:600}
+:root:root:root .bl-page.ios .bl-footer{color:var(--ios-doux)!important}
+:root:root:root:root[data-apparence="sombre"] .bl-page.ios :is(.bl-card,.bl-acces,.bl-edition,.bl-sommaire,.bl-citation) :is(h2,h3,strong,blockquote){color:var(--ios-encre)!important}
+:root:root:root:root .bl-page.ios .bl-parcours{min-height:320px!important}
+:root:root:root:root .bl-page.ios .bl-parcours::before{background:linear-gradient(180deg,rgb(0 0 0 / 0) 5%,rgb(0 0 0 / .35) 40%,rgb(0 0 0 / .8) 100%)}
+:root:root:root:root .bl-page.ios .bl-parcours a{align-self:stretch!important;width:100%!important;max-width:none!important;justify-content:center!important;gap:8px!important}
+:root:root:root:root .bl-page.ios .bl-parcours>div{width:100%!important;max-width:none!important;margin:auto 0 0!important;padding:0!important;flex:none!important;height:auto!important}
