@@ -1,11 +1,5 @@
-import {IconeRayonnage} from './IconeRayonnage';
+import {IconeOnglet} from './IconesIphone';
 import { Link, useLocation } from 'react-router-dom';
-import { Icone, type NomIcone } from '@/components/Icone';
-import { IconeMaquette } from '@/components/IconeMaquette';
-import { IconeAide } from '@/components/IconeAide';
-import { IconeBible } from '@/components/IconeBible';
-import { IconeJournal } from '@/components/IconeJournal';
-import { IconeJournee } from '@/components/IconeJournee';
 
 /** Barre du bas de l'espace participant : Aujourd'hui, Parcours, Bibliothèque, Bible, Journal (maquettes Bible du 22/10/2026 ;
  *  l'aide reste accessible depuis le profil et les pages). */
@@ -14,19 +8,17 @@ const NAV = {
   en: { nom: 'Main navigation', aujourdhui: 'Today', parcours: 'Journey', bibliotheque: 'Library', bible: 'Bible', journal: 'Journal' },
 } as const;
 
-type Entree = { cle: 'aujourdhui' | 'parcours' | 'bibliotheque' | 'bible' | 'journal'; vers: string; icone: NomIcone; chemin: string };
+type Entree = { cle: 'aujourdhui' | 'parcours' | 'bibliotheque' | 'bible' | 'journal'; vers: string; chemin: string };
 const ENTREES: Entree[] = [
-  { cle: 'aujourdhui', vers: '/espace', icone: 'soleil', chemin: '/espace' },
-  { cle: 'parcours', vers: '/progres', icone: 'livre', chemin: '/progres' },
-  { cle: 'bibliotheque', vers: '/bibliotheque', icone: 'livre', chemin: '/bibliotheque' },
-  { cle: 'bible', vers: '/bible', icone: 'livre', chemin: '/bible' },
-  { cle: 'journal', vers: '/journal', icone: 'journal', chemin: '/journal' },
+  { cle: 'aujourdhui', vers: '/espace', chemin: '/espace' },
+  { cle: 'parcours', vers: '/progres', chemin: '/progres' },
+  { cle: 'bibliotheque', vers: '/bibliotheque', chemin: '/bibliotheque' },
+  { cle: 'bible', vers: '/bible', chemin: '/bible' },
+  { cle: 'journal', vers: '/journal', chemin: '/journal' },
 ];
 
-const SYMBOLES = { aujourdhui: 'wb_twilight', parcours: 'alt_route', journal: 'history_edu' } as const;
 
-const SYMBOLES_JOURNEE = { aujourdhui: 'light_mode', parcours: 'route', journal: 'edit_note' } as const;
-export function BarreNav({ langue, maquette = false, iconesJournee = false, iconesJournal = false, iconesAide = false, varianteJournee = false }: { langue?: string | null; maquette?: boolean; iconesJournee?: boolean; iconesJournal?: boolean; iconesAide?: boolean;varianteJournee?:boolean }) {
+export function BarreNav({ langue }: { langue?: string | null; maquette?: boolean; iconesJournee?: boolean; iconesJournal?: boolean; iconesAide?: boolean;varianteJournee?:boolean }) {
   const T = NAV[langue === 'en' ? 'en' : 'fr'];
   const { pathname, search } = useLocation();
   const ecriture = new URLSearchParams(search).has('ecrire');
@@ -36,8 +28,9 @@ export function BarreNav({ langue, maquette = false, iconesJournee = false, icon
         const actif = (pathname === e.chemin || (e.cle === 'bibliotheque' && (pathname === '/livre' || pathname.startsWith('/livre/'))) || (e.cle === 'bible' && pathname.startsWith('/bible/'))) && !(e.cle === 'journal' && ecriture);
         const cle = e.cle;
         return <li key={cle}>
-          <Link to={langue === 'en' ? `${e.vers}?lang=en` : e.vers} className={cle === 'bibliotheque' ? 'nav-ecrire' : undefined} aria-current={actif ? 'page' : undefined}>
-            {cle === 'bibliotheque' ? <span className="nav-plus"><IconeRayonnage taille={24}/></span> : cle === 'bible' ? <IconeBible nom="menu_book" taille={22} /> : iconesAide ? <IconeAide nom={({aujourdhui:"wb_sunny",parcours:"route",journal:"edit_note"} as const)[cle]} taille={22} /> : iconesJournal ? <IconeJournal nom={({aujourdhui:"light_mode",parcours:"route",journal:"stylus_note"} as const)[cle]} taille={24} /> : varianteJournee ? <IconeJournee nom={({aujourdhui:"wb_sunny",parcours:"explore",journal:"edit_note"} as const)[cle]} taille={22}/> : iconesJournee ? <IconeJournee nom={SYMBOLES_JOURNEE[cle]} taille={22} /> : maquette ? <IconeMaquette nom={SYMBOLES[cle]} taille={22} /> : <Icone nom={e.icone} />}
+          <Link to={langue === 'en' ? `${e.vers}?lang=en` : e.vers} className="ios-onglet" aria-current={actif ? 'page' : undefined}>
+            {/* Style iPhone validé le 04/11/2026 : mêmes icônes partout, pleines sur l’onglet actif. */}
+            <IconeOnglet cle={cle} actif={actif}/>
             <span>{T[cle]}</span>
           </Link>
         </li>;

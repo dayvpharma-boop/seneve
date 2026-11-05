@@ -314,6 +314,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
     <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={enTete ? 'en' : 'fr'} compact/><ClocheNotifications langue={enTete ? 'en' : 'fr'} /><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div>
     {notice}
+    {data && <p className="ios-date">{new Intl.DateTimeFormat(enTete?'en-GB':'fr-FR',{weekday:'long',day:'numeric',month:'long'}).format(new Date())}</p>}
     {data && <h1>{salut}</h1>}{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'&&<Link className="jn-avatar-grand" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom.charAt(0).toUpperCase()}</AvatarParticipant></Link>}
     {repere}
   </header>;
@@ -407,7 +408,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const occurrences=occurrencesDepuisContenus(ctx,duJour.map(c=>({...c,version:Number(c.version)})),data.activities.filter(a=>culte(a.note_source,date_locale,Boolean(etatDe(a)))).map(a=>({...a,obligatoire:requiseCeJour(a.note_source,date_locale,a.obligatoire)})));
     // Programme réel, journée du jour et en ligne : l'écran « Aujourd'hui » des maquettes Stitch, directement.
     if(!lectureSeule&&estProgrammeHdReel(enr.programme_id)&&current===day&&data.participantId&&enr.etat==='active')
-      return page(enr.langue,<>{header()}{accueil}{tabs}{repereHabitudes}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
+      // Style iPhone validé le 04/11/2026 : la carte photo générique et le repère texte laissent place aux anneaux et à la carte du jour.
+      return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
         {rappelsHabitudesActifs()&&<div className="px-hd-margin pt-hd-space-md"><FuseauVoyage langue={enr.langue}/></div>}
         <ActivitesJourRecette key={`${enr.enrollment_id}:${date_locale}`} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>
         <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2">
@@ -416,14 +418,14 @@ function EspaceDuCompte({ userId }: { userId: string }) {
           <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aide${en?'?lang=en':''}`}>{en?'Help and privacy':'Aide et confidentialité'}</Link>
           <Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>
         </div>
-      </div>{footer(enr.langue)}</>,'journee-nouvelle');
+      </div>{footer(enr.langue)}</>,'journee-nouvelle ios');
     // Sans réseau (décision du 29/10/2026) : la journée HD gardée sur cet appareil, relue et notée comme en ligne.
     const copieHd=horsLigne&&!paused&&!cloture&&!habitudesTerminees&&estProgrammeHdReel(enr.programme_id)&&current===day&&enr.etat==='active'?copiesJourHdValides(userId).find(c=>c.enrollmentId===enr.enrollment_id):undefined;
     if(copieHd)
-      return page(enr.langue,<>{header()}{accueil}{tabs}{repereHabitudes}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
+      return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
         <ActivitesJourRecette key={`${enr.enrollment_id}:${copieHd.dateLocale}:hors-ligne`} enrollmentId={enr.enrollment_id} participantId={copieHd.participantId} dateLocale={copieHd.dateLocale} langue={enr.langue} fuseau={copieHd.fuseau} finExclue={copieHd.finExclue} copie={copieHd}/>
         <div className="px-hd-margin pb-hd-space-lg flex flex-col gap-2"><Link className="font-hd-label-md text-hd-label-md text-hd-secondary underline underline-offset-4" to={`/habitudes/aide${en?'?lang=en':''}`}>{en?'Help and privacy':'Aide et confidentialité'}</Link></div>
-      </div>{footer(enr.langue)}</>,'journee-nouvelle');
+      </div>{footer(enr.langue)}</>,'journee-nouvelle ios');
     return page(enr.langue,<>{header()}{accueil}{tabs}{repereHabitudes}<section><p className="tag">{enr.nom}</p>
 <h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
       {!horsLigne&&<Link className="oa-secondary" to={`/reglages?parcours=${encodeURIComponent(enr.enrollment_id)}${en?'&lang=en':''}`}>{en?'Adjust my habit schedule':'Régler mes horaires d’habitudes'}</Link>}
