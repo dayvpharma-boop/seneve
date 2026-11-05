@@ -588,3 +588,32 @@
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a).bg-hd-secondary{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border-radius:14px!important}
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a):is(.bg-hd-surface-container,.bg-hd-secondary-container){background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;border-radius:999px!important}
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(input:not([type=checkbox]):not([type=radio]),select){background:#7676801f!important;border:0!important;border-radius:12px!important;color:var(--ios-encre)!important;font-size:16px!important}
+
+/* ── Aujourd'hui, autres situations (Découverte, parcours de 7 ou 30 jours, à venir, fin) : style iPhone, 05/11/2026 ── */
+/* La carte photo générique disparaît, comme sur toutes les pages. */
+:root:root:root .espace-page.ios .accueil-vivant{display:none!important}
+:root:root:root .espace-page.ios :is(.card,.audio-card,.objectif-card,.jardin-card,.repli,.reprise-card,.action-card,.question-card,.parole-card){background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
+:root:root:root .espace-page.ios .card :is(h2,h3),:root:root:root .espace-page.ios .today-section>:is(h2,header h2,div h2){font:700 21px/1.2 var(--ios-police)!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
+:root:root:root .espace-page.ios :is(.btn:not(.btn-link):not(.link),.moment-btn,.action-btn){min-height:50px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root .espace-page.ios :is(.btn:not(.btn-link):not(.link),.moment-btn,.action-btn) *{color:rgb(255 255 255)!important}
+:root:root:root .espace-page.ios :is(.btn:not(.btn-link):not(.link),.moment-btn,.action-btn):disabled{opacity:.45!important;box-shadow:none!important}
+/* Progression de la semaine : pastilles rondes façon app Forme */
+:root:root:root .espace-page.ios .today-progress{background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
+:root:root:root .espace-page.ios .today-progress :is(.day-tile,button){border:0!important;box-shadow:none!important;border-radius:50%!important;aspect-ratio:1;min-height:0!important;background:#7676801f!important;color:var(--ios-encre)!important;font:600 13px var(--ios-police)!important}
+:root:root:root .espace-page.ios .today-progress :is(.day-tile,button):is(.is-done,[data-etat="realisee"]){background:linear-gradient(180deg,#4cd964,#28b446)!important;color:rgb(255 255 255)!important}
+:root:root:root .espace-page.ios .today-progress :is(.day-tile,button):is(.is-today,[aria-pressed="true"],[aria-current]){background:var(--ios-carte)!important;box-shadow:0 0 0 2.5px var(--ios-accent)!important;color:var(--ios-accent)!important}
+:root:root:root .espace-page.ios .today-progress :is(.day-tile,button):disabled{opacity:.55}
+/* Moments du jour : photo arrondie, pastille d'état iOS */
+:root:root:root .espace-page.ios .moment-illus img,:root:root:root .espace-page.ios .moment-illus{border-radius:18px!important;overflow:hidden}
+:root:root:root .espace-page.ios .today-section .tag,:root:root:root .espace-page.ios .card .tag{background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;border:0!important;border-radius:999px!important;font:600 12px var(--ios-police)!important;text-transform:none!important;letter-spacing:0!important}
+/* Audio et objectif : icônes en tuiles */
+:root:root:root .espace-page.ios :is(.audio-card,.objectif-card)>:is(h2,h3,header,div:first-child) svg:first-child{box-sizing:content-box;width:18px!important;height:18px!important;padding:7px;border-radius:9px;color:rgb(255 255 255)!important;background:linear-gradient(180deg,#ff6482,#ff2d55)}
+:root:root:root .espace-page.ios .objectif-card>:is(h2,h3,header,div:first-child) svg:first-child{background:linear-gradient(180deg,#ffb340,#ff9500)}
+:root:root:root .espace-page.ios :is(.audio-card,.objectif-card) :is(button,a):not(.btn):not(.moment-btn){border:0!important;border-radius:14px!important;background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;min-height:46px;font:600 15px var(--ios-police)!important}
+/* Repliés et pied de page */
+:root:root:root .espace-page.ios .repli>summary{min-height:54px;font:600 17px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .espace-page.ios .today-foot a,:root:root:root .espace-page.ios .today-foot button{color:var(--ios-accent)!important;font:500 15px var(--ios-police)!important;text-decoration:none!important}
+:root:root:root .espace-page.ios .today-parcours{color:var(--ios-accent)!important;font:600 15px var(--ios-police)!important}
+:root:root:root:root[data-apparence="sombre"] .espace-page.ios :is(.card,.audio-card,.objectif-card,.jardin-card,.today-progress) :is(h2,h3,p,strong,span:not(.tag)){color:var(--ios-encre)}
+:root:root:root:root .espace-page.ios :is(.today-section,.card) .tag{display:inline-flex!important;width:max-content!important;max-width:100%;align-items:center;gap:6px;padding:4px 10px!important}
+:root:root:root:root .espace-page.ios :is(.card,.audio-card,.objectif-card,.jardin-card) h2.tag{background:none!important;padding:0!important;font:700 18px/1.2 var(--ios-police)!important;color:var(--ios-encre)!important;letter-spacing:-.01em!important}
