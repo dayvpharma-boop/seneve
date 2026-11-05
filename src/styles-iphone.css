@@ -803,3 +803,24 @@
 :root:root:root:root:root[data-apparence="sombre"] .parcours-page.ios .prog-tab{box-shadow:0 0 0 .5px rgb(255 255 255 / .08)!important}
 :root:root:root:root:root[data-apparence="sombre"] .parcours-page.ios .prog-tab[role=tab][aria-selected="true"]{box-shadow:0 10px 24px -12px rgb(91 78 232 / .9),inset 0 1px 0 rgb(255 255 255 / .14)!important}
 @media (prefers-reduced-motion:reduce){:root:root:root .parcours-page.ios .prog-tab{transition:none}:root:root:root .parcours-page.ios .prog-tab:active{transform:none}}
+/* Aujourd'hui (Habitudes & Défis) : raccourcis du bas en liste groupée façon iPhone (tuile de couleur, titre, explication, chevron) */
+:root:root:root .hd-raccourcis{margin:8px 16px 24px}
+:root:root:root .hd-raccourcis-titre{margin:0 4px 8px!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .hd-raccourcis-liste li{position:relative}
+:root:root:root .hd-raccourcis-liste li+li::before{content:"";position:absolute;top:0;left:58px;right:0;height:.5px;background:rgb(60 60 67 / .2)}
+:root:root:root:root[data-apparence="sombre"] .hd-raccourcis-liste li+li::before{background:rgb(255 255 255 / .14)}
+:root:root:root .hd-raccourcis-liste{list-style:none;margin:0;padding:0;border-radius:18px;overflow:hidden;background:var(--ios-carte);box-shadow:0 0 0 .5px rgb(60 60 67 / .1),0 1px 2px rgb(0 0 0 / .04),0 10px 24px -18px rgb(0 0 0 / .3)}
+:root:root:root .hd-raccourci{display:flex;align-items:center;gap:12px;min-height:60px;padding:0 0 0 14px;text-decoration:none!important;color:var(--ios-encre)!important;-webkit-tap-highlight-color:transparent;transition:background-color .15s}
+:root:root:root .hd-raccourci:active{background:rgb(120 120 128 / .12)}
+:root:root:root .hd-raccourci-tuile{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:9px;color:rgb(255 255 255);background:linear-gradient(180deg,#4aa8ff,#0a7aff);box-shadow:inset 0 1px 0 rgb(255 255 255 / .22)}
+:root:root:root .hd-raccourci-tuile svg{color:rgb(255 255 255)!important}
+:root:root:root .hd-raccourci[data-ton="orange"] .hd-raccourci-tuile{background:linear-gradient(180deg,#ffb340,#ff9500)}
+:root:root:root .hd-raccourci[data-ton="vert"] .hd-raccourci-tuile{background:linear-gradient(180deg,#4cd964,#28b446)}
+:root:root:root .hd-raccourci[data-ton="gris"] .hd-raccourci-tuile{background:linear-gradient(180deg,#a1a1a6,#7c7c80)}
+:root:root:root .hd-raccourci-texte{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px;align-self:stretch;padding:10px 0}
+:root:root:root .hd-raccourci-texte strong{font:600 15.5px/1.25 var(--ios-police)!important;letter-spacing:-.01em;color:var(--ios-encre)!important}
+:root:root:root .hd-raccourci-texte small{font:400 13px/1.3 var(--ios-police)!important;color:var(--ios-doux)!important}
+:root:root:root .hd-raccourci-chevron{flex:none;align-self:stretch;display:flex;align-items:center;padding:0 14px 0 4px;color:#c7c7cc}
+:root:root:root:root[data-apparence="sombre"] .hd-raccourcis-liste{box-shadow:0 0 0 .5px rgb(255 255 255 / .08)}
+:root:root:root:root[data-apparence="sombre"] .hd-raccourci-chevron{color:#5a5a5e}
+@media (prefers-reduced-motion:reduce){:root:root:root .hd-raccourci{transition:none}}
