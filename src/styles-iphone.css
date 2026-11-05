@@ -759,8 +759,25 @@
 :root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-jardin-pratique strong{color:#30d158!important}
 @media (prefers-reduced-motion:reduce){:root:root:root .pv-page.ios .pv-jardin-barre span{transition:none}}
 :root:root:root .pv-page.ios .pv-jardin-pratique small{display:block;margin-top:2px;font:400 12.5px var(--ios-police)!important;color:var(--ios-doux)!important}
-/* Aujourd'hui : textes des boutons de parcours centrés et alignés (même forme qu'avant).
-   Le nom garde toujours la place de deux lignes : un nom court se centre dans cet espace, le petit titre reste à la même hauteur partout. */
-:root:root:root .espace-page.ios .prog-tab{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;padding:8px 18px!important}
-:root:root:root .espace-page.ios .prog-tab .jn-tab-meta{margin:0 0 2px!important}
-:root:root:root .espace-page.ios .prog-tab .jn-tab-nom{display:flex;align-items:center;justify-content:center;min-height:2.5em;line-height:1.25}
+/* Aujourd'hui : boutons de parcours en cartes façon Apple (pastille d'état, barre d'avancement, parcours choisi en violet) */
+:root:root:root .espace-page.ios .prog-tabs{gap:10px!important;padding:4px 2px 14px!important;scroll-padding-inline:2px}
+:root:root:root .espace-page.ios .prog-tabs::after{flex:0 0 1px!important}
+:root:root:root .espace-page.ios .prog-tab{position:relative;flex:0 0 196px!important;height:auto!important;min-height:92px!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important;text-align:left!important;padding:12px 14px 14px!important;border:0!important;border-radius:18px!important;background:var(--ios-carte)!important;color:var(--ios-encre)!important;box-shadow:0 0 0 .5px rgb(60 60 67 / .12),0 1px 2px rgb(0 0 0 / .04),0 8px 20px -14px rgb(0 0 0 / .28)!important;transition:transform .18s cubic-bezier(.2,.7,.2,1),background-color .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
+:root:root:root .espace-page.ios .prog-tab:active{transform:scale(.97)}
+:root:root:root .espace-page.ios .prog-tab .jn-tab-meta{display:flex!important;align-items:center;gap:6px;margin:0 0 6px!important;font:600 12px/1.2 var(--ios-police)!important;letter-spacing:0;text-transform:none;opacity:1!important;color:var(--ios-doux)!important}
+:root:root:root .espace-page.ios .prog-tab .jn-tab-meta::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:#34c759;box-shadow:0 0 0 3px rgb(52 199 89 / .18)}
+:root:root:root .espace-page.ios .prog-tab[data-etat="termine"] .jn-tab-meta::before{background:#8e8e93;box-shadow:0 0 0 3px rgb(142 142 147 / .18)}
+:root:root:root .espace-page.ios .prog-tab[data-etat="avenir"] .jn-tab-meta::before{background:#ff9500;box-shadow:0 0 0 3px rgb(255 149 0 / .18)}
+:root:root:root .espace-page.ios .prog-tab[data-etat="pause"] .jn-tab-meta::before{background:#ffcc00;box-shadow:0 0 0 3px rgb(255 204 0 / .2)}
+:root:root:root .espace-page.ios .prog-tab .jn-tab-nom{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;min-height:0!important;font:600 15px/1.25 var(--ios-police)!important;letter-spacing:-.015em;color:inherit!important;text-align:left!important}
+:root:root:root .espace-page.ios .prog-tab .jn-tab-barre{position:absolute;left:14px;right:14px;bottom:10px;height:3px;border-radius:3px;background:rgb(120 120 128 / .16);overflow:hidden}
+:root:root:root .espace-page.ios .prog-tab .jn-tab-barre i{position:absolute;inset:0 auto 0 0;width:var(--avancement,0%);border-radius:3px;background:#34c759}
+:root:root:root .espace-page.ios .prog-tab[data-etat="termine"] .jn-tab-barre i{background:#8e8e93}
+:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,#5b4ee8 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 10px 24px -12px rgb(91 78 232 / .75),inset 0 1px 0 rgb(255 255 255 / .18)!important}
+:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-meta{color:rgb(255 255 255 / .82)!important}
+:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-meta::before{background:rgb(255 255 255);box-shadow:0 0 0 3px rgb(255 255 255 / .25)}
+:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .25)}
+:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-barre i{background:rgb(255 255 255)}
+:root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .prog-tab{box-shadow:0 0 0 .5px rgb(255 255 255 / .08)!important}
+:root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{box-shadow:0 10px 24px -12px rgb(91 78 232 / .9),inset 0 1px 0 rgb(255 255 255 / .14)!important}
+@media (prefers-reduced-motion:reduce){:root:root:root .espace-page.ios .prog-tab{transition:none}:root:root:root .espace-page.ios .prog-tab:active{transform:none}}
