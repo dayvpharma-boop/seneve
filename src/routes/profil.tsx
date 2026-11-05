@@ -45,13 +45,13 @@ const NOMS_PALETTES:Record<string,[string,string]>={ivoire:['Lavande','Lavender'
 function Reglage({id,icone,titre,valeur,ouvert,basculer,children}:{id:string;icone:SymboleTrait;titre:string;valeur?:string|null;ouvert:boolean;basculer:()=>void;children:ReactNode}){
  return <div className={`pv-reglage${ouvert?' est-ouvert':''}`} id={`pf-${id}`}>
   <button type="button" className="pv-ligne" aria-expanded={ouvert} aria-controls={`pf-${id}-panneau`} onClick={basculer}>
-   <span className="pv-tuile"><T nom={icone} taille={20}/></span><span className="pv-ligne-titre">{titre}{valeur&&<small>{valeur}</small>}</span><span className="pv-chevron pv-chevron-bas"><T nom="bas" taille={18}/></span>
+   <span className="pv-tuile" data-icone={icone}><T nom={icone} taille={20}/></span><span className="pv-ligne-titre">{titre}{valeur&&<small>{valeur}</small>}</span><span className="pv-chevron pv-chevron-bas"><T nom="bas" taille={18}/></span>
   </button>
   <div className="pv-panneau" id={`pf-${id}-panneau`} role="region" aria-label={titre} hidden={!ouvert}>{children}</div>
  </div>;
 }
 function LigneLien({to,icone,children,valeur,className=''}:{to:string;icone:SymboleTrait;children:ReactNode;valeur?:string;className?:string}){
- return <Link to={to} className={`pv-ligne${className?` ${className}`:''}`}><span className="pv-tuile"><T nom={icone} taille={20}/></span><span className="pv-ligne-titre">{children}{valeur&&<small>{valeur}</small>}</span><span className="pv-chevron"><T nom="chevron" taille={18}/></span></Link>;
+ return <Link to={to} className={`pv-ligne${className?` ${className}`:''}`}><span className="pv-tuile" data-icone={icone}><T nom={icone} taille={20}/></span><span className="pv-ligne-titre">{children}{valeur&&<small>{valeur}</small>}</span><span className="pv-chevron"><T nom="chevron" taille={18}/></span></Link>;
 }
 type Filtre='tout'|'versets'|'reflexions'|'parcours';
 type Element={cle:string;type:'parcours'|'versets'|'reflexions';le:string;titre:string;sujet:string;detail?:string;annotation?:Annotation};
@@ -110,7 +110,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
   const emailMasque=data.email.replace(/^(.{4})[^@]*@/,'$1***@');
   const nomApparence=apparence==='sombre'?(en?'Dark':'Sombre'):apparence==='clair'?(en?'Light':'Clair'):(en?'Like my phone':'Comme mon téléphone');
   const tailles={petite:en?'Small':'Petite',normale:en?'Standard':'Normale',grande:en?'Large':'Grande','tres-grande':en?'Extra large':'Très grande'};
-  return <main className="pf-page pv-page avec-nav">
+  return <main className="pf-page pv-page avec-nav ios">
   <header className="pv-haut"><Link onClick={retourPrecedent} className="pv-rond" to={`/profil${suffixe}`} aria-label={en?'Back to my profile':'Revenir à mon profil'}><T nom="retour"/></Link><button type="button" className="pv-pastille" disabled={busy} onClick={()=>void deconnecter()}>{en?'Sign me out':'Me déconnecter'}</button></header>
   {bandeaux}
   <p className="pv-surtitre">{en?'Preferences & access':'Préférences & accès'}</p>
@@ -178,7 +178,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
   <p className="pf-note-privee"><P nom="lock" taille={18}/>{en?'Your journal is private. You choose the excerpts you share with the team.':'Ton journal est privé. Tu choisis les extraits que tu partages avec l’équipe.'}</p>
   <div className="pv-groupe" role="group" aria-labelledby="pv-donnees">
    <LigneLien to={en?'/confidentialite?lang=en':'/confidentialite'} icone="bouclier">{en?'How we protect your data':'Comment nous protégeons tes données'}</LigneLien>
-   <button type="button" className="pv-ligne" disabled={lectureSeule||busy} onClick={()=>void telecharger()}><span className="pv-tuile"><T nom="telecharger" taille={20}/></span><span className="pv-ligne-titre">{en?'Download my profile and journal':'Télécharger mon profil et mon journal'}</span><span className="pv-chevron"><T nom="chevron" taille={18}/></span></button>
+   <button type="button" className="pv-ligne" disabled={lectureSeule||busy} onClick={()=>void telecharger()}><span className="pv-tuile" data-icone="telecharger"><T nom="telecharger" taille={20}/></span><span className="pv-ligne-titre">{en?'Download my profile and journal':'Télécharger mon profil et mon journal'}</span><span className="pv-chevron"><T nom="chevron" taille={18}/></span></button>
    <LigneLien to="/aide?motif=export-donnees" icone="note">{en?'Request a copy of my data':'Demander une copie de mes données'}</LigneLien>
   </div>
 
