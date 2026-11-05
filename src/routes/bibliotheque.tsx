@@ -4,7 +4,6 @@ import './fiche-livre.css';
 import './livre-audio.css';
 import './livre-pdf.css';
 import {useEnLigne} from '@/lib/hors-ligne';
-import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import {IconeRayonnage} from '@/components/IconeRayonnage';
 import {useEffect} from 'react';
@@ -29,7 +28,7 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
  const en=params.get('lang')==='en';const lang=en?'en':'fr';const L=en?BOOK:LIVRE;const suffixe=en?'?lang=en':'';
  useEffect(()=>{document.title=`${format?(format==='audio'?(en?'Audiobook':'Livre audio'):(en?'Digital book · PDF':'Livre numérique · PDF'))+' · '+L.titre:detail?L.titre:(en?'Library':'Bibliothèque')} — SÉNEVÉ`;document.documentElement.lang=lang;},[detail,format,L.titre,en,lang]);
  const formatNom=format==='audio'?(en?'Audiobook':'Livre audio'):(en?'Digital book · PDF':'Livre numérique · PDF');
- return <main className={detail?`bl-page bl-fiche${format==='audio'?' bl-audio':format==='pdf'?' bl-pdf':''}`:'bl-page'}>
+ return <main className={detail?`bl-page ios bl-fiche${format==='audio'?' bl-audio':format==='pdf'?' bl-pdf':''}`:'bl-page ios'}>
   <header className="bl-header">
    {detail?<Link onClick={retourPrecedent} to={`/bibliotheque${suffixe}`} aria-label={en?'Back to library':'Revenir à la bibliothèque'}><I nom="arrow_back"/></Link>:<img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt=""/>}
    <div><span>SÉNEVÉ</span><strong>{format?(format==='audio'?(en?'Audiobook':'Livre audio'):(en?'Digital book · PDF':'Livre numérique · PDF')):detail?(en?'The book':'Le livre'):(en?'Library':'Bibliothèque')}</strong></div>
@@ -39,7 +38,6 @@ export function Bibliotheque({detail=false,format}:{detail?:boolean;format?:'aud
    {!enLigne&&<aside className="bl-hors-ligne" role="status"><I nom="lock" taille={20}/><div><strong>{detail?(en?'Book details offline':'Fiche du livre hors connexion'):(en?'Offline library':'Bibliothèque hors connexion')}</strong><p>{en?'You can view this previously loaded page. Reconnect to check your access or send a request for help.':'Tu peux consulter cette page déjà chargée. Reconnecte-toi pour vérifier tes accès ou envoyer une demande d’aide.'}</p></div></aside>}
    {!detail?<>
     <div className="bl-intro"><p className="bl-label"><IconeRayonnage taille={18}/>{en?'The book and its formats':'Le livre et ses formats'}</p><h1>{en?'My library':'Ma bibliothèque'}</h1><p className="bl-soustitre">{en?'Read, listen, and walk a little further.':'Lire, écouter et avancer un peu plus loin.'}</p></div>
-    <IllustrationPage theme="bibliotheque" langue={lang} />
     <nav className="bl-filtres" aria-label={en?'Book formats':'Formats du livre'}>{(['tous','audio','pdf'] as const).map(f=><button key={f} type="button" aria-pressed={actif===f} onClick={()=>setParams(p=>{const n=new URLSearchParams(p);if(f==='tous')n.delete('format');else n.set('format',f);return n;})}>{f==='tous'?(en?'All':'Tous'):f==='audio'?'Audio':'PDF'}</button>)}</nav>
     <div className="bl-rayonnage"><div className="bl-ouvrages"><article className="bl-card bl-livre-carte"><div className="bl-livre-identite"><Couverture petite en={en}/><div><span className="bl-label">{en?'English edition':'Édition française'}</span><h2>{L.titre}</h2><p>{L.auteur}</p><span className="bl-statut"><I nom="lock" taille={16}/>{en?'PDF and audio for buyers':'PDF et audio pour les acheteurs'}</span></div></div>
      <div className="bl-liste-formats">{FORMATS_LIVRE.filter(f=>actif==='tous'||f.id===actif).map(f=><Link key={f.id} to={`/livre/${f.id}${suffixe}`}><I nom={f.icone}/><span><strong>{f.id==='audio'?(en?'Audiobook':'Livre audio'):(en?'Digital book · PDF':'Livre numérique · PDF')}</strong><small>{en?'For buyers':'Pour les acheteurs'}</small></span><I nom="chevron_right"/></Link>)}</div>
