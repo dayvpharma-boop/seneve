@@ -1,0 +1,123 @@
+/* Style iPhone validé par Dr Justin le 04/11/2026 (maquette demo-ios) : barre d'onglets translucide sur toutes les pages,
+ * page « Aujourd'hui » en grand titre, anneaux, carte photo, segmenté, widget et liste à tuiles. Chargé en dernier :
+ * les sélecteurs répètent :root pour passer devant les feuilles plus anciennes. */
+:root{--ios-police:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,system-ui,sans-serif;--ios-accent:#5b4ee8;--ios-accent-2:#8f7bff;--ios-fond:#f2f2f7;--ios-carte:rgb(255 255 255);--ios-encre:#1c1c1e;--ios-doux:#6e6e73;--ios-ligne:#e5e5ea;--ios-ressort:cubic-bezier(.32,.72,0,1)}
+:root[data-apparence="sombre"]{--ios-fond:rgb(0 0 0);--ios-carte:#1c1c1e;--ios-encre:#f2f2f7;--ios-doux:#98989f;--ios-ligne:#38383a;--ios-accent:#8f84ff;--ios-accent-2:#a99fff}
+@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]){--ios-fond:rgb(0 0 0);--ios-carte:#1c1c1e;--ios-encre:#f2f2f7;--ios-doux:#98989f;--ios-ligne:#38383a;--ios-accent:#8f84ff;--ios-accent-2:#a99fff}}
+
+/* ── Barre d'onglets (toutes les pages) ── */
+:root:root:root .barre-nav{background:color-mix(in srgb,var(--ios-carte) 72%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;border-top:.5px solid var(--ios-ligne)!important;box-shadow:none!important;border-radius:0!important}
+:root:root:root .barre-nav ul{gap:0!important}
+:root:root:root .barre-nav a.ios-onglet{display:flex!important;flex-direction:column!important;align-items:center!important;gap:2px!important;padding:6px 0 2px!important;background:none!important;box-shadow:none!important;color:var(--ios-doux)!important;font:500 10.5px/1.2 var(--ios-police)!important;letter-spacing:.01em!important;min-height:48px;transform:none!important;border-radius:0!important;text-decoration:none!important}
+:root:root:root .barre-nav a.ios-onglet[aria-current="page"]{color:var(--ios-accent)!important;font-weight:600!important}
+:root:root:root .barre-nav a.ios-onglet::before,:root:root:root .barre-nav a.ios-onglet::after{display:none!important}
+:root:root:root .barre-nav a.ios-onglet span{background:none!important;padding:0!important;color:inherit!important;text-decoration:none!important}
+:root:root:root .barre-nav .ios-onglet-icone{width:26px;height:26px;transition:transform 200ms var(--ios-ressort)}
+:root:root:root .barre-nav a.ios-onglet:active .ios-onglet-icone{transform:scale(.88)}
+
+/* ── Page Aujourd'hui ── */
+:root:root:root .espace-page.ios{background:var(--ios-fond)!important;font-family:var(--ios-police)!important;color:var(--ios-encre)}
+:root:root:root body:has(.espace-page.ios){background:var(--ios-fond)!important}
+:root:root:root .espace-page.ios .hd-stitch{background:transparent!important;border-radius:0!important;overflow:visible!important}
+:root:root:root .espace-page.ios .hd-jour-stitch{padding-left:0!important;padding-right:0!important}
+/* Grand titre */
+.espace-page:not(.ios) .ios-date{display:none}
+:root:root:root .espace-page.ios .today-head{display:grid!important;grid-template-columns:1fr auto;align-items:end;gap:0 10px;padding:6px 4px 14px!important;background:none!important;border:0!important;box-shadow:none!important}
+:root:root:root .espace-page.ios .today-head .barre-haut{grid-column:1/-1;grid-row:1;display:flex;justify-content:flex-end;gap:8px;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;min-height:0}
+:root:root:root .espace-page.ios .today-head .logo-marque{margin-right:auto;opacity:.9}
+:root:root:root .espace-page.ios .today-head .logo-marque small{display:none}
+:root:root:root .espace-page.ios .ios-date{grid-column:1;margin:8px 0 0;font:600 13px/1.2 var(--ios-police);letter-spacing:.02em;text-transform:uppercase;color:var(--ios-doux)}
+.espace-page.ios .ios-date::first-letter{text-transform:uppercase}
+:root:root:root .espace-page.ios .today-head h1{grid-column:1;margin:2px 0 0!important;font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
+/* Onglets de parcours en pastilles iOS */
+:root:root:root .espace-page.ios .prog-tabs{gap:8px!important;padding:0 0 4px!important}
+:root:root:root .espace-page.ios .prog-tab{border:0!important;border-radius:999px!important;background:var(--ios-carte)!important;color:var(--ios-encre)!important;box-shadow:0 1px 2px #0000000f!important;font:600 14px/1.25 var(--ios-police)!important;padding:9px 14px!important;min-height:0!important}
+:root:root:root .espace-page.ios .prog-tab[aria-selected="true"]{background:var(--ios-encre)!important;color:var(--ios-fond)!important}
+:root:root:root .espace-page.ios .prog-tab .jn-tab-meta{display:block;font-size:11.5px;font-weight:500;opacity:.7}
+
+/* Carte du jour en photo */
+:root:root:root .ios-jour{position:relative;margin:14px 0 0;min-height:300px;border-radius:24px;overflow:hidden;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;color:rgb(255 255 255);
+ background:linear-gradient(180deg,#0000 10%,#0000 35%,#000b 100%),url("/illustrations/seneve-pousse-photo-v1-720.webp") center/cover,#2c2a5e;box-shadow:0 18px 40px -20px #000a}
+:root:root:root .ios-puce{position:absolute;top:14px;left:14px;right:14px;width:max-content;max-width:calc(100% - 28px);padding:6px 11px;border-radius:999px;background:#ffffff2e;backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);font:600 12.5px/1.3 var(--ios-police)}
+:root:root:root .ios-jour small{font:600 12px/1.2 var(--ios-police);letter-spacing:.07em;text-transform:uppercase;opacity:.85}
+:root:root:root .ios-jour h2{margin:0;font:800 28px/1.1 var(--ios-police);letter-spacing:-.02em;color:rgb(255 255 255)}
+:root:root:root .ios-jour p{margin:0;font:italic 16px/1.4 Lora,Georgia,serif;opacity:.92;color:rgb(255 255 255)}
+:root:root:root .ios-jour-bouton{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;min-height:50px;border-radius:14px;background:rgb(255 255 255);color:#1c1c1e!important;font:600 16px var(--ios-police);text-decoration:none!important;transition:transform 120ms ease-out}
+:root:root:root .ios-jour-bouton:active,:root:root:root .ios-bouton:active,:root:root:root .ios-prochain:active{transform:scale(.97)}
+
+/* Anneaux */
+:root:root:root .ios-anneaux{margin-top:14px;display:flex;gap:16px;align-items:center;padding:16px;border-radius:22px;background:var(--ios-carte);color:var(--ios-encre);box-shadow:0 1px 2px #0000000a}
+:root:root:root .ios-anneaux svg{flex:none}
+:root:root:root .ios-anneaux circle{fill:none;stroke-width:12;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%}
+:root:root:root .ios-anneau-trait{transition:stroke-dashoffset 900ms var(--ios-ressort)}
+:root:root:root .ios-anneau-journee .ios-anneau-fond{stroke:#5b4ee82e}.ios-anneau-journee .ios-anneau-trait{stroke:#6a5cf0}
+:root:root:root .ios-anneau-mois .ios-anneau-fond{stroke:#30d15830}.ios-anneau-mois .ios-anneau-trait{stroke:#30d158}
+:root:root:root .ios-anneau-semaine .ios-anneau-fond{stroke:#ff9f0a33}.ios-anneau-semaine .ios-anneau-trait{stroke:#ff9f0a}
+:root:root:root .ios-anneaux h2{margin:0;font:700 20px/1.2 var(--ios-police);letter-spacing:-.015em;color:var(--ios-encre)}
+:root:root:root .ios-anneaux p{margin:5px 0 0;font:400 14px/1.4 var(--ios-police);color:var(--ios-doux)}
+:root:root:root .ios-anneaux ul{list-style:none;margin:9px 0 0;padding:0;display:flex;flex-direction:column;gap:4px;font:600 12.5px/1.3 var(--ios-police);color:var(--ios-encre)}
+:root:root:root .ios-anneaux li{display:flex;align-items:center;gap:7px}
+:root:root:root .ios-anneaux li::before{content:"";width:9px;height:9px;border-radius:50%;flex:none}
+:root:root:root li.ios-anneau-journee::before{background:#6a5cf0}
+:root:root:root li.ios-anneau-mois::before{background:#30d158}
+:root:root:root li.ios-anneau-semaine::before{background:#ff9f0a}
+
+/* Titres de section et cartes */
+:root:root:root .ios-section{margin-top:24px}
+:root:root:root .espace-page.ios .ios-titre-section,.ios-titre-section{margin:0 4px 8px;font:700 22px/1.2 var(--ios-police)!important;letter-spacing:-.02em;color:var(--ios-encre)!important}
+:root:root:root .ios-carte{background:var(--ios-carte);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px #0000000a}
+:root:root:root .ios-priere-tete{display:flex;align-items:center;gap:12px}
+:root:root:root .ios-priere-tete b{display:block;font:600 16px var(--ios-police);color:var(--ios-encre)}
+:root:root:root .ios-priere-tete small{font:400 13px var(--ios-police);color:var(--ios-doux)}
+:root:root:root .ios-segment{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);padding:2px;border-radius:10px;background:#7676801f}
+:root:root:root .ios-segment-curseur{position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px)/var(--n));border-radius:8px;background:var(--ios-carte);box-shadow:0 3px 8px #0000001f,0 1px 1px #0000000f;transform:translateX(calc(100% * var(--i)));transition:transform 360ms var(--ios-ressort)}
+:root[data-apparence="sombre"] .ios-segment-curseur{background:#636366}
+:root:root:root .ios-segment button{position:relative;z-index:1;min-height:34px;border:0;background:none;font:600 13.5px var(--ios-police);color:var(--ios-encre);cursor:pointer}
+:root:root:root .ios-bouton{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border:0;border-radius:14px;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent));color:rgb(255 255 255)!important;font:600 16px var(--ios-police);text-decoration:none!important;cursor:pointer;box-shadow:0 8px 18px -10px var(--ios-accent);transition:transform 120ms ease-out}
+:root:root:root .ios-note{margin:0;font:400 12.5px/1.4 var(--ios-police);color:var(--ios-doux)}
+
+/* Prochain rendez-vous */
+:root:root:root .ios-prochain{display:flex;align-items:center;gap:14px;padding:16px;border-radius:22px;background:linear-gradient(135deg,#2c2a5e,#1a1840);color:rgb(255 255 255)!important;text-decoration:none!important;box-shadow:0 18px 36px -20px #2c2a5ecc;transition:transform 120ms ease-out}
+:root:root:root .ios-prochain small{display:block;font:600 11.5px var(--ios-police);letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+:root:root:root .ios-prochain time{display:block;font:800 34px/1 var(--ios-police);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+:root:root:root .ios-prochain-texte{flex:1;min-width:0}
+:root:root:root .ios-prochain-texte b{display:block;font:700 18px/1.2 var(--ios-police)}
+:root:root:root .ios-prochain-texte p{margin:3px 0 0;font:italic 14px/1.35 Lora,Georgia,serif;opacity:.8;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+:root:root:root .ios-rond{width:44px;height:44px;border-radius:50%;background:#ffffff26;display:grid;place-items:center;flex:none}
+
+/* Ma journée : liste groupée, une tuile colorée par habitude */
+:root:root:root .ios-liste{background:var(--ios-carte);border-radius:20px;overflow:hidden;box-shadow:0 1px 2px #0000000a}
+:root:root:root .ios-ligne{position:relative}
+:root:root:root .ios-ligne+.ios-ligne::before{content:"";position:absolute;top:0;left:62px;right:0;height:.5px;background:var(--ios-ligne);z-index:1}
+:root:root:root .ios-ligne-corps{display:flex;align-items:flex-start;gap:12px;padding:10px 0 10px 14px}
+:root:root:root .ios-ligne-corps>.ios-tuile{margin-top:12px}
+:root:root:root .ios-ligne-corps>:not(.ios-tuile){flex:1;min-width:0}
+:root:root:root .ios-liste .ios-ligne-corps>:not(.ios-tuile)>*{box-shadow:none!important;border:0!important;background:transparent!important;border-radius:0!important;margin:0!important}
+:root:root:root .ios-tuile{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:rgb(255 255 255);flex:none;box-shadow:inset 0 1px 0 #ffffff40}
+:root:root:root .ios-tuile-orange{background:linear-gradient(180deg,#ffb340,#ff9500)}
+:root:root:root .ios-tuile-bleu{background:linear-gradient(180deg,#4aa8ff,#0a7aff)}
+:root:root:root .ios-tuile-indigo{background:linear-gradient(180deg,#7d7bff,#5856d6)}
+:root:root:root .ios-tuile-vert{background:linear-gradient(180deg,#4cd964,#28b446)}
+:root:root:root .ios-tuile-rose{background:linear-gradient(180deg,#ff6482,#ff2d55)}
+:root:root:root .ios-tuile-teal{background:linear-gradient(180deg,#5ad8f0,#30b0c7)}
+:root:root:root .ios-tuile-violet{background:linear-gradient(180deg,#d07dff,#af52de)}
+:root:root:root .ios-tuile-nuit{background:linear-gradient(180deg,#4c4a8a,#2c2a5e)}
+
+@media (prefers-reduced-motion:reduce){.ios-anneau-trait,.ios-segment-curseur{transition:none}.ios-jour-bouton:active,.ios-bouton:active,.ios-prochain:active{transform:none}}
+@media (prefers-reduced-transparency:reduce){:root:root:root .barre-nav{background:var(--ios-carte)!important;backdrop-filter:none!important}}
+/* Corrections après aperçu : l'ancienne bulle de l'onglet actif et les polices imposées par les feuilles HD. */
+:root:root:root .barre-nav a.ios-onglet svg{background:none!important;padding:0!important;border-radius:0!important;box-shadow:none!important;width:26px!important;height:26px!important}
+:root:root:root .espace-page.ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,time,li,label,summary):not(.font-hd-scripture-verse){font-family:var(--ios-police)!important}
+:root:root:root:root .espace-page.ios :is(.ios-jour p,.ios-prochain-texte p){font-family:Lora,Georgia,serif!important}
+:root:root:root .ios-tuile-ardoise{background:linear-gradient(180deg,#8e8e93,#636366)}
+/* Autres blocs du jour (lectures, cultes, dîme, calendrier) : même matière que les cartes iOS. */
+:root:root:root .espace-page.ios .hd-jour-stitch>button.bg-hd-surface-container{background:var(--ios-carte)!important;border-radius:20px!important;min-height:52px!important;color:var(--ios-accent)!important;box-shadow:0 1px 2px #0000000a}
+:root:root:root .espace-page.ios .hd-jour-stitch :is(.rounded-2xl,.rounded-xl).shadow-sm,:root:root:root .espace-page.ios .hd-jour-stitch>section>details,:root:root:root .espace-page.ios .hd-jour-stitch>div>details{border-radius:20px!important;box-shadow:0 1px 2px #0000000a!important;border:0!important;background:var(--ios-carte)!important}
+/* Mode sombre : vrai noir comme sur iPhone, et la carte photo garde son texte blanc. */
+:root:root:root:root[data-apparence="sombre"] :is(body:has(.espace-page.ios),.espace-page.ios){background:rgb(0 0 0)!important}
+:root:root:root:root .espace-page.ios .ios-jour :is(h2,p,small,.ios-puce){color:rgb(255 255 255)!important;opacity:1}
+:root:root:root:root .espace-page.ios .ios-jour small{opacity:.85}
+:root:root:root:root .espace-page.ios .ios-jour .ios-jour-bouton{background:rgb(255 255 255)!important;color:#1c1c1e!important;opacity:1!important}
+/* Mode sombre : les textes des habitudes suivent la carte sombre (les pastilles gardent leurs couleurs). */
+:root:root:root:root[data-apparence="sombre"] .espace-page.ios .ios-liste .ios-ligne-corps :is(h3,h4,p,strong,b,time,span):not(button *,button,a,a *,[class*="rounded-full"],[class*="rounded-full"] *){color:var(--ios-encre)!important}
+:root:root:root:root[data-apparence="sombre"] .espace-page.ios .ios-liste .ios-ligne-corps :is(p,small):not(button *,a *){color:var(--ios-doux)!important}

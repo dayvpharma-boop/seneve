@@ -27,6 +27,8 @@ import {defiDuJourEn} from '@/data/habitudes-defis-en';
 import {lecturesHabitudesEnMois2a6} from '@/data/habitudes-lectures-en-mois-2-6';
 import {enregistrerCopieJourHd,type CopieJourHd} from '@/lib/habitudes-copie-jour';
 import {IconeJournee} from './IconeJournee';
+import {AnneauxJournee} from './AnneauxJournee';
+import {TuileHabitude} from './IconesIphone';
 
 /** Heure locale « HH:MM » du participant ; null si le fuseau est invalide. */
 function heureLocale(fuseau:string,maintenant:number){try{return new Intl.DateTimeFormat('en-GB',{timeZone:fuseau,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(maintenant));}catch{return null;}}
@@ -42,6 +44,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [lecture,setLecture]=useState<{cle:string;data:JourRecette}|null>(null),[erreur,setErreur]=useState(false),[tour,setTour]=useState(0);
  const [revision,setRevision]=useState(0),[maintenant,setMaintenant]=useState(Date.now);
+ const [moment,setMoment]=useState<string|null>(null);
  const [priereId,setPriereId]=useState<string|null>(null),[lecturesOuvertes,setLecturesOuvertes]=useState(false),[lectureInitialeId,setLectureInitialeId]=useState<string|null>(null);
  const cle=`${enrollmentId}:${participantId}:${dateLocale}`;
  useEffect(()=>{setLecturesOuvertes(false);setLectureInitialeId(null);},[cle]);
@@ -91,6 +94,9 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  const priere=activites.find(a=>a.occurrence.occurrence_id===priereId);
  const ouverte=(a:typeof activites[number])=>a.etat?.synchronisation!=='synchronise'||a.etat.etat!=='realisee';
  const h=heureLocale(fuseau,maintenant);
+ const momentHeure=h?(minutes(h)<11*60?'matin':minutes(h)<17*60?'midi':'soir'):'matin';
+ const priereChoisie=prieres.find(a=>a.occurrence.occurrence_id===moment)??prieres.find(a=>momentPriere(a.habit_key)===momentHeure)??prieres[0];
+ const nomMoment=(k:string)=>momentPriere(k)==='matin'?l('Matin','Morning'):momentPriere(k)==='midi'?l('Midi','Midday'):l('Soir','Evening');
  const prochain=activites.find(a=>ouverte(a)&&h!==null&&a.heure>=h)??activites.find(ouverte)??null;
  const ecart=prochain&&h?minutes(prochain.heure)-minutes(h):null;
  const iProchain=prochain?activites.indexOf(prochain):-1;
@@ -98,63 +104,61 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  const plusTard=(i:number)=>iProchain>=0&&i>iProchain+2&&minutes(activites[i]!.heure)>=18*60;
  const premierPlusTard=activites.findIndex((_,i)=>plusTard(i));
  return <section className="hd-jour-stitch flex flex-col w-full px-hd-margin pb-hd-space-xl" aria-label={l('Mes activités quotidiennes','My daily activities')}>
-  {/* Date et lecture du jour */}
-  <header className="py-hd-space-md flex flex-col gap-1">
-   <div className="inline-flex items-center gap-2 self-start px-2.5 py-1 rounded-full bg-hd-surface-container text-hd-on-surface-variant">
-    <IconeHD nom="calendar_today" className="text-[14px] text-hd-secondary"/>
-    <span className="font-hd-label-sm text-hd-label-sm tracking-wide"><time dateTime={dateLocale}>{date.charAt(0).toUpperCase()+date.slice(1)}</time> · {l('Jour','Day')} {data.jour} · {mois===1?l('30 jours gratuits','30 free days'):l(`Mois ${mois} sur 6`,`Month ${mois} of 6`)}</span>
-   </div>
-   {texte?<>
-    <h2 className="font-hd-headline-md text-hd-headline-md text-hd-on-surface mt-1">{texte.titre}</h2>
-    <p className="font-hd-body-md text-hd-body-md text-hd-on-surface-variant italic">{texte.objectif}</p>
-   </>:<h2 className="font-hd-headline-md text-hd-headline-md text-hd-on-surface mt-1">{l('Un pas après l’autre','One step at a time')}</h2>}
+  {/* Carte du jour en photo plein cadre (style iPhone du 04/11/2026). */}
+  <header className="ios-jour">
+   <span className="ios-puce"><time dateTime={dateLocale}>{date.charAt(0).toUpperCase()+date.slice(1)}</time> · {l('Jour','Day')} {data.jour} · {mois===1?l('30 jours gratuits','30 free days'):l(`Mois ${mois} sur 6`,`Month ${mois} of 6`)}</span>
+   <small>{l('Le pas d’aujourd’hui','Today’s step')}</small>
+   <h2>{texte?.titre??l('Un pas après l’autre','One step at a time')}</h2>
+   {texte&&<p>{texte.objectif}</p>}
+   {prochain&&!horsLigne&&<a className="ios-jour-bouton" href={`#hd-activite-${prochain.occurrence.occurrence_id}`}><IconeHD nom="play_arrow" className="text-[20px]"/>{l('Commencer','Start')}</a>}
   </header>
+  {bilan&&<AnneauxJournee realisees={bilan.realisees} total={bilan.total} jour={data.jour} en={en}/>}
   {horsLigne&&copie&&<div className="hc-bandeau" role="status"><IconeJournee nom="wifi_off" taille={20}/><p>{l('Copie du ','Copy from ')}<time dateTime={copie.le}>{new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:fuseau}).format(new Date(copie.le))}</time>. {l('Tu es hors connexion : tu peux noter tes habitudes, elles seront envoyées au retour du réseau. Les prières guidées, la durée de lecture, les cultes, les défis et l’historique demandent une connexion.','You are offline: you can record your habits; they will be sent when the network is back. Guided prayers, reading time, worship, challenges and history need a connection.')}</p></div>}
   {estDimanche(dateLocale)&&<aside className="mb-hd-space-lg rounded-2xl p-hd-space-md bg-hd-secondary-container/30 flex items-start gap-3" aria-label={l('Dimanche, jour de repos','Sunday, day of rest')}><IconeHD nom="spa" className="text-[22px] text-hd-secondary mt-0.5 shrink-0"/><div className="flex flex-col gap-1"><p className="font-hd-label-lg text-hd-label-lg text-hd-on-surface">{l('Dimanche, jour de repos','Sunday, day of rest')}</p><p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Comptent aujourd’hui : le culte, les prières du matin et du soir, les gratitudes, la Bible du matin et la dîme. Le reste est facultatif : tu peux le cocher, il ne compte jamais comme oublié.','Today counts: worship, morning and evening prayer, gratitude, morning Bible reading and the tithe. Everything else is optional: you can tick it, it never counts as missed.')}</p></div></aside>}
-  {!horsLigne&&<aside className="mb-hd-space-lg bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-sm flex flex-col gap-2" aria-label={l('Prière Amidah','Amidah prayer')}>
-   <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{l('Matin · Midi · Soir','Morning · Midday · Evening')}</span>
-   <h3 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('L’Amidah','The Amidah')}</h3>
-   {prieres.length?<div className="flex flex-wrap gap-2">{prieres.map(a=><button key={a.occurrence.occurrence_id} type="button" aria-label={l(`Lire et prier — ${momentPriere(a.habit_key)}`,`Read and pray — ${momentPriere(a.habit_key)}`)} onClick={()=>setPriereId(a.occurrence.occurrence_id)} className="flex-1 min-h-[48px] px-3 bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg rounded-xl flex items-center justify-center gap-2"><IconeHD nom="auto_stories" className="text-[20px]"/>{momentPriere(a.habit_key)==='matin'?l('Matin','Morning'):momentPriere(a.habit_key)==='midi'?l('Midi','Midday'):l('Soir','Evening')}</button>)}</div>:<a href={`${import.meta.env.BASE_URL}amidah.html?retour=espace`} className="min-h-[48px] px-4 bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg rounded-xl flex items-center justify-center gap-2"><IconeHD nom="auto_stories" className="text-[20px]"/>{l('Lire l’Amidah en français','Read the Amidah')}</a>}
-   <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Choisis ta prière. Lire ne valide rien : appuie sur « J’ai prié » après avoir prié.','Choose your prayer. Reading completes nothing: press “I prayed” after praying.')}</p>
-  </aside>}
+  {!horsLigne&&<section className="ios-section" aria-label={l('Prière Amidah','Amidah prayer')}>
+   <h3 className="ios-titre-section">{l('Prière','Prayer')}</h3>
+   <div className="ios-carte ios-priere">
+    <div className="ios-priere-tete"><TuileHabitude habitKey="priere"/><div><b>{l('L’Amidah','The Amidah')}</b><small>{l('Choisis le moment, puis prie.','Choose the moment, then pray.')}</small></div></div>
+    {prieres.length?<>
+     <div className="ios-segment" role="radiogroup" aria-label={l('Moment de la prière','Prayer time')} style={{['--n' as string]:prieres.length,['--i' as string]:Math.max(0,prieres.indexOf(priereChoisie!))}}>
+      <span className="ios-segment-curseur" aria-hidden="true"/>
+      {prieres.map(a=><button key={a.occurrence.occurrence_id} type="button" role="radio" aria-checked={a===priereChoisie} onClick={()=>setMoment(a.occurrence.occurrence_id)}>{nomMoment(a.habit_key)}</button>)}
+     </div>
+     <button type="button" className="ios-bouton" aria-label={l(`Lire et prier — ${momentPriere(priereChoisie!.habit_key)}`,`Read and pray — ${momentPriere(priereChoisie!.habit_key)}`)} onClick={()=>setPriereId(priereChoisie!.occurrence.occurrence_id)}><IconeHD nom="auto_stories" className="text-[20px]"/>{l(`Ouvrir la prière ${momentPriere(priereChoisie!.habit_key)==='matin'?'du matin':momentPriere(priereChoisie!.habit_key)==='midi'?'de midi':'du soir'}`,`Open the ${momentPriere(priereChoisie!.habit_key)==='matin'?'morning':momentPriere(priereChoisie!.habit_key)==='midi'?'midday':'evening'} prayer`)}</button>
+    </>:<a href={`${import.meta.env.BASE_URL}amidah.html?retour=espace`} className="ios-bouton"><IconeHD nom="auto_stories" className="text-[20px]"/>{l('Lire l’Amidah en français','Read the Amidah')}</a>}
+    <p className="ios-note">{l('Lire ne valide rien : appuie sur « J’ai prié » après avoir prié.','Reading completes nothing: press “I prayed” after praying.')}</p>
+   </div>
+  </section>}
   {!horsLigne&&activites.some(a=>estLectureHabitudes(a.habit_key))&&<button type="button" onClick={()=>{setLectureInitialeId(null);setLecturesOuvertes(true);}} className="mb-hd-space-lg min-h-[48px] px-4 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-lg text-hd-label-lg flex items-center justify-center gap-2"><IconeHD nom="menu_book"/>{l('Lectures du jour','Today’s readings')}<IconeHD nom="chevron_right"/></button>}
   {/* Extras du dimanche (04/11/2026), facultatifs et jamais comptés. */}
   {!horsLigne&&estDimanche(dateLocale)&&<DimancheHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue}/>}
   {!horsLigne&&<CultesSemaineHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} onConfirme={confirmer}/>}
   {!horsLigne&&<MaDimeHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} lienReglages={`/reglages?parcours=${encodeURIComponent(enrollmentId)}${en?'&lang=en':''}#horaires`}/>}
   {/* Prochain rendez-vous */}
-  {prochain&&<section className="hd-prochain-rendez-vous mt-hd-space-xs mb-hd-space-lg" aria-label={l('Prochain rendez-vous','Next appointment')}>
-   <div className="relative bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_4px_20px_rgba(117,91,0,0.06)] overflow-hidden">
-    <div className="absolute top-0 left-0 right-0 h-1.5 bg-hd-secondary"/>
-    <div className="flex items-center justify-between mb-hd-space-sm pt-1">
-     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-hd-secondary-container/40 text-hd-secondary font-hd-label-sm text-hd-label-sm uppercase tracking-wider"><IconeHD nom="schedule" className="text-[15px]"/>{l('Prochain rendez-vous','Next appointment')}</span>
-     {ecart!==null&&ecart>=0&&<span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant">{ecart===0?l('Maintenant','Now'):ecart<60?l(`Dans ${ecart} min`,`In ${ecart} min`):l(`Dans ${Math.floor(ecart/60)} h ${String(ecart%60).padStart(2,'0')}`,`In ${Math.floor(ecart/60)} h ${String(ecart%60).padStart(2,'0')}`)}</span>}
-    </div>
-    <div className="mb-hd-space-sm">
-     <div className="flex items-baseline gap-2"><span className="font-hd-label-lg text-hd-label-lg font-semibold text-hd-secondary"><time dateTime={prochain.heure}>{prochain.heure}</time></span><p className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{prochain.consigne}</p></div>
-     {prochain.critere&&<p className="font-hd-body-md text-hd-body-md text-hd-on-surface-variant mt-1.5">{prochain.critere}</p>}
-    </div>
-    <div className="pt-2 flex items-center justify-between gap-hd-space-sm">
-     <a href={`#hd-activite-${prochain.occurrence.occurrence_id}`} className="flex-1 min-h-[48px] bg-hd-secondary hover:bg-hd-on-secondary-fixed-variant text-hd-on-secondary font-hd-label-lg text-hd-label-lg font-medium rounded-xl flex items-center justify-center gap-2 transition-colors active:scale-[0.99]"><IconeHD nom="play_arrow" className="text-[20px]"/><span>{l('Commencer','Start')}</span></a>
-    </div>
-   </div>
+  {prochain&&<section className="hd-prochain-rendez-vous ios-section" aria-label={l('Prochain rendez-vous','Next appointment')}>
+   <h3 className="ios-titre-section">{l('Prochain rendez-vous','Next appointment')}</h3>
+   <a className="ios-prochain" href={`#hd-activite-${prochain.occurrence.occurrence_id}`}>
+    <div><small>{ecart!==null&&ecart>=0?(ecart===0?l('Maintenant','Now'):ecart<60?l(`Dans ${ecart} min`,`In ${ecart} min`):l(`Dans ${Math.floor(ecart/60)} h ${String(ecart%60).padStart(2,'0')}`,`In ${Math.floor(ecart/60)} h ${String(ecart%60).padStart(2,'0')}`)):l('À venir','Coming up')}</small><time dateTime={prochain.heure}>{prochain.heure}</time></div>
+    <div className="ios-prochain-texte"><b>{prochain.consigne}</b>{prochain.critere&&<p>{prochain.critere}</p>}</div>
+    <span className="ios-rond" aria-label={l('Commencer','Start')}><IconeHD nom="play_arrow" className="text-[22px]"/></span>
+   </a>
   </section>}
   {!horsLigne&&<ExportCalendrierHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue}/>}
   {/* Ma journée */}
-  <section className="flex flex-col gap-hd-space-sm" aria-label={l('Ma journée','My day')}>
+  <section className="ios-section ios-journee flex flex-col gap-hd-space-sm" aria-label={l('Ma journée','My day')}>
    <div className="flex items-baseline justify-between mb-1">
     <div>
-     <h3 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Ma journée','My day')}</h3>
+     <h3 className="ios-titre-section">{l('Ma journée','My day')}</h3>
      <p role="status" className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant uppercase tracking-wider">{bilan!.realisees} / {bilan!.total} {l('réalisées','completed')} · {bilan!.partielles} {l('en partie','partly done')}</p>
     </div>
     <span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant italic whitespace-nowrap">{l('Sans hâte ni retard','No rush, no delay')}</span>
    </div>
    <progress className="sr-only" aria-label={l('Activités réalisées aujourd’hui','Activities completed today')} value={bilan!.realisees} max={bilan!.total}/>
-   <div className="flex flex-col gap-2.5">
-    {activites.map((a,i)=><div key={a.occurrence.occurrence_id} id={`hd-activite-${a.occurrence.occurrence_id}`} className={plusTard(i)?'opacity-85':''}>
+   <div className="ios-liste flex flex-col">
+    {activites.map((a,i)=><div key={a.occurrence.occurrence_id} id={`hd-activite-${a.occurrence.occurrence_id}`} className={`ios-ligne${plusTard(i)?' opacity-85':''}`}>
      {i===premierPlusTard&&<span className="block pt-2 pb-2 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant px-1 uppercase tracking-wider">{l('Plus tard aujourd’hui','Later today')}</span>}
      {!a.occurrence.requise&&estDimanche(dateLocale)&&<span className="inline-flex items-center gap-1 mb-1 px-2 py-0.5 rounded-full bg-hd-surface-container text-hd-on-surface-variant font-hd-label-sm text-hd-label-sm"><IconeHD nom="spa" className="text-[12px]"/>{l('Facultatif aujourd’hui','Optional today')}</span>}
-     <DeclarationHabitude variante="stitch" complement={aRepereDuree(a.habit_key)||estLectureHabitudes(a.habit_key)?<div className="flex flex-col items-start gap-1.5"><RepereDureeHabitudes habitKey={a.habit_key} langue={langue} dansCarte/>{horsLigne&&estLectureHabitudes(a.habit_key)&&<p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('La durée de lecture demande une connexion : tu pourras noter cette lecture au retour du réseau.','Reading time needs a connection: you can record this reading when the network is back.')}</p>}{!horsLigne&&estLectureHabitudes(a.habit_key)&&<button type="button" aria-label={l(`Renseigner la durée — ${a.consigne}`,`Record time — ${a.consigne}`)} className="min-h-[44px] px-3 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-md text-hd-label-md" onClick={()=>{setLectureInitialeId(a.occurrence.occurrence_id);setLecturesOuvertes(true);}}>{l('Durée de lecture','Reading time')}</button>}</div>:undefined} lienLecture={a.habit_key==='bible_matin'||a.habit_key==='bible_soir'?{href:`${import.meta.env.BASE_URL}bible/livres?depuis=habitudes&moment=${a.habit_key==='bible_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='bible_matin'?l('Lire la Bible du matin','Read the morning Bible reading'):l('Lire la Bible du soir','Read the evening Bible reading')}:undefined} lienEcriture={a.habit_key==='gratitude_matin'||a.habit_key==='gratitude_soir'?{href:`${import.meta.env.BASE_URL}journal?ecrire=1&depuis=habitudes&gratitude=${a.habit_key==='gratitude_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='gratitude_matin'?l('Écrire ma gratitude du matin','Write my morning gratitude'):l('Écrire ma gratitude du soir','Write my evening gratitude')}:undefined} heure={a.heure} attenue={plusTard(i)} userId={data.userId} occurrence={a.occurrence} consigne={a.consigne} critere={a.critere} etat={a.etat} langue={langue} lectureSeule={horsLigne&&estLectureHabitudes(a.habit_key)} horsLigne={horsLigne} aideDisponible={false} transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onDemanderLecture={estLectureHabitudes(a.habit_key)?()=>{setLectureInitialeId(a.occurrence.occurrence_id);setLecturesOuvertes(true);}:undefined} onConfirme={confirmer}/>
+     <div className="ios-ligne-corps"><TuileHabitude habitKey={a.habit_key}/><DeclarationHabitude variante="stitch" complement={aRepereDuree(a.habit_key)||estLectureHabitudes(a.habit_key)?<div className="flex flex-col items-start gap-1.5"><RepereDureeHabitudes habitKey={a.habit_key} langue={langue} dansCarte/>{horsLigne&&estLectureHabitudes(a.habit_key)&&<p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('La durée de lecture demande une connexion : tu pourras noter cette lecture au retour du réseau.','Reading time needs a connection: you can record this reading when the network is back.')}</p>}{!horsLigne&&estLectureHabitudes(a.habit_key)&&<button type="button" aria-label={l(`Renseigner la durée — ${a.consigne}`,`Record time — ${a.consigne}`)} className="min-h-[44px] px-3 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-md text-hd-label-md" onClick={()=>{setLectureInitialeId(a.occurrence.occurrence_id);setLecturesOuvertes(true);}}>{l('Durée de lecture','Reading time')}</button>}</div>:undefined} lienLecture={a.habit_key==='bible_matin'||a.habit_key==='bible_soir'?{href:`${import.meta.env.BASE_URL}bible/livres?depuis=habitudes&moment=${a.habit_key==='bible_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='bible_matin'?l('Lire la Bible du matin','Read the morning Bible reading'):l('Lire la Bible du soir','Read the evening Bible reading')}:undefined} lienEcriture={a.habit_key==='gratitude_matin'||a.habit_key==='gratitude_soir'?{href:`${import.meta.env.BASE_URL}journal?ecrire=1&depuis=habitudes&gratitude=${a.habit_key==='gratitude_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='gratitude_matin'?l('Écrire ma gratitude du matin','Write my morning gratitude'):l('Écrire ma gratitude du soir','Write my evening gratitude')}:undefined} heure={a.heure} attenue={plusTard(i)} userId={data.userId} occurrence={a.occurrence} consigne={a.consigne} critere={a.critere} etat={a.etat} langue={langue} lectureSeule={horsLigne&&estLectureHabitudes(a.habit_key)} horsLigne={horsLigne} aideDisponible={false} transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onDemanderLecture={estLectureHabitudes(a.habit_key)?()=>{setLectureInitialeId(a.occurrence.occurrence_id);setLecturesOuvertes(true);}:undefined} onConfirme={confirmer}/></div>
     </div>)}
    </div>
   </section>
