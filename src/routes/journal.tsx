@@ -1,6 +1,5 @@
 import {retourPrecedent} from '@/lib/retour-precedent';
 import {contexteBilanHabitudes,cleBrouillonBilan} from '@/lib/habitudes-journal-bilan';
-import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -145,7 +144,7 @@ function JournalDuCompte({ userId }: { userId: string }) {
   const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><Link className="journal-profil" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
   const intro = <div className="journal-confidentialite"><IconeJournal nom="lock" taille={20} /><p className="journal-intro">{T.introJournal}</p></div>;
   const back = <Link className="link" onClick={retourPrecedent} to="/espace">← {T.retour}</Link>;
-  if (failed && !enLigne) return <main className="wrap avec-nav journal-page journal-nouveau journal-horsligne">{tete}
+  if (failed && !enLigne) return <main className="wrap avec-nav journal-page journal-nouveau ios journal-horsligne">{tete}
     <div className="hc-bandeau" role="status"><IconeJournee nom="wifi_off" taille={20} /><p>{en ? 'Offline. Your saved notes will appear when you are back online.' : 'Hors connexion. Tes notes déjà enregistrées s’afficheront au retour du réseau.'}</p></div>
     <section className="hc-carte hc-brouillon">
       <label className="hc-etiquette" htmlFor="hc-brouillon"><IconeJournee nom="edit_note" taille={16} />{en ? 'Draft on this device' : 'Brouillon sur cet appareil'}</label>
@@ -158,14 +157,13 @@ function JournalDuCompte({ userId }: { userId: string }) {
     <p className="hc-note">{en ? 'A draft may be erased if the browser frees up space.' : 'Un brouillon peut être effacé si le navigateur libère de la place.'}</p>
     <button type="button" className="hc-bouton" onClick={() => void refresh()}>{T.reessayer}</button>
     {retourBilan ?? retourJour ?? back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;
-  if (failed) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{retourBilan ?? retourJour ?? back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;
-  if (!data) return <main className="wrap avec-nav journal-page journal-nouveau">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langueUI} maquette iconesJournal /></main>;
+  if (failed) return <main className="wrap avec-nav journal-page journal-nouveau ios">{tete}<div className="card"><p role="alert">{T.erreurChargement}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{retourBilan ?? retourJour ?? back}<BarreNav langue={langueUI} maquette iconesJournal /></main>;
+  if (!data) return <main className="wrap avec-nav journal-page journal-nouveau ios">{tete}<p className="muted">{T.chargement}</p><BarreNav langue={langueUI} maquette iconesJournal /></main>;
 
   const trop = texte.trim().length > NOTE_MAX;
-  return <main className="wrap avec-nav journal-page journal-nouveau">
+  return <main className="wrap avec-nav journal-page journal-nouveau ios">
     {tete}
     {intro}
-    {data.entries.length === 0 && <JournalImage en={en} avecNotes={data.entries.length > 0} />}
     {formOuvert
       ? <form className="card journal-form" onSubmit={save} aria-label={T.nouvelle}>
           <div className="journal-form-haut"><p className="tag"><span />{en ? "New reflection" : "Nouvelle réflexion"}</p><span>{en ? "Today" : "Aujourd’hui"}</span></div>
@@ -194,7 +192,6 @@ function JournalDuCompte({ userId }: { userId: string }) {
           {error && <p className="error" role="alert">{error}</p>}
         </form>
       : <button type="button" className="btn moment-btn journal-nouvelle" onClick={() => { focusDemande.current = true; setFormOuvert(true); }}><IconeMaquette nom="history_edu" taille={22} />{T.nouvelle}</button>}
-    {data.entries.length > 0 && <JournalImage en={en} avecNotes={data.entries.length > 0} />}
     <section className="today-section journal-historique" aria-labelledby="titre-notes">
       <div className="journal-historique-tete"><h2 id="titre-notes">{en ? "Previous reflections" : "Mes réflexions précédentes"}</h2><span>{data.entries.length} {langueUI === 'en' ? (data.entries.length === 1 ? 'note' : 'notes') : (data.entries.length === 1 ? 'note' : 'notes')}</span></div>
       {data.entries.length === 0
@@ -249,4 +246,3 @@ function EntryCard({ entry, langue, onChanged }: { entry: Entry; langue: string;
   </article>;
 }
 
-function JournalImage({en,avecNotes}:{en:boolean;avecNotes:boolean}) { return <IllustrationPage theme="journal" langue={en?'en':'fr'} />; }

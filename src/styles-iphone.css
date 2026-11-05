@@ -308,3 +308,56 @@
 :root:root:root .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *) *{color:rgb(255 255 255)!important}
 :root:root:root .bb-page.ios .bb-pied{color:var(--ios-doux)!important}
 :root:root:root:root[data-apparence="sombre"] .bb-page.ios :is(.bb-carte:not(.bb-reprendre),.bb-testaments a,.bb-outils a) :is(h2,h3,strong,blockquote,p){color:var(--ios-encre)!important}
+
+/* ── Journal (style iPhone, 05/11/2026), dans l'esprit de l'app Journal d'Apple ── */
+:root:root:root .journal-page.ios{background:var(--ios-fond)!important;color:var(--ios-encre)}
+:root:root:root body:has(.journal-page.ios){background:var(--ios-fond)!important}
+:root:root:root:root[data-apparence="sombre"] :is(body:has(.journal-page.ios),.journal-page.ios){background:rgb(0 0 0)!important}
+:root:root:root .journal-page.ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,time,li,label):not(.prompt-question,.day-text,.day-text *){font-family:var(--ios-police)!important}
+/* Grand titre */
+:root:root:root .journal-page.ios .today-head{background:none!important;border:0!important;box-shadow:none!important;padding:6px 4px 10px!important}
+:root:root:root .journal-page.ios .today-head .logo-marque small{display:none}
+:root:root:root .journal-page.ios .journal-repere{margin:8px 0 0!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .journal-page.ios .journal-repere span{display:none!important}
+:root:root:root .journal-page.ios .today-head h1{margin:2px 0 0!important;font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
+/* Confidentialité : une ligne discrète avec un cadenas en tuile */
+:root:root:root .journal-page.ios .journal-confidentialite{display:flex!important;align-items:center!important;gap:12px!important;background:var(--ios-carte)!important;border:0!important;border-radius:16px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;padding:10px 14px!important;margin-bottom:14px!important}
+:root:root:root .journal-page.ios .journal-confidentialite>svg{box-sizing:content-box;width:16px!important;height:16px!important;padding:7px;border-radius:9px;color:rgb(255 255 255)!important;background:linear-gradient(180deg,#8e8e93,#636366);flex:none}
+:root:root:root .journal-page.ios .journal-intro{margin:0!important;font:400 13.5px/1.4 var(--ios-police)!important;color:var(--ios-doux)!important}
+/* Formulaire : une page de carnet */
+:root:root:root .journal-page.ios .journal-form{background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04),0 18px 40px -28px rgb(0 0 0 / .25)!important;padding:18px!important}
+:root:root:root .journal-page.ios .journal-form-haut .tag{font:700 20px/1.2 var(--ios-police)!important;letter-spacing:-.015em!important;color:var(--ios-encre)!important;text-transform:none!important}
+:root:root:root .journal-page.ios .journal-form-haut .tag span{display:none!important}
+:root:root:root .journal-page.ios .journal-form-haut>span{color:var(--ios-accent)!important;font:600 14px var(--ios-police)!important}
+:root:root:root .journal-page.ios .journal-form textarea{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:6px 0!important;font:400 18px/1.55 Lora,Georgia,serif!important;color:var(--ios-encre)!important;min-height:180px}
+:root:root:root .journal-page.ios .journal-form textarea::placeholder{color:#aeaeb2!important;font-style:italic}
+:root:root:root .journal-page.ios .journal-form textarea:focus{outline:none!important}
+:root:root:root .journal-page.ios .journal-mots{border-top:.5px solid var(--ios-ligne)!important;padding-top:10px!important;color:var(--ios-doux)!important;font:500 12.5px var(--ios-police)!important}
+:root:root:root .journal-page.ios .journal-question{background:#7676800f!important;border:0!important;border-radius:16px!important}
+/* Case du coach : interrupteur iOS */
+:root:root:root .journal-page.ios .share-check{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:12px!important;flex-direction:row-reverse!important;background:#7676800f!important;border-radius:16px!important;padding:12px 14px!important;border:0!important}
+:root:root:root .journal-page.ios .share-check input{appearance:none!important;-webkit-appearance:none!important;flex:none;width:51px!important;height:31px!important;margin:0!important;border-radius:999px!important;border:0!important;background:#78788052!important;position:relative;cursor:pointer;transition:background-color 250ms var(--ios-ressort)}
+:root:root:root .journal-page.ios .share-check input::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:rgb(255 255 255);box-shadow:0 3px 8px rgb(0 0 0 / .15),0 3px 1px rgb(0 0 0 / .06);transition:transform 300ms var(--ios-ressort)}
+:root:root:root .journal-page.ios .share-check input:checked{background:#34c759!important}
+:root:root:root .journal-page.ios .share-check input:checked::after{transform:translateX(20px)}
+:root:root:root .journal-page.ios .share-check input:focus-visible{outline:3px solid color-mix(in srgb,var(--ios-accent) 50%,transparent)!important;outline-offset:2px}
+:root:root:root .journal-page.ios .share-check>span{font:500 15px/1.35 var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .journal-page.ios .share-check .muted{font:400 12.5px/1.4 var(--ios-police)!important;color:var(--ios-doux)!important}
+/* Boutons */
+:root:root:root .journal-page.ios :is(.journal-form .btn,.journal-nouvelle){min-height:52px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important;transition:transform 120ms ease-out,opacity 200ms ease}
+:root:root:root .journal-page.ios :is(.journal-form .btn,.journal-nouvelle) *{color:rgb(255 255 255)!important}
+:root:root:root .journal-page.ios .journal-form .btn:disabled{opacity:.4!important;box-shadow:none!important}
+:root:root:root .journal-page.ios :is(.journal-form .btn,.journal-nouvelle):active:not(:disabled){transform:scale(.97)}
+/* Réflexions précédentes */
+:root:root:root .journal-page.ios .journal-historique-tete h2{font:700 22px/1.2 var(--ios-police)!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
+:root:root:root .journal-page.ios .journal-historique-tete>span{background:color-mix(in srgb,var(--ios-accent) 14%,transparent)!important;color:var(--ios-accent)!important;border:0!important;border-radius:999px!important;font:600 12.5px var(--ios-police)!important;padding:3px 10px!important}
+:root:root:root .journal-page.ios :is(.note-carte,.journal-vide){background:var(--ios-carte)!important;border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
+:root:root:root .journal-page.ios .journal-vide{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;gap:10px!important;padding:26px 18px!important}
+:root:root:root .journal-page.ios .journal-vide p{font:500 16px/1.45 var(--ios-police)!important;color:var(--ios-encre)!important;margin:0!important}
+:root:root:root .journal-page.ios .journal-eco{width:56px!important;height:56px!important;border-radius:16px!important;display:grid!important;place-items:center!important;background:linear-gradient(180deg,#4cd964,#28b446)!important;color:rgb(255 255 255)!important;border:0!important}
+:root:root:root .journal-page.ios .journal-eco svg{color:rgb(255 255 255)!important}
+:root:root:root .journal-page.ios .journal-graine{background:#7676800f!important;border:0!important;border-radius:999px!important;color:var(--ios-doux)!important;font:500 12.5px var(--ios-police)!important;padding:5px 12px!important}
+:root:root:root .journal-page.ios .note-carte .day-text{font-family:Lora,Georgia,serif!important}
+:root:root:root .journal-page.ios .journal-pied{color:var(--ios-doux)!important}
+:root:root:root:root[data-apparence="sombre"] .journal-page.ios :is(.journal-form,.note-carte,.journal-vide,.journal-confidentialite) :is(h2,h3,strong,p:not(.muted,.journal-intro,.journal-mots),.day-text){color:var(--ios-encre)!important}
+:root:root:root:root .journal-page.ios .today-head .barre-haut{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important}
