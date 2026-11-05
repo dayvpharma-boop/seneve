@@ -9,7 +9,6 @@ import {joursHabitudesLecture, type JourHabitudesLecture, type EtatLecture} from
 import {filtreCultesPrevus} from '@/lib/habitudes-cultes';
 import {chargerHorairesHabitudes} from '@/lib/habitudes-horaires-api';
 import { RaccourcisParcours } from '@/components/RaccourcisParcours';
-import { IllustrationPage } from '@/components/IllustrationPage';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useState, type ReactNode, type KeyboardEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -162,20 +161,20 @@ export function Progres() {
   useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = langue === 'en' ? 'en' : 'fr'; }, [T, langue]);
 
   const back = <Link className="link" to={langue==='en'?'/espace?lang=en':'/espace'}>← {T.retour}</Link>;
-  // En-tête commun à l'espace (écran « Aujourd'hui » validé le 15/10/2026) : marque puis titre.
+  // En-tête commun à l'espace : marque puis grand titre ; style iPhone du 05/11/2026 sans la carte photo répétée sur chaque page.
   const en = langue === 'en';
-  const tete = <><header className="parcours-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span>{data && <Link className="parcours-avatar" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header><IllustrationPage theme="parcours" langue={langue} photoAvantTexte /><RaccourcisParcours langue={langue} /></>;
+  const tete = <><header className="parcours-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span>{data && <Link className="parcours-avatar" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header><RaccourcisParcours langue={langue} /></>;
   if (failed && copie) return <ProgresHorsLigne copie={copie} langue={langue} tete={tete} reessayer={() => void refresh()} />;
-  if (failed && !enLigne) return <main className="wrap avec-nav parcours-page">{tete}<CarteHorsConnexion langue={langue} texte={en ? 'There is no saved copy of your progress on this device.' : 'Aucune copie de tes progrès n’est disponible sur cet appareil.'} reessayer={() => void refresh()} /><BarreNav langue={langue} maquette iconesJournee /></main>;
-  if (failed) return <main className="wrap avec-nav parcours-page">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
-  if (!data) return <main className="wrap avec-nav parcours-page">{tete}<section className="pc-etat pc-chargement" aria-busy="true"><p role="status">{T.chargement}</p><div aria-hidden="true" className="pc-squelette"><span/><span/><span/></div></section><BarreNav langue={langue} maquette iconesJournee /></main>;
-  if (!enr) return <main className="wrap avec-nav parcours-page">{tete}<section className="card pc-etat"><p role="status">{T.aucun}</p></section>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
+  if (failed && !enLigne) return <main className="wrap avec-nav parcours-page ios">{tete}<CarteHorsConnexion langue={langue} texte={en ? 'There is no saved copy of your progress on this device.' : 'Aucune copie de tes progrès n’est disponible sur cet appareil.'} reessayer={() => void refresh()} /><BarreNav langue={langue} maquette iconesJournee /></main>;
+  if (failed) return <main className="wrap avec-nav parcours-page ios">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
+  if (!data) return <main className="wrap avec-nav parcours-page ios">{tete}<section className="pc-etat pc-chargement" aria-busy="true"><p role="status">{T.chargement}</p><div aria-hidden="true" className="pc-squelette"><span/><span/><span/></div></section><BarreNav langue={langue} maquette iconesJournee /></main>;
+  if (!enr) return <main className="wrap avec-nav parcours-page ios">{tete}<section className="card pc-etat"><p role="status">{T.aucun}</p></section>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;
 
   const b = data.bilans[enr.enrollment_id]!;
   const tabs = <div className="prog-tabs" ref={placerOngletAujourdhui} role="tablist" aria-label={T.titre} onKeyDown={parcourirOnglets}>
     {data.parcours.map(x => {const bx=data.bilans[x.enrollment_id]!;return <button type="button" role="tab" id={`pc-inscription-${x.enrollment_id}`} aria-controls="pc-bilan" tabIndex={x.enrollment_id === enr.enrollment_id?0:-1} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); }}><span>{x.nom}</span><small>{x.etat === 'en_pause' ? (en ? 'Paused' : 'En pause') : x.etat==='terminee'||bx.termine ? (en ? 'Completed' : 'Terminé') : bx.pasCommence ? (en ? 'Upcoming' : 'À venir') : (en ? 'In progress' : 'En cours')} · {bx.pasCommence?(en?`${bx.duree} days`:`${bx.duree} jours`):`${en?'Day':'Jour'} ${bx.joursOuverts} / ${bx.duree}`}</small></button>;})}
   </div>;
-  if(data.habitudes[enr.enrollment_id]) return <main className="wrap avec-nav parcours-page">
+  if(data.habitudes[enr.enrollment_id]) return <main className="wrap avec-nav parcours-page ios">
     {tete}<p className="progres-intro">{T.intro}</p>{tabs}
     <div role="tabpanel" id="pc-bilan" aria-labelledby={`pc-inscription-${enr.enrollment_id}`}>{data.bilans[enr.enrollment_id]&&!data.bilans[enr.enrollment_id]!.pasCommence&&<CalendrierHabitudes jours={data.habitudes[enr.enrollment_id]!} b={data.bilans[enr.enrollment_id]!} langue={langue}/>}<BilanHabitudes jours={data.habitudes[enr.enrollment_id]!} langue={langue} inscription={enr.enrollment_id}/></div>
     {back}<BarreNav langue={langue} maquette iconesJournee/>
@@ -190,7 +189,7 @@ export function Progres() {
   const semainesDuParcours = semaines(b);
   const declarees=b.jours.filter(j=>j.ouvert&&j.etat!==null&&(j.etat!=='non_commencee'||j.aide)).length;
 
-  return <main className="wrap avec-nav parcours-page">
+  return <main className="wrap avec-nav parcours-page ios">
     {tete}<p className="progres-intro">{T.intro}</p>{tabs}
     <section className="card progres-carte" role="tabpanel" id="pc-bilan" aria-labelledby={`pc-inscription-${enr.enrollment_id}`}>
       {b.pasCommence ? <div className="pc-etat"><p>{T.pasCommence}</p><p>{en?'Planned start: ':'Début prévu : '}<time dateTime={enr.date_debut}>{dateCourte(enr.date_debut,T.locale)}</time></p></div> : <>
@@ -236,7 +235,7 @@ function ProgresHorsLigne({ copie, langue, tete, reessayer }: { copie: CopieProg
   const p = copie.parcours[0]!;
   const date = new Intl.DateTimeFormat(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Kinshasa' }).format(new Date(copie.le));
   const libelle = (e: string | null) => e === 'realisee' ? (en ? 'done' : 'réalisée') : e === 'partielle' ? (en ? 'partly done' : 'en partie') : (en ? 'not started' : 'pas commencée');
-  return <main className="wrap avec-nav parcours-page progres-horsligne">{tete}
+  return <main className="wrap avec-nav parcours-page ios progres-horsligne">{tete}
     <div className="hc-bandeau hc-bandeau-action" role="status"><IconeJournee nom="wifi_off" taille={20} /><p>{en ? 'Copy from ' : 'Copie du '}<time dateTime={copie.le}>{date}</time>. {en ? 'Reconnect to see your up-to-date progress.' : 'Reconnecte-toi pour voir tes progrès à jour.'}</p><button type="button" className="hc-lien-bouton" onClick={reessayer}>{en ? 'Try again' : 'Réessayer'}</button></div>
     <section className="hc-lecture-seule" aria-label={en ? 'Saved copy, read only' : 'Copie enregistrée, en lecture seule'}>
       {copie.parcours.length > 1 && <p className="hc-parcours">{p.nom}</p>}
