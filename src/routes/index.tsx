@@ -186,7 +186,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
   <PrototypeButton className="barre-retour" aria-label={en ? 'Back to the test home' : 'Revenir à l’accueil du test'} onClick={() => setScreen('home')}><Icone nom="fleche_gauche" taille={22} /></PrototypeButton>
   <div className="barre-titre"><span className="barre-marque">SÉNEVÉ</span><span>{t.homeTitle}</span></div>
  </header>;
- return <main className={`wrap${screen === 'home' ? ' jardin-accueil' : ''}`}>
+ return <main className={`wrap ios-test${screen === 'home' ? ' jardin-accueil' : ''}`}>
   <section id="s-home" hidden={screen !== 'home'}>
    <header className="barre-haut home-head"><p className="brand logo-marque"><Icone nom="graine" taille={20} />{t.brand}</p>{languageLink}<Apparence langue={language} compact/></header>
    <div className="jardin-hero">
