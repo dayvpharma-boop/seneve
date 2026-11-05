@@ -749,3 +749,13 @@
 @media (prefers-reduced-motion:reduce){:root:root:root .pv-page.ios .pv-onglets :is(a,button){transition:none}}
 :root:root:root .pv-page.ios .pv-grille .pv-carte:first-child .pv-label{color:#ff2d55!important}
 :root:root:root .pv-page.ios .pv-grille .pv-carte:nth-child(2) .pv-label{color:#0a7aff!important}
+/* Mon jardin : pourcentage de jours pratiqués, tous parcours ensemble (seuils 10 / 40 / 70 %) */
+:root:root:root .pv-page.ios .pv-jardin-pratique{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+:root:root:root .pv-page.ios .pv-jardin-barre{position:relative;height:8px;border-radius:8px;background:#7676801f;overflow:hidden}
+:root:root:root .pv-page.ios .pv-jardin-barre span{position:absolute;inset:0 auto 0 0;border-radius:8px;background:linear-gradient(90deg,#4cd964,#28b446);transition:width .6s cubic-bezier(.2,.7,.2,1)}
+:root:root:root .pv-page.ios .pv-jardin-barre i{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--ios-carte)}
+:root:root:root .pv-page.ios .pv-jardin-pratique p{margin:0!important;font:400 13px/1.4 var(--ios-police)!important;color:var(--ios-doux)!important}
+:root:root:root .pv-page.ios .pv-jardin-pratique strong{font:700 15px var(--ios-police)!important;color:#28a745!important}
+:root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-jardin-pratique strong{color:#30d158!important}
+@media (prefers-reduced-motion:reduce){:root:root:root .pv-page.ios .pv-jardin-barre span{transition:none}}
+:root:root:root .pv-page.ios .pv-jardin-pratique small{display:block;margin-top:2px;font:400 12.5px var(--ios-police)!important;color:var(--ios-doux)!important}

@@ -26,7 +26,7 @@ import {FuseauVoyage} from '@/components/FuseauVoyage';
 import {RappelsHabitudes} from '@/components/RappelsHabitudes';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {rappelsHabitudesActifs} from '@/lib/habitudes-rappels';
-import {chargerPas,dureeReelle,etapesJardin,joursCeMois,pasCetteSemaine,TEXTES_JARDIN,type EtapeJardin,type Pas} from '@/lib/profil-pas';
+import {chargerPas,dureeReelle,etapesJardin,pratiqueGlobale,joursCeMois,pasCetteSemaine,TEXTES_JARDIN,type EtapeJardin,type Pas} from '@/lib/profil-pas';
 import {EVENEMENT_GRAINES,envoyerInvitation,lireGraines} from '@/lib/invitation';
 import {VERSIONS,lireAnnotations,lireReglages,ecrireReglages,livreParCode,nomReference,type Annotation,type Version} from '@/lib/bible';
 import './profil-v2.css';
@@ -193,7 +193,8 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
  // Vue profil : Mes pas · Mon carnet · Mon chemin.
  const TJ=TEXTES_JARDIN[langue];
  const chargement=pas===null,indispo=pas==='indisponible',liste=Array.isArray(pas)?pas:[];
- const etapes=etapesJardin(parcours.map(({p,statut})=>({id:p.id,debut:p.debut,duree:p.duree,termineLe:statut==='termine'?jourParcours(p.debut,p.duree-1).toISOString().slice(0,10):null})),liste);
+ const parcoursJardin=parcours.map(({p,statut})=>({id:p.id,debut:p.debut,duree:p.duree,termineLe:statut==='termine'?jourParcours(p.debut,p.duree-1).toISOString().slice(0,10):null}));
+ const etapes=etapesJardin(parcoursJardin,liste);const pratique=pratiqueGlobale(parcoursJardin,liste);
  const elements:Element[]=[
   ...(indispo||chargement?[]:etapes.filter(e=>e.atteinte&&e.le).map(e=>({cle:`etape-${e.id}`,type:'parcours' as const,le:e.le!,titre:TJ.fil[e.id],sujet:TJ.detail[e.id]}))),
   ...annotations.filter(a=>a.couleur||a.signet).map(a=>({cle:`v-${a.cle}`,type:'versets' as const,le:a.modifie,titre:en?'Saved verse':'Verset gardé',sujet:reference(a,langue),annotation:a})),
@@ -229,6 +230,10 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
   <article className="pv-carte pv-graines"><div><p className="pv-chiffre">{graines}</p><p className="pv-label">{en?'Seeds shared':'Graines partagées'}</p><small>{en?'Invitations to the 7 Roots Test sent from this phone':'Invitations au Test des 7 Racines envoyées depuis ce téléphone'}</small></div><button type="button" className="pv-rond" aria-label={en?'Invite someone to the test':'Inviter un proche au test'} onClick={()=>void envoyerInvitation(langue)}><T nom="envoyer"/></button></article>
   <article className="pv-carte pv-jardin"><div className="pv-jardin-tete"><h2>{en?'My garden':'Mon jardin'}</h2><span>{en?'Matthew':'Matthieu'} 13:31-32</span></div>
    <ol className="pv-etapes">{etapes.map(e=><li key={e.id} className={e.atteinte&&!indispo&&!chargement?'atteinte':''}><span className="pv-etape"><T nom={ICONES_ETAPES[e.id]} taille={24}/></span><span>{TJ[e.id][0]}<br/>{TJ[e.id][1]}</span><span className="sr-only">{e.atteinte&&!indispo&&!chargement?(en?' — reached':' — atteinte'):(en?' — to come':' — à venir')}</span></li>)}</ol>
+   {!indispo&&!chargement&&pratique.ouverts>0&&<div className="pv-jardin-pratique">
+    <div className="pv-jardin-barre" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pratique.pourcentage} aria-label={en?'Days practised':'Jours pratiqués'}><span style={{width:`${Math.min(100,pratique.pourcentage)}%`}}/><i style={{left:'10%'}}/><i style={{left:'40%'}}/><i style={{left:'70%'}}/></div>
+    <p><strong>{pratique.pourcentage} %</strong> {en?'of days practised':'de jours pratiqués'} <small>{en?`${pratique.pratiques} of ${pratique.ouverts} days, all journeys together`:`${pratique.pratiques} sur ${pratique.ouverts} jours, tous parcours ensemble`}</small></p>
+   </div>}
   </article>
   <div className="pv-puces" role="group" aria-label={en?'Filter':'Filtrer'}>{filtres.map(([f,nom,icone])=><button key={f} type="button" aria-pressed={filtre===f} onClick={()=>setFiltre(f)}>{icone&&<T nom={icone} taille={18}/>}{nom}</button>)}</div>
   <div className="pv-fil">{visibles.length?visibles.map(e=><article className="pv-carte" key={e.cle}>

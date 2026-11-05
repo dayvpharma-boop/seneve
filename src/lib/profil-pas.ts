@@ -28,33 +28,64 @@ export function dureeReelle(p:{debut:string;duree:number;fin?:string|null}):numb
  return Number.isFinite(jours)?Math.max(p.duree,jours):p.duree;
 }
 
-/** Les quatre étapes du jardin (Matthieu 13:31-32). Elles ne reculent jamais.
- *  Graine semée : un parcours commencé. Première pousse : un premier pas déclaré.
- *  Tige affermie : sept jours différents avec un pas.
- *  Arbre accueillant : un parcours mené jusqu'à son dernier jour, avec au moins un pas déclaré dans ce parcours
- *  (un parcours arrivé à sa date de fin sans aucun pas ne fait pas pousser l'arbre). */
+const plusJours=(iso:string,n:number)=>{const d=new Date(`${iso}T00:00:00Z`);d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
+const ecart=(de:string,a:string)=>Math.round((Date.parse(`${a}T00:00:00Z`)-Date.parse(`${de}T00:00:00Z`))/864e5);
+
+/** Seuils du jardin validés par Dr Justin le 05/11/2026 : un seul jardin pour tous les parcours SÉNEVÉ. */
+export const SEUILS_JARDIN={pousse:.10,tige:.40,arbre:.70} as const;
+/** La tige demande aussi au moins sept jours pratiqués, pour qu'un premier jour isolé (1 sur 1 = 100 %) ne suffise pas. */
+const JOURS_MIN_TIGE=7;
+
+export type Pratique={pratiques:number;ouverts:number;pourcentage:number};
+type Suivi={debut:string;fin:string;jours:Set<string>};
+
+function suivis(parcours:readonly ParcoursPas[],pas:readonly Pas[]):Suivi[]{
+ return parcours.filter(p=>/^\d{4}-\d{2}-\d{2}$/.test(p.debut)&&p.duree>0).map(p=>{
+  const fin=plusJours(p.debut,p.duree-1);const jours=new Set<string>();
+  for(const x of pas)if(x.enrollment_id===p.id)for(const d of pasDates([x])){const l=dateLocale(new Date(d));if(l>=p.debut&&l<=fin)jours.add(l);}
+  return{debut:p.debut,fin,jours};
+ });
+}
+function pratiqueAu(s:readonly Suivi[],jour:string):Pratique{
+ let pratiques=0,ouverts=0;
+ for(const p of s){if(jour<p.debut)continue;ouverts+=ecart(p.debut,jour<p.fin?jour:p.fin)+1;for(const d of p.jours)if(d<=jour)pratiques++;}
+ return{pratiques,ouverts,pourcentage:ouverts?Math.round(pratiques/ouverts*100):0};
+}
+
+/** Jours pratiqués ÷ jours déjà ouverts, tous parcours additionnés (un jour compte s'il porte au moins un pas). */
+export function pratiqueGlobale(parcours:readonly ParcoursPas[],pas:readonly Pas[],now=new Date()):Pratique{return pratiqueAu(suivis(parcours,pas),dateLocale(now));}
+
+/** Les quatre étapes du jardin (Matthieu 13:31-32), un seul jardin pour tous les parcours.
+ *  Graine semée : un parcours commencé. Première pousse : 10 % des jours ouverts pratiqués.
+ *  Tige affermie : 40 % et au moins sept jours pratiqués. Arbre accueillant : 70 % et au moins un parcours terminé.
+ *  Une étape atteinte ne recule jamais : elle reste acquise même si le pourcentage baisse ensuite. */
 export function etapesJardin(parcours:readonly ParcoursPas[],pas:readonly Pas[],now=new Date()):Etape[]{
- const aujourdhui=dateLocale(now);
- const debuts=parcours.map(p=>p.debut).filter(d=>d<=aujourdhui).sort();
- const dates=pasDates(pas);const premier=dates[0];
- const jours:string[]=[];for(const d of dates){const l=dateLocale(new Date(d));if(!jours.includes(l))jours.push(l);}
- const avecPas=new Set(pas.filter(p=>pasDates([p]).length>0).map(p=>p.enrollment_id));
- const fins=parcours.filter(p=>avecPas.has(p.id)).map(p=>p.termineLe).filter((d):d is string=>Boolean(d)&&d!<=aujourdhui).sort();
+ const aujourdhui=dateLocale(now);const s=suivis(parcours,pas);
+ const debuts=s.map(p=>p.debut).filter(d=>d<=aujourdhui).sort();
+ const fins=parcours.map(p=>p.termineLe).filter((d):d is string=>Boolean(d)).sort();
+ let pousse:string|null=null,tige:string|null=null,arbre:string|null=null;
+ if(debuts[0])for(let jour=debuts[0];jour<=aujourdhui;jour=plusJours(jour,1)){
+  const r=pratiqueAu(s,jour);const taux=r.ouverts?r.pratiques/r.ouverts:0;
+  if(!pousse&&r.pratiques>0&&taux>=SEUILS_JARDIN.pousse)pousse=jour;
+  if(!tige&&r.pratiques>=JOURS_MIN_TIGE&&taux>=SEUILS_JARDIN.tige)tige=jour;
+  if(!arbre&&taux>=SEUILS_JARDIN.arbre&&fins.some(f=>f<=jour))arbre=jour;
+  if(pousse&&tige&&arbre)break;
+ }
  return [
   {id:'graine',atteinte:debuts.length>0,le:debuts[0]??null},
-  {id:'pousse',atteinte:dates.length>0,le:premier?dateLocale(new Date(premier)):null},
-  {id:'tige',atteinte:jours.length>=7,le:jours[6]??null},
-  {id:'arbre',atteinte:fins.length>0,le:fins[0]??null},
+  {id:'pousse',atteinte:Boolean(pousse),le:pousse},
+  {id:'tige',atteinte:Boolean(tige),le:tige},
+  {id:'arbre',atteinte:Boolean(arbre),le:arbre},
  ];
 }
 
 export const TEXTES_JARDIN={
  fr:{graine:['Graine','semée'],pousse:['Première','pousse'],tige:['Tige','affermie'],arbre:['Arbre','accueillant'],
   fil:{graine:'Une graine semée',pousse:'Une première pousse',tige:'Une tige affermie',arbre:'Un arbre accueillant'},
-  detail:{graine:'Ton premier parcours a commencé.',pousse:'Tu as déclaré ton premier pas.',tige:'Sept jours de pratique déclarée.',arbre:'Un parcours mené jusqu’à son dernier jour.'}},
+  detail:{graine:'Ton premier parcours a commencé.',pousse:'10 % des jours de tes parcours pratiqués.',tige:'40 % des jours de tes parcours pratiqués.',arbre:'70 % des jours pratiqués et un parcours mené à son terme.'}},
  en:{graine:['Seed','sown'],pousse:['First','shoot'],tige:['Stem','growing strong'],arbre:['Welcoming','tree'],
   fil:{graine:'A seed sown',pousse:'A first shoot',tige:'A stem growing strong',arbre:'A welcoming tree'},
-  detail:{graine:'Your first journey has begun.',pousse:'You declared your first step.',tige:'Seven days of declared practice.',arbre:'A journey followed to its last day.'}},
+  detail:{graine:'Your first journey has begun.',pousse:'10% of your journey days practised.',tige:'40% of your journey days practised.',arbre:'70% of days practised and a journey completed.'}},
 } as const;
 
 /** Actions déclarées des inscriptions du participant (lecture protégée par les règles de la base). */

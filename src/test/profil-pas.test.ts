@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest';
-import {dureeReelle,etapesJardin,joursCeMois,lundi,pasCetteSemaine,type Pas} from '@/lib/profil-pas';
+import {dureeReelle,etapesJardin,pratiqueGlobale,joursCeMois,lundi,pasCetteSemaine,type Pas} from '@/lib/profil-pas';
 import {compterGraine,lireGraines} from '@/lib/invitation';
 
 // Profil « Mes pas » validé le 31/10/2026 : uniquement ce qui a été déclaré, rien ne recule.
@@ -24,18 +24,32 @@ describe('Mon jardin', () => {
   it('sans pas : seule la graine est semée', () => {
     expect(etapesJardin(parcours,[],maintenant).map(e=>e.atteinte)).toEqual([true,false,false,false]);
   });
-  it('la tige demande sept jours différents ; l’arbre un parcours mené à son dernier jour', () => {
-    const sept=Array.from({length:7},(_,i)=>pas('realisee',`2026-10-${String(20+i).padStart(2,'0')}T08:00:00Z`));
-    const dansE2:Pas={enrollment_id:'E2',etat:'realisee',realisee_le:'2026-10-03T08:00:00Z'};
-    const e=etapesJardin([...parcours,{id:'E2',debut:'2026-10-01',duree:14,termineLe:'2026-10-14'}],[...sept,dansE2],maintenant);
+  const sept=Array.from({length:7},(_,i)=>pas('realisee',`2026-10-${String(20+i).padStart(2,'0')}T08:00:00Z`));
+  const termine=[{id:'E1',debut:'2026-10-20',duree:7,termineLe:'2026-10-26'}];
+  it('parcours pratiqué chaque jour et terminé : tout le jardin pousse', () => {
+    const e=etapesJardin(termine,sept,maintenant);
     expect(e.map(x=>x.atteinte)).toEqual([true,true,true,true]);
-    expect(e[2]?.le).toBe('2026-10-25'); // 7e jour distinct : 03/10 puis 20 au 25/10
-    expect(e[3]?.le).toBe('2026-10-14');
+    expect(e.map(x=>x.le)).toEqual(['2026-10-20','2026-10-20','2026-10-26','2026-10-26']);
+    expect(pratiqueGlobale(termine,sept,maintenant)).toEqual({pratiques:7,ouverts:7,pourcentage:100});
   });
-  it('un parcours arrivé à sa date de fin sans aucun pas ne fait pas pousser l’arbre', () => {
-    const sept=Array.from({length:7},(_,i)=>pas('realisee',`2026-10-${String(20+i).padStart(2,'0')}T08:00:00Z`));
-    const e=etapesJardin([...parcours,{id:'E2',debut:'2026-10-01',duree:14,termineLe:'2026-10-14'}],sept,maintenant);
-    expect(e[3]?.atteinte).toBe(false);
+  it('parcours terminé mais peu pratiqué : pas d’arbre', () => {
+    const e=etapesJardin(termine,sept.slice(0,2),maintenant);
+    expect(e.map(x=>x.atteinte)).toEqual([true,true,false,false]);
+    expect(pratiqueGlobale(termine,sept.slice(0,2),maintenant).pourcentage).toBe(29);
+  });
+  it('tous les parcours comptent ensemble : un parcours non pratiqué fait baisser le pourcentage', () => {
+    const deux=[...termine,{id:'E2',debut:'2026-10-01',duree:14,termineLe:'2026-10-14'}];
+    // 7 jours pratiqués sur 21 ouverts = 33 % : ni tige ni arbre.
+    expect(pratiqueGlobale(deux,sept,maintenant)).toEqual({pratiques:7,ouverts:21,pourcentage:33});
+    expect(etapesJardin(deux,sept,maintenant).map(x=>x.atteinte)).toEqual([true,true,false,false]);
+  });
+  it('une étape atteinte ne recule pas quand un nouveau parcours commence', () => {
+    const avecNouveau=[...termine,{id:'E3',debut:'2026-10-27',duree:30,termineLe:null}];
+    expect(etapesJardin(avecNouveau,sept,maintenant).map(x=>x.atteinte)).toEqual([true,true,true,true]);
+    expect(pratiqueGlobale(avecNouveau,sept,maintenant).pourcentage).toBe(58);
+  });
+  it('un pas hors des dates du parcours ne compte pas', () => {
+    expect(pratiqueGlobale(termine,[pas('realisee','2026-10-29T08:00:00Z')],maintenant)).toEqual({pratiques:0,ouverts:7,pourcentage:0});
   });
   it('Habitudes & Défis prolongé mois par mois garde sa vraie date de fin', () => {
     expect(dureeReelle({debut:'2026-10-26',duree:30,fin:'2026-12-25'})).toBe(61);
@@ -43,9 +57,8 @@ describe('Mon jardin', () => {
     expect(dureeReelle({debut:'2026-10-13',duree:14,fin:null})).toBe(14);
     expect(dureeReelle({debut:'2026-10-13',duree:14,fin:'pas une date'})).toBe(14);
   });
-  it('six jours ne suffisent pas pour la tige', () => {
-    const six=Array.from({length:6},(_,i)=>pas('realisee',`2026-10-${String(20+i).padStart(2,'0')}T08:00:00Z`));
-    expect(etapesJardin(parcours,six,maintenant)[2]?.atteinte).toBe(false);
+  it('six jours pratiqués ne suffisent pas pour la tige, même à 100 %', () => {
+    expect(etapesJardin(parcours,sept.slice(0,6),maintenant)[2]?.atteinte).toBe(false);
   });
 });
 
