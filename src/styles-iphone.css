@@ -391,6 +391,57 @@
 :root:root:root .pv-page.ios .pv-tuile:is([data-icone="livre"],[data-icone="note"],[data-icone="journal"]){background:linear-gradient(180deg,#ffcc4d,#f2a60c)!important}
 /* Boutons du haut et lien de suppression */
 :root:root:root .pv-page.ios :is(.pv-rond,.pv-pastille){background:var(--ios-carte)!important;border:0!important;box-shadow:0 1px 2px rgb(0 0 0 / .06)!important;color:var(--ios-accent)!important}
-:root:root:root .pv-page.ios .pv-pastille{font:600 15px var(--ios-police)!important;color:#ff3b30!important}
+:root:root:root .pv-page.ios button.pv-pastille{font:600 15px var(--ios-police)!important;color:#ff3b30!important}
 :root:root:root .pv-page.ios .pv-supprimer{color:#ff3b30!important;font:500 16px var(--ios-police)!important}
 :root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-groupe :is(.pv-ligne-titre,label,p,h3,strong){color:var(--ios-encre)}
+
+/* ── Pages secondaires : Profil, Notifications, Coach, Aide (style iPhone, 05/11/2026) ── */
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios{background:var(--ios-fond)!important;color:var(--ios-encre)}
+:root:root:root body:has(:is(.nt-page,.coach-page,.aide-page).ios){background:var(--ios-fond)!important}
+:root:root:root:root[data-apparence="sombre"] :is(body:has(:is(.nt-page,.coach-page,.aide-page).ios),:is(.nt-page,.coach-page,.aide-page).ios){background:rgb(0 0 0)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,time,li,label,input,select,summary):not(.day-text,.day-text *){font-family:var(--ios-police)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios h1{font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(.aide-repere,.nt-section>h2,.nt-section-titre){font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios .aide-repere span{display:none}
+/* Cartes, champs, boutons */
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(.card,.coach-cadre,.coach-editorial,.coach-confidentialite,.aide-urgence){background:var(--ios-carte)!important;border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(textarea,input:not([type=checkbox]):not([type=radio]),select){background:#7676801f!important;border:0!important;border-radius:12px!important;box-shadow:none!important;color:var(--ios-encre)!important;font-size:16px!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(textarea,input,select):focus{outline:3px solid color-mix(in srgb,var(--ios-accent) 35%,transparent)!important;outline-offset:1px}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire){min-height:50px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire) *{color:rgb(255 255 255)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn:disabled{opacity:.4!important;box-shadow:none!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn-danger{background:transparent!important;color:#ff3b30!important;border:0!important}
+/* Aide : avertissement en carte orange douce, sujets en pastilles */
+:root:root:root .aide-page.ios .aide-urgence{background:color-mix(in srgb,#ff9500 12%,var(--ios-carte))!important}
+:root:root:root .aide-page.ios .aide-bouclier{background:linear-gradient(180deg,#ffb340,#ff9500)!important;color:rgb(255 255 255)!important;border-radius:9px!important;border:0!important}
+:root:root:root .aide-page.ios .aide-sujets button{border:0!important;border-radius:999px!important;background:#7676801f!important;color:var(--ios-encre)!important;font:600 14px var(--ios-police)!important}
+:root:root:root .aide-page.ios .aide-sujets button[aria-pressed="true"],:root:root:root .aide-page.ios .aide-sujets [aria-checked="true"]{background:var(--ios-encre)!important;color:var(--ios-fond)!important}
+/* Notifications : liste groupée avec icônes colorées */
+:root:root:root .nt-page.ios .nt-liste{background:var(--ios-carte)!important;border-radius:20px!important;overflow:hidden;gap:0!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;padding:0!important}
+:root:root:root .nt-page.ios .nt-liste>*{position:relative;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important}
+:root:root:root .nt-page.ios .nt-liste>*+*::before{content:"";position:absolute;top:0;left:64px;right:0;height:.5px;background:var(--ios-ligne)}
+:root:root:root .nt-page.ios .nt-icone{width:36px!important;height:36px!important;border-radius:10px!important;border:0!important;background:linear-gradient(180deg,#ff6482,#ff2d55)!important;color:rgb(255 255 255)!important}
+:root:root:root .nt-page.ios .nt-icone svg{color:rgb(255 255 255)!important}
+:root:root:root .nt-page.ios .nt-titre{font:600 16px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .nt-page.ios .nt-badge{background:var(--ios-accent)!important;color:rgb(255 255 255)!important;border:0!important;border-radius:999px!important;font:600 11px var(--ios-police)!important}
+:root:root:root .nt-page.ios :is(.nt-texte,.nt-note,time){color:var(--ios-doux)!important}
+/* Coach : bulles façon Messages */
+:root:root:root .coach-page.ios .coach-bulle{border:0!important;border-radius:20px!important;box-shadow:none!important;background:#e9e9eb!important;color:#1c1c1e!important}
+:root:root:root:root[data-apparence="sombre"] .coach-page.ios .coach-bulle{background:#26252a!important;color:var(--ios-encre)!important}
+:root:root:root:root .coach-page.ios .coach-msg-moi .coach-bulle{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important}
+:root:root:root .coach-page.ios .coach-quota{background:color-mix(in srgb,#ff9500 16%,var(--ios-carte))!important;color:#a15c00!important;border:0!important;border-radius:999px!important}
+:root:root:root .coach-page.ios .coach-saisie,:root:root:root .coach-page.ios .coach-form{background:color-mix(in srgb,var(--ios-carte) 80%,transparent)!important;backdrop-filter:blur(20px) saturate(180%);border-radius:22px!important;border:0!important}
+:root:root:root .coach-page.ios .prog-tab{border:0!important;border-radius:999px!important;background:var(--ios-carte)!important;color:var(--ios-encre)!important;font:600 14px var(--ios-police)!important;box-shadow:0 1px 2px rgb(0 0 0 / .06)!important}
+:root:root:root .coach-page.ios .prog-tab[aria-selected="true"]{background:var(--ios-encre)!important;color:var(--ios-fond)!important}
+/* Profil : sélecteur segmenté, cartes et chiffres */
+:root:root:root .pv-page.ios a.pv-pastille,:root:root:root .pv-page.ios a.pv-pastille *{color:var(--ios-accent)!important}
+:root:root:root .pv-page.ios .pv-onglets{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;gap:0!important;padding:2px!important;border:0!important;border-radius:10px!important;background:#7676801f!important}
+:root:root:root .pv-page.ios .pv-onglets :is(a,button){border:0!important;border-radius:8px!important;background:transparent!important;color:var(--ios-encre)!important;font:600 14px var(--ios-police)!important;text-align:center;min-height:34px;padding:7px 4px!important;box-shadow:none!important}
+:root:root:root .pv-page.ios .pv-onglets :is(a,button):is([aria-selected="true"],[aria-current="page"],[aria-pressed="true"]){background:var(--ios-carte)!important;box-shadow:0 3px 8px rgb(0 0 0 / .12),0 1px 1px rgb(0 0 0 / .06)!important}
+:root:root:root .pv-page.ios .pv-onglets :is(a,button)::after{display:none!important}
+:root:root:root .pv-page.ios .pv-carte{background:var(--ios-carte)!important;border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
+:root:root:root .pv-page.ios .pv-chiffre{font:800 32px/1 var(--ios-police)!important;letter-spacing:-.02em;color:var(--ios-accent)!important}
+:root:root:root .pv-page.ios .pv-identite h1{font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important}
+:root:root:root .pv-page.ios .pv-etape span:first-child{background:linear-gradient(180deg,#4cd964,#28b446)!important;color:rgb(255 255 255)!important;border:0!important}
+:root:root:root:root .coach-page.ios .coach-msg-moi .coach-bulle *{color:rgb(255 255 255)!important}
+:root:root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn{text-transform:none!important;letter-spacing:-.01em!important}

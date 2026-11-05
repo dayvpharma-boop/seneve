@@ -204,7 +204,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
  const onglets:[('pas'|'carnet'|'chemin'),string][]=[['pas',en?'My steps':'Mes pas'],['carnet',en?'My notebook':'Mon carnet'],['chemin',en?'My path':'Mon chemin']];
  const filtres:[Filtre,string,SymboleTrait|null][]=[['tout',en?'All':'Tout',null],['versets',en?'Verses':'Versets','verset'],['reflexions',en?'Reflections':'Réflexions','note'],['parcours',en?'Journeys':'Parcours','parcours']];
  const extrait=(a:Annotation)=><><blockquote className="pv-verset"><sup>{a.verset}</sup> {a.extrait}</blockquote><p className="pv-ref">{reference(a,langue)} · {VERSIONS[a.version]?.nom??a.version}</p></>;
- return <main className="pf-page pv-page avec-nav">
+ return <main className="pf-page pv-page avec-nav ios">
  <header className="pv-haut"><Link className="pv-pastille" to={`/aide${suffixe}`}><T nom="aide"/>{en?'Need help?':'Besoin d’aide ?'}</Link><span className="pv-pastille pv-icones"><ClocheNotifications langue={langue}/><Link to={`/reglages${suffixe}`} aria-label={en?'My settings':'Mes réglages'}><T nom="reglages"/></Link></span></header>
  {bandeaux}
  <section className="pv-identite" aria-label={en?'My identity':'Mon identité'}>
