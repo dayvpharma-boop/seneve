@@ -543,3 +543,48 @@
 :root:root:root:root .hd-ecran.ios ul.flex-col>li:nth-child(7)>span.rounded-full.bg-hd-surface-container-low{background:linear-gradient(180deg,#d07dff,#af52de)!important}
 :root:root:root:root .hd-ecran.ios ul.flex-col>li:nth-child(8)>span.rounded-full.bg-hd-surface-container-low{background:linear-gradient(180deg,#ffb340,#ff9500)!important}
 :root:root:root:root .hd-ecran.ios ul.flex-col>li>span.rounded-full.bg-hd-surface-container-low *{color:rgb(255 255 255)!important}
+
+/* ── Fenêtres de la journée (style iPhone, 05/11/2026) : « Fait », correction, prière, lectures, volets ── */
+/* « Fait » : une capsule verte, comme une action accomplie sur iPhone */
+:root:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios,dialog) :is(button[aria-label^="Fait — "],button[aria-label^="Done — "]):is(button,a){background:rgb(52 199 89 / .16)!important;color:#1f8a3b!important;border:0!important;box-shadow:none!important;font-weight:600!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios,dialog) :is(button[aria-label^="Fait — "],button[aria-label^="Done — "]) *{color:#1f8a3b!important}
+:root:root:root:root[data-apparence="sombre"] :is(.espace-page.ios,.hd-ecran.ios,dialog) :is(button[aria-label^="Fait — "],button[aria-label^="Done — "]),:root:root:root:root[data-apparence="sombre"] :is(.espace-page.ios,.hd-ecran.ios,dialog) :is(button[aria-label^="Fait — "],button[aria-label^="Done — "]) *{color:#5fe08a!important}
+/* Boutons « J'ai réalisé » et autres actions principales de la journée */
+:root:root:root:root .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border-radius:14px!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important}
+:root:root:root:root .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary *{color:rgb(255 255 255)!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .hd-jour-stitch :is(button,a):is(.bg-hd-surface-container,.bg-hd-secondary-container){background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;border:0!important;border-radius:999px!important}
+/* Correction : une petite feuille d'action iPhone */
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low:has(button){background:#7676800f!important;border-radius:16px!important;padding:12px!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low:has(button) .flex-wrap{display:grid!important;grid-template-columns:1fr;gap:8px!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button{min-height:46px!important;width:100%;justify-content:center;border:0!important;border-radius:12px!important;font:600 15.5px var(--ios-police)!important;box-shadow:none!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:first-child{background:var(--ios-carte)!important;color:#ff3b30!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:nth-child(2){background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important}
+/* Volets (cultes, dîme, historique) : en-tête comme une ligne de réglage */
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) details:is(.hd-volet,.hd-historique-jour)>summary{min-height:56px!important;font:600 17px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) details:is(.hd-volet,.hd-historique-jour)>summary svg:first-child,:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) details.hd-volet>summary .material-symbols-outlined:first-child{color:var(--ios-accent)!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) details:is(.hd-volet,.hd-historique-jour) :is(section,.rounded-xl){border-radius:14px!important;border:0!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .hd-simulateur{background:var(--ios-carte)!important;border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
+/* Lecteur de prière : chrome iPhone, texte de la prière inchangé */
+:root:root:root:root dialog.hd-lecteur-priere :is(.ap-tete,.ap-langues,.ap-meta,.ap-information,.ap-commandes-repere,.ap-actions,.ap-tailles) :is(button,span,small,p,strong,h2,label){font-family:var(--ios-police)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-tete{background:color-mix(in srgb,var(--ios-fond) 80%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important;box-shadow:0 .5px 0 var(--ios-ligne)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-tete h2{font:600 17px var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-tailles button{border-radius:999px!important;background:#7676801f!important;border:0!important;color:var(--ios-encre)!important;font:600 14px var(--ios-police)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-langues{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;gap:0!important;padding:2px!important;border-radius:10px!important;background:#7676801f!important;border:0!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-langues button{border:0!important;border-radius:8px!important;background:transparent!important;color:var(--ios-encre)!important;box-shadow:none!important;font:600 14px var(--ios-police)!important;min-height:36px}
+:root:root:root:root dialog.hd-lecteur-priere .ap-langues button[aria-pressed="true"]{background:var(--ios-carte)!important;box-shadow:0 3px 8px rgb(0 0 0 / .12),0 1px 1px rgb(0 0 0 / .06)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-information{background:#7676800f!important;border:0!important;border-radius:14px!important;color:var(--ios-doux)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-signets{background:transparent!important;border:0!important;padding:0!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-commandes-repere button{border:0!important;border-radius:999px!important;background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;font:600 14px var(--ios-police)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-actions{background:color-mix(in srgb,var(--ios-carte) 80%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important;border-top:.5px solid var(--ios-ligne)!important;box-shadow:none!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-boutons button{border:0!important;border-radius:14px!important;background:#7676801f!important;color:var(--ios-encre)!important;box-shadow:none!important;font:600 14.5px var(--ios-police)!important;min-height:48px}
+:root:root:root:root dialog.hd-lecteur-priere .ap-boutons .ap-confirmer,:root:root:root:root dialog.hd-lecteur-priere .ap-boutons button:last-child:not(:disabled){background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-boutons :is(.ap-confirmer,button:last-child:not(:disabled)) *{color:rgb(255 255 255)!important}
+/* Lectures du jour : feuille iPhone */
+:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere){background:var(--ios-fond)!important}
+:root:root:root:root[data-apparence="sombre"] dialog.hd-stitch:not(.hd-lecteur-priere){background:rgb(0 0 0)!important}
+:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(h1,h2,h3,p,small,span,button,a,label,input):not(.font-hd-scripture-verse){font-family:var(--ios-police)!important}
+:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(h1,h2){font-weight:700!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
+:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(.bg-hd-surface-container-lowest,.card,article){background:var(--ios-carte)!important;border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
+:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a).bg-hd-secondary{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border-radius:14px!important}
+:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a):is(.bg-hd-surface-container,.bg-hd-secondary-container){background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;border-radius:999px!important}
+:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(input:not([type=checkbox]):not([type=radio]),select){background:#7676801f!important;border:0!important;border-radius:12px!important;color:var(--ios-encre)!important;font-size:16px!important}
