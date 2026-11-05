@@ -26,7 +26,7 @@ import {FuseauVoyage} from '@/components/FuseauVoyage';
 import {RappelsHabitudes} from '@/components/RappelsHabitudes';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {rappelsHabitudesActifs} from '@/lib/habitudes-rappels';
-import {chargerPas,etapesJardin,joursCeMois,pasCetteSemaine,TEXTES_JARDIN,type EtapeJardin,type Pas} from '@/lib/profil-pas';
+import {chargerPas,dureeReelle,etapesJardin,joursCeMois,pasCetteSemaine,TEXTES_JARDIN,type EtapeJardin,type Pas} from '@/lib/profil-pas';
 import {EVENEMENT_GRAINES,envoyerInvitation,lireGraines} from '@/lib/invitation';
 import {VERSIONS,lireAnnotations,lireReglages,ecrireReglages,livreParCode,nomReference,type Annotation,type Version} from '@/lib/bible';
 import './profil-v2.css';
@@ -37,7 +37,7 @@ type Parcours=Donnees['parcours'][number];
 const jourParcours=(debut:string,n:number)=>{const d=new Date(`${debut}T00:00:00Z`);d.setUTCDate(d.getUTCDate()+n);return d;};
 /** « 19 octobre », avec l'année seulement si ce n'est pas l'année en cours. */
 const dateCourte=(d:Date,en:boolean,timeZone='UTC')=>{const annee=Number(new Intl.DateTimeFormat('en',{year:'numeric',timeZone}).format(d));return new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',...(annee!==new Date().getFullYear()?{year:'numeric' as const}:{}),timeZone}).format(d);};
-function etatParcours(p:Parcours){const brut=rawDay(p.debut,new Date());const jour=Math.max(0,Math.min(p.duree,brut));const statut=p.etat==='en_pause'?'pause':jour===0?'avenir':jour>=p.duree&&(p.etat==='terminee'||brut>p.duree)?'termine':'encours';return{p,jour,statut};}
+function etatParcours(brutP:Parcours){const p={...brutP,duree:dureeReelle(brutP)};const brut=rawDay(p.debut,new Date());const jour=Math.max(0,Math.min(p.duree,brut));const statut=p.etat==='en_pause'?'pause':jour===0?'avenir':jour>=p.duree&&(p.etat==='terminee'||brut>p.duree)?'termine':'encours';return{p,jour,statut};}
 
 const NOMS_PALETTES:Record<string,[string,string]>={ivoire:['Lavande','Lavender'],sable:['Sable','Sand'],sauge:['Sauge','Sage'],argile:['Argile','Clay'],ardoise:['Bleu ardoise','Slate blue']};
 /** Ligne de réglage qui s'ouvre sur place. Le contenu reste monté : les états se chargent comme avant
