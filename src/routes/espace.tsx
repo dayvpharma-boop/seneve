@@ -20,7 +20,7 @@ import { prenomDuCompte } from '@/lib/connexion-sociale';
 import {Apparence} from '@/components/Apparence';
 import {IconeRegistre} from '@/components/IconeRegistre';
 import {IconeFinitions} from '@/components/IconeFinitions';
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ComptePrive } from '@/components/ComptePrive';
 import { supabase } from '@/lib/supabase';
@@ -346,7 +346,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     :data.periodesHabitudes?.[x.enrollment_id]?.length?calendrierPeriodes(x.date_debut,data.periodesHabitudes[x.enrollment_id]!,data.fuseauHabitudes??'Africa/Kinshasa',x.duree)
     :calendrierHabitudes(x.date_debut,x.duree,data.fuseauHabitudes??'Africa/Kinshasa');
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletAujourdhui} role="tablist" aria-label={T.mesParcours}>
-    {data.parcours.map(x => <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{calendrierDe(x).notStarted?T.ongletAVenir:x.etat==='en_pause'?T.ongletPause:calendrierDe(x).finished?T.ongletTermine:T.ongletJour(calendrierDe(x).day)}</span><span className="jn-tab-nom">{x.nom}</span></button>)}
+    {data.parcours.map(x => { const c = calendrierDe(x); const etat = c.notStarted ? 'avenir' : x.etat === 'en_pause' ? 'pause' : c.finished ? 'termine' : 'encours'; const avancement = etat === 'termine' ? 100 : etat === 'avenir' ? 0 : Math.max(0, Math.min(100, Math.round(c.day / Math.max(1, x.duree) * 100))); return <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" data-etat={etat} style={{ '--avancement': `${avancement}%` } as CSSProperties} aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{etat === 'avenir' ? T.ongletAVenir : etat === 'pause' ? T.ongletPause : etat === 'termine' ? T.ongletTermine : T.ongletJour(c.day)}</span><span className="jn-tab-nom">{x.nom}</span><span className="jn-tab-barre" aria-hidden="true"><i /></span></button>; })}
   </div>;
 
   const { day, finished, notStarted } = calendrierDe(enr);
