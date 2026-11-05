@@ -361,3 +361,36 @@
 :root:root:root .journal-page.ios .journal-pied{color:var(--ios-doux)!important}
 :root:root:root:root[data-apparence="sombre"] .journal-page.ios :is(.journal-form,.note-carte,.journal-vide,.journal-confidentialite) :is(h2,h3,strong,p:not(.muted,.journal-intro,.journal-mots),.day-text){color:var(--ios-encre)!important}
 :root:root:root:root .journal-page.ios .today-head .barre-haut{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important}
+
+/* ── Mes réglages (style iPhone, 05/11/2026), comme l'app Réglages : une couleur par icône ── */
+:root:root:root .pv-page.ios{background:var(--ios-fond)!important;color:var(--ios-encre)}
+:root:root:root body:has(.pv-page.ios){background:var(--ios-fond)!important}
+:root:root:root:root[data-apparence="sombre"] :is(body:has(.pv-page.ios),.pv-page.ios){background:rgb(0 0 0)!important}
+:root:root:root .pv-page.ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,time,li,label,summary,input,select){font-family:var(--ios-police)!important}
+:root:root:root .pv-page.ios .pv-surtitre{font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase!important;color:var(--ios-doux)!important}
+:root:root:root .pv-page.ios .pv-titre{font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
+:root:root:root .pv-page.ios .pv-intro{font:400 15px/1.45 var(--ios-police)!important;color:var(--ios-doux)!important}
+:root:root:root .pv-page.ios h2.pv-surtitre{margin:24px 16px 6px!important;font:500 13px var(--ios-police)!important}
+/* Groupes et lignes */
+:root:root:root .pv-page.ios .pv-groupe{background:var(--ios-carte)!important;border:0!important;border-radius:16px!important;box-shadow:none!important;overflow:hidden}
+:root:root:root .pv-page.ios .pv-ligne{min-height:52px!important;padding:8px 14px!important;gap:12px!important;background:none!important}
+:root:root:root .pv-page.ios .pv-ligne-titre{font:400 17px/1.25 var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .pv-page.ios .pv-ligne-titre small{font:400 13.5px var(--ios-police)!important;color:var(--ios-doux)!important}
+:root:root:root .pv-page.ios .pv-chevron{color:#c7c7cc!important}
+/* Tuiles : pleines et colorées */
+:root:root:root .pv-page.ios .pv-tuile{width:30px!important;height:30px!important;border-radius:8px!important;border:0!important;color:rgb(255 255 255)!important;background:linear-gradient(180deg,#8e8e93,#636366)!important;box-shadow:inset 0 1px 0 rgb(255 255 255 / .2)!important}
+:root:root:root .pv-page.ios .pv-tuile svg{width:18px!important;height:18px!important;color:rgb(255 255 255)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="photo"],[data-icone="langue"],[data-icone="courriel"]){background:linear-gradient(180deg,#4aa8ff,#0a7aff)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="arobase"],[data-icone="message"]){background:linear-gradient(180deg,#5ad8f0,#30b0c7)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="cadenas"],[data-icone="bouclier"]){background:linear-gradient(180deg,#8e8e93,#636366)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="graine"],[data-icone="parcours"],[data-icone="telecharger"]){background:linear-gradient(180deg,#4cd964,#28b446)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="cle"],[data-icone="ticket"]){background:linear-gradient(180deg,#ffb340,#ff9500)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="equipe"],[data-icone="lune"]){background:linear-gradient(180deg,#7d7bff,#5856d6)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="cloche"],[data-icone="calendrier"]){background:linear-gradient(180deg,#ff6482,#ff2d55)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="palette"],[data-icone="verset"]){background:linear-gradient(180deg,#d07dff,#af52de)!important}
+:root:root:root .pv-page.ios .pv-tuile:is([data-icone="livre"],[data-icone="note"],[data-icone="journal"]){background:linear-gradient(180deg,#ffcc4d,#f2a60c)!important}
+/* Boutons du haut et lien de suppression */
+:root:root:root .pv-page.ios :is(.pv-rond,.pv-pastille){background:var(--ios-carte)!important;border:0!important;box-shadow:0 1px 2px rgb(0 0 0 / .06)!important;color:var(--ios-accent)!important}
+:root:root:root .pv-page.ios .pv-pastille{font:600 15px var(--ios-police)!important;color:#ff3b30!important}
+:root:root:root .pv-page.ios .pv-supprimer{color:#ff3b30!important;font:500 16px var(--ios-police)!important}
+:root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-groupe :is(.pv-ligne-titre,label,p,h3,strong){color:var(--ios-encre)}
