@@ -121,3 +121,75 @@
 /* Mode sombre : les textes des habitudes suivent la carte sombre (les pastilles gardent leurs couleurs). */
 :root:root:root:root[data-apparence="sombre"] .espace-page.ios .ios-liste .ios-ligne-corps :is(h3,h4,p,strong,b,time,span):not(button *,button,a,a *,[class*="rounded-full"],[class*="rounded-full"] *){color:var(--ios-encre)!important}
 :root:root:root:root[data-apparence="sombre"] .espace-page.ios .ios-liste .ios-ligne-corps :is(p,small):not(button *,a *){color:var(--ios-doux)!important}
+
+/* ── Page Parcours (style iPhone, 05/11/2026) ── */
+:root:root:root .parcours-page.ios{background:var(--ios-fond)!important;font-family:var(--ios-police)!important;color:var(--ios-encre)}
+:root:root:root body:has(.parcours-page.ios){background:var(--ios-fond)!important}
+:root:root:root:root[data-apparence="sombre"] :is(body:has(.parcours-page.ios),.parcours-page.ios){background:rgb(0 0 0)!important}
+:root:root:root .parcours-page.ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,time,li,label,summary){font-family:var(--ios-police)!important}
+/* Grand titre */
+:root:root:root .parcours-page.ios .parcours-marque{padding:8px 4px 0!important;background:none!important;border:0!important}
+:root:root:root .parcours-page.ios .parcours-intro{padding:6px 4px 4px!important}
+:root:root:root .parcours-page.ios .parcours-repere{margin:0!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .parcours-page.ios .parcours-repere span{display:none!important}
+:root:root:root .parcours-page.ios .parcours-intro h1{margin:2px 0 0!important;font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
+:root:root:root .parcours-page.ios .progres-intro{margin:6px 4px 14px!important;font:400 15px/1.45 var(--ios-police)!important;color:var(--ios-doux)!important}
+/* Raccourcis en liste groupée avec tuiles */
+:root:root:root .parcours-page.ios .raccourcis-parcours{display:flex!important;flex-direction:column!important;gap:0!important;margin:14px 0 6px!important;background:var(--ios-carte)!important;border-radius:20px!important;overflow:hidden;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
+:root:root:root .parcours-page.ios .raccourcis-parcours a{position:relative;display:flex!important;align-items:center!important;gap:12px!important;min-height:54px!important;padding:9px 40px 9px 14px!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;color:var(--ios-encre)!important;font:500 16px var(--ios-police)!important;text-decoration:none!important}
+:root:root:root .parcours-page.ios .raccourcis-parcours a+a::before{content:"";position:absolute;top:0;left:62px;right:0;height:.5px;background:var(--ios-ligne)}
+:root:root:root .parcours-page.ios .raccourcis-parcours a::after{content:"";position:absolute;right:16px;top:50%;width:8px;height:8px;border-right:2px solid #c7c7cc;border-top:2px solid #c7c7cc;transform:translateY(-50%) rotate(45deg)}
+:root:root:root .parcours-page.ios .raccourcis-parcours a>svg{box-sizing:content-box;width:20px!important;height:20px!important;padding:8px;border-radius:10px;color:rgb(255 255 255)!important;background:linear-gradient(180deg,#4aa8ff,#0a7aff);flex:none}
+:root:root:root .parcours-page.ios .raccourcis-parcours a+a>svg{background:linear-gradient(180deg,#4cd964,#28b446)}
+/* Onglets de parcours */
+:root:root:root .parcours-page.ios .prog-tabs{gap:8px!important;padding:2px 0 6px!important;margin-top:8px!important}
+:root:root:root .parcours-page.ios .prog-tab{border:0!important;border-radius:16px!important;background:var(--ios-carte)!important;color:var(--ios-encre)!important;box-shadow:0 1px 2px rgb(0 0 0 / .06)!important;padding:10px 14px!important;min-height:0!important;text-align:left}
+:root:root:root .parcours-page.ios .prog-tab span{font:600 15px/1.25 var(--ios-police)!important}
+:root:root:root .parcours-page.ios .prog-tab small{display:block;font:500 12.5px/1.3 var(--ios-police)!important;opacity:.7;color:inherit!important}
+:root:root:root .parcours-page.ios .prog-tab[aria-selected="true"]{background:var(--ios-encre)!important;color:var(--ios-fond)!important}
+/* Cartes */
+:root:root:root .parcours-page.ios :is(.card,.hd-bilan,.parcours-semaines){background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
+:root:root:root .parcours-page.ios :is(.parcours-synthese-titre h2,.card h2,.hd-bilan h2,.parcours-etapes>h2){font:700 21px/1.2 var(--ios-police)!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
+:root:root:root .parcours-page.ios .parcours-synthese-titre>span{background:color-mix(in srgb,var(--ios-accent) 14%,transparent)!important;color:var(--ios-accent)!important;border-radius:999px!important;padding:4px 10px!important;font:600 12.5px var(--ios-police)!important;border:0!important}
+:root:root:root .parcours-page.ios .progres-compte{color:var(--ios-doux)!important;font:400 14px var(--ios-police)!important}
+/* Calendrier : pastilles rondes façon app Forme */
+:root:root:root .parcours-page.ios .day-tile{background:none!important;border:0!important;box-shadow:none!important;gap:4px!important}
+:root:root:root .parcours-page.ios .day-tile .parcours-rond{width:36px!important;height:36px!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:#7676801f!important;color:var(--ios-encre)!important;border:0!important;font:600 14px var(--ios-police)!important}
+:root:root:root .parcours-page.ios .day-tile.is-done .parcours-rond{background:linear-gradient(180deg,#4cd964,#28b446)!important;color:rgb(255 255 255)!important}
+:root:root:root .parcours-page.ios .day-tile.is-partial .parcours-rond{background:linear-gradient(180deg,#ffb340,#ff9500)!important;color:rgb(255 255 255)!important}
+:root:root:root .parcours-page.ios .day-tile.is-today .parcours-rond{background:var(--ios-carte)!important;box-shadow:0 0 0 2.5px var(--ios-accent)!important;color:var(--ios-accent)!important}
+:root:root:root .parcours-page.ios .day-tile.is-locked .parcours-rond{opacity:.55}
+:root:root:root .parcours-page.ios .day-tile .parcours-jour{font:500 11px var(--ios-police)!important;color:var(--ios-doux)!important}
+/* Participation et chiffres */
+:root:root:root .parcours-page.ios .pc-participation progress{height:8px!important;border-radius:999px!important;overflow:hidden;appearance:none;-webkit-appearance:none;background:#7676801f!important;border:0!important}
+:root:root:root .parcours-page.ios .pc-participation progress::-webkit-progress-bar{background:#7676801f;border-radius:999px}
+:root:root:root .parcours-page.ios .pc-participation progress::-webkit-progress-value{background:linear-gradient(90deg,var(--ios-accent-2),var(--ios-accent));border-radius:999px}
+:root:root:root .parcours-page.ios .pc-participation progress::-moz-progress-bar{background:linear-gradient(90deg,var(--ios-accent-2),var(--ios-accent));border-radius:999px}
+:root:root:root .parcours-page.ios .progres-chiffres{gap:8px!important}
+:root:root:root .parcours-page.ios .progres-chiffres li{background:#7676800f!important;border:0!important;border-radius:16px!important;box-shadow:none!important;padding:12px 8px!important}
+:root:root:root .parcours-page.ios .progres-chiffres li strong{font:800 28px/1 var(--ios-police)!important;letter-spacing:-.02em}
+:root:root:root .parcours-page.ios .progres-chiffres li:nth-child(1) :is(strong,svg){color:#28b446!important}
+:root:root:root .parcours-page.ios .progres-chiffres li:nth-child(2) :is(strong,svg){color:#ff9500!important}
+:root:root:root .parcours-page.ios .progres-chiffres li:nth-child(3) :is(strong,svg){color:#0a7aff!important}
+:root:root:root .parcours-page.ios .progres-chiffres li:nth-child(4) :is(strong,svg){color:#af52de!important}
+:root:root:root .parcours-page.ios .progres-chiffres li span{color:var(--ios-doux)!important;font:500 12px/1.3 var(--ios-police)!important}
+/* Prochaine étape : widget bleu nuit */
+:root:root:root .parcours-page.ios .progres-suite{background:linear-gradient(135deg,#2c2a5e,#1a1840)!important;color:rgb(255 255 255)!important;border:0!important;border-radius:20px!important;padding:16px!important;box-shadow:0 18px 36px -20px #2c2a5ecc!important}
+:root:root:root .parcours-page.ios .progres-suite p{color:rgb(255 255 255)!important;font:600 16px/1.35 var(--ios-police)!important}
+:root:root:root .parcours-page.ios .progres-suite .btn{background:rgb(255 255 255)!important;color:#1c1c1e!important;border-radius:14px!important;min-height:50px!important;box-shadow:none!important;font:600 16px var(--ios-police)!important}
+:root:root:root .parcours-page.ios .progres-suite .btn *{color:#1c1c1e!important}
+/* Étapes : liste groupée */
+:root:root:root .parcours-page.ios .parcours-etapes>h2{margin:24px 4px 8px!important}
+:root:root:root .parcours-page.ios .bilan-jours{background:var(--ios-carte)!important;border-radius:22px!important;overflow:hidden;gap:0!important;padding:0!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
+:root:root:root .parcours-page.ios .bilan-jour{position:relative;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important;padding:12px 14px!important}
+:root:root:root .parcours-page.ios .bilan-jour+.bilan-jour::before{content:"";position:absolute;top:0;left:66px;right:0;height:.5px;background:var(--ios-ligne)}
+:root:root:root .parcours-page.ios .bilan-pastille{border-radius:12px!important;border:0!important;background:linear-gradient(180deg,#7d7bff,#5856d6)!important;color:rgb(255 255 255)!important;box-shadow:inset 0 1px 0 rgb(255 255 255 / .25)!important}
+:root:root:root .parcours-page.ios .bilan-jour.is-done .bilan-pastille{background:linear-gradient(180deg,#4cd964,#28b446)!important}
+:root:root:root .parcours-page.ios .bilan-jour.is-partial .bilan-pastille{background:linear-gradient(180deg,#ffb340,#ff9500)!important}
+:root:root:root .parcours-page.ios .bilan-ferme .bilan-pastille{background:#8e8e93!important;border:0!important}
+:root:root:root .parcours-page.ios .bilan-pastille *{color:rgb(255 255 255)!important}
+:root:root:root .parcours-page.ios .bilan-theme{font:600 16px/1.3 var(--ios-police)!important;color:var(--ios-encre)!important}
+:root:root:root .parcours-page.ios .parcours-jour-titre small{background:var(--ios-accent)!important;color:rgb(255 255 255)!important;border-radius:999px!important;padding:2px 8px!important;border:0!important;font:600 11px var(--ios-police)!important;letter-spacing:.02em}
+:root:root:root .parcours-page.ios :is(.bilan-num,.parcours-jour-titre time,.bilan-etat,.parcours-consigne){color:var(--ios-doux)!important}
+:root:root:root .parcours-page.ios :is(.parcours-revoir,.bilan-etat a){color:var(--ios-accent)!important}
+:root:root:root:root[data-apparence="sombre"] .parcours-page.ios :is(.card,.hd-bilan,.parcours-semaines,.bilan-jours,.raccourcis-parcours) *:not(svg,svg *,.btn,.btn *,.bilan-pastille,.bilan-pastille *,.parcours-jour-titre small,.progres-chiffres strong,.progres-chiffres svg,.progres-chiffres svg *){color:var(--ios-encre)}
