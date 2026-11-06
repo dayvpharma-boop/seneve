@@ -124,7 +124,9 @@ describe('Espace avec plusieurs parcours', () => {
     tables['enrollments'] = [{ enrollment_id: 'E14', programme_id: 'ACHETEUR_LIVRE_14J_FR_V1', version: 1, langue: 'fr', date_debut: '2026-10-10', etat: 'active' }];
     render(<MemoryRouter><Espace /></MemoryRouter>);
     expect(await screen.findByText('Jour 3 sur 14')).toBeInTheDocument();
-    expect(screen.getByText('Thème ACHETEUR_LIVRE_14J_FR_V1 3')).toBeInTheDocument();
+    // Le thème du jour figure dans la carte photo (06/11/2026) et dans la liste des moments.
+    expect(screen.getAllByText('Thème ACHETEUR_LIVRE_14J_FR_V1 3')).toHaveLength(2);
+    expect(document.querySelector('.ios-jour-parcours h2')).toHaveTextContent('Thème ACHETEUR_LIVRE_14J_FR_V1 3');
     fireEvent.click(screen.getByRole('button', { name: 'Voir tous les jours' }));
     expect(screen.getByRole('button', { name: 'Jour 14, pas encore ouvert' })).toBeDisabled();
     expect(screen.queryByRole('tab')).not.toBeInTheDocument();
