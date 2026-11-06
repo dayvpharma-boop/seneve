@@ -760,8 +760,8 @@
 @media (prefers-reduced-motion:reduce){:root:root:root .pv-page.ios .pv-jardin-barre span{transition:none}}
 :root:root:root .pv-page.ios .pv-jardin-pratique small{display:block;margin-top:2px;font:400 12.5px var(--ios-police)!important;color:var(--ios-doux)!important}
 /* Aujourd'hui : boutons de parcours en cartes façon Apple (pastille d'état, barre d'avancement, parcours choisi en violet) */
-:root:root:root .espace-page.ios .prog-tabs{gap:10px!important;padding:4px 2px 14px!important;scroll-padding-inline:2px}
-:root:root:root .espace-page.ios .prog-tabs::after{flex:0 0 1px!important}
+:root:root:root .espace-page.ios .prog-tabs{gap:10px!important;padding:4px 2px 14px!important;scroll-padding-inline-start:44px!important}
+:root:root:root .espace-page.ios .prog-tabs::after{flex:0 0 calc(100% - 240px)!important}
 :root:root:root .espace-page.ios .prog-tab{position:relative;flex:0 0 196px!important;height:auto!important;min-height:92px!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important;text-align:left!important;padding:12px 14px 14px!important;border:0!important;border-radius:18px!important;background:var(--ios-carte)!important;color:var(--ios-encre)!important;box-shadow:0 0 0 .5px rgb(60 60 67 / .12),0 1px 2px rgb(0 0 0 / .04),0 8px 20px -14px rgb(0 0 0 / .28)!important;transition:transform .18s cubic-bezier(.2,.7,.2,1),background-color .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
 :root:root:root .espace-page.ios .prog-tab:active{transform:scale(.97)}
 :root:root:root .espace-page.ios .prog-tab .jn-tab-meta{display:flex!important;align-items:center;gap:6px;margin:0 0 6px!important;font:600 12px/1.2 var(--ios-police)!important;letter-spacing:0;text-transform:none;opacity:1!important;color:var(--ios-doux)!important}
@@ -782,8 +782,8 @@
 :root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{box-shadow:0 10px 24px -12px rgb(91 78 232 / .9),inset 0 1px 0 rgb(255 255 255 / .14)!important}
 @media (prefers-reduced-motion:reduce){:root:root:root .espace-page.ios .prog-tab{transition:none}:root:root:root .espace-page.ios .prog-tab:active{transform:none}}
 /* Parcours : mêmes cartes façon Apple que sur Aujourd'hui (pastille d'état en haut, nom, barre d'avancement) */
-:root:root:root .parcours-page.ios .prog-tabs{gap:10px!important;padding:4px 2px 14px!important;scroll-padding-inline:2px}
-:root:root:root .parcours-page.ios .prog-tabs::after{flex:0 0 1px!important}
+:root:root:root .parcours-page.ios .prog-tabs{gap:10px!important;padding:4px 2px 14px!important;scroll-padding-inline-start:44px!important}
+:root:root:root .parcours-page.ios .prog-tabs::after{flex:0 0 calc(100% - 240px)!important}
 :root:root:root .parcours-page.ios .prog-tab{position:relative;flex:0 0 196px!important;height:auto!important;min-height:92px!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important;text-align:left!important;padding:12px 14px 16px!important;border:0!important;border-radius:18px!important;background:var(--ios-carte)!important;color:var(--ios-encre)!important;box-shadow:0 0 0 .5px rgb(60 60 67 / .12),0 1px 2px rgb(0 0 0 / .04),0 8px 20px -14px rgb(0 0 0 / .28)!important;transition:transform .18s cubic-bezier(.2,.7,.2,1),background-color .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
 :root:root:root .parcours-page.ios .prog-tab:active{transform:scale(.97)}
 :root:root:root .parcours-page.ios .prog-tab small{order:-1;display:flex!important;align-items:center;gap:6px;margin:0 0 6px!important;font:600 12px/1.2 var(--ios-police)!important;opacity:1!important;color:var(--ios-doux)!important}
