@@ -9,6 +9,7 @@ import {reglerRythmeDime} from '@/lib/habitudes-horaires-api';
 import type {RythmeDime} from '@/lib/habitudes-planning';
 import {ChoixRythmeDime} from './ChoixRythmeDime';
 import {creneauxDepuisJours,heuresDifferentes,heuresParJour} from '@/lib/habitudes-heures-jour';
+import {activerRappelsDepuisInscription,rappelsHabitudesActifs,type ResultatRappelsInscription} from '@/lib/habitudes-rappels';
 
 // Le parent doit fournir le catalogue autorisé par le serveur, jamais une offre de démonstration.
 // La clé inclut le compte pour ne pas réutiliser un formulaire après un changement de session.
@@ -27,6 +28,9 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
  const [rythmeDime,setRythmeDime]=useState<RythmeDime>({rythme:'semaine'}),[dimeARegler,setDimeARegler]=useState(false);
  // Demande de Dr Justin (04/11/2026) : dès l'inscription, une heure différente selon le jour (comme dans les réglages).
  const [parJour,setParJour]=useState<Record<string,boolean>>(()=>Object.fromEntries(c.planning.map(h=>[h.habit_key,heuresDifferentes(h.creneaux)])));
+ // Demande de Dr Justin (06/11/2026) : choisir ses rappels dès l'inscription (allumés au départ, toutes les habitudes cochées).
+ const avecRappels=rappelsHabitudesActifs();
+ const [rappels,setRappels]=useState(true),[sansRappel,setSansRappel]=useState<string[]>([]),[rappelsResultat,setRappelsResultat]=useState<ResultatRappelsInscription|null>(null);
  const verrou=useRef(false),demande=useRef<DemandeInscription|null>(null);
  const jours=en?['Mon','Tue','Wed','Thu','Fri','Sat','Sun']:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
  const frequence=(i:number)=>c.planning[i]!.creneaux.reduce((n,s)=>n+s.jours_iso.length,0);
@@ -43,8 +47,12 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
    demande.current={p_programme_id:c.programmeId,p_version:c.version,p_langue:c.langue,p_offre_id:c.offreId,p_confirmation:true,p_horaires:planning.map(h=>({habit_key:h.habit_key,creneaux:h.creneaux.map(s=>({...s,jours_iso:[...s.jours_iso]}))}))};
   }
   verrou.current=true;setOccupe(true);setAttente(true);setErreur('');
+  // L'autorisation des notifications doit être demandée pendant l'appui de la personne (iPhone).
+  const veutRappels=avecRappels&&rappels;
+  if(veutRappels)try{if('Notification'in window&&Notification.permission==='default')await Notification.requestPermission();}catch{/* demandée de nouveau plus bas */}
   try{
    const r=await inscrireHabitudesGratuit(demande.current);
+   if(veutRappels&&'enrollment_id'in r)setRappelsResultat(await activerRappelsDepuisInscription(sansRappel));
    if('enrollment_id'in r&&r.cree&&rythmeDime.rythme==='mois')try{await reglerRythmeDime(rythmeDime);}catch{setDimeARegler(true);}
    setResultat(r);
   }
@@ -103,6 +111,7 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
    <div className="flex items-center gap-2"><span className="w-8 h-8 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center"><IconeHD nom="check_circle" className="text-[20px]"/></span><p className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{resultat.cree?l('Inscription confirmée. Tes horaires ont été enregistrés.','Enrollment confirmed. Your schedule has been saved.'):l('Une inscription existe déjà. Ses dates et ses horaires ont été conservés.','An enrollment already exists. Its dates and schedule have been preserved.')}</p></div>
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Fin de la période gratuite :','Free period ends:')} <time dateTime={resultat.fin_exclue}>{new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{timeZone:c.fuseau,dateStyle:'long',timeStyle:'short'}).format(new Date(resultat.fin_exclue))}</time> ({c.fuseau}).</p>
    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Consulte tes accès pour vérifier l’état actuel du parcours.','Check your access page for the current journey status.')}</p>
+   {rappelsResultat&&<p className="hd-rappels-inscription-resultat" data-etat={rappelsResultat}><IconeHD nom={rappelsResultat==='actifs'?'notifications_active':'notifications_off'} className="text-[18px] shrink-0"/><span>{rappelsResultat==='actifs'?l('Tes rappels sont activés. Tu peux les régler à tout moment dans Mes réglages.','Your reminders are on. You can adjust them anytime in My settings.'):rappelsResultat==='refus'?l('Les notifications sont bloquées sur ce téléphone. Tu pourras activer tes rappels plus tard dans Mes réglages.','Notifications are blocked on this phone. You can turn on your reminders later in My settings.'):rappelsResultat==='iphone'?l('Sur iPhone, ajoute SÉNEVÉ à l’écran d’accueil, puis active tes rappels dans Mes réglages.','On iPhone, add SÉNEVÉ to your Home Screen, then turn on your reminders in My settings.'):l('Tes rappels n’ont pas pu être activés maintenant. Active-les dans Mes réglages.','Your reminders could not be turned on now. Turn them on in My settings.')}</span></p>}
    {dimeARegler&&<p role="alert" className="font-hd-body-sm text-hd-body-sm text-hd-on-surface">{l('Le rythme mensuel de ta dîme n’a pas pu être enregistré : choisis-le à nouveau dans tes horaires. En attendant, elle revient chaque semaine.','Your monthly tithe rhythm could not be saved: choose it again in your schedule. Until then, it comes every week.')}</p>}
   </>}<a className={bouton} href={`${import.meta.env.BASE_URL}acces?lang=${en?'en':'fr'}`}>{l('Consulter mes accès','View my access')}<IconeHD nom="arrow_forward" className="text-[20px]"/></a></div>:<form onSubmit={e=>void soumettre(e)} className="flex flex-col">
    <fieldset disabled={occupe||attente||refus} className="min-w-0 border-0 p-0 m-0 flex flex-col disabled:opacity-70"><legend className="mb-2 font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant uppercase tracking-wider">{l('Mes horaires','My schedule')} ({c.fuseau})</legend>
@@ -115,7 +124,15 @@ function FormulaireInscription({configuration:c}:{configuration:ConfigurationIns
      </summary>
      <div className="px-3 pb-3 flex flex-col gap-2.5">{planning.map((h,i)=>culte(h.habit_key)?carteHabitude(h,i):null)}</div>
     </details>}
-    <p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant flex items-start gap-1.5 mb-4"><IconeHD nom="notifications_off" className="text-[16px] text-hd-outline mt-0.5"/>{l('Adapte les jours et les heures à ton rythme. Ces horaires n’activent aucun rappel.','Adjust days and times to your rhythm. These times do not enable reminders.')}</p>
+    {avecRappels?<section className="hd-rappels-inscription" aria-labelledby="hd-rappels-inscription-titre">
+     <div className="hd-rappels-inscription-tete"><span className="hd-rappels-inscription-icone" aria-hidden="true"><IconeHD nom="notifications_active" className="text-[20px]"/></span><span className="flex flex-col"><span id="hd-rappels-inscription-titre" className="hd-rappels-inscription-titre">{l('Mes rappels','My reminders')}</span><span className="hd-rappels-inscription-badge">{l('Recommandé','Recommended')}</span></span></div>
+     <p className="hd-rappels-inscription-texte">{l('Un petit rappel au bon moment t’aide à tenir tes habitudes jour après jour. Ce n’est pas une obligation : tu peux les arrêter quand tu veux dans tes réglages.','A small reminder at the right time helps you keep your habits day after day. It is not an obligation: you can stop them whenever you like in your settings.')}</p>
+     <label className="hd-rappels-inscription-interrupteur"><span>{l('Recevoir les rappels de mes habitudes','Get reminders for my habits')}</span><input type="checkbox" role="switch" checked={rappels} onChange={e=>setRappels(e.target.checked)}/></label>
+     {rappels&&<details className="hd-rappels-inscription-choix"><summary><span>{l('Habitudes rappelées','Habits reminded')}</span><span className="hd-rappels-inscription-compte">{sansRappel.length?l(`${planning.length-sansRappel.length} sur ${planning.length}`,`${planning.length-sansRappel.length} of ${planning.length}`):l(`Toutes (${planning.length})`,`All (${planning.length})`)}<IconeHD nom="expand_more" className="text-[20px]"/></span></summary><fieldset className="hd-rappels-inscription-liste"><legend className="sr-only">{l('Habitudes rappelées','Habits reminded')}</legend>
+      <ul>{planning.map(h=><li key={h.habit_key}><label><input type="checkbox" checked={!sansRappel.includes(h.habit_key)} onChange={e=>setSansRappel(x=>e.target.checked?x.filter(k=>k!==h.habit_key):[...x,h.habit_key])}/><span>{h.libelle}</span></label></li>)}</ul>
+     </fieldset></details>}
+     {rappels&&<p className="hd-rappels-inscription-note">{l('Au moment de confirmer, ton téléphone te demandera l’autorisation d’afficher les notifications.','When you confirm, your phone will ask permission to show notifications.')}</p>}
+    </section>:<p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant flex items-start gap-1.5 mb-4"><IconeHD nom="notifications_off" className="text-[16px] text-hd-outline mt-0.5"/>{l('Adapte les jours et les heures à ton rythme. Ces horaires n’activent aucun rappel.','Adjust days and times to your rhythm. These times do not enable reminders.')}</p>}
     <div className="mb-4"><SemaineAvantInscription planning={planning} frequences={Object.fromEntries(c.planning.map((h,i)=>[h.habit_key,frequence(i)]))} fuseau={c.fuseau} langue={c.langue}/></div>
     <details className="hd-volet group bg-hd-surface-container-lowest rounded-2xl shadow-[0_2px_10px_rgba(29,28,19,0.04)] mb-3" onToggle={e=>{if(e.currentTarget.open)setEngagementsLus(true);}}>
      <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer p-4 min-h-[44px] flex items-center justify-between gap-2"><span className="flex items-center gap-2.5"><span className="w-7 h-7 rounded-full bg-hd-secondary-container/40 text-hd-secondary flex items-center justify-center"><IconeHD nom="spa" className="text-[18px]"/></span><span className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Lire mes engagements','Read my commitments')}</span></span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-secondary"/></summary>
