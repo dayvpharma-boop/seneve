@@ -19,6 +19,7 @@ import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { prenomDuCompte } from '@/lib/connexion-sociale';
 import {Apparence} from '@/components/Apparence';
 import {IconeRegistre} from '@/components/IconeRegistre';
+import {AnneauxJournee} from '@/components/AnneauxJournee';
 import {IconeFinitions} from '@/components/IconeFinitions';
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -522,8 +523,22 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const realiseesSemaine = joursSemaine.filter(j => j.ouvert && j.etat === 'realisee').length;
   const dateCopie = copieDu ? new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(copieDu)) : null;
   const bandeauHorsLigne = horsLigne && <aside className="offline-bandeau" role="status"><span className="offline-nuage" aria-hidden="true"><IconeJournee nom="cloud_off" taille={18} /></span><div><div className="offline-bandeau-tete"><strong>{enr.langue === 'en' ? 'Offline mode' : 'Mode hors connexion'}</strong><span>{enr.langue === 'en' ? 'Local copy' : 'Copie locale'}</span></div><p>{dateCopie ? <>{enr.langue === 'en' ? 'You are viewing the copy saved on ' : 'Tu consultes la copie enregistrée le '}<strong>{dateCopie}</strong>.</> : (enr.langue === 'en' ? 'You are viewing the days already loaded.' : 'Tu consultes les journées déjà chargées.')}</p><p className="offline-note">{enr.langue === 'en' ? 'You are offline. Your drafts stay on this device.' : 'Tu n’as pas de connexion. Tes brouillons restent sur cet appareil.'}</p></div></aside>;
+  // Demande de Dr Justin (06/11/2026) : comme Habitudes & Défis, une carte photo du jour et les anneaux de la journée.
+  const actionsJour = [action, question].filter((a): a is Activity => Boolean(a));
+  const faitesJour = actionsJour.filter(a => etatDe(a)?.etat === 'realisee').length;
+  const premierMoment = moments.find(m => m.ouvert);
+  const dateJour = majuscule(new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, current)));
+  const enJour = enr.langue === 'en';
+  const carteJour = <><header className="ios-jour ios-jour-parcours">
+    <span className="ios-puce"><time>{dateJour}</time> · {T.jourSur(current, total)}</span>
+    <small>{estAujourdhui ? (enJour ? 'Today’s step' : 'Le pas d’aujourd’hui') : T.jour(current)}</small>
+    <h2>{moments[0]!.content.theme}</h2>
+    <p>{nomRepere}</p>
+    {premierMoment && <button type="button" className="ios-jour-bouton" onClick={() => ouvrirMoment(premierMoment.n)}><IconeRegistre nom="play_arrow" taille={20} />{enJour ? 'Start' : 'Commencer'}</button>}
+  </header>
+  {actionsJour.length > 0 && <AnneauxJournee realisees={faitesJour} total={actionsJour.length} jour={current} duree={total} en={enJour} />}</>;
   const enteteHorsLigne = <header className="offline-entete"><div className="erreur-header"><div><strong>SÉNEVÉ</strong></div><span className="erreur-avatar" aria-hidden="true"><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></span></div>{bandeauHorsLigne}<div className="offline-profil"><div><small>{enr.langue === 'en' ? 'Daily companion' : 'Compagnon de chemin'}</small><h1>{salut}</h1></div><p><span>{nomRepere}</span><strong>{T.jourSur(current,total)}</strong></p></div></header>;
-  return page(enr.langue, <>{horsLigne ? enteteHorsLigne : header(undefined, bandeauHorsLigne)}{!horsLigne && accueil}{tabs}{!horsLigne && !data.habitudes?.length && <CarteHabitudes langue={enr.langue} />}{!horsLigne && <div className="today-reperes"><><p className="today-date">{new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, current))}</p><p className="today-parcours">{current === 1 ? <IconeJournee nom="explore" taille={18} /> : <IconeMaquette nom="spa" taille={18} />}{`${nomRepere} · ${T.jourSur(current, total)}`}</p></></div>}
+  return page(enr.langue, <>{horsLigne ? enteteHorsLigne : header(undefined, bandeauHorsLigne)}{!horsLigne && accueil}{tabs}{!horsLigne && !data.habitudes?.length && <CarteHabitudes langue={enr.langue} />}{!horsLigne && carteJour}
     <div className="jn-colonnes"><div className="jn-colonne jn-colonne-journee">
     {!horsLigne && total>14 ? <ProgressionLongue langue={enr.langue} b={bilanEnr} current={current} jour={day} choisir={choisirJour}/> : <section className="today-progress" aria-labelledby="progression-semaine">
       <div className="weekly-head"><h2 id="progression-semaine">{T.progressionHebdomadaire}</h2><span className="today-week">{enr.langue==='en'?'Week':'Semaine'} {Math.ceil(current/7)}</span>{horsLigne ? <p className="offline-copie-prete"><IconeJournee nom="offline_pin" taille={14} />{enr.langue === 'en' ? 'Local copy ready' : 'Copie locale prête'}</p> : <p>{T.actionsSemaine(realiseesSemaine, actionsSemaine)}</p>}</div>
