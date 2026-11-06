@@ -34,11 +34,29 @@ export function TestPage({ defaultSource = null, defaultLanguage = 'fr' }: { def
 function PrototypeButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
  return <button type="button" {...props} />;
 }
+/** Couleurs des 7 racines, dans l'ordre, pour les anneaux de la page de résultat (proposition B du 06/11/2026). */
+const COULEURS_RACINES = ['#5b4ee8', '#ff9f0a', '#0a84ff', '#30d158', '#ff375f', '#64d2ff', '#bf5af2'] as const;
+function AnneauScore({ total, couleur, taille = 64, epaisseur = 9, chiffre = true }: { total: number; couleur: string; taille?: number; epaisseur?: number; chiffre?: boolean }) {
+ const r = (taille - epaisseur) / 2, L = 2 * Math.PI * r, c = taille / 2;
+ return <svg className="anneau-score" width={taille} height={taille} viewBox={`0 0 ${taille} ${taille}`} aria-hidden="true">
+  <circle cx={c} cy={c} r={r} fill="none" stroke={couleur} strokeOpacity={0.18} strokeWidth={epaisseur} />
+  <circle cx={c} cy={c} r={r} fill="none" stroke={couleur} strokeWidth={epaisseur} strokeLinecap="round" strokeDasharray={L} strokeDashoffset={L * (1 - total / 15)} transform={`rotate(-90 ${c} ${c})`} />
+  {chiffre && <text x={c} y={c} dy="0.35em" textAnchor="middle">{total}</text>}
+ </svg>;
+}
+/** Roue des 7 racines : un anneau par racine, rempli selon son total sur 15 (la liste détaillée suit plus bas). */
+function RoueRacines({ totals, language }: { totals: number[]; language: Language }) {
+ const R = texts[language].roots;
+ return <div className="roue-racines" aria-hidden="true">
+  <svg width="230" height="230" viewBox="0 0 230 230">{R.map((_, k) => { const r = 104 - k * 13, L = 2 * Math.PI * r, c = COULEURS_RACINES[k]!; return <g key={k}><circle cx="115" cy="115" r={r} fill="none" stroke={c} strokeOpacity={0.15} strokeWidth="9" /><circle cx="115" cy="115" r={r} fill="none" stroke={c} strokeWidth="9" strokeLinecap="round" strokeDasharray={L} strokeDashoffset={L * (1 - (totals[k] ?? 3) / 15)} transform="rotate(-90 115 115)" /></g>; })}</svg>
+  <ul>{R.map((root, k) => <li key={root.n}><i style={{ background: COULEURS_RACINES[k] }} />{k + 1}. {root.n}</li>)}</ul>
+ </div>;
+}
 function RootCard({ tag, k, total, language, explanation }: { tag: string; k: number; total: number; language: Language; explanation: string }) {
  const t = texts[language];
  const root = t.roots[k];
  if (!root) return null;
-  return <div className="card result-hero"><div className="result-root-heading"><div><p className="tag">{tag}</p><h2>{root.n}</h2></div><p className="score-grand"><b>{total}</b> / 15</p></div><span className="cat-chip">{categorie(total, language)}</span><p className="muted">{explanation}</p><div className="quote-encart"><p className="result-auteur"><IconeResultat nom="format_quote" taille={18}/>Dr Justin Tshims</p><p className="quote">{t.quote(root.o ?? root.p)}</p><p className="src">{root.o && root.c ? t.openingSource(root.c) : t.quoteSource}</p></div></div>;
+  return <div className="card result-hero"><div className="result-root-heading"><div><p className="tag">{tag}</p><h2>{root.n}</h2></div><p className="score-grand"><AnneauScore total={total} couleur={COULEURS_RACINES[k] ?? '#5b4ee8'} chiffre={false} /><span><b>{total}</b> / 15</span></p></div><span className="cat-chip">{categorie(total, language)}</span><p className="muted">{explanation}</p><div className="quote-encart"><p className="result-auteur"><IconeResultat nom="format_quote" taille={18}/>Dr Justin Tshims</p><p className="quote">{t.quote(root.o ?? root.p)}</p><p className="src">{root.o && root.c ? t.openingSource(root.c) : t.quoteSource}</p></div></div>;
 }
 /** Racine forte (cahier n°4, §11 A) : la ou les racines au total le plus haut, sans note chiffrée.
  * Absente quand les sept racines sont au même niveau, toutes points d'appui, ou toutes à développer. */
@@ -52,7 +70,7 @@ function StrengthCard({ fortes, total, language }: { fortes: number[]; total: nu
  return <div className="card result-strength"><p className="tag"><IconeResultat nom="psychiatry" taille={20}/>{tag}</p>
   {plusieurs
    ? <ul className="plain strength-list" role="list">{fortes.map(i => <li key={i}>{t.roots[i]?.n}</li>)}</ul>
-   : <><h2>{t.roots[k]?.n}</h2><div className="strength-quote"><p className="quote">{t.quote(t.roots[k]?.p ?? '')}</p><p className="src">{t.quoteSource}</p></div></>}
+   : <><div className="strength-tete"><AnneauScore total={total} couleur={COULEURS_RACINES[k] ?? '#30d158'} taille={52} epaisseur={8} /><h2>{t.roots[k]?.n}</h2></div><div className="strength-quote"><p className="quote">{t.quote(t.roots[k]?.p ?? '')}</p><p className="src">{t.quoteSource}</p></div></>}
   <p className="muted">{plusieurs ? t.resultHelp.strengthMany : t.resultHelp.strengthOne}</p>
  </div>;
 }
@@ -86,6 +104,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language, mantle = '' }: { 
   // Ordre du cahier n°4, §11 (rétabli le 22/10/2026) : racine forte, racine à fortifier, première action ;
   // puis le détail des 7 racines avec une barre par score, le partage et la suite.
   return <>
+    <RoueRacines totals={r.t} language={language} />
     {/* La racine forte ne dépend pas du choix fait en cas d'égalité en bas : elle s'affiche d'abord. */}
     {!r.same && !allSupport && <StrengthCard language={language} fortes={r.fortes} total={Math.max(...r.t)} />}
      {needsChoice && <><div className="result-choice-message"><IconeResultat nom={allSupport ? 'military_tech' : r.same ? 'spa' : 'balance'} taille={24}/><p>{message}</p></div><ChoixRacines language={language} indices={indices} totals={r.t} chosenRoot={chosenRoot} onChoose={onChoose} allSupport={allSupport} detail={detail} /></>}
@@ -98,6 +117,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language, mantle = '' }: { 
        <ul className="root-rows" role="list">{R.map((item, k) => {
          const total = r.t[k] ?? 3;
          return <li key={item.n} data-band={total >= 12 ? 'appui' : total <= 6 ? 'developper' : 'consolider'} className={['root-row',k===act?'is-start':'',!r.same&&!allSupport&&r.fortes.includes(k)&&strengthKind(total)?'is-appui':''].filter(Boolean).join(' ')}>
+           <AnneauScore total={total} couleur={COULEURS_RACINES[k] ?? '#5b4ee8'} taille={38} epaisseur={5} chiffre={false} />
            <div className="root-row-top"><span className="root-num" aria-hidden="true">{k + 1}.</span><span className="root-summary-name">{item.n}</span><span className="root-score">{total} / 15</span></div>
            <span className="root-bar" aria-hidden="true"><i style={{ width: `${(total / 15) * 100}%` }} /></span>
            <div className="root-row-bottom"><span className="root-category">{k===act?<b>{language==='en'?'Priority':'Priorité'}</b>:null}{categorie(total, language)}</span><span className="root-percent" aria-hidden="true">{Math.round(total / 15 * 100)}%</span></div>
@@ -256,7 +276,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
     <p className="quiz-confidentialite"><Icone nom="cadenas" taille={18} /><span>{t.privacyTest} <a className="link-inline" href={`${import.meta.env.BASE_URL}confidentialite${en ? '?lang=en' : ''}`}>{t.privacyLink}</a></span></p>
    </div>
   </section>
-  <section id="s-result" data-lecture={tailleLecture} hidden={screen !== 'result'}>
+  <section id="s-result" className="resultat-anneaux" data-lecture={tailleLecture} hidden={screen !== 'result'}>
    <header className="resultat-outils"><PrototypeButton className="result-retour" aria-label={en ? 'Back to the test home' : 'Revenir à l’accueil du test'} onClick={() => setScreen('home')}><Icone nom="fleche_gauche" taille={22}/></PrototypeButton><p className="result-brand"><Icone nom="graine" taille={24}/>SÉNEVÉ</p><Apparence langue={language} compact contraste/></header>
    <p className="resultat-puce">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
     <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} mantle={mantle} />}</div>

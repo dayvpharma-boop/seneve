@@ -959,3 +959,44 @@
 :root:root:root:root #s-quiz.quiz-tactile .quiz-card{display:flex!important;flex-direction:column!important;align-items:center!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-card .tap-hint{text-align:center;max-width:300px}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-card .tap-hint{display:inline-flex!important;gap:6px;align-items:flex-start;width:auto}
+
+/* Test des 7 Racines, page de résultat : design « anneaux Forme » (proposition B choisie le 06/11/2026). */
+:root:root:root:root #s-result.resultat-anneaux{font-family:var(--ios-police)}
+:root:root:root:root #s-result.resultat-anneaux .resultat-puce{text-align:center;font:600 12.5px/1.2 var(--ios-police);letter-spacing:.04em;text-transform:uppercase;color:var(--ios-doux)}
+:root:root:root:root #s-result.resultat-anneaux #rtitle{text-align:center;font:800 28px/1.1 var(--ios-police)!important;letter-spacing:-.02em;color:var(--ios-encre)}
+:root:root:root:root #s-result.resultat-anneaux .roue-racines{display:flex;flex-direction:column;align-items:center;gap:10px;margin:14px 0 4px}
+:root:root:root:root #s-result.resultat-anneaux .roue-racines ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;font:500 11.5px/1.3 var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-result.resultat-anneaux .roue-racines i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+:root:root:root:root #s-result.resultat-anneaux .card{border:0!important;border-radius:20px!important;background:var(--ios-carte)!important;box-shadow:0 1px 2px #0000000a!important}
+:root:root:root:root #s-result.resultat-anneaux .anneau-score text{font:800 15px var(--ios-police);fill:var(--ios-encre)}
+:root:root:root:root #s-result.resultat-anneaux .score-grand{display:flex;align-items:center;gap:8px}
+:root:root:root:root #s-result.resultat-anneaux .score-grand span{font:600 14px var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-result.resultat-anneaux .score-grand b{font:800 22px var(--ios-police);color:var(--ios-encre)}
+:root:root:root:root #s-result.resultat-anneaux .strength-tete{display:flex;align-items:center;gap:12px}
+:root:root:root:root #s-result.resultat-anneaux .strength-tete h2{margin:0}
+:root:root:root:root #s-result.resultat-anneaux .result-action{background:linear-gradient(150deg,#7b6cf6,#5b4ee8 55%,#3e33b8)!important;color:#fefefe}
+:root:root:root:root #s-result.resultat-anneaux .result-action .tag{color:#ffffffd9!important;background:transparent!important}
+:root:root:root:root #s-result.resultat-anneaux .result-action .action-box{background:transparent!important;border:0!important;padding:0!important}
+:root:root:root:root #s-result.resultat-anneaux .result-action .action{color:#fefefe!important;font:700 18px/1.3 var(--ios-police)!important}
+:root:root:root:root #s-result.resultat-anneaux .result-action .src{color:#ffffffb3!important}
+:root:root:root:root #s-result.resultat-anneaux .root-rows{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+:root:root:root:root #s-result.resultat-anneaux .root-row{display:grid!important;grid-template-columns:38px minmax(0,1fr);grid-template-rows:auto auto;column-gap:8px;align-items:center;padding:10px!important;border:0!important;border-radius:16px;background:var(--ios-fond)!important}
+:root:root:root:root #s-result.resultat-anneaux .root-row .anneau-score{grid-row:1/3}
+:root:root:root:root #s-result.resultat-anneaux .root-row-top{display:flex;flex-wrap:wrap;gap:2px 4px;align-items:baseline;min-width:0}
+:root:root:root:root #s-result.resultat-anneaux .root-row-top .root-num{display:none}
+:root:root:root:root #s-result.resultat-anneaux .root-summary-name{font:600 12.5px/1.2 var(--ios-police);color:var(--ios-encre)}
+:root:root:root:root #s-result.resultat-anneaux .root-score{font:700 12px/1.2 var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-result.resultat-anneaux .root-bar,:root:root:root:root #s-result.resultat-anneaux .root-percent{display:none!important}
+:root:root:root:root #s-result.resultat-anneaux .root-row-bottom{min-width:0}
+:root:root:root:root #s-result.resultat-anneaux .root-category{font:500 11px/1.25 var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-result.resultat-anneaux .root-row.is-start{box-shadow:inset 0 0 0 2px #ff375f}
+:root:root:root:root #s-result.resultat-anneaux .root-category b{display:inline-block;margin-right:4px;padding:1px 6px;border-radius:5px;background:#ff375f;color:#fefefe;font:700 9.5px/1.4 var(--ios-police);text-transform:uppercase}
+:root:root:root:root #s-result.resultat-anneaux .result-next .btn-link{min-height:50px;border-radius:14px!important;border:0!important;font:600 16px var(--ios-police)!important;display:flex;justify-content:center;align-items:center;gap:8px}
+:root:root:root:root #s-result.resultat-anneaux .result-next > .btn-link{background:#25d366!important;color:#fefefe!important}
+:root:root:root:root #s-result.resultat-anneaux .result-espace .btn-link{background:#5b4ee8!important;color:#fefefe!important}
+@media (max-width:330px){:root:root:root:root #s-result.resultat-anneaux .root-rows{grid-template-columns:1fr}}
+:root:root:root:root #s-result.resultat-anneaux .score-grand{background:transparent!important;padding:0!important;border:0!important;color:var(--ios-encre)!important;box-shadow:none!important}
+:root:root:root:root #s-result.resultat-anneaux .root-row-top{flex-direction:column!important;align-items:flex-start!important;gap:1px!important}
+:root:root:root:root #s-result.resultat-anneaux .root-summary-name{word-break:normal!important;overflow-wrap:normal!important;hyphens:manual!important;font-size:12px!important}
+:root:root:root:root #s-result.resultat-anneaux .root-row{grid-template-columns:34px minmax(0,1fr)!important;column-gap:7px!important;padding:10px 8px!important}
+:root:root:root:root #s-result.resultat-anneaux .root-row .anneau-score{width:34px;height:34px}
