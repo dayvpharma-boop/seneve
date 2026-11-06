@@ -18,8 +18,8 @@ function versionAnglaise(html) {
     ['content="https://dayvpharma-boop.github.io/seneve/"', 'content="https://dayvpharma-boop.github.io/seneve/en"'],
     ['<meta property="og:locale" content="fr_FR" />', '<meta property="og:locale" content="en_GB" />'],
     ['<meta property="og:locale:alternate" content="en_GB" />', '<meta property="og:locale:alternate" content="fr_FR" />'],
-    ['/seneve/og-image-v3.jpg', '/seneve/og-image-en-v1.jpg'],
-    ['content="SÉNEVÉ — Test des 7 Racines : Ce qui grandit commence à l’intérieur, avec la photo de racines dans la terre"', 'content="SÉNEVÉ — 7 Roots Test: Growth begins within, with a photo of roots in the soil"'],
+    ['/seneve/og-image-v4.jpg', '/seneve/og-image-en-v2.jpg'],
+    ['content="SÉNEVÉ — Test des 7 Racines : Ce qui grandit commence à l’intérieur. Panneau de verre dépoli sur la photo de racines dans la terre"', 'content="SÉNEVÉ — 7 Roots Test: Growth begins within. Frosted glass panel over a photo of roots in the soil"'],
   ];
   let sortie = html;
   for (const [avant, apres] of rempl) {
@@ -45,7 +45,7 @@ function apercu(html, route, { titre, description, titreLien, image, alt }) {
     ['content="Test des 7 Racines — Ce qui grandit commence à l’intérieur."', `content="${titreLien}"`],
     [`<meta property="og:url" content="${SITE}" />`, `<meta property="og:url" content="${SITE}${route}" />`],
   ];
-  if (image) rempl.push(['/seneve/og-image-v3.jpg', `/seneve/${image}`], ['content="SÉNEVÉ — Test des 7 Racines : Ce qui grandit commence à l’intérieur, avec la photo de racines dans la terre"', `content="${alt}"`]);
+  if (image) rempl.push(['/seneve/og-image-v4.jpg', `/seneve/${image}`], ['content="SÉNEVÉ — Test des 7 Racines : Ce qui grandit commence à l’intérieur. Panneau de verre dépoli sur la photo de racines dans la terre"', `content="${alt}"`]);
   let sortie = html;
   for (const [avant, apres] of rempl) {
     if (!sortie.includes(avant)) throw new Error(`Aperçu de /${route} : balise introuvable dans index.html : ${avant}`);
@@ -57,7 +57,7 @@ const HABITUDES = {
   titre: 'Habitudes & Défis — SÉNEVÉ',
   description: 'Un parcours prévu sur six mois pour faire une place à la prière, à la lecture, à la gratitude et aux actions concrètes dans ton quotidien.',
   titreLien: 'Habitudes & Défis — De petits actes. Un rythme qui prend racine.',
-  image: 'og-image-habitudes-v2.jpg',
+  image: 'og-image-habitudes-v3.jpg',
   alt: 'SÉNEVÉ — Habitudes & Défis : De petits actes. Un rythme qui prend racine. 30 jours gratuits. Avec la couverture « De la graine à l’arbre ».',
 };
 // /habitudes/en : même aperçu, en anglais, avec la couverture « From seed to tree ».
@@ -65,7 +65,7 @@ const HABITUDES_EN = {
   titre: 'Habits & Challenges — SÉNEVÉ',
   description: 'A planned six-month journey making room for prayer, reading, gratitude and practical actions in everyday life.',
   titreLien: 'Habits & Challenges — Small actions. A rhythm that takes root.',
-  image: 'og-image-habitudes-en-v1.jpg',
+  image: 'og-image-habitudes-en-v2.jpg',
   alt: 'SÉNEVÉ — Habits & Challenges: Small actions. A rhythm that takes root. 30 days free. With the cover “From seed to tree”.',
 };
 function enAnglais(html) {
