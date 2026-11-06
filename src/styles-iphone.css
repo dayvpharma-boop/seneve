@@ -1000,3 +1000,14 @@
 :root:root:root:root #s-result.resultat-anneaux .root-summary-name{word-break:normal!important;overflow-wrap:normal!important;hyphens:manual!important;font-size:12px!important}
 :root:root:root:root #s-result.resultat-anneaux .root-row{grid-template-columns:34px minmax(0,1fr)!important;column-gap:7px!important;padding:10px 8px!important}
 :root:root:root:root #s-result.resultat-anneaux .root-row .anneau-score{width:34px;height:34px}
+/* Marges intérieures égales pour toutes les cartes du résultat (06/11/2026) : aucun texte ne touche le bord. */
+:root:root:root:root #s-result.resultat-anneaux .card{padding:18px!important;box-sizing:border-box}
+:root:root:root:root #s-result.resultat-anneaux .card > *{max-width:100%}
+:root:root:root:root #s-result.resultat-anneaux .root-list-card .root-rows{margin-left:0!important;margin-right:0!important}
+:root:root:root:root #s-result.resultat-anneaux .result-next .btn-link{width:100%;box-sizing:border-box}
+:root:root:root:root #s-result.resultat-anneaux .result-legend,:root:root:root:root #s-result.resultat-anneaux .result-method{margin-left:0!important;margin-right:0!important}
+:root:root:root:root #s-result.resultat-anneaux .root-row-top > *,:root:root:root:root #s-result.resultat-anneaux .root-row-bottom > *{margin-left:0!important;margin-right:0!important;text-align:left!important;align-self:flex-start!important;justify-self:start!important}
+:root:root:root:root #s-result.resultat-anneaux .root-row-bottom{display:flex!important;justify-content:flex-start!important;align-items:flex-start!important}
+:root:root:root:root #s-result.resultat-anneaux .root-category{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+:root:root:root:root #s-result.resultat-anneaux .result-next .btn-link{text-transform:none!important;letter-spacing:-.01em!important;white-space:nowrap}
+:root:root:root:root #s-result.resultat-anneaux .invite-card :is(a,button){text-transform:none!important;letter-spacing:-.01em!important}
