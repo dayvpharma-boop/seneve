@@ -154,6 +154,7 @@ export function drawCard(ctx: CanvasRenderingContext2D, format: CardFormat, c: C
 
 /** Photo de fond de l'image « photo et verre dépoli » (proposition C du 06/11/2026), chargée par renderCard. */
 let photoPartage: CanvasImageSource | null = null;
+const COULEURS = { or: '#F4CE74', ivoire: '#FFF1D6', vert: '#B9E58C', vertClair: '#D4F2B0', lilas: '#CFC8FF', pied: 'rgba(255,241,214,.78)' } as const;
 const POLICE_APPLE = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif';
 
 /** Rectangle aux coins arrondis, sans roundRect (absent de certains navigateurs). */
@@ -188,7 +189,7 @@ function drawFocusedEditorial(ctx:CanvasRenderingContext2D, format:CardFormat, c
   if (voile) { ctx.fillStyle = voile; ctx.fillRect(0, 0, w, h); }
   // Marque en haut à gauche.
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-  ctx.fillStyle = '#fefefe'; ctx.font = `700 ${tall ? 34 : 28}px ${POLICE_APPLE}`;
+  ctx.fillStyle = COULEURS.or; ctx.font = `700 ${tall ? 34 : 28}px ${POLICE_APPLE}`;
   const esp = tall ? 11 : 9, larg = [...c.brand].reduce((n, ch) => n + ctx.measureText(ch).width, 0) + esp * ([...c.brand].length - 1);
   spaced(ctx, c.brand, marge + larg / 2, tall ? 140 : 96, esp);
   ctx.textAlign = 'left';
@@ -214,26 +215,28 @@ function drawFocusedEditorial(ctx:CanvasRenderingContext2D, format:CardFormat, c
   ctx.strokeStyle = 'rgba(255,255,255,.26)'; ctx.lineWidth = 2; cheminArrondi(ctx, x + 1, y + 1, largeur - 2, hauteur - 2, rayon); ctx.stroke();
   // Textes, alignés à gauche dans le panneau.
   const tx = x + pad; let ty = y + pad + 26;
-  ctx.fillStyle = 'rgba(255,255,255,.82)'; ctx.font = `700 ${tall ? 28 : 24}px ${POLICE_APPLE}`; ctx.fillText(focus.label.toUpperCase(), tx, ty);
+  ctx.fillStyle = COULEURS.or; ctx.font = `700 ${tall ? 28 : 24}px ${POLICE_APPLE}`; ctx.fillText(focus.label.toUpperCase(), tx, ty);
   ty += 24;
-  ctx.fillStyle = '#fefefe'; ctx.font = `800 ${nom}px ${POLICE_APPLE}`;
+  const dore = ctx.createLinearGradient?.(tx, 0, tx + texteW, 0) as CanvasGradient | undefined;
+  if (dore && typeof dore.addColorStop === 'function') { dore.addColorStop(0, '#FFFFFF'); dore.addColorStop(.35, '#FFF1CF'); dore.addColorStop(1, '#F2C35A'); ctx.fillStyle = dore; } else ctx.fillStyle = '#fefefe';
+  ctx.font = `800 ${nom}px ${POLICE_APPLE}`;
   for (const l of nomL) { ty += nom * 1.0; ctx.fillText(l, tx, ty); ty += nom * .06; }
   ty += 30;
-  ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.font = `italic 400 ${cit}px Georgia, "Times New Roman", serif`;
+  ctx.fillStyle = COULEURS.ivoire; ctx.font = `italic 400 ${cit}px Georgia, "Times New Roman", serif`;
   for (const l of citL) { ty += cit * 1.1; ctx.fillText(l, tx, ty); ty += cit * .32; }
   ty += 44;
-  ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.font = `500 ${tall ? 24 : 21}px ${POLICE_APPLE}`;
+  ctx.fillStyle = COULEURS.vert; ctx.font = `500 ${tall ? 24 : 21}px ${POLICE_APPLE}`;
   for (const l of wrap(ctx, focus.source, texteW)) { ctx.fillText(l, tx, ty); ty += 30; }
   if (appui) {
     ty += 12; ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(x + largeur - pad, ty); ctx.stroke();
-    ty += 46; ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = `600 ${tall ? 28 : 24}px ${POLICE_APPLE}`;
+    ty += 46; ctx.fillStyle = COULEURS.vertClair; ctx.font = `600 ${tall ? 28 : 24}px ${POLICE_APPLE}`;
     ctx.fillText(wrap(ctx, appui, texteW)[0] ?? appui, tx, ty);
   }
-  ty += 46; ctx.fillStyle = 'rgba(255,255,255,.72)'; ctx.font = `500 ${tall ? 23 : 20}px ${POLICE_APPLE}`;
+  ty += 46; ctx.fillStyle = COULEURS.pied; ctx.font = `500 ${tall ? 23 : 20}px ${POLICE_APPLE}`;
   ctx.fillText(wrap(ctx, pied, texteW)[0] ?? pied, tx, ty);
   ty += 38; let taille = tall ? 26 : 22; ctx.font = `600 ${taille}px ${POLICE_APPLE}`;
   while (taille > 16 && ctx.measureText(c.address).width > texteW) { taille--; ctx.font = `600 ${taille}px ${POLICE_APPLE}`; }
-  ctx.fillStyle = '#fefefe'; ctx.fillText(c.address, tx, ty);
+  ctx.fillStyle = COULEURS.lilas; ctx.fillText(c.address, tx, ty);
 }
 
 /** Crée l'image PNG, ou null si le navigateur ne sait pas dessiner. */
