@@ -152,49 +152,88 @@ export function drawCard(ctx: CanvasRenderingContext2D, format: CardFormat, c: C
   ctx.fillText(c.address, w / 2, fy + m.question * 1.35);
 }
 
-/** Carte de la maquette reliée à la racine choisie et à sa citation exacte du livre.
- * Les seuls contenus reçus sont éditoriaux : aucun score, nom de participant ni note de journal. */
+/** Photo de fond de l'image « photo et verre dépoli » (proposition C du 06/11/2026), chargée par renderCard. */
+let photoPartage: CanvasImageSource | null = null;
+const POLICE_APPLE = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif';
+
+/** Rectangle aux coins arrondis, sans roundRect (absent de certains navigateurs). */
+function cheminArrondi(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+/** Dessine la photo pour qu'elle couvre tout le cadre, comme background-size: cover. */
+function photoCouvrante(ctx: CanvasRenderingContext2D, img: CanvasImageSource, w: number, h: number) {
+  const iw = (img as HTMLImageElement).naturalWidth || (img as HTMLImageElement).width || 720, ih = (img as HTMLImageElement).naturalHeight || (img as HTMLImageElement).height || 314;
+  const k = Math.max(w / iw, h / ih), dw = iw * k, dh = ih * k;
+  ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+}
+function degrade(ctx: CanvasRenderingContext2D, y0: number, y1: number, arrets: [number, string][]) {
+  const g = ctx.createLinearGradient?.(0, y0, 0, y1) as CanvasGradient | undefined;
+  if (!g || typeof g.addColorStop !== 'function') return null;
+  for (const [o, c] of arrets) g.addColorStop(o, c);
+  return g;
+}
+
+/** Image de partage « photo et verre dépoli » (proposition C choisie par Dr Justin le 06/11/2026) :
+ *  la photo de la pousse en plein cadre, la racine choisie et sa citation exacte sur un panneau de verre.
+ *  Les seuls contenus reçus sont éditoriaux : aucun score, nom de participant ni note de journal. */
 function drawFocusedEditorial(ctx:CanvasRenderingContext2D, format:CardFormat, c:CardContent) {
-  const focus=c.focus;
-  if(!focus)return;
-  const {w,h}=CARD_SIZES[format], tall=format==='vertical', gold='#E6C687', ivory='#fff9ea', maxWidth=w-160;
-  ctx.fillStyle='#0E0D0B';ctx.fillRect(0,0,w,h);
-  ctx.strokeStyle='rgba(230,198,135,.35)';ctx.lineWidth=4;ctx.strokeRect(24,24,w-48,h-48);
-  ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  seed(ctx,w/2,tall?150:95,.6);
-  ctx.fillStyle=gold;ctx.font='600 42px Outfit, sans-serif';
-  spaced(ctx,c.brand,w/2,tall?285:210,8);
-  ctx.fillStyle=ivory;ctx.font='500 32px Outfit, sans-serif';
-  ctx.fillText(c.title,w/2,tall?350:265);
-  let nameSize=tall?80:60, quoteSize=tall?58:42, nameLines:string[]=[], quoteLines:string[]=[];
-  const top=tall?600:370, bottom=h-(c.strength?300:230);
-  for(let attempt=0;attempt<30;attempt++) {
-    ctx.font=`600 ${nameSize}px Outfit, sans-serif`;nameLines=wrap(ctx,focus.name,maxWidth);
-    ctx.font=`italic 400 ${quoteSize}px Literata, Georgia, serif`;quoteLines=wrap(ctx,focus.quote,maxWidth);
-    const totalHeight=nameLines.length*nameSize*1.18+54+quoteLines.length*quoteSize*1.4+76;
-    if(totalHeight<=bottom-top || (nameSize<=40 && quoteSize<=28))break;
-    nameSize=Math.max(40,nameSize-2);quoteSize=Math.max(28,quoteSize-2);
+  const focus = c.focus;
+  if (!focus) return;
+  const { w, h } = CARD_SIZES[format], tall = format === 'vertical';
+  const marge = tall ? 70 : 56, pad = tall ? 58 : 46, largeur = w - 2 * marge, texteW = largeur - 2 * pad;
+  // Fond : la photo, ou un dégradé terre si elle n'a pas pu être chargée.
+  ctx.fillStyle = '#1b1a14'; ctx.fillRect(0, 0, w, h);
+  if (photoPartage) photoCouvrante(ctx, photoPartage, w, h);
+  const voile = degrade(ctx, 0, h, [[0, 'rgba(0,0,0,.55)'], [.28, 'rgba(0,0,0,0)'], [.45, 'rgba(0,0,0,0)'], [1, 'rgba(0,0,0,.82)']]);
+  if (voile) { ctx.fillStyle = voile; ctx.fillRect(0, 0, w, h); }
+  // Marque en haut à gauche.
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#fefefe'; ctx.font = `700 ${tall ? 34 : 28}px ${POLICE_APPLE}`;
+  const esp = tall ? 11 : 9, larg = [...c.brand].reduce((n, ch) => n + ctx.measureText(ch).width, 0) + esp * ([...c.brand].length - 1);
+  spaced(ctx, c.brand, marge + larg / 2, tall ? 140 : 96, esp);
+  ctx.textAlign = 'left';
+  // Contenu du panneau : on réduit les tailles jusqu'à ce que tout tienne.
+  let nom = tall ? 92 : 70, cit = tall ? 42 : 32, nomL: string[] = [], citL: string[] = [], hauteur = 0;
+  const appui = c.strength && c.strength.name !== focus.name ? `${c.strength.label} : ${c.strength.name}` : '';
+  const pied = `${c.title} · ${c.book.charAt(0).toLowerCase()}${c.book.slice(1)}`;
+  const dispo = h - (tall ? 260 : 170) - marge;
+  for (let essai = 0; essai < 40; essai++) {
+    ctx.font = `800 ${nom}px ${POLICE_APPLE}`; nomL = wrap(ctx, focus.name, texteW);
+    ctx.font = `italic 400 ${cit}px Georgia, "Times New Roman", serif`; citL = wrap(ctx, focus.quote, texteW);
+    hauteur = pad + 34 + 16 + nomL.length * nom * 1.06 + 30 + citL.length * cit * 1.42 + 18 + 30 + (appui ? 34 + 40 : 0) + 34 + 30 + 34 + pad;
+    if (hauteur <= dispo || (nom <= 48 && cit <= 26)) break;
+    nom = Math.max(48, nom - 3); cit = Math.max(26, cit - 1);
   }
-  let y=top;
-  ctx.fillStyle=gold;ctx.font='500 28px Outfit, sans-serif';ctx.fillText(focus.label.toUpperCase(),w/2,y-50);
-  ctx.fillStyle=ivory;ctx.font=`600 ${nameSize}px Outfit, sans-serif`;
-  for(const line of nameLines){ctx.fillText(line,w/2,y);y+=nameSize*1.18;}
-  y+=38;ctx.fillStyle=ivory;ctx.font=`italic 400 ${quoteSize}px Literata, Georgia, serif`;
-  for(const line of quoteLines){ctx.fillText(line,w/2,y);y+=quoteSize*1.4;}
-  y+=20;ctx.fillStyle=gold;ctx.font='400 26px Outfit, sans-serif';
-  for(const line of wrap(ctx,focus.source,maxWidth)){ctx.fillText(line,w/2,y);y+=34;}
-  if(c.strength && c.strength.name!==focus.name){
-    ctx.fillStyle=gold;ctx.font='500 26px Outfit, sans-serif';
-    const lines=wrap(ctx,`${c.strength.label} : ${c.strength.name}`,maxWidth);
-    lines.forEach((line,k)=>ctx.fillText(line,w/2,h-245+k*34));
+  const x = marge, y = h - marge - hauteur, rayon = tall ? 56 : 44;
+  // Verre dépoli : la photo floutée dans le panneau, un voile clair et un bord lumineux.
+  ctx.save(); cheminArrondi(ctx, x, y, largeur, hauteur, rayon); ctx.clip();
+  const flouPossible = photoPartage && 'filter' in ctx;
+  if (flouPossible) { ctx.filter = 'blur(38px) saturate(1.6)'; photoCouvrante(ctx, photoPartage!, w, h); ctx.filter = 'none'; if (voile) { ctx.fillStyle = voile; ctx.fillRect(0, 0, w, h); } }
+  ctx.fillStyle = flouPossible ? 'rgba(255,255,255,.16)' : 'rgba(38,32,24,.72)'; ctx.fillRect(x, y, largeur, hauteur);
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(255,255,255,.26)'; ctx.lineWidth = 2; cheminArrondi(ctx, x + 1, y + 1, largeur - 2, hauteur - 2, rayon); ctx.stroke();
+  // Textes, alignés à gauche dans le panneau.
+  const tx = x + pad; let ty = y + pad + 26;
+  ctx.fillStyle = 'rgba(255,255,255,.82)'; ctx.font = `700 ${tall ? 28 : 24}px ${POLICE_APPLE}`; ctx.fillText(focus.label.toUpperCase(), tx, ty);
+  ty += 24;
+  ctx.fillStyle = '#fefefe'; ctx.font = `800 ${nom}px ${POLICE_APPLE}`;
+  for (const l of nomL) { ty += nom * 1.0; ctx.fillText(l, tx, ty); ty += nom * .06; }
+  ty += 30;
+  ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.font = `italic 400 ${cit}px Georgia, "Times New Roman", serif`;
+  for (const l of citL) { ty += cit * 1.1; ctx.fillText(l, tx, ty); ty += cit * .32; }
+  ty += 44;
+  ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.font = `500 ${tall ? 24 : 21}px ${POLICE_APPLE}`;
+  for (const l of wrap(ctx, focus.source, texteW)) { ctx.fillText(l, tx, ty); ty += 30; }
+  if (appui) {
+    ty += 12; ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(x + largeur - pad, ty); ctx.stroke();
+    ty += 46; ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = `600 ${tall ? 28 : 24}px ${POLICE_APPLE}`;
+    ctx.fillText(wrap(ctx, appui, texteW)[0] ?? appui, tx, ty);
   }
-  ctx.strokeStyle='rgba(230,198,135,.25)';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(80,h-160);ctx.lineTo(w-80,h-160);ctx.stroke();
-  ctx.fillStyle=ivory;ctx.font='400 24px Outfit, sans-serif';
-  wrap(ctx,c.book,maxWidth).forEach((line,k)=>ctx.fillText(line,w/2,h-115+k*30));
-  let addressSize=28;ctx.font=`500 ${addressSize}px Outfit, sans-serif`;
-  while(addressSize>16 && ctx.measureText(c.address).width>maxWidth){addressSize--;ctx.font=`500 ${addressSize}px Outfit, sans-serif`;}
-  ctx.fillStyle=gold;ctx.fillText(c.address,w/2,h-45);
+  ty += 46; ctx.fillStyle = 'rgba(255,255,255,.72)'; ctx.font = `500 ${tall ? 23 : 20}px ${POLICE_APPLE}`;
+  ctx.fillText(wrap(ctx, pied, texteW)[0] ?? pied, tx, ty);
+  ty += 38; let taille = tall ? 26 : 22; ctx.font = `600 ${taille}px ${POLICE_APPLE}`;
+  while (taille > 16 && ctx.measureText(c.address).width > texteW) { taille--; ctx.font = `600 ${taille}px ${POLICE_APPLE}`; }
+  ctx.fillStyle = '#fefefe'; ctx.fillText(c.address, tx, ty);
 }
 
 /** Crée l'image PNG, ou null si le navigateur ne sait pas dessiner. */
@@ -206,6 +245,13 @@ export async function renderCard(format: CardFormat, content: CardContent): Prom
       document.fonts?.load('600 30px Poppins'), document.fonts?.load('500 30px Poppins'),
     ]);
   } catch { /* polices de secours */ }
+  if (content.design === 'editorial' && content.focus && !photoPartage) {
+    try {
+      const img = new Image(); img.decoding = 'async';
+      img.src = `${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp`;
+      await img.decode(); photoPartage = img;
+    } catch { /* sans photo : fond terre */ }
+  }
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
