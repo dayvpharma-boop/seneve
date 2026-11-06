@@ -824,3 +824,29 @@
 :root:root:root:root[data-apparence="sombre"] .hd-raccourcis-liste{box-shadow:0 0 0 .5px rgb(255 255 255 / .08)}
 :root:root:root:root[data-apparence="sombre"] .hd-raccourci-chevron{color:#5a5a5e}
 @media (prefers-reduced-motion:reduce){:root:root:root .hd-raccourci{transition:none}}
+/* Photo de profil (06/11/2026) : on touche la photo ; petite pastille appareil photo aux couleurs SÉNEVÉ ; menu façon iPhone */
+:root:root:root .pf-photo .pf-photo-avatar{position:relative}
+:root:root:root .pf-photo-bouton{position:relative;display:block;width:100%;height:100%;padding:0;margin:0;border:0;border-radius:50%;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s cubic-bezier(.2,.7,.2,1)}
+:root:root:root .pf-photo-bouton:active:not(:disabled){transform:scale(.96)}
+:root:root:root .pf-photo-bouton:disabled{cursor:default}
+:root:root:root .pf-photo-bouton:focus-visible{outline:3px solid var(--ios-accent,#5b4ee8);outline-offset:3px}
+:root:root:root .pf-photo-bouton .pf-avatar{display:grid;place-items:center;width:100%;height:100%}
+:root:root:root .pf-photo-pastille{position:absolute;right:4%;bottom:4%;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ios-accent,#5b4ee8);color:rgb(255 255 255);border:2.5px solid var(--ios-carte,rgb(255 255 255));box-shadow:0 2px 6px rgb(0 0 0 / .18)}
+:root:root:root .pf-photo-pastille svg{width:13px!important;height:13px!important;color:rgb(255 255 255)!important}
+:root:root:root .pf-photo-bouton:disabled .pf-photo-pastille{opacity:.55}
+:root:root:root .pf-photo-menu{display:flex;flex-direction:column;width:min(260px,100%);margin:10px auto 0;border-radius:14px;overflow:hidden;background:var(--ios-carte,rgb(255 255 255));box-shadow:0 0 0 .5px rgb(60 60 67 / .14),0 12px 30px -12px rgb(0 0 0 / .35);animation:pf-menu-apparait .18s cubic-bezier(.2,.7,.2,1)}
+:root:root:root .pf-photo-menu p{margin:0!important;padding:12px 16px 10px!important;font:400 13px/1.35 var(--ios-police)!important;color:var(--ios-doux)!important;text-align:center}
+:root:root:root .pf-photo-menu button{min-height:46px;padding:0 16px;border:0;border-radius:0;background:none;font:500 16px var(--ios-police)!important;color:var(--ios-accent,#5b4ee8)!important;text-align:center;cursor:pointer;box-shadow:inset 0 .5px 0 rgb(60 60 67 / .18)}
+:root:root:root .pf-photo-menu button:first-child{box-shadow:none}
+:root:root:root .pf-photo-menu p+button{box-shadow:inset 0 .5px 0 rgb(60 60 67 / .18)}
+:root:root:root .pf-photo-menu button:active{background:rgb(120 120 128 / .12)}
+:root:root:root .pf-photo-menu .pf-photo-menu-retirer{color:#ff3b30!important}
+:root:root:root .pf-photo-menu .pf-photo-menu-annuler{font-weight:600!important;color:var(--ios-encre)!important}
+:root:root:root:root[data-apparence="sombre"] .pf-photo-menu{box-shadow:0 0 0 .5px rgb(255 255 255 / .1),0 12px 30px -12px rgb(0 0 0 / .7)}
+:root:root:root:root[data-apparence="sombre"] .pf-photo-menu button{box-shadow:inset 0 .5px 0 rgb(255 255 255 / .12)}
+:root:root:root:root[data-apparence="sombre"] .pf-photo-menu button:first-child{box-shadow:none}
+:root:root:root:root[data-apparence="sombre"] .pf-photo-menu .pf-photo-menu-retirer{color:#ff453a!important}
+:root:root:root:root .pf-photo .pf-photo-menu{background:var(--ios-carte,rgb(255 255 255))!important;border:0!important;padding:0!important;margin:10px auto 0!important;border-radius:14px!important;gap:0!important}
+:root:root:root:root .pf-photo .pf-photo-menu button{width:100%;margin:0!important;border:0!important;outline-offset:-3px}
+@keyframes pf-menu-apparait{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){:root:root:root .pf-photo-menu{animation:none}:root:root:root .pf-photo-bouton{transition:none}}

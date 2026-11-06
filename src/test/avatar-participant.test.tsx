@@ -23,7 +23,7 @@ it('charge une seule fois pour plusieurs avatars et le profil, puis propage ajou
  render(<PhotosParticipant>{avatar}<span>{avatar}</span><PhotoProfil userId="U1" prenom="Marie" langue="fr"/></PhotosParticipant>);
  await waitFor(()=>expect(m.download).toHaveBeenCalledTimes(1));fireEvent.change(screen.getByLabelText('Choisir une photo de profil'),{target:{files:[new File(['x'],'image.png',{type:'image/png'})]}});
  await screen.findByAltText('Aperçu de la nouvelle photo');expect(image()).toBeNull();fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma photo'}));await screen.findByText('Photo de profil enregistrée');expect(document.querySelectorAll('.photo-participant img')).toHaveLength(2);
- fireEvent.click(screen.getByRole('button',{name:'Retirer ma photo'}));fireEvent.click(screen.getByRole('button',{name:'Confirmer le retrait'}));await screen.findByText('Photo de profil retirée');expect(image()).toBeNull();expect(m.download).toHaveBeenCalledTimes(1);
+ fireEvent.click(screen.getByRole('button',{name:'Changer ma photo'}));fireEvent.click(screen.getByRole('menuitem',{name:'Retirer la photo'}));fireEvent.click(screen.getByRole('button',{name:'Confirmer le retrait'}));await screen.findByText('Photo de profil retirée');expect(image()).toBeNull();expect(m.download).toHaveBeenCalledTimes(1);
 });
 it('remplace les URLs, les révoque au retrait et ne diffuse rien après une écriture refusée',async()=>{
  render(<PhotosParticipant>{avatar}</PhotosParticipant>);await waitFor(()=>expect(image()).not.toBeNull());const ancienne=image()!.getAttribute('src');m.upload.mockResolvedValueOnce({error:Error('refus')});await expect(enregistrerPhoto('U1',blob())).rejects.toThrow();expect(image()).toHaveAttribute('src',ancienne);
