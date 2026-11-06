@@ -215,7 +215,8 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    <PenseeLivre langue={language} titre={en ? 'A guide from the book' : 'Un repère du livre'} />
    <p className="home-legal"><a className="link" href={`${import.meta.env.BASE_URL}confidentialite${en ? '?lang=en' : ''}`}>{en ? 'Privacy policy' : 'Confidentialité'}</a></p>
   </section>
-  <section id="s-quiz" hidden={screen !== 'quiz'}>
+  {/* Design « échelle tactile » choisi par Dr Justin le 06/11/2026 (proposition B, style app Forme). */}
+  <section id="s-quiz" className="quiz-tactile" hidden={screen !== 'quiz'}>
    {barreTest}
    <div className="quiz-nav">
     {i > 0 ? <PrototypeButton className="link quiz-precedente" id="back" onClick={back}>{t.back}</PrototypeButton> : <span />}
@@ -229,6 +230,13 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    {/* Une part par racine : elle se remplit question par question (3 questions par racine). */}
    <div className="segments" aria-hidden="true">
     {[0,1,2,3,4,5,6].map(k => <span key={k} className={k === racineEnCours ? 'segment-bloc is-current' : k < racineEnCours ? 'segment-bloc is-done' : 'segment-bloc'}><span className="segment"><i style={{ width: `${Math.min(1, Math.max(0, (i + 1 - 3*k) / 3)) * 100}%` }} /></span><b>{k+1}</b></span>)}
+   </div>
+   <div className="quiz-anneau" aria-hidden="true">
+    <svg width="120" height="120" viewBox="0 0 120 120">
+     <circle className="quiz-anneau-fond" cx="60" cy="60" r="50" /><circle className="quiz-anneau-trait" cx="60" cy="60" r="50" strokeDasharray={2 * Math.PI * 50} strokeDashoffset={2 * Math.PI * 50 * (1 - (i + 1) / 21)} transform="rotate(-90 60 60)" />
+     <circle className="quiz-anneau-fond quiz-anneau-racine" cx="60" cy="60" r="34" /><circle className="quiz-anneau-trait quiz-anneau-racine" cx="60" cy="60" r="34" strokeDasharray={2 * Math.PI * 34} strokeDashoffset={2 * Math.PI * 34 * (1 - (i % 3 + 1) / 3)} transform="rotate(-90 60 60)" />
+    </svg>
+    <b>{i + 1}<small>/21</small></b>
    </div>
    {i % 3 === 0 && t.roots[racineEnCours]?.s && <figure className="quiz-seuil"><blockquote className="quote">{t.quote(t.roots[racineEnCours]?.s ?? '')}</blockquote><figcaption className="src">{t.thresholdSource}</figcaption></figure>}
    <div className="quiz-card">
