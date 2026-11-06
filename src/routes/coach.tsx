@@ -83,7 +83,10 @@ export function Coach() {
   useEffect(() => { void refresh(); }, [refresh]);
 
   const enrollment = data ? (data.enrollments.find(x => x.enrollment_id === chosen) ?? data.defaut) : null;
-  const langueVue = enrollment?.langue ?? data?.langue ?? langueSansDonnees(params);
+  // La langue choisie dans l'application (?lang=) passe en premier, comme sur les autres pages (07/11/2026) :
+  // un compte dont la fiche est en français mais qui utilise l'application en anglais voyait le Coach en français.
+  const langueChoisie = params.get('lang');
+  const langueVue = langueChoisie === 'en' || langueChoisie === 'fr' ? langueChoisie : enrollment?.langue ?? (typeof document !== 'undefined' && document.documentElement.lang === 'en' ? 'en' : data?.langue ?? langueSansDonnees(params));
   const T = coachTextes(langueVue);
   useEffect(() => { document.title = `${T.titre} — SÉNEVÉ`; document.documentElement.lang = langueVue === 'en' ? 'en' : 'fr'; }, [T, langueVue]);
 
