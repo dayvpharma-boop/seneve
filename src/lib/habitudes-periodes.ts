@@ -47,3 +47,8 @@ export function calendrierPeriodes(dateDebut:string,periodes:PeriodeHabitudes[],
  return {date_locale,raw,total,debuts,day:Math.max(1,Math.min(raw,total)),notStarted:raw<1,finished:termine,joursOuverts:Math.max(0,Math.min(raw,total))};
 }
 
+
+/** Demande de Dr Justin (06/11/2026) : le compteur d'Habitudes & Défis montre le mois en cours sur les 6 du parcours
+ *  (« Jour 12 · Mois 1 sur 6 ») plutôt que le total des jours ouverts, qui grandit à chaque mois acheté. */
+export const MOIS_HABITUDES=6;
+export const moisHabitudes=(jour:number)=>Math.min(MOIS_HABITUDES,Math.max(1,Math.ceil(Math.max(1,jour)/30)));

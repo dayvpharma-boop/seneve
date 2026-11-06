@@ -1,6 +1,7 @@
 import type {JourHabitudesLecture} from '@/lib/habitudes-lecture';
 import type {Bilan} from '@/lib/progres';
 import {IconeProgres} from '@/components/IconeProgres';
+import {MOIS_HABITUDES} from '@/lib/habitudes-periodes';
 
 /** Calendrier Habitudes & Défis sur la page Parcours (demande de Dr Justin du 31/10/2026) :
  *  même présentation que les autres parcours (tuiles des jours, barre, chiffres), pour le mois en cours.
@@ -34,7 +35,7 @@ export function CalendrierHabitudes({jours,b,langue}:{jours:readonly JourHabitud
  const libelle=(e:EtatTuile)=>({complete:en?'all activities completed':'toutes les activités réalisées',commencee:en?'started':'commencée',aucune:en?'nothing recorded':'rien d’enregistré',vide:en?'no activity':'aucune activité',a_venir:en?'not open yet':'pas encore ouvert'})[e];
  return <section className="card progres-carte hd-calendrier" aria-labelledby="hd-calendrier-titre">
   <div className="parcours-synthese-titre"><h2 id="hd-calendrier-titre">{en?'My calendar':'Mon calendrier'}</h2><span>{en?'Month':'Mois'} {mois}</span></div>
-  <p className="progres-compte">{b.termine?(en?'Journey completed':'Parcours terminé'):en?`Day ${b.joursOuverts} of ${b.duree} · days ${premier} to ${dernier} shown`:`Jour ${b.joursOuverts} sur ${b.duree} · jours ${premier} à ${dernier}`}</p>
+  <p className="progres-compte">{b.termine?(en?'Journey completed':'Parcours terminé'):en?`Day ${b.joursOuverts} · Month ${mois} of ${MOIS_HABITUDES} · days ${premier} to ${dernier} shown`:`Jour ${b.joursOuverts} · Mois ${mois} sur ${MOIS_HABITUDES} · jours ${premier} à ${dernier}`}</p>
   <ol className="day-tiles progres-tuiles is-compact" aria-label={en?`Days ${premier} to ${dernier}`:`Jours ${premier} à ${dernier}`}>
    {tuiles.map(jour=>{const e=jour>b.joursOuverts?'a_venir':etatJourHabitudes(parJour.get(jour));
     return <li key={jour} className={['day-tile',jour===aujourdhui&&'is-today',e==='complete'&&'is-done',e==='a_venir'&&'is-locked',e==='commencee'&&'is-partial'].filter(Boolean).join(' ')} aria-label={`${en?'Day':'Jour'} ${jour} : ${libelle(e)}${jour===aujourdhui?(en?' (today)':' (aujourd’hui)'):''}`}>
