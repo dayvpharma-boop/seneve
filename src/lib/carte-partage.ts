@@ -165,6 +165,8 @@ function cheminArrondi(ctx: CanvasRenderingContext2D, x: number, y: number, w: n
 function photoCouvrante(ctx: CanvasRenderingContext2D, img: CanvasImageSource, w: number, h: number) {
   const iw = (img as HTMLImageElement).naturalWidth || (img as HTMLImageElement).width || 720, ih = (img as HTMLImageElement).naturalHeight || (img as HTMLImageElement).height || 314;
   const k = Math.max(w / iw, h / ih), dw = iw * k, dh = ih * k;
+  // Photo d’origine 1900 px (06/11/2026) et agrandissement de haute qualité : la petite plante reste nette.
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
 }
 function degrade(ctx: CanvasRenderingContext2D, y0: number, y1: number, arrets: [number, string][]) {
@@ -251,7 +253,7 @@ export async function renderCard(format: CardFormat, content: CardContent): Prom
   if (content.design === 'editorial' && content.focus && !photoPartage) {
     try {
       const img = new Image(); img.decoding = 'async';
-      img.src = `${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-v1-720.webp`;
+      img.src = `${import.meta.env.BASE_URL}illustrations/seneve-pousse-photo-partage-1900.jpg`;
       await img.decode(); photoPartage = img;
     } catch { /* sans photo : fond terre */ }
   }
