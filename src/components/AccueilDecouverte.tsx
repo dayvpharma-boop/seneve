@@ -19,7 +19,7 @@ const TEXTES = {
     instant: 'Un instant…', commencer: 'Commencer ma Découverte',
     autre: { langue: 'en' as const, titre: 'English track available', texte: 'A free 7-day journey based on the book “Stop Begging for Miracles”.', bouton: 'Start in English' },
     reglages: 'Mes réglages', reglagesDetail: 'Liaison WhatsApp et code de place offerte.',
-    hd: { badge: '30 jours gratuits', titre: 'Habitudes & Défis', texte: 'Installe, jour après jour, des habitudes qui durent. À suivre en même temps que ta Découverte.', bouton: 'Activer mes 30 jours gratuits', plus: 'En savoir plus' },
+    hd: { badge: '30 jours gratuits', titre: 'Habitudes & Défis', texte: 'Installe, jour après jour, des habitudes qui durent. À suivre en même temps que ta Découverte.', bouton: 'Activer mes 30 jours gratuits', plus: 'En savoir plus', chiffres: [['8', 'disciplines'], ['30', 'jours offerts'], ['0', 'paiement']] as const },
   },
   en: {
     bonjour: 'Hello', pret: 'Your space is ready. Choose your first step to take root.',
@@ -31,24 +31,33 @@ const TEXTES = {
     instant: 'One moment…', commencer: 'Start my Discovery',
     autre: { langue: 'fr' as const, titre: 'Parcours en français disponible', texte: 'Un parcours gratuit de 7 jours d’après le livre « Arrête de mendier des miracles ».', bouton: 'Commencer en français' },
     reglages: 'My settings', reglagesDetail: 'WhatsApp link and sponsored place code.',
-    hd: { badge: '30 days free', titre: 'Habits & Challenges', texte: 'Build, day after day, habits that last. Follow it alongside your Discovery.', bouton: 'Activate my 30 free days', plus: 'Learn more' },
+    hd: { badge: '30 days free', titre: 'Habits & Challenges', texte: 'Build, day after day, habits that last. Follow it alongside your Discovery.', bouton: 'Activate my 30 free days', plus: 'Learn more', chiffres: [['8', 'disciplines'], ['30', 'free days'], ['0', 'payment']] as const },
   },
 };
 
 /** Demande de Dr Justin (03/11/2026) : dès la première connexion, Habitudes & Défis visible en haut, à côté de la Découverte. */
+/** Trois anneaux décoratifs façon app Forme (rouge, vert, bleu). */
+function AnneauxForme() {
+  const anneaux = [[34, 'rouge', .72], [24, 'vert', .55], [14, 'bleu', .4]] as const;
+  return <svg className="dhd-anneaux" width="84" height="84" viewBox="0 0 84 84" aria-hidden="true">
+    {anneaux.map(([r, c, part]) => { const L = 2 * Math.PI * r; return <g key={c} className={`dhd-anneau-${c}`}><circle className="dhd-anneau-fond" cx="42" cy="42" r={r} /><circle className="dhd-anneau-trait" cx="42" cy="42" r={r} strokeDasharray={L} strokeDashoffset={L * (1 - part)} transform="rotate(-90 42 42)" /></g>; })}
+  </svg>;
+}
+
 export function CarteHabitudes({ langue }: { langue: string }) {
   const l = langue === 'en' ? 'en' : 'fr';
   const t = TEXTES[l].hd;
   if (!habitudesActivees()) return null;
-  return <aside className="decouverte-hd" aria-labelledby="titre-decouverte-hd">
-    <img src={`${import.meta.env.BASE_URL}illustrations/couverture-habitudes-${l}-v1-200.webp`} width={200} height={300} alt="" />
-    <div>
-      <span className="decouverte-hd-badge"><IconeAccueilEspace nom="spa" taille={14} />{t.badge}</span>
-      <h2 id="titre-decouverte-hd">{t.titre}</h2>
-      <p>{t.texte}</p>
-      <Link className="decouverte-hd-activer" to={`/habitudes/inscription?lang=${l}`}>{t.bouton}<IconeAccueilEspace nom="east" taille={18} /></Link>
-      <Link className="decouverte-hd-plus" to={`/habitudes?lang=${l}`}>{t.plus}</Link>
-    </div>
+  // Design « app Forme » choisi par Dr Justin le 06/11/2026 (proposition C) : carte noire, trois anneaux,
+  // trois chiffres et bouton vert vif. Textes et liens inchangés.
+  return <aside className="decouverte-hd dhd-forme" aria-labelledby="titre-decouverte-hd">
+    <span className="decouverte-hd-badge">{t.badge}</span>
+    <AnneauxForme />
+    <h2 id="titre-decouverte-hd">{t.titre}</h2>
+    <p>{t.texte}</p>
+    <dl className="dhd-chiffres">{t.chiffres.map(([n, x]) => <div key={x}><dt>{x}</dt><dd>{n}</dd></div>)}</dl>
+    <Link className="decouverte-hd-activer" to={`/habitudes/inscription?lang=${l}`}>{t.bouton}</Link>
+    <Link className="decouverte-hd-plus" to={`/habitudes?lang=${l}`}>{t.plus}</Link>
   </aside>;
 }
 
