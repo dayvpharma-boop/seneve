@@ -907,3 +907,55 @@
 :root:root:root .espace-page .dhd-forme a.decouverte-hd-plus{grid-column:1/-1;justify-self:center;align-self:center;min-height:36px;display:flex;align-items:center;color:#ffffffd9!important;font:500 14px/1.2 var(--ios-police);text-decoration:none!important}
 :root:root:root .espace-page .dhd-forme a:focus-visible{outline:3px solid #fefefe;outline-offset:3px}
 @media (prefers-reduced-motion:reduce){:root:root:root .espace-page .dhd-forme a.decouverte-hd-activer:active{transform:none}}
+
+/* Test des 7 Racines, page des questions : design « échelle tactile » (proposition B, 06/11/2026).
+   Anneau d'avancement (21 questions, et 3 par racine), question centrée, 5 grands ronds de couleur, citation en carte. */
+:root:root:root:root #s-quiz.quiz-tactile{display:flex;flex-direction:column;font-family:var(--ios-police)}
+:root:root:root:root #s-quiz.quiz-tactile > *{order:2}
+:root:root:root:root #s-quiz.quiz-tactile > .quiz-nav{order:0}
+:root:root:root:root #s-quiz.quiz-tactile > .quiz-anneau{order:1}
+:root:root:root:root #s-quiz.quiz-tactile > .quiz-seuil{order:3;margin:22px 0 0;padding:14px 16px;border:0;border-radius:18px;background:var(--ios-carte);box-shadow:0 1px 2px #0000000a}
+:root:root:root:root #s-quiz.quiz-tactile > .quiz-validation{order:4}
+:root:root:root:root #s-quiz.quiz-tactile .segments{display:none}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-nav .count-main{font:600 13px/1.2 var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau{position:relative;width:120px;height:120px;margin:6px auto 4px}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau circle{fill:none;stroke-linecap:round}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-fond{stroke:#5b4ee82a;stroke-width:12}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-trait{stroke:#5b4ee8;stroke-width:12;transition:stroke-dashoffset 600ms var(--ios-ressort,ease)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-fond.quiz-anneau-racine{stroke:#30d1582a;stroke-width:10}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-trait.quiz-anneau-racine{stroke:#30d158;stroke-width:10}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 26px/1 var(--ios-police);letter-spacing:-.02em;color:var(--ios-encre)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau b small{font:600 15px/1 var(--ios-police);color:var(--ios-doux);margin-left:1px}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-racine-entete{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;margin:4px 0 0}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-racine-entete > div{display:flex;flex-direction:column;align-items:center;gap:2px}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-racine-num{margin:0;padding:6px 12px;border-radius:999px;background:#5b4ee81f;color:#5b4ee8;font:700 12.5px/1.2 var(--ios-police);letter-spacing:.03em;text-transform:uppercase}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-racine{margin:6px 0 0;font:700 17px/1.25 var(--ios-police);color:var(--ios-encre)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-restantes{background:none;color:var(--ios-doux);font:500 13px/1.2 var(--ios-police);padding:0}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-card{margin:16px 0 0;padding:0;border:0;background:none;box-shadow:none;text-align:center}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-card-haut{display:none}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-card .q{margin:0 6px;font:700 23px/1.28 var(--ios-police)!important;letter-spacing:-.015em;color:var(--ios-encre)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-card .tap-hint{justify-content:center;margin:12px 0 0;font:400 13px/1.4 var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-card > :not(.q):not(.tap-hint):not(.quiz-card-haut){margin-left:auto;margin-right:auto}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-echelle{margin:22px 0 0;justify-content:center;text-align:center;font:600 13px/1.2 var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-echelle span+span{display:none}
+:root:root:root:root #s-quiz.quiz-tactile .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0 0}
+:root:root:root:root #s-quiz.quiz-tactile .scale-option{display:flex;flex-direction:column;align-items:center;gap:8px}
+:root:root:root:root #s-quiz.quiz-tactile .scale-button{width:54px!important;height:54px!important;max-width:none!important;min-height:0!important;aspect-ratio:1;border:0!important;border-radius:50%!important;color:#fefefe!important;font:800 19px/1 var(--ios-police)!important;box-shadow:0 8px 16px -10px #0007;transition:transform 120ms ease-out,box-shadow .2s}
+:root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(1) .scale-button{background:#aeaeb2!important}
+:root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(2) .scale-button{background:#ff9f0a!important}
+:root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(3) .scale-button{background:#ffcc00!important;color:#3a2f00!important}
+:root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(4) .scale-button{background:#30d158!important}
+:root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(5) .scale-button{background:#5b4ee8!important}
+:root:root:root:root #s-quiz.quiz-tactile .scale-button:active{transform:scale(.92)}
+:root:root:root:root #s-quiz.quiz-tactile .scale-button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ios-fond),0 0 0 6px #5b4ee8}
+:root:root:root:root #s-quiz.quiz-tactile .scale-label{font:500 11.5px/1.2 var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-quiz.quiz-tactile .scale:has(.scale-label) + .ends{display:none}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-seuil .quote{font:italic 15px/1.45 Lora,Georgia,serif;color:var(--ios-doux);border:0;padding:0;margin:0}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-seuil .src{margin-top:6px;font:400 12px/1.3 var(--ios-police);color:var(--ios-doux)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-confidentialite{font:400 12px/1.45 var(--ios-police);color:var(--ios-doux)}
+@media (prefers-reduced-motion:reduce){:root:root:root:root #s-quiz.quiz-tactile .scale-button:active{transform:none}:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-trait{transition:none}}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-racine-entete{position:static!important;display:flex!important;flex-direction:column!important;align-items:center!important;grid-template-columns:none!important}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-restantes{position:static!important;margin:0!important;transform:none!important}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-card{display:flex!important;flex-direction:column!important;align-items:center!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-card .tap-hint{text-align:center;max-width:300px}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-card .tap-hint{display:inline-flex!important;gap:6px;align-items:flex-start;width:auto}
