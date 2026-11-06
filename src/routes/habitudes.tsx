@@ -2,6 +2,7 @@ import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {useEffect,useState} from 'react';
 import {Link,useLocation,useNavigate,useSearchParams} from 'react-router-dom';
 import {SimulateurDime} from '@/components/SimulateurDime';
+import {SimulateurEpargne} from '@/components/SimulateurEpargne';
 import {planningHabitudesPourDate,type HorairePersonnelHabitude} from '@/lib/habitudes-planning';
 import {rythmeProposeHabitudes} from '@/lib/habitudes-rythme-propose';
 import {lecturesHabitudesFr} from '@/data/habitudes-lectures-fr';
@@ -36,7 +37,7 @@ export function Habitudes(){
    <p className="hd-public-small">{l('Cet aperçu ne crée aucun horaire personnel et n’enregistre aucune réalisation.','This preview does not create a personal schedule or record any activity completion.')}</p>
   </section>
   <section id="priere" className="hd-public-section hd-public-prayer"><p className="hd-public-eyebrow">{l('Matin · Midi · Soir','Morning · Midday · Evening')}</p><h2>{l('Prière juive — Amidah','Jewish prayer — Amidah')}</h2><p>{l('Trois rendez-vous pour prier à ton rythme, avec un texte fluide et des repères discrets pour les gestes.','Three moments to pray at your own pace, with flowing text and discreet movement cues.')}</p><p className="hd-public-small">{l('La lecture française intégrale est disponible. Sa durée dépend de chaque personne.','The full French reading is available. Its duration varies from person to person.')}</p><p><a className="btn-primaire" href={`${import.meta.env.BASE_URL}amidah.html`}>{l("Lire l’Amidah en français","Read the Amidah in French")}</a></p></section>
-  <section id="dime" className="hd-public-section"><p className="hd-public-eyebrow">{l('Comprendre et pratiquer','Understand and practice')}</p><h2>{l('Dîme & offrande','Tithe & offering')}</h2><p>{l('Explore les règles pédagogiques du parcours avec le simulateur facultatif. Pour l’offrande, le montant reste libre.','Explore the journey’s educational rules with the optional simulator. The offering amount remains freely chosen.')}</p><SimulateurDime langue={langue} key={langue}/></section>
+  <section id="dime" className="hd-public-section"><p className="hd-public-eyebrow">{l('Comprendre et pratiquer','Understand and practice')}</p><h2>{l('Dîme, offrande & épargne','Tithe, offering & savings')}</h2><p>{l('Explore les règles pédagogiques du parcours avec les simulateurs facultatifs. La dîme suit son calcul propre ; l’offrande reste libre ; les épargnes sont des repères choisis, sans versement automatique.','Explore the journey’s educational rules with the optional calculators. The tithe follows its own calculation; offering remains free; savings are chosen guides with no automatic transfers.')}</p><SimulateurDime langue={langue} key={`dime-${langue}`}/><div className="mt-hd-space-md"><SimulateurEpargne langue={langue} key={`epargne-${langue}`}/></div></section>
   <footer className="hd-public-footer"><p>{l('Avancer avec honnêteté, reprendre avec confiance.','Move forward honestly, begin again with confidence.')}</p><p>{l('Le suivi des activités ne mesure ni ta foi ni ta valeur.','Activity tracking measures neither your faith nor your worth.')}</p><Link to={path('/offres')}>{l('Les parcours SÉNEVÉ','SÉNEVÉ journeys')}</Link><Link to={path('/espace')}>{l('Revenir à mon espace','Back to my space')}</Link></footer>
  </main>;
 }
