@@ -887,23 +887,23 @@
 :root:root:root .hd-rappels-inscription-choix .hd-rappels-inscription-liste ul{border-radius:0;box-shadow:inset 0 .5px 0 rgb(60 60 67 / .16)}
 :root:root:root .hd-rappels-inscription-note{margin:8px 4px 0!important;font:400 12.5px/1.4 var(--ios-police,system-ui)!important;color:var(--ios-doux,#6e6e73)!important}
 
-/* Carte « Habitudes & Défis » de la page Aujourd'hui, design app Forme choisi le 06/11/2026 (proposition C).
+/* Carte « Habitudes & Défis » de la page Aujourd'hui, design app Forme choisi le 06/11/2026 (proposition C), aux couleurs de l'application avec un peu de noir.
    Noir #050505 et blanc #fefefe : l'outil des thèmes remplace #000 et #fff par les couleurs du thème. */
-:root:root:root .espace-page aside.decouverte-hd.dhd-forme{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;margin:14px 0 22px;padding:20px;border:0;border-radius:22px;background:#050505;color:#fefefe;box-shadow:0 18px 40px -24px #000c}
-:root:root:root .espace-page .dhd-forme .decouverte-hd-badge{all:unset;grid-column:1;font:700 13px/1.2 var(--ios-police);letter-spacing:.05em;text-transform:uppercase;color:#a6ff00}
+:root:root:root .espace-page aside.decouverte-hd.dhd-forme{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;margin:14px 0 22px;padding:20px;border:0;border-radius:22px;background:radial-gradient(120% 85% at 0% 0%,#7b6cf6 0%,#5b4ee8 30%,#2a2170 62%,#0b0a14 100%);color:#fefefe;box-shadow:0 18px 36px -18px #1a1640cc}
+:root:root:root .espace-page .dhd-forme .decouverte-hd-badge{all:unset;grid-column:1;font:700 13px/1.2 var(--ios-police);letter-spacing:.05em;text-transform:uppercase;color:#ffffffe6}
 :root:root:root .espace-page .dhd-forme .dhd-anneaux{grid-column:2;grid-row:1/3}
 :root:root:root .espace-page .dhd-forme .dhd-anneau-fond,:root:root:root .espace-page .dhd-forme .dhd-anneau-trait{fill:none;stroke-width:9;stroke-linecap:round}
-:root:root:root .espace-page .dhd-forme .dhd-anneau-rouge .dhd-anneau-fond{stroke:#fa114f33}.dhd-forme .dhd-anneau-rouge .dhd-anneau-trait{stroke:#fa114f}
-:root:root:root .espace-page .dhd-forme .dhd-anneau-vert .dhd-anneau-fond{stroke:#a6ff0033}.dhd-forme .dhd-anneau-vert .dhd-anneau-trait{stroke:#a6ff00}
-:root:root:root .espace-page .dhd-forme .dhd-anneau-bleu .dhd-anneau-fond{stroke:#00e5ff33}.dhd-forme .dhd-anneau-bleu .dhd-anneau-trait{stroke:#00e5ff}
+:root:root:root .espace-page .dhd-forme .dhd-anneau-rouge .dhd-anneau-fond{stroke:#ffffff40}.dhd-forme .dhd-anneau-rouge .dhd-anneau-trait{stroke:#fefefe}
+:root:root:root .espace-page .dhd-forme .dhd-anneau-vert .dhd-anneau-fond{stroke:#30d15840}.dhd-forme .dhd-anneau-vert .dhd-anneau-trait{stroke:#30d158}
+:root:root:root .espace-page .dhd-forme .dhd-anneau-bleu .dhd-anneau-fond{stroke:#ff9f0a40}.dhd-forme .dhd-anneau-bleu .dhd-anneau-trait{stroke:#ff9f0a}
 :root:root:root .espace-page .dhd-forme h2{grid-column:1;margin:2px 0 0;color:#fefefe;font:800 28px/1.08 var(--ios-police);letter-spacing:-.025em}
-:root:root:root .espace-page .dhd-forme p{grid-column:1/-1;margin:6px 0 4px;color:#ebebf599;font:400 15px/1.4 var(--ios-police)}
+:root:root:root .espace-page .dhd-forme p{grid-column:1/-1;margin:6px 0 4px;color:#ffffffd1;font:400 15px/1.4 var(--ios-police)}
 :root:root:root .espace-page .dhd-forme .dhd-chiffres{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 12px}
-:root:root:root .espace-page .dhd-forme .dhd-chiffres div{display:flex;flex-direction:column-reverse;border-radius:14px;background:#1c1c1e;padding:10px}
+:root:root:root .espace-page .dhd-forme .dhd-chiffres div{display:flex;flex-direction:column-reverse;border-radius:14px;background:#ffffff1a;padding:10px}
 :root:root:root .espace-page .dhd-forme .dhd-chiffres dd{margin:0;color:#fefefe;font:700 20px/1.1 var(--ios-police)}
-:root:root:root .espace-page .dhd-forme .dhd-chiffres dt{color:#ebebf599;font:500 12px/1.3 var(--ios-police)}
-:root:root:root .espace-page .dhd-forme a.decouverte-hd-activer{grid-column:1/-1;display:flex;justify-content:center;align-items:center;min-height:50px;margin:0;padding:0 14px;border-radius:14px;background:#a6ff00;color:#050505!important;font:700 17px/1.2 var(--ios-police);text-align:center;text-decoration:none!important;transition:transform 120ms ease-out}
+:root:root:root .espace-page .dhd-forme .dhd-chiffres dt{color:#ffffffc7;font:500 12px/1.3 var(--ios-police)}
+:root:root:root .espace-page .dhd-forme a.decouverte-hd-activer{grid-column:1/-1;display:flex;justify-content:center;align-items:center;min-height:50px;margin:0;padding:0 14px;border-radius:14px;background:#fefefe;color:#5b4ee8!important;font:700 17px/1.2 var(--ios-police);text-align:center;text-decoration:none!important;transition:transform 120ms ease-out}
 :root:root:root .espace-page .dhd-forme a.decouverte-hd-activer:active{transform:scale(.97)}
-:root:root:root .espace-page .dhd-forme a.decouverte-hd-plus{grid-column:1/-1;justify-self:center;align-self:center;min-height:36px;display:flex;align-items:center;color:#ebebf5cc!important;font:500 14px/1.2 var(--ios-police);text-decoration:none!important}
-:root:root:root .espace-page .dhd-forme a:focus-visible{outline:3px solid #a6ff00;outline-offset:3px}
+:root:root:root .espace-page .dhd-forme a.decouverte-hd-plus{grid-column:1/-1;justify-self:center;align-self:center;min-height:36px;display:flex;align-items:center;color:#ffffffd9!important;font:500 14px/1.2 var(--ios-police);text-decoration:none!important}
+:root:root:root .espace-page .dhd-forme a:focus-visible{outline:3px solid #fefefe;outline-offset:3px}
 @media (prefers-reduced-motion:reduce){:root:root:root .espace-page .dhd-forme a.decouverte-hd-activer:active{transform:none}}
