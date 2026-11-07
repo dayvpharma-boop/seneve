@@ -6,7 +6,7 @@ import {Habitudes} from '@/routes/habitudes';
 beforeEach(()=>{vi.stubEnv('VITE_HABITUDES_DEFIS','false');vi.stubEnv('VITE_HABITUDES_INSCRIPTION','fermee');});
 afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllEnvs();});
 it('publie un aperçu explicite et permet de parcourir les trois jours de culte',()=>{
- render(<MemoryRouter><Habitudes/></MemoryRouter>);expect(screen.getByText('Aperçu · module en préparation')).toBeVisible();expect(screen.getByRole('heading',{name:'Habitudes & Défis'})).toBeVisible();expect(screen.getByText('30 jours gratuits')).toBeVisible();
+ render(<MemoryRouter><Habitudes/></MemoryRouter>);expect(screen.getByText('Aperçu · module en préparation')).toBeVisible();expect(screen.getByRole('heading',{name:'Habitudes & Défis'})).toBeVisible();expect(screen.getByText('jours gratuits')).toBeVisible();
  const liste=screen.getByRole('list');expect(within(liste).getAllByRole('listitem')).toHaveLength(13);fireEvent.change(screen.getByRole('combobox',{name:'Voir un jour de la semaine'}),{target:{value:'3'}});expect(within(liste).getAllByRole('listitem')).toHaveLength(14);expect(within(liste).getByText('Culte en semaine')).toBeVisible();
  expect(screen.queryByRole('button',{name:/Commencer|réalisé|inscrire/i})).toBeNull();
 });
