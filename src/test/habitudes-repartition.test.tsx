@@ -50,11 +50,11 @@ it('la page affiche la répartition et garde les pourcentages dans leurs limites
  expect(screen.getByLabelText('Argent encaissé')).toHaveValue('');
  expect(screen.queryByLabelText('Coût des marchandises vendues')).toBeNull();
 });
-it('le dollar américain apparaît en haut du menu des monnaies, juste après le franc congolais',async()=>{
+it('le dollar américain apparaît juste après le kwanza, dans les monnaies les plus utilisées',async()=>{
  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
  render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);
  const options=[...(screen.getByLabelText('Monnaie') as HTMLSelectElement).options];
- expect(options.slice(0,5).map(o=>o.text)).toEqual(['Franc congolais (CDF)','Dollar américain (USD)','Euro (EUR)','Franc CFA d’Afrique centrale (XAF)','Franc CFA d’Afrique de l’Ouest (XOF)']);
+ expect(options.slice(0,6).map(o=>o.text)).toEqual(['Franc congolais (CDF)','Euro (EUR)','Franc CFA d’Afrique centrale (XAF)','Franc CFA d’Afrique de l’Ouest (XOF)','Kwanza angolais (AOA)','Dollar américain (USD)']);
  fireEvent.change(screen.getByLabelText('Monnaie'),{target:{value:'USD'}});
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
  expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/1\s?000 USD/);
