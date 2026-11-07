@@ -2,7 +2,7 @@ import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import type {ReactNode} from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,expect,it,vi} from 'vitest';
-import {baseRepartition,repartir,repartirSurDettes,POURCENTAGES_DEFAUT} from '@/lib/habitudes-repartition';
+import {baseRepartition,maximumPart,repartir,repartirSurDettes,POURCENTAGES_DEFAUT} from '@/lib/habitudes-repartition';
 
 vi.mock('@/lib/habitudes-configuration',()=>({habitudesActivees:()=>true,suiviFinancierActive:()=>true}));
 vi.mock('@/components/CadreHabitudes',()=>({CadreHabitudes:({children}:{children:ReactNode})=><>{children}</>}));
@@ -17,7 +17,14 @@ it('calcule la base selon le profil, avec les règles de la dîme',()=>{
  expect(()=>baseRepartition('salarie','abc','','')).toThrow();
 });
 it('répartit 500 000 : dîme 10 %, réserve 10 %, investir 20 %, dettes 15 %, le reste pour vivre',()=>{
- expect(repartir('500000',POURCENTAGES_DEFAUT,2)).toEqual({base:500000,dime:50000,reserve:50000,investir:100000,dettes:75000,vivre:225000});
+ expect(repartir('500000',POURCENTAGES_DEFAUT,2)).toEqual({base:500000,dime:50000,offrande:0,reserve:50000,investir:100000,dettes:75000,vivre:225000});
+});
+it('l’offrande est libre (0 % au départ) mais le total ne dépasse jamais 100 %',()=>{
+ expect(POURCENTAGES_DEFAUT.offrande).toBe(0);
+ const p={...POURCENTAGES_DEFAUT,offrande:20};
+ expect(repartir('500000',p,2)).toMatchObject({offrande:100000,vivre:125000});
+ expect(maximumPart('offrande',POURCENTAGES_DEFAUT)).toBe(45);
+ expect(repartir('500000',{...POURCENTAGES_DEFAUT,offrande:45},2).vivre).toBe(0);
 });
 it('propose la part « Dettes » d’abord sur la plus petite dette',()=>{
  expect(repartirSurDettes(7500000,[{id:'papy',resteCentimes:12000000},{id:'kanza',resteCentimes:6000000}])).toEqual({propositions:[{id:'kanza',centimes:6000000,solde:true},{id:'papy',centimes:1500000,solde:false}],surplus:0});
@@ -32,6 +39,9 @@ it('la page affiche la répartition et garde les pourcentages dans leurs limites
  expect(base.textContent).toMatch(/500\s?000 CDF/);
  expect(within(base).getByText('Pour vivre').closest('li')!.textContent).toMatch(/225\s?000/);
  expect(screen.getByRole('button',{name:'Augmenter : Réserve de joie'})).toBeDisabled();
+ for(let i=0;i<4;i++)fireEvent.click(screen.getByRole('button',{name:'Augmenter : Offrande'}));
+ expect(within(base).getByText('Offrande').closest('li')!.textContent).toMatch(/100\s?000/);
+ expect(within(base).getByText('Pour vivre').closest('li')!.textContent).toMatch(/125\s?000/);
  for(let i=0;i<5;i++)fireEvent.click(screen.getByRole('button',{name:'Augmenter : Dettes'}));
  expect(screen.getByRole('button',{name:'Augmenter : Dettes'})).toBeDisabled();
  const lien=screen.getByRole('link',{name:/Réserve de joie/});

@@ -5,10 +5,10 @@ import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {IconeHD} from '@/components/IconeHabitudes';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {DEVISES_SUIVI,decimalesDevise,nomDevise} from '@/lib/devises';
-import {baseRepartition,repartir,LIMITES_REPARTITION,POURCENTAGES_DEFAUT,type CleRepartition,type Pourcentages,type ProfilRevenu} from '@/lib/habitudes-repartition';
+import {baseRepartition,maximumPart,repartir,LIMITES_REPARTITION,POURCENTAGES_DEFAUT,type CleRepartition,type Pourcentages,type ProfilRevenu} from '@/lib/habitudes-repartition';
 import {NotFound} from '@/routes/introuvable';
 
-const COULEURS:Record<CleRepartition|'vivre',string>={dime:'#b8862b',reserve:'#2f9e62',investir:'#2f6fe0',dettes:'#e0662f',vivre:'#c7c7cc'};
+const COULEURS:Record<CleRepartition|'vivre',string>={dime:'#b8862b',offrande:'#b05bd6',reserve:'#2f9e62',investir:'#2f6fe0',dettes:'#e0662f',vivre:'#c7c7cc'};
 
 /** Page « Ma répartition » (maquette validée le 07/11/2026), ouverte depuis Mon épargne ou Mon suivi des dettes.
  * Calcul local seulement : aucun montant n'est envoyé ni enregistré. Le bouton final ne fait que préremplir un formulaire. */
@@ -35,12 +35,13 @@ export function HabitudesRepartition(){
  const champ=(id:string,libelle:string,valeur:string,changer:(v:string)=>void,signe=false)=><div className="sim-ios-ligne"><label htmlFor={id}>{libelle}</label>{signe&&<span className="sim-ios-signe" aria-hidden="true">−</span>}<span className="flex items-center gap-1.5"><input id={id} type="text" inputMode="decimal" autoComplete="off" maxLength={24} placeholder="0" value={valeur} onChange={e=>changer(e.target.value)}/><span className="text-hd-on-surface-variant" style={{fontSize:15}}>{devise}</span></span></div>;
  const PARTS:{cle:CleRepartition;nom:string;info:string}[]=[
   {cle:'dime',nom:l('Dîme','Tithe'),info:l('10 % fixés par l’enseignement','10% set by the teaching')},
+  {cle:'offrande',nom:l('Offrande','Offering'),info:l('libre, selon toi','free, as you choose')},
   {cle:'reserve',nom:l('Réserve de joie','Family joy reserve'),info:l('de 5 à 10 %','5 to 10%')},
   {cle:'investir',nom:l('Pour investir','For investing'),info:l('jusqu’à 30 %','up to 30%')},
   {cle:'dettes',nom:l('Dettes','Debts'),info:l('proposé 15 % (0 à 30 %)','suggested 15% (0 to 30%)')},
  ];
- const reglage=(cle:CleRepartition,d:number)=>setP(x=>{const b=LIMITES_REPARTITION[cle];return {...x,[cle]:Math.min(b.max,Math.max(b.min,x[cle]+d*b.pas))};});
- const vivrePct=r&&r.base>0?Math.round(r.vivre/r.base*100):100-p.dime-p.reserve-p.investir-p.dettes;
+ const reglage=(cle:CleRepartition,d:number)=>setP(x=>{const b=LIMITES_REPARTITION[cle];return {...x,[cle]:Math.min(maximumPart(cle,x),Math.max(b.min,x[cle]+d*b.pas))};});
+ const vivrePct=r&&r.base>0?Math.round(r.vivre/r.base*100):100-p.dime-p.offrande-p.reserve-p.investir-p.dettes;
  const lien=(chemin:string,montant:number,extra='')=>`${chemin}?montant=${encodeURIComponent(String(montant))}&devise=${devise}${extra}${suffixe}`;
  return <CadreHabitudes titre={l('Ma répartition','My allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à Mon suivi des dettes','Back to my debt tracker'):l('Revenir à Mon épargne','Back to my savings')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
   <div className="sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
@@ -67,7 +68,7 @@ export function HabitudesRepartition(){
       <span aria-hidden="true" className="size-3 shrink-0 rounded" style={{background:COULEURS[x.cle]}}/>
       <span className="min-w-0 flex-1 text-[16px]">{x.nom}<small className="block text-xs text-hd-on-surface-variant">{x.info}</small></span>
       {b.pas===0?<span className="min-w-[96px] text-center text-[13px] text-hd-on-surface-variant">{p[x.cle]} %</span>
-       :<span className="sim-ios-stepper" style={{alignItems:'center'}}><button type="button" aria-label={l(`Baisser : ${x.nom}`,`Decrease: ${x.nom}`)} disabled={p[x.cle]<=b.min} onClick={()=>reglage(x.cle,-1)} style={{width:32,height:30}}>−</button><span aria-live="polite" style={{minWidth:40,margin:0,background:'none',textAlign:'center',fontSize:14,fontWeight:600}}>{p[x.cle]} %</span><button type="button" aria-label={l(`Augmenter : ${x.nom}`,`Increase: ${x.nom}`)} disabled={p[x.cle]>=b.max} onClick={()=>reglage(x.cle,1)} style={{width:32,height:30}}>+</button></span>}
+       :<span className="sim-ios-stepper" style={{alignItems:'center'}}><button type="button" aria-label={l(`Baisser : ${x.nom}`,`Decrease: ${x.nom}`)} disabled={p[x.cle]<=b.min} onClick={()=>reglage(x.cle,-1)} style={{width:32,height:30}}>−</button><span aria-live="polite" style={{minWidth:40,margin:0,background:'none',textAlign:'center',fontSize:14,fontWeight:600}}>{p[x.cle]} %</span><button type="button" aria-label={l(`Augmenter : ${x.nom}`,`Increase: ${x.nom}`)} disabled={p[x.cle]>=maximumPart(x.cle,p)} onClick={()=>reglage(x.cle,1)} style={{width:32,height:30}}>+</button></span>}
       <b className="min-w-[72px] text-right tabular-nums">{r?nombre(r[x.cle]):'—'}</b>
      </li>;})}
      <li className="flex min-h-[52px] items-center gap-2.5 border-t border-black/10 py-1">
