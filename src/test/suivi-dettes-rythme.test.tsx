@@ -27,7 +27,7 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
     }
     if (fonction==='hd_finance_debt_add_with_guide') {
       const dette={...dettes[0]!,debt_id:args.p_request_id!,debt_number:2,opening_balance:args.p_opening_balance!,
-        monthly_basis:null,repayment_percent:null,weekly_basis:args.p_weekly_basis,weekly_repayment_percent:'10.00'};
+        monthly_basis:null,repayment_percent:null,weekly_basis:args.p_weekly_basis??null,weekly_repayment_percent:'10.00'};
       dettes.push(dette);
       return {data:dette,error:null};
     }
