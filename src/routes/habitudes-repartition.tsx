@@ -1,6 +1,6 @@
 import '@/components/SimulateurEpargne.css';
 import {useEffect,useState} from 'react';
-import {Link,useSearchParams} from 'react-router-dom';
+import {useSearchParams} from 'react-router-dom';
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {IconeHD} from '@/components/IconeHabitudes';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
@@ -8,11 +8,12 @@ import {decimalesDevise} from '@/lib/devises';
 import {baseRepartition,maximumPart,repartir,LIMITES_REPARTITION,POURCENTAGES_DEFAUT,type CleRepartition,type Pourcentages,type ProfilRevenu} from '@/lib/habitudes-repartition';
 import {NotFound} from '@/routes/introuvable';
 import {OptionsDevises} from '@/components/OptionsDevises';
+import {EnregistrerRepartition} from '@/components/EnregistrerRepartition';
 
 const COULEURS:Record<CleRepartition|'vivre',string>={dime:'#b8862b',offrande:'#b05bd6',reserve:'#2f9e62',investir:'#2f6fe0',dettes:'#e0662f',vivre:'#c7c7cc'};
 
 /** Page « Ma répartition » (maquette validée le 07/11/2026), ouverte depuis Mon épargne ou Mon suivi des dettes.
- * Calcul local seulement : aucun montant n'est envoyé ni enregistré. Le bouton final ne fait que préremplir un formulaire. */
+ * Le calcul est local ; « Enregistrer ma répartition » ouvre une feuille où chaque part est vérifiée avant d'être notée. */
 export function HabitudesRepartition(){
  const [q]=useSearchParams(),en=q.get('lang')==='en',langue=en?'en':'fr',l=(fr:string,english:string)=>en?english:fr;
  const pour=q.get('pour')==='dettes'?'dettes':'epargne',suffixe=en?'&lang=en':'';
@@ -20,6 +21,7 @@ export function HabitudesRepartition(){
  const [recu,setRecu]=useState(''),[marchandises,setMarchandises]=useState(''),[frais,setFrais]=useState('');
  const [devise,setDevise]=useState('USD');
  const [p,setP]=useState<Pourcentages>(POURCENTAGES_DEFAUT);
+ const [feuille,setFeuille]=useState(false);
  useEffect(()=>{document.title=l('Ma répartition','My allocation')+' — SÉNEVÉ';document.documentElement.lang=langue;},[langue]);
  if(!habitudesActivees())return <NotFound/>;
  const dec=decimalesDevise(devise);
@@ -43,7 +45,6 @@ export function HabitudesRepartition(){
  ];
  const reglage=(cle:CleRepartition,d:number)=>setP(x=>{const b=LIMITES_REPARTITION[cle];return {...x,[cle]:Math.min(maximumPart(cle,x),Math.max(b.min,x[cle]+d*b.pas))};});
  const vivrePct=r&&r.base>0?Math.round(r.vivre/r.base*100):100-p.dime-p.offrande-p.reserve-p.investir-p.dettes;
- const lien=(chemin:string,montant:number,extra='')=>`${chemin}?montant=${encodeURIComponent(String(montant))}&devise=${devise}${extra}${suffixe}`;
  return <CadreHabitudes titre={l('Ma répartition','My allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à Mon suivi des dettes','Back to my debt tracker'):l('Revenir à Mon épargne','Back to my savings')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
   <div className="sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <h1 className="ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('Ma répartition','My allocation')}</h1>
@@ -82,10 +83,9 @@ export function HabitudesRepartition(){
     {!r&&!erreur&&<p className="mt-2 text-sm text-hd-on-surface-variant">{l('Écris ce que tu as reçu : la répartition apparaît tout de suite.','Enter what you received: the allocation appears straight away.')}</p>}
    </section>
 
-   {r&&r.base>0&&(pour==='epargne'?<>
-    <Link to={lien('/habitudes/epargne',r.reserve,'&type=reserve_joie')} className="hd-classique sim-ios-bouton mt-3" style={{background:'#2f9e62',textDecoration:'none'}}>{l(`Mettre ${nombre(r.reserve)} ${devise} dans ma Réserve de joie`,`Put ${nombre(r.reserve)} ${devise} in my joy reserve`)}</Link>
-    {r.investir>0&&<Link to={lien('/habitudes/epargne',r.investir,'&type=epargne_investir')} className="hd-classique sim-ios-bouton mt-2" style={{background:'rgb(47 111 224 / .12)',color:'#2f6fe0',textDecoration:'none'}}>{l(`Mettre ${nombre(r.investir)} ${devise} pour investir`,`Put ${nombre(r.investir)} ${devise} towards investing`)}</Link>}
-   </>:r.dettes>0&&<Link to={lien('/habitudes/dettes',r.dettes)} className="hd-classique sim-ios-bouton mt-3" style={{background:'#e0662f',textDecoration:'none'}}>{l(`Utiliser ${nombre(r.dettes)} ${devise} pour mes dettes`,`Use ${nombre(r.dettes)} ${devise} for my debts`)}</Link>)}
+   {r&&r.base>0&&<button type="button" onClick={()=>setFeuille(true)} className="hd-classique sim-ios-bouton mt-3"><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{l('Enregistrer ma répartition','Save my allocation')}</button>}
+   {r&&r.base>0&&<p className="sim-ios-note hd-classique">{l('Tu vérifies chaque part avant que rien ne soit enregistré. Aucun argent ne bouge : SÉNEVÉ note seulement ce que tu as fait.','You check each part before anything is saved. No money moves: SÉNEVÉ only records what you did.')}</p>}
+   {feuille&&r&&<EnregistrerRepartition montants={r} devise={devise} langue={langue} onFermer={()=>setFeuille(false)}/>}
    <p className="sim-ios-note hd-classique mt-4 flex items-start gap-2"><IconeHD nom="lock" className="shrink-0 text-[16px]"/>{l('Ces pourcentages sont des repères d’enseignement, pas une obligation ni un conseil financier personnel. Aucun argent ne bouge.','These percentages are teaching guides, not an obligation or personal financial advice. No money moves.')}</p>
   </div>
  </CadreHabitudes>;

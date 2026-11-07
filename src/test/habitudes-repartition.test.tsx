@@ -44,8 +44,9 @@ it('la page affiche la répartition et garde les pourcentages dans leurs limites
  expect(within(base).getByText('Pour vivre').closest('li')!.textContent).toMatch(/125\s?000/);
  for(let i=0;i<5;i++)fireEvent.click(screen.getByRole('button',{name:'Augmenter : Dettes'}));
  expect(screen.getByRole('button',{name:'Augmenter : Dettes'})).toBeDisabled();
- const lien=screen.getByRole('link',{name:/Réserve de joie/});
- expect(lien.getAttribute('href')).toBe('/habitudes/epargne?montant=50000&devise=USD&type=reserve_joie');
+ // Un seul bouton : il ouvre la feuille de vérification des parts (07/11/2026).
+ expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeVisible();
+ expect(screen.queryByRole('link',{name:/Réserve de joie/})).toBeNull();
  fireEvent.click(screen.getByRole('radio',{name:'Entrepreneur'}));
  expect(screen.getByLabelText('Argent encaissé')).toHaveValue('');
  expect(screen.queryByLabelText('Coût des marchandises vendues')).toBeNull();

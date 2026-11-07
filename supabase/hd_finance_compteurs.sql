@@ -51,7 +51,8 @@ revoke all on seneve.hd_finance_envelope_moves,seneve.hd_finance_savings_withdra
 -- Identifiant stable dérivé (pour rejouer une répartition sans doublon).
 create function seneve_private.hd_finance_derived_id(p_base uuid,p_index integer)
 returns uuid language sql immutable set search_path='' as $$
- select (md5(p_base::text||'|'||p_index::text))::uuid
+ -- Forme d'un UUID v4 (chiffre de version 4, variante 8) : l'application refuse les autres formes.
+ select (substr(h,1,12)||'4'||substr(h,14,3)||'8'||substr(h,18,15))::uuid from (select md5(p_base::text||'|'||p_index::text) h) s
 $$;
 revoke all on function seneve_private.hd_finance_derived_id(uuid,integer) from public,anon,authenticated,service_role;
 
