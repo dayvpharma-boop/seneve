@@ -289,7 +289,7 @@ do $$declare d text;old text;begin
  alter function seneve_private.hd_expected_push_slots(uuid,date) rename to hd_expected_push_slots_base;
 end$$;
 
-create function seneve_private.hd_expected_push_slots(p_enrollment_id uuid,p_date date)
+create or replace function seneve_private.hd_expected_push_slots(p_enrollment_id uuid,p_date date)
 returns table(activity_id uuid,creneau timestamptz)
 language plpgsql stable security definer set search_path='' as $$
 declare e seneve.enrollments%rowtype;l seneve.hd_programme_links%rowtype;z text;cfg seneve.hd_delivery_preferences%rowtype;accord boolean;relances boolean;
