@@ -65,6 +65,15 @@ export async function noterRetraitEpargne(enrollmentId:string,goalId:string,moti
  return data as {withdrawal_id:string;amount:string;balance:string};
 }
 
+/** Effacer le bilan (DÉFINITIF, 08/11/2026). quoi : un motif de sortie, 'dettes' (remboursements) ou 'tout'.
+ * depuis : début de la période choisie, ou null pour tout l'historique. 'tout' exige confirmation='EFFACER'. */
+export type QuoiEffacer=Motif|'dettes'|'tout';
+export async function effacerBilan(enrollmentId:string,devise:string,depuis:string|null,quoi:QuoiEffacer,confirmation:string|null){
+ const {data,error}=await supabase.rpc('hd_finance_bilan_effacer',{p_enrollment_id:enrollmentId,p_currency:devise,p_depuis:depuis,p_quoi:quoi,p_confirmation:confirmation});
+ if(error){if(absente(error))throw new CompteursIndisponibles();throw error;}
+ if(!objet(data))throw Error('Effacement non confirmé');
+ return data as Record<string,number>;
+}
 const centimes=(v:string)=>Math.round(Number(v)*100);
 /** Disponible d'un compteur, en centimes, pour une monnaie. */
 export function disponibleCompteur(c:Compteurs,enveloppe:Enveloppe,devise:string){

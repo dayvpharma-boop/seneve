@@ -1,11 +1,13 @@
 import '@/components/SimulateurEpargne.css';
-import {useCallback,useEffect,useMemo,useState} from 'react';
+import {useCallback,useEffect,useMemo,useState,type FormEvent} from 'react';
 import {Link,useLocation,useSearchParams} from 'react-router-dom';
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {ComptePrive} from '@/components/ComptePrive';
 import {IconeHD} from '@/components/IconeHabitudes';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {chargerSuiviFinancier,type SuiviFinancier} from '@/lib/habitudes-finances-suivi';
+import {supabase} from '@/lib/supabase';
+import {effacerBilan,type QuoiEffacer} from '@/lib/habitudes-finances-compteurs';
 import {chargerCompteurs,CompteursIndisponibles,disponibleCompteur,disponibleObjectif,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {decimalesDevise,montantValidePourDevise} from '@/lib/devises';
 import {NotFound} from '@/routes/introuvable';
@@ -17,10 +19,10 @@ import {momentLisible} from '@/lib/date-heure-finances';
  * - l'historique n'est JAMAIS effacé : bilan de la semaine, du mois ou de l'année. Aucun argent ne bouge. */
 type Caisse={cle:string;nom:string;sous:string;couleur:string;icone:string;enveloppe?:Enveloppe;goalId?:string};
 type Ligne={id:string;date:string;creeLe?:string;signe:1|-1;centimes:number;motif:Motif|null;remise:boolean;origine:'repartition'|'versement'|'sortie'};
-type Periode='semaine'|'mois'|'annee';
+type Periode='semaine'|'mois'|'annee'|'tout';
 const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 const centimes=(v:string)=>Math.round(Number(v)*100);
-const debutPeriode=(p:Periode)=>{const d=new Date();if(p==='annee')return `${d.getFullYear()}-01-01`;if(p==='mois')return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;const j=(d.getDay()+6)%7;const l=new Date(d.getFullYear(),d.getMonth(),d.getDate()-j);return new Intl.DateTimeFormat('en-CA').format(l);};
+const debutPeriode=(p:Periode)=>{if(p==='tout')return '0001-01-01';const d=new Date();if(p==='annee')return `${d.getFullYear()}-01-01`;if(p==='mois')return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;const j=(d.getDay()+6)%7;const l=new Date(d.getFullYear(),d.getMonth(),d.getDate()-j);return new Intl.DateTimeFormat('en-CA').format(l);};
 
 export function RouteHabitudesCompteurs(){
  return suiviFinancierActive()?<ComptePrive enfants={userId=><HabitudesCompteurs userId={userId}/>}/>:<NotFound/>;
@@ -88,7 +90,43 @@ export function HabitudesCompteurs({userId}:{userId:string}){
   finally{setBusy(false);}
  }
  const message=(zone:string)=>annonce?.zone===zone?<p role={annonce.erreur?'alert':'status'} aria-live="polite" className={`mt-2.5 flex items-start gap-2 rounded-xl p-3 text-sm ${annonce.erreur?'bg-red-50 text-red-800':'bg-emerald-50 text-emerald-900'}`}><IconeHD nom={annonce.erreur?'info':'check_circle'} className="shrink-0 text-[18px]"/>{annonce.texte}</p>:null;
- const PERIODES:[Periode,string][]=[['semaine',l('Cette semaine','This week')],['mois',l('Ce mois','This month')],['annee',l('Cette année','This year')]];
+const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mois','Month')],['annee',l('Année','Year')],['tout',l('Tout','All')]];
+ // Effacer le bilan (demande de Dr Justin du 08/11/2026) : une ligne à la fois, ou tout, avec confirmation.
+ const [modifier,setModifier]=useState(false);
+ const [aEffacer,setAEffacer]=useState<{quoi:Exclude<QuoiEffacer,'tout'>;nom:string;nb:number;centimes:number}|null>(null);
+ const [toutEffacer,setToutEffacer]=useState(false);
+ const [compte,setCompte]=useState<{email:string;motDePasse:boolean}|null>(null);
+ const [email,setEmail]=useState(''),[motDePasse,setMotDePasse]=useState(''),[mot,setMot]=useState(''),[erreurEffacer,setErreurEffacer]=useState('');
+ const depuis=periode==='tout'?null:debut;
+ const libellePeriode=periode==='tout'?l('sur tout l’historique','over the whole history'):periode==='annee'?l('pour cette année','for this year'):periode==='mois'?l('pour ce mois','for this month'):l('pour cette semaine','for this week');
+ const nombreDe=(quoi:Exclude<QuoiEffacer,'tout'>)=>{let n=0;if(quoi==='dettes'){for(const d of [...(suivi?.debts??[]),...(suivi?.archived_debts??[])])if(d.currency===dev)for(const p of d.payments)if(p.date_locale>=debut)n++;return n;}
+  for(const c of [...caisses,...caissesSupprimees])for(const x of lignesDe(c))if(x.date>=debut&&x.signe===-1&&(x.motif??'autre')===quoi)n++;return n;};
+ async function relireTout(){if(!suivi)return;setSuivi(await chargerSuiviFinancier(suivi.enrollment_id)??suivi);setCpt(await chargerCompteurs(suivi.enrollment_id));}
+ async function effacerLigne(){
+  if(!aEffacer||!suivi||busy)return;setBusy(true);
+  try{await effacerBilan(suivi.enrollment_id,dev,depuis,aEffacer.quoi,null);const nom=aEffacer.nom;setAEffacer(null);await relireTout();setAnnonce({zone:'bilan',texte:l(`« ${nom} » est effacé ${libellePeriode}.`,`“${nom}” is erased ${libellePeriode}.`),erreur:false});}
+  catch(e){setAEffacer(null);setAnnonce({zone:'bilan',texte:/négative/.test(String((e as {message?:string})?.message))?l('Cet effacement rendrait une caisse négative. Choisis une période plus longue.','This would make a counter negative. Choose a longer period.'):l('L’effacement n’a pas pu se faire. Réessaie.','Erasing did not work. Try again.'),erreur:true});}
+  finally{setBusy(false);}
+ }
+ async function ouvrirToutEffacer(){
+  setErreurEffacer('');setMotDePasse('');setMot('');setToutEffacer(true);
+  try{const {data}=await supabase.auth.getUser();const u=data.user;const avecMotDePasse=!!u?.identities?.some(i=>i.provider==='email');setCompte({email:u?.email??'',motDePasse:avecMotDePasse});setEmail('');}
+  catch{setCompte({email:'',motDePasse:false});}
+ }
+ async function confirmerToutEffacer(e:FormEvent){
+  e.preventDefault();if(!suivi||busy||!compte)return;setErreurEffacer('');
+  if(compte.motDePasse){
+   if(email.trim().toLowerCase()!==compte.email.toLowerCase()||!motDePasse){setErreurEffacer(l('Écris l’e-mail de ton compte et ton mot de passe.','Enter your account e-mail and your password.'));return;}
+  }else if(mot.trim().toUpperCase()!=='EFFACER'){setErreurEffacer(l('Écris EFFACER pour confirmer.','Type EFFACER to confirm.'));return;}
+  setBusy(true);
+  try{
+   if(compte.motDePasse){const {data,error}=await supabase.auth.signInWithPassword({email:compte.email,password:motDePasse});if(error||!data.user){setErreurEffacer(l('E-mail ou mot de passe incorrect.','Wrong e-mail or password.'));return;}}
+   await effacerBilan(suivi.enrollment_id,dev,depuis,'tout','EFFACER');
+   setToutEffacer(false);setModifier(false);setMotDePasse('');await relireTout();
+   setAnnonce({zone:'bilan',texte:l(`Tout est effacé ${libellePeriode}, en ${dev}. Les caisses repartent de zéro.`,`Everything is erased ${libellePeriode}, in ${dev}. Counters start again from zero.`),erreur:false});
+  }catch{setErreurEffacer(l('L’effacement n’a pas pu se faire. Réessaie.','Erasing did not work. Try again.'));}
+  finally{setBusy(false);}
+ }
  return <CadreHabitudes titre={l('Mes compteurs','My counters')} langue={langue} retour={`/espace${suffixe}`} retourLibelle={l('Revenir à ma journée','Back to my day')} liens={{aujourdhui:`/espace${suffixe}`}} actif="aujourdhui" cloche>
   <div className="sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <h1 className="mb-1 ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('Mes compteurs','My counters')}</h1>
@@ -130,13 +168,46 @@ export function HabitudesCompteurs({userId}:{userId:string}){
       </article>;})}
     </div>
     <section aria-labelledby="hd-bilan" className="mt-2">
-     <h2 id="hd-bilan" className="hd-classique sim-ios-titre">{l('Mon bilan','My summary')} · {dev}</h2>
+     <h2 id="hd-bilan" className="hd-classique sim-ios-titre flex items-baseline justify-between" style={{textTransform:'none'}}><span style={{textTransform:'uppercase'}}>{l('Mon bilan','My summary')} · {dev}</span><button type="button" onClick={()=>{setModifier(v=>!v);setAnnonce(null);}} style={{color:'var(--ios-accent,#5b4ee8)',fontSize:15,textTransform:'none',minHeight:44}}>{modifier?l('Terminé','Done'):l('Modifier','Edit')}</button></h2>
      <div role="radiogroup" aria-label={l('Période','Period')} className="hd-classique sim-ios-segment">{PERIODES.map(([p,n])=><button key={p} type="button" role="radio" aria-checked={periode===p} onClick={()=>setPeriode(p)}>{n}</button>)}</div>
      <div className="sim-ios-groupe hd-classique mt-3">
-      {([['entre',l('Entré dans les caisses','Added to counters'),'#2f9e62'],['donne',l('Donné','Given'),'#b8862b'],['depense',l('Dépensé','Spent'),'#e0662f'],['investi',l('Investi','Invested'),'#2f6fe0'],['autre',l('Autre','Other'),'#a1a1a6'],['dettes',l('Remboursé sur les dettes','Repaid on debts'),'#7c3aed']] as const).map(([k,n,coul])=><div key={k} className="sim-ios-ligne"><span aria-hidden="true" className="size-3 rounded" style={{background:coul}}/><span style={{flex:1}}>{n}</span><b className="tabular-nums">{nombre(bilan[k])} {dev}</b></div>)}
+      {([['entre',l('Entré dans les caisses','Added to counters'),'#2f9e62'],['donne',l('Donné','Given'),'#b8862b'],['depense',l('Dépensé','Spent'),'#e0662f'],['investi',l('Investi','Invested'),'#2f6fe0'],['autre',l('Autre','Other'),'#a1a1a6'],['dettes',l('Remboursé sur les dettes','Repaid on debts'),'#7c3aed']] as const).map(([k,n,coul])=><div key={k} className="sim-ios-ligne" style={modifier&&k==='entre'?{opacity:.45}:undefined}>{modifier&&k!=='entre'&&<button type="button" aria-label={l(`Effacer : ${n}`,`Erase: ${n}`)} disabled={bilan[k]===0||busy} onClick={()=>setAEffacer({quoi:k,nom:n,nb:nombreDe(k),centimes:bilan[k]})} className="grid size-[22px] shrink-0 place-items-center rounded-full text-white disabled:opacity-30" style={{background:'#d70015',fontWeight:700,lineHeight:1}}>−</button>}<span aria-hidden="true" className="size-3 rounded" style={{background:coul}}/><span style={{flex:1}}>{n}</span><b className="tabular-nums">{nombre(bilan[k])} {dev}</b></div>)}
      </div>
-     <p className="hd-classique sim-ios-note">{l('Le bilan compte tout l’historique de la période, même après une remise à zéro, y compris les remboursements de dettes.','The summary counts the whole history of the period, even after a reset, including debt repayments.')}</p>
+     {message('bilan')}
+     {modifier?<>
+      <p className="hd-classique sim-ios-note">{l('« Entré dans les caisses » ne s’efface qu’avec « Tout effacer » : sinon les caisses deviendraient négatives. L’effacement suit la période choisie.','“Added to counters” is only erased with “Erase everything”, otherwise counters would go negative. Erasing follows the chosen period.')}</p>
+      <button type="button" disabled={busy} onClick={()=>void ouvrirToutEffacer()} className="hd-classique sim-ios-bouton" style={{marginTop:14,background:'rgb(215 0 21 / .08)',color:'#d70015'}}>{l('Tout effacer…','Erase everything…')}</button>
+     </>:<p className="hd-classique sim-ios-note">{l('Le bilan compte tout l’historique de la période, même après une remise à zéro, y compris les remboursements de dettes. « Modifier » permet de l’effacer.','The summary counts the whole history of the period, even after a reset, including debt repayments. “Edit” lets you erase it.')}</p>}
     </section>
+    {aEffacer&&<div className="fixed inset-0 z-[60] grid place-items-center px-8" role="alertdialog" aria-modal="true" aria-labelledby="hd-effacer-titre">
+     <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={()=>setAEffacer(null)}/>
+     <div className="hd-classique relative w-full max-w-[290px] overflow-hidden rounded-[14px] text-center shadow-[0_10px_40px_rgba(0,0,0,.25)]" style={{background:'rgb(242 242 247 / .97)'}}>
+      <div className="px-4 pb-3.5 pt-4"><h2 id="hd-effacer-titre" style={{margin:'0 0 6px',fontSize:17,fontWeight:600}}>{l(`Effacer « ${aEffacer.nom} » ?`,`Erase “${aEffacer.nom}”?`)}</h2>
+       <p style={{margin:'0 0 6px',fontSize:13,lineHeight:1.4}}>{l(`${aEffacer.nb} ligne${aEffacer.nb>1?'s':''} (${nombre(aEffacer.centimes)} ${dev}), ${libellePeriode}.`,`${aEffacer.nb} line${aEffacer.nb>1?'s':''} (${nombre(aEffacer.centimes)} ${dev}), ${libellePeriode}.`)}</p>
+       <p style={{margin:'0 0 6px',fontSize:13,lineHeight:1.4}}>{aEffacer.quoi==='dettes'?l('Elles disparaissent de l’historique et du bilan. Chaque dette remonte d’autant.','They disappear from history and the summary. Each debt goes back up by that amount.'):l(`Elles disparaissent de l’historique et du bilan. Les caisses concernées remontent de ${nombre(aEffacer.centimes)} ${dev}.`,`They disappear from history and the summary. The counters concerned go back up by ${nombre(aEffacer.centimes)} ${dev}.`)}</p>
+       <p style={{margin:0,fontSize:13,fontWeight:600}}>{l('On ne peut pas revenir en arrière.','This cannot be undone.')}</p></div>
+      <button type="button" disabled={busy} onClick={()=>void effacerLigne()} className="block w-full border-t border-black/20 py-3 text-[17px] font-semibold" style={{color:'#d70015'}}>{busy?l('Effacement…','Erasing…'):l(`Effacer ${nombre(aEffacer.centimes)} ${dev}`,`Erase ${nombre(aEffacer.centimes)} ${dev}`)}</button>
+      <button type="button" autoFocus onClick={()=>setAEffacer(null)} className="block w-full border-t border-black/20 py-3 text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)'}}>{l('Annuler','Cancel')}</button>
+     </div>
+    </div>}
+    {toutEffacer&&<div className="fixed inset-0 z-[60] flex flex-col justify-end" role="dialog" aria-modal="true" aria-labelledby="hd-tout-effacer-titre">
+     <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={()=>setToutEffacer(false)}/>
+     <form onSubmit={e=>void confirmerToutEffacer(e)} noValidate className="sim-ios hd-classique relative max-h-[90vh] overflow-y-auto rounded-t-[14px] px-4 pb-8 pt-2" style={{background:'var(--ios-fond,#f2f2f7)'}}>
+      <div aria-hidden="true" className="mx-auto mb-2.5 h-[5px] w-9 rounded-full bg-[#c7c7cc]"/>
+      <div className="mb-2 grid grid-cols-[1fr_auto_1fr] items-center"><button type="button" onClick={()=>setToutEffacer(false)} className="justify-self-start text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)',minHeight:44}}>{l('Annuler','Cancel')}</button><h2 id="hd-tout-effacer-titre" style={{margin:0,fontSize:17,fontWeight:600}}>{l('Tout effacer','Erase everything')}</h2><span/></div>
+      <div className="rounded-[14px] p-3.5 text-sm leading-relaxed" style={{background:'#fde8ea',color:'#9b0011'}}><b>{l(`${libellePeriode.charAt(0).toUpperCase()+libellePeriode.slice(1)}, en ${dev} :`,`${libellePeriode.charAt(0).toUpperCase()+libellePeriode.slice(1)}, in ${dev}:`)}</b>
+       <ul style={{margin:'6px 0',paddingLeft:18}}><li>{l('toutes les caisses reviennent à 0 (dîme, offrande, pour vivre) ;','every counter goes back to 0 (tithe, offering, living);')}</li><li>{l('les versements et retraits de tes objectifs sont effacés : ils repartent de 0 ;','your goals’ contributions and withdrawals are erased: they start again from 0;')}</li><li>{l('les remboursements de tes dettes sont effacés : chaque dette revient à son montant de départ ;','your debt repayments are erased: each debt goes back to its starting amount;')}</li><li>{l('l’historique et le bilan sont vides.','history and the summary are empty.')}</li></ul>
+       {l('Tes objectifs et tes dettes restent, avec leur nom.','Your goals and debts remain, with their names.')} <b>{l('On ne peut pas revenir en arrière.','This cannot be undone.')}</b></div>
+      {!compte&&<p role="status" className="sim-ios-note">{l('Vérification de ton compte…','Checking your account…')}</p>}
+      {compte?.motDePasse&&<><h3 className="sim-ios-titre">{l('Pour confirmer, écris ton e-mail et ton mot de passe','To confirm, enter your e-mail and password')}</h3>
+       <div className="sim-ios-groupe"><div className="sim-ios-ligne"><label htmlFor="hd-effacer-email">{l('E-mail','E-mail')}</label><input id="hd-effacer-email" type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} placeholder={l('ton e-mail','your e-mail')} style={{width:'60%',textAlign:'right'}}/></div>
+        <div className="sim-ios-ligne"><label htmlFor="hd-effacer-mdp">{l('Mot de passe','Password')}</label><input id="hd-effacer-mdp" type="password" autoComplete="current-password" value={motDePasse} onChange={e=>setMotDePasse(e.target.value)} placeholder="••••••••" style={{width:'60%',textAlign:'right'}}/></div></div></>}
+      {compte&&!compte.motDePasse&&<><h3 className="sim-ios-titre">{l('Ton compte n’a pas de mot de passe (connexion Google) : écris EFFACER','Your account has no password (Google sign-in): type EFFACER')}</h3>
+       <div className="sim-ios-groupe"><div className="sim-ios-ligne"><label htmlFor="hd-effacer-mot">{l('Confirmation','Confirmation')}</label><input id="hd-effacer-mot" autoComplete="off" value={mot} onChange={e=>setMot(e.target.value)} placeholder="EFFACER" style={{width:'55%',textAlign:'right'}}/></div></div></>}
+      {erreurEffacer&&<p role="alert" className="sim-ios-alerte">{erreurEffacer}</p>}
+      <button type="submit" disabled={busy||!compte} className="sim-ios-bouton disabled:opacity-60" style={{marginTop:14,background:'#d70015'}}>{busy?l('Effacement…','Erasing…'):l('Tout effacer','Erase everything')}</button>
+     </form>
+    </div>}
    </>}
   </div>
  </CadreHabitudes>;

@@ -63,7 +63,7 @@ it('« Mes compteurs » : disponible, sortie notée, remise à zéro, historique
  expect(within(dime).getAllByRole('listitem').length).toBeGreaterThanOrEqual(4);
  expect(within(dime).getByText('Donné depuis le début').closest('div')!.textContent).toMatch(/50 USD/);
  const bilan=screen.getByRole('region',{name:/Mon bilan/});
- fireEvent.click(within(bilan).getByRole('radio',{name:'Cette année'}));
+ fireEvent.click(within(bilan).getByRole('radio',{name:'Année'}));
  expect(within(bilan).getByText('Donné').closest('div')!.textContent).toMatch(/50 USD/);
 });
 
