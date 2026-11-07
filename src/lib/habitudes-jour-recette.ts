@@ -6,12 +6,13 @@ import {planningHabitudesPourDate} from './habitudes-planning';
 import type {EtatOccurrence,OccurrenceHabitude} from './habitudes';
 import {lignesPaginees} from './lignes-paginees';
 import {programmeHdLisible} from './habitudes-programmes';
+import {HABITUDES_FINANCES,financesPourDate,lireHabitudesFinancieres,type ConfigurationFinanciere,type CleHabitudeFinanciere} from './habitudes-finances-api';
 import {dateDuJourHabitudes,debutsMois,jourHabitudes,type DebutMois,type PeriodeHabitudes} from './habitudes-periodes';
 export type ActiviteJourRecette={habit_key?:string;occurrence:OccurrenceHabitude;consigne:string;critere:string|null;heure:string;etat?:EtatOccurrence};
 /** `mois` : mois d'accès en cours pour cette journée (le jour 31 d'un mois gratuit non renouvelé reste au mois 1). */
-export type JourRecette={userId:string;date:string;jour:number;mois?:number;activites:ActiviteJourRecette[]};
+export type JourRecette={userId:string;date:string;jour:number;version?:number;mois?:number;activites:ActiviteJourRecette[]};
 /** Programmes HD lus par cet écran : l'essai technique et le programme réel, en français ou en anglais (habitudes-programmes). */
-const PREFIXE='RECETTE_HD_QUOTIDIEN_V1:',DIME='RECETTE_HD_DIME_V1:dime';
+const DIME_V1='RECETTE_HD_DIME_V1:dime',DIME_V2='RECETTE_HD_DIME_V2:dime';
 /** Six mois de 30 jours (le dernier finit le 181e jour civil). Au-delà, ou sans journée publiée : refus explicite. */
 const JOURS_MAX=181;
 /** Débuts locaux des mois de l'inscription (périodes d'accès lisibles par leur seul titulaire). */
@@ -29,15 +30,16 @@ export async function chargerJourRecette(enrollmentId:string,participantId:strin
  const [session,e,horaires]=await Promise.all([supabase.auth.getSession(),supabase.from('enrollments').select('enrollment_id,participant_id,programme_id,version,langue,date_debut,etat').eq('enrollment_id',enrollmentId).single(),chargerHorairesHabitudes(enrollmentId)]);
  if(session.error||!session.data.session||e.error)throw Error('Session ou inscription indisponible');
  const enr=e.data;
- if(!enr||enr.participant_id!==participantId||!programmeHdLisible(enr.programme_id,enr.langue)||enr.version!==1||enr.etat!=='active')throw Error('Inscription hors recette');
+ if(!enr||enr.participant_id!==participantId||!programmeHdLisible(enr.programme_id,enr.langue)||![1,2].includes(enr.version)||enr.etat!=='active')throw Error('Inscription hors recette');
  // L'horloge du serveur fournit la journée courante ; le composant ne réutilise pas celle d'hier.
  if(horaires.date_locale!==dateLocale)throw Error('Journée à actualiser');
  // Jour du parcours d'après les périodes d'accès : identique au jour civil sans coupure, reprise après un retard.
  const debuts=await debutsDe(periodes,enr.date_debut,horaires.fuseau);
+ const finance=enr.version>=2?await lireHabitudesFinancieres(enrollmentId,dateLocale):null;
  const jourCivil=jourHabitudes(enr.date_debut,debuts,dateLocale);
  const moisEnCours=[...debuts].sort((a,b)=>b.mois-a.mois).find(x=>x.debut<=dateLocale)?.mois;
  if(!Number.isInteger(jourCivil)||jourCivil<1||jourCivil>JOURS_MAX)throw Error('Jour hors parcours');
- const c=await supabase.from('contents').select('content_id').eq('programme_id',enr.programme_id).eq('version',1).eq('langue',enr.langue).eq('jour',jourCivil);
+ const c=await supabase.from('contents').select('content_id').eq('programme_id',enr.programme_id).eq('version',enr.version).eq('langue',enr.langue).eq('jour',jourCivil);
  if(c.error||c.data?.length!==1)throw Error('Journée non publiée');
  const a=await supabase.from('activities').select('activity_id,consigne,critere_realisation,note_source,obligatoire').eq('content_id',c.data[0]!.content_id).eq('type_activite','action');
  if(a.error)throw Error('Lecture indisponible');
@@ -45,26 +47,42 @@ export async function chargerJourRecette(enrollmentId:string,participantId:strin
  const ids=(a.data??[]).map(x=>x.activity_id);
  const s=ids.length?await supabase.from('activity_state').select('activity_id,etat,aide_demandee').eq('enrollment_id',enrollmentId).in('activity_id',ids):{data:[],error:null};
  if(s.error)throw Error('Lecture indisponible');
- return {...assemblerJourRecette(enrollmentId,participantId,dateLocale,jourCivil,session.data.session.user.id,horaires,a.data??[],s.data??[]),...(moisEnCours?{mois:moisEnCours}:{})};
+ return {...assemblerJourRecette(enrollmentId,participantId,dateLocale,jourCivil,session.data.session.user.id,horaires,a.data??[],s.data??[],enr.version,finance),...(moisEnCours?{mois:moisEnCours}:{})};
 }
 type ActivitePubliee={activity_id:string;consigne:string;critere_realisation:string|null;note_source:string|null;obligatoire:boolean};
 type EtatPublie={activity_id:string;etat:string;aide_demandee:boolean};
 /** Le même calcul daté pour la journée et son historique, notamment les cultes personnels. */
-export function assemblerJourRecette(enrollmentId:string,participantId:string,dateLocale:string,jourCivil:number,userId:string,horaires:ConfigurationHoraires,lignes:ActivitePubliee[],etats:EtatPublie[]):JourRecette{
+export function assemblerJourRecette(enrollmentId:string,participantId:string,dateLocale:string,jourCivil:number,userId:string,horaires:ConfigurationHoraires,lignes:ActivitePubliee[],etats:EtatPublie[],version=1,finance?:ConfigurationFinanciere|null):JourRecette{
  const modele=horaires.modeles[0];if(!modele)throw Error('Planning absent');
  const planning=planningHabitudesPourDate({participant_id:participantId,module_id:modele.module_id,version:modele.version,langue:modele.langue,date_locale:dateLocale,fuseau:horaires.fuseau,dime:horaires.dime},horaires.modeles,horaires.horaires);
  const quotidien=horaires.modeles.filter(m=>m.jours_iso.length===7).map(m=>m.habit_key);
+ const prefixe=`RECETTE_HD_QUOTIDIEN_V${version}:`,cultePrefixe=`RECETTE_HD_CULTE_V${version}:`,dimeSource=version===1?DIME_V1:DIME_V2,financePrefixe=`RECETTE_HD_FINANCE_V${version}:`;
  if(quotidien.length!==13)throw Error('Catalogue quotidien incomplet');
  const vus=new Set<string>();
- const quotidiennes=lignes.filter(row=>row.note_source?.startsWith(PREFIXE));
- const cultes=lignes.filter(row=>row.note_source?.startsWith('RECETTE_HD_CULTE_V1:'));
+ const quotidiennes=lignes.filter(row=>row.note_source?.startsWith(prefixe));
+ const cultes=lignes.filter(row=>row.note_source?.startsWith(cultePrefixe));
+ const finances=lignes.filter(row=>row.note_source?.startsWith(financePrefixe));
  // La dîme (03/11/2026) est publiée chaque jour, comme les cultes ; elle n'apparaît que le jour prévu.
- const dimes=lignes.filter(row=>row.note_source===DIME);
- if(quotidiennes.length!==13||cultes.length!==3||dimes.length>1||lignes.length!==16+dimes.length)throw Error('Catalogue de cultes incomplet');
+ const dimes=lignes.filter(row=>row.note_source===dimeSource);
+ if(quotidiennes.length!==13||cultes.length!==3||dimes.length>1||finances.length!==(version>=2?4:0)||lignes.length!==16+dimes.length+finances.length)throw Error('Catalogue de cultes incomplet');
  const activites=lignes.flatMap(row=>{
   const source=row.note_source??'';
-  const culte=/^RECETTE_HD_CULTE_V1:(culte_semaine|culte_dimanche):([12])$/.exec(source)??(source===DIME?[source,'dime','1'] as const:null);
-  const habit=culte?culte[1]!:source.startsWith(PREFIXE)?source.slice(PREFIXE.length):'';
+  const culte=new RegExp(`^RECETTE_HD_CULTE_V${version}:(culte_semaine|culte_dimanche):([12])$`).exec(source)??(source===dimeSource?[source,'dime','1'] as const:null);
+  const financier=source.startsWith(financePrefixe)?source.slice(financePrefixe.length) as CleHabitudeFinanciere:null;
+  if(financier){
+   if(version<2||!HABITUDES_FINANCES.some(h=>h.habit_key===financier)||row.obligatoire)throw Error('Activité financière invalide');
+   const pref=finance?.habitudes.find(h=>h.habit_key===financier);
+   if(!pref?.active)return [];
+   const joursDate=new Date(dateLocale+'T12:00:00Z').getUTCDay()||7;
+   const rendezVous=pref.creneaux.filter(c=>c.jours_iso.includes(joursDate));
+   if(rendezVous.length>1)throw Error('Créneau financier ambigu');
+   if(!rendezVous.length)return [];
+   const occurrence={occurrence_id:row.activity_id,enrollment_id:enrollmentId,version,date_locale:dateLocale,requise:false};
+   const st=etats.find(x=>x.activity_id===row.activity_id);
+   if(st&&!['non_commencee','preparee','partielle','realisee'].includes(st.etat))throw Error('État invalide');
+   return [{habit_key:financier,occurrence,consigne:row.consigne,critere:row.critere_realisation,heure:rendezVous[0]!.heure_locale,etat:st?{...occurrence,etat:st.etat,aide_demandee:st.aide_demandee,synchronisation:'synchronise'} as EtatOccurrence:undefined}];
+  }
+  const habit=culte?culte[1]!:source.startsWith(prefixe)?source.slice(prefixe.length):'';
   if(!habit||(!culte&&!quotidien.includes(habit)))throw Error('Activité non identifiée');
   const rang=culte?Number(culte[2]):1;
   if((habit==='culte_dimanche'||habit==='dime')&&rang!==1)throw Error('Rang de culte invalide');
@@ -74,12 +92,12 @@ export function assemblerJourRecette(enrollmentId:string,participantId:string,da
   if(!culte&&rdv.length!==1)throw Error('Correspondance horaire ambiguë');
   if(culte&&!rdv[rang-1])return [];
   const rendezVous=rdv[rang-1]!;
-  const occurrence={occurrence_id:row.activity_id,enrollment_id:enrollmentId,version:1,date_locale:dateLocale,requise:requiseCeJour(source,dateLocale,row.obligatoire)};
+  const occurrence={occurrence_id:row.activity_id,enrollment_id:enrollmentId,version,date_locale:dateLocale,requise:requiseCeJour(source,dateLocale,row.obligatoire)};
   const st=etats.find(x=>x.activity_id===row.activity_id);
   if(st&&!['non_commencee','preparee','partielle','realisee'].includes(st.etat))throw Error('État invalide');
   return [{habit_key:habit,occurrence,consigne:culte?`${row.consigne}${rdv.length>1?' — '+rang:''}`:row.consigne,critere:row.critere_realisation,heure:rendezVous.heure_locale,etat:st?{...occurrence,etat:st.etat,aide_demandee:st.aide_demandee,synchronisation:'synchronise'} as EtatOccurrence:undefined}];
  }).sort((a,b)=>a.heure.localeCompare(b.heure)||a.consigne.localeCompare(b.consigne));
- return {userId,date:dateLocale,jour:jourCivil,activites};
+ return {userId,date:dateLocale,jour:jourCivil,version,activites};
 }
 
 /** Lecture bornée au mois en cours (30 jours au plus). Aucun appel record_progress, aucune date future. */
@@ -88,18 +106,20 @@ export async function chargerHistoriqueRecette(enrollmentId:string,participantId
  const [session,e,horaires]=await Promise.all([supabase.auth.getSession(),supabase.from('enrollments').select('enrollment_id,participant_id,programme_id,version,langue,date_debut,etat').eq('enrollment_id',enrollmentId).single(),chargerHorairesHabitudes(enrollmentId)]);
  if(session.error||!session.data.session||e.error)throw Error('Session ou inscription indisponible');
  const enr=e.data;
- if(!enr||enr.participant_id!==participantId||!programmeHdLisible(enr.programme_id,enr.langue)||enr.version!==1||enr.etat!=='active'||horaires.date_locale!==dateLocale)throw Error('Historique non accessible');
+ if(!enr||enr.participant_id!==participantId||!programmeHdLisible(enr.programme_id,enr.langue)||![1,2].includes(enr.version)||enr.etat!=='active'||horaires.date_locale!==dateLocale)throw Error('Historique non accessible');
+ const finance=enr.version>=2?await lireHabitudesFinancieres(enrollmentId,dateLocale):null;
  const debuts=await debutsDe(periodes,enr.date_debut,horaires.fuseau);
  const raw=jourHabitudes(enr.date_debut,debuts,dateLocale);
  if(!Number.isInteger(raw)||raw<1)throw Error('Calendrier invalide');
  const ouverts=Math.min(JOURS_MAX,raw),premier=Math.floor((ouverts-1)/30)*30+1,attendus=ouverts-premier+1;
- const c=await supabase.from('contents').select('content_id,jour').eq('programme_id',enr.programme_id).eq('version',1).eq('langue',enr.langue).gte('jour',premier).lte('jour',ouverts);
+ const c=await supabase.from('contents').select('content_id,jour').eq('programme_id',enr.programme_id).eq('version',enr.version).eq('langue',enr.langue).gte('jour',premier).lte('jour',ouverts);
  if(c.error||c.data?.length!==attendus||new Set(c.data.map(x=>x.jour)).size!==attendus||c.data.some(x=>x.jour<premier||x.jour>ouverts))throw Error('Historique incomplet');
  const [a,etats]=await Promise.all([supabase.from('activities').select('activity_id,content_id,consigne,critere_realisation,note_source,obligatoire').in('content_id',c.data.map(x=>x.content_id)).eq('type_activite','action'),
   lignesPaginees<EtatPublie>((de,fin)=>supabase.from('activity_state').select('activity_id,etat,aide_demandee').eq('enrollment_id',enrollmentId).order('activity_id').range(de,fin)).then(data=>({data,error:null}),()=>({data:null,error:true}))]);
  if(a.error||etats.error)throw Error('Lecture indisponible');
  const s={data:etats.data};
  return [...c.data].sort((a,b)=>a.jour-b.jour).map(contenu=>{
-  return assemblerJourRecette(enrollmentId,participantId,dateDuJourHabitudes(enr.date_debut,debuts,contenu.jour),contenu.jour,session.data.session!.user.id,horaires,(a.data??[]).filter(x=>x.content_id===contenu.content_id),s.data??[]);
+  const date=dateDuJourHabitudes(enr.date_debut,debuts,contenu.jour);
+  return assemblerJourRecette(enrollmentId,participantId,date,contenu.jour,session.data.session!.user.id,horaires,(a.data??[]).filter(x=>x.content_id===contenu.content_id),s.data??[],enr.version,finance?financesPourDate(finance,date):null);
  });
 }
