@@ -31,7 +31,7 @@ it('un versement refusé s’explique sous son formulaire, sans appel au serveur
  fireEvent.submit(bouton.closest('form')!);
  const alerte=within(bouton.closest('form')!).getByRole('alert');
  expect(alerte.textContent).toContain('Écris un montant plus grand que 0');
- expect(rpc).toHaveBeenCalledTimes(1);
+ expect(rpc).not.toHaveBeenCalledWith('hd_finance_savings_entry_add',expect.anything());
 });
 it('un remboursement trop grand s’explique sous son formulaire, avec des dates lisibles dans l’historique',async()=>{
  charger();render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="u"/></MemoryRouter>);

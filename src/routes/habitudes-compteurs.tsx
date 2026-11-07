@@ -68,7 +68,7 @@ export function HabitudesCompteurs({userId}:{userId:string}){
  const nomMotif=(m:Motif|null)=>MOTIFS.find(x=>x[0]===m)?.[1].toLowerCase()??'';
  // Bilan de la période : ce qui est entré et ce qui est sorti, par motif. L'historique n'est jamais remis à zéro.
  const debut=debutPeriode(periode);
- const bilan=useMemo(()=>{const b={entre:0,donne:0,depense:0,investi:0,autre:0};for(const c of caisses)for(const x of lignesDe(c))if(x.date>=debut){if(x.signe===1)b.entre+=x.centimes;else b[x.motif??'autre']+=x.centimes;}return b;},[cpt,suivi,dev,debut,en]);
+ const bilan=useMemo(()=>{const b={entre:0,donne:0,depense:0,investi:0,autre:0,dettes:0};for(const c of caisses)for(const x of lignesDe(c))if(x.date>=debut){if(x.signe===1)b.entre+=x.centimes;else b[x.motif??'autre']+=x.centimes;}for(const d of suivi?.debts??[])if(d.currency===dev)for(const p of d.payments)if(p.date_locale>=debut)b.dettes+=centimes(p.amount);return b;},[cpt,suivi,dev,debut,en]);
  function ouvrir(c:Caisse){setOuverte(o=>o===c.cle?'':c.cle);setMontant('');setMotif(c.enveloppe==='vivre'?'depense':c.goalId?'investi':'donne');setDate(aujourdhui());setAnnonce(null);}
  async function noter(c:Caisse,toutUtilise:boolean){
   if(!suivi||busy)return;const zone='caisse:'+c.cle;
@@ -131,9 +131,9 @@ export function HabitudesCompteurs({userId}:{userId:string}){
      <h2 id="hd-bilan" className="hd-classique sim-ios-titre">{l('Mon bilan','My summary')} · {dev}</h2>
      <div role="radiogroup" aria-label={l('Période','Period')} className="hd-classique sim-ios-segment">{PERIODES.map(([p,n])=><button key={p} type="button" role="radio" aria-checked={periode===p} onClick={()=>setPeriode(p)}>{n}</button>)}</div>
      <div className="sim-ios-groupe hd-classique mt-3">
-      {([['entre',l('Entré dans les caisses','Added to counters'),'#2f9e62'],['donne',l('Donné','Given'),'#b8862b'],['depense',l('Dépensé','Spent'),'#e0662f'],['investi',l('Investi','Invested'),'#2f6fe0'],['autre',l('Autre','Other'),'#a1a1a6']] as const).map(([k,n,coul])=><div key={k} className="sim-ios-ligne"><span aria-hidden="true" className="size-3 rounded" style={{background:coul}}/><span style={{flex:1}}>{n}</span><b className="tabular-nums">{nombre(bilan[k])} {dev}</b></div>)}
+      {([['entre',l('Entré dans les caisses','Added to counters'),'#2f9e62'],['donne',l('Donné','Given'),'#b8862b'],['depense',l('Dépensé','Spent'),'#e0662f'],['investi',l('Investi','Invested'),'#2f6fe0'],['autre',l('Autre','Other'),'#a1a1a6'],['dettes',l('Remboursé sur les dettes','Repaid on debts'),'#7c3aed']] as const).map(([k,n,coul])=><div key={k} className="sim-ios-ligne"><span aria-hidden="true" className="size-3 rounded" style={{background:coul}}/><span style={{flex:1}}>{n}</span><b className="tabular-nums">{nombre(bilan[k])} {dev}</b></div>)}
      </div>
-     <p className="hd-classique sim-ios-note">{l('Le bilan compte tout l’historique de la période, même après une remise à zéro. Les dettes ont leur propre page.','The summary counts the whole history of the period, even after a reset. Debts have their own page.')}</p>
+     <p className="hd-classique sim-ios-note">{l('Le bilan compte tout l’historique de la période, même après une remise à zéro, y compris les remboursements de dettes.','The summary counts the whole history of the period, even after a reset, including debt repayments.')}</p>
     </section>
    </>}
   </div>

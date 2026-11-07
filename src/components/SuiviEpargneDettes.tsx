@@ -10,6 +10,7 @@ import {decimalesDevise,deviseAcceptee,montantValidePourDevise} from '@/lib/devi
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {OptionsDevises} from '@/components/OptionsDevises';
 import {momentLisible} from '@/lib/date-heure-finances';
+import {chargerCompteurs,type Compteurs,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {NotFound} from '@/routes/introuvable';
 
 type Mode='epargne'|'dettes';
@@ -61,12 +62,17 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   if (!demandes.current.has(cle)) demandes.current.set(cle,crypto.randomUUID());
   return {cle,id:demandes.current.get(cle)!};
  }
+ // Retraits notés dans Mes compteurs (07/11/2026) : ils diminuent le disponible de l'objectif et apparaissent dans son historique.
+ const [cpt,setCpt]=useState<Compteurs|null>(null);
+ const retraitsDe=(goalId:string)=>cpt?.withdrawals.filter(w=>w.goal_id===goalId)??[];
+ const disponibleDe=(g:ObjectifEpargne)=>totalCents(g.entries)-totalCents(retraitsDe(g.goal_id));
  const charger=useCallback(async()=>{
   setState('chargement');
   try{
    const contenu=await chargerSuiviFinancier(null);
    if(!contenu){setSuivi(null);setState('vide');return;}
    setSuivi(contenu);setGoal(current=>contenu.savings_goals.some(g=>g.goal_id===current)?current:contenu.savings_goals[0]?.goal_id??'');
+   setCpt(await chargerCompteurs(contenu.enrollment_id).catch(()=>null));
    setState('pret');
   }catch{setState('erreur');}
  },[userId,essai]);
@@ -125,6 +131,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   notice(message,zone);
   try {
    setSuivi(await chargerSuiviFinancier(inscription!));
+   setCpt(await chargerCompteurs(inscription!).catch(()=>null));
   } catch {
    setState('erreur');
   }
@@ -145,7 +152,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   if(!montantValidePourDevise(contribution,objectif.currency)||Number(contribution)<=0){montantInvalide('versement');return;}
   if(!ISO.test(contributionDate)||contributionDate>aujourdhui()){dateFuture('versement');return;}
   setBusy(true);setAnnonce(null);
-  try{const demande=idDemande('versement',objectif.goal_id,contribution,contributionDate);await enregistrerVersementEpargne(inscription,objectif.goal_id,contribution,contributionDate,objectif.currency,demande.id);const total=totalCents(objectif.entries)+montantCents(contribution);setContribution('');await confirmerSaisie(demande.cle,l(`Versement ajouté. Ton total est maintenant de ${formatter(total,objectif.currency,false)}.`,`Contribution added. Your total is now ${formatter(total,objectif.currency,true)}.`),'versement');}
+  try{const demande=idDemande('versement',objectif.goal_id,contribution,contributionDate);await enregistrerVersementEpargne(inscription,objectif.goal_id,contribution,contributionDate,objectif.currency,demande.id);const total=disponibleDe(objectif)+montantCents(contribution);setContribution('');await confirmerSaisie(demande.cle,l(`Versement ajouté. Ton disponible est maintenant de ${formatter(total,objectif.currency,false)}.`,`Contribution added. You now have ${formatter(total,objectif.currency,true)}.`),'versement');}
   catch{notice(l('Versement non enregistré. Vérifie le montant et réessaie.','Contribution was not saved. Check the amount and try again.'),'versement',true);}
   finally{setBusy(false);}
  }
@@ -200,7 +207,9 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const champDate=(id:string,valeur:string,changer:(v:string)=>void)=><input id={id} required type="date" max={aujourdhui()} value={valeur} onChange={e=>changer(e.target.value)} style={{width:150,color:'var(--ios-accent,#5b4ee8)'}}/>;
 
  const pageEpargne=()=>{
-  const total=objectif?totalCents(objectif.entries):0,cible=objectif?montantCents(objectif.target_amount):1;
+  // Disponible = versements − retraits ; c'est lui qui avance vers l'objectif.
+  const verse=objectif?totalCents(objectif.entries):0,retire=objectif?totalCents(retraitsDe(objectif.goal_id)):0;
+  const total=verse-retire,cible=objectif?montantCents(objectif.target_amount):1;
   const pct=Math.min(100,Math.round(total/Math.max(1,cible)*100)),reste=Math.max(0,cible-total);
   const dernier=objectif?.entries.at(-1);
   const encouragement=!objectif?'':total===0?l('Ta première semence attend.','Your first seed is waiting.'):total>=cible?l('Objectif atteint : ta semence a grandi.','Goal reached: your seed has grown.'):dernier&&montantCents(dernier.amount)>0?(n=>l(`Ta semence grandit : encore ${n} versement${n>1?'s':''} comme le dernier.`,`Your seed is growing: ${n} more contribution${n>1?'s':''} like the last one.`))(Math.ceil(reste/montantCents(dernier.amount))):l('Chaque versement fait grandir ton jardin.','Each contribution helps your garden grow.');
@@ -234,7 +243,8 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
        <span className="inline-block rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">{objectif.goal_type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):objectif.goal_type==='epargne_investir'?l('Épargne pour investir','Savings for investing'):l('Autre objectif','Other goal')}</span>
        <h2 id="hd-epargne-resume" className="sr-only">{objectif.label}</h2>
        <div className="mt-1 text-[28px] font-bold leading-tight tracking-tight [overflow-wrap:anywhere]">{formatter(total,objectif.currency,en)}</div>
-       <div className="text-sm text-hd-on-surface-variant">{l('sur','of')} {formatter(cible,objectif.currency,en)} · {l('reste','left')} {nombre(reste,objectif.currency,en)}</div>
+       <div className="text-sm text-hd-on-surface-variant">{l('disponible','available')} · {l('sur','of')} {formatter(cible,objectif.currency,en)} · {l('reste','left')} {nombre(reste,objectif.currency,en)}</div>
+       {retire>0&&<div className="mt-0.5 text-xs text-hd-on-surface-variant">{l(`Mis de côté ${nombre(verse,objectif.currency,false)} · utilisé ${nombre(retire,objectif.currency,false)}`,`Set aside ${nombre(verse,objectif.currency,true)} · used ${nombre(retire,objectif.currency,true)}`)}</div>}
       </div>
      </div>
      <p className="mt-3.5 flex items-center gap-2.5 rounded-xl bg-emerald-50 px-3 py-2.5 text-sm text-emerald-900"><IconeHD nom={total>=cible?'nature_people':'potted_plant'} className="shrink-0 text-[24px] text-emerald-700"/>{encouragement}</p>
@@ -252,7 +262,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
     </section>
     <section aria-labelledby="hd-titre-historique">
      <h2 id="hd-titre-historique" className="hd-classique sim-ios-titre">{l('Historique','History')}</h2>
-     {objectif.entries.length?<ol className="sim-ios-groupe hd-classique">{[...objectif.entries].reverse().map(entry=><li key={entry.entry_id} className="sim-ios-ligne"><time dateTime={entry.date_locale} className="flex-1">{momentLisible(entry.date_locale,entry.created_at,en)}</time><strong className="text-emerald-700 tabular-nums">+ {nombre(montantCents(entry.amount),objectif.currency,en)}</strong></li>)}</ol>
+     {objectif.entries.length+retraitsDe(objectif.goal_id).length?<ol className="sim-ios-groupe hd-classique">{[...objectif.entries.map(x=>({id:x.entry_id,date:x.date_locale,cree:x.created_at,signe:1,montant:montantCents(x.amount),motif:null as Motif|null,zero:false})),...retraitsDe(objectif.goal_id).map(w=>({id:w.withdrawal_id,date:w.date_locale,cree:w.created_at,signe:-1,montant:montantCents(w.amount),motif:w.motif as Motif|null,zero:w.remise_a_zero}))].sort((a,b)=>b.date.localeCompare(a.date)||(b.cree??'').localeCompare(a.cree??'')).map(x=><li key={x.id} className="sim-ios-ligne"><time dateTime={x.date} className="flex-1">{momentLisible(x.date,x.cree,en)}{x.signe<0?` · ${({donne:l('donné','given'),depense:l('dépensé','spent'),investi:l('investi','invested'),autre:l('autre','other')} as Record<string,string>)[x.motif??'autre']}${x.zero?l(' · remis à zéro',' · reset to zero'):''}`:''}</time><strong className={`tabular-nums ${x.signe>0?'text-emerald-700':'text-red-700'}`}>{x.signe>0?'+':'−'} {nombre(x.montant,objectif.currency,en)}</strong></li>)}</ol>
       :<p className="sim-ios-note hd-classique">{l('Aucun versement pour le moment.','No contributions yet.')}</p>}
     </section>
    </>}
