@@ -63,6 +63,7 @@ const HabitudesInscription = lazy(() => import('@/routes/habitudes-inscription')
 const HabitudesAujourdhui = lazy(() => import('@/routes/habitudes-aujourdhui').then(m => ({ default: m.HabitudesAujourdhui })));
 const HabitudesEngagements = lazy(() => import('@/routes/habitudes-engagements').then(m => ({ default: m.HabitudesEngagements })));
 const HabitudesAide = lazy(() => import('@/routes/habitudes-aide').then(m => ({ default: m.HabitudesAide })));
+const SuiviEpargneDettes = lazy(() => import('@/components/SuiviEpargneDettes').then(m => ({ default: m.RouteSuiviEpargneDettes })));
 const Offres = lazy(() => import('@/routes/offres').then(m => ({ default: m.Offres })));
 const Bibliotheque = lazy(() => import('@/routes/bibliotheque').then(m => ({ default: m.Bibliotheque })));
 const Confidentialite = lazy(() => import('@/routes/confidentialite').then(m => ({ default: m.Confidentialite })));
@@ -94,6 +95,8 @@ if (root) createRoot(root).render(
         <Route path="/habitudes/aujourdhui" element={<HabitudesAujourdhui />} />
         <Route path="/habitudes/engagements" element={<HabitudesEngagements />} />
         <Route path="/habitudes/aide" element={<HabitudesAide />} />
+        <Route path="/habitudes/epargne" element={<SuiviEpargneDettes mode="epargne" />} />
+        <Route path="/habitudes/dettes" element={<SuiviEpargneDettes mode="dettes" />} />
         <Route path="/bibliotheque" element={<Bibliotheque/>}/>
         <Route path="/livre" element={<Bibliotheque detail/>}/>
         <Route path="/livre/audio" element={<Bibliotheque detail format="audio"/>}/>
