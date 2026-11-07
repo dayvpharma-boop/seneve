@@ -8,6 +8,7 @@ import { BarreNav } from '@/components/BarreNav';
 import { IconeNotification, type SymboleNotification } from '@/components/IconeNotification';
 import { CarteHorsConnexion, langueSansDonnees } from '@/components/HorsConnexion';
 import { useEnLigne } from '@/lib/hors-ligne';
+import { chargerSupabase } from '@/lib/supabase-differe';
 import { chargerNotifications, marquerNotificationsVues, NOMS_HABITUDES, TEXTES_MOMENTS, type ElementNotification, type Notifications as Liste } from '@/lib/notifications';
 
 export function Notifications() {
@@ -16,7 +17,20 @@ export function Notifications() {
 
 function NotificationsDuCompte() {
   const [params] = useSearchParams();
-  const langue = langueSansDonnees(params), en = langue === 'en';
+  // Sans ?lang= dans l'adresse, la page suit la langue de la fiche du participant (07/11/2026) :
+  // ouverte directement, elle s'affichait en français pour un compte anglais.
+  const langueAdresse = params.get('lang');
+  const [langueFiche, setLangueFiche] = useState<'fr' | 'en' | null>(null);
+  useEffect(() => {
+    if (langueAdresse === 'en' || langueAdresse === 'fr') return;
+    let annule = false;
+    void chargerSupabase().then(sb => sb.from('participants').select('langue').maybeSingle()).then(r => {
+      const l = (r as { data?: { langue?: string } | null } | undefined)?.data?.langue;
+      if (!annule && (l === 'en' || l === 'fr')) setLangueFiche(l);
+    }).catch(() => undefined);
+    return () => { annule = true; };
+  }, [langueAdresse]);
+  const langue = langueAdresse === 'en' || langueAdresse === 'fr' ? langueAdresse : langueFiche ?? langueSansDonnees(params), en = langue === 'en';
   const enLigne = useEnLigne();
   const [data, setData] = useState<Liste | null>(null);
   const [echec, setEchec] = useState(false);
