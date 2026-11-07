@@ -11,7 +11,7 @@ export type RetraitEpargne={withdrawal_id:string;goal_id:string;motif:Motif;amou
 export type Compteurs={enrollment_id:string;moves:MouvementCompteur[];withdrawals:RetraitEpargne[]};
 export type PartRepartition=
  |{part:Enveloppe;amount:string}
- |{part:'reserve_joie'|'epargne_investir';goal_id:string;amount:string}
+ |{part:'reserve_joie'|'epargne_investir'|'autre';goal_id:string;amount:string}
  |{part:'dettes';debt_id:string;amount:string};
 
 const ENVELOPPES:readonly string[]=['dime','offrande','vivre'];

@@ -105,3 +105,25 @@ it('la répartition s’enregistre à la date choisie, jamais dans le futur',asy
  fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_date_locale:'2026-11-02'})));
 });
+
+it('Ma répartition propose « Autre objectif » et l’envoie vers l’objectif choisi',async()=>{
+ const t1={goal_id:'5f1c2a4e-3333-4c3b-9a55-000000000003',goal_type:'autre',label:'Toiture',target_amount:'500.00',currency:'USD',entries:[]};
+ const t2={goal_id:'5f1c2a4e-4444-4c3b-9a55-000000000004',goal_type:'autre',label:'École',target_amount:'300.00',currency:'USD',entries:[]};
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[...suivi.savings_goals,t1,t2]},error:null};
+  if(f==='hd_finance_allocation_save')return {data:{allocation_id:a.p_request_id,deja:false},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[],withdrawals:[]},error:null};
+  throw Error(f);});
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
+ for(let i=0;i<2;i++)fireEvent.click(screen.getByRole('button',{name:'Augmenter : Autre objectif'}));
+ expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/Autre objectif.*10 %.*100/);
+ fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
+ const feuille=await screen.findByRole('dialog');
+ await within(feuille).findByText(/objectif « Toiture »/);
+ fireEvent.change(within(feuille).getByLabelText('Quel autre objectif ?'),{target:{value:t2.goal_id}});
+ expect(within(feuille).getByText(/objectif « École »/)).toBeInTheDocument();
+ fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_parts:expect.arrayContaining([{part:'autre',goal_id:t2.goal_id,amount:'100.00'}])})));
+});

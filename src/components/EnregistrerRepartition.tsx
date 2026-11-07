@@ -7,7 +7,7 @@ import {CompteursIndisponibles,enregistrerRepartition,type PartRepartition} from
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {decimalesDevise} from '@/lib/devises';
 
-type Montants={dime:number;offrande:number;reserve:number;investir:number;dettes:number;vivre:number};
+type Montants={dime:number;offrande:number;reserve:number;investir:number;autre:number;dettes:number;vivre:number};
 type Ligne={cle:string;nom:string;destination:string;montant:number;parts:PartRepartition[];possible:boolean;couleur:string};
 const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 
@@ -23,6 +23,8 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
  const [enCours,setEnCours]=useState(false),[erreur,setErreur]=useState('');
  // Date choisie par la personne (demande du 07/11/2026) : aujourd’hui au départ, jamais dans le futur.
  const [date,setDate]=useState(aujourdhui);
+ // « Autre objectif » : la personne choisit lequel quand elle en a plusieurs dans la monnaie.
+ const [autreChoisi,setAutreChoisi]=useState('');
  const demande=useRef(crypto.randomUUID());
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
@@ -39,6 +41,11 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
    if(m<=0)continue;const g=objectif(type);
    out.push({cle,nom,destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):l(`crée d’abord un objectif en ${devise} dans Mon épargne`,`first create a ${devise} goal in My savings`),montant:m,parts:g?[{part:type,goal_id:g.goal_id,amount:chaine(m)}]:[],possible:!!g,couleur:coul});
   }
+  if(montants.autre>0){
+   const autres=(s?.savings_goals??[]).filter(g=>g.goal_type==='autre'&&g.currency===devise);
+   const g=autres.find(x=>x.goal_id===autreChoisi)??autres[0];
+   out.push({cle:'autre',nom:l('Autre objectif','Other goal'),destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):l(`crée d’abord un « Autre objectif » en ${devise} dans Mon épargne`,`first create an “Other goal” in ${devise} in My savings`),montant:montants.autre,parts:g?[{part:'autre',goal_id:g.goal_id,amount:chaine(montants.autre)}]:[],possible:!!g,couleur:'#c2410c'});
+  }
   if(montants.dettes>0){
    const dettes=(s?.debts??[]).filter(d=>d.currency===devise).map(d=>({d,reste:Math.round(Number(d.opening_balance)*100)-d.payments.reduce((n,p)=>n+Math.round(Number(p.amount)*100),0)}));
    const {propositions,surplus}=repartirSurDettes(Math.round(montants.dettes*100),dettes.map(x=>({id:x.d.debt_id,resteCentimes:x.reste})));
@@ -48,7 +55,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
   }
   if(montants.vivre>0)out.push({cle:'vivre',nom:l('Pour vivre','For living'),destination:l('Pour vivre','For living'),montant:montants.vivre,parts:[{part:'vivre',amount:chaine(montants.vivre)}],possible:true,couleur:'#a1a1a6'});
   return out.filter(x=>x.montant>0);
- },[suivi,cleMontants,devise,en]);
+ },[suivi,cleMontants,devise,en,autreChoisi]);
  const choisies=lignes.filter(x=>x.possible&&coche(x.cle));
  const total=choisies.reduce((n,x)=>n+x.montant,0);
  async function enregistrer(){
@@ -77,6 +84,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
       <label htmlFor={`hd-part-${x.cle}`} style={{flex:1,minWidth:0}}><span className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 rounded-sm" style={{background:x.couleur}}/>{x.nom}</span><small className="block text-[13px] text-hd-on-surface-variant">→ {x.destination}</small></label>
       <b className="tabular-nums whitespace-nowrap">{nombre(x.montant)} {devise}</b>
      </li>)}
+     {(()=>{const autres=suivi&&typeof suivi==='object'?suivi.savings_goals.filter(g=>g.goal_type==='autre'&&g.currency===devise):[];return montants.autre>0&&autres.length>1?<li className="sim-ios-ligne"><label htmlFor="hd-autre-objectif">{l('Quel autre objectif ?','Which other goal?')}</label><select id="hd-autre-objectif" value={autreChoisi||autres[0]!.goal_id} onChange={e=>setAutreChoisi(e.target.value)}>{autres.map(g=><option key={g.goal_id} value={g.goal_id}>{g.label}</option>)}</select></li>:null;})()}
     </ul>
     <button type="button" disabled={!choisies.length||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
     {erreur&&<p role="alert" className="sim-ios-alerte">{erreur}</p>}

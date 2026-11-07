@@ -17,7 +17,7 @@ it('calcule la base selon le profil, avec les règles de la dîme',()=>{
  expect(()=>baseRepartition('salarie','abc','','')).toThrow();
 });
 it('répartit 500 000 : dîme 10 %, réserve 10 %, investir 20 %, dettes 15 %, le reste pour vivre',()=>{
- expect(repartir('500000',POURCENTAGES_DEFAUT,2)).toEqual({base:500000,dime:50000,offrande:0,reserve:50000,investir:100000,dettes:75000,vivre:225000});
+ expect(repartir('500000',POURCENTAGES_DEFAUT,2)).toEqual({base:500000,dime:50000,offrande:0,reserve:50000,investir:100000,autre:0,dettes:75000,vivre:225000});
 });
 it('l’offrande est libre (0 % au départ) mais le total ne dépasse jamais 100 %',()=>{
  expect(POURCENTAGES_DEFAUT.offrande).toBe(0);

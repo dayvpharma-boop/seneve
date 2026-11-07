@@ -149,8 +149,8 @@ begin
   if nom in('dime','offrande','vivre') then
    insert into seneve.hd_finance_envelope_moves(move_id,enrollment_id,envelope,direction,amount,currency,date_locale,allocation_id)
    values(seneve_private.hd_finance_derived_id(p_request_id,i),enrollment,nom,'entree',montant,p_currency,p_date_locale,p_request_id);
-  elsif nom in('reserve_joie','epargne_investir') then
-   select * into g from seneve.hd_finance_savings_goals where goal_id=(part->>'goal_id')::uuid and enrollment_id=enrollment and archived_at is null and currency=p_currency;
+  elsif nom in('reserve_joie','epargne_investir','autre') then
+   select * into g from seneve.hd_finance_savings_goals where goal_id=(part->>'goal_id')::uuid and enrollment_id=enrollment and archived_at is null and currency=p_currency and goal_type=nom;
    if not found then raise exception 'Objectif d’épargne non accessible' using errcode='42501';end if;
    insert into seneve.hd_finance_savings_entries(entry_id,goal_id,amount,date_locale) values(seneve_private.hd_finance_derived_id(p_request_id,i),g.goal_id,montant,p_date_locale);
   elsif nom='dettes' then

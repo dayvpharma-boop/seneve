@@ -10,7 +10,7 @@ import {NotFound} from '@/routes/introuvable';
 import {OptionsDevises} from '@/components/OptionsDevises';
 import {EnregistrerRepartition} from '@/components/EnregistrerRepartition';
 
-const COULEURS:Record<CleRepartition|'vivre',string>={dime:'#b8862b',offrande:'#b05bd6',reserve:'#2f9e62',investir:'#2f6fe0',dettes:'#e0662f',vivre:'#c7c7cc'};
+const COULEURS:Record<CleRepartition|'vivre',string>={dime:'#b8862b',offrande:'#b05bd6',reserve:'#2f9e62',investir:'#2f6fe0',autre:'#c2410c',dettes:'#e0662f',vivre:'#c7c7cc'};
 
 /** Page « Ma répartition » (maquette validée le 07/11/2026), ouverte depuis Mon épargne ou Mon suivi des dettes.
  * Le calcul est local ; « Enregistrer ma répartition » ouvre une feuille où chaque part est vérifiée avant d'être notée. */
@@ -41,10 +41,11 @@ export function HabitudesRepartition(){
   {cle:'offrande',nom:l('Offrande','Offering'),info:l('libre, selon toi','free, as you choose')},
   {cle:'reserve',nom:l('Réserve de joie','Family joy reserve'),info:l('de 5 à 10 %','5 to 10%')},
   {cle:'investir',nom:l('Pour investir','For investing'),info:l('jusqu’à 30 %','up to 30%')},
+  {cle:'autre',nom:l('Autre objectif','Other goal'),info:l('libre : toiture, école…','free: roof, school…')},
   {cle:'dettes',nom:l('Dettes','Debts'),info:l('proposé 15 % (0 à 30 %)','suggested 15% (0 to 30%)')},
  ];
  const reglage=(cle:CleRepartition,d:number)=>setP(x=>{const b=LIMITES_REPARTITION[cle];return {...x,[cle]:Math.min(maximumPart(cle,x),Math.max(b.min,x[cle]+d*b.pas))};});
- const vivrePct=r&&r.base>0?Math.round(r.vivre/r.base*100):100-p.dime-p.offrande-p.reserve-p.investir-p.dettes;
+ const vivrePct=r&&r.base>0?Math.round(r.vivre/r.base*100):100-p.dime-p.offrande-p.reserve-p.investir-p.autre-p.dettes;
  return <CadreHabitudes titre={l('Ma répartition','My allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à Mon suivi des dettes','Back to my debt tracker'):l('Revenir à Mon épargne','Back to my savings')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
   <div className="sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <h1 className="ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('Ma répartition','My allocation')}</h1>
