@@ -103,6 +103,7 @@ Aucune de ces étapes serveur n’est déclarée terminée. La V1 reste intacte 
 - Dettes : enregistrer séparément chaque solde de départ et devise ; le système attribue un libellé neutre « Dette 1 », etc. Chaque paiement daté est retranché du solde. La liste recommande le plus petit solde restant (méthode boule de neige), tout en laissant le choix au participant. Un paiement supérieur au reste est refusé côté interface et côté serveur.
 - Le taux choisi est un simple repère facultatif : le participant fournit lui-même une base mensuelle et un pourcentage de 0 à 100 %. Le calcul donne un montant indicatif ; il ne change jamais le solde d’une dette. Seul un paiement réellement saisi diminue le solde.
 - Les sommes sont calculées séparément par devise ; aucune conversion ni somme interdevises. Les montants et dates sont privés et attachés à l’inscription HD V2. Aucun créancier, motif, détail de dette, automatisme de transfert ou prélèvement n’est enregistré.
+- Le sélecteur propose 148 devises courantes, dont CDF, XAF et XOF. Les codes historiques et devises nécessitant trois décimales ne sont pas encore proposés, car le stockage V2 accepte au plus deux décimales. Les devises sont affichées avec leurs noms localisés quand le navigateur les connaît.
 
 ### État de réalisation
 
