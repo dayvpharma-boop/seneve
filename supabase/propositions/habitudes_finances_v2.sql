@@ -122,6 +122,8 @@ do $$begin
  end if;
 end$$;
 
+
+
 insert into seneve.activities(activity_id,content_id,type_activite,consigne,obligatoire,format_reponse,critere_realisation,variante_de,niveau,cree_le,note_source)
 select m.new_id,m.new_content_id,a.type_activite,a.consigne,a.obligatoire,a.format_reponse,a.critere_realisation,coalesce(v.new_id,a.variante_de),a.niveau,now(),replace(a.note_source,'_V1:','_V2:')
 from seneve.activities a join hd_finance_v2_activity_map m on m.old_id=a.activity_id
@@ -378,3 +380,139 @@ do $$declare d text;old text;begin
  d:=replace(d,old,'if source like ''RECETTE_HD_FINANCE_V2:%'' then if not seneve_private.hd_finance_activity_admis(new.enrollment_id,new.activity_id) then raise exception ''Activité financière non choisie ou hors horaire'' using errcode=''42501'';end if;end if; '||old);
  execute d;
 end$$;
+
+-- 8. Brouillon du suivi privé des versements d’épargne et des remboursements.
+-- Le taux choisi sert seulement à estimer un repère ; aucun transfert n’est déclenché.
+create table seneve.hd_finance_savings_goals(
+ goal_id uuid primary key default gen_random_uuid(),
+ enrollment_id uuid not null references seneve.enrollments(enrollment_id) on delete cascade,
+ module_version smallint not null default 2 check(module_version=2),
+ goal_type text not null check(goal_type in('reserve_joie','epargne_investir','autre')),
+ label text not null check(length(btrim(label)) between 1 and 60),
+ target_amount numeric(12,2) not null check(target_amount>0),
+ currency text not null check(currency ~ '^[A-Z]{3}$'),
+ created_at timestamptz not null default now(),
+ archived_at timestamptz
+);
+create index hd_finance_savings_goals_enrollment_idx on seneve.hd_finance_savings_goals(enrollment_id,created_at);
+create table seneve.hd_finance_savings_entries(
+ entry_id uuid primary key default gen_random_uuid(),
+ goal_id uuid not null references seneve.hd_finance_savings_goals(goal_id) on delete cascade,
+ amount numeric(12,2) not null check(amount>0),
+ date_locale date not null,
+ created_at timestamptz not null default now()
+);
+create index hd_finance_savings_entries_goal_idx on seneve.hd_finance_savings_entries(goal_id,date_locale,created_at);
+create table seneve.hd_finance_debt_accounts(
+ debt_id uuid primary key default gen_random_uuid(),
+ enrollment_id uuid not null references seneve.enrollments(enrollment_id) on delete cascade,
+ module_version smallint not null default 2 check(module_version=2),
+ debt_number integer not null check(debt_number>0),
+ opening_balance numeric(12,2) not null check(opening_balance>0),
+ currency text not null check(currency ~ '^[A-Z]{3}$'),
+ monthly_basis numeric(12,2) check(monthly_basis is null or monthly_basis>=0),
+ repayment_percent numeric(5,2) check(repayment_percent is null or repayment_percent between 0 and 100),
+ created_at timestamptz not null default now(),
+ closed_at timestamptz,
+ unique(enrollment_id,debt_number),
+ check((monthly_basis is null)=(repayment_percent is null))
+);
+create index hd_finance_debt_accounts_enrollment_idx on seneve.hd_finance_debt_accounts(enrollment_id,debt_number);
+create table seneve.hd_finance_debt_payments(
+ payment_id uuid primary key default gen_random_uuid(),
+ debt_id uuid not null references seneve.hd_finance_debt_accounts(debt_id) on delete cascade,
+ amount numeric(12,2) not null check(amount>0),
+ date_locale date not null,
+ created_at timestamptz not null default now()
+);
+create index hd_finance_debt_payments_debt_idx on seneve.hd_finance_debt_payments(debt_id,date_locale,created_at);
+alter table seneve.hd_finance_savings_goals enable row level security;
+alter table seneve.hd_finance_savings_entries enable row level security;
+alter table seneve.hd_finance_debt_accounts enable row level security;
+alter table seneve.hd_finance_debt_payments enable row level security;
+revoke all on seneve.hd_finance_savings_goals,seneve.hd_finance_savings_entries,seneve.hd_finance_debt_accounts,seneve.hd_finance_debt_payments from public,anon,authenticated;
+
+create function seneve_private.hd_finance_tracker_get(p_enrollment_id uuid)
+returns jsonb language plpgsql stable security definer set search_path='' as $$
+declare e seneve.enrollments%rowtype;l seneve.hd_programme_links%rowtype;
+begin
+ if auth.uid() is null then raise exception 'Compte requis' using errcode='42501';end if;
+ select * into e from seneve.enrollments where enrollment_id=p_enrollment_id and participant_id=(select seneve.current_participant_id());
+ if not found or e.version<>2 or not seneve.hd_has_current_right(p_enrollment_id) then raise exception 'Suivi financier non accessible' using errcode='42501';end if;
+ select * into l from seneve.hd_programme_links where programme_id=e.programme_id and version=e.version and langue=e.langue and actif;
+ if not found or l.module_id<>'HABITUDES_DEFIS' or l.module_version<>2 then raise exception 'Version de suivi financier indisponible' using errcode='42501';end if;
+ return jsonb_build_object('module_v2',true,'enrollment_id',e.enrollment_id,
+  'savings_goals',(select coalesce(jsonb_agg(jsonb_build_object('goal_id',g.goal_id,'goal_type',g.goal_type,'label',g.label,'target_amount',g.target_amount::text,'currency',g.currency,'created_at',g.created_at,'entries',(select coalesce(jsonb_agg(jsonb_build_object('entry_id',x.entry_id,'amount',x.amount::text,'date_locale',x.date_locale) order by x.date_locale,x.created_at),'[]'::jsonb) from seneve.hd_finance_savings_entries x where x.goal_id=g.goal_id)) order by g.created_at),'[]'::jsonb) from seneve.hd_finance_savings_goals g where g.enrollment_id=e.enrollment_id and g.archived_at is null),
+  'debts',(select coalesce(jsonb_agg(jsonb_build_object('debt_id',d.debt_id,'debt_number',d.debt_number,'opening_balance',d.opening_balance::text,'currency',d.currency,'monthly_basis',d.monthly_basis::text,'repayment_percent',d.repayment_percent::text,'created_at',d.created_at,'payments',(select coalesce(jsonb_agg(jsonb_build_object('payment_id',p.payment_id,'amount',p.amount::text,'date_locale',p.date_locale) order by p.date_locale,p.created_at),'[]'::jsonb) from seneve.hd_finance_debt_payments p where p.debt_id=d.debt_id)) order by d.debt_number),'[]'::jsonb) from seneve.hd_finance_debt_accounts d where d.enrollment_id=e.enrollment_id));
+end$$;
+
+create function seneve_private.hd_finance_savings_goal_add(p_enrollment_id uuid,p_goal_type text,p_label text,p_target_amount numeric,p_currency text)
+returns jsonb language plpgsql volatile security definer set search_path='' as $$
+declare e seneve.enrollments%rowtype;l seneve.hd_programme_links%rowtype;g seneve.hd_finance_savings_goals%rowtype;
+begin
+ if auth.uid() is null then raise exception 'Compte requis' using errcode='42501';end if;
+ if p_goal_type not in('reserve_joie','epargne_investir','autre') or p_label is null or length(btrim(p_label)) not between 1 and 60 or p_target_amount is null or p_target_amount<=0 or p_target_amount>9999999999.99 or scale(p_target_amount)>2 or p_currency !~ '^[A-Z]{3}$' then raise exception 'Objectif d’épargne invalide' using errcode='22023';end if;
+ select * into e from seneve.enrollments where enrollment_id=p_enrollment_id and participant_id=(select seneve.current_participant_id()) for share;
+ if not found or e.version<>2 or not seneve.hd_has_current_right(p_enrollment_id) then raise exception 'Inscription financière non accessible' using errcode='42501';end if;
+ select * into l from seneve.hd_programme_links where programme_id=e.programme_id and version=e.version and langue=e.langue and actif;
+ if not found or l.module_id<>'HABITUDES_DEFIS' or l.module_version<>2 then raise exception 'Version de suivi financier indisponible' using errcode='42501';end if;
+ insert into seneve.hd_finance_savings_goals(enrollment_id,goal_type,label,target_amount,currency) values(e.enrollment_id,p_goal_type,btrim(p_label),p_target_amount,p_currency) returning * into g;
+ return jsonb_build_object('goal_id',g.goal_id,'goal_type',g.goal_type,'label',g.label,'target_amount',g.target_amount::text,'currency',g.currency);
+end$$;
+
+create function seneve_private.hd_finance_savings_entry_add(p_enrollment_id uuid,p_goal_id uuid,p_amount numeric,p_date_locale date)
+returns jsonb language plpgsql volatile security definer set search_path='' as $$
+declare e seneve.enrollments%rowtype;g seneve.hd_finance_savings_goals%rowtype;x seneve.hd_finance_savings_entries%rowtype;
+begin
+ if auth.uid() is null then raise exception 'Compte requis' using errcode='42501';end if;
+ if p_amount is null or p_amount<=0 or p_amount>9999999999.99 or scale(p_amount)>2 or p_date_locale is null or p_date_locale>current_date then raise exception 'Versement invalide' using errcode='22023';end if;
+ select * into e from seneve.enrollments where enrollment_id=p_enrollment_id and participant_id=(select seneve.current_participant_id()) for share;
+ if not found or e.version<>2 or not seneve.hd_has_current_right(p_enrollment_id) then raise exception 'Inscription financière non accessible' using errcode='42501';end if;
+ if not exists(select 1 from seneve.hd_programme_links where programme_id=e.programme_id and version=e.version and langue=e.langue and actif and module_id='HABITUDES_DEFIS' and module_version=2) then raise exception 'Version de suivi financier indisponible' using errcode='42501';end if;
+ select * into g from seneve.hd_finance_savings_goals where goal_id=p_goal_id and enrollment_id=e.enrollment_id and archived_at is null for share;
+ if not found then raise exception 'Objectif d’épargne non accessible' using errcode='42501';end if;
+ insert into seneve.hd_finance_savings_entries(goal_id,amount,date_locale) values(g.goal_id,p_amount,p_date_locale) returning * into x;
+ return jsonb_build_object('entry_id',x.entry_id,'goal_id',x.goal_id,'amount',x.amount::text,'date_locale',x.date_locale);
+end$$;
+
+create function seneve_private.hd_finance_debt_add(p_enrollment_id uuid,p_opening_balance numeric,p_currency text,p_monthly_basis numeric default null,p_repayment_percent numeric default null)
+returns jsonb language plpgsql volatile security definer set search_path='' as $$
+declare e seneve.enrollments%rowtype;d seneve.hd_finance_debt_accounts%rowtype;n integer;
+begin
+ if auth.uid() is null then raise exception 'Compte requis' using errcode='42501';end if;
+ if p_opening_balance is null or p_opening_balance<=0 or p_opening_balance>9999999999.99 or scale(p_opening_balance)>2 or p_currency !~ '^[A-Z]{3}$' or ((p_monthly_basis is null)<>(p_repayment_percent is null)) or (p_monthly_basis is not null and (p_monthly_basis<0 or p_monthly_basis>9999999999.99 or scale(p_monthly_basis)>2)) or (p_repayment_percent is not null and p_repayment_percent not between 0 and 100) then raise exception 'Dette ou repère de remboursement invalide' using errcode='22023';end if;
+ select * into e from seneve.enrollments where enrollment_id=p_enrollment_id and participant_id=(select seneve.current_participant_id()) for share;
+ if not found or e.version<>2 or not seneve.hd_has_current_right(p_enrollment_id) then raise exception 'Inscription financière non accessible' using errcode='42501';end if;
+ if not exists(select 1 from seneve.hd_programme_links where programme_id=e.programme_id and version=e.version and langue=e.langue and actif and module_id='HABITUDES_DEFIS' and module_version=2) then raise exception 'Version de suivi financier indisponible' using errcode='42501';end if;
+ perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('hd-finance-debt|'||e.enrollment_id::text,0));
+ select coalesce(max(debt_number),0)+1 into n from seneve.hd_finance_debt_accounts where enrollment_id=e.enrollment_id;
+ insert into seneve.hd_finance_debt_accounts(enrollment_id,debt_number,opening_balance,currency,monthly_basis,repayment_percent) values(e.enrollment_id,n,p_opening_balance,p_currency,p_monthly_basis,p_repayment_percent) returning * into d;
+ return jsonb_build_object('debt_id',d.debt_id,'debt_number',d.debt_number,'opening_balance',d.opening_balance::text,'currency',d.currency,'monthly_basis',d.monthly_basis::text,'repayment_percent',d.repayment_percent::text);
+end$$;
+
+create function seneve_private.hd_finance_debt_payment_add(p_enrollment_id uuid,p_debt_id uuid,p_amount numeric,p_date_locale date)
+returns jsonb language plpgsql volatile security definer set search_path='' as $$
+declare e seneve.enrollments%rowtype;d seneve.hd_finance_debt_accounts%rowtype;p seneve.hd_finance_debt_payments%rowtype;reste numeric;
+begin
+ if auth.uid() is null then raise exception 'Compte requis' using errcode='42501';end if;
+ if p_amount is null or p_amount<=0 or p_amount>9999999999.99 or scale(p_amount)>2 or p_date_locale is null or p_date_locale>current_date then raise exception 'Remboursement invalide' using errcode='22023';end if;
+ select * into e from seneve.enrollments where enrollment_id=p_enrollment_id and participant_id=(select seneve.current_participant_id()) for share;
+ if not found or e.version<>2 or not seneve.hd_has_current_right(p_enrollment_id) then raise exception 'Inscription financière non accessible' using errcode='42501';end if;
+ if not exists(select 1 from seneve.hd_programme_links where programme_id=e.programme_id and version=e.version and langue=e.langue and actif and module_id='HABITUDES_DEFIS' and module_version=2) then raise exception 'Version de suivi financier indisponible' using errcode='42501';end if;
+ select * into d from seneve.hd_finance_debt_accounts where debt_id=p_debt_id and enrollment_id=e.enrollment_id for update;
+ if not found then raise exception 'Dette non accessible' using errcode='42501';end if;
+ select d.opening_balance-coalesce(sum(x.amount),0) into reste from seneve.hd_finance_debt_payments x where x.debt_id=d.debt_id;
+ if p_amount>reste then raise exception 'Le remboursement dépasse le solde restant' using errcode='22023';end if;
+ insert into seneve.hd_finance_debt_payments(debt_id,amount,date_locale) values(d.debt_id,p_amount,p_date_locale) returning * into p;
+ if p_amount=reste then update seneve.hd_finance_debt_accounts set closed_at=now() where debt_id=d.debt_id;end if;
+ return jsonb_build_object('payment_id',p.payment_id,'debt_id',p.debt_id,'amount',p.amount::text,'date_locale',p.date_locale,'remaining',reste-p.amount);
+end$$;
+
+create function seneve.hd_finance_tracker_get(p_enrollment_id uuid) returns jsonb language sql stable security invoker set search_path='' as $$select seneve_private.hd_finance_tracker_get(p_enrollment_id)$$;
+create function seneve.hd_finance_savings_goal_add(p_enrollment_id uuid,p_goal_type text,p_label text,p_target_amount numeric,p_currency text) returns jsonb language sql volatile security invoker set search_path='' as $$select seneve_private.hd_finance_savings_goal_add(p_enrollment_id,p_goal_type,p_label,p_target_amount,p_currency)$$;
+create function seneve.hd_finance_savings_entry_add(p_enrollment_id uuid,p_goal_id uuid,p_amount numeric,p_date_locale date) returns jsonb language sql volatile security invoker set search_path='' as $$select seneve_private.hd_finance_savings_entry_add(p_enrollment_id,p_goal_id,p_amount,p_date_locale)$$;
+create function seneve.hd_finance_debt_add(p_enrollment_id uuid,p_opening_balance numeric,p_currency text,p_monthly_basis numeric,p_repayment_percent numeric) returns jsonb language sql volatile security invoker set search_path='' as $$select seneve_private.hd_finance_debt_add(p_enrollment_id,p_opening_balance,p_currency,p_monthly_basis,p_repayment_percent)$$;
+create function seneve.hd_finance_debt_payment_add(p_enrollment_id uuid,p_debt_id uuid,p_amount numeric,p_date_locale date) returns jsonb language sql volatile security invoker set search_path='' as $$select seneve_private.hd_finance_debt_payment_add(p_enrollment_id,p_debt_id,p_amount,p_date_locale)$$;
+revoke all on function seneve_private.hd_finance_tracker_get(uuid),seneve_private.hd_finance_savings_goal_add(uuid,text,text,numeric,text),seneve_private.hd_finance_savings_entry_add(uuid,uuid,numeric,date),seneve_private.hd_finance_debt_add(uuid,numeric,text,numeric,numeric),seneve_private.hd_finance_debt_payment_add(uuid,uuid,numeric,date) from public,anon,authenticated;
+revoke all on function seneve.hd_finance_tracker_get(uuid),seneve.hd_finance_savings_goal_add(uuid,text,text,numeric,text),seneve.hd_finance_savings_entry_add(uuid,uuid,numeric,date),seneve.hd_finance_debt_add(uuid,numeric,text,numeric,numeric),seneve.hd_finance_debt_payment_add(uuid,uuid,numeric,date) from public,anon;
+grant execute on function seneve_private.hd_finance_tracker_get(uuid),seneve_private.hd_finance_savings_goal_add(uuid,text,text,numeric,text),seneve_private.hd_finance_savings_entry_add(uuid,uuid,numeric,date),seneve_private.hd_finance_debt_add(uuid,numeric,text,numeric,numeric),seneve_private.hd_finance_debt_payment_add(uuid,uuid,numeric,date),seneve.hd_finance_tracker_get(uuid),seneve.hd_finance_savings_goal_add(uuid,text,text,numeric,text),seneve.hd_finance_savings_entry_add(uuid,uuid,numeric,date),seneve.hd_finance_debt_add(uuid,numeric,text,numeric,numeric),seneve.hd_finance_debt_payment_add(uuid,uuid,numeric,date) to authenticated;

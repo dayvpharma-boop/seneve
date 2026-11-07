@@ -93,3 +93,20 @@ La cartographie et l’état initial ci-dessus sont historiques. Les éléments 
 5. Appliquer d’abord en environnement isolé, vérifier les résultats et préparer ensuite la mise en production avec sauvegarde et retour arrière.
 
 Aucune de ces étapes serveur n’est déclarée terminée. La V1 reste intacte et aucun déploiement n’est revendiqué.
+
+## Suivi dédié Épargne et Dettes — préparation du 7 novembre 2026
+
+### Décision de conception
+
+- Deux pages privées distinctes : `/habitudes/epargne` et `/habitudes/dettes`, accessibles seulement depuis le compte SÉNEVÉ et une inscription active à la version HD V2.
+- Épargne : créer un ou plusieurs objectifs avec libellé, type (Réserve de joie, Épargne pour investir ou autre), cible, devise et versements réels datés. Le total est la somme des versements de l’objectif ; le reste vaut `max(0, cible − total)`. La progression et le jardin sont visuels. Dépasser la cible reste possible et le montant réellement épargné demeure visible.
+- Dettes : enregistrer séparément chaque solde de départ et devise ; le système attribue un libellé neutre « Dette 1 », etc. Chaque paiement daté est retranché du solde. La liste recommande le plus petit solde restant (méthode boule de neige), tout en laissant le choix au participant. Un paiement supérieur au reste est refusé côté interface et côté serveur.
+- Le taux choisi est un simple repère facultatif : le participant fournit lui-même une base mensuelle et un pourcentage de 0 à 100 %. Le calcul donne un montant indicatif ; il ne change jamais le solde d’une dette. Seul un paiement réellement saisi diminue le solde.
+- Les sommes sont calculées séparément par devise ; aucune conversion ni somme interdevises. Les montants et dates sont privés et attachés à l’inscription HD V2. Aucun créancier, motif, détail de dette, automatisme de transfert ou prélèvement n’est enregistré.
+
+### État de réalisation
+
+- Maquette interactive bilingue : `design/habitudes-defis/suivi-epargne-dettes.html`. Les données d’exemple restent dans le navigateur et ne rejoignent pas le compte.
+- Pages React préparées dans `src/components/SuiviEpargneDettes.tsx`, RPC d’accès dans `src/lib/habitudes-finances-suivi.ts`, et chemins prévus `/habitudes/epargne` et `/habitudes/dettes`. Les raccourcis restent cachés si `VITE_HABITUDES_FINANCES_SUIVI` n’est pas `true`.
+- Le brouillon SQL ajoute des tables isolées par inscription et des RPC propriétaires de lecture/écriture ; la migration ne doit pas être appliquée à la production ni au test partagé sans sauvegarde restaurée et vérifications isolées.
+- Le build et le contrôle TypeScript passent. Un essai DOM de la maquette confirme le cumul d’épargne, la soustraction d’un paiement et la suggestion de la plus petite dette. La partie Supabase n’est pas exécutée et n’est pas déclarée opérationnelle.
