@@ -8,7 +8,8 @@ export type PaiementDette={payment_id:string;amount:string;date_locale:string;cr
 export type RythmeRepereDette='mensuel'|'hebdomadaire';
 type RepereDette={base:string;pourcentage:string;rythme:RythmeRepereDette};
 export type DetteSuivie={debt_id:string;debt_number:number;opening_balance:string;currency:string;creditor_name:string|null;repere:RepereDette|null;payments:PaiementDette[]};
-export type SuiviFinancier={enrollment_id:string;savings_goals:ObjectifEpargne[];debts:DetteSuivie[]};
+/** savings_goals et debts : seulement ce qui est actif. archived_* : ce qui a été supprimé (mis de côté), gardé pour le bilan. */
+export type SuiviFinancier={enrollment_id:string;savings_goals:ObjectifEpargne[];debts:DetteSuivie[];archived_goals:ObjectifEpargne[];archived_debts:DetteSuivie[]};
 const objet=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
 const montant=(v:unknown)=>typeof v==='string'&&/^\d{1,10}(?:\.\d{1,2})?$/.test(v)&&Number(v)>=0;
@@ -48,7 +49,19 @@ function analyserDette(v:unknown):DetteSuivie {
 }
 function verifierReponse(v:unknown,enrollmentId:string|null):SuiviFinancier {
   if (!objet(v)||!uuid(v.enrollment_id)||(enrollmentId!==null&&v.enrollment_id!==enrollmentId)) throw Error('Suivi financier incohérent');
-  return {enrollment_id:v.enrollment_id,savings_goals:analyserListe(v.savings_goals,analyserObjectif),debts:analyserListe(v.debts,analyserDette)};
+  return {enrollment_id:v.enrollment_id,savings_goals:analyserListe(v.savings_goals,analyserObjectif),debts:analyserListe(v.debts,analyserDette),
+    archived_goals:Array.isArray(v.archived_goals)?analyserListe(v.archived_goals,analyserObjectif):[],archived_debts:Array.isArray(v.archived_debts)?analyserListe(v.archived_debts,analyserDette):[]};
+}
+/** « Supprimer » (07/11/2026) : met de côté un objectif ou une dette ; archive=false le fait revenir. Rien n'est effacé. */
+export async function supprimerObjectif(enrollmentId:string,goalId:string,archive:boolean){
+  if(!uuid(goalId))throw Error('Objectif invalide');
+  const {data,error}=await supabase.rpc('hd_finance_goal_archive',{p_enrollment_id:enrollmentId,p_goal_id:goalId,p_archive:archive});
+  if(error)throw error;if(!objet(data)||data.goal_id!==goalId)throw Error('Suppression non confirmée');return data;
+}
+export async function supprimerDette(enrollmentId:string,debtId:string,archive:boolean){
+  if(!uuid(debtId))throw Error('Dette invalide');
+  const {data,error}=await supabase.rpc('hd_finance_debt_archive',{p_enrollment_id:enrollmentId,p_debt_id:debtId,p_archive:archive});
+  if(error)throw error;if(!objet(data)||data.debt_id!==debtId)throw Error('Suppression non confirmée');return data;
 }
 export async function chargerSuiviFinancier(enrollmentId:string|null) {
   const {data,error}=await supabase.rpc('hd_finance_tracker_get',{p_enrollment_id:enrollmentId});

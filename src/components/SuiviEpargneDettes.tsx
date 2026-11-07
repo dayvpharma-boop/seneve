@@ -4,7 +4,7 @@ import {Link,useSearchParams} from 'react-router-dom';
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {ComptePrive} from '@/components/ComptePrive';
 import {IconeHD} from '@/components/IconeHabitudes';
-import {chargerSuiviFinancier,creerDetteSuivie,creerObjectifEpargne,enregistrerPaiementDette,enregistrerVersementEpargne,renommerDetteSuivie,nomCreancierValide,LONGUEUR_NOM_CREANCIER,type DetteSuivie,type ObjectifEpargne,type TypeObjectifEpargne,type SuiviFinancier,type RythmeRepereDette} from '@/lib/habitudes-finances-suivi';
+import {chargerSuiviFinancier,supprimerObjectif,supprimerDette,creerDetteSuivie,creerObjectifEpargne,enregistrerPaiementDette,enregistrerVersementEpargne,renommerDetteSuivie,nomCreancierValide,LONGUEUR_NOM_CREANCIER,type DetteSuivie,type ObjectifEpargne,type TypeObjectifEpargne,type SuiviFinancier,type RythmeRepereDette} from '@/lib/habitudes-finances-suivi';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {decimalesDevise,deviseAcceptee,montantValidePourDevise} from '@/lib/devises';
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
@@ -64,6 +64,11 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  }
  // Retraits notés dans Mes compteurs (07/11/2026) : ils diminuent le disponible de l'objectif et apparaissent dans son historique.
  const [cpt,setCpt]=useState<Compteurs|null>(null);
+ // Suppression (07/11/2026) : confirmation d'abord, puis « Annuler » pendant quelques secondes.
+ const [aConfirmer,setAConfirmer]=useState<{type:'objectif'|'dette';id:string;nom:string;detail:string}|null>(null);
+ const [annulable,setAnnulable]=useState<{type:'objectif'|'dette';id:string;nom:string}|null>(null);
+ const minuterie=useRef<ReturnType<typeof setTimeout>|null>(null);
+ useEffect(()=>()=>{if(minuterie.current)clearTimeout(minuterie.current);},[]);
  const retraitsDe=(goalId:string)=>cpt?.withdrawals.filter(w=>w.goal_id===goalId)??[];
  const disponibleDe=(g:ObjectifEpargne)=>totalCents(g.entries)-totalCents(retraitsDe(g.goal_id));
  const charger=useCallback(async()=>{
@@ -125,6 +130,23 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   } finally {
    setBusy(false);
   }
+ }
+async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinancier(inscription));setCpt(await chargerCompteurs(inscription).catch(()=>null));}
+ async function supprimer(){
+  if(!aConfirmer||!inscription||busy)return;const c=aConfirmer;setBusy(true);
+  try{
+   if(c.type==='objectif')await supprimerObjectif(inscription,c.id,true);else await supprimerDette(inscription,c.id,true);
+   setAConfirmer(null);setOuverte('');await relire();
+   setAnnulable({type:c.type,id:c.id,nom:c.nom});
+   if(minuterie.current)clearTimeout(minuterie.current);minuterie.current=setTimeout(()=>setAnnulable(null),8000);
+  }catch{setAConfirmer(null);notice(l('La suppression n’a pas pu se faire. Réessaie.','Deleting did not work. Try again.'),'haut',true);}
+  finally{setBusy(false);}
+ }
+ async function annulerSuppression(){
+  if(!annulable||!inscription||busy)return;const c=annulable;setBusy(true);
+  try{if(c.type==='objectif'){await supprimerObjectif(inscription,c.id,false);setGoal(c.id);}else await supprimerDette(inscription,c.id,false);setAnnulable(null);await relire();notice(l(`« ${c.nom} » est revenu.`,`“${c.nom}” is back.`),'haut');}
+  catch{notice(l('Impossible d’annuler pour le moment.','Could not undo right now.'),'haut',true);}
+  finally{setBusy(false);}
  }
  async function confirmerSaisie(cle:string, message:string, zone:Zone) {
   demandes.current.delete(cle);
@@ -265,6 +287,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
      {objectif.entries.length+retraitsDe(objectif.goal_id).length?<ol className="sim-ios-groupe hd-classique">{[...objectif.entries.map(x=>({id:x.entry_id,date:x.date_locale,cree:x.created_at,signe:1,montant:montantCents(x.amount),motif:null as Motif|null,zero:false})),...retraitsDe(objectif.goal_id).map(w=>({id:w.withdrawal_id,date:w.date_locale,cree:w.created_at,signe:-1,montant:montantCents(w.amount),motif:w.motif as Motif|null,zero:w.remise_a_zero}))].sort((a,b)=>b.date.localeCompare(a.date)||(b.cree??'').localeCompare(a.cree??'')).map(x=><li key={x.id} className="sim-ios-ligne"><time dateTime={x.date} className="flex-1">{momentLisible(x.date,x.cree,en)}{x.signe<0?` · ${({donne:l('donné','given'),depense:l('dépensé','spent'),investi:l('investi','invested'),autre:l('autre','other')} as Record<string,string>)[x.motif??'autre']}${x.zero?l(' · remis à zéro',' · reset to zero'):''}`:''}</time><strong className={`tabular-nums ${x.signe>0?'text-emerald-700':'text-red-700'}`}>{x.signe>0?'+':'−'} {nombre(x.montant,objectif.currency,en)}</strong></li>)}</ol>
       :<p className="sim-ios-note hd-classique">{l('Aucun versement pour le moment.','No contributions yet.')}</p>}
     </section>
+    <div className="sim-ios-groupe hd-classique mt-6"><button type="button" disabled={busy} onClick={()=>setAConfirmer({type:'objectif',id:objectif.goal_id,nom:objectif.label,detail:l(`Il disparaît de tes objectifs, de la répartition et des compteurs. Ses ${objectif.entries.length} versement${objectif.entries.length>1?'s':''} (${nombre(verse,objectif.currency,false)} ${objectif.currency}) restent dans ton bilan.`,`It disappears from your goals, allocation and counters. Its ${objectif.entries.length} contribution${objectif.entries.length>1?'s':''} (${nombre(verse,objectif.currency,true)} ${objectif.currency}) stay in your summary.`)})} className="sim-ios-ligne w-full justify-center font-medium" style={{color:'#d70015',fontSize:16}}>{l('Supprimer cet objectif','Delete this goal')}</button></div>
    </>}
   </>;
  };
@@ -353,6 +376,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
           <div className="mt-2 flex gap-2"><button disabled={busy} className="min-h-[44px] rounded-lg px-3 text-sm font-semibold text-white" style={{background:'var(--ios-accent,#5b4ee8)'}}>{l('Enregistrer le nom','Save name')}</button><button type="button" disabled={busy} className="min-h-[44px] rounded-lg px-3 text-sm" onClick={()=>setNomEnEdition(null)}>{l('Annuler','Cancel')}</button></div>
          </form>}
          {d.repere&&<Ligne libelle={l('Repère de remboursement','Repayment guide')}><span className="text-hd-on-surface-variant" style={{fontSize:15}}>{montantRepere(d.repere.base,d.repere.pourcentage,d.currency)} {periode(d.repere.rythme)}</span></Ligne>}
+         <button type="button" disabled={busy} onClick={()=>setAConfirmer({type:'dette',id:d.debt_id,nom:nomDette(d),detail:l(`Elle disparaît de ta liste. ${d.payments.length?`Ses ${d.payments.length} remboursement${d.payments.length>1?'s':''} (${nombre(rembourse,d.currency,false)} ${d.currency}) restent comptés dans ton bilan.`:'Aucun remboursement n’avait été noté.'}`,`It disappears from your list. ${d.payments.length?`Its ${d.payments.length} repayment${d.payments.length>1?'s':''} (${nombre(rembourse,d.currency,true)} ${d.currency}) stay in your summary.`:'No repayment had been recorded.'}`)})} className="sim-ios-ligne w-full justify-center font-medium" style={{color:'#d70015',fontSize:16}}>{l('Supprimer cette dette','Delete this debt')}</button>
         </div>
        </div>}
       </article>;
@@ -375,10 +399,20 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
     <IconeHD nom="chevron_right" className="text-[22px] opacity-80"/>
    </Link>
    {mode==='epargne'&&<Link to={`/habitudes/compteurs${en?'?lang=en':''}`} className="hd-classique mb-3 flex min-h-[52px] items-center gap-3 rounded-xl bg-white px-4" style={{textDecoration:'none',color:'inherit'}}><IconeHD nom="calendar_view_week" className="text-[22px] text-hd-secondary"/><span className="flex-1"><span className="block text-[16px]">{l('Mes compteurs','My counters')}</span><small className="block text-[13px] text-hd-on-surface-variant">{l('Ce qui reste dans chaque caisse, et le bilan','What is left in each counter, and the summary')}</small></span><IconeHD nom="chevron_right" className="text-[20px] text-hd-outline"/></Link>}
+   {annulable&&<p role="status" aria-live="polite" className="hd-classique mb-3 flex items-center gap-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-900"><span className="flex-1">{annulable.type==='objectif'?l(`« ${annulable.nom} » est supprimé. Son historique reste dans ton bilan.`,`“${annulable.nom}” is deleted. Its history stays in your summary.`):l(`« ${annulable.nom} » est supprimée. Son historique reste dans ton bilan.`,`“${annulable.nom}” is deleted. Its history stays in your summary.`)}</span><button type="button" disabled={busy} onClick={()=>void annulerSuppression()} className="min-h-[44px] px-2 font-semibold" style={{color:'var(--ios-accent,#5b4ee8)'}}>{l('Annuler','Undo')}</button></p>}
+   {message('haut')}
    {state==='chargement'&&<p role="status" className="rounded-2xl bg-white p-4">{l('Chargement du suivi…','Loading your tracker…')}</p>}
    {state==='erreur'&&<section className="rounded-2xl bg-white p-4"><p role="alert">{l('Le suivi n’est pas disponible pour le moment.','Your tracker is not available right now.')}</p><button className="mt-3 min-h-[44px] rounded-xl px-4 text-white" style={{background:'var(--ios-accent,#5b4ee8)'}} onClick={()=>setEssai(x=>x+1)}>{l('Réessayer','Try again')}</button></section>}
    {state==='vide'&&<section className="rounded-2xl bg-white p-4"><p>{l('Ce suivi est disponible avec un accès actif à Habitudes & Défis.','This tracker is available with active access to Habits & Challenges.')}</p><Link className="mt-3 inline-flex min-h-[44px] items-center underline" style={{color:'var(--ios-accent,#5b4ee8)'}} to={`/habitudes${suffix}`}>{l('Voir Habitudes & Défis','View Habits & Challenges')}</Link></section>}
    {state==='pret'&&(mode==='epargne'?pageEpargne():pageDettes())}
+   {aConfirmer&&<div className="fixed inset-0 z-[60] grid place-items-center px-8" role="alertdialog" aria-modal="true" aria-labelledby="hd-supprimer-titre" aria-describedby="hd-supprimer-detail">
+    <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={()=>setAConfirmer(null)}/>
+    <div className="hd-classique relative w-full max-w-[290px] overflow-hidden rounded-[14px] text-center shadow-[0_10px_40px_rgba(0,0,0,.25)]" style={{background:'rgb(242 242 247 / .97)'}}>
+     <div className="px-4 pb-3.5 pt-4"><h2 id="hd-supprimer-titre" style={{margin:'0 0 4px',fontSize:17,fontWeight:600}}>{l(`Supprimer « ${aConfirmer.nom} » ?`,`Delete “${aConfirmer.nom}”?`)}</h2><p id="hd-supprimer-detail" style={{margin:0,fontSize:13,lineHeight:1.4}}>{aConfirmer.detail}</p></div>
+     <button type="button" disabled={busy} onClick={()=>void supprimer()} className="block w-full border-t border-black/20 py-3 text-[17px] font-semibold" style={{color:'#d70015'}}>{busy?l('Suppression…','Deleting…'):l('Supprimer','Delete')}</button>
+     <button type="button" autoFocus onClick={()=>setAConfirmer(null)} className="block w-full border-t border-black/20 py-3 text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)'}}>{l('Annuler','Cancel')}</button>
+    </div>
+   </div>}
    <p className="sim-ios-note hd-classique mt-6 flex items-start gap-2"><IconeHD nom="lock" className="shrink-0 text-[16px]"/>{l('Suivi privé, visible par toi seul. Aucun paiement ni transfert n’est déclenché. Chaque monnaie reste séparée.','Private tracking, visible only to you. No payment or transfer is triggered. Each currency stays separate.')}</p>
   </div>
  </CadreHabitudes>;

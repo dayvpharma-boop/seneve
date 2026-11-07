@@ -60,7 +60,7 @@ export function HabitudesCompteurs({userId}:{userId:string}){
  const lignesDe=(c:Caisse):Ligne[]=>{
   if(!cpt)return [];
   if(c.enveloppe)return cpt.moves.filter(m=>m.envelope===c.enveloppe&&m.currency===dev).map(m=>({id:m.move_id,date:m.date_locale,creeLe:m.created_at,signe:m.direction==='entree'?1:-1,centimes:centimes(m.amount),motif:m.motif,remise:m.remise_a_zero,origine:m.direction==='entree'?'repartition':'sortie'}));
-  const g=suivi?.savings_goals.find(x=>x.goal_id===c.goalId);if(!g)return [];
+  const g=[...(suivi?.savings_goals??[]),...(suivi?.archived_goals??[])].find(x=>x.goal_id===c.goalId);if(!g)return [];
   return [...g.entries.map(v=>({id:v.entry_id,date:v.date_locale,creeLe:v.created_at,signe:1 as const,centimes:centimes(v.amount),motif:null,remise:false,origine:'versement' as const})),...cpt.withdrawals.filter(w=>w.goal_id===g.goal_id).map(w=>({id:w.withdrawal_id,date:w.date_locale,creeLe:w.created_at,signe:-1 as const,centimes:centimes(w.amount),motif:w.motif,remise:w.remise_a_zero,origine:'sortie' as const}))].sort((a,b)=>a.date.localeCompare(b.date)||(a.creeLe??'').localeCompare(b.creeLe??''));
  };
  const dispo=(c:Caisse)=>{if(!cpt)return 0;if(c.enveloppe)return disponibleCompteur(cpt,c.enveloppe,dev);const g=suivi?.savings_goals.find(x=>x.goal_id===c.goalId);return g?disponibleObjectif(cpt,g.goal_id,g.entries):0;};
@@ -68,7 +68,9 @@ export function HabitudesCompteurs({userId}:{userId:string}){
  const nomMotif=(m:Motif|null)=>MOTIFS.find(x=>x[0]===m)?.[1].toLowerCase()??'';
  // Bilan de la période : ce qui est entré et ce qui est sorti, par motif. L'historique n'est jamais remis à zéro.
  const debut=debutPeriode(periode);
- const bilan=useMemo(()=>{const b={entre:0,donne:0,depense:0,investi:0,autre:0,dettes:0};for(const c of caisses)for(const x of lignesDe(c))if(x.date>=debut){if(x.signe===1)b.entre+=x.centimes;else b[x.motif??'autre']+=x.centimes;}for(const d of suivi?.debts??[])if(d.currency===dev)for(const p of d.payments)if(p.date_locale>=debut)b.dettes+=centimes(p.amount);return b;},[cpt,suivi,dev,debut,en]);
+ // Le bilan compte aussi les objectifs et dettes supprimés (mis de côté) : l'historique n'est jamais perdu.
+ const caissesSupprimees:Caisse[]=(suivi?.archived_goals??[]).filter(g=>g.currency===dev).map(g=>({cle:g.goal_id,nom:g.label,sous:'',couleur:'',icone:'',goalId:g.goal_id}));
+ const bilan=useMemo(()=>{const b={entre:0,donne:0,depense:0,investi:0,autre:0,dettes:0};for(const c of [...caisses,...caissesSupprimees])for(const x of lignesDe(c))if(x.date>=debut){if(x.signe===1)b.entre+=x.centimes;else b[x.motif??'autre']+=x.centimes;}for(const d of [...(suivi?.debts??[]),...(suivi?.archived_debts??[])])if(d.currency===dev)for(const p of d.payments)if(p.date_locale>=debut)b.dettes+=centimes(p.amount);return b;},[cpt,suivi,dev,debut,en]);
  function ouvrir(c:Caisse){setOuverte(o=>o===c.cle?'':c.cle);setMontant('');setMotif(c.enveloppe==='vivre'?'depense':c.goalId?'investi':'donne');setDate(aujourdhui());setAnnonce(null);}
  async function noter(c:Caisse,toutUtilise:boolean){
   if(!suivi||busy)return;const zone='caisse:'+c.cle;

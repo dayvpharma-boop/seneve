@@ -48,3 +48,62 @@ it('Mes compteurs : la même caisse affiche 50, et le bilan compte l’entrée, 
  expect(ligne('Investi')).toMatch(/150 USD/);
  expect(ligne('Remboursé sur les dettes')).toMatch(/40 USD/);
 });
+
+it('Supprimer un objectif : confirmation, disparition, « Annuler » le fait revenir ; le bilan garde son historique',async()=>{
+ const {fireEvent,waitFor}=await import('@testing-library/react');
+ let archive=false;
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:archive?{...suivi,savings_goals:[],archived_goals:suivi.savings_goals}:{...suivi,archived_goals:[]},error:null};
+  if(f==='hd_finance_counters_get')return {data:compteurs,error:null};
+  if(f==='hd_finance_goal_archive'){archive=a.p_archive as boolean;return {data:{goal_id:a.p_goal_id,archived_at:archive?new Date().toISOString():null},error:null};}
+  throw Error(f);});
+ const {SuiviEpargneDettes}=await import('@/components/SuiviEpargneDettes');
+ render(<MemoryRouter initialEntries={['/habitudes/epargne']}><SuiviEpargneDettes mode="epargne" userId="u"/></MemoryRouter>);
+ fireEvent.click(await screen.findByRole('button',{name:'Supprimer cet objectif'}));
+ const boite=screen.getByRole('alertdialog');
+ expect(boite.textContent).toMatch(/Supprimer « Moto-taxi » \?/);expect(boite.textContent).toMatch(/2 versements/);
+ fireEvent.click(within(boite).getByRole('button',{name:'Supprimer'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_goal_archive',expect.objectContaining({p_goal_id:GI,p_archive:true})));
+ expect(await screen.findByText(/« Moto-taxi » est supprimé/)).toBeInTheDocument();
+ expect(screen.queryByRole('region',{name:'Moto-taxi'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Annuler'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_goal_archive',expect.objectContaining({p_goal_id:GI,p_archive:false})));
+ expect(await screen.findByRole('region',{name:'Moto-taxi'})).toBeInTheDocument();
+});
+
+it('Mes compteurs : un objectif supprimé ne s’affiche plus, mais son historique reste dans le bilan',async()=>{
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[],archived_goals:suivi.savings_goals,debts:[],archived_debts:suivi.debts},error:null};
+  if(f==='hd_finance_counters_get')return {data:compteurs,error:null};
+  throw Error(f);});
+ const {HabitudesCompteurs}=await import('@/routes/habitudes-compteurs');
+ render(<MemoryRouter initialEntries={['/habitudes/compteurs']}><HabitudesCompteurs userId="u"/></MemoryRouter>);
+ await screen.findByRole('article',{name:'Dîme'});
+ expect(screen.queryByRole('article',{name:'Pour investir'})).toBeNull();
+ const bilan=screen.getByRole('region',{name:/Mon bilan/});
+ const ligne=(t:string)=>within(bilan).getByText(t).closest('div')!.textContent;
+ expect(ligne('Entré dans les caisses')).toMatch(/220 USD/);
+ expect(ligne('Investi')).toMatch(/150 USD/);
+ expect(ligne('Remboursé sur les dettes')).toMatch(/40 USD/);
+});
+
+it('Supprimer une dette : confirmation avec ses remboursements, puis elle disparaît de la liste et du total',async()=>{
+ const {fireEvent,waitFor}=await import('@testing-library/react');
+ let archive=false;
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:archive?{...suivi,debts:[],archived_debts:suivi.debts}:suivi,error:null};
+  if(f==='hd_finance_counters_get')return {data:compteurs,error:null};
+  if(f==='hd_finance_debt_archive'){archive=a.p_archive as boolean;return {data:{debt_id:a.p_debt_id,archived_at:null},error:null};}
+  throw Error(f);});
+ const {SuiviEpargneDettes}=await import('@/components/SuiviEpargneDettes');
+ render(<MemoryRouter initialEntries={['/habitudes/dettes']}><SuiviEpargneDettes mode="dettes" userId="u"/></MemoryRouter>);
+ const fiche=await screen.findByRole('article',{name:'Papy'});
+ fireEvent.click(within(fiche).getAllByRole('button')[0]!);
+ fireEvent.click(within(fiche).getByRole('button',{name:'Supprimer cette dette'}));
+ const boite=screen.getByRole('alertdialog');
+ expect(boite.textContent).toMatch(/1 remboursement \(40 USD\) restent comptés/);
+ fireEvent.click(within(boite).getByRole('button',{name:'Supprimer'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_debt_archive',expect.objectContaining({p_debt_id:D,p_archive:true})));
+ await waitFor(()=>expect(screen.queryByRole('article',{name:'Papy'})).toBeNull());
+ expect(screen.queryByText(/Il reste à rembourser/)).toBeNull();
+});
