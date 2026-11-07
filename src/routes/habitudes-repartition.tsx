@@ -4,9 +4,10 @@ import {Link,useSearchParams} from 'react-router-dom';
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {IconeHD} from '@/components/IconeHabitudes';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
-import {DEVISES_SUIVI,decimalesDevise,nomDevise} from '@/lib/devises';
+import {decimalesDevise} from '@/lib/devises';
 import {baseRepartition,maximumPart,repartir,LIMITES_REPARTITION,POURCENTAGES_DEFAUT,type CleRepartition,type Pourcentages,type ProfilRevenu} from '@/lib/habitudes-repartition';
 import {NotFound} from '@/routes/introuvable';
+import {OptionsDevises} from '@/components/OptionsDevises';
 
 const COULEURS:Record<CleRepartition|'vivre',string>={dime:'#b8862b',offrande:'#b05bd6',reserve:'#2f9e62',investir:'#2f6fe0',dettes:'#e0662f',vivre:'#c7c7cc'};
 
@@ -55,7 +56,7 @@ export function HabitudesRepartition(){
     {champ('hd-rep-recu',profil==='salarie'?l('Salaire reçu','Salary received'):profil==='commerce'?l('Ventes encaissées','Sales received'):profil==='entreprise'?l('Argent encaissé','Money received'):l('Montant reçu (don, aide…)','Amount received (gift, help…)'),recu,setRecu)}
     {profil==='commerce'&&champ('hd-rep-marchandises',l('Coût des marchandises vendues','Cost of goods sold'),marchandises,setMarchandises,true)}
     {profil!=='autre'&&champ('hd-rep-frais',profil==='salarie'?l('Dépenses de travail non remboursées','Unreimbursed work expenses'):profil==='commerce'?l('Charges du commerce','Business expenses'):l('Dépenses du travail','Work expenses'),frais,setFrais,true)}
-    <div className="sim-ios-ligne"><label htmlFor="hd-rep-devise">{l('Monnaie','Currency')}</label><select id="hd-rep-devise" value={devise} onChange={e=>setDevise(e.target.value)}>{['CDF',...DEVISES_SUIVI.filter(c=>c!=='CDF')].map(c=><option key={c} value={c}>{nomDevise(c,en?'en':'fr')} ({c})</option>)}</select></div>
+    <div className="sim-ios-ligne"><label htmlFor="hd-rep-devise">{l('Monnaie','Currency')}</label><select id="hd-rep-devise" value={devise} onChange={e=>setDevise(e.target.value)}><OptionsDevises langue={en?'en':'fr'}/></select></div>
    </div>
    <p className="sim-ios-note hd-classique">{aide}</p>
    {erreur&&<p role="alert" className="sim-ios-alerte hd-classique">{l('Vérifie les montants : écris seulement des chiffres, par exemple 500000 ou 1000,50.','Check the amounts: digits only, for example 500000 or 1000.50.')}</p>}

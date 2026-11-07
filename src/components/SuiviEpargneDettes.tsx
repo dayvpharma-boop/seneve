@@ -6,8 +6,9 @@ import {ComptePrive} from '@/components/ComptePrive';
 import {IconeHD} from '@/components/IconeHabitudes';
 import {chargerSuiviFinancier,creerDetteSuivie,creerObjectifEpargne,enregistrerPaiementDette,enregistrerVersementEpargne,renommerDetteSuivie,nomCreancierValide,LONGUEUR_NOM_CREANCIER,type DetteSuivie,type ObjectifEpargne,type TypeObjectifEpargne,type SuiviFinancier,type RythmeRepereDette} from '@/lib/habitudes-finances-suivi';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
-import {DEVISES_SUIVI,decimalesDevise,deviseAcceptee,montantValidePourDevise,nomDevise} from '@/lib/devises';
+import {decimalesDevise,deviseAcceptee,montantValidePourDevise} from '@/lib/devises';
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
+import {OptionsDevises} from '@/components/OptionsDevises';
 import {NotFound} from '@/routes/introuvable';
 
 type Mode='epargne'|'dettes';
@@ -190,7 +191,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   finally{setBusy(false);}
  }
  const message=(zone:Zone)=>annonce?.zone===zone?<p role={annonce.erreur?'alert':'status'} aria-live="polite" className={`mt-2.5 flex items-start gap-2 rounded-xl p-3 text-sm ${annonce.erreur?'bg-red-50 text-red-800':'bg-emerald-50 text-emerald-900'}`}><IconeHD nom={annonce.erreur?'info':'check_circle'} className="shrink-0 text-[18px]"/>{annonce.texte}</p>:null;
- const deviseOptions=[DEVISE_DEFAUT,...DEVISES_SUIVI.filter(c=>c!==DEVISE_DEFAUT)].map(code=><option key={code} value={code}>{nomDevise(code,en?'en':'fr')} ({code})</option>);
+ const deviseOptions=<OptionsDevises langue={en?'en':'fr'}/>;
  const pas=(devise:string)=>decimalesDevise(devise)===0?1:0.01;
  const titre=(texte:string,action?:ReactNode)=><h2 className="hd-classique sim-ios-titre flex items-baseline justify-between gap-2" style={{textTransform:'none'}}><span style={{textTransform:'uppercase'}}>{texte}</span>{action}</h2>;
  const bouton=(texte:string,couleur='var(--ios-accent,#5b4ee8)')=><button disabled={busy} className="hd-classique sim-ios-bouton disabled:opacity-60" style={{marginTop:12,background:couleur}}>{busy?l('Enregistrement…','Saving…'):texte}</button>;
