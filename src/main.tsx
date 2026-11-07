@@ -95,8 +95,11 @@ if (root) createRoot(root).render(
         <Route path="/habitudes/aujourdhui" element={<HabitudesAujourdhui />} />
         <Route path="/habitudes/engagements" element={<HabitudesEngagements />} />
         <Route path="/habitudes/aide" element={<HabitudesAide />} />
-        <Route path="/habitudes/epargne" element={<SuiviEpargneDettes mode="epargne" />} />
-        <Route path="/habitudes/dettes" element={<SuiviEpargneDettes mode="dettes" />} />
+        {/* Suivi épargne et dettes : caché tant que la base V2 n'est pas prête (07/11/2026). */}
+        {import.meta.env.VITE_HABITUDES_FINANCES_SUIVI === 'true' && <>
+          <Route path="/habitudes/epargne" element={<SuiviEpargneDettes mode="epargne" />} />
+          <Route path="/habitudes/dettes" element={<SuiviEpargneDettes mode="dettes" />} />
+        </>}
         <Route path="/bibliotheque" element={<Bibliotheque/>}/>
         <Route path="/livre" element={<Bibliotheque detail/>}/>
         <Route path="/livre/audio" element={<Bibliotheque detail format="audio"/>}/>
