@@ -21,6 +21,8 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
  const [decoches,setDecoches]=useState<Record<string,boolean>>({});
  const coche=(cle:string)=>!decoches[cle];
  const [enCours,setEnCours]=useState(false),[erreur,setErreur]=useState('');
+ // Date choisie par la personne (demande du 07/11/2026) : aujourd’hui au départ, jamais dans le futur.
+ const [date,setDate]=useState(aujourdhui);
  const demande=useRef(crypto.randomUUID());
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
@@ -53,7 +55,8 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
   if(!suivi||typeof suivi!=='object'||!choisies.length||enCours)return;
   setEnCours(true);setErreur('');
   try{
-   await enregistrerRepartition(suivi.enrollment_id,devise,aujourdhui(),choisies.flatMap(x=>x.parts),demande.current);
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date>aujourdhui()){setErreur(l('Choisis une date qui n’est pas dans le futur.','Choose a date that is not in the future.'));setEnCours(false);return;}
+   await enregistrerRepartition(suivi.enrollment_id,devise,date,choisies.flatMap(x=>x.parts),demande.current);
    const soldees=lignes.find(x=>x.cle==='dettes'&&x.possible&&coche('dettes'))?.destination.match(/\((soldée|paid off)\)/g)?.length??0;
    navigate(`/habitudes/compteurs${en?'?lang=en':''}`,{state:{message:l(`Répartition enregistrée : ${choisies.length} part${choisies.length>1?'s':''}, ${nombre(total)} ${devise}.${soldees?` ${soldees} dette${soldees>1?'s':''} soldée${soldees>1?'s':''}.`:''}`,`Allocation saved: ${choisies.length} part${choisies.length>1?'s':''}, ${nombre(total)} ${devise}.${soldees?` ${soldees} debt${soldees>1?'s':''} paid off.`:''}`)}});
   }catch(e){setErreur(e instanceof CompteursIndisponibles?l('Les compteurs ne sont pas encore ouverts. Réessaie un peu plus tard.','Counters are not open yet. Try again a little later.'):l('La répartition n’a pas été enregistrée. Vérifie les montants et réessaie.','The allocation was not saved. Check the amounts and try again.'));setEnCours(false);}
@@ -63,7 +66,8 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
   <div className="sim-ios hd-classique relative max-h-[88vh] overflow-y-auto rounded-t-[14px] px-4 pb-8 pt-2 shadow-[0_-8px_30px_rgba(0,0,0,.18)]" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <div aria-hidden="true" className="mx-auto mb-2.5 h-[5px] w-9 rounded-full bg-[#c7c7cc]"/>
    <div className="mb-1.5 grid grid-cols-[1fr_auto_1fr] items-center"><button type="button" onClick={onFermer} className="justify-self-start text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)',minHeight:44}}>{l('Annuler','Cancel')}</button><h2 id="hd-feuille-titre" className="text-[17px] font-semibold" style={{margin:0}}>{l('Enregistrer','Save')}</h2><span/></div>
-   <p className="sim-ios-sous">{l(`Décoche ce que tu n’as pas encore donné ou versé. Date : aujourd’hui.`,`Untick what you have not given or set aside yet. Date: today.`)}</p>
+   <p className="sim-ios-sous">{l('Décoche ce que tu n’as pas encore donné ou versé.','Untick what you have not given or set aside yet.')}</p>
+   <div className="sim-ios-groupe mb-3"><div className="sim-ios-ligne"><label htmlFor="hd-repartition-date">{l('Date de la répartition','Allocation date')}</label><input id="hd-repartition-date" type="date" max={aujourdhui()} value={date} onChange={e=>setDate(e.target.value)} style={{width:150,color:'var(--ios-accent,#5b4ee8)'}}/></div></div>
    {suivi===null&&<p role="status" className="rounded-xl bg-white p-4">{l('Chargement de ton suivi…','Loading your tracker…')}</p>}
    {(suivi==='aucun'||suivi==='erreur')&&<p role="alert" className="rounded-xl bg-white p-4">{suivi==='aucun'?l('Connecte-toi avec un accès actif à Habitudes & Défis pour enregistrer ta répartition.','Sign in with active Habits & Challenges access to save your allocation.'):l('Ton suivi n’est pas disponible pour le moment.','Your tracker is not available right now.')}</p>}
    {suivi&&typeof suivi==='object'&&<>

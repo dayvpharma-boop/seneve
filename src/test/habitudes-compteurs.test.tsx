@@ -85,3 +85,23 @@ it('« Mes compteurs » montre aussi les objectifs « Autre objectif »',async()
  const carte=await screen.findByRole('article',{name:'Autre objectif'});
  expect(carte.textContent).toMatch(/Toiture/);expect(carte.textContent).toMatch(/80USD disponibles/);
 });
+
+it('la répartition s’enregistre à la date choisie, jamais dans le futur',async()=>{
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:suivi,error:null};
+  if(f==='hd_finance_allocation_save')return {data:{allocation_id:a.p_request_id,deja:false},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[],withdrawals:[]},error:null};
+  throw Error(f);});
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'100'}});
+ fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
+ const feuille=await screen.findByRole('dialog');
+ await within(feuille).findByText(/Kanza/);
+ fireEvent.change(within(feuille).getByLabelText('Date de la répartition'),{target:{value:'2999-01-01'}});
+ fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
+ expect(await within(feuille).findByText(/pas dans le futur/)).toBeInTheDocument();
+ fireEvent.change(within(feuille).getByLabelText('Date de la répartition'),{target:{value:'2026-11-02'}});
+ fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_date_locale:'2026-11-02'})));
+});
