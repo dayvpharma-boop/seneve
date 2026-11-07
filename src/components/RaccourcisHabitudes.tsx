@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { suiviFinancierActive } from '@/lib/habitudes-configuration';
 import { IconeTrait, type SymboleTrait } from '@/components/IconeTrait';
 
 /** Raccourcis du bas de la journée Habitudes & Défis, en liste groupée façon iPhone (05/11/2026) :
@@ -27,9 +28,9 @@ export function raccourcisHabitudes(en: boolean, enrollmentId: string, engagemen
   return [
     { cle: 'acces', vers: `/habitudes/aujourdhui${q}`, titre: en ? 'My access and schedule' : 'Mon accès et mes horaires', detail: en ? 'Open months and times' : 'Mois ouverts et horaires', icone: 'calendrier', ton: 'bleu' },
     { cle: 'horaires', vers: `/reglages?parcours=${encodeURIComponent(enrollmentId)}${en ? '&lang=en' : ''}`, titre: en ? 'Adjust my habit schedule' : 'Régler mes horaires d’habitudes', detail: en ? 'Wake-up, prayer, reading, bedtime' : 'Réveil, prière, lecture, coucher', icone: 'cloche', ton: 'orange' },
-    ...(import.meta.env.VITE_HABITUDES_FINANCES_SUIVI === 'true' ? [
-      { cle: 'epargne', vers: `/habitudes/epargne${q}`, titre: en ? 'My savings' : 'Mon épargne', detail: en ? 'Goals, contributions and progress' : 'Objectifs, versements et progression', icone: 'pousse' as SymboleTrait, ton: 'vert' as const },
-      { cle: 'dettes', vers: `/habitudes/dettes${q}`, titre: en ? 'My debt tracker' : 'Mon suivi des dettes', detail: en ? 'Balances and repayments' : 'Soldes et remboursements', icone: 'objectif' as SymboleTrait, ton: 'bleu' as const },
+    ...(suiviFinancierActive() ? [
+      { cle: 'epargne', vers: `/habitudes/epargne${q}`, titre: en ? 'My savings' : 'Mon épargne', detail: en ? 'Goals, contributions and progress' : 'Objectifs, versements et progression', icone: 'pousse' as const, ton: 'vert' as const },
+      { cle: 'dettes', vers: `/habitudes/dettes${q}`, titre: en ? 'My debt tracker' : 'Mon suivi des dettes', detail: en ? 'Balances and repayments' : 'Soldes et remboursements', icone: 'objectif' as const, ton: 'bleu' as const },
     ] : []),
     ...(engagements ? [{ cle: 'engagements', vers: `/habitudes/engagements${q}`, titre: en ? 'My commitments' : 'Mes engagements', detail: en ? 'What you chose to keep' : 'Ce que tu as choisi de tenir', icone: 'objectif' as SymboleTrait, ton: 'vert' as const }] : []),
     aide,
