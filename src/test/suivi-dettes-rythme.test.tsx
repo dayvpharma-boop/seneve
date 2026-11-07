@@ -1,4 +1,4 @@
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import type {ReactNode} from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,expect,it,vi} from 'vitest';
@@ -17,7 +17,7 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
   const enrollmentId='a58c18be-22d3-4e33-8a73-554fdfd693af';
   const dettes=[{
     debt_id:'7c011210-b780-41a4-9ec4-8f6566b27755',
-    debt_number:1,opening_balance:'120.00',currency:'USD',
+    debt_number:1,opening_balance:'120.00',currency:'USD',creditor_name:null as string|null,
     monthly_basis:'600.00' as string|null,repayment_percent:'10.00' as string|null,
     weekly_basis:null as string|null,weekly_repayment_percent:null as string|null,payments:[]
   }];
@@ -25,9 +25,9 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
     if (fonction==='hd_finance_tracker_get') {
       return {data:{enrollment_id:enrollmentId,savings_goals:[],debts:[...dettes]},error:null};
     }
-    if (fonction==='hd_finance_debt_add_with_guide') {
+    if (fonction==='hd_finance_debt_add_named') {
       const dette={...dettes[0]!,debt_id:args.p_request_id!,debt_number:2,opening_balance:args.p_opening_balance!,
-        monthly_basis:null,repayment_percent:null,weekly_basis:args.p_weekly_basis??null,weekly_repayment_percent:'10.00'};
+        monthly_basis:null,repayment_percent:null,weekly_basis:args.p_weekly_basis??null,weekly_repayment_percent:'10.00',creditor_name:args.p_creditor_name??null};
       dettes.push(dette);
       return {data:dette,error:null};
     }
@@ -45,11 +45,44 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
   fireEvent.change(screen.getByLabelText('Pourcentage consacré à cette dette'),{target:{value:'10'}});
   expect(screen.getByText(/15,00.*par semaine/)).toBeVisible();
 
+  fireEvent.change(screen.getByLabelText('Nom du créancier'),{target:{value:'Fournisseur A'}});
   fireEvent.change(screen.getByLabelText('Solde de départ'),{target:{value:'300'}});
   fireEvent.click(screen.getByRole('button',{name:'Ajouter cette dette'}));
-  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_debt_add_with_guide',expect.objectContaining({
-    p_enrollment_id:enrollmentId,p_monthly_basis:null,p_weekly_basis:'150.00',p_repayment_percent:'10'
+  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_debt_add_named',expect.objectContaining({
+    p_enrollment_id:enrollmentId,p_creditor_name:'Fournisseur A',p_monthly_basis:null,p_weekly_basis:'150.00',p_repayment_percent:'10'
   })));
   expect(await screen.findByText(/15,00.*par semaine/)).toBeVisible();
+  expect(screen.getByRole('heading',{name:'Fournisseur A'})).toBeVisible();
   expect(screen.getByText(/60,00.*par mois/)).toBeVisible();
+});
+
+it('ajoute un nom à une dette existante et la présélectionne pour le remboursement',async()=>{
+  const enrollmentId='a58c18be-22d3-4e33-8a73-554fdfd693af';
+  const debtId='7c011210-b780-41a4-9ec4-8f6566b27755';
+  const dettes=[
+    {debt_id:'7c011210-b780-41a4-9ec4-8f6566b27756',debt_number:1,opening_balance:'30.00',creditor_name:'Banque locale'},
+    {debt_id:debtId,debt_number:2,opening_balance:'120.00',creditor_name:null}
+  ].map(d=>({...d,currency:'USD',monthly_basis:null,repayment_percent:null,payments:[]}));
+  rpc.mockImplementation(async (fonction:string,args:Record<string,string|null>)=>{
+    if (fonction==='hd_finance_tracker_get') {
+      return {data:{enrollment_id:enrollmentId,savings_goals:[],debts:dettes},error:null};
+    }
+    if (fonction==='hd_finance_debt_rename') {
+      return {data:{debt_id:args.p_debt_id,creditor_name:args.p_creditor_name},error:null};
+    }
+    throw Error(fonction);
+  });
+
+  render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="participant"/></MemoryRouter>);
+  const fiche=await screen.findByRole('article',{name:'Dette 2'});
+  fireEvent.click(within(fiche).getByRole('button',{name:'Ajouter un nom'}));
+  fireEvent.change(within(fiche).getByLabelText('Nom du créancier'),{target:{value:' Fournisseur B '}});
+  fireEvent.click(within(fiche).getByRole('button',{name:'Enregistrer le nom'}));
+  const renommee=await screen.findByRole('article',{name:'Fournisseur B'});
+  expect(rpc).toHaveBeenCalledWith('hd_finance_debt_rename',{
+    p_enrollment_id:enrollmentId,p_debt_id:debtId,p_creditor_name:'Fournisseur B'
+  });
+  fireEvent.click(within(renommee).getByRole('button',{name:'Rembourser'}));
+  expect(screen.getByRole<HTMLSelectElement>('combobox',{name:'Dette à rembourser'}).value).toBe(debtId);
+  expect(screen.getByRole('option',{name:/Fournisseur B/})).toBeVisible();
 });

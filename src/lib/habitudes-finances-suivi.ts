@@ -7,7 +7,7 @@ export type ObjectifEpargne={goal_id:string;goal_type:TypeObjectifEpargne;label:
 export type PaiementDette={payment_id:string;amount:string;date_locale:string};
 export type RythmeRepereDette='mensuel'|'hebdomadaire';
 type RepereDette={base:string;pourcentage:string;rythme:RythmeRepereDette};
-export type DetteSuivie={debt_id:string;debt_number:number;opening_balance:string;currency:string;repere:RepereDette|null;payments:PaiementDette[]};
+export type DetteSuivie={debt_id:string;debt_number:number;opening_balance:string;currency:string;creditor_name:string|null;repere:RepereDette|null;payments:PaiementDette[]};
 export type SuiviFinancier={enrollment_id:string;savings_goals:ObjectifEpargne[];debts:DetteSuivie[]};
 const objet=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
@@ -30,12 +30,21 @@ function analyserRepereDette(v:Record<string,unknown>):RepereDette|null {
   }
   return {base,pourcentage,rythme:hebdomadaire?'hebdomadaire':'mensuel'};
 }
+export const LONGUEUR_NOM_CREANCIER=80;
+export function nomCreancierValide(nom:string):boolean {
+  const nettoye=nom.trim();
+  return nettoye.length>0&&nettoye.length<=LONGUEUR_NOM_CREANCIER&&!/[\u0000-\u001f\u007f]/.test(nettoye);
+}
 function analyserDette(v:unknown):DetteSuivie {
   if (!objet(v)||!uuid(v.debt_id)||!Number.isInteger(v.debt_number)||Number(v.debt_number)<1||
       typeof v.opening_balance!=='string'||!montant(v.opening_balance)||Number(v.opening_balance)<=0||
       typeof v.currency!=='string'||!/^[A-Z]{3}$/.test(v.currency)) throw Error('Dette incohérente');
+  const creditorName=v.creditor_name??null;
+  if (creditorName!==null&&(typeof creditorName!=='string'||!nomCreancierValide(creditorName))) {
+    throw Error('Nom du créancier incohérent');
+  }
   return {debt_id:v.debt_id,debt_number:Number(v.debt_number),opening_balance:v.opening_balance,
-    currency:v.currency,repere:analyserRepereDette(v),payments:analyserListe(v.payments,analyserPaiement)};
+    currency:v.currency,creditor_name:creditorName,repere:analyserRepereDette(v),payments:analyserListe(v.payments,analyserPaiement)};
 }
 function verifierReponse(v:unknown,enrollmentId:string|null):SuiviFinancier {
   if (!objet(v)||!uuid(v.enrollment_id)||(enrollmentId!==null&&v.enrollment_id!==enrollmentId)) throw Error('Suivi financier incohérent');
@@ -50,17 +59,19 @@ export async function creerObjectifEpargne(enrollmentId:string,d:{type:TypeObjec
 export async function enregistrerVersementEpargne(enrollmentId:string,goalId:string,amount:string,date:string,currency:string,requestId:string){if(!uuid(goalId)||!montantValidePourDevise(amount,currency)||Number(amount)<=0||!deviseAcceptee(currency)||!dateLocale(date))throw Error('Versement invalide');const value=montantFixe(amount);const {data,error}=await supabase.rpc('hd_finance_savings_entry_add',{p_enrollment_id:enrollmentId,p_goal_id:goalId,p_amount:value,p_date_locale:date,p_request_id:requestId});if(error)throw error;if(!objet(data)||data.entry_id!==requestId||data.goal_id!==goalId||data.amount!==value||data.date_locale!==date)throw Error('Versement non confirmé');return data;}
 export async function creerDetteSuivie(
   enrollmentId:string,
-  d:{openingBalance:string;currency:string;repere:RepereDette|null},
+  d:{creditorName:string;openingBalance:string;currency:string;repere:RepereDette|null},
   requestId:string
 ) {
   const {repere}=d;
-  if (!deviseAcceptee(d.currency)||!montantValidePourDevise(d.openingBalance,d.currency)||Number(d.openingBalance)<=0||
+  if (!nomCreancierValide(d.creditorName)||!deviseAcceptee(d.currency)||!montantValidePourDevise(d.openingBalance,d.currency)||Number(d.openingBalance)<=0||
       (repere&&(!montantValidePourDevise(repere.base,d.currency)||!montant(repere.pourcentage)||Number(repere.pourcentage)>100))) {
     throw Error('Dette invalide');
   }
   const openingBalance=montantFixe(d.openingBalance);
   const base=repere?montantFixe(repere.base):null;
-  const {data,error}=await supabase.rpc('hd_finance_debt_add_with_guide',{
+  const creditorName=d.creditorName.trim();
+  const {data,error}=await supabase.rpc('hd_finance_debt_add_named',{
+    p_creditor_name:creditorName,
     p_enrollment_id:enrollmentId,p_opening_balance:openingBalance,p_currency:d.currency,
     p_monthly_basis:repere?.rythme==='mensuel'?base:null,
     p_weekly_basis:repere?.rythme==='hebdomadaire'?base:null,
@@ -68,7 +79,7 @@ export async function creerDetteSuivie(
   });
   if (error) throw error;
   if (!objet(data)||data.debt_id!==requestId||!Number.isInteger(data.debt_number)||
-      Number(data.debt_number)<1||data.opening_balance!==openingBalance||data.currency!==d.currency) {
+      Number(data.debt_number)<1||data.opening_balance!==openingBalance||data.currency!==d.currency||data.creditor_name!==creditorName) {
     throw Error('Création de dette non confirmée');
   }
   const repereEnregistre=analyserRepereDette(data);
@@ -77,5 +88,17 @@ export async function creerDetteSuivie(
     throw Error('Repère de remboursement non confirmé');
   }
   return data;
+}
+export async function renommerDetteSuivie(enrollmentId:string,debtId:string,nom:string) {
+  if (!uuid(debtId)||!nomCreancierValide(nom)) throw Error('Nom du créancier invalide');
+  const creditorName=nom.trim();
+  const {data,error}=await supabase.rpc('hd_finance_debt_rename',{
+    p_enrollment_id:enrollmentId,p_debt_id:debtId,p_creditor_name:creditorName
+  });
+  if (error) throw error;
+  if (!objet(data)||data.debt_id!==debtId||data.creditor_name!==creditorName) {
+    throw Error('Nom du créancier non confirmé');
+  }
+  return creditorName;
 }
 export async function enregistrerPaiementDette(enrollmentId:string,debtId:string,amount:string,date:string,currency:string,requestId:string){if(!uuid(debtId)||!montantValidePourDevise(amount,currency)||Number(amount)<=0||!deviseAcceptee(currency)||!dateLocale(date))throw Error('Remboursement invalide');const value=montantFixe(amount);const {data,error}=await supabase.rpc('hd_finance_debt_payment_add',{p_enrollment_id:enrollmentId,p_debt_id:debtId,p_amount:value,p_date_locale:date,p_request_id:requestId});if(error)throw error;if(!objet(data)||data.payment_id!==requestId||data.debt_id!==debtId||data.amount!==value||data.date_locale!==date||!montant(data.remaining))throw Error('Remboursement non confirmé');return data;}

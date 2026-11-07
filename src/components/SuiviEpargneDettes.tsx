@@ -3,7 +3,7 @@ import {Link,useSearchParams} from 'react-router-dom';
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {ComptePrive} from '@/components/ComptePrive';
 import {IconeHD} from '@/components/IconeHabitudes';
-import {chargerSuiviFinancier,creerDetteSuivie,creerObjectifEpargne,enregistrerPaiementDette,enregistrerVersementEpargne,type DetteSuivie,type ObjectifEpargne,type TypeObjectifEpargne,type SuiviFinancier,type RythmeRepereDette} from '@/lib/habitudes-finances-suivi';
+import {chargerSuiviFinancier,creerDetteSuivie,creerObjectifEpargne,enregistrerPaiementDette,enregistrerVersementEpargne,renommerDetteSuivie,nomCreancierValide,LONGUEUR_NOM_CREANCIER,type DetteSuivie,type ObjectifEpargne,type TypeObjectifEpargne,type SuiviFinancier,type RythmeRepereDette} from '@/lib/habitudes-finances-suivi';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {DEVISES_SUIVI,decimalesDevise,deviseAcceptee,montantValidePourDevise,nomDevise} from '@/lib/devises';
 import {NotFound} from '@/routes/introuvable';
@@ -25,6 +25,10 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const [suivi,setSuivi]=useState<SuiviFinancier|null>(null),[essai,setEssai]=useState(0),[busy,setBusy]=useState(false),[annonce,setAnnonce]=useState('');
  const [goal,setGoal]=useState(''),[goalName,setGoalName]=useState(''),[goalType,setGoalType]=useState<TypeObjectifEpargne>('reserve_joie'),[goalTarget,setGoalTarget]=useState(''),[goalCurrency,setGoalCurrency]=useState('USD'),[contribution,setContribution]=useState(''),[contributionDate,setContributionDate]=useState(AUJOURDHUI);
  const [debtBalance,setDebtBalance]=useState(''),[debtCurrency,setDebtCurrency]=useState('USD'),[debtBase,setDebtBase]=useState(''),[debtPercent,setDebtPercent]=useState(''),[paymentDebt,setPaymentDebt]=useState(''),[paymentAmount,setPaymentAmount]=useState(''),[paymentDate,setPaymentDate]=useState(AUJOURDHUI);
+ const [nomNouvelleDette,setNomNouvelleDette]=useState('');
+ const [nomEnEdition,setNomEnEdition]=useState<{id:string;nom:string}|null>(null);
+ const [erreurNom,setErreurNom]=useState('');
+ const titreRemboursement=useRef<HTMLHeadingElement>(null);
  const [rythmeDette,setRythmeDette]=useState<RythmeRepereDette>('mensuel');
  const hebdomadaire=rythmeDette==='hebdomadaire';
  const periode=(rythme:RythmeRepereDette)=>rythme==='hebdomadaire'?l('par semaine','per week'):l('par mois','per month');
@@ -54,6 +58,31 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const objectif=suivi?.savings_goals.find(g=>g.goal_id===goal)??suivi?.savings_goals[0];
  const dettesOuvertes=dettesTriees.filter(d=>resteDette(d)>0),detteChoisie=dettesOuvertes.find(d=>d.debt_id===paymentDebt)??dettesOuvertes[0];
  const notice=(message:string)=>{setAnnonce(message);};
+ const nomDette=(d:DetteSuivie)=>d.creditor_name??`${l('Dette','Debt')} ${d.debt_number}`;
+ function choisirRemboursement(debtId:string) {
+  if (debtId!==detteChoisie?.debt_id) setPaymentAmount('');
+  setPaymentDebt(debtId);
+ }
+ async function enregistrerNom(e:FormEvent) {
+  e.preventDefault();
+  if (!inscription||!nomEnEdition||busy) return;
+  if (!nomCreancierValide(nomEnEdition.nom)) {
+   setErreurNom(l('Saisis le nom ou le surnom du créancier.','Enter the creditor’s name or nickname.'));
+   return;
+  }
+  setBusy(true);
+  setErreurNom('');
+  try {
+   const nom=await renommerDetteSuivie(inscription,nomEnEdition.id,nomEnEdition.nom);
+   setSuivi(current=>current?{...current,debts:current.debts.map(d=>d.debt_id===nomEnEdition.id?{...d,creditor_name:nom}:d)}:current);
+   setNomEnEdition(null);
+   notice(l('Nom enregistré.','Name saved.'));
+  } catch {
+   setErreurNom(l('Le nom n’a pas pu être enregistré. Réessaie.','The name could not be saved. Try again.'));
+  } finally {
+   setBusy(false);
+  }
+ }
  async function confirmerSaisie(cle:string, message:string) {
   demandes.current.delete(cle);
   notice(message);
@@ -68,6 +97,11 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  async function creerDette(e:FormEvent) {
   e.preventDefault();
   if (!inscription||busy||!montantValidePourDevise(debtBalance,debtCurrency)||Number(debtBalance)<=0||!monnaie(debtCurrency)) return;
+  if (!nomCreancierValide(nomNouvelleDette)) {
+   notice(l('Saisis le nom ou le surnom du créancier.','Enter the creditor’s name or nickname.'));
+   return;
+  }
+  const creditorName=nomNouvelleDette.trim();
   const avecRepere=debtBase.trim()!==''||debtPercent.trim()!=='';
   if (avecRepere&&!reperePret) {
    notice(l('Pour calculer un repère, saisis un montant et un pourcentage entre 0 et 100.','Enter an amount and a percentage from 0 to 100 to calculate a guide.'));
@@ -77,8 +111,9 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   setBusy(true);
   setAnnonce('');
   try {
-   const demande=idDemande('dette',debtBalance,debtCurrency,repere?.rythme??'',debtBase,debtPercent);
-   await creerDetteSuivie(inscription,{openingBalance:debtBalance,currency:debtCurrency,repere},demande.id);
+   const demande=idDemande('dette',creditorName,debtBalance,debtCurrency,repere?.rythme??'',debtBase,debtPercent);
+   await creerDetteSuivie(inscription,{creditorName,openingBalance:debtBalance,currency:debtCurrency,repere},demande.id);
+   setNomNouvelleDette('');
    setDebtBalance('');
    setDebtBase('');
    setDebtPercent('');
@@ -107,8 +142,98 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
    </>}
    {state==='pret'&&mode==='dettes'&&<>
     <section className="rounded-2xl bg-white p-4"><h2 className="font-hd-headline-sm">{l('Solde restant','Remaining balance')}</h2>{Array.from(new Set(dettesTriees.map(d=>d.currency))).map(currency=>{const groupe=dettesTriees.filter(d=>d.currency===currency),ouverture=groupe.reduce((n,d)=>n+montantCents(d.opening_balance),0),rembourse=groupe.reduce((n,d)=>n+totalCents(d.payments),0),p=ouverture?Math.min(100,rembourse/ouverture*100):0;return <div key={currency} className="mt-3"><div className="flex justify-between gap-2"><strong>{currency}</strong><strong>{formatter(Math.max(0,ouverture-rembourse),currency,en)}</strong></div><div className="mt-2 h-3 overflow-hidden rounded-full bg-hd-surface-container"><div className="h-full rounded-full bg-emerald-600" style={{width:`${p}%`}}/></div><div className="mt-1 flex justify-between text-xs text-hd-on-surface-variant"><span>{l('Remboursé','Repaid')} {formatter(rembourse,currency,en)}</span><span>{l('sur','of')} {formatter(ouverture,currency,en)}</span></div></div>})}{!dettesTriees.length&&<p className="mt-2 text-sm text-hd-on-surface-variant">{l('Ajoute une dette pour voir le suivi.','Add a debt to see your tracker.')}</p>}</section>
-    <section className="rounded-2xl bg-white p-4"><h2 className="font-hd-headline-sm">{l('Mes dettes','My debts')}</h2><p className="mt-1 text-sm text-hd-on-surface-variant">{l('Dans chaque devise, les dettes ouvertes sont classées du plus petit solde au plus grand.','Within each currency, open debts are listed from smallest to largest balance.')}</p><div className="mt-3 flex flex-col gap-2">{dettesTriees.map(d=>{const plusPetite=dettesOuvertes.find(x=>x.currency===d.currency)?.debt_id===d.debt_id;const paid=totalCents(d.payments),remaining=resteDette(d),pct=Math.min(100,paid/Math.max(1,montantCents(d.opening_balance))*100);return <article key={d.debt_id} className={`rounded-xl border p-3 ${plusPetite?'border-hd-secondary bg-hd-secondary-container/20':''}`}><div className="flex justify-between gap-2"><strong>{l('Dette','Debt')} {d.debt_number}</strong><span className="text-xs text-hd-secondary">{remaining===0?l('Soldée','Paid'):plusPetite?l('Plus petite dans cette devise','Smallest in this currency'):l('En cours','In progress')}</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-hd-surface-container"><div className="h-full bg-emerald-600" style={{width:`${pct}%`}}/></div><p className="mt-2 text-sm">{l('Reste','Remaining')}: <strong>{formatter(remaining,d.currency,en)}</strong> · {l('Payé','Paid')}: {formatter(paid,d.currency,en)}</p>{d.repere&&<p className="mt-1 text-xs text-hd-on-surface-variant">{l('Repère choisi','Chosen guide')}: <strong>{montantRepere(d.repere.base,d.repere.pourcentage,d.currency)} {periode(d.repere.rythme)}</strong> ({d.repere.pourcentage}% × {formatter(montantCents(d.repere.base),d.currency,en)})</p>}</article>})}</div></section>
-    <section className="rounded-2xl bg-white p-4"><h2 className="font-hd-headline-sm">{l('Ajouter une dette','Add a debt')}</h2><p className="mt-1 text-sm text-hd-on-surface-variant">{l('Indique le solde de départ et la devise de ta dette.','Enter the starting balance and currency for this debt.')}</p><form className="mt-3 flex flex-col gap-3" onSubmit={e=>void creerDette(e)}><div className="grid grid-cols-2 gap-3"><label className="flex flex-col gap-1 text-sm">{l('Solde de départ','Starting balance')}<input required min={decimalesDevise(debtCurrency)===0?1:0.01} step={decimalesDevise(debtCurrency)===0?1:0.01} type="number" value={debtBalance} onChange={e=>setDebtBalance(e.target.value)} className="min-h-[44px] rounded-lg border px-3" placeholder="120"/></label><label className="flex flex-col gap-1 text-sm">{l('Devise','Currency')}<select value={debtCurrency} onChange={e=>setDebtCurrency(e.target.value)} className="min-h-[44px] rounded-lg border px-3">{deviseOptions}</select></label></div><details>
+    {dettesTriees.length>0&&<section aria-labelledby="hd-mes-dettes">
+     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <div>
+       <h2 id="hd-mes-dettes" className="font-hd-headline-sm">{l('Mes dettes','My debts')}</h2>
+       <p className="mt-1 text-sm text-hd-on-surface-variant">{l('Dans chaque devise, le plus petit solde est affiché en premier.','Within each currency, the smallest balance appears first.')}</p>
+      </div>
+      <a href="#hd-ajouter-dette" className="inline-flex min-h-[44px] items-center gap-1 rounded-xl bg-hd-secondary-container px-3 font-semibold text-hd-on-secondary-container">
+       {l('Ajouter une dette','Add a debt')}
+      </a>
+     </div>
+     <div className="grid gap-3 sm:grid-cols-2">
+      {dettesTriees.map(d=>{
+       const rembourse=totalCents(d.payments);
+       const reste=resteDette(d);
+       const pourcentage=Math.min(100,Math.round(rembourse/Math.max(1,montantCents(d.opening_balance))*100));
+       const plusPetite=dettesOuvertes.find(x=>x.currency===d.currency)?.debt_id===d.debt_id;
+       const edition=nomEnEdition?.id===d.debt_id?nomEnEdition:null;
+       return <article key={d.debt_id} className="min-w-0 rounded-2xl border border-hd-surface-container bg-white p-4 shadow-sm" aria-labelledby={`hd-titre-${d.debt_id}`}>
+        <div className="flex items-start gap-3">
+         <div aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-hd-secondary-container/40 text-hd-secondary">
+          <IconeHD nom={reste===0?'check_circle':'account_balance'}/>
+         </div>
+         <div className="min-w-0 flex-1">
+          <p className="text-xs font-medium text-hd-on-surface-variant">{d.creditor_name?`${l('Dette','Debt')} ${d.debt_number} · ${d.currency}`:d.currency}</p>
+          <h3 id={`hd-titre-${d.debt_id}`} className="mt-0.5 font-semibold [overflow-wrap:anywhere]">{nomDette(d)}</h3>
+         </div>
+         <span className="shrink-0 rounded-full bg-hd-surface-container-low px-2.5 py-1 text-xs font-medium text-hd-on-surface-variant">
+          {reste===0?l('Soldée','Paid'):plusPetite?l('Plus petit solde','Smallest balance'):l('En cours','In progress')}
+         </span>
+        </div>
+        <dl className="mt-4 grid grid-cols-2 gap-2">
+         <div className="min-w-0 rounded-xl bg-hd-surface-container-low p-2.5">
+          <dt className="text-xs text-hd-on-surface-variant">{l('Reste à payer','Left to pay')}</dt>
+          <dd className="mt-0.5 font-bold text-hd-secondary [overflow-wrap:anywhere]">{formatter(reste,d.currency,en)}</dd>
+         </div>
+         <div className="min-w-0 rounded-xl bg-hd-surface-container-low p-2.5">
+          <dt className="text-xs text-hd-on-surface-variant">{l('Déjà remboursé','Already repaid')}</dt>
+          <dd className="mt-0.5 font-semibold [overflow-wrap:anywhere]">{formatter(rembourse,d.currency,en)}</dd>
+         </div>
+        </dl>
+        <div className="mt-3 flex items-center gap-3">
+         <div role="progressbar" aria-label={l('Progression du remboursement','Repayment progress')} aria-valuenow={pourcentage} className="h-2 flex-1 overflow-hidden rounded-full bg-hd-surface-container">
+          <div className="h-full rounded-full bg-emerald-600" style={{width:`${pourcentage}%`}}/>
+         </div>
+         <span aria-hidden="true" className="text-xs text-hd-on-surface-variant">{pourcentage} %</span>
+        </div>
+        {d.repere&&<p className="mt-2 text-xs text-hd-on-surface-variant">
+         {l('Repère choisi','Chosen guide')}: <strong>{montantRepere(d.repere.base,d.repere.pourcentage,d.currency)} {periode(d.repere.rythme)}</strong>
+        </p>}
+        <div className="mt-3 flex flex-wrap gap-2">
+         {reste>0&&<button type="button" className="min-h-[44px] rounded-lg bg-hd-secondary px-3 text-sm font-semibold text-white disabled:opacity-60" disabled={busy} onClick={()=>{
+          choisirRemboursement(d.debt_id);
+          titreRemboursement.current?.focus();
+         }}>{l('Rembourser','Record repayment')}</button>}
+         <button type="button" aria-expanded={!!edition} disabled={busy} className="min-h-[44px] rounded-lg border border-hd-surface-container px-3 text-sm font-medium text-hd-secondary" onClick={()=>{
+          setErreurNom('');
+          setNomEnEdition(edition?null:{id:d.debt_id,nom:d.creditor_name??''});
+         }}>{d.creditor_name?l('Modifier le nom','Edit name'):l('Ajouter un nom','Add a name')}</button>
+        </div>
+        {edition&&<form className="mt-3 flex flex-col gap-2 rounded-xl bg-hd-surface-container-low p-3" onSubmit={e=>void enregistrerNom(e)}>
+         <label className="flex flex-col gap-1 text-sm font-medium">
+          {l('Nom du créancier','Creditor name')}
+          <input autoFocus required maxLength={LONGUEUR_NOM_CREANCIER} value={edition.nom} onChange={e=>setNomEnEdition({id:d.debt_id,nom:e.target.value})} aria-invalid={!!erreurNom} aria-describedby={erreurNom?'hd-erreur-nom':undefined} className="min-h-[44px] w-full rounded-lg border bg-white px-3" placeholder={l('Ex. Banque, fournisseur ou proche','E.g. Bank, supplier or relative')}/>
+         </label>
+         {erreurNom&&<p id="hd-erreur-nom" role="alert" className="text-sm text-red-700">{erreurNom}</p>}
+         <div className="flex flex-wrap gap-2">
+          <button disabled={busy} className="min-h-[44px] rounded-lg bg-hd-secondary px-3 text-sm font-semibold text-white">{l('Enregistrer le nom','Save name')}</button>
+          <button type="button" disabled={busy} className="min-h-[44px] rounded-lg px-3 text-sm" onClick={()=>setNomEnEdition(null)}>{l('Annuler','Cancel')}</button>
+         </div>
+        </form>}
+        {d.payments.length>0&&<details className="mt-2 border-t border-hd-surface-container">
+         <summary className="min-h-[44px] py-3 text-sm font-medium text-hd-secondary">{l('Historique des remboursements','Repayment history')} ({d.payments.length})</summary>
+         <ol className="flex flex-col gap-1 text-sm">
+          {[...d.payments].reverse().map(p=><li key={p.payment_id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-hd-surface-container-low px-3 py-2">
+           <time dateTime={p.date_locale}>{p.date_locale}</time><strong>{formatter(montantCents(p.amount),d.currency,en)}</strong>
+          </li>)}
+         </ol>
+        </details>}
+       </article>;
+      })}
+     </div>
+    </section>}
+    <section id="hd-ajouter-dette" className="scroll-mt-24 rounded-2xl bg-white p-4 shadow-sm">
+     <h2 className="font-hd-headline-sm">{l('Ajouter une dette','Add a debt')}</h2>
+     <p className="mt-1 text-sm text-hd-on-surface-variant">{l('Commence par indiquer à qui tu dois de l’argent.','Start by naming who you owe.')}</p>
+     <form className="mt-3 flex flex-col gap-3" onSubmit={e=>void creerDette(e)}>
+      <label className="flex flex-col gap-1 text-sm font-medium">
+       {l('Nom du créancier','Creditor name')}
+       <input required maxLength={LONGUEUR_NOM_CREANCIER} value={nomNouvelleDette} onChange={e=>setNomNouvelleDette(e.target.value)} aria-describedby="hd-nom-creancier-aide" className="min-h-[44px] w-full rounded-lg border px-3" placeholder={l('Ex. Banque, fournisseur ou proche','E.g. Bank, supplier or relative')}/>
+      </label>
+      <p id="hd-nom-creancier-aide" className="-mt-2 text-xs text-hd-on-surface-variant">{l('Un nom ou un surnom suffit pour reconnaître la dette.','A name or nickname is enough to recognize the debt.')}</p>
+      <div className="grid grid-cols-2 gap-3"><label className="flex flex-col gap-1 text-sm">{l('Solde de départ','Starting balance')}<input required min={decimalesDevise(debtCurrency)===0?1:0.01} step={decimalesDevise(debtCurrency)===0?1:0.01} type="number" value={debtBalance} onChange={e=>setDebtBalance(e.target.value)} className="min-h-[44px] rounded-lg border px-3" placeholder="120"/></label><label className="flex flex-col gap-1 text-sm">{l('Devise','Currency')}<select value={debtCurrency} onChange={e=>setDebtCurrency(e.target.value)} className="min-h-[44px] rounded-lg border px-3">{deviseOptions}</select></label></div><details>
      <summary className="min-h-[44px] flex items-center">{l('Définir un repère de remboursement','Set a repayment guide')}</summary>
      <p className="mb-3 text-sm text-hd-on-surface-variant">{l('Facultatif. Choisis le rythme qui correspond à ton revenu. Ton solde diminue quand tu enregistres un remboursement.','Optional. Choose the schedule that matches your income. Your balance drops when you record a repayment.')}</p>
      <label className="flex flex-col gap-1 text-sm">
@@ -138,7 +263,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
       {l('Repère','Guide')}: <strong>{montantRepere(debtBase,debtPercent,debtCurrency)} {periode(rythmeDette)}</strong>
      </p>}
     </details><button disabled={busy} className="min-h-[46px] rounded-xl bg-hd-secondary px-4 font-semibold text-white disabled:opacity-60">{busy?l('Enregistrement…','Saving…'):l('Ajouter cette dette','Add this debt')}</button></form></section>
-    <section className="rounded-2xl bg-white p-4"><h2 className="font-hd-headline-sm">{l('Enregistrer un remboursement','Record a repayment')}</h2>{detteChoisie?<form className="mt-3 flex flex-col gap-3" onSubmit={e=>void enregistrerPaiement(e)}><label className="flex flex-col gap-1 text-sm">{l('Dette à rembourser','Debt to repay')}<select value={detteChoisie.debt_id} onChange={e=>setPaymentDebt(e.target.value)} className="min-h-[44px] rounded-lg border px-3">{dettesOuvertes.map(d=><option key={d.debt_id} value={d.debt_id}>{l('Dette','Debt')} {d.debt_number} · {formatter(resteDette(d),d.currency,en)}</option>)}</select></label>{dettesOuvertes.find(d=>d.currency===detteChoisie.currency)?.debt_id===detteChoisie.debt_id&&<p className="rounded-xl bg-hd-secondary-container/30 p-3 text-sm">{l('Cette dette a le plus petit solde dans sa devise. Tu peux en choisir une autre.','This debt has the smallest balance in its currency. You can choose another.')}</p>}<div className="grid grid-cols-2 gap-3"><label className="flex flex-col gap-1 text-sm">{l('Montant payé','Amount paid')}<input required min={decimalesDevise(detteChoisie.currency)===0?1:0.01} max={moneyInput(resteDette(detteChoisie))} step={decimalesDevise(detteChoisie.currency)===0?1:0.01} type="number" value={paymentAmount} onChange={e=>setPaymentAmount(e.target.value)} className="min-h-[44px] rounded-lg border px-3" placeholder="20.00"/></label><label className="flex flex-col gap-1 text-sm">{l('Date','Date')}<input required max={AUJOURDHUI} type="date" value={paymentDate} onChange={e=>setPaymentDate(e.target.value)} className="min-h-[44px] rounded-lg border px-2"/></label></div><button disabled={busy} className="min-h-[46px] rounded-xl bg-hd-secondary px-4 font-semibold text-white disabled:opacity-60">{busy?l('Enregistrement…','Saving…'):l('Enregistrer le paiement','Record payment')}</button></form>:<p className="mt-2 text-sm text-hd-on-surface-variant">{l('Ajoute une dette pour pouvoir consigner un remboursement.','Add a debt before recording a repayment.')}</p>}</section>
+    <section className="rounded-2xl bg-white p-4"><h2 ref={titreRemboursement} tabIndex={-1} className="scroll-mt-24 font-hd-headline-sm">{l('Enregistrer un remboursement','Record a repayment')}</h2>{detteChoisie?<form className="mt-3 flex flex-col gap-3" onSubmit={e=>void enregistrerPaiement(e)}><label className="flex flex-col gap-1 text-sm">{l('Dette à rembourser','Debt to repay')}<select value={detteChoisie.debt_id} onChange={e=>choisirRemboursement(e.target.value)} className="min-h-[44px] rounded-lg border px-3">{dettesOuvertes.map(d=><option key={d.debt_id} value={d.debt_id}>{nomDette(d)} · {formatter(resteDette(d),d.currency,en)}</option>)}</select></label>{dettesOuvertes.find(d=>d.currency===detteChoisie.currency)?.debt_id===detteChoisie.debt_id&&<p className="rounded-xl bg-hd-secondary-container/30 p-3 text-sm">{l('Cette dette a le plus petit solde dans sa devise. Tu peux en choisir une autre.','This debt has the smallest balance in its currency. You can choose another.')}</p>}<div className="grid grid-cols-2 gap-3"><label className="flex flex-col gap-1 text-sm">{l('Montant payé','Amount paid')}<input required min={decimalesDevise(detteChoisie.currency)===0?1:0.01} max={moneyInput(resteDette(detteChoisie))} step={decimalesDevise(detteChoisie.currency)===0?1:0.01} type="number" value={paymentAmount} onChange={e=>setPaymentAmount(e.target.value)} className="min-h-[44px] rounded-lg border px-3" placeholder="20.00"/></label><label className="flex flex-col gap-1 text-sm">{l('Date','Date')}<input required max={AUJOURDHUI} type="date" value={paymentDate} onChange={e=>setPaymentDate(e.target.value)} className="min-h-[44px] rounded-lg border px-2"/></label></div><button disabled={busy} className="min-h-[46px] rounded-xl bg-hd-secondary px-4 font-semibold text-white disabled:opacity-60">{busy?l('Enregistrement…','Saving…'):l('Enregistrer le paiement','Record payment')}</button></form>:<p className="mt-2 text-sm text-hd-on-surface-variant">{l('Ajoute une dette pour pouvoir consigner un remboursement.','Add a debt before recording a repayment.')}</p>}</section>
    </>}
    {annonce&&<p role="status" aria-live="polite" className="rounded-xl bg-hd-surface-container-low p-3">{annonce}</p>}
    <p className="flex items-start gap-2 rounded-xl bg-hd-surface-container-low p-3 text-xs text-hd-on-surface-variant"><IconeHD nom="lock" className="shrink-0 text-hd-secondary"/>{l('Suivi privé réservé à ton compte. Les montants ne sont pas partagés. Aucun paiement ou transfert n’est déclenché. Les dettes et l’épargne restent séparées par devise.','Private tracking for your account. Amounts are not shared. No payment or transfer is triggered. Debts and savings stay separate by currency.')}</p>
