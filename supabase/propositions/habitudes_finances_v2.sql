@@ -465,7 +465,7 @@ returns jsonb language plpgsql volatile security definer set search_path='' as $
 declare e seneve.enrollments%rowtype;g seneve.hd_finance_savings_goals%rowtype;x seneve.hd_finance_savings_entries%rowtype;
 begin
  if auth.uid() is null then raise exception 'Compte requis' using errcode='42501';end if;
- if p_amount is null or p_amount<=0 or p_amount>9999999999.99 or scale(p_amount)>2 or p_date_locale is null or p_date_locale>current_date then raise exception 'Versement invalide' using errcode='22023';end if;
+ if p_amount is null or p_amount<=0 or p_amount>9999999999.99 or scale(p_amount)>2 or p_date_locale is null then raise exception 'Versement invalide' using errcode='22023';end if;
  select * into e from seneve.enrollments where enrollment_id=p_enrollment_id and participant_id=(select seneve.current_participant_id()) for share;
  if not found or e.version<>2 or not seneve.hd_has_current_right(p_enrollment_id) then raise exception 'Inscription financière non accessible' using errcode='42501';end if;
  if not exists(select 1 from seneve.hd_programme_links where programme_id=e.programme_id and version=e.version and langue=e.langue and actif and module_id='HABITUDES_DEFIS' and module_version=2) then raise exception 'Version de suivi financier indisponible' using errcode='42501';end if;
@@ -480,7 +480,7 @@ returns jsonb language plpgsql volatile security definer set search_path='' as $
 declare e seneve.enrollments%rowtype;d seneve.hd_finance_debt_accounts%rowtype;n integer;
 begin
  if auth.uid() is null then raise exception 'Compte requis' using errcode='42501';end if;
- if p_opening_balance is null or p_opening_balance<=0 or p_opening_balance>9999999999.99 or scale(p_opening_balance)>2 or p_currency !~ '^[A-Z]{3}$' or ((p_monthly_basis is null)<>(p_repayment_percent is null)) or (p_monthly_basis is not null and (p_monthly_basis<0 or p_monthly_basis>9999999999.99 or scale(p_monthly_basis)>2)) or (p_repayment_percent is not null and p_repayment_percent not between 0 and 100) then raise exception 'Dette ou repère de remboursement invalide' using errcode='22023';end if;
+ if p_opening_balance is null or p_opening_balance<=0 or p_opening_balance>9999999999.99 or scale(p_opening_balance)>2 or p_currency !~ '^[A-Z]{3}$' or ((p_monthly_basis is null)<>(p_repayment_percent is null)) or (p_monthly_basis is not null and (p_monthly_basis<0 or p_monthly_basis>9999999999.99 or scale(p_monthly_basis)>2)) or (p_repayment_percent is not null and (p_repayment_percent not between 0 and 100 or scale(p_repayment_percent)>2)) then raise exception 'Dette ou repère de remboursement invalide' using errcode='22023';end if;
  select * into e from seneve.enrollments where enrollment_id=p_enrollment_id and participant_id=(select seneve.current_participant_id()) for share;
  if not found or e.version<>2 or not seneve.hd_has_current_right(p_enrollment_id) then raise exception 'Inscription financière non accessible' using errcode='42501';end if;
  if not exists(select 1 from seneve.hd_programme_links where programme_id=e.programme_id and version=e.version and langue=e.langue and actif and module_id='HABITUDES_DEFIS' and module_version=2) then raise exception 'Version de suivi financier indisponible' using errcode='42501';end if;
@@ -495,7 +495,7 @@ returns jsonb language plpgsql volatile security definer set search_path='' as $
 declare e seneve.enrollments%rowtype;d seneve.hd_finance_debt_accounts%rowtype;p seneve.hd_finance_debt_payments%rowtype;reste numeric;
 begin
  if auth.uid() is null then raise exception 'Compte requis' using errcode='42501';end if;
- if p_amount is null or p_amount<=0 or p_amount>9999999999.99 or scale(p_amount)>2 or p_date_locale is null or p_date_locale>current_date then raise exception 'Remboursement invalide' using errcode='22023';end if;
+ if p_amount is null or p_amount<=0 or p_amount>9999999999.99 or scale(p_amount)>2 or p_date_locale is null then raise exception 'Remboursement invalide' using errcode='22023';end if;
  select * into e from seneve.enrollments where enrollment_id=p_enrollment_id and participant_id=(select seneve.current_participant_id()) for share;
  if not found or e.version<>2 or not seneve.hd_has_current_right(p_enrollment_id) then raise exception 'Inscription financière non accessible' using errcode='42501';end if;
  if not exists(select 1 from seneve.hd_programme_links where programme_id=e.programme_id and version=e.version and langue=e.langue and actif and module_id='HABITUDES_DEFIS' and module_version=2) then raise exception 'Version de suivi financier indisponible' using errcode='42501';end if;
@@ -505,7 +505,7 @@ begin
  if p_amount>reste then raise exception 'Le remboursement dépasse le solde restant' using errcode='22023';end if;
  insert into seneve.hd_finance_debt_payments(debt_id,amount,date_locale) values(d.debt_id,p_amount,p_date_locale) returning * into p;
  if p_amount=reste then update seneve.hd_finance_debt_accounts set closed_at=now() where debt_id=d.debt_id;end if;
- return jsonb_build_object('payment_id',p.payment_id,'debt_id',p.debt_id,'amount',p.amount::text,'date_locale',p.date_locale,'remaining',reste-p.amount);
+ return jsonb_build_object('payment_id',p.payment_id,'debt_id',p.debt_id,'amount',p.amount::text,'date_locale',p.date_locale,'remaining',(reste-p.amount)::text);
 end$$;
 
 create function seneve.hd_finance_tracker_get(p_enrollment_id uuid) returns jsonb language sql stable security invoker set search_path='' as $$select seneve_private.hd_finance_tracker_get(p_enrollment_id)$$;
