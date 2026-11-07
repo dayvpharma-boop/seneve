@@ -1,0 +1,55 @@
+import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import type {ReactNode} from 'react';
+import {MemoryRouter} from 'react-router-dom';
+import {afterEach,expect,it,vi} from 'vitest';
+import {SuiviEpargneDettes} from '@/components/SuiviEpargneDettes';
+
+const {rpc}=vi.hoisted(()=>({rpc:vi.fn()}));
+vi.mock('@/lib/supabase',()=>({supabase:{rpc}}));
+vi.mock('@/components/CadreHabitudes',()=>({CadreHabitudes:({children}:{children:ReactNode})=><>{children}</>}));
+
+afterEach(()=>{
+  cleanup();
+  rpc.mockReset();
+});
+
+it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles existantes',async()=>{
+  const enrollmentId='a58c18be-22d3-4e33-8a73-554fdfd693af';
+  const dettes=[{
+    debt_id:'7c011210-b780-41a4-9ec4-8f6566b27755',
+    debt_number:1,opening_balance:'120.00',currency:'USD',
+    monthly_basis:'600.00' as string|null,repayment_percent:'10.00' as string|null,
+    weekly_basis:null as string|null,weekly_repayment_percent:null as string|null,payments:[]
+  }];
+  rpc.mockImplementation(async (fonction:string,args:Record<string,string|null>)=>{
+    if (fonction==='hd_finance_tracker_get') {
+      return {data:{enrollment_id:enrollmentId,savings_goals:[],debts:[...dettes]},error:null};
+    }
+    if (fonction==='hd_finance_debt_add_with_guide') {
+      const dette={...dettes[0]!,debt_id:args.p_request_id!,debt_number:2,opening_balance:args.p_opening_balance!,
+        monthly_basis:null,repayment_percent:null,weekly_basis:args.p_weekly_basis??null,weekly_repayment_percent:'10.00'};
+      dettes.push(dette);
+      return {data:dette,error:null};
+    }
+    throw Error(fonction);
+  });
+
+  render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="participant"/></MemoryRouter>);
+  expect(await screen.findByText(/60,00.*par mois/)).toBeVisible();
+  fireEvent.click(screen.getByText('Définir un repère de remboursement'));
+  fireEvent.change(screen.getByLabelText('Salaire net du mois'),{target:{value:'600'}});
+  fireEvent.change(screen.getByLabelText('Situation de revenu'),{target:{value:'hebdomadaire'}});
+  const benefice=screen.getByLabelText('Bénéfice net de la semaine') as HTMLInputElement;
+  expect(benefice.value).toBe('');
+  fireEvent.change(benefice,{target:{value:'150'}});
+  fireEvent.change(screen.getByLabelText('Pourcentage consacré à cette dette'),{target:{value:'10'}});
+  expect(screen.getByText(/15,00.*par semaine/)).toBeVisible();
+
+  fireEvent.change(screen.getByLabelText('Solde de départ'),{target:{value:'300'}});
+  fireEvent.click(screen.getByRole('button',{name:'Ajouter cette dette'}));
+  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_debt_add_with_guide',expect.objectContaining({
+    p_enrollment_id:enrollmentId,p_monthly_basis:null,p_weekly_basis:'150.00',p_repayment_percent:'10'
+  })));
+  expect(await screen.findByText(/15,00.*par semaine/)).toBeVisible();
+  expect(screen.getByText(/60,00.*par mois/)).toBeVisible();
+});
