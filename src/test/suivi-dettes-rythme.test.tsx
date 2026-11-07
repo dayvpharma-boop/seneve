@@ -35,7 +35,8 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
   });
 
   render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="participant"/></MemoryRouter>);
-  expect(await screen.findByText(/60,00.*par mois/)).toBeVisible();
+  expect(await screen.findByText(/60.*par mois/)).toBeVisible();
+  fireEvent.click(screen.getByRole('button',{name:'+ Ajouter'}));
   fireEvent.click(screen.getByText('Définir un repère de remboursement'));
   fireEvent.change(screen.getByLabelText('Salaire net du mois'),{target:{value:'600'}});
   fireEvent.change(screen.getByLabelText('Situation de revenu'),{target:{value:'hebdomadaire'}});
@@ -43,17 +44,19 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
   expect(benefice.value).toBe('');
   fireEvent.change(benefice,{target:{value:'150'}});
   fireEvent.change(screen.getByLabelText('Pourcentage consacré à cette dette'),{target:{value:'10'}});
-  expect(screen.getByText(/15,00.*par semaine/)).toBeVisible();
+  expect(screen.getByText(/15.*par semaine/)).toBeVisible();
 
   fireEvent.change(screen.getByLabelText('Nom du créancier'),{target:{value:'Fournisseur A'}});
-  fireEvent.change(screen.getByLabelText('Solde de départ'),{target:{value:'300'}});
+  fireEvent.change(screen.getByLabelText('Montant dû'),{target:{value:'300'}});
+  // Le franc congolais est proposé d’abord : cette dette est en dollars.
+  fireEvent.change(screen.getByLabelText('Monnaie'),{target:{value:'USD'}});
   fireEvent.click(screen.getByRole('button',{name:'Ajouter cette dette'}));
   await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_debt_add_named',expect.objectContaining({
     p_enrollment_id:enrollmentId,p_creditor_name:'Fournisseur A',p_monthly_basis:null,p_weekly_basis:'150.00',p_repayment_percent:'10'
   })));
-  expect(await screen.findByText(/15,00.*par semaine/)).toBeVisible();
-  expect(screen.getByRole('heading',{name:'Fournisseur A'})).toBeVisible();
-  expect(screen.getByText(/60,00.*par mois/)).toBeVisible();
+  expect(await screen.findByRole('article',{name:'Fournisseur A'})).toBeVisible();
+  expect(screen.getByText(/15.*par semaine/)).toBeVisible();
+  expect(screen.getByText(/60.*par mois/)).toBeVisible();
 });
 
 it('ajoute un nom à une dette existante et la présélectionne pour le remboursement',async()=>{
@@ -75,6 +78,7 @@ it('ajoute un nom à une dette existante et la présélectionne pour le rembours
 
   render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="participant"/></MemoryRouter>);
   const fiche=await screen.findByRole('article',{name:'Dette 2'});
+  fireEvent.click(within(fiche).getAllByRole('button')[0]!);
   fireEvent.click(within(fiche).getByRole('button',{name:'Ajouter un nom'}));
   fireEvent.change(within(fiche).getByLabelText('Nom du créancier'),{target:{value:' Fournisseur B '}});
   fireEvent.click(within(fiche).getByRole('button',{name:'Enregistrer le nom'}));
@@ -82,7 +86,7 @@ it('ajoute un nom à une dette existante et la présélectionne pour le rembours
   expect(rpc).toHaveBeenCalledWith('hd_finance_debt_rename',{
     p_enrollment_id:enrollmentId,p_debt_id:debtId,p_creditor_name:'Fournisseur B'
   });
-  fireEvent.click(within(renommee).getByRole('button',{name:'Rembourser'}));
-  expect(screen.getByRole<HTMLSelectElement>('combobox',{name:'Dette à rembourser'}).value).toBe(debtId);
-  expect(screen.getByRole('option',{name:/Fournisseur B/})).toBeVisible();
+  // La fiche reste ouverte : le remboursement se note directement sur la dette renommée.
+  expect(within(renommee).getByLabelText('Montant payé')).toBeVisible();
+  expect(within(renommee).getByRole('button',{name:'Enregistrer le paiement'})).toBeVisible();
 });

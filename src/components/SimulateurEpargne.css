@@ -53,3 +53,9 @@
 :root .sim-ios-dime .sim-ios-formule{display:block;margin-top:6px;font-size:14px;opacity:.85;overflow-wrap:anywhere}
 /* Les champs restent nus dans leur ligne, même sous les styles iPhone généraux des formulaires. */
 :root:root:root .hd-ecran.ios .sim-ios-ligne input:not([type="checkbox"]):not([type="radio"]),:root:root:root .hd-ecran.ios .sim-ios-ligne select:not([multiple]):not([size]),:root .sim-ios-ligne input,:root .sim-ios-ligne select{background:transparent!important;border:0!important;box-shadow:none!important;padding-left:0!important;padding-right:0!important}
+/* Bascule Épargne / Dettes du suivi financier (liens dans la même bascule que le simulateur). */
+:root .sim-ios-segment .sim-ios-segment-lien{flex:1;display:flex;align-items:center;justify-content:center;min-height:36px;border-radius:7px;font-size:14px;font-weight:500;color:inherit;text-decoration:none;transition:background-color .2s ease,box-shadow .2s ease}
+:root .sim-ios-segment .sim-ios-segment-lien[aria-current="page"]{background:var(--ios-carte,#fff);font-weight:600;box-shadow:0 3px 8px rgb(0 0 0 / .12),0 0 1px rgb(0 0 0 / .04)}
+:root .sim-ios-ligne input[type="date"]{width:150px}
+/* Police système partout dans les simulateurs et le suivi (certains styles anciens imposent une police à empattements). */
+:root .sim-ios,:root .sim-ios *{font-family:var(--ios-police,-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif)}

@@ -20,7 +20,7 @@ it('écrit les dates en toutes lettres',()=>{
 });
 it('la flèche retour et l’onglet Aujourd’hui ramènent à la journée',async()=>{
  charger();render(<MemoryRouter><SuiviEpargneDettes mode="epargne" userId="u"/></MemoryRouter>);
- await screen.findByText('Réserve',{selector:'h2'});
+ await screen.findByRole('button',{name:'Ajouter à mon épargne'});
  const props=cadre.mock.calls.at(-1)![0];
  expect(props.retour).toBe('/espace');expect(props.liens).toEqual({aujourdhui:'/espace'});expect(props.actif).toBe('aujourdhui');
  expect(screen.getByText('7 novembre 2026')).toBeInTheDocument();
@@ -35,7 +35,9 @@ it('un versement refusé s’explique sous son formulaire, sans appel au serveur
 });
 it('un remboursement trop grand s’explique sous son formulaire, avec des dates lisibles dans l’historique',async()=>{
  charger();render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="u"/></MemoryRouter>);
- const bouton=await screen.findByRole('button',{name:'Enregistrer le paiement'});
+ const fiche=await screen.findByRole('article',{name:'Banque'});
+ fireEvent.click(within(fiche).getAllByRole('button')[0]!);
+ const bouton=within(fiche).getByRole('button',{name:'Enregistrer le paiement'});
  fireEvent.change(screen.getByLabelText('Montant payé'),{target:{value:'500'}});
  fireEvent.submit(bouton.closest('form')!);
  expect(within(bouton.closest('form')!).getByRole('alert').textContent).toContain('dépasse le solde restant');

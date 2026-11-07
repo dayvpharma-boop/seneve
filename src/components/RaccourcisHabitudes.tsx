@@ -28,8 +28,8 @@ export function raccourcisHabitudes(en: boolean, enrollmentId: string, engagemen
   return [
     { cle: 'acces', vers: `/habitudes/aujourdhui${q}`, titre: en ? 'My access and schedule' : 'Mon accès et mes horaires', detail: en ? 'Open months and times' : 'Mois ouverts et horaires', icone: 'calendrier', ton: 'bleu' },
     { cle: 'horaires', vers: `/reglages?parcours=${encodeURIComponent(enrollmentId)}${en ? '&lang=en' : ''}`, titre: en ? 'Adjust my habit schedule' : 'Régler mes horaires d’habitudes', detail: en ? 'Wake-up, prayer, reading, bedtime' : 'Réveil, prière, lecture, coucher', icone: 'cloche', ton: 'orange' },
-    // Maquette validée le 07/11/2026 : le simulateur d'épargne, simple calcul local, toujours proposé.
-    { cle: 'simulateur-epargne', vers: `/habitudes/simulateur-epargne${q}`, titre: en ? 'Savings simulator' : 'Simulateur d’épargne', detail: en ? 'Joy reserve and investing' : 'Réserve de joie et investissement', icone: 'pousse', ton: 'vert' },
+    // Un seul raccourci d'épargne (maquette du 07/11/2026) : avec le suivi, le simulateur est dans « Mon épargne ».
+    ...(suiviFinancierActive() ? [] : [{ cle: 'simulateur-epargne', vers: `/habitudes/simulateur-epargne${q}`, titre: en ? 'Savings simulator' : 'Simulateur d’épargne', detail: en ? 'Joy reserve and investing' : 'Réserve de joie et investissement', icone: 'pousse', ton: 'vert' } as Raccourci]),
     ...(suiviFinancierActive() ? [
       { cle: 'epargne', vers: `/habitudes/epargne${q}`, titre: en ? 'My savings' : 'Mon épargne', detail: en ? 'Goals, contributions and progress' : 'Objectifs, versements et progression', icone: 'pousse' as const, ton: 'vert' as const },
       { cle: 'dettes', vers: `/habitudes/dettes${q}`, titre: en ? 'My debt tracker' : 'Mon suivi des dettes', detail: en ? 'Balances and repayments' : 'Soldes et remboursements', icone: 'objectif' as const, ton: 'bleu' as const },

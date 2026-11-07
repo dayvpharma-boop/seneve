@@ -41,8 +41,10 @@ it('la journée propose « Épargne » sous « Ma dîme » et un raccourci vers 
  render(<MonEpargneHabitudes langue="fr"/>);
  const volet=document.getElementById('hd-epargne')!;expect(volet.tagName).toBe('DETAILS');expect(volet.querySelector('summary')!.textContent).toContain('Épargne');
  expect(volet.querySelector('#hd-epargne-recu')).not.toBeNull();
- const r=raccourcisHabitudes(false,'E',false).find(x=>x.cle==='simulateur-epargne')!;
- expect(r.vers).toBe('/habitudes/simulateur-epargne');expect(r.titre).toBe('Simulateur d’épargne');
- expect(raccourcisHabitudes(true,'E',false).find(x=>x.cle==='simulateur-epargne')!.vers).toBe('/habitudes/simulateur-epargne?lang=en');
+ // Un seul raccourci d'épargne : le simulateur seul, ou « Mon épargne » qui le contient.
+ const cles=raccourcisHabitudes(false,'E',false).map(x=>x.cle);
+ expect(cles.filter(c=>c==='simulateur-epargne'||c==='epargne')).toHaveLength(1);
+ const r=raccourcisHabitudes(true,'E',false).find(x=>x.cle==='simulateur-epargne'||x.cle==='epargne')!;
+ expect(r.vers).toMatch(/^\/habitudes\/(simulateur-epargne|epargne)\?lang=en$/);
  expect(raccourcisHabitudes(false,'E',false,true).some(x=>x.cle==='simulateur-epargne')).toBe(false);
 });
