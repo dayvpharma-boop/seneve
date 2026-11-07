@@ -73,3 +73,15 @@ it('si la base n’a pas encore les compteurs, la page l’explique sans erreur'
  render(<MemoryRouter initialEntries={['/habitudes/compteurs']}><HabitudesCompteurs userId="u"/></MemoryRouter>);
  expect(await screen.findByText(/Les compteurs arrivent bientôt/)).toBeInTheDocument();
 });
+
+it('« Mes compteurs » montre aussi les objectifs « Autre objectif »',async()=>{
+ const autre={goal_id:'5f1c2a4e-2222-4c3b-9a55-000000000002',goal_type:'autre',label:'Toiture',target_amount:'500.00',currency:'USD',entries:[{entry_id:id(5),amount:'80.00',date_locale:'2026-11-07'}]};
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[...suivi.savings_goals,autre]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[],withdrawals:[]},error:null};
+  throw Error(f);});
+ const {HabitudesCompteurs}=await import('@/routes/habitudes-compteurs');
+ render(<MemoryRouter initialEntries={['/habitudes/compteurs']}><HabitudesCompteurs userId="u"/></MemoryRouter>);
+ const carte=await screen.findByRole('article',{name:'Autre objectif'});
+ expect(carte.textContent).toMatch(/Toiture/);expect(carte.textContent).toMatch(/80USD disponibles/);
+});

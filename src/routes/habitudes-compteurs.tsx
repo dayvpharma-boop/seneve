@@ -52,7 +52,8 @@ export function HabitudesCompteurs({userId}:{userId:string}){
  const caisses:Caisse[]=[
   {cle:'dime',nom:l('Dîme','Tithe'),sous:l('à donner','to give'),couleur:'#b8862b',icone:'church',enveloppe:'dime'},
   {cle:'offrande',nom:l('Offrande','Offering'),sous:l('à donner','to give'),couleur:'#b05bd6',icone:'favorite',enveloppe:'offrande'},
-  ...(suivi?.savings_goals.filter(g=>g.currency===dev&&g.goal_type!=='autre').map(g=>({cle:g.goal_id,nom:g.goal_type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):l('Pour investir','For investing'),sous:g.label,couleur:g.goal_type==='reserve_joie'?'#2f9e62':'#2f6fe0',icone:g.goal_type==='reserve_joie'?'potted_plant':'pie_chart',goalId:g.goal_id}))??[]),
+  // Tous les objectifs d'épargne, « Autre objectif » compris (demande du 07/11/2026).
+  ...(suivi?.savings_goals.filter(g=>g.currency===dev).map(g=>({cle:g.goal_id,nom:g.goal_type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):g.goal_type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal'),sous:g.label,couleur:g.goal_type==='reserve_joie'?'#2f9e62':g.goal_type==='epargne_investir'?'#2f6fe0':'#c2410c',icone:g.goal_type==='reserve_joie'?'potted_plant':g.goal_type==='epargne_investir'?'pie_chart':'bookmark',goalId:g.goal_id}))??[]),
   {cle:'vivre',nom:l('Pour vivre','For living'),sous:l('dépenses de la maison','household spending'),couleur:'#a1a1a6',icone:'location_on',enveloppe:'vivre'},
  ];
  const lignesDe=(c:Caisse):Ligne[]=>{
