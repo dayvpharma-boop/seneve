@@ -36,7 +36,7 @@ it('la page affiche la répartition et garde les pourcentages dans leurs limites
  fireEvent.change(screen.getByLabelText('Coût des marchandises vendues'),{target:{value:'400000'}});
  fireEvent.change(screen.getByLabelText('Charges du commerce'),{target:{value:'100000'}});
  const base=screen.getByRole('region',{name:'Base retenue'});
- expect(base.textContent).toMatch(/500\s?000 CDF/);
+ expect(base.textContent).toMatch(/500\s?000 USD/);
  expect(within(base).getByText('Pour vivre').closest('li')!.textContent).toMatch(/225\s?000/);
  expect(screen.getByRole('button',{name:'Augmenter : Réserve de joie'})).toBeDisabled();
  for(let i=0;i<4;i++)fireEvent.click(screen.getByRole('button',{name:'Augmenter : Offrande'}));
@@ -45,16 +45,16 @@ it('la page affiche la répartition et garde les pourcentages dans leurs limites
  for(let i=0;i<5;i++)fireEvent.click(screen.getByRole('button',{name:'Augmenter : Dettes'}));
  expect(screen.getByRole('button',{name:'Augmenter : Dettes'})).toBeDisabled();
  const lien=screen.getByRole('link',{name:/Réserve de joie/});
- expect(lien.getAttribute('href')).toBe('/habitudes/epargne?montant=50000&devise=CDF&type=reserve_joie');
+ expect(lien.getAttribute('href')).toBe('/habitudes/epargne?montant=50000&devise=USD&type=reserve_joie');
  fireEvent.click(screen.getByRole('radio',{name:'Entrepreneur'}));
  expect(screen.getByLabelText('Argent encaissé')).toHaveValue('');
  expect(screen.queryByLabelText('Coût des marchandises vendues')).toBeNull();
 });
-it('le dollar américain apparaît juste après le kwanza, dans les monnaies les plus utilisées',async()=>{
+it('le dollar américain est en premier et le franc congolais juste après le kwanza',async()=>{
  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
  render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);
  const options=[...(screen.getByLabelText('Monnaie') as HTMLSelectElement).options];
- expect(options.slice(0,6).map(o=>o.text)).toEqual(['Franc congolais (CDF)','Euro (EUR)','Franc CFA d’Afrique centrale (XAF)','Franc CFA d’Afrique de l’Ouest (XOF)','Kwanza angolais (AOA)','Dollar américain (USD)']);
+ expect(options.slice(0,6).map(o=>o.text)).toEqual(['Dollar américain (USD)','Euro (EUR)','Franc CFA d’Afrique centrale (XAF)','Franc CFA d’Afrique de l’Ouest (XOF)','Kwanza angolais (AOA)','Franc congolais (CDF)']);
  fireEvent.change(screen.getByLabelText('Monnaie'),{target:{value:'USD'}});
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
  expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/1\s?000 USD/);

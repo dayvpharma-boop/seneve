@@ -20,8 +20,8 @@ const resteDette=(d:DetteSuivie)=>Math.max(0,montantCents(d.opening_balance)-tot
 const formatter=(centimes:number,devise:string,en:boolean)=>{const dec=decimalesDevise(devise);return new Intl.NumberFormat(en?'en-US':'fr-FR',{style:'currency',currency:devise,minimumFractionDigits:centimes%100===0?0:dec,maximumFractionDigits:dec}).format(centimes/100);};
 const nombre=(centimes:number,devise:string,en:boolean)=>{const dec=decimalesDevise(devise);return new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:centimes%100===0?0:dec,maximumFractionDigits:dec}).format(centimes/100);};
 const monnaie=deviseAcceptee;
-/** Franc congolais proposé en premier (demande du 07/11/2026). */
-const DEVISE_DEFAUT='CDF';
+/** Dollar proposé en premier (demande de Dr Justin du 07/11/2026, qui remplace le franc congolais). */
+const DEVISE_DEFAUT='USD';
 const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 /** « 2026-11-07 » devient « 7 novembre 2026 » (ou « 7 November 2026 »), sans décalage de fuseau. */
 export const dateLisible=(iso:string,en:boolean)=>ISO.test(iso)?new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(iso+'T00:00:00Z')):iso;

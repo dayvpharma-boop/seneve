@@ -18,7 +18,7 @@ export function HabitudesRepartition(){
  const pour=q.get('pour')==='dettes'?'dettes':'epargne',suffixe=en?'&lang=en':'';
  const [profil,setProfil]=useState<ProfilRevenu>('commerce');
  const [recu,setRecu]=useState(''),[marchandises,setMarchandises]=useState(''),[frais,setFrais]=useState('');
- const [devise,setDevise]=useState('CDF');
+ const [devise,setDevise]=useState('USD');
  const [p,setP]=useState<Pourcentages>(POURCENTAGES_DEFAUT);
  useEffect(()=>{document.title=l('Ma répartition','My allocation')+' — SÉNEVÉ';document.documentElement.lang=langue;},[langue]);
  if(!habitudesActivees())return <NotFound/>;

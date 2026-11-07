@@ -1,9 +1,9 @@
 import {DEVISES_SUIVI,nomDevise} from '@/lib/devises';
 
 /** Monnaies les plus utilisées en premier (demande du 07/11/2026 : le dollar était perdu en 133e position). */
-// Ordre demandé par Dr Justin (07/11/2026) : Congo, euro, francs CFA, kwanza, puis le dollar juste après le kwanza
+// Ordre demandé par Dr Justin (07/11/2026) : le dollar en premier ; le franc congolais juste après le kwanza
 // (7e ligne du menu en comptant le titre « Les plus utilisées »), puis pays voisins et monnaies du commerce.
-export const DEVISES_COURANTES=['CDF','EUR','XAF','XOF','AOA','USD','ZMW','RWF','BIF','UGX','TZS','KES','ZAR','NGN','GHS','CNY','AED','GBP','CAD','CHF'] as const;
+export const DEVISES_COURANTES=['USD','EUR','XAF','XOF','AOA','CDF','ZMW','RWF','BIF','UGX','TZS','KES','ZAR','NGN','GHS','CNY','AED','GBP','CAD','CHF'] as const;
 const NOMS_FR:Record<string,string>={USD:'Dollar américain',CDF:'Franc congolais',EUR:'Euro',XAF:'Franc CFA d’Afrique centrale',XOF:'Franc CFA d’Afrique de l’Ouest',CNY:'Yuan chinois',AED:'Dirham des Émirats – Dubaï'};
 const NOMS_EN:Record<string,string>={USD:'US dollar',CDF:'Congolese franc',EUR:'Euro',XAF:'Central African CFA franc',XOF:'West African CFA franc',CNY:'Chinese yuan',AED:'UAE dirham – Dubai'};
 const majuscule=(s:string)=>s.charAt(0).toLocaleUpperCase('fr-FR')+s.slice(1);
