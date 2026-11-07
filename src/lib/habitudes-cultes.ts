@@ -2,7 +2,7 @@ import {planningHabitudesPourDate} from './habitudes-planning';
 import type {ConfigurationHoraires} from './habitudes-horaires-api';
 
 // La dîme (03/11/2026) suit la même règle : publiée chaque jour, comptée seulement le jour prévu.
-const CULTE=/^RECETTE_HD_(?:CULTE_V1:(culte_semaine|culte_dimanche):([12])|DIME_V1:(dime)())$/;
+const CULTE=/^RECETTE_HD_(?:CULTE_V[12]:(culte_semaine|culte_dimanche):([12])|DIME_V[12]:(dime)())$/;
 export type FiltreCultes=(noteSource:string|null|undefined,dateLocale:string,declaree:boolean)=>boolean;
 
 /** Cultes d'un jour passé ou du suivi : seuls ceux prévus ce jour-là dans le planning personnel sont affichés et comptés,

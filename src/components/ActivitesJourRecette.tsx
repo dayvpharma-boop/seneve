@@ -73,7 +73,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   },50);
   return()=>window.clearTimeout(t);
  },[data,horsLigne]);
- const bilan=data?bilanHabitudes({enrollment_id:enrollmentId,version:1,date_locale:dateLocale},data.activites.map(a=>a.occurrence),data.activites.flatMap(a=>a.etat?[a.etat]:[])):null;
+ const bilan=data?bilanHabitudes({enrollment_id:enrollmentId,version:data.version??1,date_locale:dateLocale},data.activites.map(a=>a.occurrence),data.activites.flatMap(a=>a.etat?[a.etat]:[])):null;
  function confirmer(etat:EtatOccurrence){setRevision(n=>n+1);setLecture(ancien=>ancien?.cle===cle?{...ancien,data:{...ancien.data,activites:ancien.data.activites.map(a=>a.occurrence.occurrence_id===etat.occurrence_id?{...a,etat}:a)}}:ancien);}
  if(erreur)return <section className="hd-jour-stitch px-hd-margin py-hd-space-md flex flex-col gap-hd-space-md" aria-label={l('Mes activités quotidiennes','My daily activities')}>
   <div className="bg-hd-surface-container-lowest rounded-2xl p-hd-space-md shadow-[0_2px_10px_rgba(29,28,19,0.04)] flex flex-col gap-hd-space-sm">

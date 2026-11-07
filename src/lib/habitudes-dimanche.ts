@@ -4,7 +4,7 @@
  * Les rappels de celles marquées « en pause » ne sonnent pas le dimanche (seneve_060). */
 export const EN_PAUSE_LE_DIMANCHE=['reveil','coucher','exercice','lecture_pro','predication','lecture_personnelle'] as const;
 export const FACULTATIVES_LE_DIMANCHE:readonly string[]=[...EN_PAUSE_LE_DIMANCHE,'priere_midi','bible_soir'];
-const QUOTIDIEN=/^RECETTE_HD_QUOTIDIEN_V1:([a-z_]+)$/;
+const QUOTIDIEN=/^RECETTE_HD_QUOTIDIEN_V[12]:([a-z_]+)$/;
 
 export function estDimanche(dateLocale:string){return new Date(dateLocale+'T12:00:00Z').getUTCDay()===0;}
 /** Une activité facultative le dimanche ne compte pas parmi les activités requises de la journée. */

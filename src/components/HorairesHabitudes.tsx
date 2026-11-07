@@ -2,6 +2,7 @@ import {useCallback,useEffect,useRef,useState,type FormEvent} from 'react';
 import {chargerHorairesHabitudes,enregistrerHorairesHabitudes,reglerRythmeDime,type ConfigurationHoraires,type CreneauPersonnel,type DemandeHoraires} from '@/lib/habitudes-horaires-api';
 import type {ModelePlanningHabitude,RythmeDime} from '@/lib/habitudes-planning';
 import {ChoixRythmeDime} from './ChoixRythmeDime';
+import {FinancesHabitudes} from './FinancesHabitudes';
 import {creneauxDepuisJours,heuresDifferentes,heuresParJour} from '@/lib/habitudes-heures-jour';
 import {creneauxRespectentFrequence} from '@/lib/habitudes-creneaux';
 import './HorairesHabitudes.css';
@@ -20,6 +21,7 @@ export function HorairesHabitudes({enrollmentId,langue}:{enrollmentId:string;lan
    <p>{l('Les modifications s’appliquent le','Changes take effect on')} <time dateTime={data.modifications_a_partir_du}>{data.modifications_a_partir_du}</time> ({data.fuseau}). {l('Ta journée en cours et ton historique sont conservés. Ces horaires n’activent aucun rappel.','Your current day and history are preserved. These times do not enable reminders.')}</p>
    {data.modeles.map(modele=><FormulaireHoraire key={`${modele.habit_key}:${data.revisions.find(r=>r.habit_key===modele.habit_key)?.revision??'initial'}`} modele={modele} data={data} langue={langue} confirmation={confirmation?.habit_key===modele.habit_key?confirmation.texte:''} onEnregistre={texte=>{setConfirmation({habit_key:modele.habit_key,texte});void charger();}}/>)}
    {data.modeles.some(m=>m.habit_key==='dime')&&<RythmeDimeHoraires key={JSON.stringify(data.dime)} actuel={data.dime??{rythme:'semaine'}} langue={langue} onEnregistre={()=>{setAnnonce(l('Rythme de la dîme enregistré.','Tithe rhythm saved.'));void charger();}}/>}
+   {data.modeles.some(m=>m.version>=2)&&<FinancesHabitudes enrollmentId={enrollmentId} langue={langue}/>}
   </>}
  </section>;
 }

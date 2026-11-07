@@ -95,6 +95,8 @@ export const NOMS_HABITUDES: Record<string, readonly [string, string]> = {
   lecture_personnelle: ['Développement personnel', 'Personal development reading'], bible_soir: ['Bible du soir', 'Evening Bible reading'],
   gratitude_soir: ['Gratitude du soir', 'Evening gratitude'], priere_soir: ['Prière du soir', 'Evening prayer'],
   coucher: ['Coucher', 'Bedtime'], culte_semaine: ['Culte en semaine', 'Weekday worship'], culte_dimanche: ['Culte du dimanche', 'Sunday worship'], dime: ['Dîme', 'Tithe'],
+  reserve_joie: ['Réserve de joie', 'Family joy reserve'], epargne_investir: ['Épargne pour investir', 'Savings for investing'],
+  offrande: ['Offrande libre', 'Freewill offering'], remboursement_dette: ['Remboursement de dette', 'Debt repayment'],
 };
 export const TEXTES_MOMENTS: Record<'fr' | 'en', Record<string, string>> = {
   fr: { matin: 'Ta graine du jour t’attend. Un enseignement, une action : quelques minutes suffisent.', midi: 'Où en est ton action du jour ? Même un petit pas compte.', soir: 'Avant de dormir, prends un instant pour noter ta journée.' },
