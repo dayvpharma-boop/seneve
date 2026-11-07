@@ -9,6 +9,7 @@ import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {decimalesDevise,deviseAcceptee,montantValidePourDevise} from '@/lib/devises';
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {OptionsDevises} from '@/components/OptionsDevises';
+import {momentLisible} from '@/lib/date-heure-finances';
 import {NotFound} from '@/routes/introuvable';
 
 type Mode='epargne'|'dettes';
@@ -251,7 +252,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
     </section>
     <section aria-labelledby="hd-titre-historique">
      <h2 id="hd-titre-historique" className="hd-classique sim-ios-titre">{l('Historique','History')}</h2>
-     {objectif.entries.length?<ol className="sim-ios-groupe hd-classique">{[...objectif.entries].reverse().map(entry=><li key={entry.entry_id} className="sim-ios-ligne"><time dateTime={entry.date_locale} className="flex-1">{dateLisible(entry.date_locale,en)}</time><strong className="text-emerald-700 tabular-nums">+ {nombre(montantCents(entry.amount),objectif.currency,en)}</strong></li>)}</ol>
+     {objectif.entries.length?<ol className="sim-ios-groupe hd-classique">{[...objectif.entries].reverse().map(entry=><li key={entry.entry_id} className="sim-ios-ligne"><time dateTime={entry.date_locale} className="flex-1">{momentLisible(entry.date_locale,entry.created_at,en)}</time><strong className="text-emerald-700 tabular-nums">+ {nombre(montantCents(entry.amount),objectif.currency,en)}</strong></li>)}</ol>
       :<p className="sim-ios-note hd-classique">{l('Aucun versement pour le moment.','No contributions yet.')}</p>}
     </section>
    </>}
@@ -330,7 +331,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
          {message('paiement:'+d.debt_id)}
         </form>}
         {d.payments.length>0&&<><h4 className="hd-classique sim-ios-titre" style={{marginLeft:0}}>{l('Historique','History')}</h4>
-         <ol className="sim-ios-groupe hd-classique" style={{background:'var(--ios-fond,#f2f2f7)'}}>{[...d.payments].reverse().map(p=><li key={p.payment_id} className="sim-ios-ligne"><time dateTime={p.date_locale} className="flex-1">{dateLisible(p.date_locale,en)}</time><strong className="tabular-nums">− {nombre(montantCents(p.amount),d.currency,en)}</strong></li>)}</ol></>}
+         <ol className="sim-ios-groupe hd-classique" style={{background:'var(--ios-fond,#f2f2f7)'}}>{[...d.payments].reverse().map(p=><li key={p.payment_id} className="sim-ios-ligne"><time dateTime={p.date_locale} className="flex-1">{momentLisible(p.date_locale,p.created_at,en)}</time><strong className="tabular-nums">− {nombre(montantCents(p.amount),d.currency,en)}</strong></li>)}</ol></>}
         <h4 className="hd-classique sim-ios-titre" style={{marginLeft:0}}>{l('Réglages de la dette','Debt settings')}</h4>
         <div className="sim-ios-groupe hd-classique" style={{background:'var(--ios-fond,#f2f2f7)'}}>
          <Ligne libelle={l('Nom','Name')}><button type="button" aria-expanded={!!edition} disabled={busy} onClick={()=>{setErreurNom('');setNomEnEdition(edition?null:{id:d.debt_id,nom:d.creditor_name??''});}} style={{color:'var(--ios-accent,#5b4ee8)',fontSize:16,minHeight:44}}>{d.creditor_name?l('Modifier le nom','Edit name'):l('Ajouter un nom','Add a name')}</button></Ligne>

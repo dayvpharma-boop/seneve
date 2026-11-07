@@ -6,8 +6,8 @@ import {deviseAcceptee,montantValidePourDevise} from './devises';
  * Aucun argent ne bouge : la personne déclare, SÉNEVÉ note. */
 export type Enveloppe='dime'|'offrande'|'vivre';
 export type Motif='donne'|'depense'|'investi'|'autre';
-export type MouvementCompteur={move_id:string;envelope:Enveloppe;direction:'entree'|'sortie';motif:Motif|null;amount:string;currency:string;date_locale:string;remise_a_zero:boolean;allocation_id:string|null};
-export type RetraitEpargne={withdrawal_id:string;goal_id:string;motif:Motif;amount:string;date_locale:string;remise_a_zero:boolean};
+export type MouvementCompteur={move_id:string;envelope:Enveloppe;direction:'entree'|'sortie';motif:Motif|null;amount:string;currency:string;date_locale:string;remise_a_zero:boolean;allocation_id:string|null;created_at?:string};
+export type RetraitEpargne={withdrawal_id:string;goal_id:string;motif:Motif;amount:string;date_locale:string;remise_a_zero:boolean;created_at?:string};
 export type Compteurs={enrollment_id:string;moves:MouvementCompteur[];withdrawals:RetraitEpargne[]};
 export type PartRepartition=
  |{part:Enveloppe;amount:string}
@@ -28,9 +28,9 @@ function absente(e:unknown){const x=e as {code?:string;message?:string}|null;ret
 function analyser(v:unknown):Compteurs{
  if(!objet(v)||!uuid(v.enrollment_id)||!Array.isArray(v.moves)||!Array.isArray(v.withdrawals))throw Error('Compteurs incohérents');
  const moves=v.moves.map(m=>{if(!objet(m)||!uuid(m.move_id)||!ENVELOPPES.includes(String(m.envelope))||(m.direction!=='entree'&&m.direction!=='sortie')||!montant(m.amount)||typeof m.currency!=='string'||!date(m.date_locale)||(m.motif!==null&&!MOTIFS.includes(String(m.motif))))throw Error('Mouvement incohérent');
-  return {move_id:m.move_id,envelope:m.envelope as Enveloppe,direction:m.direction as 'entree'|'sortie',motif:(m.motif??null) as Motif|null,amount:m.amount,currency:m.currency,date_locale:m.date_locale,remise_a_zero:m.remise_a_zero===true,allocation_id:uuid(m.allocation_id)?m.allocation_id:null};});
+  return {move_id:m.move_id,envelope:m.envelope as Enveloppe,direction:m.direction as 'entree'|'sortie',motif:(m.motif??null) as Motif|null,amount:m.amount,currency:m.currency,date_locale:m.date_locale,remise_a_zero:m.remise_a_zero===true,allocation_id:uuid(m.allocation_id)?m.allocation_id:null,...(typeof m.created_at==='string'?{created_at:m.created_at}:{})};});
  const withdrawals=v.withdrawals.map(w=>{if(!objet(w)||!uuid(w.withdrawal_id)||!uuid(w.goal_id)||!MOTIFS.includes(String(w.motif))||!montant(w.amount)||!date(w.date_locale))throw Error('Retrait incohérent');
-  return {withdrawal_id:w.withdrawal_id,goal_id:w.goal_id,motif:w.motif as Motif,amount:w.amount,date_locale:w.date_locale,remise_a_zero:w.remise_a_zero===true};});
+  return {withdrawal_id:w.withdrawal_id,goal_id:w.goal_id,motif:w.motif as Motif,amount:w.amount,date_locale:w.date_locale,remise_a_zero:w.remise_a_zero===true,...(typeof w.created_at==='string'?{created_at:w.created_at}:{})};});
  return {enrollment_id:v.enrollment_id,moves,withdrawals};
 }
 

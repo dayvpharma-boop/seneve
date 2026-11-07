@@ -9,13 +9,14 @@ import {chargerSuiviFinancier,type SuiviFinancier} from '@/lib/habitudes-finance
 import {chargerCompteurs,CompteursIndisponibles,disponibleCompteur,disponibleObjectif,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {decimalesDevise,montantValidePourDevise} from '@/lib/devises';
 import {NotFound} from '@/routes/introuvable';
+import {momentLisible} from '@/lib/date-heure-finances';
 
 /** Page « Mes compteurs » (maquette validée le 07/11/2026, demande de Dr Justin) :
  * - le disponible de chaque caisse (dîme, offrande, Réserve de joie, pour investir, pour vivre) ;
  * - noter l'argent donné, dépensé ou investi, ou « tout utilisé » : la caisse repart de zéro ;
  * - l'historique n'est JAMAIS effacé : bilan de la semaine, du mois ou de l'année. Aucun argent ne bouge. */
 type Caisse={cle:string;nom:string;sous:string;couleur:string;icone:string;enveloppe?:Enveloppe;goalId?:string};
-type Ligne={id:string;date:string;signe:1|-1;centimes:number;motif:Motif|null;remise:boolean;origine:'repartition'|'versement'|'sortie'};
+type Ligne={id:string;date:string;creeLe?:string;signe:1|-1;centimes:number;motif:Motif|null;remise:boolean;origine:'repartition'|'versement'|'sortie'};
 type Periode='semaine'|'mois'|'annee';
 const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 const centimes=(v:string)=>Math.round(Number(v)*100);
@@ -58,9 +59,9 @@ export function HabitudesCompteurs({userId}:{userId:string}){
  ];
  const lignesDe=(c:Caisse):Ligne[]=>{
   if(!cpt)return [];
-  if(c.enveloppe)return cpt.moves.filter(m=>m.envelope===c.enveloppe&&m.currency===dev).map(m=>({id:m.move_id,date:m.date_locale,signe:m.direction==='entree'?1:-1,centimes:centimes(m.amount),motif:m.motif,remise:m.remise_a_zero,origine:m.direction==='entree'?'repartition':'sortie'}));
+  if(c.enveloppe)return cpt.moves.filter(m=>m.envelope===c.enveloppe&&m.currency===dev).map(m=>({id:m.move_id,date:m.date_locale,creeLe:m.created_at,signe:m.direction==='entree'?1:-1,centimes:centimes(m.amount),motif:m.motif,remise:m.remise_a_zero,origine:m.direction==='entree'?'repartition':'sortie'}));
   const g=suivi?.savings_goals.find(x=>x.goal_id===c.goalId);if(!g)return [];
-  return [...g.entries.map(v=>({id:v.entry_id,date:v.date_locale,signe:1 as const,centimes:centimes(v.amount),motif:null,remise:false,origine:'versement' as const})),...cpt.withdrawals.filter(w=>w.goal_id===g.goal_id).map(w=>({id:w.withdrawal_id,date:w.date_locale,signe:-1 as const,centimes:centimes(w.amount),motif:w.motif,remise:w.remise_a_zero,origine:'sortie' as const}))].sort((a,b)=>a.date.localeCompare(b.date));
+  return [...g.entries.map(v=>({id:v.entry_id,date:v.date_locale,creeLe:v.created_at,signe:1 as const,centimes:centimes(v.amount),motif:null,remise:false,origine:'versement' as const})),...cpt.withdrawals.filter(w=>w.goal_id===g.goal_id).map(w=>({id:w.withdrawal_id,date:w.date_locale,creeLe:w.created_at,signe:-1 as const,centimes:centimes(w.amount),motif:w.motif,remise:w.remise_a_zero,origine:'sortie' as const}))].sort((a,b)=>a.date.localeCompare(b.date)||(a.creeLe??'').localeCompare(b.creeLe??''));
  };
  const dispo=(c:Caisse)=>{if(!cpt)return 0;if(c.enveloppe)return disponibleCompteur(cpt,c.enveloppe,dev);const g=suivi?.savings_goals.find(x=>x.goal_id===c.goalId);return g?disponibleObjectif(cpt,g.goal_id,g.entries):0;};
  const MOTIFS:[Motif,string][]=[['donne',l('Donné','Given')],['depense',l('Dépensé','Spent')],['investi',l('Investi','Invested')],['autre',l('Autre','Other')]];
@@ -122,7 +123,7 @@ export function HabitudesCompteurs({userId}:{userId:string}){
         {message('caisse:'+c.cle)}
         <div className="sim-ios-groupe hd-classique mt-3" style={{background:'var(--ios-fond,#f2f2f7)'}}><div className="sim-ios-ligne"><span style={{flex:1}}>{c.enveloppe&&c.enveloppe!=='vivre'?l('Donné depuis le début','Given since the start'):l('Utilisé depuis le début','Used since the start')}</span><b className="tabular-nums">{nombre(sorti)} {dev}</b></div></div>
         {lignes.length>0&&<><h4 className="hd-classique sim-ios-titre" style={{marginLeft:0}}>{l('Historique','History')}</h4>
-         <ol className="sim-ios-groupe hd-classique" style={{background:'var(--ios-fond,#f2f2f7)',listStyle:'none',margin:0,padding:0}}>{[...lignes].reverse().flatMap(x=>{const li=<li key={x.id} className="sim-ios-ligne"><span style={{flex:1}}>{dateLisible(x.date)} · {x.signe===1?(x.origine==='repartition'?l('répartition','allocation'):l('versement','contribution')):nomMotif(x.motif)}</span><b className="tabular-nums" style={{color:x.signe===1?'#2f9e62':'#d70015'}}>{x.signe===1?'+':'−'} {nombre(x.centimes)}</b></li>;return x.remise?[li,<li key={x.id+'-zero'} className="px-4 py-2 text-center text-xs text-hd-on-surface-variant">{l(`Caisse remise à zéro le ${dateLisible(x.date)}`,`Counter reset on ${dateLisible(x.date)}`)}</li>]:[li];})}</ol></>}
+         <ol className="sim-ios-groupe hd-classique" style={{background:'var(--ios-fond,#f2f2f7)',listStyle:'none',margin:0,padding:0}}>{[...lignes].reverse().flatMap(x=>{const li=<li key={x.id} className="sim-ios-ligne"><span style={{flex:1}}>{momentLisible(x.date,x.creeLe,en)} · {x.signe===1?(x.origine==='repartition'?l('répartition','allocation'):l('versement','contribution')):nomMotif(x.motif)}</span><b className="tabular-nums" style={{color:x.signe===1?'#2f9e62':'#d70015'}}>{x.signe===1?'+':'−'} {nombre(x.centimes)}</b></li>;return x.remise?[li,<li key={x.id+'-zero'} className="px-4 py-2 text-center text-xs text-hd-on-surface-variant">{l(`Caisse remise à zéro le ${dateLisible(x.date)}`,`Counter reset on ${dateLisible(x.date)}`)}</li>]:[li];})}</ol></>}
        </div>}
       </article>;})}
     </div>

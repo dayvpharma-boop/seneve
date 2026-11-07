@@ -2,9 +2,9 @@ import {supabase} from './supabase';
 import {deviseAcceptee,montantValidePourDevise} from './devises';
 
 export type TypeObjectifEpargne='reserve_joie'|'epargne_investir'|'autre';
-export type VersementEpargne={entry_id:string;amount:string;date_locale:string};
+export type VersementEpargne={entry_id:string;amount:string;date_locale:string;created_at?:string};
 export type ObjectifEpargne={goal_id:string;goal_type:TypeObjectifEpargne;label:string;target_amount:string;currency:string;entries:VersementEpargne[]};
-export type PaiementDette={payment_id:string;amount:string;date_locale:string};
+export type PaiementDette={payment_id:string;amount:string;date_locale:string;created_at?:string};
 export type RythmeRepereDette='mensuel'|'hebdomadaire';
 type RepereDette={base:string;pourcentage:string;rythme:RythmeRepereDette};
 export type DetteSuivie={debt_id:string;debt_number:number;opening_balance:string;currency:string;creditor_name:string|null;repere:RepereDette|null;payments:PaiementDette[]};
@@ -15,8 +15,8 @@ const montant=(v:unknown)=>typeof v==='string'&&/^\d{1,10}(?:\.\d{1,2})?$/.test(
 const montantFixe=(v:string)=>Number(v).toFixed(2);
 const dateLocale=(v:unknown)=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v);
 function analyserListe<T>(v:unknown,analyser:(x:unknown)=>T):T[]{if(!Array.isArray(v))throw Error('Suivi financier incohérent');return v.map(analyser);}
-function analyserVersement(v:unknown):VersementEpargne{if(!objet(v)||!uuid(v.entry_id)||!montant(v.amount)||Number(v.amount)<=0||!dateLocale(v.date_locale))throw Error('Versement d’épargne incohérent');return {entry_id:v.entry_id as string,amount:v.amount as string,date_locale:v.date_locale as string};}
-function analyserPaiement(v:unknown):PaiementDette{if(!objet(v)||!uuid(v.payment_id)||!montant(v.amount)||Number(v.amount)<=0||!dateLocale(v.date_locale))throw Error('Remboursement incohérent');return {payment_id:v.payment_id as string,amount:v.amount as string,date_locale:v.date_locale as string};}
+function analyserVersement(v:unknown):VersementEpargne{if(!objet(v)||!uuid(v.entry_id)||!montant(v.amount)||Number(v.amount)<=0||!dateLocale(v.date_locale))throw Error('Versement d’épargne incohérent');return {entry_id:v.entry_id as string,amount:v.amount as string,date_locale:v.date_locale as string,...(typeof v.created_at==='string'?{created_at:v.created_at}:{})};}
+function analyserPaiement(v:unknown):PaiementDette{if(!objet(v)||!uuid(v.payment_id)||!montant(v.amount)||Number(v.amount)<=0||!dateLocale(v.date_locale))throw Error('Remboursement incohérent');return {payment_id:v.payment_id as string,amount:v.amount as string,date_locale:v.date_locale as string,...(typeof v.created_at==='string'?{created_at:v.created_at}:{})};}
 function analyserObjectif(v:unknown):ObjectifEpargne{if(!objet(v)||!uuid(v.goal_id)||!['reserve_joie','epargne_investir','autre'].includes(String(v.goal_type))||typeof v.label!=='string'||!v.label.trim()||!montant(v.target_amount)||Number(v.target_amount)<=0||typeof v.currency!=='string'||!/^[A-Z]{3}$/.test(v.currency))throw Error('Objectif d’épargne incohérent');return {goal_id:v.goal_id as string,goal_type:v.goal_type as TypeObjectifEpargne,label:v.label,target_amount:v.target_amount as string,currency:v.currency,entries:analyserListe(v.entries,analyserVersement)};}
 function analyserRepereDette(v:Record<string,unknown>):RepereDette|null {
   const hebdomadaire=v.weekly_basis!=null||v.weekly_repayment_percent!=null;
