@@ -7,6 +7,7 @@ import {IconeHD} from '@/components/IconeHabitudes';
 import {chargerSuiviFinancier,creerDetteSuivie,creerObjectifEpargne,enregistrerPaiementDette,enregistrerVersementEpargne,renommerDetteSuivie,nomCreancierValide,LONGUEUR_NOM_CREANCIER,type DetteSuivie,type ObjectifEpargne,type TypeObjectifEpargne,type SuiviFinancier,type RythmeRepereDette} from '@/lib/habitudes-finances-suivi';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {DEVISES_SUIVI,decimalesDevise,deviseAcceptee,montantValidePourDevise,nomDevise} from '@/lib/devises';
+import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {NotFound} from '@/routes/introuvable';
 
 type Mode='epargne'|'dettes';
@@ -68,6 +69,24 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   }catch{setState('erreur');}
  },[userId,essai]);
  useEffect(()=>{void charger();},[charger]);
+ const montantRecu=params.get('montant'),deviseRecue=params.get('devise'),typeRecu=params.get('type');
+ const prerempli=useRef(false);
+ const [propositionDettes,setPropositionDettes]=useState<{id:string;centimes:number;solde:boolean}[]|null>(null);
+ useEffect(()=>{
+  if(prerempli.current||state!=='pret'||!suivi||!montantRecu||!/^\d+(?:\.\d{1,2})?$/.test(montantRecu))return;
+  prerempli.current=true;
+  if(mode==='epargne'){
+   const cible=suivi.savings_goals.find(g=>g.goal_type===typeRecu&&g.currency===deviseRecue)??suivi.savings_goals.find(g=>g.currency===deviseRecue);
+   if(cible){setGoal(cible.goal_id);setContribution(montantRecu);setAnnonce({zone:'versement',texte:l(`Montant venu de ta répartition : vérifie-le, puis ajoute-le.`,`Amount from your allocation: check it, then add it.`),erreur:false});}
+   else{setNouvelObjectif(true);setAnnonce({zone:'objectif',texte:l(`Crée d’abord un objectif en ${deviseRecue??''} pour y mettre ce montant.`,`First create a goal in ${deviseRecue??''} to put this amount in.`),erreur:false});}
+  }else{
+   const ouvertes=suivi.debts.filter(d=>d.currency===deviseRecue&&resteDette(d)>0);
+   const {propositions}=repartirSurDettes(montantCents(montantRecu),ouvertes.map(d=>({id:d.debt_id,resteCentimes:resteDette(d)})));
+   setPropositionDettes(propositions);
+   const premiere=propositions[0];
+   if(premiere){setOuverte(premiere.id);setPaymentAmount((premiere.centimes/100).toFixed(decimalesDevise(deviseRecue??'CDF')));}
+  }
+ },[state,suivi,montantRecu,deviseRecue,typeRecu,mode]);
  const titrePage=mode==='epargne'?l('Mon épargne','My savings'):l('Mon suivi des dettes','My debt tracker');
  useEffect(()=>{document.title=titrePage+' — SÉNEVÉ';document.documentElement.lang=langue;},[titrePage,langue]);
  const dettesTriees=useMemo(()=>[...(suivi?.debts??[])].sort((a,b)=>{const ar=resteDette(a),br=resteDette(b);return (ar===0?1:0)-(br===0?1:0)||a.currency.localeCompare(b.currency)||ar-br||a.debt_number-b.debt_number;}),[suivi]);
@@ -177,7 +196,6 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const bouton=(texte:string,couleur='var(--ios-accent,#5b4ee8)')=><button disabled={busy} className="hd-classique sim-ios-bouton disabled:opacity-60" style={{marginTop:12,background:couleur}}>{busy?l('Enregistrement…','Saving…'):texte}</button>;
  const champMontant=(id:string,valeur:string,changer:(v:string)=>void,devise:string,placeholder:string,max?:string)=><span className="flex items-center gap-1.5"><input id={id} required inputMode="decimal" type="number" min={pas(devise)} max={max} step={pas(devise)} value={valeur} onChange={e=>changer(e.target.value)} placeholder={placeholder}/><span className="text-hd-on-surface-variant" style={{fontSize:15}}>{devise}</span></span>;
  const champDate=(id:string,valeur:string,changer:(v:string)=>void)=><input id={id} required type="date" max={aujourdhui()} value={valeur} onChange={e=>changer(e.target.value)} style={{width:150,color:'var(--ios-accent,#5b4ee8)'}}/>;
- const segment=<nav className="hd-classique sim-ios-segment mb-4" aria-label={l('Suivi financier','Financial tracker')}>{(['epargne','dettes'] as const).map(m=><Link key={m} aria-current={mode===m?'page':undefined} to={`/habitudes/${m}${suffix}`} className="sim-ios-segment-lien">{m==='epargne'?l('Épargne','Savings'):l('Dettes','Debts')}</Link>)}</nav>;
 
  const pageEpargne=()=>{
   const total=objectif?totalCents(objectif.entries):0,cible=objectif?montantCents(objectif.target_amount):1;
@@ -236,14 +254,6 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
       :<p className="sim-ios-note hd-classique">{l('Aucun versement pour le moment.','No contributions yet.')}</p>}
     </section>
    </>}
-   <section aria-labelledby="hd-titre-outils">
-    <h2 id="hd-titre-outils" className="hd-classique sim-ios-titre">{l('Outils','Tools')}</h2>
-    <div className="sim-ios-groupe hd-classique"><Link to={`/habitudes/simulateur-epargne${suffix}`} className="sim-ios-ligne" style={{textDecoration:'none',color:'inherit'}}>
-     <span aria-hidden="true" className="grid size-[30px] shrink-0 place-items-center rounded-lg text-white" style={{background:'linear-gradient(180deg,#8f84ff,#5b4fe0)'}}><IconeHD nom="calculate" className="text-[18px]"/></span>
-     <span className="flex-1 min-w-0 py-1"><span className="block text-[16px]">{l('Combien mettre de côté ?','How much should I set aside?')}</span><small className="block text-[13px] text-hd-on-surface-variant">{l('Le simulateur de Réserve de joie et d’épargne','The joy reserve and savings simulator')}</small></span>
-     <IconeHD nom="chevron_right" className="text-[20px] text-hd-outline"/>
-    </Link></div>
-   </section>
   </>;
  };
 
@@ -287,6 +297,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
     {titre(l('Mes dettes','My debts'),<button type="button" className="text-[15px] font-normal" style={{color:'var(--ios-accent,#5b4ee8)'}} aria-expanded={ajoutDette} aria-controls="hd-ajouter-dette" onClick={()=>{setAjoutDette(true);setAnnonce(null);setTimeout(()=>formulaireDette.current?.scrollIntoView({behavior:'smooth',block:'start'}),0);}}>+ {l('Ajouter','Add')}</button>)}
     <span id="hd-mes-dettes" hidden>{l('Mes dettes','My debts')}</span>
     {message('liste')}
+    {propositionDettes&&<p role="status" className="hd-classique mb-2.5 rounded-xl bg-orange-50 p-3 text-sm text-orange-900">{propositionDettes.length?<>{l('Ta part « Dettes »','Your “Debts” share')} : {propositionDettes.map((x,i)=>{const d=dettesTriees.find(y=>y.debt_id===x.id);return d?<span key={x.id}>{i>0?' ; ':''}{nombre(x.centimes,d.currency,en)} {x.solde?l('soldent','pays off'):l('pour','for')} <b>{nomDette(d)}</b></span>:null;})}. {l('Vérifie le montant dans la fiche ouverte, puis enregistre. Tu peux choisir un autre ordre.','Check the amount in the open card, then save. You can choose another order.')}</>:l('Aucune dette ouverte dans cette monnaie.','No open debt in this currency.')}</p>}
     <div className="mt-1 flex flex-col gap-2.5">
      {dettesTriees.map(d=>{
       const rembourse=totalCents(d.payments),reste=resteDette(d),ouv=montantCents(d.opening_balance);
@@ -345,7 +356,12 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  return <CadreHabitudes titre={titrePage} langue={langue} retour={`/espace${suffix}`} retourLibelle={l('Revenir à ma journée','Back to my day')} liens={{aujourdhui:`/espace${suffix}`}} actif="aujourdhui" cloche>
   <div className="sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <h1 className="mb-3 ml-1 text-[34px] font-bold leading-tight tracking-tight">{titrePage}</h1>
-   {segment}
+   <p className="hd-classique sim-ios-sous">{mode==='epargne'?l('Tes objectifs et ce que tu mets de côté.','Your goals and what you set aside.'):l('Ce que tu dois et ce que tu as déjà remboursé.','What you owe and what you have already repaid.')}</p>
+   <Link to={`/habitudes/repartition?pour=${mode}${en?'&lang=en':''}`} className="hd-classique mb-3 flex items-center gap-3.5 rounded-[20px] px-[18px] py-4 text-white active:scale-[.98] transition-transform" style={{textDecoration:'none',background:mode==='epargne'?'linear-gradient(160deg,#5b4fe0,#49439b)':'linear-gradient(160deg,#f08a4b,#d9602a)',boxShadow:mode==='epargne'?'0 12px 30px rgba(73,67,155,.22)':'0 12px 30px rgba(217,96,42,.22)'}}>
+    <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-xl" style={{background:'rgb(255 255 255 / .18)'}}><IconeHD nom="payments" className="text-[24px]"/></span>
+    <span className="min-w-0 flex-1"><b className="block text-[17px]">{l('Quand je reçois de l’argent','When I receive money')}</b><small className="block text-sm opacity-85">{mode==='epargne'?l('Combien mettre de côté, selon ton revenu','How much to set aside, based on your income'):l('Combien rembourser, selon ton revenu','How much to repay, based on your income')}</small></span>
+    <IconeHD nom="chevron_right" className="text-[22px] opacity-80"/>
+   </Link>
    {state==='chargement'&&<p role="status" className="rounded-2xl bg-white p-4">{l('Chargement du suivi…','Loading your tracker…')}</p>}
    {state==='erreur'&&<section className="rounded-2xl bg-white p-4"><p role="alert">{l('Le suivi n’est pas disponible pour le moment.','Your tracker is not available right now.')}</p><button className="mt-3 min-h-[44px] rounded-xl px-4 text-white" style={{background:'var(--ios-accent,#5b4ee8)'}} onClick={()=>setEssai(x=>x+1)}>{l('Réessayer','Try again')}</button></section>}
    {state==='vide'&&<section className="rounded-2xl bg-white p-4"><p>{l('Ce suivi est disponible avec un accès actif à Habitudes & Défis.','This tracker is available with active access to Habits & Challenges.')}</p><Link className="mt-3 inline-flex min-h-[44px] items-center underline" style={{color:'var(--ios-accent,#5b4ee8)'}} to={`/habitudes${suffix}`}>{l('Voir Habitudes & Défis','View Habits & Challenges')}</Link></section>}

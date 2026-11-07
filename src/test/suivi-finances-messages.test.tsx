@@ -1,4 +1,4 @@
-import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import type {ReactNode} from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,expect,it,vi} from 'vitest';
@@ -42,4 +42,16 @@ it('un remboursement trop grand s’explique sous son formulaire, avec des dates
  fireEvent.submit(bouton.closest('form')!);
  expect(within(bouton.closest('form')!).getByRole('alert').textContent).toContain('dépasse le solde restant');
  expect(screen.getByText('5 novembre 2026')).toBeInTheDocument();
+});
+it('la part « Dettes » de la répartition ouvre la plus petite dette avec le montant prérempli',async()=>{
+ charger();render(<MemoryRouter initialEntries={['/habitudes/dettes?montant=150&devise=USD']}><SuiviEpargneDettes mode="dettes" userId="u"/></MemoryRouter>);
+ const fiche=await screen.findByRole('article',{name:'Banque'});
+ await waitFor(()=>expect(within(fiche).getByLabelText('Montant payé')).toHaveValue(100));
+ expect(screen.getByText(/Ta part « Dettes »/).textContent).toMatch(/soldent/);
+ expect(screen.queryByRole('link',{name:'Épargne'})).toBeNull();
+});
+it('la part d’épargne préremplit le versement de l’objectif du même type',async()=>{
+ charger();render(<MemoryRouter initialEntries={['/habitudes/epargne?montant=40&devise=USD&type=reserve_joie']}><SuiviEpargneDettes mode="epargne" userId="u"/></MemoryRouter>);
+ await waitFor(()=>expect(screen.getByLabelText('Montant mis de côté')).toHaveValue(40));
+ expect(screen.getByRole('link',{name:/Quand je reçois de l’argent/}).getAttribute('href')).toBe('/habitudes/repartition?pour=epargne');
 });

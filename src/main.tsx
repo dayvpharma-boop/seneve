@@ -64,6 +64,7 @@ const HabitudesAujourdhui = lazy(() => import('@/routes/habitudes-aujourdhui').t
 const HabitudesEngagements = lazy(() => import('@/routes/habitudes-engagements').then(m => ({ default: m.HabitudesEngagements })));
 const HabitudesAide = lazy(() => import('@/routes/habitudes-aide').then(m => ({ default: m.HabitudesAide })));
 const HabitudesSimulateurEpargne = lazy(() => import('@/routes/habitudes-simulateur-epargne').then(m => ({ default: m.HabitudesSimulateurEpargne })));
+const HabitudesRepartition = lazy(() => import('@/routes/habitudes-repartition').then(m => ({ default: m.HabitudesRepartition })));
 const SuiviEpargneDettes = lazy(() => import('@/components/SuiviEpargneDettes').then(m => ({ default: m.RouteSuiviEpargneDettes })));
 const Offres = lazy(() => import('@/routes/offres').then(m => ({ default: m.Offres })));
 const Bibliotheque = lazy(() => import('@/routes/bibliotheque').then(m => ({ default: m.Bibliotheque })));
@@ -97,6 +98,7 @@ if (root) createRoot(root).render(
         <Route path="/habitudes/engagements" element={<HabitudesEngagements />} />
         <Route path="/habitudes/aide" element={<HabitudesAide />} />
         <Route path="/habitudes/simulateur-epargne" element={<HabitudesSimulateurEpargne />} />
+        <Route path="/habitudes/repartition" element={<HabitudesRepartition />} />
         <Route path="/habitudes/epargne" element={<SuiviEpargneDettes mode="epargne" />} />
         <Route path="/habitudes/dettes" element={<SuiviEpargneDettes mode="dettes" />} />
         <Route path="/bibliotheque" element={<Bibliotheque/>}/>
