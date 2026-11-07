@@ -1,7 +1,7 @@
 import {estDimanche} from '@/lib/habitudes-dimanche';
 import {RepereDureeHabitudes,aRepereDuree} from './RepereDureeHabitudes';
 import {CultesSemaineHabitudes} from './CultesSemaineHabitudes';
-import {MaDimeHabitudes} from './MaDimeHabitudes';
+import {MaDimeHabitudes,MonEpargneHabitudes} from './MaDimeHabitudes';
 import {DimancheHabitudes} from './DimancheHabitudes';
 import {LecteurPriereHabitudes,momentPriere} from './LecteurPriereHabitudes';
 import {LecturesJourHabitudes,estLectureHabitudes} from './LecturesJourHabitudes';
@@ -134,6 +134,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   {!horsLigne&&estDimanche(dateLocale)&&<DimancheHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue}/>}
   {!horsLigne&&<CultesSemaineHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} onConfirme={confirmer}/>}
   {!horsLigne&&<MaDimeHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue} lienReglages={`/reglages?parcours=${encodeURIComponent(enrollmentId)}${en?'&lang=en':''}#horaires`}/>}
+  {!horsLigne&&<MonEpargneHabitudes langue={langue}/>}
   {/* Prochain rendez-vous */}
   {prochain&&<section className="hd-prochain-rendez-vous ios-section" aria-label={l('Prochain rendez-vous','Next appointment')}>
    <h3 className="ios-titre-section">{l('Prochain rendez-vous','Next appointment')}</h3>

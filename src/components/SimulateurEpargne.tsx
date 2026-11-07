@@ -1,33 +1,78 @@
-import {useState,type FormEvent} from 'react';
+import './SimulateurEpargne.css';
+import {useState} from 'react';
 import {simulerEpargne,type TypeRevenuEpargne} from '@/lib/habitudes-epargne';
 import {IconeHD} from './IconeHabitudes';
 
-/** Calcul facultatif dans l’état React uniquement ; les montants ne quittent pas cette page. */
-export function SimulateurEpargne({langue}:{langue:string}){
+/** Simulateur d'épargne facultatif, présentation iPhone validée par Dr Justin le 07/11/2026 :
+ * montants groupés, pourcentages préremplis avec − et +, résultat mis à jour pendant la saisie.
+ * Calcul dans l'état React uniquement : aucun montant ne quitte la page, rien n'est enregistré. */
+const LIMITES={reserve:{min:5,max:10,pas:1},investir:{min:0,max:30,pas:5}} as const;
+
+export function SimulateurEpargne({langue,replie=true}:{langue:string;replie?:boolean}){
+ const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
+ if(!replie)return <div className="sim-ios hd-classique"><ContenuEpargne langue={langue}/></div>;
+ return <details className="hd-simulateur sim-ios sim-ios-repli hd-classique rounded-xl shadow-sm" style={{background:'var(--ios-carte,#fff)'}}>
+  <summary><IconeHD nom="potted_plant" className="text-hd-secondary text-[22px]"/><span className="flex-1 min-w-0"><strong>{l('Épargne','Savings')}</strong><small>{l('Simulateur facultatif','Optional simulator')}</small></span><IconeHD nom="expand_more" className="text-[22px] text-hd-on-surface-variant"/></summary>
+  <div className="sim-ios-repli-corps"><ContenuEpargne langue={langue}/></div>
+ </details>;
+}
+
+function ContenuEpargne({langue}:{langue:string}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [type,setType]=useState<TypeRevenuEpargne>('commerce');
  const [recu,setRecu]=useState(''),[marchandises,setMarchandises]=useState(''),[charges,setCharges]=useState('');
- const [tauxReserve,setTauxReserve]=useState(''),[tauxInvestissement,setTauxInvestissement]=useState(''),[resultat,setResultat]=useState<ReturnType<typeof simulerEpargne>|null>(null),[erreur,setErreur]=useState(false);
- const clear=()=>{setRecu('');setMarchandises('');setCharges('');setResultat(null);setErreur(false);};
- const choisir=(valeur:TypeRevenuEpargne)=>{setType(valeur);clear();};
- const champ=(id:string,label:string,value:string,change:(value:string)=>void)=><div className="flex flex-col gap-1"><label htmlFor={id} className="font-hd-label-md text-hd-label-md text-hd-on-surface">{label}</label><input id={id} type="text" inputMode="decimal" autoComplete="off" required maxLength={32} value={value} onChange={e=>{change(e.target.value);setResultat(null);setErreur(false);}} className="w-full bg-hd-surface-container-low text-hd-on-surface font-hd-label-lg text-hd-label-lg rounded-lg py-2.5 px-3 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-hd-secondary/40"/></div>;
- function calculer(e:FormEvent){e.preventDefault();setErreur(false);try{setResultat(simulerEpargne(type,recu,type==='commerce'?marchandises:'0',charges,tauxReserve,tauxInvestissement||'0'));}catch{setErreur(true);setResultat(null);}}
- const montant=(s:string)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:2,maximumFractionDigits:6}).format(Number(s));
- return <details className="hd-simulateur hd-stitch bg-hd-surface-container-lowest rounded-xl shadow-sm text-hd-on-surface">
-  <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer p-hd-space-md flex items-center justify-between gap-hd-space-xs min-h-[56px]"><span className="flex items-center gap-hd-space-xs"><IconeHD nom="account_balance" className="text-hd-secondary text-[22px]"/><span className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{l('Simulateur d’épargne facultatif','Optional savings simulator')}</span></span><span className="font-hd-label-sm text-hd-label-sm text-hd-on-surface-variant bg-hd-surface-container px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">5–10 % · ≤30 %</span></summary>
-  <div className="px-hd-space-md pb-hd-space-md flex flex-col gap-hd-space-md">
-   <div className="bg-hd-surface-container-low rounded-xl p-hd-space-md flex flex-col gap-hd-space-sm"><span className="self-start inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-hd-surface-container text-hd-secondary font-hd-label-sm text-hd-label-sm"><IconeHD nom="info" className="text-[14px]"/>{l('Règles décidées pour cette maquette','Rules decided for this prototype')}</span><p className="font-hd-body-md text-hd-body-md text-hd-on-surface">{l('La Réserve de joie est une cible facultative de 5 à 10 %. L’Épargne pour investir est libre, sans minimum, avec un maximum de 30 %. Aucun versement n’est effectué.','The Family joy reserve is an optional 5–10% target. Savings for investing are freely chosen, with no minimum and a 30% maximum. No transfer is made.')}</p></div>
-   <div role="radiogroup" aria-label={l('Situation de revenu','Income situation')} className="grid grid-cols-2 gap-1 p-1 bg-hd-surface-container rounded-lg"><button type="button" role="radio" aria-checked={type==='commerce'} onClick={()=>choisir('commerce')} className={`min-h-[44px] rounded-lg font-hd-label-md text-hd-label-md ${type==='commerce'?'bg-hd-surface-container-lowest text-hd-secondary font-semibold shadow-sm':'text-hd-on-surface-variant'}`}>{l('Commerçant','Business')}</button><button type="button" role="radio" aria-checked={type==='salaire'} onClick={()=>choisir('salaire')} className={`min-h-[44px] rounded-lg font-hd-label-md text-hd-label-md ${type==='salaire'?'bg-hd-surface-container-lowest text-hd-secondary font-semibold shadow-sm':'text-hd-on-surface-variant'}`}>{l('Salarié','Salary')}</button></div>
-   <form onSubmit={calculer} className="flex flex-col gap-hd-space-md">
-    <div className="flex flex-col gap-hd-space-sm">{champ('hd-epargne-recu',type==='commerce'?l('Ventes encaissées cette semaine','Sales received this week'):l('Salaire reçu ce mois','Salary received this month'),recu,setRecu)}{type==='commerce'&&champ('hd-epargne-marchandises',l('Coût des marchandises vendues','Cost of goods sold'),marchandises,setMarchandises)}{champ('hd-epargne-charges',l('Charges professionnelles admissibles','Eligible professional expenses'),charges,setCharges)}</div>
-    <p className="font-hd-body-sm text-hd-on-surface-variant">{l('Les dépenses personnelles, les remboursements de dettes et l’argent emprunté ne réduisent pas la base. Seules les charges professionnelles prévues dans la règle sont déduites.','Personal expenses, debt repayments and borrowed money do not reduce the basis. Only the professional expenses specified by the rule are deducted.')}</p>
-    <div className="grid grid-cols-2 gap-hd-space-sm"><label className="flex flex-col gap-1 font-hd-label-md text-hd-label-md text-hd-on-surface">{l('Réserve de joie (%)','Family joy reserve (%)')}<input type="number" min="5" max="10" step="any" required value={tauxReserve} onChange={e=>{setTauxReserve(e.target.value);setResultat(null);}} className="w-full min-h-[44px] rounded-lg px-3 bg-hd-surface-container-low border border-hd-outline-variant"/></label><label className="flex flex-col gap-1 font-hd-label-md text-hd-label-md text-hd-on-surface">{l('Pour investir (%)','For investing (%)')}<input type="number" min="0" max="30" step="any" value={tauxInvestissement} onChange={e=>{setTauxInvestissement(e.target.value);setResultat(null);}} className="w-full min-h-[44px] rounded-lg px-3 bg-hd-surface-container-low border border-hd-outline-variant"/></label></div>
-    <p className="font-hd-body-sm text-hd-on-surface-variant">{l('Utilise la même monnaie et la même période pour chaque montant.','Use the same currency and period for every amount.')}</p>
-    <button type="submit" className="w-full min-h-[48px] bg-hd-secondary text-hd-on-secondary font-hd-label-lg text-hd-label-lg rounded-xl flex items-center justify-center gap-2"><IconeHD nom="calculate" className="text-[20px]"/>{l('Simuler','Calculate')}</button>
-    {erreur&&<p role="alert" className="font-hd-body-sm text-hd-error">{l('Vérifie les montants et les pourcentages saisis.','Check the amounts and percentages entered.')}</p>}
-   </form>
-   {resultat&&<output aria-live="polite" className="bg-hd-surface-container-low rounded-xl p-hd-space-md flex flex-col gap-hd-space-xs"><div className="flex justify-between gap-2"><span>{l('Base retenue','Selected basis')}</span><strong>{montant(resultat.base)}</strong></div><div className="h-px bg-hd-outline-variant/50 my-1"/><div className="flex justify-between gap-2"><span>{l('Réserve de joie','Family joy reserve')} · {tauxReserve} %</span><strong>{montant(resultat.reserve_joie)}</strong></div>{tauxInvestissement!==''&&<div className="flex justify-between gap-2"><span>{l('Épargne pour investir','Savings for investing')} · {tauxInvestissement} %</span><strong>{montant(resultat.epargne_investissement)}</strong></div>}</output>}
-   <div className="flex flex-col items-center gap-2"><p className="font-hd-body-sm text-hd-on-surface-variant flex items-center gap-2"><IconeHD nom="lock" className="text-hd-secondary text-[16px]"/>{l('Simulation temporaire. Aucun montant n’est enregistré et aucun paiement n’est lancé.','Temporary calculation. No amount is saved and no payment is initiated.')}</p><button type="button" onClick={clear} className="min-h-[44px] px-4 rounded-xl bg-hd-surface-container-low text-hd-on-surface font-hd-label-md">{l('Effacer les montants','Clear amounts')}</button></div>
+ const [reserve,setReserve]=useState(10),[investir,setInvestir]=useState(20);
+ const effacer=()=>{setRecu('');setMarchandises('');setCharges('');};
+ const choisir=(v:TypeRevenuEpargne)=>{setType(v);effacer();};
+ const nombre=(s:string)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{maximumFractionDigits:2}).format(Number(s));
+ let resultat:ReturnType<typeof simulerEpargne>|null=null,erreur=false;
+ if(recu.trim()!==''){
+  try{resultat=simulerEpargne(type,recu,type==='commerce'?(marchandises.trim()||'0'):'0',charges.trim()||'0',String(reserve),String(investir));}
+  catch{erreur=true;}
+ }else if([marchandises,charges].some(v=>v.trim()!==''&&!/^\d+(?:[.,]\d{1,6})?$/.test(v.trim().replace(/[   ]/g,''))))erreur=true;
+ const reste=resultat?Math.max(0,Number(resultat.base)-Number(resultat.reserve_joie)-Number(resultat.epargne_investissement)):0;
+ const champ=(id:string,libelle:string,valeur:string,changer:(v:string)=>void,signe='')=><div className="sim-ios-ligne">
+  <label htmlFor={id}>{libelle}</label>{signe&&<span className="sim-ios-signe" aria-hidden="true">{signe}</span>}
+  <input id={id} type="text" inputMode="decimal" autoComplete="off" maxLength={32} placeholder="0" value={valeur} onChange={e=>changer(e.target.value)}/>
+ </div>;
+ const pas=(cle:'reserve'|'investir',libelle:string,valeur:number,changer:(v:number)=>void)=>{const b=LIMITES[cle];return <div className="sim-ios-ligne">
+  <label id={`hd-epargne-${cle}`}>{libelle}</label>
+  <div className="sim-ios-pas"><span className="sim-ios-valeur">{valeur} %</span><div className="sim-ios-stepper">
+   <button type="button" aria-label={l(`Baisser : ${libelle}`,`Decrease: ${libelle}`)} disabled={valeur<=b.min} onClick={()=>changer(Math.max(b.min,valeur-b.pas))}>−</button><span aria-hidden="true"/>
+   <button type="button" aria-label={l(`Augmenter : ${libelle}`,`Increase: ${libelle}`)} disabled={valeur>=b.max} onClick={()=>changer(Math.min(b.max,valeur+b.pas))}>+</button>
+  </div></div>
+ </div>;};
+ return <>
+  <p className="sim-ios-sous">{l('Facultatif · un calcul pour t’aider. Rien n’est enregistré, aucun argent ne bouge.','Optional · a calculation to help you. Nothing is saved and no money moves.')}</p>
+  <div role="radiogroup" aria-label={l('Situation de revenu','Income situation')} className="sim-ios-segment">
+   <button type="button" role="radio" aria-checked={type==='commerce'} onClick={()=>choisir('commerce')}>{l('Commerçant','Business')}</button>
+   <button type="button" role="radio" aria-checked={type==='salaire'} onClick={()=>choisir('salaire')}>{l('Salarié','Salary')}</button>
   </div>
- </details>;
+  <h3 className="sim-ios-titre">{type==='commerce'?l('Cette semaine','This week'):l('Ce mois','This month')}</h3>
+  <div className="sim-ios-groupe">
+   {champ('hd-epargne-recu',type==='commerce'?l('Ventes encaissées','Sales received'):l('Salaire reçu','Salary received'),recu,setRecu)}
+   {type==='commerce'&&champ('hd-epargne-marchandises',l('Coût des marchandises','Cost of goods sold'),marchandises,setMarchandises,'−')}
+   {champ('hd-epargne-charges',type==='commerce'?l('Charges du commerce','Business expenses'):l('Charges de travail','Work expenses'),charges,setCharges,'−')}
+  </div>
+  <p className="sim-ios-note">{l('Tes dépenses personnelles et tes remboursements de dettes ne se retirent pas. Mets tous les montants dans la même monnaie.','Personal expenses and debt repayments are not deducted. Use the same currency for every amount.')}</p>
+  {erreur&&<p role="alert" className="sim-ios-alerte">{l('Vérifie les montants : écris seulement des chiffres, par exemple 1000 ou 1000,50.','Check the amounts: use digits only, for example 1000 or 1000.50.')}</p>}
+  <h3 className="sim-ios-titre">{l('Mes pourcentages','My percentages')}</h3>
+  <div className="sim-ios-groupe">
+   {pas('reserve',l('Réserve de joie','Family joy reserve'),reserve,setReserve)}
+   {pas('investir',l('Pour investir','For investing'),investir,setInvestir)}
+  </div>
+  <p className="sim-ios-note">{l('Réserve de joie : de 5 à 10 %. Pour investir : jusqu’à 30 %.','Family joy reserve: 5 to 10%. For investing: up to 30%.')}</p>
+  <div aria-live="polite" className="sim-ios-resultat">
+   {resultat?<>
+    <div className="sim-ios-resultat-etiquette">{l('Base retenue','Selected basis')}</div>
+    <div className="sim-ios-resultat-base">{nombre(resultat.base)}</div>
+    <div className="sim-ios-deux">
+     <div className="sim-ios-boite"><small>{l('Réserve de joie','Family joy reserve')}</small><b>{nombre(resultat.reserve_joie)}</b><i>{reserve} %</i></div>
+     <div className="sim-ios-boite"><small>{l('Pour investir','For investing')}</small><b>{nombre(resultat.epargne_investissement)}</b><i>{investir} %</i></div>
+    </div>
+    <p className="sim-ios-reste">{type==='commerce'?l(`Il te reste ${nombre(String(reste))} pour ta vie et ton commerce.`,`You have ${nombre(String(reste))} left for your life and your business.`):l(`Il te reste ${nombre(String(reste))} pour ta vie.`,`You have ${nombre(String(reste))} left for your life.`)}</p>
+   </>:<p className="sim-ios-attente">{l('Écris tes montants : le résultat apparaît tout de suite ici.','Enter your amounts: the result appears here straight away.')}</p>}
+  </div>
+  <button type="button" className="sim-ios-effacer" onClick={effacer}>{l('Effacer les montants','Clear amounts')}</button>
+ </>;
 }

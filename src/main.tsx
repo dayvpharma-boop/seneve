@@ -63,6 +63,7 @@ const HabitudesInscription = lazy(() => import('@/routes/habitudes-inscription')
 const HabitudesAujourdhui = lazy(() => import('@/routes/habitudes-aujourdhui').then(m => ({ default: m.HabitudesAujourdhui })));
 const HabitudesEngagements = lazy(() => import('@/routes/habitudes-engagements').then(m => ({ default: m.HabitudesEngagements })));
 const HabitudesAide = lazy(() => import('@/routes/habitudes-aide').then(m => ({ default: m.HabitudesAide })));
+const HabitudesSimulateurEpargne = lazy(() => import('@/routes/habitudes-simulateur-epargne').then(m => ({ default: m.HabitudesSimulateurEpargne })));
 const SuiviEpargneDettes = lazy(() => import('@/components/SuiviEpargneDettes').then(m => ({ default: m.RouteSuiviEpargneDettes })));
 const Offres = lazy(() => import('@/routes/offres').then(m => ({ default: m.Offres })));
 const Bibliotheque = lazy(() => import('@/routes/bibliotheque').then(m => ({ default: m.Bibliotheque })));
@@ -95,6 +96,7 @@ if (root) createRoot(root).render(
         <Route path="/habitudes/aujourdhui" element={<HabitudesAujourdhui />} />
         <Route path="/habitudes/engagements" element={<HabitudesEngagements />} />
         <Route path="/habitudes/aide" element={<HabitudesAide />} />
+        <Route path="/habitudes/simulateur-epargne" element={<HabitudesSimulateurEpargne />} />
         {/* Suivi épargne et dettes : caché tant que la base V2 n'est pas prête (07/11/2026). */}
         {import.meta.env.VITE_HABITUDES_FINANCES_SUIVI === 'true' && <>
           <Route path="/habitudes/epargne" element={<SuiviEpargneDettes mode="epargne" />} />

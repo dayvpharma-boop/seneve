@@ -4,6 +4,7 @@ import {chargerHorairesHabitudes,reglerRythmeDime,type ConfigurationHoraires} fr
 import {planningHabitudesPourDate,type RythmeDime} from '@/lib/habitudes-planning';
 import {ChoixRythmeDime} from './ChoixRythmeDime';
 import {SimulateurDime} from './SimulateurDime';
+import {SimulateurEpargne} from './SimulateurEpargne';
 import {IconeHD} from './IconeHabitudes';
 
 const jourSuivant=(date:string,n:number)=>new Date(Date.parse(date+'T00:00:00Z')+n*86400000).toISOString().slice(0,10);
@@ -27,6 +28,15 @@ export function MaDimeHabitudes({enrollmentId,participantId,dateLocale,langue,li
  return <details className="hd-volet mb-hd-space-lg rounded-2xl bg-hd-surface-container-lowest p-hd-space-md shadow-sm" onToggle={e=>setOuvert(e.currentTarget.open)}>
   <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[48px] cursor-pointer flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="volunteer_activism" className="text-[20px] text-hd-secondary"/><span className="flex-1">{l('Ma dîme','My tithe')}</span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-on-surface-variant"/></summary>
   {ouvert&&<ContenuDime key={enrollmentId+dateLocale} {...{enrollmentId,participantId,dateLocale,langue,lienReglages}}/>}
+ </details>;
+}
+
+/** Maquette validée le 07/11/2026 : « Épargne » juste sous « Ma dîme », même volet repliable. Calcul local seulement. */
+export function MonEpargneHabitudes({langue}:{langue:string}){
+ const en=langue==='en';
+ return <details id="hd-epargne" className="hd-volet mb-hd-space-lg rounded-2xl bg-hd-surface-container-lowest p-hd-space-md shadow-sm">
+  <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[48px] cursor-pointer flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="potted_plant" className="text-[20px] text-hd-secondary"/><span className="flex-1">{en?'Savings':'Épargne'}</span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-on-surface-variant"/></summary>
+  <div className="pt-2 sim-ios-dans-volet"><SimulateurEpargne langue={langue} replie={false}/></div>
  </details>;
 }
 

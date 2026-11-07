@@ -1,0 +1,55 @@
+/* Présentation iPhone des simulateurs (maquette validée par Dr Justin le 07/11/2026) :
+   montants groupés dans une carte, pourcentages avec − et +, résultat en grande carte violette. */
+:root .sim-ios{font-family:var(--ios-police,system-ui,sans-serif);color:var(--ios-encre,#1c1c1e)}
+:root .sim-ios-sous{margin:0 4px 16px;font-size:15px;line-height:1.4;color:var(--ios-doux,#6e6e73)}
+:root .sim-ios-segment{display:flex;padding:2px;border-radius:9px;background:rgb(118 118 128 / .12)}
+:root .sim-ios-segment button{flex:1;min-height:36px;margin:0;border:0;border-radius:7px;background:transparent;font:inherit;font-size:14px;font-weight:500;color:inherit;cursor:pointer;transition:background-color .2s ease,box-shadow .2s ease}
+:root .sim-ios-segment button[aria-checked="true"]{background:var(--ios-carte,#fff);font-weight:600;box-shadow:0 3px 8px rgb(0 0 0 / .12),0 0 1px rgb(0 0 0 / .04)}
+:root .sim-ios-titre{margin:24px 16px 7px;font-size:13px;font-weight:400;letter-spacing:.04em;text-transform:uppercase;color:var(--ios-doux,#6e6e73)}
+:root .sim-ios-groupe{overflow:hidden;border-radius:12px;background:var(--ios-carte,#fff)}
+:root .sim-ios-ligne{position:relative;display:flex;align-items:center;gap:10px;min-height:50px;padding:0 16px}
+:root .sim-ios-ligne+.sim-ios-ligne::before{content:"";position:absolute;top:0;right:0;left:16px;border-top:.5px solid var(--ios-ligne,#e5e5ea)}
+:root .sim-ios-ligne label{flex:1;min-width:0;font-size:16px;line-height:1.3}
+:root .sim-ios-ligne .sim-ios-signe{width:12px;font-size:16px;color:var(--ios-doux,#6e6e73)}
+:root .sim-ios-ligne input{width:96px;min-height:44px;margin:0;padding:0;border:0;border-radius:0;outline:none;background:transparent;box-shadow:none;font:inherit;font-size:16px;text-align:right;font-variant-numeric:tabular-nums;color:inherit}
+:root .sim-ios-ligne input::placeholder{color:var(--ios-doux,#6e6e73);opacity:.55}
+:root .sim-ios-ligne:focus-within label{color:var(--ios-accent,#5b4ee8)}
+:root .sim-ios-ligne select{max-width:55%;min-height:44px;margin:0;padding:0 2px;border:0;background:transparent;font:inherit;font-size:16px;text-align:right;color:var(--ios-accent,#5b4ee8)}
+:root .sim-ios-pas{display:flex;align-items:center;gap:12px}
+:root .sim-ios-pas .sim-ios-valeur{min-width:48px;text-align:right;font-size:16px;font-weight:500;font-variant-numeric:tabular-nums}
+:root .sim-ios-stepper{display:flex;border-radius:8px;background:rgb(118 118 128 / .12)}
+:root .sim-ios-stepper span{width:.5px;margin:7px 0;background:var(--ios-ligne,#e5e5ea)}
+:root .sim-ios-stepper button{width:46px;height:34px;min-height:0;margin:0;border:0;border-radius:8px;background:transparent;font-size:20px;line-height:1;color:inherit;cursor:pointer}
+:root .sim-ios-stepper button:active{background:rgb(118 118 128 / .2)}
+:root .sim-ios-stepper button:disabled{opacity:.3;cursor:default}
+:root .sim-ios-note{margin:7px 16px 0;font-size:13px;line-height:1.45;color:var(--ios-doux,#6e6e73)}
+:root .sim-ios-alerte{margin:7px 16px 0;font-size:13px;line-height:1.45;color:#d70015}
+:root .sim-ios-resultat{display:block;margin-top:24px;padding:20px;border-radius:20px;color:#fff;background:linear-gradient(160deg,#5b4fe0,#49439b);box-shadow:0 12px 30px rgb(73 67 155 / .25)}
+:root .sim-ios-resultat-etiquette{font-size:13px;letter-spacing:.05em;text-transform:uppercase;opacity:.8}
+:root .sim-ios-resultat-base{margin:2px 0 16px;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+:root .sim-ios-deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+:root .sim-ios-boite{min-width:0;padding:12px;border-radius:14px;background:rgb(255 255 255 / .14)}
+:root .sim-ios-boite small{display:block;font-size:13px;opacity:.85}
+:root .sim-ios-boite b{display:block;margin-top:2px;font-size:28px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+:root .sim-ios-boite i{font-size:12px;font-style:normal;opacity:.75}
+:root .sim-ios-grand{display:block;font-size:34px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+:root .sim-ios-reste{margin:14px 0 0;font-size:14px;line-height:1.4;opacity:.85}
+:root .sim-ios-attente{margin:0;font-size:15px;line-height:1.4;opacity:.9}
+:root .sim-ios-effacer{display:block;min-height:44px;margin:14px auto 0;padding:0 12px;border:0;background:none;font:inherit;font-size:16px;color:var(--ios-accent,#5b4ee8);cursor:pointer}
+:root .sim-ios-bouton{display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;margin:20px 0 0;border:0;border-radius:14px;background:var(--ios-accent,#5b4ee8);font:inherit;font-size:17px;font-weight:600;color:#fff;cursor:pointer;transition:transform .1s ease-out}
+:root .sim-ios-bouton:active{transform:scale(.97)}
+:root .sim-ios-repli>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:56px;padding:12px 16px}
+:root .sim-ios-repli>summary::-webkit-details-marker{display:none}
+:root .sim-ios-repli>summary strong{display:block;font-size:17px;font-weight:600}
+:root .sim-ios-repli>summary small{display:block;font-size:14px;color:var(--ios-doux,#6e6e73)}
+:root .sim-ios-repli-corps{padding:4px 16px 18px}
+:root .sim-ios-repli .sim-ios-groupe{background:var(--ios-fond,#f2f2f7)}
+@media (prefers-reduced-motion:reduce){.sim-ios *{transition:none!important}}
+:root .sim-ios-dans-volet .sim-ios-groupe{background:var(--ios-fond,#f2f2f7)}
+:root .sim-ios-dans-volet .sim-ios-segment button[aria-checked="true"]{background:var(--ios-fond,#f2f2f7)}
+:root .sim-ios-dime .sim-ios-groupe{background:var(--ios-fond,#f2f2f7)}
+:root .sim-ios-dime .sim-ios-ligne input{width:110px}
+:root .sim-ios-dime .sim-ios-resultat-base{font-size:19px}
+:root .sim-ios-dime .sim-ios-formule{display:block;margin-top:6px;font-size:14px;opacity:.85;overflow-wrap:anywhere}
+/* Les champs restent nus dans leur ligne, même sous les styles iPhone généraux des formulaires. */
+:root:root:root .hd-ecran.ios .sim-ios-ligne input:not([type="checkbox"]):not([type="radio"]),:root:root:root .hd-ecran.ios .sim-ios-ligne select:not([multiple]):not([size]),:root .sim-ios-ligne input,:root .sim-ios-ligne select{background:transparent!important;border:0!important;box-shadow:none!important;padding-left:0!important;padding-right:0!important}
