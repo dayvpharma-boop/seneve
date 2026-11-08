@@ -188,7 +188,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    </div>
    {autresActivites.length>0&&<details key={cle} ref={autresActivitesRef} className="hd-autres-activites group rounded-2xl bg-hd-surface-container-lowest shadow-sm">
     <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[52px] cursor-pointer px-4 py-2.5 flex items-center gap-3 rounded-2xl text-hd-on-surface">
-     <IconeHD nom="list" className="text-[22px] shrink-0 text-hd-secondary"/>
+     <IconeHD nom="calendar_view_week" className="text-[22px] shrink-0 text-hd-secondary"/>
      <span className="flex-1 min-w-0 flex flex-col">
       <strong className="font-hd-label-lg text-hd-label-lg"><span className="group-open:hidden">{l(`Voir les ${autresActivites.length} autres activités`,`Show ${autresActivites.length} other activities`)}</span><span className="hidden group-open:inline">{l('Masquer les autres activités','Hide other activities')}</span></strong>
       <small className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{autresConfirmees} / {autresActivites.length} {l('réalisées et synchronisées','completed and synchronised')}</small>
