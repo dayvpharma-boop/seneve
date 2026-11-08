@@ -50,7 +50,7 @@ export function BarreNav({ langue }: { langue?: string | null; maquette?: boolea
     const courant = getComputedStyle(el);
     const fromLeft = Number.parseFloat(courant.left) || 6;
     const fromWidth = Number.parseFloat(courant.width) || cible.width;
-    el.getAnimations().forEach(animation => animation.cancel());
+    if (typeof el.getAnimations === 'function') el.getAnimations().forEach(animation => animation.cancel());
 
     const installer = () => {
       el.style.left = String(cible.left) + 'px';
