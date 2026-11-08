@@ -1167,3 +1167,8 @@
 
 /* Bibliothèque : espace clair entre la couverture Habitudes & Défis et son bouton. */
 :root:root:root .bl-page.ios .bl-hd-carte>.bl-principal{margin-top:16px!important}
+
+/* Accueil : un peu plus d'espace dans les cartes de parcours du haut. */
+:root:root:root:root .espace-page.ios .prog-tabs{gap:12px!important;padding:4px 2px 16px!important}
+:root:root:root:root .espace-page.ios .prog-tab{flex:0 0 204px!important;min-height:100px!important;padding:14px 16px 16px!important;border-radius:20px!important}
+:root:root:root:root .espace-page.ios .prog-tab .jn-tab-barre{left:16px!important;right:16px!important;bottom:11px!important}
