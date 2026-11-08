@@ -92,6 +92,12 @@ it('exercices de calcul : les centimes et monnaies sans décimales ne créent ja
   expect(Math.round(somme*10**dec)).toBe(Math.round(Number(base)*10**dec));
   expect(Object.values(a).every(v=>v>=0)).toBe(true);
  }
+ // Ancien arrondi : 0,05 USD avec parts 10+35+10+25+20 = 100 %
+ // donnait 0,06 USD distribués sur une base de seulement 0,05 USD.
+ const autre={...POURCENTAGES_DEFAUT,offrande:35,investir:25,dettes:20};
+ const excessif=repartir('0.05',autre,2);
+ expect(Math.round((excessif.dime+excessif.offrande+excessif.reserve+excessif.investir+excessif.autre+excessif.dettes+excessif.vivre)*100)).toBe(5);
+ expect(excessif.vivre).toBe(0);
  const p={...POURCENTAGES_DEFAUT,offrande:45};
  const tout=repartir('0.03',p,2);
  expect(tout.vivre).toBe(0);
