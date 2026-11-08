@@ -9,6 +9,17 @@
    même si l'appareil préfère l'apparence opposée. */
 :root:root[data-apparence="clair"] { --hdc-secondary-fixed-dim:#e6c364; --hdc-outline-variant:#d0c5b2; --hdc-primary-container:#755b00; --hdc-on-primary-fixed:#241a00; --hdc-surface-container:#f2eedf; --hdc-on-background:#1d1c13; --hdc-error-container:#ffdad6; --hdc-on-surface:#1d1c13; --hdc-on-error:#ffffff; --hdc-on-secondary-container:#785d00; --hdc-on-tertiary-fixed-variant:#49473e; --hdc-inverse-on-surface:#f5f1e2; --hdc-on-tertiary-fixed:#1d1c15; --hdc-secondary-container:#fed978; --hdc-on-error-container:#93000a; --hdc-surface-container-low:#f8f4e4; --hdc-outline:#7e7665; --hdc-tertiary-fixed-dim:#cac6bb; --hdc-tertiary-fixed:#e7e2d6; --hdc-tertiary-container:#605e55; --hdc-on-tertiary:#ffffff; --hdc-on-surface-variant:#4d4637; --hdc-surface-container-highest:#e7e2d4; --hdc-surface:#fef9ea; --hdc-on-secondary-fixed-variant:#584400; --hdc-background:#fef9ea; --hdc-on-primary:#ffffff; --hdc-inverse-surface:#323127; --hdc-on-tertiary-container:#dcd8cc; --hdc-on-primary-container:#f9d576; --hdc-on-primary-fixed-variant:#584400; --hdc-error:#ba1a1a; --hdc-inverse-primary:#e6c366; --hdc-surface-dim:#dedacb; --hdc-surface-container-high:#ede8d9; --hdc-surface-bright:#fef9ea; --hdc-on-secondary:#ffffff; --hdc-secondary:#755b00; --hdc-surface-container-lowest:#ffffff; --hdc-primary:#584400; --hdc-on-secondary-fixed:#241a00; --hdc-primary-fixed:#ffdf90; --hdc-surface-variant:#e7e2d4; --hdc-surface-tint:#755b00; --hdc-secondary-fixed:#ffe08f; --hdc-tertiary:#48473e; --hdc-primary-fixed-dim:#e6c366; }
 :root:root[data-apparence="sombre"] { --hdc-surface:#16140e; --hdc-background:#16140e; --hdc-surface-bright:#3c392f; --hdc-surface-dim:#16140e; --hdc-surface-container-lowest:#211f17; --hdc-surface-container-low:#1e1c14; --hdc-surface-container:#24221a; --hdc-surface-container-high:#2e2c23; --hdc-surface-container-highest:#39372d; --hdc-surface-variant:#4d4637; --hdc-on-surface:#e8e2d4; --hdc-on-background:#e8e2d4; --hdc-on-surface-variant:#d0c5b2; --hdc-outline:#998f80; --hdc-outline-variant:#4d4637; --hdc-secondary:#e6c364; --hdc-on-secondary:#3d2f00; --hdc-secondary-container:#584400; --hdc-on-secondary-container:#ffe08f; --hdc-primary:#e6c366; --hdc-on-primary:#3d2e00; --hdc-primary-container:#584400; --hdc-on-primary-container:#ffdf90; --hdc-tertiary:#cac6bb; --hdc-on-tertiary:#32312a; --hdc-tertiary-container:#48473e; --hdc-on-tertiary-container:#e7e2d6; --hdc-inverse-surface:#e8e2d4; --hdc-inverse-on-surface:#323127; --hdc-inverse-primary:#755b00; --hdc-surface-tint:#e6c366; --hdc-error:#ffb4ab; --hdc-on-error:#690005; --hdc-error-container:#93000a; --hdc-on-error-container:#ffdad6; }
+:root:root[data-apparence="clair"] {
+ --hd-fond:#fef9ea;--hd-carte:#ffffff;--hd-carte-basse:#f8f4e4;
+ --hd-carte-moy:#f2eedf;--hd-carte-haute:#ede8d9;
+ --hd-encre:#1d1c13;--hd-encre-2:#4d4637;--hd-discret:#605e55;
+ --hd-trait:#d0c5b2;--hd-trait-fort:#7e7665;
+ --hd-or:#755b00;--hd-or-fonce:#584400;--hd-or-pale:#fed978;
+ --hd-or-voile:rgba(254,217,120,.35);
+ --hd-ciel:#dceafe;--hd-ciel-encre:#1f3b63;
+ --hd-erreur:#93000a;--hd-erreur-fond:#ffdad6;
+ --hd-ombre:0 1px 3px rgba(29,28,19,.06),0 1px 2px rgba(29,28,19,.04);
+}
 :root:root[data-apparence="sombre"] {
  --hd-fond:#141310;--hd-carte:#211f1c;--hd-carte-basse:#1b1a17;
  --hd-carte-moy:#262420;--hd-carte-haute:#2f2c27;
