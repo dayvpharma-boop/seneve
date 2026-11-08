@@ -1164,3 +1164,6 @@
 /* Transparence réglée à 26 % : arrière-plan nettement visible sous un léger flou. */
 :root:root:root:root .barre-nav{background:rgba(255,255,255,.26)!important;backdrop-filter:blur(10px) saturate(145%)!important;-webkit-backdrop-filter:blur(10px) saturate(145%)!important}
 :root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.26)!important;backdrop-filter:blur(10px) saturate(145%)!important;-webkit-backdrop-filter:blur(10px) saturate(145%)!important}
+
+/* Bibliothèque : espace clair entre la couverture Habitudes & Défis et son bouton. */
+:root:root:root .bl-page.ios .bl-hd-carte>.bl-principal{margin-top:16px!important}
