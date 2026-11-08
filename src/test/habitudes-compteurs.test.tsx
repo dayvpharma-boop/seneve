@@ -143,7 +143,7 @@ it('un excédent de la part Dettes reste au participant et passe à « Pour vivr
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'500'}});
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
  const feuille=await screen.findByRole('dialog');
- const dette=await within(feuille).findByRole('checkbox',{name:/Dettes/});
+ const dette=await within(feuille).findByRole('checkbox',{name:/^Dettes/});
  const surplus=within(feuille).getByRole('checkbox',{name:/Excédent de la part Dettes/});
  expect(dette).not.toBeChecked();
  expect(surplus).not.toBeChecked();
