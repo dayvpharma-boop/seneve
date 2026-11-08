@@ -39,19 +39,19 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
   if(montants.offrande>0)out.push({cle:'offrande',nom:l('Offrande','Offering'),destination:l('Mes offrandes','My offerings'),montant:montants.offrande,parts:[{part:'offrande',amount:chaine(montants.offrande)}],possible:true,couleur:'#b05bd6'});
   for(const [cle,type,nom,coul,m] of [['reserve','reserve_joie',l('Réserve de joie','Family joy reserve'),'#2f9e62',montants.reserve],['investir','epargne_investir',l('Pour investir','For investing'),'#2f6fe0',montants.investir]] as const){
    if(m<=0)continue;const g=objectif(type);
-   out.push({cle,nom,destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):l(`crée d’abord un objectif en ${devise} dans Mon épargne`,`first create a ${devise} goal in My savings`),montant:m,parts:g?[{part:type,goal_id:g.goal_id,amount:chaine(m)}]:[],possible:!!g,couleur:coul});
+   out.push({cle,nom,destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):l(`crée d’abord un objectif en ${devise} dans SÉNEVÉ Finance`,`first create a ${devise} goal in SÉNEVÉ Finance`),montant:m,parts:g?[{part:type,goal_id:g.goal_id,amount:chaine(m)}]:[],possible:!!g,couleur:coul});
   }
   if(montants.autre>0){
    const autres=(s?.savings_goals??[]).filter(g=>g.goal_type==='autre'&&g.currency===devise);
    const g=autres.find(x=>x.goal_id===autreChoisi)??autres[0];
-   out.push({cle:'autre',nom:l('Autre objectif','Other goal'),destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):l(`crée d’abord un « Autre objectif » en ${devise} dans Mon épargne`,`first create an “Other goal” in ${devise} in My savings`),montant:montants.autre,parts:g?[{part:'autre',goal_id:g.goal_id,amount:chaine(montants.autre)}]:[],possible:!!g,couleur:'#c2410c'});
+   out.push({cle:'autre',nom:l('Autre objectif','Other goal'),destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):l(`crée d’abord un « Autre objectif » en ${devise} dans SÉNEVÉ Finance`,`first create an “Other goal” in ${devise} in SÉNEVÉ Finance`),montant:montants.autre,parts:g?[{part:'autre',goal_id:g.goal_id,amount:chaine(montants.autre)}]:[],possible:!!g,couleur:'#c2410c'});
   }
   if(montants.dettes>0){
    const dettes=(s?.debts??[]).filter(d=>d.currency===devise).map(d=>({d,reste:Math.round(Number(d.opening_balance)*100)-d.payments.reduce((n,p)=>n+Math.round(Number(p.amount)*100),0)}));
    const {propositions,surplus}=repartirSurDettes(Math.round(montants.dettes*100),dettes.map(x=>({id:x.d.debt_id,resteCentimes:x.reste})));
    const noms=propositions.map(p=>{const d=dettes.find(x=>x.d.debt_id===p.id)!.d;return `${d.creditor_name??l(`Dette ${d.debt_number}`,`Debt ${d.debt_number}`)} ${nombre(p.centimes/100)}${p.solde?l(' (soldée)',' (paid off)'):''}`;});
    const total=propositions.reduce((n,p)=>n+p.centimes,0)/100;
-   out.push({cle:'dettes',nom:l('Dettes','Debts'),destination:propositions.length?noms.join(' · ')+(surplus>0?l(` · ${nombre(surplus/100)} sans dette à rembourser`,` · ${nombre(surplus/100)} with no debt left`):''):l(`aucune dette en ${devise} dans Mon suivi des dettes`,`no ${devise} debt in My debt tracker`),montant:propositions.length?total:montants.dettes,parts:propositions.map(p=>({part:'dettes',debt_id:p.id,amount:chaine(p.centimes/100)})),possible:propositions.length>0,couleur:'#e0662f'});
+   out.push({cle:'dettes',nom:l('Dettes','Debts'),destination:propositions.length?noms.join(' · ')+(surplus>0?l(` · ${nombre(surplus/100)} sans dette à rembourser`,` · ${nombre(surplus/100)} with no debt left`):''):l(`aucune dette en ${devise} dans SÉNEVÉ Suivi des dettes`,`no ${devise} debt in SÉNEVÉ Debt tracker`),montant:propositions.length?total:montants.dettes,parts:propositions.map(p=>({part:'dettes',debt_id:p.id,amount:chaine(p.centimes/100)})),possible:propositions.length>0,couleur:'#e0662f'});
   }
   if(montants.vivre>0)out.push({cle:'vivre',nom:l('Pour vivre','For living'),destination:l('Pour vivre','For living'),montant:montants.vivre,parts:[{part:'vivre',amount:chaine(montants.vivre)}],possible:true,couleur:'#a1a1a6'});
   return out.filter(x=>x.montant>0);

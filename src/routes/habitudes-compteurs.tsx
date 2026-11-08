@@ -45,7 +45,7 @@ export function HabitudesCompteurs({userId}:{userId:string}){
   }catch{setEtat('erreur');}
  },[userId]);
  useEffect(()=>{void charger();},[charger]);
- useEffect(()=>{document.title=l('Mes compteurs','My counters')+' — SÉNEVÉ';document.documentElement.lang=langue;},[langue]);
+ useEffect(()=>{document.title=l('SÉNEVÉ Compte','SÉNEVÉ Account');document.documentElement.lang=langue;},[langue]);
  const devises=useMemo(()=>{const s=new Set<string>();cpt?.moves.forEach(m=>s.add(m.currency));suivi?.savings_goals.forEach(g=>s.add(g.currency));return [...s];},[cpt,suivi]);
  const dev=devise&&devises.includes(devise)?devise:devises[0]??'USD';
  const dec=decimalesDevise(dev);
@@ -126,9 +126,9 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
   }catch{setErreurEffacer(l('L’effacement n’a pas pu se faire. Réessaie.','Erasing did not work. Try again.'));}
   finally{setBusy(false);}
  }
- return <CadreHabitudes titre={l('Mes compteurs','My counters')} langue={langue} retour={`/espace${suffixe}`} retourLibelle={l('Revenir à ma journée','Back to my day')} liens={{aujourdhui:`/espace${suffixe}`}} actif="aujourdhui" cloche>
+ return <CadreHabitudes titre={l('SÉNEVÉ Compte','SÉNEVÉ Account')} langue={langue} retour={`/espace${suffixe}`} retourLibelle={l('Revenir à ma journée','Back to my day')} liens={{aujourdhui:`/espace${suffixe}`}} actif="aujourdhui" cloche>
   <div className="sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
-   <h1 className="mb-1 ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('Mes compteurs','My counters')}</h1>
+   <h1 className="mb-1 ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('SÉNEVÉ Compte','SÉNEVÉ Account')}</h1>
    <p className="hd-classique sim-ios-sous">{l('Chaque répartition remplit les caisses. Touche une caisse quand l’argent a été donné, dépensé ou investi. La remise à zéro garde l’historique ; seul « Modifier » dans Mon bilan l’efface.','Each allocation fills the counters. Tap one when the money has been given, spent or invested. A reset keeps the history; only “Edit” in My summary erases it.')}</p>
    {message('haut')}
    {etat==='chargement'&&<p role="status" className="rounded-2xl bg-white p-4">{l('Chargement…','Loading…')}</p>}
@@ -138,7 +138,7 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
    {etat==='pret'&&<>
     <Link to={`/habitudes/repartition?pour=epargne${en?'&lang=en':''}`} className="hd-classique mt-2 flex items-center gap-3.5 rounded-[20px] px-[18px] py-4 text-white" style={{textDecoration:'none',background:'linear-gradient(160deg,#5b4fe0,#49439b)'}}><IconeHD nom="payments" className="text-[24px]"/><span className="flex-1"><b className="block text-[17px]">{l('Quand je reçois de l’argent','When I receive money')}</b><small className="block text-sm opacity-85">{l('Répartir et remplir les caisses','Allocate and fill the counters')}</small></span><IconeHD nom="chevron_right" className="text-[22px] opacity-80"/></Link>
     {devises.length>1&&<div role="radiogroup" aria-label={l('Monnaie','Currency')} className="mt-3 flex gap-2 overflow-x-auto">{devises.map(d=><button key={d} type="button" role="radio" aria-checked={d===dev} onClick={()=>{setDevise(d);setOuverte('');}} className={`min-h-[36px] rounded-full px-3.5 text-sm font-medium ${d===dev?'bg-hd-on-surface text-white':'bg-white'}`}>{d}</button>)}</div>}
-    <h2 className="hd-classique sim-ios-titre">{l('Mes caisses','My counters')} · {dev}</h2>
+    <h2 className="hd-classique sim-ios-titre">{l('Mes caisses','My cash boxes')} · {dev}</h2>
     <div className="flex flex-col gap-2.5">
      {caisses.map(c=>{const d=dispo(c),lignes=lignesDe(c),est=ouverte===c.cle,sorti=lignes.filter(x=>x.signe===-1).reduce((n,x)=>n+x.centimes,0);
       return <article key={c.cle} aria-labelledby={`hd-caisse-${c.cle}`} className="rounded-2xl bg-white px-4 py-3" style={est?{boxShadow:'0 0 0 2px var(--ios-accent,#5b4ee8)'}:undefined}>

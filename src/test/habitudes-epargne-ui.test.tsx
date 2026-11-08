@@ -48,3 +48,13 @@ it('la journée propose « Épargne » sous « Ma dîme » et un raccourci vers 
  expect(r.vers).toMatch(/^\/habitudes\/(simulateur-epargne|epargne)\?lang=en$/);
  expect(raccourcisHabitudes(false,'E',false,true).some(x=>x.cle==='simulateur-epargne')).toBe(false);
 });
+
+it('les raccourcis portent les noms SÉNEVÉ (demande du 08/11/2026)',async()=>{
+ vi.resetModules();
+ vi.doMock('@/lib/habitudes-configuration',()=>({habitudesActivees:()=>true,suiviFinancierActive:()=>true}));
+ const {raccourcisHabitudes}=await import('@/components/RaccourcisHabitudes');
+ const titres=(en:boolean)=>Object.fromEntries(raccourcisHabitudes(en,'E',false).map(x=>[x.cle,x.titre]));
+ expect(titres(false)).toMatchObject({epargne:'SÉNEVÉ Finance',compteurs:'SÉNEVÉ Compte',dettes:'SÉNEVÉ Suivi des dettes'});
+ expect(titres(true)).toMatchObject({epargne:'SÉNEVÉ Finance',compteurs:'SÉNEVÉ Account',dettes:'SÉNEVÉ Debt tracker'});
+ vi.doUnmock('@/lib/habitudes-configuration');
+});

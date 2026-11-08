@@ -31,9 +31,9 @@ export function raccourcisHabitudes(en: boolean, enrollmentId: string, engagemen
     // Un seul raccourci d'épargne (maquette du 07/11/2026) : avec le suivi, le simulateur est dans « Mon épargne ».
     ...(suiviFinancierActive() ? [] : [{ cle: 'simulateur-epargne', vers: `/habitudes/simulateur-epargne${q}`, titre: en ? 'Savings simulator' : 'Simulateur d’épargne', detail: en ? 'Joy reserve and investing' : 'Réserve de joie et investissement', icone: 'pousse', ton: 'vert' } as Raccourci]),
     ...(suiviFinancierActive() ? [
-      { cle: 'epargne', vers: `/habitudes/epargne${q}`, titre: en ? 'My savings' : 'Mon épargne', detail: en ? 'Goals, contributions and progress' : 'Objectifs, versements et progression', icone: 'pousse' as const, ton: 'vert' as const },
-      { cle: 'compteurs', vers: `/habitudes/compteurs${q}`, titre: en ? 'My counters' : 'Mes compteurs', detail: en ? 'Tithe, offering, savings, living' : 'Dîme, offrande, épargne, pour vivre', icone: 'calendrier' as const, ton: 'orange' as const },
-      { cle: 'dettes', vers: `/habitudes/dettes${q}`, titre: en ? 'My debt tracker' : 'Mon suivi des dettes', detail: en ? 'Balances and repayments' : 'Soldes et remboursements', icone: 'objectif' as const, ton: 'bleu' as const },
+      { cle: 'epargne', vers: `/habitudes/epargne${q}`, titre: 'SÉNEVÉ Finance', detail: en ? 'Goals, contributions and progress' : 'Objectifs, versements et progression', icone: 'pousse' as const, ton: 'vert' as const },
+      { cle: 'compteurs', vers: `/habitudes/compteurs${q}`, titre: en ? 'SÉNEVÉ Account' : 'SÉNEVÉ Compte', detail: en ? 'Tithe, offering, savings, living' : 'Dîme, offrande, épargne, pour vivre', icone: 'calendrier' as const, ton: 'orange' as const },
+      { cle: 'dettes', vers: `/habitudes/dettes${q}`, titre: en ? 'SÉNEVÉ Debt tracker' : 'SÉNEVÉ Suivi des dettes', detail: en ? 'Balances and repayments' : 'Soldes et remboursements', icone: 'objectif' as const, ton: 'bleu' as const },
     ] : []),
     ...(engagements ? [{ cle: 'engagements', vers: `/habitudes/engagements${q}`, titre: en ? 'My commitments' : 'Mes engagements', detail: en ? 'What you chose to keep' : 'Ce que tu as choisi de tenir', icone: 'objectif' as SymboleTrait, ton: 'vert' as const }] : []),
     aide,

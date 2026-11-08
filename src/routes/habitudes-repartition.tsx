@@ -41,7 +41,7 @@ export function HabitudesRepartition(){
  const [devise,setDevise]=useState('USD');
  const [p,setP]=useState<Pourcentages>(POURCENTAGES_DEFAUT);
  const [feuille,setFeuille]=useState(false);
- useEffect(()=>{document.title=l('Ma répartition','My allocation')+' — SÉNEVÉ';document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
+ useEffect(()=>{document.title=l('SÉNEVÉ Répartition','SÉNEVÉ Allocation');document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
  if(!habitudesActivees())return <NotFound/>;
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
@@ -76,9 +76,9 @@ export function HabitudesRepartition(){
  // Anneau : une couleur par part, « Pour vivre » ferme le cercle.
  const R=42,C=2*Math.PI*R;let depart=0;
  const segments=[...PARTS.map(x=>({cle:x.cle as CleRepartition|'vivre',pct:p[x.cle]})),{cle:'vivre' as const,pct:Math.max(0,100-totalParts)}].filter(s=>s.pct>0).map(s=>{const long=C*s.pct/100,seg={...s,dash:`${Math.max(0,long-1.5)} ${C}`,offset:-depart};depart+=long;return seg;});
- return <CadreHabitudes titre={l('Ma répartition','My allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à Mon suivi des dettes','Back to my debt tracker'):l('Revenir à Mon épargne','Back to my savings')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
+ return <CadreHabitudes titre={l('SÉNEVÉ Répartition','SÉNEVÉ Allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à SÉNEVÉ Suivi des dettes','Back to SÉNEVÉ Debt tracker'):l('Revenir à SÉNEVÉ Finance','Back to SÉNEVÉ Finance')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
   <div className="sim-ios rep-page mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg">
-   <h1 className="ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('Ma répartition','My allocation')}</h1>
+   <h1 className="ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('SÉNEVÉ Répartition','SÉNEVÉ Allocation')}</h1>
    <p className="sim-ios-sous hd-classique">{l('Choisis ton profil, écris ce que tu as reçu : tu vois où va chaque franc. Rien n’est enregistré.','Choose your profile and enter what you received: you see where every franc goes. Nothing is saved.')}</p>
 
    <h2 className="hd-classique sim-ios-titre">{l('Je suis','I am')}</h2>

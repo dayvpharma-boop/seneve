@@ -100,8 +100,8 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
    if(premiere){setOuverte(premiere.id);setPaymentAmount((premiere.centimes/100).toFixed(decimalesDevise(deviseRecue??'CDF')));}
   }
  },[state,suivi,montantRecu,deviseRecue,typeRecu,mode]);
- const titrePage=mode==='epargne'?l('Mon épargne','My savings'):l('Mon suivi des dettes','My debt tracker');
- useEffect(()=>{document.title=titrePage+' — SÉNEVÉ';document.documentElement.lang=langue;},[titrePage,langue]);
+ const titrePage=mode==='epargne'?'SÉNEVÉ Finance':l('SÉNEVÉ Suivi des dettes','SÉNEVÉ Debt tracker');
+ useEffect(()=>{document.title=titrePage;document.documentElement.lang=langue;},[titrePage,langue]);
  const dettesTriees=useMemo(()=>[...(suivi?.debts??[])].sort((a,b)=>{const ar=resteDette(a),br=resteDette(b);return (ar===0?1:0)-(br===0?1:0)||a.currency.localeCompare(b.currency)||ar-br||a.debt_number-b.debt_number;}),[suivi]);
  const objectif=suivi?.savings_goals.find(g=>g.goal_id===goal)??suivi?.savings_goals[0];
  const dettesOuvertes=dettesTriees.filter(d=>resteDette(d)>0);
@@ -401,7 +401,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
     <span className="min-w-0 flex-1"><b className="block text-[17px]">{l('Quand je reçois de l’argent','When I receive money')}</b><small className="block text-sm opacity-85">{mode==='epargne'?l('Combien mettre de côté, selon ton revenu','How much to set aside, based on your income'):l('Combien rembourser, selon ton revenu','How much to repay, based on your income')}</small></span>
     <IconeHD nom="chevron_right" className="text-[22px] opacity-80"/>
    </Link>
-   {mode==='epargne'&&<Link to={`/habitudes/compteurs${en?'?lang=en':''}`} className="hd-classique mb-3 flex min-h-[52px] items-center gap-3 rounded-xl bg-white px-4" style={{textDecoration:'none',color:'inherit'}}><IconeHD nom="calendar_view_week" className="text-[22px] text-hd-secondary"/><span className="flex-1"><span className="block text-[16px]">{l('Mes compteurs','My counters')}</span><small className="block text-[13px] text-hd-on-surface-variant">{l('Ce qui reste dans chaque caisse, et le bilan','What is left in each counter, and the summary')}</small></span><IconeHD nom="chevron_right" className="text-[20px] text-hd-outline"/></Link>}
+   {mode==='epargne'&&<Link to={`/habitudes/compteurs${en?'?lang=en':''}`} className="hd-classique mb-3 flex min-h-[52px] items-center gap-3 rounded-xl bg-white px-4" style={{textDecoration:'none',color:'inherit'}}><IconeHD nom="calendar_view_week" className="text-[22px] text-hd-secondary"/><span className="flex-1"><span className="block text-[16px]">{l('SÉNEVÉ Compte','SÉNEVÉ Account')}</span><small className="block text-[13px] text-hd-on-surface-variant">{l('Ce qui reste dans chaque caisse, et le bilan','What is left in each counter, and the summary')}</small></span><IconeHD nom="chevron_right" className="text-[20px] text-hd-outline"/></Link>}
    {annulable&&<p role="status" aria-live="polite" className="hd-classique mb-3 flex items-center gap-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-900"><span className="flex-1">{annulable.type==='objectif'?l(`« ${annulable.nom} » est supprimé. Son historique reste dans ton bilan.`,`“${annulable.nom}” is deleted. Its history stays in your summary.`):l(`« ${annulable.nom} » est supprimée. Son historique reste dans ton bilan.`,`“${annulable.nom}” is deleted. Its history stays in your summary.`)}</span><button type="button" disabled={busy} onClick={()=>void annulerSuppression()} className="min-h-[44px] px-2 font-semibold" style={{color:'var(--ios-accent,#5b4ee8)'}}>{l('Annuler','Undo')}</button></p>}
    {message('haut')}
    {state==='chargement'&&<p role="status" className="rounded-2xl bg-white p-4">{l('Chargement du suivi…','Loading your tracker…')}</p>}
