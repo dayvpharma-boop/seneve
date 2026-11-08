@@ -412,7 +412,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
  };
 
  return <CadreHabitudes titre={titrePage} langue={langue} retour={`/espace${suffix}`} retourLibelle={l('Revenir à ma journée','Back to my day')} liens={{aujourdhui:`/espace${suffix}`}} actif="aujourdhui" cloche>
-  <div className="sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
+  <div className="finance-cartes-lisibles sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <h1 className="mb-3 ml-1 text-[34px] font-bold leading-tight tracking-tight">{titrePage}</h1>
    <p className="hd-classique sim-ios-sous">{mode==='epargne'?l('Tes objectifs et ce que tu mets de côté.','Your goals and what you set aside.'):l('Ce que tu dois et ce que tu as déjà remboursé.','What you owe and what you have already repaid.')}</p>
    <Link to={`/habitudes/repartition?pour=${mode}${en?'&lang=en':''}`} className="hd-classique mb-3 flex items-center gap-3.5 rounded-[20px] px-[18px] py-4 text-white active:scale-[.98] transition-transform" style={{textDecoration:'none',background:mode==='epargne'?'linear-gradient(160deg,#5b4fe0,#49439b)':'linear-gradient(160deg,#f08a4b,#d9602a)',boxShadow:mode==='epargne'?'0 12px 30px rgba(73,67,155,.22)':'0 12px 30px rgba(217,96,42,.22)'}}>
