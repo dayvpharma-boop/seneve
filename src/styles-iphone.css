@@ -1114,3 +1114,8 @@
 :root:root:root:root .hd-jour-stitch .ios-ligne-corps article h3.truncate{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.25}
 /* Aujourd'hui : le bloc « fuseau en voyage » vide n'ajoute plus 16 px entre les onglets et la carte du jour (08/11/2026). */
 :root:root:root:root .espace-page .hd-stitch>div.pt-hd-space-md:empty{display:none}
+/* Aujourd'hui, tous les parcours : même écart de 14 px sous les onglets (demande de Dr Justin du 08/11/2026).
+   Formation 30 jours : 32 → 14 px ; Accompagnement et Découverte : la ligne du parcours plus proche de sa carte. */
+:root:root:root:root .espace-page .prog-tabs{margin-bottom:14px!important}
+:root:root:root:root .espace-page .ios-jour-parcours{margin-top:0!important}
+:root:root:root:root .espace-page .today-hd-repere{margin-bottom:10px!important}
