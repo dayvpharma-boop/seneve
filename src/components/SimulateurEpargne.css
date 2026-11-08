@@ -59,3 +59,29 @@
 :root .sim-ios-ligne input[type="date"]{width:150px}
 /* Police système partout dans les simulateurs et le suivi (certains styles anciens imposent une police à empattements). */
 :root .sim-ios,:root .sim-ios *{font-family:var(--ios-police,-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif)}
+
+
+/* CORRECTION CIBLÉE — SÉNEVÉ Compte et Finance (08/11/2026).
+ * En mode sombre, la maquette conserve volontairement ses cartes blanches,
+ * mais les libellés et montants héritaient d'une encre presque blanche.
+ * Seules ces deux pages portent .finance-cartes-lisibles.
+ * Aucun changement de fond, des boutons violets, de l'administration
+ * ou des calculs. Le mode clair reste strictement inchangé. */
+:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ .finance-cartes-lisibles .bg-white {
+  color:#202331!important;
+}
+/* L'en-tête des caisses est un h3 contenant un bouton.
+ * Le montant et le pourcentage héritent de la carte blanche. */
+:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ .finance-cartes-lisibles .bg-white :is(h2,h3,h4,.text-hd-on-surface) {
+  color:#202331!important;
+}
+/* Sous-titres : « à donner », « disponibles », « sur », « reste » et
+ * l'excédent doivent rester suffisamment foncés sur blanc. */
+:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ .finance-cartes-lisibles .bg-white .text-hd-on-surface-variant {
+  color:#575e6b!important;
+}
+/* Les indicateurs verts, les icônes colorées et les CTA texte blanc
+ * conservent leurs couleurs de sens. */
