@@ -59,23 +59,35 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  // Demande de Dr Justin (03/11/2026) : un rappel touché (#hd-activite-<id>) ouvre directement son activité :
  // la prière dans son lecteur, la Bible dans la lecture du jour, sinon la carte de l'activité, mise en évidence.
  const cibleOuverte=useRef<string|null>(null);
+ const autresActivitesRef=useRef<HTMLDetailsElement>(null);
  useEffect(()=>{
   if(!data)return;
-  const m=/^#hd-activite-([0-9a-f-]{36})$/i.exec(window.location.hash);
-  if(!m||cibleOuverte.current===m[1])return;
-  const id=m[1]!,a=data.activites.find(x=>x.occurrence.occurrence_id===id);
-  if(!a)return;
-  cibleOuverte.current=id;
-  if(momentPriere(a.habit_key))setPriereId(id);
-  else if(!horsLigne&&estLectureHabitudes(a.habit_key)){setLectureInitialeId(id);setLecturesOuvertes(true);}
-  const t=window.setTimeout(()=>{
-   const el=document.getElementById(`hd-activite-${id}`);if(!el)return;
-   el.scrollIntoView?.({block:'center'});
-   el.style.outline='3px solid #c9a84c';el.style.outlineOffset='4px';el.style.borderRadius='16px';
-   window.setTimeout(()=>{el.style.outline='';el.style.outlineOffset='';},4000);
-  },50);
-  return()=>window.clearTimeout(t);
- },[data,horsLigne]);
+  let surbrillance:number|undefined;
+  const ouvrirCible=()=>{
+   const m=/^#hd-activite-([0-9a-f-]{36})$/i.exec(window.location.hash);
+   if(!m||cibleOuverte.current===m[1])return;
+   const id=m[1]!,a=data.activites.find(x=>x.occurrence.occurrence_id===id);
+   if(!a)return;
+   cibleOuverte.current=id;
+   // Un rappel peut désigner une action parmi celles repliées.
+   const ordonnees=[...data.activites].sort((x,y)=>x.heure.localeCompare(y.heure));
+   const journee=estDimanche(dateLocale)?ordonnees.filter(x=>x.occurrence.requise):ordonnees;
+   if(journee.findIndex(x=>x.occurrence.occurrence_id===id)>=3&&autresActivitesRef.current)
+    autresActivitesRef.current.open=true;
+   if(momentPriere(a.habit_key))setPriereId(id);
+   else if(!horsLigne&&estLectureHabitudes(a.habit_key)){setLectureInitialeId(id);setLecturesOuvertes(true);}
+   if(surbrillance!==undefined)window.clearTimeout(surbrillance);
+   surbrillance=window.setTimeout(()=>{
+    const el=document.getElementById(`hd-activite-${id}`);if(!el)return;
+    el.scrollIntoView?.({block:'center'});
+    el.style.outline='3px solid #c9a84c';el.style.outlineOffset='4px';el.style.borderRadius='16px';
+    window.setTimeout(()=>{el.style.outline='';el.style.outlineOffset='';},4000);
+   },50);
+  };
+  ouvrirCible();
+  window.addEventListener('hashchange',ouvrirCible);
+  return()=>{window.removeEventListener('hashchange',ouvrirCible);if(surbrillance!==undefined)window.clearTimeout(surbrillance);};
+ },[data,horsLigne,dateLocale]);
  const bilan=data?bilanHabitudes({enrollment_id:enrollmentId,version:data.version??1,date_locale:dateLocale},data.activites.map(a=>a.occurrence),data.activites.flatMap(a=>a.etat?[a.etat]:[])):null;
  function confirmer(etat:EtatOccurrence){setRevision(n=>n+1);setLecture(ancien=>ancien?.cle===cle?{...ancien,data:{...ancien.data,activites:ancien.data.activites.map(a=>a.occurrence.occurrence_id===etat.occurrence_id?{...a,etat}:a)}}:ancien);}
  if(erreur)return <section className="hd-jour-stitch px-hd-margin py-hd-space-md flex flex-col gap-hd-space-md" aria-label={l('Mes activités quotidiennes','My daily activities')}>
@@ -104,9 +116,13 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  const dimanche=estDimanche(dateLocale);
  const visibles=dimanche?activites.filter(a=>a.occurrence.requise):activites;
  const auRepos=dimanche?activites.filter(a=>!a.occurrence.requise):[];
+ // Seulement trois activités visibles ; toutes les autres restent accessibles avec leurs états réels.
+ const autresActivites=visibles.slice(3);
+ const autresConfirmees=autresActivites.filter(a=>a.etat?.etat==='realisee'&&a.etat.synchronisation==='synchronise').length;
  const prochain=visibles.find(a=>ouverte(a)&&h!==null&&a.heure>=h)??visibles.find(ouverte)??null;
  const ecart=prochain&&h?minutes(prochain.heure)-minutes(h):null;
  const iProchain=prochain?visibles.indexOf(prochain):-1;
+ const ouvrirProchain=()=>{if(iProchain>=3&&autresActivitesRef.current)autresActivitesRef.current.open=true;};
  // Les rendez-vous éloignés du soir sont présentés en lignes discrètes, comme dans la maquette ; un appui les déplie.
  const plusTard=(i:number)=>!dimanche&&iProchain>=0&&i>iProchain+2&&minutes(visibles[i]!.heure)>=18*60;
  const premierPlusTard=visibles.findIndex((_,i)=>plusTard(i));
@@ -122,7 +138,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    <small>{l('Le pas d’aujourd’hui','Today’s step')}</small>
    <h2>{texte?.titre??l('Un pas après l’autre','One step at a time')}</h2>
    {texte&&<p>{texte.objectif}</p>}
-   {prochain&&!horsLigne&&<a className="ios-jour-bouton" href={`#hd-activite-${prochain.occurrence.occurrence_id}`}><IconeHD nom="play_arrow" className="text-[20px]"/>{l('Commencer','Start')}</a>}
+   {prochain&&!horsLigne&&<a className="ios-jour-bouton" href={`#hd-activite-${prochain.occurrence.occurrence_id}`} onClick={ouvrirProchain}><IconeHD nom="play_arrow" className="text-[20px]"/>{l('Commencer','Start')}</a>}
   </header>
   {bilan&&<AnneauxJournee realisees={dimanche?bilan.requises_realisees:bilan.realisees} total={dimanche?bilan.requises:bilan.total} jour={data.jour} en={en}/>}
   {horsLigne&&copie&&<div className="hc-bandeau" role="status"><IconeJournee nom="wifi_off" taille={20}/><p>{l('Copie du ','Copy from ')}<time dateTime={copie.le}>{new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:fuseau}).format(new Date(copie.le))}</time>. {l('Tu es hors connexion : tu peux noter tes habitudes, elles seront envoyées au retour du réseau. Les prières guidées, la durée de lecture, les cultes, les défis et l’historique demandent une connexion.','You are offline: you can record your habits; they will be sent when the network is back. Guided prayers, reading time, worship, challenges and history need a connection.')}</p></div>}
@@ -150,7 +166,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
   {/* Prochain rendez-vous */}
   {prochain&&<section className="hd-prochain-rendez-vous ios-section" aria-label={l('Prochain rendez-vous','Next appointment')}>
    <h3 className="ios-titre-section">{l('Prochain rendez-vous','Next appointment')}</h3>
-   <a className="ios-prochain" href={`#hd-activite-${prochain.occurrence.occurrence_id}`}>
+   <a className="ios-prochain" href={`#hd-activite-${prochain.occurrence.occurrence_id}`} onClick={ouvrirProchain}>
     <div><small>{ecart!==null&&ecart>=0?(ecart===0?l('Maintenant','Now'):ecart<60?l(`Dans ${ecart} min`,`In ${ecart} min`):l(`Dans ${Math.floor(ecart/60)} h ${String(ecart%60).padStart(2,'0')}`,`In ${Math.floor(ecart/60)} h ${String(ecart%60).padStart(2,'0')}`)):l('À venir','Coming up')}</small><time dateTime={prochain.heure}>{prochain.heure}</time></div>
     <div className="ios-prochain-texte"><b>{prochain.consigne}</b>{prochain.critere&&<p>{prochain.critere}</p>}</div>
     <span className="ios-rond" aria-label={l('Commencer','Start')}><IconeHD nom="play_arrow" className="text-[22px]"/></span>
@@ -168,8 +184,19 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    </div>
    <progress className="sr-only" aria-label={l('Activités réalisées aujourd’hui','Activities completed today')} value={dimanche?bilan!.requises_realisees:bilan!.realisees} max={dimanche?bilan!.requises:bilan!.total}/>
    <div className="ios-liste flex flex-col">
-    {visibles.map((a,i)=>ligne(a,i,false))}
+    {visibles.slice(0,3).map((a,i)=>ligne(a,i,false))}
    </div>
+   {autresActivites.length>0&&<details key={cle} ref={autresActivitesRef} className="hd-autres-activites group rounded-2xl bg-hd-surface-container-lowest shadow-sm">
+    <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[52px] cursor-pointer px-4 py-2.5 flex items-center gap-3 rounded-2xl text-hd-on-surface">
+     <IconeHD nom="list" className="text-[22px] shrink-0 text-hd-secondary"/>
+     <span className="flex-1 min-w-0 flex flex-col">
+      <strong className="font-hd-label-lg text-hd-label-lg"><span className="group-open:hidden">{l(`Voir les ${autresActivites.length} autres activités`,`Show ${autresActivites.length} other activities`)}</span><span className="hidden group-open:inline">{l('Masquer les autres activités','Hide other activities')}</span></strong>
+      <small className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{autresConfirmees} / {autresActivites.length} {l('réalisées et synchronisées','completed and synchronised')}</small>
+     </span>
+     <IconeHD nom="expand_more" className="text-[22px] shrink-0 text-hd-on-surface-variant transition-transform group-open:rotate-180"/>
+    </summary>
+    <div className="ios-liste flex flex-col px-2 pb-3">{autresActivites.map((a,i)=>ligne(a,i+3,false))}</div>
+   </details>
    {auRepos.length>0&&<>
     <h3 className="ios-titre-section mt-4">{l('Si tu veux','If you like')}</h3>
     <details className="ios-repos-volet">
