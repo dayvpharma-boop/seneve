@@ -101,6 +101,7 @@
   :root:root:root:root:not([data-apparence="clair"]) body:has(.espace-page.ios .hd-aujourdhui-pastel){background:#10111b!important}
   :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel :is(.ios-anneaux,.ios-carte.ios-priere,.ios-journee>.ios-liste,.hd-autres-activites,.hd-reflexion-jour,.hd-defi-semaine),
   :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel>details.hd-volet,
+  :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel>details.hd-volet:nth-of-type(even),
   :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel>button.bg-hd-surface-container {
     background:linear-gradient(125deg,#24243b,#1c2231)!important;
     border-color:rgb(180 171 255 / .12)!important;
