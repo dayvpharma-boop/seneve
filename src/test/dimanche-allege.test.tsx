@@ -62,3 +62,38 @@ it('« Mes habitudes » est placé juste avant « Suivre mes défis facultatifs 
  expect(nav.compareDocumentPosition(suivi)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
  expect(nav.compareDocumentPosition(screen.getByRole('region',{name:'Ma journée'}))&Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
 });
+
+it('en semaine : trois activités restent visibles, les autres se déplient avec le total déjà confirmé',async()=>{
+ const source=jour(LUNDI,false);
+ const creer=(n:number,habit_key:string,consigne:string,heure:string)=>({...source.activites[0]!,habit_key,consigne,heure,occurrence:{...source.activites[0]!.occurrence,occurrence_id:id(n)}});
+ const derniere={...source.activites[3]!,etat:{...source.activites[3]!.occurrence,etat:'realisee',synchronisation:'synchronise',aide_demandee:false}};
+ mocks.charger.mockResolvedValue({...source,activites:[...source.activites.slice(0,3),derniere,creer(5,'lecture_personnelle','Lecture personnelle','20:00'),creer(6,'gratitude_soir','Gratitude du soir','21:10')]});
+ afficher(LUNDI);
+ const journee=await screen.findByRole('region',{name:'Ma journée'});
+ const trois=journee.querySelector('.ios-liste')!;
+ expect(trois.children).toHaveLength(3);
+ expect(trois.textContent).toMatch(/Gratitude du matin/);
+ expect(trois.textContent).not.toMatch(/Prière du soir/);
+ const volet=journee.querySelector('details.hd-autres-activites') as HTMLDetailsElement;
+ expect(volet).not.toBeNull();
+ expect(volet.open).toBe(false);
+ expect(volet.querySelector('summary')!.textContent).toMatch(/Voir les 3 autres activités/);
+ expect(volet.querySelector('summary')!.textContent).toMatch(/1 \/ 3 réalisées et synchronisées/);
+ fireEvent.click(volet.querySelector('summary')!);
+ expect(volet.open).toBe(true);
+ expect(within(volet).getByRole('heading',{name:'Prière du soir'})).toBeInTheDocument();
+ fireEvent.click(volet.querySelector('summary')!);
+ expect(volet.open).toBe(false);
+});
+
+it('le bouton Commencer ouvre une activité rangée parmi les suivantes',async()=>{
+ const source=jour(LUNDI,false);
+ const activites=source.activites.map((a,i)=>i<3?{...a,etat:{...a.occurrence,etat:'realisee',synchronisation:'synchronise',aide_demandee:false}}:a);
+ mocks.charger.mockResolvedValue({...source,activites});
+ const vue=afficher(LUNDI);
+ const journee=await screen.findByRole('region',{name:'Ma journée'});
+ const volet=journee.querySelector('details.hd-autres-activites') as HTMLDetailsElement;
+ expect(volet.open).toBe(false);
+ fireEvent.click(vue.container.querySelector('.ios-jour-bouton')!);
+ expect(volet.open).toBe(true);
+});
