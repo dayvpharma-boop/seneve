@@ -2,7 +2,7 @@ import './SimulateurEpargne.css';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {IconeHD} from './IconeHabitudes';
-import {chargerSuiviFinancier,type SuiviFinancier} from '@/lib/habitudes-finances-suivi';
+import {chargerSuiviFinancier,type SuiviFinancier,type TypeObjectifEpargne} from '@/lib/habitudes-finances-suivi';
 import {CompteursIndisponibles,enregistrerRepartition,type PartRepartition} from '@/lib/habitudes-finances-compteurs';
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {decimalesDevise} from '@/lib/devises';
@@ -23,8 +23,9 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
  const [enCours,setEnCours]=useState(false),[erreur,setErreur]=useState('');
  // Date choisie par la personne (demande du 07/11/2026) : aujourd’hui au départ, jamais dans le futur.
  const [date,setDate]=useState(aujourdhui);
- // « Autre objectif » : la personne choisit lequel quand elle en a plusieurs dans la monnaie.
- const [autreChoisi,setAutreChoisi]=useState('');
+ // Chaque objectif a son identifiant : deux investissements de même type/devise
+ // (Voiture et Achat maison) ne doivent jamais être confondus.
+ const [objectifsChoisis,setObjectifsChoisis]=useState<Partial<Record<TypeObjectifEpargne,string>>>({});
  const demande=useRef(crypto.randomUUID());
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
@@ -34,17 +35,22 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
  const cleMontants=JSON.stringify(montants);
  const lignes=useMemo<Ligne[]>(()=>{
   const s=suivi&&typeof suivi==='object'?suivi:null;
-  const objectif=(type:'reserve_joie'|'epargne_investir')=>s?.savings_goals.find(g=>g.goal_type===type&&g.currency===devise);
+  const candidats=(type:TypeObjectifEpargne)=>(s?.savings_goals??[]).filter(g=>g.goal_type===type&&g.currency===devise);
+  const objectif=(type:TypeObjectifEpargne)=>{
+   const liste=candidats(type);
+   // Auto-affectation seulement quand l'objectif est unique.
+   return liste.length===1?liste[0]:liste.find(g=>g.goal_id===objectifsChoisis[type]);
+  };
   const out:Ligne[]=[{cle:'dime',nom:l('Dîme','Tithe'),destination:l('Dans ma caisse de dîme · pas encore donnée','In my tithe counter · not yet given'),montant:montants.dime,parts:[{part:'dime',amount:chaine(montants.dime)}],possible:true,couleur:'#b8862b'}];
   if(montants.offrande>0)out.push({cle:'offrande',nom:l('Offrande','Offering'),destination:l('Mes offrandes','My offerings'),montant:montants.offrande,parts:[{part:'offrande',amount:chaine(montants.offrande)}],possible:true,couleur:'#b05bd6'});
   for(const [cle,type,nom,coul,m] of [['reserve','reserve_joie',l('Réserve de joie','Family joy reserve'),'#2f9e62',montants.reserve],['investir','epargne_investir',l('Pour investir','For investing'),'#2f6fe0',montants.investir]] as const){
-   if(m<=0)continue;const g=objectif(type);
-   out.push({cle,nom,destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):l(`crée d’abord un objectif en ${devise} dans SÉNEVÉ Finance`,`first create a ${devise} goal in SÉNEVÉ Finance`),montant:m,parts:g?[{part:type,goal_id:g.goal_id,amount:chaine(m)}]:[],possible:!!g,couleur:coul});
+   if(m<=0)continue;
+   const g=objectif(type),multiples=candidats(type).length>1;
+   out.push({cle,nom,destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):multiples?l('Choisis l’objectif précis ci-dessous : cette part n’est pas encore sélectionnée.','Choose the specific goal below: this share is not yet selected.'):l(`crée d’abord un objectif en ${devise} dans SÉNEVÉ Finance`,`first create a ${devise} goal in SÉNEVÉ Finance`),montant:m,parts:g?[{part:type,goal_id:g.goal_id,amount:chaine(m)}]:[],possible:!!g,couleur:coul});
   }
   if(montants.autre>0){
-   const autres=(s?.savings_goals??[]).filter(g=>g.goal_type==='autre'&&g.currency===devise);
-   const g=autres.find(x=>x.goal_id===autreChoisi)??autres[0];
-   out.push({cle:'autre',nom:l('Autre objectif','Other goal'),destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):l(`crée d’abord un « Autre objectif » en ${devise} dans SÉNEVÉ Finance`,`first create an “Other goal” in ${devise} in SÉNEVÉ Finance`),montant:montants.autre,parts:g?[{part:'autre',goal_id:g.goal_id,amount:chaine(montants.autre)}]:[],possible:!!g,couleur:'#c2410c'});
+   const g=objectif('autre'),multiples=candidats('autre').length>1;
+   out.push({cle:'autre',nom:l('Autre objectif','Other goal'),destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):multiples?l('Choisis l’objectif précis ci-dessous.','Choose the specific goal below.'):l(`crée d’abord un « Autre objectif » en ${devise} dans SÉNEVÉ Finance`,`first create an “Other goal” in ${devise} in SÉNEVÉ Finance`),montant:montants.autre,parts:g?[{part:'autre',goal_id:g.goal_id,amount:chaine(montants.autre)}]:[],possible:!!g,couleur:'#c2410c'});
   }
   if(montants.dettes>0){
    const dettes=(s?.debts??[]).filter(d=>d.currency===devise).map(d=>({d,reste:Math.round(Number(d.opening_balance)*100)-d.payments.reduce((n,p)=>n+Math.round(Number(p.amount)*100),0)}));
@@ -59,7 +65,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
   }
   if(montants.vivre>0)out.push({cle:'vivre',nom:l('Pour vivre','For living'),destination:l('Pour vivre','For living'),montant:montants.vivre,parts:[{part:'vivre',amount:chaine(montants.vivre)}],possible:true,couleur:'#a1a1a6'});
   return out.filter(x=>x.montant>0);
- },[suivi,cleMontants,devise,en,autreChoisi]);
+ },[suivi,cleMontants,devise,en,objectifsChoisis]);
  const choisies=lignes.filter(x=>x.possible&&coche(x.cle));
  const total=choisies.reduce((n,x)=>n+x.montant,0);
  async function enregistrer(){
@@ -88,7 +94,22 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
       <label htmlFor={`hd-part-${x.cle}`} style={{flex:1,minWidth:0}}><span className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 rounded-sm" style={{background:x.couleur}}/>{x.nom}</span><small className="block text-[13px] text-hd-on-surface-variant">→ {x.destination}</small></label>
       <b className="tabular-nums whitespace-nowrap">{nombre(x.montant)} {devise}</b>
      </li>)}
-     {(()=>{const autres=suivi&&typeof suivi==='object'?suivi.savings_goals.filter(g=>g.goal_type==='autre'&&g.currency===devise):[];return montants.autre>0&&autres.length>1?<li className="sim-ios-ligne"><label htmlFor="hd-autre-objectif">{l('Quel autre objectif ?','Which other goal?')}</label><select id="hd-autre-objectif" value={autreChoisi||autres[0]!.goal_id} onChange={e=>{demande.current=crypto.randomUUID();setAutreChoisi(e.target.value);}}>{autres.map(g=><option key={g.goal_id} value={g.goal_id}>{g.label}</option>)}</select></li>:null;})()}
+     {(['reserve_joie','epargne_investir','autre'] as const).map(type=>{
+       const montantsType={reserve_joie:montants.reserve,epargne_investir:montants.investir,autre:montants.autre};
+       const objectifs=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
+       if(montantsType[type]<=0||objectifs.length<2)return null;
+       const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
+       return <li key={type} className="sim-ios-ligne">
+        <label htmlFor={`hd-choix-${type}`}>{l(`Choisir l’objectif : ${nom}`,`Choose goal: ${nom}`)}</label>
+        <select id={`hd-choix-${type}`} required value={objectifsChoisis[type]??''}
+          onChange={e=>{demande.current=crypto.randomUUID();setObjectifsChoisis(prev=>({...prev,[type]:e.target.value}));}}
+          aria-describedby={`hd-choix-aide-${type}`}>
+         <option value="">{l('Sélectionner…','Select…')}</option>
+         {objectifs.map(g=><option key={g.goal_id} value={g.goal_id}>{g.label}</option>)}
+        </select>
+        <small id={`hd-choix-aide-${type}`} className="text-[12px] text-hd-on-surface-variant">{l('Sans choix, cette part ne sera pas enregistrée.','Without a selection, this share will not be saved.')}</small>
+       </li>;
+     })}
     </ul>
     <button type="button" disabled={!choisies.length||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
     {erreur&&<p role="alert" className="sim-ios-alerte">{erreur}</p>}
