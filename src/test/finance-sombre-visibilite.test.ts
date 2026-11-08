@@ -16,6 +16,24 @@ function contraste(a:string,b:string){
  return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);
 }
 
+describe('Choix de l’objectif SÉNEVÉ Finance en mode sombre',()=>{
+ it('applique un style distinct seulement à la pastille sélectionnée',()=>{
+  expect(finance).toContain('className="finance-objectifs-choix flex gap-2');
+  expect(finance).toContain("aria-pressed={!nouvelObjectif&&!choixVersementRequis&&g.goal_id===objectif?.goal_id}");
+  expect(finance).toContain('aria-pressed={nouvelObjectif}');
+  expect(css).toContain('.finance-objectifs-choix button[aria-pressed="true"]');
+  expect(css).toContain('background:#202331!important');
+  expect(css).toContain('color:#ffffff!important');
+  expect(css).not.toContain('.finance-objectifs-choix button[aria-pressed="false"]');
+ });
+ it('ne remplace ni les couleurs des cartes ni le mode clair',()=>{
+  const corr=css.slice(css.lastIndexOf('/* SÉNEVÉ Finance — objectif choisi'));
+  expect(corr).toContain('data-apparence="sombre"');
+  expect(corr).not.toContain('bg-white {');
+  expect(corr).not.toContain('data-apparence="clair"');
+ });
+});
+
 describe('SÉNEVÉ Finance : seules les cartes blanches sont corrigées en mode sombre',()=>{
  it('cible uniquement les pages SÉNEVÉ Compte et SÉNEVÉ Finance',()=>{
   expect(compte).toContain('className="finance-cartes-lisibles sim-ios');
