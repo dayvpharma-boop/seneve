@@ -80,7 +80,9 @@ const loadError = (langue?: string | null) => LOAD_ERRORS[langue === 'en' ? 'en'
 
 /** Charge les données du participant connecté. Renvoie null s'il n'y a pas de session. */
 async function load(langueDemandee: string | null): Promise<Data | null> {
-  const { data: s } = await supabase.auth.getSession();
+  const { data: s, error: erreurSession } = await supabase.auth.getSession();
+  // Une erreur de renouvellement ne doit pas être interprétée comme une déconnexion volontaire.
+  if (erreurSession) throw erreurSession;
   if (!s.session) return null;
   const user = s.session.user;
   const meta = prenomDuCompte(user.user_metadata);
@@ -182,6 +184,9 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   const location = useLocation();
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
+  const [confirmationDeconnexion, setConfirmationDeconnexion] = useState(false);
+  const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
+  const [erreurDeconnexion, setErreurDeconnexion] = useState(false);
   const [prenomSession, setPrenomSession] = useState('');
   // Compte créé sur la page anglaise (langue gardée à l'inscription) : accueil en anglais sans ?lang=en.
   const [langueSession, setLangueSession] = useState<'en' | null>(null);
@@ -212,7 +217,8 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     setFailed(false);
     let userId: string | null = null;
     try {
-      const { data: s } = await supabase.auth.getSession();
+      const { data: s, error: erreurSession } = await supabase.auth.getSession();
+      if (erreurSession) throw erreurSession;
       userId = s.session?.user.id ?? null;
       setPrenomSession(typeof s.session?.user.user_metadata?.prenom === 'string' ? s.session.user.user_metadata.prenom : '');
       setLangueSession(s.session?.user.user_metadata?.langue === 'en' ? 'en' : null);
@@ -285,9 +291,26 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   }, [momentParam, data]);
 
   async function signOut() {
-    effacerEspaces();
-    await supabase.auth.signOut();
-    navigate('/connexion', { replace: true });
+    if (deconnexionEnCours) return;
+    setDeconnexionEnCours(true);
+    setErreurDeconnexion(false);
+    try {
+      // Le scope par défaut est global : il révoque aussi les sessions Android/iPhone et ordinateur.
+      // La déconnexion demandée ici ne doit concerner que cet appareil.
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) {
+        // Supabase peut retirer la session locale avant qu'une erreur réseau soit retournée.
+        // Vérifier l'état réel plutôt que d'annoncer à tort que la session existe encore.
+        const { data: etatSession } = await supabase.auth.getSession();
+        if (etatSession.session) throw error;
+      }
+      effacerEspaces();
+      navigate('/connexion', { replace: true });
+    } catch {
+      setErreurDeconnexion(true);
+    } finally {
+      setDeconnexionEnCours(false);
+    }
   }
 
   async function start(langue: 'fr' | 'en') {
@@ -331,7 +354,24 @@ function EspaceDuCompte({ userId }: { userId: string }) {
   </header>;
   const accueil = data ? <AccueilVivant langue={enTete ? 'en' : 'fr'} /> : null;
   // Pied de page dans la langue du parcours ; les pages publiques reçoivent ?lang=en pour rester en anglais.
-  const footer = (l: string) => { const en = l === 'en', s = en ? '?lang=en' : ''; return <div className="today-foot"><Link className="link" to={`/acces${s}`}>{en ? 'My access' : 'Mes accès'}</Link><Link className="link" to={`/confidentialite${s}`}>{en ? 'Privacy' : 'Confidentialité'}</Link><button type="button" className="link" onClick={signOut}>{en ? 'Sign out' : 'Se déconnecter'}</button></div>; };
+  const footer = (l: string) => {
+    const en = l === 'en', s = en ? '?lang=en' : '';
+    return <>
+      <div className="today-foot">
+        <Link className="link" to={`/acces${s}`}>{en ? 'My access' : 'Mes accès'}</Link>
+        <Link className="link" to={`/confidentialite${s}`}>{en ? 'Privacy' : 'Confidentialité'}</Link>
+        <button type="button" className="link" disabled={deconnexionEnCours} aria-expanded={confirmationDeconnexion} onClick={() => { setConfirmationDeconnexion(v => !v); setErreurDeconnexion(false); }}>{en ? 'Sign out' : 'Se déconnecter'}</button>
+      </div>
+      {confirmationDeconnexion && <section className="card flex flex-col gap-3 my-3 p-4 rounded-xl" role="group" aria-label={en ? 'Confirm sign out' : 'Confirmer la déconnexion'}>
+        <p>{en ? 'Do you want to sign out on this device? Your other devices will stay connected.' : 'Veux-tu te déconnecter sur cet appareil ? Tes autres appareils resteront connectés.'}</p>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className="btn-secondaire min-h-[44px] px-4" disabled={deconnexionEnCours} onClick={() => setConfirmationDeconnexion(false)}>{en ? 'Cancel' : 'Annuler'}</button>
+          <button type="button" className="btn min-h-[44px] px-4" disabled={deconnexionEnCours} onClick={() => void signOut()}>{deconnexionEnCours ? (en ? 'Signing out…' : 'Déconnexion…') : (en ? 'Confirm sign out' : 'Confirmer la déconnexion')}</button>
+        </div>
+      </section>}
+      {erreurDeconnexion && <p role="alert" className="error">{en ? 'Unable to complete sign out. Check your connection and try again.' : 'Impossible de terminer la déconnexion. Vérifie ta connexion et réessaie.'}</p>}
+    </>;
+  };
   // Réglages regroupés en bas : e-mail du matin (si proposé) et liaison WhatsApp.
   // Repliés sur l'écran « Aujourd'hui » (allègement du 19/10/2026) : on les ouvre quand on en a besoin.
   const reglages = (langue: string, avecEmail: boolean, replie = false) => {

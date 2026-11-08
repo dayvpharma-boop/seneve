@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // (fusion de la référence Dribbble et de son essai Stitch) : tuiles des jours, moments illustrés, action dorée,
 // questions du journal, page d'un moment et barre du bas.
 // Fausse base : chaque table renvoie les lignes fournies, quelle que soit la chaîne de filtres.
+const mocksDeconnexion = vi.hoisted(() => ({ signOut: vi.fn() }));
 const tables: Record<string, unknown[]> = {};
 function builder(table: string) {
   const rows = () => tables[table] ?? [];
@@ -17,7 +18,7 @@ function builder(table: string) {
 }
 vi.mock('@/lib/supabase', () => ({
   supabase: {
-    auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'U1', user_metadata: { prenom: 'Marie' } } } } }), signOut: () => Promise.resolve({}) },
+    auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'U1', user_metadata: { prenom: 'Marie' } } } } }), signOut: (...args: unknown[]) => mocksDeconnexion.signOut(...args) },
     rpc: () => Promise.resolve({ data: null, error: null }),
     from: (t: string) => builder(t),
   },
@@ -50,7 +51,7 @@ const follows = (a: Element, b: Element) => Boolean(a.compareDocumentPosition(b)
 const ouvrir = (url = '/espace') => render(<MemoryRouter initialEntries={[url]}><Espace /></MemoryRouter>);
 
 describe('Espace — écran « Aujourd’hui »', () => {
-  beforeEach(() => { vi.useFakeTimers({ toFake: ['Date'] }); vi.setSystemTime(new Date('2026-10-14T13:30:00Z')); base(); }); // jour 2, 14 h 30 à Kinshasa
+  beforeEach(() => { vi.useFakeTimers({ toFake: ['Date'] }); vi.setSystemTime(new Date('2026-10-14T13:30:00Z')); base(); mocksDeconnexion.signOut.mockReset().mockResolvedValue({error:null}); }); // jour 2, 14 h 30 à Kinshasa
   afterEach(() => { cleanup(); vi.useRealTimers(); });
 
   it('ordre de la page : salutation, tuiles, ta journée, action, journal, réglages, « Se déconnecter »', async () => {
@@ -68,6 +69,21 @@ describe('Espace — écran « Aujourd’hui »', () => {
     expect(screen.getByText('Texte du jour 2.')).toHaveClass('jn-moment-extrait');
     expect(screen.getByText('Action du jour 2')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "J'ai réalisé cette action" })).toHaveClass('btn-or');
+  });
+
+  it('demande confirmation avant de déconnecter, puis utilise uniquement la session locale', async () => {
+    ouvrir();
+    const bouton = await screen.findByRole('button', { name: 'Se déconnecter' });
+    fireEvent.click(bouton);
+    expect(mocksDeconnexion.signOut).not.toHaveBeenCalled();
+    expect(screen.getByText(/Tes autres appareils resteront connectés/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Annuler' }));
+    expect(screen.queryByRole('button', { name: 'Confirmer la déconnexion' })).toBeNull();
+    expect(mocksDeconnexion.signOut).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Se déconnecter' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Confirmer la déconnexion' }));
+    await waitFor(() => expect(mocksDeconnexion.signOut).toHaveBeenCalledTimes(1));
+    expect(mocksDeconnexion.signOut).toHaveBeenCalledWith({ scope: 'local' });
   });
 
   it('affiche le critère de réalisation fourni avec une action', async () => {
