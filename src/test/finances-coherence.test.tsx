@@ -107,3 +107,20 @@ it('Supprimer une dette : confirmation avec ses remboursements, puis elle dispar
  await waitFor(()=>expect(screen.queryByRole('article',{name:'Papy'})).toBeNull());
  expect(screen.queryByText(/Il reste à rembourser/)).toBeNull();
 });
+
+it('un objectif dépassé montre l’excédent sans le transférer ni réduire le solde',async()=>{
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[{
+   ...suivi.savings_goals[0],target_amount:'100.00',
+   entries:[{entry_id:id(1),amount:'120.00',date_locale:auj}]
+  }]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{...compteurs,withdrawals:[]},error:null};
+  throw Error(f);
+ });
+ const {SuiviEpargneDettes}=await import('@/components/SuiviEpargneDettes');
+ render(<MemoryRouter initialEntries={['/habitudes/epargne']}><SuiviEpargneDettes mode="epargne" userId="u"/></MemoryRouter>);
+ const resume=await screen.findByRole('region',{name:'Moto-taxi'});
+ expect(within(resume).getByRole('progressbar').getAttribute('aria-valuenow')).toBe('100');
+ expect(within(resume).getByRole('status').textContent).toMatch(/Excédent de 20 USD/);
+ expect(within(resume).getByRole('status').textContent).toMatch(/Aucun argent n’est déplacé automatiquement/);
+});
