@@ -1119,3 +1119,16 @@
 :root:root:root:root .espace-page .prog-tabs{margin-bottom:14px!important}
 :root:root:root:root .espace-page .ios-jour-parcours{margin-top:0!important}
 :root:root:root:root .espace-page .today-hd-repere{margin-bottom:10px!important}
+
+/* Barre du bas en verre flottant, comme la maquette v2 de Mon abonnement (validée par Dr Justin le 08/11/2026) :
+ * pilule détachée du bord, 62 px, verre blanc 78 % + flou 24 px, liseré intérieur et ombre douce. */
+:root:root:root:root .barre-nav{left:16px!important;right:16px!important;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;max-width:480px!important;margin:0 auto!important;height:62px!important;padding:0!important;border-radius:31px!important;border:0!important;background:rgba(255,255,255,.78)!important;backdrop-filter:blur(24px) saturate(180%)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.9),0 6px 24px rgba(0,0,0,.12)!important}
+:root:root:root:root .barre-nav ul{height:100%!important;max-width:none!important;margin:0!important;padding:0 6px!important;display:flex!important;justify-content:space-around!important;align-items:center!important}
+:root:root:root:root .barre-nav li{flex:1 1 0!important;display:flex!important;justify-content:center!important}
+:root:root:root:root .barre-nav a.ios-onglet{gap:2px!important;padding:0!important;font:500 10px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif!important;letter-spacing:.1px!important;color:#8e8e93!important}
+:root:root:root:root .barre-nav a.ios-onglet[aria-current="page"]{color:var(--ios-accent,#5b4ee8)!important;font-weight:600!important}
+:root:root:root:root .barre-nav a.ios-onglet svg,:root:root:root:root .barre-nav .ios-onglet-icone{width:23px!important;height:23px!important}
+:root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.72)!important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.14),0 8px 28px rgba(0,0,0,.55)!important}
+:root:root:root:root[data-apparence="sombre"] .barre-nav a.ios-onglet{color:#98989f!important}
+:root:root:root:root[data-apparence="sombre"] .barre-nav a.ios-onglet[aria-current="page"]{color:var(--ios-accent,#a59bff)!important}
+@media (prefers-reduced-transparency:reduce){:root:root:root:root .barre-nav{background:var(--ios-carte,#fff)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
