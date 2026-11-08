@@ -18,7 +18,7 @@ export function simulerEpargne(type:TypeRevenuEpargne,recu:string,marchandises:s
  if(type!=='commerce'&&type!=='salaire')throw new Error('Type de revenu invalide');
  const base=simulerDime(type,recu,marchandises,charges);
  const reserve=unites(tauxReserve),investissement=unites(tauxInvestissement);
- if(reserve<5n*ECHELLE||reserve>10n*ECHELLE)throw new Error('La réserve doit être comprise entre 5 et 10 %.');
+ if(reserve<0n||reserve>10n*ECHELLE)throw new Error('La réserve doit être comprise entre 0 et 10 %.');
  if(investissement<0n||investissement>30n*ECHELLE)throw new Error('L’épargne pour investir ne peut pas dépasser 30 %.');
  const baseUnites=unites(base.base);
  return {...base,reserve_joie:afficher(baseUnites*reserve/(100n*ECHELLE)),epargne_investissement:afficher(baseUnites*investissement/(100n*ECHELLE))};

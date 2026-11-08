@@ -1,7 +1,7 @@
 import {simulerDime} from './habitudes-dime';
 
 /** « Quand je reçois de l'argent » : répartition validée par Dr Justin le 07/11/2026.
- * Dîme 10 % fixe ; Offrande libre et facultative (0 % au départ, sans limite propre : 5, 10, 20, 50 %… selon la personne) ; Réserve de joie 5 à 10 % ; Pour investir 0 à 30 % ; Dettes 0 à 30 % (15 % proposés) ; le reste pour vivre.
+ * Dîme 10 % fixe ; Offrande libre et facultative (0 % au départ, sans limite propre : 5, 10, 20, 50 %… selon la personne) ; Réserve de joie 0 à 10 % (08/11/2026, avant 5 à 10 %) ; Pour investir 0 à 30 % ; Dettes 0 à 30 % (15 % proposés) ; le reste pour vivre.
  * Base : commerçant = ventes − marchandises − charges ; salarié = salaire − dépenses de travail non remboursées ;
  * entrepreneur = encaissé − dépenses du travail ; autre revenu (don) = montant entier. Un prêt n'est pas un revenu.
  * Calcul local uniquement : rien n'est enregistré. */
@@ -10,7 +10,7 @@ export type CleRepartition='dime'|'offrande'|'reserve'|'investir'|'autre'|'dette
 export const LIMITES_REPARTITION:Record<CleRepartition,{min:number;max:number;pas:number;defaut:number}>={
  dime:{min:10,max:10,pas:0,defaut:10},
  offrande:{min:0,max:100,pas:5,defaut:0},
- reserve:{min:5,max:10,pas:1,defaut:10},
+ reserve:{min:0,max:10,pas:1,defaut:10},
  investir:{min:0,max:30,pas:5,defaut:20},
  // « Autre objectif » (toiture, école…) : libre, 0 % au départ (demande du 07/11/2026).
  autre:{min:0,max:100,pas:5,defaut:0},

@@ -60,3 +60,10 @@ it('le dollar américain est en premier et le franc congolais juste après le kw
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
  expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/1\s?000 USD/);
 });
+
+it('Réserve de joie : de 0 à 10 % (demande du 08/11/2026), 10 % proposés au départ',async()=>{
+ const {LIMITES_REPARTITION,POURCENTAGES_DEFAUT,repartir}=await import('@/lib/habitudes-repartition');
+ expect(LIMITES_REPARTITION.reserve).toMatchObject({min:0,max:10});
+ expect(POURCENTAGES_DEFAUT.reserve).toBe(10);
+ expect(repartir('1000',{...POURCENTAGES_DEFAUT,reserve:0},2).reserve).toBe(0);
+});

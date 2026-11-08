@@ -39,7 +39,7 @@ export function HabitudesRepartition(){
  const PARTS:{cle:CleRepartition;nom:string;info:string}[]=[
   {cle:'dime',nom:l('Dîme','Tithe'),info:l('10 % fixés par l’enseignement','10% set by the teaching')},
   {cle:'offrande',nom:l('Offrande','Offering'),info:l('libre, selon toi','free, as you choose')},
-  {cle:'reserve',nom:l('Réserve de joie','Family joy reserve'),info:l('de 5 à 10 %','5 to 10%')},
+  {cle:'reserve',nom:l('Réserve de joie','Family joy reserve'),info:l('de 0 à 10 %','0 to 10%')},
   {cle:'investir',nom:l('Pour investir','For investing'),info:l('jusqu’à 30 %','up to 30%')},
   {cle:'autre',nom:l('Autre objectif','Other goal'),info:l('libre : toiture, école…','free: roof, school…')},
   {cle:'dettes',nom:l('Dettes','Debts'),info:l('proposé 15 % (0 à 30 %)','suggested 15% (0 to 30%)')},

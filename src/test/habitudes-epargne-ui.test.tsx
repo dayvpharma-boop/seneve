@@ -13,7 +13,7 @@ it('calcule pendant la saisie, sans stockage ni appel réseau',()=>{
  expect(r.textContent).toContain('Il te reste 350');
  expect(stockage).not.toHaveBeenCalled();expect(reseau).not.toHaveBeenCalled();
 });
-it('garde les pourcentages dans les limites : 5 à 10 % et 0 à 30 %',()=>{
+it('garde les pourcentages dans les limites : 0 à 10 % et 0 à 30 % (Réserve de joie dès 0 %, demande du 08/11/2026)',()=>{
  render(<SimulateurEpargne langue="fr" replie={false}/>);
  const plusJoie=screen.getByRole('button',{name:'Augmenter : Réserve de joie'});expect(plusJoie).toBeDisabled();
  for(let i=0;i<10;i++)fireEvent.click(screen.getByRole('button',{name:'Baisser : Réserve de joie'}));
@@ -21,7 +21,7 @@ it('garde les pourcentages dans les limites : 5 à 10 % et 0 à 30 %',()=>{
  for(let i=0;i<10;i++)fireEvent.click(screen.getByRole('button',{name:'Augmenter : Pour investir'}));
  expect(screen.getByRole('button',{name:'Augmenter : Pour investir'})).toBeDisabled();
  saisir('Ventes encaissées','100');
- const r=document.querySelector('.sim-ios-resultat')!.textContent!;expect(r).toContain('5 %');expect(r).toContain('30 %');
+ const r=document.querySelector('.sim-ios-resultat')!.textContent!;expect(r).toMatch(/Réserve de joie0\s*0 %/);expect(r).toContain('30 %');
 });
 it('signale un montant mal écrit et efface tout à la demande',()=>{
  render(<SimulateurEpargne langue="fr" replie={false}/>);

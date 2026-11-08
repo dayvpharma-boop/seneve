@@ -6,7 +6,7 @@ import {IconeHD} from './IconeHabitudes';
 /** Simulateur d'épargne facultatif, présentation iPhone validée par Dr Justin le 07/11/2026 :
  * montants groupés, pourcentages préremplis avec − et +, résultat mis à jour pendant la saisie.
  * Calcul dans l'état React uniquement : aucun montant ne quitte la page, rien n'est enregistré. */
-const LIMITES={reserve:{min:5,max:10,pas:1},investir:{min:0,max:30,pas:5}} as const;
+const LIMITES={reserve:{min:0,max:10,pas:1},investir:{min:0,max:30,pas:5}} as const;
 
 export function SimulateurEpargne({langue,replie=true}:{langue:string;replie?:boolean}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
@@ -61,7 +61,7 @@ function ContenuEpargne({langue}:{langue:string}){
    {pas('reserve',l('Réserve de joie','Family joy reserve'),reserve,setReserve)}
    {pas('investir',l('Pour investir','For investing'),investir,setInvestir)}
   </div>
-  <p className="sim-ios-note">{l('Réserve de joie : de 5 à 10 %. Pour investir : jusqu’à 30 %.','Family joy reserve: 5 to 10%. For investing: up to 30%.')}</p>
+  <p className="sim-ios-note">{l('Réserve de joie : de 0 à 10 %. Pour investir : jusqu’à 30 %.','Family joy reserve: 0 to 10%. For investing: up to 30%.')}</p>
   <div aria-live="polite" className="sim-ios-resultat">
    {resultat?<>
     <div className="sim-ios-resultat-etiquette">{l('Base retenue','Selected basis')}</div>
