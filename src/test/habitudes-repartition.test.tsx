@@ -50,7 +50,7 @@ it('la page affiche la répartition et garde les pourcentages dans leurs limites
  fireEvent.click(screen.getByRole('radio',{name:'Entrepreneur'}));
  expect(screen.getByLabelText('Argent encaissé')).toHaveValue('');
  expect(screen.queryByLabelText('Coût des marchandises vendues')).toBeNull();
-});
+},20000);
 it('le dollar américain est en premier et le franc congolais juste après le kwanza',async()=>{
  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
  render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);

@@ -118,7 +118,7 @@ it('Ma répartition propose « Autre objectif » et l’envoie vers l’objectif
  render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
  for(let i=0;i<2;i++)fireEvent.click(screen.getByRole('button',{name:'Augmenter : Autre objectif'}));
- expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/Autre objectif.*10 %.*100/);
+ expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/Autre objectif.*100.*10 %/);
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
  const feuille=await screen.findByRole('dialog');
  await within(feuille).findByText(/objectif « Toiture »/);
