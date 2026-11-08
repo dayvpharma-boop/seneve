@@ -6,6 +6,7 @@ import {ChoixRythmeDime} from './ChoixRythmeDime';
 import {SimulateurDime} from './SimulateurDime';
 import {SimulateurEpargne} from './SimulateurEpargne';
 import {IconeHD} from './IconeHabitudes';
+import {IconeVolet} from './IconeVolet';
 
 const jourSuivant=(date:string,n:number)=>new Date(Date.parse(date+'T00:00:00Z')+n*86400000).toISOString().slice(0,10);
 
@@ -26,7 +27,7 @@ export function MaDimeHabitudes({enrollmentId,participantId,dateLocale,langue,li
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [ouvert,setOuvert]=useState(false);
  return <details className="hd-volet mb-hd-space-lg rounded-2xl bg-hd-surface-container-lowest p-hd-space-md shadow-sm" onToggle={e=>setOuvert(e.currentTarget.open)}>
-  <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[48px] cursor-pointer flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="volunteer_activism" className="text-[20px] text-hd-secondary"/><span className="flex-1">{l('Ma dîme','My tithe')}</span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-on-surface-variant"/></summary>
+  <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[48px] cursor-pointer flex items-center gap-3 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeVolet nom="dime"/><span className="flex-1">{l('Ma dîme','My tithe')}</span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-on-surface-variant"/></summary>
   {ouvert&&<ContenuDime key={enrollmentId+dateLocale} {...{enrollmentId,participantId,dateLocale,langue,lienReglages}}/>}
  </details>;
 }

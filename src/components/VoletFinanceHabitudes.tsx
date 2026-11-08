@@ -1,6 +1,7 @@
 import {useEffect,useState} from 'react';
 import {Link} from 'react-router-dom';
 import {IconeHD} from './IconeHabitudes';
+import {IconeVolet} from './IconeVolet';
 import {SimulateurEpargne} from './SimulateurEpargne';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {chargerSuiviFinancier,type DetteSuivie,type SuiviFinancier} from '@/lib/habitudes-finances-suivi';
@@ -31,7 +32,7 @@ export function VoletFinanceHabitudes({langue}:{langue:string}){
  const dettes=(suivi?.debts??[]).filter(d=>resteDette(d)>0);
  const totaux=dettes.reduce<Record<string,number>>((m,d)=>({...m,[d.currency]:(m[d.currency]??0)+resteDette(d)}),{});
  return <details id="hd-epargne" className="hd-volet mb-hd-space-lg rounded-2xl bg-hd-surface-container-lowest p-hd-space-md shadow-sm" onToggle={e=>setOuvert(e.currentTarget.open)}>
-  <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[48px] cursor-pointer flex items-center gap-2 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="potted_plant" className="text-[20px] text-hd-secondary"/><span className="flex-1">SÉNEVÉ Finance</span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-on-surface-variant"/></summary>
+  <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[48px] cursor-pointer flex items-center gap-3 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeVolet nom="finance"/><span className="flex-1">SÉNEVÉ Finance</span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-on-surface-variant"/></summary>
   <div className="vf hd-classique pt-2">
    {actif&&<div role="tablist" aria-label="SÉNEVÉ Finance" className="vf-segment" style={{['--i' as string]:ONGLETS.findIndex(([o])=>o===onglet),['--n' as string]:ONGLETS.length}}>
     <span className="vf-curseur" aria-hidden="true"/>
