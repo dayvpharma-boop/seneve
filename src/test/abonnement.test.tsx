@@ -65,3 +65,13 @@ it('erreur réseau : réessayer recharge',async()=>{
  fireEvent.click(await screen.findByRole('button',{name:'Réessayer'}));
  expect(await screen.findByRole('heading',{level:2,name:'Graine'})).toBeInTheDocument();
 });
+
+it('chaque formule payante présente SÉNEVÉ Finance et SÉNEVÉ Compte ; Graine les donne pour son mois (08/11/2026)',async()=>{
+ const {FORMULES}=await import('@/lib/abonnements');
+ const textes=(id:string)=>FORMULES.find(f=>f.id===id)!.avantages.map(a=>a[0]).join(' | ');
+ expect(textes('graine')).toMatch(/SÉNEVÉ Finance pendant ce mois/);
+ for(const id of ['senev','plus']){expect(textes(id)).toMatch(/SÉNEVÉ Finance : tes objectifs d’épargne, ton suivi des dettes/);expect(textes(id)).toMatch(/SÉNEVÉ Compte/);}
+ expect(textes('accompagnement')).toMatch(/Tout Sénevé Plus/);
+ // L'anglais suit
+ expect(FORMULES.find(f=>f.id==='plus')!.avantages.map(a=>a[1]).join(' ')).toMatch(/SÉNEVÉ Finance: your savings goals/);
+});
