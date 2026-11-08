@@ -52,7 +52,7 @@ export function repartir(base:string,p:Pourcentages,decimales:number){
  const parts=[...cles,'vivre'] as const;
  const pourcentages=[...cles.map(c=>p[c]),100-total];
  const quotas=parts.map((cle,i)=>{
-  const exact=BigInt(b)*BigInt(pourcentages[i]);
+  const exact=BigInt(b)*BigInt(pourcentages[i]!);
   return {cle,unites:Number(exact/100n),reste:Number(exact%100n),ordre:i};
  });
  let aRepartir=b-quotas.reduce((n,q)=>n+q.unites,0);
