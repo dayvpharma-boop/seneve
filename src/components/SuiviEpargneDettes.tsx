@@ -267,7 +267,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
    </form>
   </section>;
   return <>
-   {!!suivi?.savings_goals.length&&<div role="group" aria-label={l('Mes objectifs','My goals')} className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+   {!!suivi?.savings_goals.length&&<div role="group" aria-label={l('Mes objectifs','My goals')} className="finance-objectifs-choix flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
     {suivi.savings_goals.map(g=><button key={g.goal_id} type="button" aria-pressed={!nouvelObjectif&&!choixVersementRequis&&g.goal_id===objectif?.goal_id} onClick={()=>{setGoal(g.goal_id);setChoixVersementRequis(false);setNouvelObjectif(false);setAnnonce(null);}} className={`shrink-0 whitespace-nowrap rounded-full px-3.5 min-h-[36px] text-sm font-medium ${!nouvelObjectif&&g.goal_id===objectif?.goal_id?'bg-hd-on-surface text-white':'bg-white text-hd-on-surface'}`}>{g.label}</button>)}
     <button type="button" aria-pressed={nouvelObjectif} onClick={()=>{setNouvelObjectif(v=>!v);setAnnonce(null);}} className={`shrink-0 whitespace-nowrap rounded-full px-3.5 min-h-[36px] text-sm font-medium ${nouvelObjectif?'bg-hd-on-surface text-white':'bg-white text-hd-secondary'}`}>+ {l('Nouvel objectif','New goal')}</button>
    </div>}
