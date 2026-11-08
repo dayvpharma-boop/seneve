@@ -33,4 +33,13 @@ describe('Harmonisation pastel SÉNEVÉ',()=>{
   expect(css).not.toMatch(/\.oa-primary\s*\{/);
   expect(css).not.toMatch(/\.bb-lecture-texte\s*\{/);
  });
+ it('garde le bleu nuit original du verset d’accueil Bible, sans recolorer sa citation',()=>{
+  const ancien=readFileSync(`${process.cwd()}/src/styles-iphone.css`,'utf8');
+  expect(ancien).toContain('.bb-carte.bb-reprendre{background:radial-gradient');
+  expect(ancien).toContain('linear-gradient(160deg,#2a1f7a,#151040)');
+  // Le sélecteur global n’intercepte plus la carte supérieure ni son verset.
+  expect(css).toContain('.bb-carte:not(.bb-reprendre)');
+  expect(css).toContain('.bb-citation:not(.bb-reprendre .bb-citation)');
+  expect(css).not.toContain(':is(.bb-carte.bb-reprendre,.bb-citation)');
+ });
 });
