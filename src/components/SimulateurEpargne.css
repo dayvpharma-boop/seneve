@@ -100,3 +100,13 @@
 }
 /* Les indicateurs verts, les icônes colorées et les CTA texte blanc
  * conservent leurs couleurs de sens. */
+
+/* Objectif sélectionné (Voiture, Maison, etc.) : en mode sombre,
+ * la classe utilitaire bg-hd-on-surface était trop pâle, rendant
+ * l'écriture blanche invisible. Seulement le bouton sélectionné,
+ * sans modifier la carte de progression ni les autres objectifs. */
+:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ .finance-cartes-lisibles .finance-choix-objectifs button[aria-pressed="true"] {
+  background:#202331!important;
+  color:#ffffff!important;
+}
