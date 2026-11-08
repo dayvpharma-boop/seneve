@@ -82,7 +82,8 @@ describe('Espace — écran « Aujourd’hui »', () => {
     expect(mocksDeconnexion.signOut).not.toHaveBeenCalled();
     fireEvent.click(bouton);
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer la déconnexion' }));
-    await waitFor(() => expect(mocksDeconnexion.signOut).toHaveBeenCalledExactlyOnceWith({ scope: 'local' }));
+    await waitFor(() => expect(mocksDeconnexion.signOut).toHaveBeenCalledTimes(1));
+    expect(mocksDeconnexion.signOut).toHaveBeenCalledWith({ scope: 'local' });
   });
 
   it('affiche le critère de réalisation fourni avec une action', async () => {
