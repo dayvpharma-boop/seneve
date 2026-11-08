@@ -28,7 +28,7 @@
  * derrière un texte hérité devenu clair. Ne pas altérer les boutons blancs
  * intentionnels, ni les messages d'alerte qui portent une couleur sémantique. */
 :root:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
- :is(section,article,aside,div,form,ul,li,details).bg-white {
+ :is(section,article,aside,div,form,ul,li,details,p).bg-white {
  background-color:#25283a!important;
  background-image:none!important;
  border:1px solid var(--sv-bordure)!important;
@@ -69,6 +69,29 @@
  :is(input,textarea)::placeholder {
  color:#b8bfd3!important;
  opacity:1!important;
+}
+
+/* Les alertes financières à fond pâle restent identifiables sans rectangle
+ * éblouissant ni texte sombre invisible dans le thème nocturne. */
+:root:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios :is(section,article,div,p).bg-emerald-50 {
+ background-color:#17382f!important;background-image:none!important;
+ color:#d6fbe7!important;border:1px solid #548b76!important;
+}
+:root:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios :is(section,article,div,p).bg-orange-50 {
+ background-color:#392c25!important;background-image:none!important;
+ color:#ffe0c0!important;border:1px solid #9a7356!important;
+}
+:root:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios :is(section,article,div,p).bg-red-50 {
+ background-color:#3b252d!important;background-image:none!important;
+ color:#ffd0d2!important;border:1px solid #995b6b!important;
+}
+:root:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ :is(.bg-emerald-50 .text-emerald-900,.bg-emerald-50 .text-emerald-800) {
+ color:#d6fbe7!important;
+}
+:root:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ :is(.bg-orange-50 .text-orange-900,.bg-red-50 .text-red-900) {
+ color:#ffe0c0!important;
 }
 
 /* Aujourd'hui, Parcours, Journal, Paramètres et autres pages : cartes stables
