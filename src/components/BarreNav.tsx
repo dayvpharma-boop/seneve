@@ -64,12 +64,14 @@ export function BarreNav({ langue }: { langue?: string | null; maquette?: boolea
         (Math.abs(fromLeft - cible.left) < 1 && Math.abs(fromWidth - cible.width) < 1)) { installer(); return; }
 
     const delta = cible.left - fromLeft;
-    const largeurEtiree = Math.max(fromWidth, cible.width) * 1.08;
+    // Vers Bible, la vitre prend un léger volume supplémentaire en mouvement, puis se repose à sa taille exacte.
+    const largeurEtiree = Math.max(fromWidth, cible.width) * (i === 3 ? 1.14 : 1.08);
+    const hauteurEtiree = i === 3 ? 'scaleY(1.04)' : 'scaleY(.97)';
     const milieu = fromLeft + delta * .48 + (fromWidth - largeurEtiree) / 2;
     const approche = fromLeft + delta * .84 + (fromWidth - cible.width) / 2;
     const animation = el.animate([
       { left: String(fromLeft) + 'px', width: String(fromWidth) + 'px', transform: 'scaleY(1)', offset: 0, easing: 'cubic-bezier(.2,.7,.25,1)' },
-      { left: String(milieu) + 'px', width: String(largeurEtiree) + 'px', transform: 'scaleY(.97)', offset: .48, easing: 'cubic-bezier(.16,1,.3,1)' },
+      { left: String(milieu) + 'px', width: String(largeurEtiree) + 'px', transform: hauteurEtiree, offset: .48, easing: 'cubic-bezier(.16,1,.3,1)' },
       { left: String(approche) + 'px', width: String(cible.width * 1.02) + 'px', transform: 'scaleY(1.01)', offset: .84, easing: 'cubic-bezier(.34,1.2,.64,1)' },
       { left: String(cible.left) + 'px', width: String(cible.width) + 'px', transform: 'scaleY(1)', offset: 1 },
     ], { duration: 600, easing: 'cubic-bezier(.22,.8,.3,1)' });
