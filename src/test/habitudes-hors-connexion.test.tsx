@@ -1,5 +1,6 @@
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
+import {MemoryRouter} from 'react-router-dom';
 const mocks=vi.hoisted(()=>({charger:vi.fn(),rpc:vi.fn()}));
 vi.mock('@/lib/habitudes-jour-recette',()=>({chargerJourRecette:mocks.charger,chargerHistoriqueRecette:vi.fn()}));
 vi.mock('@/lib/supabase',()=>({supabase:{rpc:mocks.rpc}}));
@@ -20,7 +21,7 @@ afterEach(()=>{cleanup();Object.defineProperty(navigator,'onLine',{configurable:
 
 describe('Habitudes & Défis hors connexion (décision du 29/10/2026 : lire et noter)',()=>{
  it('en ligne, la journée est gardée sur l’appareil pour ce compte seulement',async()=>{
-  render(<ActivitesJourRecette enrollmentId={E} participantId="P1" dateLocale={aujourdhui} langue="fr" fuseau={F}/>);
+  render(<MemoryRouter><ActivitesJourRecette enrollmentId={E} participantId="P1" dateLocale={aujourdhui} langue="fr" fuseau={F}/></MemoryRouter>);
   await screen.findByRole('heading',{name:'Gratitude du matin'});
   // La copie est écrite après l'affichage : on attend son écriture au lieu de supposer sa date.
   await waitFor(()=>expect(copiesJourHdValides(U)).toHaveLength(1));
@@ -39,7 +40,7 @@ describe('Habitudes & Défis hors connexion (décision du 29/10/2026 : lire et n
  it('sans réseau : la journée se relit, une habitude se note sur l’appareil, puis part au retour du réseau sans doublon',async()=>{
   enregistrerCopieJourHd(U,copie());const c=copiesJourHdValides(U)[0]!;
   Object.defineProperty(navigator,'onLine',{configurable:true,value:false});
-  render(<ActivitesJourRecette enrollmentId={E} participantId="P1" dateLocale={aujourdhui} langue="fr" fuseau={F} copie={c}/>);
+  render(<MemoryRouter><ActivitesJourRecette enrollmentId={E} participantId="P1" dateLocale={aujourdhui} langue="fr" fuseau={F} copie={c}/></MemoryRouter>);
   expect(await screen.findByText(/Tu es hors connexion : tu peux noter tes habitudes/)).toBeInTheDocument();
   expect(mocks.charger).not.toHaveBeenCalled();
   fireEvent.click(screen.getAllByRole('button',{name:'J’ai réalisé cette activité'})[0]!);
@@ -58,7 +59,7 @@ describe('Habitudes & Défis hors connexion (décision du 29/10/2026 : lire et n
  });
  it('sans réseau, une lecture avec durée et les parties en ligne restent fermées',async()=>{
   enregistrerCopieJourHd(U,copie());const c=copiesJourHdValides(U)[0]!;
-  render(<ActivitesJourRecette enrollmentId={E} participantId="P1" dateLocale={aujourdhui} langue="fr" fuseau={F} copie={c}/>);
+  render(<MemoryRouter><ActivitesJourRecette enrollmentId={E} participantId="P1" dateLocale={aujourdhui} langue="fr" fuseau={F} copie={c}/></MemoryRouter>);
   expect(await screen.findByText('La durée de lecture demande une connexion : tu pourras noter cette lecture au retour du réseau.')).toBeInTheDocument();
   expect(screen.getAllByRole('button',{name:'J’ai réalisé cette activité'})).toHaveLength(1);
   expect(screen.queryByRole('button',{name:'Durée de lecture'})).toBeNull();
