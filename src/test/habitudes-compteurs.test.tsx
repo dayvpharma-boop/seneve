@@ -124,8 +124,10 @@ it('Ma répartition propose « Autre objectif » et l’envoie vers l’objectif
  expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/Autre objectif.*100.*10 %/);
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
  const feuille=await screen.findByRole('dialog');
- await within(feuille).findByText(/objectif « Toiture »/);
- fireEvent.change(within(feuille).getByLabelText('Quel autre objectif ?'),{target:{value:t2.goal_id}});
+ const select=await within(feuille).findByLabelText('Choisir l’objectif : Autre objectif') as HTMLSelectElement;
+ expect(select.value).toBe('');
+ expect(within(feuille).getByRole('checkbox',{name:/^Autre objectif/})).toBeDisabled();
+ fireEvent.change(select,{target:{value:t2.goal_id}});
  expect(within(feuille).getByText(/objectif « École »/)).toBeInTheDocument();
  fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_parts:expect.arrayContaining([{part:'autre',goal_id:t2.goal_id,amount:'100.00'}])})));
