@@ -67,9 +67,17 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
   return out.filter(x=>x.montant>0);
  },[suivi,cleMontants,devise,en,objectifsChoisis]);
  const choisies=lignes.filter(x=>x.possible&&coche(x.cle));
+ const typesObjectifs:[TypeObjectifEpargne,number][]=[
+  ['reserve_joie',montants.reserve],['epargne_investir',montants.investir],['autre',montants.autre]
+ ];
+ const selectionManquante=!!suivi&&typeof suivi==='object'&&typesObjectifs.some(([type,montant])=>{
+  if(montant<=0)return false;
+  const candidats=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
+  return candidats.length>1&&!candidats.some(g=>g.goal_id===objectifsChoisis[type]);
+ });
  const total=choisies.reduce((n,x)=>n+x.montant,0);
  async function enregistrer(){
-  if(!suivi||typeof suivi!=='object'||!choisies.length||enCours)return;
+  if(!suivi||typeof suivi!=='object'||!choisies.length||selectionManquante||enCours)return;
   setEnCours(true);setErreur('');
   try{
    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date>aujourdhui()){setErreur(l('Choisis une date qui n’est pas dans le futur.','Choose a date that is not in the future.'));setEnCours(false);return;}
@@ -111,7 +119,8 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
        </li>;
      })}
     </ul>
-    <button type="button" disabled={!choisies.length||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
+    {selectionManquante&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Choisis la destination de chaque part ayant plusieurs objectifs avant d’enregistrer. Pour ne pas répartir une part, décoche-la après avoir choisi son objectif.','Choose the destination for each share with multiple goals before saving. To exclude a share, untick it after selecting its goal.')}</p>}
+    <button type="button" disabled={!choisies.length||selectionManquante||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
     {erreur&&<p role="alert" className="sim-ios-alerte">{erreur}</p>}
     <p className="sim-ios-note">{l('Ce qui reste décoché n’est pas noté ; tu pourras l’ajouter plus tard. Aucun argent ne bouge.','Anything left unticked is not recorded; you can add it later. No money moves.')}</p>
    </>}
