@@ -1,0 +1,213 @@
+/* SÉNEVÉ — palette harmonisée inspirée du cadre « Dimanche · jour de repos ».
+ * Surfaces uniquement : jamais d'altération des données, des accès, des actions,
+ * des couvertures, des photos, des icônes d'état ni du texte biblique.
+ * Fonctionne sur les mêmes composants français / anglais.
+ * Exclus : administration, connexion, test des 7 Racines, lecteur Bible
+ * et ambiances sépia/nocturne choisies par le participant.
+ */
+
+:root {
+  --sv-fond:#f6f8ff;
+  --sv-fond-ambiance:
+    radial-gradient(ellipse 410px 370px at 0% 5%,rgb(216 230 255 / .50),transparent 76%),
+    radial-gradient(ellipse 400px 400px at 100% 42%,rgb(228 219 255 / .43),transparent 76%),
+    radial-gradient(ellipse 400px 340px at 0% 82%,rgb(255 231 213 / .27),transparent 78%),
+    linear-gradient(180deg,#f6f8ff,#fbfaff 54%,#f5f8ff);
+  --sv-carte-violette:linear-gradient(130deg,#f3efff 0%,#fbfaff 57%,#f5f8ff 100%);
+  --sv-carte-bleue:linear-gradient(130deg,#edf4ff 0%,#fbfdff 58%,#f5f1ff 100%);
+  --sv-carte-peche:linear-gradient(130deg,#fff1e7 0%,#fffaf7 57%,#f6f2ff 100%);
+  --sv-carte-lisse:#fafbff;
+  --sv-bordure:rgb(106 100 164 / .11);
+  --sv-ombre:0 5px 22px rgb(72 67 139 / .045);
+}
+:root[data-apparence="sombre"] {
+  --sv-fond:#10111b;
+  --sv-fond-ambiance:
+    radial-gradient(ellipse 410px 350px at 100% 12%,rgb(112 91 182 / .15),transparent 78%),
+    radial-gradient(ellipse 390px 400px at 0% 73%,rgb(102 90 148 / .11),transparent 76%),
+    linear-gradient(180deg,#10111b,#151723 62%,#10111b);
+  --sv-carte-violette:linear-gradient(130deg,#27253b,#202337);
+  --sv-carte-bleue:linear-gradient(130deg,#1e2a3d,#24243a);
+  --sv-carte-peche:linear-gradient(130deg,#322a35,#242537);
+  --sv-carte-lisse:#222437;
+  --sv-bordure:rgb(181 171 255 / .12);
+  --sv-ombre:0 6px 22px rgb(0 0 0 / .12);
+}
+@media (prefers-color-scheme:dark) {
+  :root:not([data-apparence="clair"]) {
+    --sv-fond:#10111b;
+    --sv-fond-ambiance:
+      radial-gradient(ellipse 410px 350px at 100% 12%,rgb(112 91 182 / .15),transparent 78%),
+      radial-gradient(ellipse 390px 400px at 0% 73%,rgb(102 90 148 / .11),transparent 76%),
+      linear-gradient(180deg,#10111b,#151723 62%,#10111b);
+    --sv-carte-violette:linear-gradient(130deg,#27253b,#202337);
+    --sv-carte-bleue:linear-gradient(130deg,#1e2a3d,#24243a);
+    --sv-carte-peche:linear-gradient(130deg,#322a35,#242537);
+    --sv-carte-lisse:#222437;
+    --sv-bordure:rgb(181 171 255 / .12);
+    --sv-ombre:0 6px 22px rgb(0 0 0 / .12);
+  }
+}
+
+/* Fond subtilement nuancé des pages participantes, et non de l'administration.
+ * Le style déjà approuvé d'Aujourd'hui Habitudes & Défis est préservé. */
+:root:root:root:root :is(
+  .espace-page.ios:not(:has(.hd-aujourdhui-pastel)),
+  .parcours-page.ios,.bl-page.ios,.pv-page.ios,.journal-page.ios,
+  .oa-page.ios,.aide-page.ios,.coach-page.ios,.nt-page.ios,
+  .confidentialite.ios,.hd-public.ios,
+  .hd-ecran.ios:not(:has(.hd-aujourdhui-pastel)),
+  .bb-page.ios:not(.bb-page-lecture):not(.bb-ambiance-sepia):not(.bb-ambiance-nocturne)
+) {
+  background-color:var(--sv-fond)!important;
+  background-image:var(--sv-fond-ambiance)!important;
+  background-repeat:no-repeat!important;
+  background-size:100% 100%!important;
+}
+:root:root:root:root body:has(:is(
+  .espace-page.ios:not(:has(.hd-aujourdhui-pastel)),
+  .parcours-page.ios,.bl-page.ios,.pv-page.ios,.journal-page.ios,
+  .oa-page.ios,.aide-page.ios,.coach-page.ios,.nt-page.ios,
+  .confidentialite.ios,.hd-public.ios,
+  .hd-ecran.ios:not(:has(.hd-aujourdhui-pastel)),
+  .bb-page.ios:not(.bb-page-lecture):not(.bb-ambiance-sepia):not(.bb-ambiance-nocturne)
+)) {
+  background-color:var(--sv-fond)!important;
+  background-image:var(--sv-fond-ambiance)!important;
+}
+/* Dans CadreHabitudes, main posait auparavant un fond opaque sur le dégradé. */
+:root:root:root:root .hd-ecran.ios:not(:has(.hd-aujourdhui-pastel))>main {
+  background:transparent!important;
+}
+
+/* Aujourd'hui des autres parcours : surfaces alternées, photo inchangée. */
+:root:root:root:root .espace-page.ios:not(:has(.hd-aujourdhui-pastel)) :is(.card,.ios-carte,.ios-anneaux,.repere-parcours) {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+  box-shadow:var(--sv-ombre)!important;
+}
+:root:root:root:root .espace-page.ios:not(:has(.hd-aujourdhui-pastel)) :is(.prompt-carte,.jardin-card,.reglages,.repli,.today-section>.card) {
+  background-image:var(--sv-carte-bleue)!important;
+  border-color:var(--sv-bordure)!important;
+}
+/* La carte du dimanche et la grande illustration conservent leur composition. */
+
+/* Parcours et progrès : synthèse bleue, bilans violets, notes pêche. */
+:root:root:root:root .parcours-page.ios :is(.card,.bilan-jour,.repere-parcours,.hc-carte,.pc-etat) {
+  background-image:var(--sv-carte-bleue)!important;
+  border-color:var(--sv-bordure)!important;
+  box-shadow:var(--sv-ombre)!important;
+}
+:root:root:root:root .parcours-page.ios :is(.progres-carte,.hd-bilan,.progres-suite) {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+}
+:root:root:root:root .parcours-page.ios .parcours-notes {
+  background-image:var(--sv-carte-peche)!important;
+}
+
+/* Bibliothèque : cartes et éditions douces ; photos de livres et couvertures intactes. */
+:root:root:root:root .bl-page.ios :is(.bl-card,.bl-sommaire) {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+  box-shadow:var(--sv-ombre)!important;
+}
+:root:root:root:root .bl-page.ios :is(.bl-acces:not(.bl-parcours),.bl-liste-formats>a,.bl-citation) {
+  background-image:var(--sv-carte-bleue)!important;
+  border-color:var(--sv-bordure)!important;
+}
+:root:root:root:root .bl-page.ios .bl-edition {
+  background-image:var(--sv-carte-peche)!important;
+  border-color:var(--sv-bordure)!important;
+}
+
+/* Profil et Paramètres : alternance de groupes, sans changer les champs. */
+:root:root:root:root .pv-page.ios :is(.pv-groupe,.pv-carte) {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+  box-shadow:var(--sv-ombre)!important;
+}
+:root:root:root:root .pv-page.ios .pv-groupe:nth-of-type(even) {
+  background-image:var(--sv-carte-bleue)!important;
+}
+:root:root:root:root .pv-page.ios :is(.pv-pastille,.pv-rond,.pv-recharger) {
+  background-image:var(--sv-carte-bleue)!important;
+  border-color:var(--sv-bordure)!important;
+}
+
+/* Journal privé : seule la décoration change, pas les notes ou les validations. */
+:root:root:root:root .journal-page.ios :is(.journal-form,.hc-carte,.journal-vide) {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+  box-shadow:var(--sv-ombre)!important;
+}
+:root:root:root:root .journal-page.ios :is(.note-carte,.journal-confidentialite) {
+  background-image:var(--sv-carte-bleue)!important;
+}
+:root:root:root:root .journal-page.ios .journal-question {
+  background-image:var(--sv-carte-peche)!important;
+}
+
+/* Bible : accueil et catalogue uniquement. La lecture et les ambiances choisies
+ * (ivoire, sépia, nocturne) conservent leur contraste et leur papier. */
+:root:root:root:root .bb-page.ios:not(.bb-page-lecture):not(.bb-ambiance-sepia):not(.bb-ambiance-nocturne) :is(.bb-carte,.bb-recherche,.bb-menu) {
+  background-image:var(--sv-carte-bleue)!important;
+  box-shadow:var(--sv-ombre)!important;
+}
+:root:root:root:root .bb-page.ios:not(.bb-page-lecture):not(.bb-ambiance-sepia):not(.bb-ambiance-nocturne) :is(.bb-carte.bb-reprendre,.bb-citation) {
+  background-image:var(--sv-carte-violette)!important;
+}
+
+/* Cultes, autres écrans Habitudes, engagements, aide et horaires. Les pages
+ * Aujourd'hui HD conservent leur palette spécifique déjà approuvée. */
+:root:root:root:root .hd-ecran.ios:not(:has(.hd-aujourdhui-pastel))
+  :is(section,article,aside,details,div).bg-hd-surface-container-lowest {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+  box-shadow:var(--sv-ombre)!important;
+}
+:root:root:root:root .hd-ecran.ios:not(:has(.hd-aujourdhui-pastel))
+  :is(section,article,aside,details,div).bg-hd-surface-container-low {
+  background-image:var(--sv-carte-bleue)!important;
+  border-color:var(--sv-bordure)!important;
+}
+:root:root:root:root .hd-ecran.ios:has(.hd-aujourdhui-pastel)
+  :is(section[aria-label="Mon accès"],section[aria-label="My access"])>div.bg-hd-surface-container-lowest {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+}
+:root:root:root:root .hd-public.ios :is(.hd-public-section,.hd-public-editor) {
+  background-image:var(--sv-carte-bleue)!important;
+  border-color:var(--sv-bordure)!important;
+}
+
+/* Offres, aide, coach, notifications. Ne pas toucher aux avertissements,
+ * aux prix, au statut payé/impayé, aux messages personnels ni aux CTA. */
+:root:root:root:root .oa-page.ios :is(.oa-card,.oa-access) {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+  box-shadow:var(--sv-ombre)!important;
+}
+:root:root:root:root .oa-page.ios :is(.oa-note,.oa-discovery) {
+  background-image:var(--sv-carte-bleue)!important;
+}
+:root:root:root:root .aide-page.ios :is(.aide-form,.demande-carte,.card) {
+  background-image:var(--sv-carte-bleue)!important;
+  border-color:var(--sv-bordure)!important;
+}
+:root:root:root:root .aide-page.ios :is(.aide-intro,.demande-reponse) {
+  background-image:var(--sv-carte-violette)!important;
+}
+:root:root:root:root .coach-page.ios :is(.coach-cadre,.coach-thread,.coach-confidentialite,.coach-anciens) {
+  background-image:var(--sv-carte-violette)!important;
+  border-color:var(--sv-bordure)!important;
+}
+:root:root:root:root .nt-page.ios :is(.nt-element,.nt-vide) {
+  background-image:var(--sv-carte-bleue)!important;
+  border-color:var(--sv-bordure)!important;
+}
+:root:root:root:root .nt-page.ios .nt-note {
+  background-image:var(--sv-carte-violette)!important;
+}
+/* L'illustration des livres, la carte « Prochain rendez-vous », les priorités
+ * urgentes et les textes longs restent des repères de lecture sans effet de couleur. */
