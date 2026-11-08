@@ -127,7 +127,7 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
   finally{setBusy(false);}
  }
  return <CadreHabitudes titre={l('SÉNEVÉ Compte','SÉNEVÉ Account')} langue={langue} retour={`/espace${suffixe}`} retourLibelle={l('Revenir à ma journée','Back to my day')} liens={{aujourdhui:`/espace${suffixe}`}} actif="aujourdhui" cloche>
-  <div className="sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
+  <div className="finance-cartes-lisibles sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <h1 className="mb-1 ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('SÉNEVÉ Compte','SÉNEVÉ Account')}</h1>
    <p className="hd-classique sim-ios-sous">{l('Chaque répartition remplit les caisses. Touche une caisse quand l’argent a été donné, dépensé ou investi. La remise à zéro garde l’historique ; seul « Modifier » dans Mon bilan l’efface.','Each allocation fills the counters. Tap one when the money has been given, spent or invested. A reset keeps the history; only “Edit” in My summary erases it.')}</p>
    {message('haut')}
