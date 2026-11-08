@@ -1139,12 +1139,12 @@
 :root:root:root:root .barre-nav a.ios-onglet{transition:color .25s ease!important}
 @media (prefers-reduced-motion:reduce){.barre-nav-pastille{transition:none}}
 
-/* Barre du bas : libellés noirs bien lisibles et pastille ajustée au contenu de l'onglet. */
+/* Pastille contenue dans son onglet ; texte contrasté, sans toucher l'onglet voisin. */
 :root:root:root:root .barre-nav a.ios-onglet,
 :root:root:root:root .barre-nav a.ios-onglet[aria-current="page"]{color:#111!important;font-weight:600!important}
 :root:root:root:root .barre-nav .ios-onglet-contenu{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:max-content;white-space:nowrap}
-:root:root:root:root .barre-nav .ios-onglet-label{display:block;color:#111!important;font:600 10.5px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif!important;letter-spacing:.1px!important}
-:root:root:root:root .barre-nav-pastille{left:6px;width:74px;will-change:left,width,transform;transition:none!important}
+:root:root:root:root .barre-nav .ios-onglet-label{display:block;color:#111!important;font:700 10px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif!important;letter-spacing:0!important}
+:root:root:root:root .barre-nav-pastille{left:6px;width:60px;will-change:left,width,transform;transition:none!important}
 :root:root:root:root[data-apparence="sombre"] .barre-nav a.ios-onglet,
 :root:root:root:root[data-apparence="sombre"] .barre-nav a.ios-onglet[aria-current="page"],
 :root:root:root:root[data-apparence="sombre"] .barre-nav .ios-onglet-label{color:#f5f5f7!important}

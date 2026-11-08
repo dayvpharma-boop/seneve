@@ -38,8 +38,12 @@ export function BarreNav({ langue }: { langue?: string | null; maquette?: boolea
     const contenu = link?.querySelector<HTMLElement>('.ios-onglet-contenu');
     if (!nav || !link || !contenu || !pill) return null;
     const nr = nav.getBoundingClientRect(), cr = contenu.getBoundingClientRect();
-    const width = Math.min(nr.width - 12, Math.max(74, Math.ceil(cr.width + 28)));
-    const left = Math.max(6, Math.min(nr.width - width - 6, cr.left - nr.left - (width - cr.width) / 2));
+    const cellule = link.parentElement?.getBoundingClientRect();
+    const celluleLargeur = cellule?.width ?? nr.width;
+    const largeurMax = Math.max(40, Math.min(nr.width - 12, celluleLargeur - 8));
+    const width = Math.min(largeurMax, Math.max(52, Math.ceil(cr.width + 12)));
+    const centre = cellule ? cellule.left - nr.left + cellule.width / 2 : cr.left - nr.left + cr.width / 2;
+    const left = Math.max(6, Math.min(nr.width - width - 6, centre - width / 2));
     return { left, width };
   };
 
@@ -61,15 +65,15 @@ export function BarreNav({ langue }: { langue?: string | null; maquette?: boolea
     if (!glisser || reduit || typeof el.animate !== 'function' ||
         (Math.abs(fromLeft - cible.left) < 1 && Math.abs(fromWidth - cible.width) < 1)) { installer(); return; }
 
-    const unionLeft = Math.min(fromLeft, cible.left);
     const unionRight = Math.max(fromLeft + fromWidth, cible.left + cible.width);
-    const etire = unionRight - unionLeft;
+    const etire = Math.min(unionRight - Math.min(fromLeft, cible.left), Math.max(fromWidth, cible.width) * 1.15);
+    const etireGauche = cible.left < fromLeft ? Math.max(6, unionRight - etire) : fromLeft;
     const animation = el.animate([
       { left: String(fromLeft) + 'px', width: String(fromWidth) + 'px', transform: 'scaleY(1)', offset: 0, easing: 'cubic-bezier(.2,.7,.25,1)' },
-      { left: String(unionLeft) + 'px', width: String(etire) + 'px', transform: 'scaleY(.92)', offset: .38, easing: 'cubic-bezier(.16,1,.3,1)' },
-      { left: String(cible.left) + 'px', width: String(cible.width * 1.06) + 'px', transform: 'scaleY(1.02)', offset: .78, easing: 'cubic-bezier(.34,1.25,.64,1)' },
+      { left: String(etireGauche) + 'px', width: String(etire) + 'px', transform: 'scaleY(.94)', offset: .38, easing: 'cubic-bezier(.16,1,.3,1)' },
+      { left: String(cible.left) + 'px', width: String(cible.width * 1.02) + 'px', transform: 'scaleY(1.01)', offset: .78, easing: 'cubic-bezier(.34,1.2,.64,1)' },
       { left: String(cible.left) + 'px', width: String(cible.width) + 'px', transform: 'scaleY(1)', offset: 1 },
-    ], { duration: 680, easing: 'cubic-bezier(.22,.8,.3,1)' });
+    ], { duration: 650, easing: 'cubic-bezier(.22,.8,.3,1)' });
     animation.onfinish = installer;
   };
 
