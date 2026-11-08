@@ -1091,3 +1091,24 @@
 :root:root:root .ios-repos-pause{display:inline-flex;align-items:center;gap:4px;margin:8px 0 0 58px;font-size:12px;font-weight:500;color:var(--ios-doux)}
 @media (prefers-reduced-motion:reduce){:root:root:root .ios-repos-chevron{transition:none}}
 @media (prefers-reduced-transparency:reduce){:root:root:root .ios-repos{background:var(--ios-carte);backdrop-filter:none;-webkit-backdrop-filter:none}}
+/* Page Aujourd'hui de Habitudes & Défis : alignement des cadres (demande de Dr Justin du 08/11/2026).
+   Même dessin : un seul bord, un seul arrondi, une seule marge intérieure, un seul écart entre les blocs. */
+:root:root:root:root .espace-page .hd-stitch:has(> .hd-jour-stitch){border:0!important;background:transparent!important;overflow:visible!important}
+:root:root:root:root .espace-page .hd-raccourcis{margin-left:0!important;margin-right:0!important}
+:root:root:root:root .hd-jour-stitch{--hd-carte-pad:18px;--hd-carte-rayon:20px;display:flex!important;flex-direction:column;gap:20px;padding-left:0!important;padding-right:0!important}
+:root:root:root:root .hd-jour-stitch>*{margin-top:0!important;margin-bottom:0!important}
+:root:root:root:root .hd-jour-stitch>:is(.ios-anneaux,.ios-repos,details,aside,[aria-label="Défi de la semaine"]){border-radius:var(--hd-carte-rayon)!important;padding-left:var(--hd-carte-pad)!important;padding-right:var(--hd-carte-pad)!important}
+:root:root:root:root .hd-jour-stitch .ios-titre-section,
+:root:root:root:root .hd-jour-stitch>section[aria-label="Pour ton dimanche"]>span:first-child,
+:root:root:root:root .hd-jour-stitch>section[aria-label="For your Sunday"]>span:first-child,
+:root:root:root:root .hd-jour-stitch .ios-journee>div:first-child{padding-left:var(--hd-carte-pad)!important;margin-left:0!important}
+:root:root:root:root .hd-jour-stitch>section[aria-label="Pour ton dimanche"],:root:root:root:root .hd-jour-stitch>section[aria-label="For your Sunday"]{gap:12px}
+:root:root:root:root .hd-jour-stitch>section[aria-label="Pour ton dimanche"]>div,:root:root:root:root .hd-jour-stitch>section[aria-label="For your Sunday"]>div,:root:root:root:root .hd-jour-stitch>section>details{border-radius:var(--hd-carte-rayon)!important;padding-left:var(--hd-carte-pad)!important;padding-right:var(--hd-carte-pad)!important}
+:root:root:root:root .espace-page .hd-historique-recette{border:0!important;background:transparent!important}
+:root:root:root:root .hd-jour-stitch .ios-carte,:root:root:root:root .hd-jour-stitch .ios-prochain{padding-left:var(--hd-carte-pad)!important;padding-right:var(--hd-carte-pad)!important}
+:root:root:root:root .hd-jour-stitch .ios-journee .ios-titre-section{padding-left:0!important}
+/* Ma journée : le texte de l'activité prend toute la largeur, les boutons passent dessous (avant : un mot par ligne). */
+:root:root:root:root .hd-jour-stitch .ios-ligne-corps article>div.justify-between.pt-1{flex-wrap:wrap;row-gap:10px}
+:root:root:root:root .hd-jour-stitch .ios-ligne-corps article>div.justify-between.pt-1>p{flex:1 1 100%}
+/* Titres des activités en entier (avant : « Gratitude … ») */
+:root:root:root:root .hd-jour-stitch .ios-ligne-corps article h3.truncate{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.25}
