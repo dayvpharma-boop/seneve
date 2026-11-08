@@ -34,6 +34,14 @@ describe('SÉNEVÉ Finance : seules les cartes blanches sont corrigées en mode 
   expect(css).toContain('.bg-white.text-hd-secondary');
   expect(css).not.toContain('.hd-ecran.ios .bg-white {');
  });
+ it('rend visible seulement l’objectif sélectionné sur fond foncé en mode sombre',()=>{
+  expect(finance).toContain('className="finance-choix-objectifs');
+  expect(finance).toContain('aria-pressed={!nouvelObjectif&&!choixVersementRequis&&g.goal_id===objectif?.goal_id}');
+  expect(css).toContain('.finance-choix-objectifs button[aria-pressed="true"]');
+  expect(css).toContain('background:#202331!important');
+  expect(css).toContain('color:#ffffff!important');
+  expect(contraste('#ffffff','#202331')).toBeGreaterThan(7);
+ });
  it('ne modifie pas les autres pages ni les calculs',()=>{
   expect(css).not.toContain('data-apparence="clair"');
   expect(css).not.toContain('.bb-page');
