@@ -43,6 +43,8 @@ import { AfficheAnnonce } from '@/components/AfficheAnnonce';
 import './styles-introuvable.css';
 import './styles-accents.css';
 import './styles-ilots-clairs.css';
+// Mélanges très doux sur les pages participant FR/EN, après les styles existants.
+import './styles-harmonie-globale.css';
 import { enregistrerServiceWorker } from '@/lib/hors-ligne';
 
 // Pages chargées à la demande : seul le Test des 7 Racines (la page d'arrivée) reste dans le fichier principal.
