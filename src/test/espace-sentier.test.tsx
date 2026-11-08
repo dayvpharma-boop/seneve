@@ -80,8 +80,8 @@ describe('Espace — écran « Aujourd’hui »', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Annuler' }));
     expect(screen.queryByRole('button', { name: 'Confirmer la déconnexion' })).toBeNull();
     expect(mocksDeconnexion.signOut).not.toHaveBeenCalled();
-    fireEvent.click(bouton);
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmer la déconnexion' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Se déconnecter' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Confirmer la déconnexion' }));
     await waitFor(() => expect(mocksDeconnexion.signOut).toHaveBeenCalledTimes(1));
     expect(mocksDeconnexion.signOut).toHaveBeenCalledWith({ scope: 'local' });
   });
