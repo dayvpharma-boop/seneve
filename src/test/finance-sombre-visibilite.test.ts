@@ -34,13 +34,18 @@ describe('SÉNEVÉ Finance : seules les cartes blanches sont corrigées en mode 
   expect(css).toContain('.bg-white.text-hd-secondary');
   expect(css).not.toContain('.hd-ecran.ios .bg-white {');
  });
- it('rend visible seulement l’objectif sélectionné sur fond foncé en mode sombre',()=>{
+ it('rend visible le seul objectif sélectionné sur fond lavande en mode sombre',()=>{
   expect(finance).toContain('className="finance-choix-objectifs');
   expect(finance).toContain('aria-pressed={!nouvelObjectif&&!choixVersementRequis&&g.goal_id===objectif?.goal_id}');
   expect(css).toContain('.finance-choix-objectifs button[aria-pressed="true"]');
-  expect(css).toContain('background:#202331!important');
-  expect(css).toContain('color:#ffffff!important');
-  expect(contraste('#ffffff','#202331')).toBeGreaterThan(7);
+  expect(css).toContain('background:#eee8fc!important');
+  expect(css).toContain('color:#151b36!important');
+  expect(css).toContain('-webkit-text-fill-color:#151b36!important');
+  expect(css).toContain('border:2px solid #49439b!important');
+  expect(contraste('#151b36','#eee8fc')).toBeGreaterThan(7);
+  const dernier=css.slice(css.indexOf('/* Objectif sélectionné en mode sombre (Voiture'));
+  expect(dernier).toContain('data-apparence="sombre"');
+  expect(dernier).not.toContain('data-apparence="clair"');
  });
  it('ne modifie pas les autres pages ni les calculs',()=>{
   expect(css).not.toContain('data-apparence="clair"');
