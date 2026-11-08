@@ -53,3 +53,12 @@ it('un jour de semaine : rien ne change, pas de volet « Au repos »',async()=>{
  expect(journee.querySelector('.ios-liste')!.textContent).toMatch(/Exercice/);
  expect(screen.queryByRole('complementary',{name:'Dimanche, jour de repos'})).toBeNull();
 });
+
+it('« Mes habitudes » est placé juste avant « Suivre mes défis facultatifs » (demande du 08/11/2026)',async()=>{
+ mocks.charger.mockResolvedValue(jour(LUNDI,false));
+ render(<MemoryRouter><ActivitesJourRecette enrollmentId={E} participantId="P1" dateLocale={LUNDI} langue="fr" fuseau={F} avantDefis={<nav aria-label="Mes habitudes">raccourcis</nav>}/></MemoryRouter>);
+ const nav=await screen.findByRole('navigation',{name:'Mes habitudes'});
+ const suivi=await screen.findByRole('region',{name:'Suivi de mes défis facultatifs'});
+ expect(nav.compareDocumentPosition(suivi)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+ expect(nav.compareDocumentPosition(screen.getByRole('region',{name:'Ma journée'}))&Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+});

@@ -1112,3 +1112,5 @@
 :root:root:root:root .hd-jour-stitch .ios-ligne-corps article>div.justify-between.pt-1>p{flex:1 1 100%}
 /* Titres des activités en entier (avant : « Gratitude … ») */
 :root:root:root:root .hd-jour-stitch .ios-ligne-corps article h3.truncate{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.25}
+/* Aujourd'hui : le bloc « fuseau en voyage » vide n'ajoute plus 16 px entre les onglets et la carte du jour (08/11/2026). */
+:root:root:root:root .espace-page .hd-stitch>div.pt-hd-space-md:empty{display:none}

@@ -6,7 +6,7 @@ import {VoletFinanceHabitudes} from './VoletFinanceHabitudes';
 import {DimancheHabitudes} from './DimancheHabitudes';
 import {LecteurPriereHabitudes,momentPriere} from './LecteurPriereHabitudes';
 import {LecturesJourHabitudes,estLectureHabitudes} from './LecturesJourHabitudes';
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {chargerJourRecette,type JourRecette} from '@/lib/habitudes-jour-recette';
 import {bilanHabitudes,type EtatOccurrence} from '@/lib/habitudes';
 import {supabase} from '@/lib/supabase';
@@ -38,9 +38,11 @@ const minutes=(h:string)=>{const [a,b]=h.split(':').map(Number);return (a??0)*60
 /** Écran « Aujourd’hui » des maquettes Stitch : mêmes lectures serveur, mêmes déclarations, même historique.
  * Le prochain rendez-vous n’est qu’un repère d’affichage : il ne valide ni n’envoie rien.
  */
-export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,langue,fuseau='Africa/Kinshasa',finExclue=null,copie}:{enrollmentId:string;participantId:string;dateLocale:string;langue:string;fuseau?:string;finExclue?:string|null;
+export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,langue,fuseau='Africa/Kinshasa',finExclue=null,copie,avantDefis}:{enrollmentId:string;participantId:string;dateLocale:string;langue:string;fuseau?:string;finExclue?:string|null;
  /** Sans réseau : journée gardée sur l'appareil (décision du 29/10/2026). Aucun appel serveur pour l'afficher. */
- copie?:CopieJourHd}){
+ copie?:CopieJourHd;
+ /** Raccourcis « Mes habitudes », placés juste avant « Suivre mes défis facultatifs » (demande du 08/11/2026). */
+ avantDefis?:ReactNode}){
  const horsLigne=Boolean(copie);
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const [lecture,setLecture]=useState<{cle:string;data:JourRecette}|null>(null),[erreur,setErreur]=useState(false),[tour,setTour]=useState(0);
@@ -194,6 +196,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    {defi.adapter&&<details className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant"><summary className="min-h-[44px] flex items-center cursor-pointer font-hd-label-md text-hd-label-md text-hd-secondary">{l('Adapter','Adapting')}</summary><p>{defi.adapter}</p></details>}
    {defi.relire&&<p className="font-hd-scripture-verse text-hd-scripture-verse text-hd-on-surface italic">{l('Pour relire la semaine :','Looking back on the week:')} {defi.relire}</p>}
   </section>}
+  {avantDefis}
   {!horsLigne&&<SuiviDefisHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} jour={data.jour} langue={langue}/>}
   {/* Note de bas de page */}
   <footer className="mt-hd-space-md pt-hd-space-sm pb-hd-space-sm flex flex-col items-center text-center gap-2">

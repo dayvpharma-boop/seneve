@@ -425,15 +425,13 @@ function EspaceDuCompte({ userId }: { userId: string }) {
       // Style iPhone validé le 04/11/2026 : la carte photo générique et le repère texte laissent place aux anneaux et à la carte du jour.
       return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
         {rappelsHabitudesActifs()&&<div className="px-hd-margin pt-hd-space-md"><FuseauVoyage langue={enr.langue}/></div>}
-        <ActivitesJourRecette key={`${enr.enrollment_id}:${date_locale}`} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'}/>
-        <RaccourcisHabitudes titre={en?'My habits':'Mes habitudes'} liens={raccourcisHabitudes(en, enr.enrollment_id, compteurFideliteActif())}/>
+        <ActivitesJourRecette key={`${enr.enrollment_id}:${date_locale}`} enrollmentId={enr.enrollment_id} participantId={data.participantId} dateLocale={date_locale} langue={enr.langue} fuseau={data.fuseauHabitudes??'Africa/Kinshasa'} avantDefis={<RaccourcisHabitudes titre={en?'My habits':'Mes habitudes'} liens={raccourcisHabitudes(en, enr.enrollment_id, compteurFideliteActif())}/>}/>
       </div>{footer(enr.langue)}</>,'journee-nouvelle ios');
     // Sans réseau (décision du 29/10/2026) : la journée HD gardée sur cet appareil, relue et notée comme en ligne.
     const copieHd=horsLigne&&!paused&&!cloture&&!habitudesTerminees&&estProgrammeHdReel(enr.programme_id)&&current===day&&enr.etat==='active'?copiesJourHdValides(userId).find(c=>c.enrollmentId===enr.enrollment_id):undefined;
     if(copieHd)
       return page(enr.langue,<>{header()}{tabs}<div className="hd-stitch bg-hd-background rounded-2xl overflow-hidden">
-        <ActivitesJourRecette key={`${enr.enrollment_id}:${copieHd.dateLocale}:hors-ligne`} enrollmentId={enr.enrollment_id} participantId={copieHd.participantId} dateLocale={copieHd.dateLocale} langue={enr.langue} fuseau={copieHd.fuseau} finExclue={copieHd.finExclue} copie={copieHd}/>
-        <RaccourcisHabitudes titre={en?'My habits':'Mes habitudes'} liens={raccourcisHabitudes(en, enr.enrollment_id, false, true)}/>
+        <ActivitesJourRecette key={`${enr.enrollment_id}:${copieHd.dateLocale}:hors-ligne`} enrollmentId={enr.enrollment_id} participantId={copieHd.participantId} dateLocale={copieHd.dateLocale} langue={enr.langue} fuseau={copieHd.fuseau} finExclue={copieHd.finExclue} copie={copieHd} avantDefis={<RaccourcisHabitudes titre={en?'My habits':'Mes habitudes'} liens={raccourcisHabitudes(en, enr.enrollment_id, false, true)}/>}/>
       </div>{footer(enr.langue)}</>,'journee-nouvelle ios');
     return page(enr.langue,<>{header()}{accueil}{tabs}{repereHabitudes}<section><p className="tag">{enr.nom}</p>
 <h2>{current===day?(en?'My activities today':'Mes activités du jour'):(en?`My activities — day ${current}`:`Mes activités — jour ${current}`)}</h2>
