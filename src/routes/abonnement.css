@@ -1,139 +1,137 @@
-/* « Mon abonnement » : style Apple demandé par Dr Justin le 04/11/2026. Quatre paliers bien distincts
- * (emblèmes pleins, Plus en indigo profond, Accompagnement noir et or), grands prix, coches rondes, sélecteur segmenté. */
-.ab-page{--ab-encre:var(--vivant-encre,#151b36);--ab-doux:var(--vivant-secondaire,#4d5874);--ab-surface:var(--vivant-surface,#fff);--ab-ligne:var(--vivant-ligne,#e3e6f0);--ab-accent:#4b3fd1;--ab-ressort:cubic-bezier(.32,.72,0,1)}
-.ab-page .pv-intro{margin:0 0 22px;font-size:16px;line-height:1.5;color:var(--ab-doux)}
+/* « Mon abonnement », dessin v2 validé par Dr Justin le 08/11/2026 : style Réglages d'iPhone.
+ * Échelle de texte : grand titre 32, titre de carte 22, corps 17, sous-titre 15, note 13, légende 11.
+ * Listes groupées, séparateurs qui commencent après l'icône, icônes au trait sur carrés arrondis colorés. */
+.ab-page{--ab-encre:var(--vivant-encre,#151b36);--ab-doux:var(--vivant-secondaire,#5f6478);--ab-faible:#3c3c434d;--ab-carte:var(--vivant-surface,#fff);--ab-sep:#3c3c4329;--ab-accent:#5b4ee8;--ab-accent-fond:#5b4ee81f;--ab-choisie:#f6f5ff;--ab-vert:#34c759;--ab-vert-texte:#248a3d;--ab-vert-fond:#e8f8ec;--ab-segment:#7676801f;--ab-ressort:cubic-bezier(.32,.72,0,1)}
+.ab-page .ab-retour{margin:0 2px;font:600 11.5px/1.4 Poppins,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--ab-doux)}
+.ab-page .ab-titre{margin:4px 0 0;font:700 32px/1.2 Poppins,system-ui,sans-serif;letter-spacing:-.4px;color:var(--ab-encre)}
+.ab-page .ab-intro{margin:6px 2px 22px;font-size:15px;line-height:1.4;color:var(--ab-doux)}
+.ab-page .ab-section{margin:28px 16px 8px;font:500 13px/1.35 system-ui,sans-serif;letter-spacing:.02em;text-transform:uppercase;color:var(--ab-doux)}
+.ab-page .ab-pied{margin:8px 16px 0;font-size:13px;line-height:1.4;color:var(--ab-doux)}
+.ab-page .ab-vide{color:var(--ab-doux);font-size:15px}
+.ab-page b,.ab-page h2,.ab-page h3{color:var(--ab-encre)}
 
-/* Emblèmes : un dessin plein par palier, sur un fond dégradé qui s'enrichit d'une formule à l'autre. */
-.ab-embleme{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;flex:none;color:#fff;box-shadow:inset 0 1px 0 #ffffff59,0 6px 16px -6px var(--ab-ombre,#0003)}
-.ab-embleme-graine{background:linear-gradient(145deg,#a8dcb9,#3f9466);--ab-ombre:#3f946680}
-.ab-embleme-senev{background:linear-gradient(145deg,#9f97ff,#5146d8);--ab-ombre:#5146d880}
-.ab-embleme-plus{background:linear-gradient(145deg,#ffffff38,#ffffff12);box-shadow:inset 0 1px 0 #ffffff66,inset 0 0 0 1px #ffffff26}
-.ab-embleme-accompagnement{background:linear-gradient(145deg,#f6dc96,#b9852f);color:#2a1f0c;--ab-ombre:#b9852f99}
-.ab-actuelle .ab-embleme-plus{background:linear-gradient(145deg,#7d6cff,#2f2399);--ab-ombre:#2f239980}
-.ab-coche{flex:none;margin-top:1px}
-.ab-coche circle{fill:color-mix(in srgb,var(--ab-accent) 14%,transparent)}
-.ab-coche path{stroke:var(--ab-accent)}
+/* Icônes */
+.ab-tuile{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;color:#fff;flex:none}
+.ab-tuile-grande{width:52px;height:52px;border-radius:14px}
+.ab-t-vert{background:#34c759}.ab-t-violet{background:#5b4ee8}.ab-t-indigo{background:#5856d6}.ab-t-or{background:#c8961e}.ab-t-cyan{background:#30b0c7}.ab-t-bleu{background:#007aff}
+.ab-t-orange{background:#ff9500}.ab-t-rose{background:#ff2d55}.ab-t-rouge{background:#ff3b30}.ab-t-mauve{background:#af52de}.ab-t-menthe{background:#00c7be}.ab-t-gris{background:#8e8e93}
 
-/* Formule actuelle */
-.ab-actuelle{position:relative;overflow:hidden;background:var(--ab-surface);border:1px solid var(--ab-ligne);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px #151b360a,0 12px 32px -12px #151b3626}
-.ab-actuelle::before{content:"";position:absolute;inset:-40% -20% auto auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--ab-accent) 16%,transparent),transparent);pointer-events:none}
-.ab-actuelle-haut{display:flex;align-items:center;gap:14px;position:relative}
-.ab-actuelle-haut h2{margin:2px 0 0;font:650 26px/1.1 Poppins,system-ui,sans-serif;letter-spacing:-.02em;color:var(--ab-encre)}
-.ab-etiquette{font:600 11.5px/1 Poppins,system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--ab-doux)}
-.ab-duree{display:block;margin-top:4px;font-size:13.5px;font-weight:500;color:var(--ab-doux)}
-.ab-etat{margin-left:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#e4f5ea;color:#1c6b3a;font:600 13px/1.2 Poppins,system-ui,sans-serif}
-.ab-etat::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.ab-terminee .ab-etat{background:#fde7e4;color:#a1261b}
-.ab-jauge{height:6px;border-radius:999px;background:color-mix(in srgb,var(--ab-accent) 14%,transparent);overflow:hidden}
-.ab-jauge span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8f86ff,var(--ab-accent));transition:width 500ms var(--ab-ressort)}
-.ab-bientot .ab-jauge span{background:linear-gradient(90deg,#f3b84a,#d08a00)}
-.ab-message{margin:0;font-size:15px;line-height:1.5;color:var(--ab-encre)}
-.ab-message strong{font-weight:650;font-variant-numeric:tabular-nums}
-.ab-alerte{margin:0;padding:12px 14px;border-radius:14px;background:#fff4dc;color:#6b4a00;font-size:14px;line-height:1.5}
-.ab-inclus,.ab-liste,.ab-bonus ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;font-size:15px;line-height:1.45;color:var(--ab-encre)}
-.ab-inclus li,.ab-liste li,.ab-bonus li{display:flex;gap:10px;align-items:flex-start}
+/* Cartes et listes groupées */
+.ab-carte{background:var(--ab-carte);border-radius:20px;overflow:hidden}
+.ab-groupe{background:var(--ab-carte);border-radius:14px;overflow:hidden}
+.ab-message-carte{padding:18px}
+.ab-message-carte p{margin:0 0 14px;font-size:15px;line-height:1.4;color:var(--ab-doux)}
 
-/* Sélecteur segmenté : un curseur blanc glisse sous le choix, comme sur iPhone. */
-.ab-periode{position:relative;display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:420px;padding:3px;margin:20px 0 22px;border-radius:14px;background:color-mix(in srgb,var(--ab-encre) 8%,transparent)}
-.ab-curseur{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:11px;background:var(--ab-surface);box-shadow:0 3px 8px #0000001f,0 1px 1px #0000000f;transition:transform 380ms var(--ab-ressort)}
+/* Ta formule */
+.ab-encours-haut{display:flex;align-items:center;gap:14px;padding:18px 18px 16px}
+.ab-encours-nom{flex:1;min-width:0}
+.ab-encours-nom small{display:block;font-size:13px;line-height:18px;color:var(--ab-doux)}
+.ab-encours-nom h2{margin:0;font:700 22px/28px Poppins,system-ui,sans-serif;letter-spacing:.2px}
+.ab-duree{display:block;font-size:13px;color:var(--ab-doux)}
+.ab-etat{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ab-vert-texte);background:var(--ab-vert-fond);border-radius:999px;padding:4px 11px;flex:none}
+.ab-etat i{width:7px;height:7px;border-radius:50%;background:var(--ab-vert)}
+.ab-terminee .ab-etat{color:#c4321b;background:#ffebe8}.ab-terminee .ab-etat i{background:#ff3b30}
+.ab-jauge-bloc{padding:0 18px 16px}
+.ab-chiffres{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 8px}
+.ab-chiffres b{font-size:17px;font-weight:600}
+.ab-chiffres span{font-size:15px;color:var(--ab-doux)}
+.ab-jauge{height:6px;border-radius:3px;background:var(--ab-segment);overflow:hidden}
+.ab-jauge span{display:block;height:100%;border-radius:3px;background:var(--ab-vert)}
+.ab-bientot .ab-jauge span{background:#ff9500}
+.ab-alerte{margin:10px 0 0;font-size:13px;line-height:1.4;color:#a35a00}
+.ab-pied-carte{margin:0;border-top:.5px solid var(--ab-sep);padding:12px 18px 14px;font-size:15px;line-height:1.4;color:var(--ab-doux)}
+
+/* Sélecteur Au mois / À l'année */
+.ab-periode{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:2px;border-radius:9px;background:var(--ab-segment);margin:0 0 12px}
+.ab-curseur{position:absolute;top:2px;bottom:2px;left:2px;width:calc(50% - 2px);border-radius:7px;background:var(--ab-carte);box-shadow:0 3px 8px #0000001f,0 3px 1px #0000000a;transition:transform .35s var(--ab-ressort)}
 .ab-periode-an .ab-curseur{transform:translateX(100%)}
-.ab-periode button{position:relative;z-index:1;white-space:nowrap;min-height:44px;padding:0 10px;border:0;border-radius:11px;background:transparent;color:var(--ab-doux);font:600 15px Poppins,system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:color 200ms ease}
-.ab-periode button[aria-checked="true"]{color:var(--ab-encre)}
-.ab-cadeau{position:absolute;top:-11px;right:8px;white-space:nowrap;box-shadow:0 4px 10px -4px #b9852f99;padding:3px 8px;border-radius:999px;background:linear-gradient(135deg,#ffe3a3,#f7c75a);color:#3a2800;font-size:11px;font-weight:650;letter-spacing:.01em}
+.ab-periode button{position:relative;z-index:1;border:0;background:none;padding:7px 0;font-size:13px;font-weight:500;color:var(--ab-encre);cursor:pointer;font-family:inherit}
+.ab-periode button[aria-checked="true"]{font-weight:600}
+.ab-periode em{font-style:normal;font-weight:600;color:var(--ab-vert-texte)}
 
-/* Cartes */
-.ab-formules{display:flex;flex-direction:column;gap:18px}
-.ab-formule{position:relative;background:var(--ab-surface);border:1px solid var(--ab-ligne);border-radius:28px;padding:22px 20px 20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px #151b360a,0 10px 28px -14px #151b3622;transition:transform 300ms var(--ab-ressort),box-shadow 300ms var(--ab-ressort)}
-@media (hover:hover){.ab-formule:hover{transform:translateY(-2px);box-shadow:0 2px 4px #151b360d,0 22px 44px -18px #151b3640}}
-.ab-formule.ab-courante{box-shadow:0 0 0 2px #f2c14e,0 10px 28px -14px #151b3622}
-.ab-formule-haut{display:flex;align-items:center;gap:14px}
-.ab-formule-haut h3{margin:0;font:650 22px/1.15 Poppins,system-ui,sans-serif;letter-spacing:-.02em;color:var(--ab-encre)}
-.ab-formule-haut p{margin:3px 0 0;font-size:14px;line-height:1.35;color:var(--ab-doux)}
-.ab-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:6px 14px;border-radius:999px;background:linear-gradient(135deg,#ffe3a3,#f2bd4a);color:#3a2800;font:650 12px/1.2 Poppins,system-ui,sans-serif;letter-spacing:.02em;box-shadow:0 6px 16px -6px #b9852f99}
-.ab-prix{margin:0;display:flex;align-items:baseline;flex-wrap:wrap;column-gap:2px;row-gap:2px;color:var(--ab-encre)}
-.ab-prix>strong,.ab-montant{font:700 46px/1 Poppins,system-ui,sans-serif;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
-.ab-montant sup{font-size:.5em;font-weight:600;letter-spacing:0;vertical-align:baseline;margin-left:.06em}
-.ab-prix span{margin-left:2px;font-size:15px;font-weight:500;color:var(--ab-doux)}
-.ab-prix small{flex-basis:100%;margin-top:4px;font-size:13.5px;color:var(--ab-doux)}
-.ab-valeur{margin:-6px 0 0;font-size:13.5px;font-weight:600;color:#1c6b3a}
-.ab-places{margin:0;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:650;letter-spacing:.02em;text-transform:uppercase}
-.ab-places::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+/* Liste des formules */
+.ab-f{display:grid;grid-template-columns:22px 1fr auto;align-items:center;column-gap:14px;width:100%;min-height:64px;padding:12px 16px;border:0;background:none;text-align:left;font-family:inherit;color:inherit;cursor:pointer;position:relative;transition:background .2s}
+.ab-f+.ab-f::before{content:"";position:absolute;left:52px;right:0;top:0;border-top:.5px solid var(--ab-sep)}
+.ab-f:active{background:var(--ab-segment)}
+.ab-f.ab-choisie{background:var(--ab-choisie)}
+.ab-radio{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ab-faible);display:grid;place-items:center;transition:background .2s,border-color .2s}
+.ab-choisie .ab-radio{border-color:var(--ab-accent);background:var(--ab-accent)}
+.ab-choisie .ab-radio::after{content:"";width:8px;height:8px;border-radius:50%;background:#fff}
+.ab-f-nom{min-width:0}
+.ab-f-nom b{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-size:17px;line-height:22px;font-weight:600}
+.ab-f-nom small,.ab-f-prix small{display:block;font-size:13px;line-height:18px;color:var(--ab-doux);margin-top:1px}
+.ab-f-prix{text-align:right;font-variant-numeric:tabular-nums}
+.ab-f-prix b{display:block;font-size:17px;line-height:22px;font-weight:600;white-space:nowrap}
+.ab-f-prix small{font-size:12px}
+.ab-etiq{font-size:11px;line-height:13px;font-weight:600;padding:3px 7px;border-radius:6px;background:var(--ab-segment);color:var(--ab-doux)}
+.ab-etiq-or{background:#fff4d6;color:#8a5a00}
 
-/* Boutons */
-.ab-bouton{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:16px;border:0;background:color-mix(in srgb,var(--ab-accent) 12%,transparent);color:var(--ab-accent);font:650 16px Poppins,system-ui,sans-serif;letter-spacing:-.01em;text-decoration:none;cursor:pointer;transition:transform 120ms ease-out,filter 150ms ease}
-.ab-bouton:active{transform:scale(.97)}
-.ab-principal{background:linear-gradient(180deg,#6458f0,#4337cf);color:#fff;box-shadow:inset 0 1px 0 #ffffff40,0 8px 20px -8px #4337cfa6}
-.ab-desactive{background:transparent;border:1px dashed var(--ab-ligne);color:var(--ab-doux);cursor:default}
-.ab-desactive:active{transform:none}
+/* Détail de la formule choisie */
+.ab-detail{margin-top:12px}
+.ab-detail-tete{display:flex;gap:14px;align-items:flex-start;padding:20px 18px 14px}
+.ab-detail-tete h3{margin:0;font:700 22px/28px Poppins,system-ui,sans-serif;letter-spacing:.2px}
+.ab-detail-tete p{margin:2px 0 0;font-size:15px;line-height:20px;color:var(--ab-doux)}
+.ab-montant{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:6px;margin:0;padding:0 18px 12px;font-variant-numeric:tabular-nums}
+.ab-montant b{font:700 38px/1.1 Poppins,system-ui,sans-serif;letter-spacing:-.8px}
+.ab-montant span{font-size:15px;color:var(--ab-doux)}
+.ab-montant small{flex-basis:100%;font-size:13px;color:var(--ab-doux)}
+.ab-economie{margin:0 18px 10px;font-size:13px;font-weight:600;color:var(--ab-vert-texte)}
+.ab-valeur{margin:0 18px 12px;padding:10px 12px;border-radius:10px;background:#f2fbf4;font-size:13px;line-height:18px;color:#1d6b33}
+.ab-valeur b{color:inherit}
+.ab-sous-titre{margin:6px 18px 0;padding-top:12px;border-top:.5px solid var(--ab-sep);font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--ab-doux)}
+.ab-atouts{list-style:none;margin:0;padding:0}
+.ab-atouts li{display:grid;grid-template-columns:30px 1fr;column-gap:14px;align-items:center;padding:10px 18px;position:relative}
+.ab-atouts li+li::before{content:"";position:absolute;left:62px;right:0;top:0;border-top:.5px solid var(--ab-sep)}
+.ab-atouts b{display:block;font-size:15px;line-height:20px;font-weight:600}
+.ab-atouts small{display:block;font-size:13px;line-height:18px;color:var(--ab-doux)}
+.ab-tout{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px 18px;border:0;border-top:.5px solid var(--ab-sep);background:none;font:inherit;font-size:15px;color:var(--ab-accent);cursor:pointer}
+.ab-tout svg{color:var(--ab-faible);transition:transform .25s}
+.ab-tout[aria-expanded="true"] svg{transform:rotate(-90deg)}
+.ab-tout[aria-expanded="false"] svg{transform:rotate(90deg)}
+.ab-action{padding:8px 18px 18px}
+.ab-cta{display:grid;place-items:center;height:50px;border:0;border-radius:12px;background:var(--ab-accent);color:#fff!important;font:600 17px/22px system-ui,sans-serif;text-decoration:none;cursor:pointer;width:100%;transition:transform .1s ease-out,opacity .2s}
+.ab-cta:active{transform:scale(.98)}
+.ab-cta.ab-desactive{background:var(--ab-segment);color:var(--ab-doux)!important;cursor:default}
+.ab-rassure{display:flex;justify-content:center;align-items:center;gap:5px;margin-top:10px;font-size:13px;color:var(--ab-doux)}
 
-/* Avantages de l'année */
-.ab-bonus{border-radius:20px;padding:14px 16px;background:linear-gradient(135deg,#fff6e0,#fdecd8);color:#2a1f0c;display:flex;flex-direction:column;gap:10px;animation:ab-apparait 320ms var(--ab-ressort) both}
-@keyframes ab-apparait{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
-.ab-economie{margin:0;font:650 16px/1.3 Poppins,system-ui,sans-serif;letter-spacing:-.01em;color:#1c6b3a}
-.ab-bonus-titre{margin:0;display:flex;align-items:center;gap:6px;font:650 11.5px/1 Poppins,system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:#8a5a00}
-.ab-bonus ul{font-size:14.5px;color:#2a1f0c;gap:9px}
-.ab-bonus .ab-coche circle{fill:#e8a93a33}
-.ab-bonus .ab-coche path{stroke:#9a6400}
-
-/* Sénevé Plus : indigo profond, la formule mise en avant. */
-.ab-formule.ab-plus{border:0;color:#fff;background:radial-gradient(120% 80% at 100% 0%,#7b62ff 0%,transparent 55%),linear-gradient(160deg,#2a1f7a 0%,#1a1352 60%,#120d3a 100%);box-shadow:0 20px 44px -18px #2a1f7acc,inset 0 1px 0 #ffffff26}
-.ab-plus .ab-formule-haut h3,.ab-plus .ab-prix,.ab-plus .ab-liste{color:#fff}
-.ab-plus .ab-formule-haut p,.ab-plus .ab-prix span,.ab-plus .ab-prix small{color:#d8d3ffcc}
-.ab-plus .ab-valeur{color:#9df0bd}
-.ab-plus .ab-coche circle{fill:#ffffff26}
-.ab-plus .ab-coche path{stroke:#fff}
-.ab-plus .ab-bonus{background:#ffffff14;box-shadow:inset 0 0 0 1px #ffffff1f;color:#fff}
-.ab-plus .ab-bonus ul,.ab-plus .ab-economie{color:#fff}
-.ab-plus .ab-bonus-titre{color:#ffd98a}
-.ab-plus .ab-bonus .ab-coche circle{fill:#ffd98a33}
-.ab-plus .ab-bonus .ab-coche path{stroke:#ffd98a}
-.ab-plus .ab-bouton,.ab-plus .ab-principal{background:#fff;color:#2a1f7a;box-shadow:0 8px 20px -8px #0009}
-.ab-plus .ab-desactive{background:transparent;color:#d8d3ff;border-color:#ffffff40;box-shadow:none}
-
-/* Accompagnement : noir et or, le palier le plus personnel. */
-.ab-formule.ab-accompagnement{border:0;color:#f6efe2;background:radial-gradient(110% 70% at 0% 0%,#4a3a1c 0%,transparent 55%),linear-gradient(165deg,#1d1914 0%,#110f0c 100%);box-shadow:0 20px 44px -18px #000c,inset 0 0 0 1px #e9c46a2e}
-.ab-accompagnement .ab-formule-haut h3,.ab-accompagnement .ab-prix,.ab-accompagnement .ab-liste{color:#f6efe2}
-.ab-accompagnement .ab-formule-haut p,.ab-accompagnement .ab-prix span,.ab-accompagnement .ab-prix small{color:#d9ccb3b3}
-.ab-accompagnement .ab-coche circle{fill:#e9c46a26}
-.ab-accompagnement .ab-coche path{stroke:#e9c46a}
-.ab-accompagnement .ab-places{color:#e9c46a}
-.ab-accompagnement .ab-bonus{background:#e9c46a14;box-shadow:inset 0 0 0 1px #e9c46a33;color:#f6efe2}
-.ab-accompagnement .ab-bonus ul,.ab-accompagnement .ab-economie{color:#f6efe2}
-.ab-accompagnement .ab-bonus-titre{color:#e9c46a}
-.ab-accompagnement .ab-bonus .ab-coche path{stroke:#e9c46a}
-.ab-accompagnement .ab-bouton{background:linear-gradient(180deg,#f3d58a,#c9973c);color:#21180a;box-shadow:inset 0 1px 0 #ffffff66,0 8px 20px -8px #c9973c99}
-
-.ab-page .pv-note{font-size:13.5px;line-height:1.55;color:var(--ab-doux)}
+/* Tableau comparatif */
+.ab-ligne{display:grid;grid-template-columns:1fr repeat(4,38px);column-gap:4px;align-items:center;padding:0 10px 0 16px;min-height:50px;position:relative}
+.ab-ligne+.ab-ligne::before{content:"";position:absolute;left:16px;right:0;top:0;border-top:.5px solid var(--ab-sep)}
+.ab-ligne-tete{min-height:58px}
+.ab-lib{font:400 15px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;letter-spacing:-.2px;color:var(--ab-encre);min-width:0}
+.ab-ligne-tete .ab-lib{font-weight:600}
+.ab-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;line-height:13px;font-weight:600;color:var(--ab-doux);white-space:nowrap}
+.ab-ligne-tete .ab-tuile{width:22px;height:22px;border-radius:6px}
+.ab-ligne-tete .ab-tuile svg{width:13px;height:13px}
+.ab-oui{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ab-vert);color:#fff}
+.ab-oui svg{stroke-width:3.4}
+.ab-non{width:12px;height:2px;border-radius:2px;background:var(--ab-faible)}
+.ab-mois{font-size:11px;font-weight:600;color:var(--ab-doux);font-variant-numeric:tabular-nums}
 
 /* Offrir */
-.ab-offrir{margin:26px 0 6px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px;border-radius:24px;background:linear-gradient(135deg,#fff4dc,#fbe6ee);color:#2a1f0c}
-.ab-offrir>div{flex:1;min-width:180px}
-.ab-offrir h2{margin:0;font:650 18px/1.3 Poppins,system-ui,sans-serif;letter-spacing:-.01em}
-.ab-offrir p{margin:4px 0 0;font-size:14px;line-height:1.45}
-.ab-icone{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;flex:none}
-.ab-offrir .ab-icone{background:linear-gradient(145deg,#ffe3a3,#f2bd4a);color:#3a2800}
-.ab-offrir .ab-bouton{background:#2a1f0c;color:#fff4dc;min-height:46px}
+.ab-offrir{display:grid;grid-template-columns:52px 1fr;column-gap:14px;align-items:start;padding:18px}
+.ab-offrir h3{margin:0;font-size:17px;line-height:22px;font-weight:600}
+.ab-offrir p{margin:2px 0 12px;font-size:15px;line-height:20px;color:var(--ab-doux)}
+.ab-bouton-s{display:inline-flex;align-items:center;height:34px;padding:0 16px;border-radius:999px;background:var(--ab-accent-fond);color:var(--ab-accent)!important;font-size:15px;font-weight:600;text-decoration:none}
 
-/* Mes achats */
-.ab-achat{display:flex;align-items:center;gap:12px;min-height:58px;padding:8px 0;color:var(--ab-encre);border-bottom:1px solid var(--ab-ligne)}
-.ab-achat:last-child{border-bottom:0}
-.ab-achat span{flex:1;font-size:15px}
-.ab-achat small{font-size:12.5px;color:var(--ab-doux)}
-.ab-vide{margin:14px 0;color:var(--ab-doux)}
+/* Paiement, achats */
+.ab-l{display:grid;grid-template-columns:30px 1fr auto;column-gap:14px;align-items:center;padding:10px 16px;min-height:56px;position:relative;color:inherit;text-decoration:none}
+.ab-l+.ab-l::before{content:"";position:absolute;left:60px;right:0;top:0;border-top:.5px solid var(--ab-sep)}
+.ab-l b{display:block;font-size:17px;line-height:22px;font-weight:400}
+.ab-l small{display:block;font-size:13px;line-height:18px;color:var(--ab-doux)}
+.ab-chev{color:var(--ab-faible);display:grid}
 
-/* Mode sombre : surfaces claires assombries ; Plus et Accompagnement gardent leur matière. */
-:root[data-apparence] .ab-page{--ab-accent:#4b3fd1}
-:root[data-apparence="sombre"] .ab-page{--ab-accent:#b4aaff}
-@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]) .ab-page{--ab-accent:#b4aaff}:root:not([data-apparence="clair"]) .ab-offrir{background:linear-gradient(135deg,#3a2f12,#3a2230);color:#fff4dc}:root:not([data-apparence="clair"]) .ab-offrir .ab-bouton{background:#ffd482;color:#241a00}:root:not([data-apparence="clair"]) .ab-bonus{background:linear-gradient(135deg,#3a2f12,#3a2a20);color:#fff4dc}:root:not([data-apparence="clair"]) .ab-bonus ul{color:#fff4dc}:root:not([data-apparence="clair"]) .ab-economie{color:#9df0bd}:root:not([data-apparence="clair"]) .ab-etat{background:#1c6b3a40;color:#9df0bd}:root:not([data-apparence="clair"]) .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-bonus-titre{color:#ffd98a}:root:not([data-apparence="clair"]) .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-bonus .ab-coche path{stroke:#ffd98a}}
-:root[data-apparence="sombre"] .ab-page{--ab-accent:#b4aaff}
-:root[data-apparence="sombre"] .ab-offrir{background:linear-gradient(135deg,#3a2f12,#3a2230);color:#fff4dc}
-:root[data-apparence="sombre"] .ab-offrir .ab-bouton{background:#ffd482;color:#241a00}
-:root[data-apparence="sombre"] .ab-bonus{background:linear-gradient(135deg,#3a2f12,#3a2a20);color:#fff4dc}
-:root[data-apparence="sombre"] .ab-bonus ul{color:#fff4dc}
-:root[data-apparence="sombre"] .ab-economie{color:#9df0bd}
-:root[data-apparence="sombre"] .ab-etat{background:#1c6b3a40;color:#9df0bd}
-:root[data-apparence="sombre"] .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-bonus-titre{color:#ffd98a}
-:root[data-apparence="sombre"] .ab-formule:not(.ab-plus,.ab-accompagnement) .ab-bonus .ab-coche path{stroke:#ffd98a}
+@media (prefers-reduced-motion:reduce){.ab-curseur,.ab-tout svg,.ab-f{transition:none}}
 
-@media (prefers-reduced-motion:reduce){.ab-bouton:active,.ab-formule:hover{transform:none}.ab-jauge span,.ab-curseur,.ab-formule{transition:none}.ab-bonus{animation:none}}
-@media (prefers-contrast:more){.ab-formule,.ab-actuelle{border:2px solid currentColor}}
+/* Mode sombre : surfaces de l'application, accents éclaircis. */
+:root[data-apparence="sombre"] .ab-page{--ab-carte:var(--vivant-surface,#1c1c1e);--ab-sep:#ffffff1f;--ab-faible:#ebebf54d;--ab-accent:#a59bff;--ab-accent-fond:#a59bff26;--ab-choisie:#a59bff1a;--ab-vert-texte:#7ee2a0;--ab-vert-fond:#34c75926;--ab-segment:#7676803d}
+:root[data-apparence="sombre"] .ab-cta{background:#7c6ff2}
+:root[data-apparence="sombre"] .ab-valeur{background:#34c7591f;color:#9df0bd}
+:root[data-apparence="sombre"] .ab-etiq-or{background:#c8961e33;color:#ffd98a}
+:root[data-apparence="sombre"] .ab-alerte{color:#ffcc80}
+:root[data-apparence="sombre"] .ab-curseur{background:#636366}
+.ab-lib small{display:block;font-size:12px;line-height:16px;color:var(--ab-doux);letter-spacing:0;margin-top:1px}
+.ab-mois{text-align:center;line-height:13px}
+.ab-ligne{padding-top:6px;padding-bottom:6px}
+/* La police ne dépend pas de la page visitée avant (styles-profil.css impose Literata sur .pf-page). */
+.pf-page.pv-page.ab-page{font:400 16px/1.4 Poppins,system-ui,sans-serif}

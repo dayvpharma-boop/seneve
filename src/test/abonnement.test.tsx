@@ -25,8 +25,9 @@ it('mois gratuit en cours : jours restants, aucun produit Chariow encore créé 
  m.rpc.mockResolvedValue({data:{formule:'graine',periode:null,debut:iso(-20),fin:iso(10),achats:[],liens:{}},error:null});
  afficher();
  expect(await screen.findByRole('heading',{level:2,name:'Graine'})).toBeInTheDocument();
- expect(screen.getByText('10 jours restants')).toBeInTheDocument();
- expect(screen.getAllByText('Bientôt disponible')).toHaveLength(2);
+ expect(screen.getByText('Encore 10 jours')).toBeInTheDocument();
+ expect(screen.getAllByText('Bientôt disponible')).toHaveLength(1);
+ fireEvent.click(screen.getByRole('radio',{name:/^Accompagnement/}));
  expect(screen.getByRole('link',{name:'Demander une place'})).toHaveAttribute('href','/aide?motif=accompagnement');
  expect(m.rpc).toHaveBeenCalledWith('mon_abonnement');
 });
