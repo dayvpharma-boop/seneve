@@ -1070,3 +1070,24 @@
 :root:root:root:root #s-result.resultat-anneaux .root-category{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
 :root:root:root:root #s-result.resultat-anneaux .result-next .btn-link{text-transform:none!important;letter-spacing:-.01em!important;white-space:nowrap}
 :root:root:root:root #s-result.resultat-anneaux .invite-card :is(a,button){text-transform:none!important;letter-spacing:-.01em!important}
+
+/* Dimanche allégé (maquette validée le 08/11/2026) : carte en verre, volet « Au repos aujourd'hui ». */
+:root:root:root .ios-repos{display:flex;gap:14px;align-items:flex-start;margin:16px 0 20px;padding:18px;border-radius:24px;background:color-mix(in srgb,var(--ios-carte) 62%,transparent);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:inset 0 0 0 .5px color-mix(in srgb,#fff 70%,transparent),0 8px 30px rgb(88 78 232 / .12);background-image:radial-gradient(120% 90% at 100% 0%,rgb(255 216 176 / .45),transparent 60%),radial-gradient(90% 80% at 0% 0%,rgb(217 212 255 / .6),transparent 65%);font-family:var(--ios-police)}
+:root:root:root .ios-repos-icone{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;color:#fff;background:linear-gradient(135deg,var(--ios-accent-2),var(--ios-accent))}
+:root:root:root .ios-repos small{display:block;font-size:13px;font-weight:600;color:var(--ios-accent);letter-spacing:-.005em}
+:root:root:root .ios-repos h2{margin:2px 0 4px;font-size:22px;line-height:1.15;font-weight:700;letter-spacing:-.01em;color:var(--ios-encre)}
+:root:root:root .ios-repos p{margin:0;font-size:15px;line-height:1.35;color:var(--ios-doux)}
+:root:root:root .ios-repos-volet>summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 16px 10px 14px;background:var(--ios-carte);border-radius:20px;cursor:pointer;font-family:var(--ios-police);box-shadow:0 1px 2px #0000000a}
+:root:root:root .ios-repos-volet>summary::-webkit-details-marker{display:none}
+:root:root:root .ios-repos-volet[open]>summary{border-radius:20px 20px 0 0;border-bottom:.5px solid var(--ios-ligne)}
+:root:root:root .ios-repos-volet[open]>.ios-liste{border-radius:0 0 20px 20px}
+:root:root:root .ios-repos-volet summary b{display:block;font-size:17px;font-weight:400;letter-spacing:-.022em;color:var(--ios-encre)}
+:root:root:root .ios-repos-volet summary small{display:block;font-size:13px;color:var(--ios-doux)}
+:root:root:root .ios-repos-tuile{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;background:#aeaeb2;color:#fff}
+:root:root:root .ios-repos-nombre{font-size:15px;color:var(--ios-doux)}
+:root:root:root .ios-repos-chevron{display:inline-block;color:#c7c7cc;transition:transform .3s var(--ios-ressort)}
+:root:root:root .ios-repos-volet[open] .ios-repos-chevron{transform:rotate(90deg)}
+:root:root:root .ios-ligne-repos .ios-tuile{filter:grayscale(1);opacity:.75}
+:root:root:root .ios-repos-pause{display:inline-flex;align-items:center;gap:4px;margin:8px 0 0 58px;font-size:12px;font-weight:500;color:var(--ios-doux)}
+@media (prefers-reduced-motion:reduce){:root:root:root .ios-repos-chevron{transition:none}}
+@media (prefers-reduced-transparency:reduce){:root:root:root .ios-repos{background:var(--ios-carte);backdrop-filter:none;-webkit-backdrop-filter:none}}
