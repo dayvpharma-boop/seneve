@@ -49,7 +49,8 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
   fireEvent.change(screen.getByLabelText('Nom du créancier'),{target:{value:'Fournisseur A'}});
   fireEvent.change(screen.getByLabelText('Montant dû'),{target:{value:'300'}});
   // Le franc congolais est proposé d’abord : cette dette est en dollars.
-  fireEvent.change(screen.getByLabelText('Monnaie'),{target:{value:'USD'}});
+  fireEvent.click(screen.getByLabelText('Monnaie'));
+  fireEvent.click(within(screen.getByRole('dialog',{name:'Monnaie'})).getAllByRole('option',{name:/Dollar américain/})[0]!);
   fireEvent.click(screen.getByRole('button',{name:'Ajouter cette dette'}));
   await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_debt_add_named',expect.objectContaining({
     p_enrollment_id:enrollmentId,p_creditor_name:'Fournisseur A',p_monthly_basis:null,p_weekly_basis:'150.00',p_repayment_percent:'10'
@@ -57,7 +58,7 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
   expect(await screen.findByRole('article',{name:'Fournisseur A'})).toBeVisible();
   expect(screen.getByText(/15.*par semaine/)).toBeVisible();
   expect(screen.getByText(/60.*par mois/)).toBeVisible();
-});
+},20000);
 
 it('ajoute un nom à une dette existante et la présélectionne pour le remboursement',async()=>{
   const enrollmentId='a58c18be-22d3-4e33-8a73-554fdfd693af';

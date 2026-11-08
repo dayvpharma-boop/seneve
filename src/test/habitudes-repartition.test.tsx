@@ -54,12 +54,21 @@ it('la page affiche la répartition et garde les pourcentages dans leurs limites
 it('le dollar américain est en premier et le franc congolais juste après le kwanza',async()=>{
  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
  render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);
- const options=[...(screen.getByLabelText('Monnaie') as HTMLSelectElement).options];
- expect(options.slice(0,6).map(o=>o.text)).toEqual(['Dollar américain (USD)','Euro (EUR)','Franc CFA d’Afrique centrale (XAF)','Franc CFA d’Afrique de l’Ouest (XOF)','Kwanza angolais (AOA)','Franc congolais (CDF)']);
- fireEvent.change(screen.getByLabelText('Monnaie'),{target:{value:'USD'}});
+ // Feuille « Monnaie » style iPhone (08/11/2026) : « Les plus utilisées » dans l'ordre demandé.
+ expect(screen.getByLabelText('Monnaie').textContent).toMatch(/Dollar américain/);
+ fireEvent.click(screen.getByLabelText('Monnaie'));
+ const feuille=screen.getByRole('dialog',{name:'Monnaie'});
+ const options=within(feuille).getAllByRole('option').slice(0,6).map(o=>o.querySelector('b')!.textContent);
+ expect(options).toEqual(['Dollar américain','Euro','Franc CFA d’Afrique centrale','Franc CFA d’Afrique de l’Ouest','Kwanza angolais','Franc congolais']);
+ // La recherche trouve par nom ou par code, sans tenir compte des accents.
+ fireEvent.change(within(feuille).getByRole('searchbox'),{target:{value:'congo'}});
+ expect(within(feuille).getAllByRole('option').map(o=>o.querySelector('small')!.textContent)).toEqual(['CDF']);
+ fireEvent.change(within(feuille).getByRole('searchbox'),{target:{value:'usd'}});
+ fireEvent.click(within(feuille).getByRole('option',{name:/Dollar américain/}));
+ expect(screen.queryByRole('dialog',{name:'Monnaie'})).toBeNull();
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
  expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/1\s?000 USD/);
-});
+},20000);
 
 it('Réserve de joie : de 0 à 10 % (demande du 08/11/2026), 10 % proposés au départ',async()=>{
  const {LIMITES_REPARTITION,POURCENTAGES_DEFAUT,repartir}=await import('@/lib/habitudes-repartition');

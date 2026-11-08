@@ -8,7 +8,7 @@ import {chargerSuiviFinancier,supprimerObjectif,supprimerDette,creerDetteSuivie,
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {decimalesDevise,deviseAcceptee,montantValidePourDevise} from '@/lib/devises';
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
-import {OptionsDevises} from '@/components/OptionsDevises';
+import {ChoixDevise,ChoixTypeObjectif} from './ChoixDevise';
 import {momentLisible} from '@/lib/date-heure-finances';
 import {chargerCompteurs,type Compteurs,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {NotFound} from '@/routes/introuvable';
@@ -221,7 +221,6 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
   finally{setBusy(false);}
  }
  const message=(zone:Zone)=>annonce?.zone===zone?<p role={annonce.erreur?'alert':'status'} aria-live="polite" className={`mt-2.5 flex items-start gap-2 rounded-xl p-3 text-sm ${annonce.erreur?'bg-red-50 text-red-800':'bg-emerald-50 text-emerald-900'}`}><IconeHD nom={annonce.erreur?'info':'check_circle'} className="shrink-0 text-[18px]"/>{annonce.texte}</p>:null;
- const deviseOptions=<OptionsDevises langue={en?'en':'fr'}/>;
  const pas=(devise:string)=>decimalesDevise(devise)===0?1:0.01;
  const titre=(texte:string,action?:ReactNode)=><h2 className="hd-classique sim-ios-titre flex items-baseline justify-between gap-2" style={{textTransform:'none'}}><span style={{textTransform:'uppercase'}}>{texte}</span>{action}</h2>;
  const bouton=(texte:string,couleur='var(--ios-accent,#5b4ee8)')=><button disabled={busy} className="hd-classique sim-ios-bouton disabled:opacity-60" style={{marginTop:12,background:couleur}}>{busy?l('Enregistrement…','Saving…'):texte}</button>;
@@ -240,9 +239,13 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
    <form onSubmit={e=>void creerObjectif(e)} noValidate>
     <div className="sim-ios-groupe hd-classique">
      <Ligne id="hd-objectif-nom" libelle={l('Nom','Name')}><input id="hd-objectif-nom" required maxLength={60} value={goalName} onChange={e=>setGoalName(e.target.value)} placeholder={l('Ex. Moto-taxi','E.g. Motorbike')} style={{width:'55%'}}/></Ligne>
-     <Ligne id="hd-objectif-type" libelle={l('Type','Type')}><select id="hd-objectif-type" value={goalType} onChange={e=>setGoalType(e.target.value as TypeObjectifEpargne)}><option value="reserve_joie">{l('Réserve de joie','Family joy reserve')}</option><option value="epargne_investir">{l('Épargne pour investir','Savings for investing')}</option><option value="autre">{l('Autre objectif','Other goal')}</option></select></Ligne>
+    </div>
+    <h3 className="hd-classique sim-ios-titre">{l('Pour quoi ?','What for?')}</h3>
+    <ChoixTypeObjectif valeur={goalType} onChange={setGoalType} langue={en?'en':'fr'}/>
+    <h3 className="hd-classique sim-ios-titre">{l('Montant','Amount')}</h3>
+    <div className="sim-ios-groupe hd-classique">
      <Ligne id="hd-objectif-cible" libelle={l('Montant cible','Target amount')}>{champMontant('hd-objectif-cible',goalTarget,setGoalTarget,goalCurrency,'250000')}</Ligne>
-     <Ligne id="hd-objectif-devise" libelle={l('Monnaie','Currency')}><select id="hd-objectif-devise" value={goalCurrency} onChange={e=>setGoalCurrency(e.target.value)}>{deviseOptions}</select></Ligne>
+     <Ligne id="hd-objectif-devise" libelle={l('Monnaie','Currency')}><ChoixDevise id="hd-objectif-devise" valeur={goalCurrency} onChange={setGoalCurrency} langue={en?'en':'fr'}/></Ligne>
     </div>
     <p className="sim-ios-note hd-classique">{l('Un objectif personnel : aucun prélèvement n’est fait.','A personal goal: no automatic transfer is made.')}</p>
     {bouton(l('Créer mon objectif','Create my goal'))}
@@ -300,7 +303,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
     <div className="sim-ios-groupe hd-classique">
      <Ligne id="hd-dette-nom" libelle={l('Nom du créancier','Creditor name')}><input id="hd-dette-nom" required maxLength={LONGUEUR_NOM_CREANCIER} value={nomNouvelleDette} onChange={e=>setNomNouvelleDette(e.target.value)} placeholder={l('Ex. banque, proche','E.g. bank, relative')} style={{width:'50%'}}/></Ligne>
      <Ligne id="hd-dette-solde" libelle={l('Montant dû','Amount owed')}>{champMontant('hd-dette-solde',debtBalance,setDebtBalance,debtCurrency,'0')}</Ligne>
-     <Ligne id="hd-dette-devise" libelle={l('Monnaie','Currency')}><select id="hd-dette-devise" value={debtCurrency} onChange={e=>setDebtCurrency(e.target.value)}>{deviseOptions}</select></Ligne>
+     <Ligne id="hd-dette-devise" libelle={l('Monnaie','Currency')}><ChoixDevise id="hd-dette-devise" valeur={debtCurrency} onChange={setDebtCurrency} langue={en?'en':'fr'}/></Ligne>
     </div>
     <p className="sim-ios-note hd-classique">{l('Un nom ou un surnom suffit pour reconnaître la dette.','A name or nickname is enough to recognise the debt.')}</p>
     <details className="mt-3 rounded-xl bg-white px-4 hd-classique sim-ios">
