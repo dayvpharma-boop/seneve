@@ -100,3 +100,13 @@
 }
 /* Les indicateurs verts, les icônes colorées et les CTA texte blanc
  * conservent leurs couleurs de sens. */
+
+/* SÉNEVÉ Finance — objectif choisi sur fond noir en mode sombre.
+ * Les objectifs non sélectionnés restent blancs, écriture foncée.
+ * Correctif limité aux pastilles de choix, pas aux cartes ni aux chiffres. */
+:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ .finance-cartes-lisibles .finance-objectifs-choix button[aria-pressed="true"] {
+  background:#202331!important;
+  color:#ffffff!important;
+  border:1px solid #202331!important;
+}
