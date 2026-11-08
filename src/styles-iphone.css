@@ -1155,8 +1155,8 @@
 :root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.64)!important;backdrop-filter:blur(22px) saturate(170%)!important;-webkit-backdrop-filter:blur(22px) saturate(170%)!important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.18),inset 0 1px 0 rgba(255,255,255,.1),0 8px 28px rgba(0,0,0,.48)!important}
 @media(prefers-reduced-transparency:reduce){:root:root:root:root .barre-nav{background:var(--ios-carte,#fff)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 
-/* Pastille Bible un peu plus ample, selon la largeur de l'onglet. */
-:root:root:root:root .barre-nav a.ios-onglet-bible{padding-left:clamp(11px,3vw,15px)!important;padding-right:clamp(11px,3vw,15px)!important}
-/* Verre dépoli plus translucide : le contenu derrière reste flouté et discret. */
-:root:root:root:root .barre-nav{background:rgba(255,255,255,.56)!important;backdrop-filter:blur(22px) saturate(170%)!important;-webkit-backdrop-filter:blur(22px) saturate(170%)!important}
-:root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.56)!important;backdrop-filter:blur(22px) saturate(170%)!important;-webkit-backdrop-filter:blur(22px) saturate(170%)!important}
+/* Pastille Bible légèrement élargie, proportionnelle à son onglet. */
+:root:root:root:root .barre-nav a.ios-onglet-bible{padding-left:clamp(13px,3.4vw,16px)!important;padding-right:clamp(13px,3.4vw,16px)!important}
+/* Verre dépoli un peu plus translucide, avec arrière-plan toujours adouci. */
+:root:root:root:root .barre-nav{background:rgba(255,255,255,.51)!important;backdrop-filter:blur(22px) saturate(170%)!important;-webkit-backdrop-filter:blur(22px) saturate(170%)!important}
+:root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.51)!important;backdrop-filter:blur(22px) saturate(170%)!important;-webkit-backdrop-filter:blur(22px) saturate(170%)!important}
