@@ -1161,6 +1161,6 @@
 :root:root:root:root .barre-nav{background:rgba(255,255,255,.51)!important;backdrop-filter:blur(22px) saturate(170%)!important;-webkit-backdrop-filter:blur(22px) saturate(170%)!important}
 :root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.51)!important;backdrop-filter:blur(22px) saturate(170%)!important;-webkit-backdrop-filter:blur(22px) saturate(170%)!important}
 
-/* Transparence renforcée : arrière-plan visible et seulement légèrement flouté. */
-:root:root:root:root .barre-nav{background:rgba(255,255,255,.34)!important;backdrop-filter:blur(10px) saturate(145%)!important;-webkit-backdrop-filter:blur(10px) saturate(145%)!important}
-:root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.34)!important;backdrop-filter:blur(10px) saturate(145%)!important;-webkit-backdrop-filter:blur(10px) saturate(145%)!important}
+/* Transparence réglée à 26 % : arrière-plan nettement visible sous un léger flou. */
+:root:root:root:root .barre-nav{background:rgba(255,255,255,.26)!important;backdrop-filter:blur(10px) saturate(145%)!important;-webkit-backdrop-filter:blur(10px) saturate(145%)!important}
+:root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.26)!important;backdrop-filter:blur(10px) saturate(145%)!important;-webkit-backdrop-filter:blur(10px) saturate(145%)!important}
