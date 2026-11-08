@@ -1,6 +1,7 @@
 import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {MemoryRouter} from 'react-router-dom';
+import {readFileSync} from 'node:fs';
 
 /** Dimanche allégé (maquette validée par Dr Justin le 08/11/2026) : en haut seulement ce qui compte,
  * les habitudes facultatives rangées dans « Au repos aujourd'hui ». Les autres jours ne changent pas. */
@@ -96,4 +97,18 @@ it('le bouton Commencer ouvre une activité rangée parmi les suivantes',async()
  expect(volet.open).toBe(false);
  fireEvent.click(vue.container.querySelector('.ios-jour-bouton')!);
  expect(volet.open).toBe(true);
+});
+
+it('la palette pastel cible uniquement Aujourd’hui Habitudes & Défis, avec variante sombre',async()=>{
+ mocks.charger.mockResolvedValue(jour(LUNDI,false));
+ afficher(LUNDI);
+ const journee=await screen.findByRole('region',{name:'Ma journée'});
+ expect(journee.closest('.hd-aujourdhui-pastel')).not.toBeNull();
+ expect(journee.closest('.hd-aujourdhui-pastel')!.querySelector('.hd-reflexion-jour')).not.toBeNull();
+ const css=readFileSync(`${process.cwd()}/src/styles-habitudes-aujourdhui-pastel.css`,'utf8');
+ expect(css).toContain(':has(.hd-aujourdhui-pastel)');
+ expect(css).toContain('.hd-aujourdhui-pastel .ios-carte.ios-priere');
+ expect(css).toContain('.hd-aujourdhui-pastel .hd-autres-activites');
+ expect(css).toContain('[data-apparence="sombre"]');
+ expect(css).toContain('prefers-color-scheme:dark');
 });
