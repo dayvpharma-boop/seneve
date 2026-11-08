@@ -231,7 +231,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
   // Disponible = versements − retraits ; c'est lui qui avance vers l'objectif.
   const verse=objectif?totalCents(objectif.entries):0,retire=objectif?totalCents(retraitsDe(objectif.goal_id)):0;
   const total=verse-retire,cible=objectif?montantCents(objectif.target_amount):1;
-  const pct=Math.min(100,Math.round(total/Math.max(1,cible)*100)),reste=Math.max(0,cible-total);
+  const pct=Math.min(100,Math.round(total/Math.max(1,cible)*100)),reste=Math.max(0,cible-total),excedent=Math.max(0,total-cible);
   const dernier=objectif?.entries.at(-1);
   const encouragement=!objectif?'':total===0?l('Ta première semence attend.','Your first seed is waiting.'):total>=cible?l('Objectif atteint : ta semence a grandi.','Goal reached: your seed has grown.'):dernier&&montantCents(dernier.amount)>0?(n=>l(`Ta semence grandit : encore ${n} versement${n>1?'s':''} comme le dernier.`,`Your seed is growing: ${n} more contribution${n>1?'s':''} like the last one.`))(Math.ceil(reste/montantCents(dernier.amount))):l('Chaque versement fait grandir ton jardin.','Each contribution helps your garden grow.');
   const formObjectif=<section aria-labelledby="hd-nouvel-objectif">
@@ -270,6 +270,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
        <div className="mt-1 text-[28px] font-bold leading-tight tracking-tight [overflow-wrap:anywhere]">{formatter(total,objectif.currency,en)}</div>
        <div className="text-sm text-hd-on-surface-variant">{l('disponible','available')} · {l('sur','of')} {formatter(cible,objectif.currency,en)} · {l('reste','left')} {nombre(reste,objectif.currency,en)}</div>
        {retire>0&&<div className="mt-0.5 text-xs text-hd-on-surface-variant">{l(`Mis de côté ${nombre(verse,objectif.currency,false)} · utilisé ${nombre(retire,objectif.currency,false)}`,`Set aside ${nombre(verse,objectif.currency,true)} · used ${nombre(retire,objectif.currency,true)}`)}</div>}
+       {excedent>0&&<p role="status" className="mt-1 text-[13px] text-hd-on-surface-variant">{l(`Excédent de ${nombre(excedent,objectif.currency,false)} ${objectif.currency} sur ta cible. Il reste disponible dans cet objectif. Aucun argent n’est déplacé automatiquement ; tu peux noter un retrait dans Mes compteurs si tu l’utilises.`,`Surplus of ${nombre(excedent,objectif.currency,true)} ${objectif.currency} above your target. It remains available in this goal. No money is moved automatically; you may record a withdrawal in My counters if you use it.`)}</p>}
       </div>
      </div>
      <p className="mt-3.5 flex items-center gap-2.5 rounded-xl bg-emerald-50 px-3 py-2.5 text-sm text-emerald-900"><IconeHD nom={total>=cible?'nature_people':'potted_plant'} className="shrink-0 text-[24px] text-emerald-700"/>{encouragement}</p>
