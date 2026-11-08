@@ -160,6 +160,3 @@ import './styles-modele-lavande.css';
 import './styles-test-accueil-moderne.css';
 import './styles-aujourdhui-lavande.css';
 import './styles-iphone.css';
-
-// Mode sombre : contraste après les styles iPhone et les composants chargés à la demande.
-import './styles-contraste-sombre.css';
