@@ -110,7 +110,7 @@ export function BarreNav({ langue }: { langue?: string | null; maquette?: boolea
         const actif = estActif(e);
         const cle = e.cle;
         return <li key={cle}>
-          <Link ref={el => { liens.current[i] = el; }} to={langue === 'en' ? `${e.vers}?lang=en` : e.vers} className="ios-onglet" aria-current={actif ? 'page' : undefined}
+          <Link ref={el => { liens.current[i] = el; }} to={langue === 'en' ? `${e.vers}?lang=en` : e.vers} className={`ios-onglet${cle === 'bible' ? ' ios-onglet-bible' : ''}`} aria-current={actif ? 'page' : undefined}
             onPointerDown={() => placer(i, true)}>
             {/* Style iPhone validé le 04/11/2026 : mêmes icônes partout, pleines sur l’onglet actif. */}
             <span className="ios-onglet-contenu">
