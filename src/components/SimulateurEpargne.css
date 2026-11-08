@@ -100,3 +100,20 @@
 }
 /* Les indicateurs verts, les icônes colorées et les CTA texte blanc
  * conservent leurs couleurs de sens. */
+
+/* Écran Finance, choix de l'objectif en mode sombre :
+ * l'objectif sélectionné (ex. Voiture) était blanc sur blanc.
+ * Garder les autres puces blanches, mais rendre le choix actif noir/blanc.
+ * Aucune règle pour les cartes, chiffres, formulaires ou autres pages. */
+:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ .finance-cartes-lisibles .finance-choix-objectifs button[aria-pressed="true"] {
+ background:#202331!important;
+ color:#ffffff!important;
+ border:1px solid #202331!important;
+}
+:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios
+ .finance-cartes-lisibles .finance-choix-objectifs button[aria-pressed="false"] {
+ background:#ffffff!important;
+ color:#202331!important;
+ border:1px solid #d9dce5!important;
+}
