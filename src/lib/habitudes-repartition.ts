@@ -33,13 +33,35 @@ export function baseRepartition(profil:ProfilRevenu,recu:string,marchandises:str
  return simulerDime('salaire',recu,'0',zero(frais)).base;
 }
 
-/** Montants en unités de la devise (arrondis à `decimales`), « vivre » = ce qui reste. */
+/** Montants en unités de la devise, sans créer ni perdre la plus petite unité.
+ * L'arrondi indépendant de chaque part pouvait dépasser la base (ex. 0,03 USD).
+ * Méthode des plus grands restes : les parts et « Pour vivre » totalisent exactement la base.
+ * Le taux de dîme reste fixe à 10 % ; aucune répartition supérieure à 100 % n'est acceptée.
+ */
 export function repartir(base:string,p:Pourcentages,decimales:number){
- const f=10**decimales,b=Math.round(Number(base)*f);
- const part=(pct:number)=>Math.round(b*pct/100);
- const dime=part(p.dime),offrande=part(p.offrande),reserve=part(p.reserve),investir=part(p.investir),autre=part(p.autre),dettes=part(p.dettes);
- const vivre=Math.max(0,b-dime-offrande-reserve-investir-autre-dettes);
- return {base:b/f,dime:dime/f,offrande:offrande/f,reserve:reserve/f,investir:investir/f,autre:autre/f,dettes:dettes/f,vivre:vivre/f};
+ if(decimales!==0&&decimales!==2)throw Error('Précision de devise invalide');
+ const montant=Number(base),f=10**decimales;
+ if(!Number.isFinite(montant)||montant<0||montant>9_999_999_999.99)throw Error('Base invalide');
+ const b=Math.round(montant*f);
+ if(!Number.isSafeInteger(b))throw Error('Base trop élevée');
+ const cles=['dime','offrande','reserve','investir','autre','dettes'] as const;
+ if(p.dime!==10||cles.some(c=>!Number.isInteger(p[c])||p[c]<LIMITES_REPARTITION[c].min||p[c]>LIMITES_REPARTITION[c].max))
+  throw Error('Pourcentages invalides');
+ const total=cles.reduce((n,c)=>n+p[c],0);
+ if(total>100)throw Error('Le total ne peut pas dépasser 100 %');
+ const parts=[...cles,'vivre'] as const;
+ const pourcentages=[...cles.map(c=>p[c]),100-total];
+ const quotas=parts.map((cle,i)=>{
+  const exact=BigInt(b)*BigInt(pourcentages[i]!);
+  return {cle,unites:Number(exact/100n),reste:Number(exact%100n),ordre:i};
+ });
+ let aRepartir=b-quotas.reduce((n,q)=>n+q.unites,0);
+ for(const q of [...quotas].sort((a,z)=>z.reste-a.reste||a.ordre-z.ordre)){
+  if(aRepartir===0)break;
+  q.unites++;aRepartir--;
+ }
+ const montants=Object.fromEntries(quotas.map(q=>[q.cle,q.unites/f])) as Record<typeof parts[number],number>;
+ return {base:b/f,dime:montants.dime,offrande:montants.offrande,reserve:montants.reserve,investir:montants.investir,autre:montants.autre,dettes:montants.dettes,vivre:montants.vivre};
 }
 
 /** Propose comment répartir une part « Dettes » : d'abord la plus petite dette, puis la suivante (soldes en centimes). */

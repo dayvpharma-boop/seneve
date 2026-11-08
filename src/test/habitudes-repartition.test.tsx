@@ -76,3 +76,42 @@ it('Réserve de joie : de 0 à 10 % (demande du 08/11/2026), 10 % proposés au d
  expect(POURCENTAGES_DEFAUT.reserve).toBe(10);
  expect(repartir('1000',{...POURCENTAGES_DEFAUT,reserve:0},2).reserve).toBe(0);
 });
+
+it('exercices de calcul : les centimes et monnaies sans décimales ne créent jamais un excédent fictif',()=>{
+ const cas=[
+  {base:'0.03',dec:2},
+  {base:'0.01',dec:2},
+  {base:'1',dec:0},
+  {base:'7',dec:0},
+  {base:'499.99',dec:2},
+  {base:'1000',dec:2},
+ ];
+ for(const {base,dec} of cas){
+  const a=repartir(base,POURCENTAGES_DEFAUT,dec);
+  const somme=a.dime+a.offrande+a.reserve+a.investir+a.autre+a.dettes+a.vivre;
+  expect(Math.round(somme*10**dec)).toBe(Math.round(Number(base)*10**dec));
+  expect(Object.values(a).every(v=>v>=0)).toBe(true);
+ }
+ // Ancien arrondi : 0,05 USD avec parts 10+35+10+25+20 = 100 %
+ // donnait 0,06 USD distribués sur une base de seulement 0,05 USD.
+ const autre={...POURCENTAGES_DEFAUT,offrande:35,investir:25,dettes:20};
+ const excessif=repartir('0.05',autre,2);
+ expect(Math.round((excessif.dime+excessif.offrande+excessif.reserve+excessif.investir+excessif.autre+excessif.dettes+excessif.vivre)*100)).toBe(5);
+ expect(excessif.vivre).toBe(0);
+ const p={...POURCENTAGES_DEFAUT,offrande:45};
+ const tout=repartir('0.03',p,2);
+ expect(tout.vivre).toBe(0);
+ expect(Math.round((tout.dime+tout.offrande+tout.reserve+tout.investir+tout.autre+tout.dettes)*100)).toBe(3);
+});
+it('refuse les taux incohérents, la dîme modifiée et les bases impossibles',()=>{
+ expect(()=>repartir('1000',{...POURCENTAGES_DEFAUT,offrande:70},2)).toThrow(/100/);
+ expect(()=>repartir('1000',{...POURCENTAGES_DEFAUT,dime:25},2)).toThrow(/Pourcentages/);
+ expect(()=>repartir('999999999999',POURCENTAGES_DEFAUT,2)).toThrow();
+ expect(()=>repartir('NaN',POURCENTAGES_DEFAUT,2)).toThrow();
+});
+it('exercice dette : 75 réservés, seulement 20 dus, 55 restent sans faux remboursement',()=>{
+ expect(repartirSurDettes(7500,[{id:'d1',resteCentimes:2000}])).toEqual({
+  propositions:[{id:'d1',centimes:2000,solde:true}],surplus:5500
+ });
+ expect(repartirSurDettes(7500,[])).toEqual({propositions:[],surplus:7500});
+});

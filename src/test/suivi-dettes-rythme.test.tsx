@@ -91,3 +91,20 @@ it('ajoute un nom à une dette existante et la présélectionne pour le rembours
   expect(within(renommee).getByLabelText('Montant payé')).toBeVisible();
   expect(within(renommee).getByRole('button',{name:'Enregistrer le paiement'})).toBeVisible();
 });
+
+it('un repère de paiement de 180 USD est plafonné au solde restant de 20 USD',async()=>{
+ const enrollmentId='a58c18be-22d3-4e33-8a73-554fdfd693af';
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{enrollment_id:enrollmentId,savings_goals:[],debts:[{
+   debt_id:'7c011210-b780-41a4-9ec4-8f6566b27755',debt_number:1,
+   opening_balance:'50.00',currency:'USD',creditor_name:'Fournisseur',
+   monthly_basis:'600.00',repayment_percent:'30.00',weekly_basis:null,weekly_repayment_percent:null,
+   payments:[{payment_id:'caaa5555-0000-4000-8000-000000000001',amount:'30.00',date_locale:'2026-11-01'}]
+  }]},error:null};
+  throw Error(f);
+ });
+ render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="participant"/></MemoryRouter>);
+ const fiche=await screen.findByRole('article',{name:'Fournisseur'});
+ expect(fiche.textContent).toMatch(/20.*par mois/);
+ expect(fiche.textContent).not.toMatch(/180.*par mois/);
+});

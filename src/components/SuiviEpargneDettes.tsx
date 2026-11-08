@@ -52,7 +52,8 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const [rythmeDette,setRythmeDette]=useState<RythmeRepereDette>('mensuel');
  const hebdomadaire=rythmeDette==='hebdomadaire';
  const periode=(rythme:RythmeRepereDette)=>rythme==='hebdomadaire'?l('par semaine','per week'):l('par mois','per month');
- const montantRepere=(base:string,taux:string,devise:string)=>formatter(Math.round(montantCents(base)*Number(taux)/100),devise,en);
+ // Un repère de remboursement ne doit jamais recommander plus que la dette.
+ const montantRepere=(base:string,taux:string,devise:string,plafondCents?:number)=>formatter(Math.min(Math.round(montantCents(base)*Number(taux)/100),plafondCents??Infinity),devise,en);
  const reperePret=montantValidePourDevise(debtBase,debtCurrency)&&/^\d+(?:\.\d{1,2})?$/.test(debtPercent)&&Number(debtPercent)<=100;
  const inscription=suivi?.enrollment_id;
  const demandes=useRef(new Map<string,string>());
@@ -231,7 +232,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
   // Disponible = versements − retraits ; c'est lui qui avance vers l'objectif.
   const verse=objectif?totalCents(objectif.entries):0,retire=objectif?totalCents(retraitsDe(objectif.goal_id)):0;
   const total=verse-retire,cible=objectif?montantCents(objectif.target_amount):1;
-  const pct=Math.min(100,Math.round(total/Math.max(1,cible)*100)),reste=Math.max(0,cible-total);
+  const pct=Math.min(100,Math.round(total/Math.max(1,cible)*100)),reste=Math.max(0,cible-total),excedent=Math.max(0,total-cible);
   const dernier=objectif?.entries.at(-1);
   const encouragement=!objectif?'':total===0?l('Ta première semence attend.','Your first seed is waiting.'):total>=cible?l('Objectif atteint : ta semence a grandi.','Goal reached: your seed has grown.'):dernier&&montantCents(dernier.amount)>0?(n=>l(`Ta semence grandit : encore ${n} versement${n>1?'s':''} comme le dernier.`,`Your seed is growing: ${n} more contribution${n>1?'s':''} like the last one.`))(Math.ceil(reste/montantCents(dernier.amount))):l('Chaque versement fait grandir ton jardin.','Each contribution helps your garden grow.');
   const formObjectif=<section aria-labelledby="hd-nouvel-objectif">
@@ -270,6 +271,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
        <div className="mt-1 text-[28px] font-bold leading-tight tracking-tight [overflow-wrap:anywhere]">{formatter(total,objectif.currency,en)}</div>
        <div className="text-sm text-hd-on-surface-variant">{l('disponible','available')} · {l('sur','of')} {formatter(cible,objectif.currency,en)} · {l('reste','left')} {nombre(reste,objectif.currency,en)}</div>
        {retire>0&&<div className="mt-0.5 text-xs text-hd-on-surface-variant">{l(`Mis de côté ${nombre(verse,objectif.currency,false)} · utilisé ${nombre(retire,objectif.currency,false)}`,`Set aside ${nombre(verse,objectif.currency,true)} · used ${nombre(retire,objectif.currency,true)}`)}</div>}
+       {excedent>0&&<p role="status" className="mt-1 text-[13px] text-hd-on-surface-variant">{l(`Excédent de ${nombre(excedent,objectif.currency,false)} ${objectif.currency} sur ta cible. Il reste disponible dans cet objectif. Aucun argent n’est déplacé automatiquement ; tu peux noter un retrait dans Mes compteurs si tu l’utilises.`,`Surplus of ${nombre(excedent,objectif.currency,true)} ${objectif.currency} above your target. It remains available in this goal. No money is moved automatically; you may record a withdrawal in My counters if you use it.`)}</p>}
       </div>
      </div>
      <p className="mt-3.5 flex items-center gap-2.5 rounded-xl bg-emerald-50 px-3 py-2.5 text-sm text-emerald-900"><IconeHD nom={total>=cible?'nature_people':'potted_plant'} className="shrink-0 text-[24px] text-emerald-700"/>{encouragement}</p>
@@ -317,7 +319,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
      <p id="hd-dette-revenu-aide" className="pb-3 text-xs text-hd-on-surface-variant">{hebdomadaire
       ?l('Saisis ce qu’il reste après le coût des marchandises et les dépenses de ton activité. Si ton bénéfice varie, tu peux saisir une moyenne par semaine.','Enter what remains after the cost of goods and business expenses. If profit varies, you can enter a weekly average.')
       :l('Saisis le montant que tu reçois après les retenues sur ton salaire.','Enter what you receive after payroll deductions.')}</p>
-     {reperePret&&<p role="status" className="mb-3 rounded-xl bg-hd-surface-container-low p-3 text-sm">{l('Repère','Guide')} : <strong>{montantRepere(debtBase,debtPercent,debtCurrency)} {periode(rythmeDette)}</strong></p>}
+     {reperePret&&<p role="status" className="mb-3 rounded-xl bg-hd-surface-container-low p-3 text-sm">{l('Repère','Guide')} : <strong>{montantRepere(debtBase,debtPercent,debtCurrency,montantValidePourDevise(debtBalance,debtCurrency)?montantCents(debtBalance):undefined)} {periode(rythmeDette)}</strong></p>}
     </details>
     {bouton(l('Ajouter cette dette','Add this debt'))}
     {message('dette')}
@@ -343,7 +345,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
       const plusPetite=dettesOuvertes.find(x=>x.currency===d.currency)?.debt_id===d.debt_id;
       const dernier=d.payments.at(-1);
       const statut=reste===0?(dernier?l(`Soldée le ${dateCourte(dernier.date_locale,false)}`,`Paid off on ${dateCourte(dernier.date_locale,true)}`):l('Soldée','Paid off')):plusPetite?l('Plus petit solde · à finir d’abord','Smallest balance · finish first'):l('En cours','In progress');
-      const repere=d.repere?`${l('Repère','Guide')} : ${montantRepere(d.repere.base,d.repere.pourcentage,d.currency)} ${periode(d.repere.rythme)}`:dernier?`${l('Dernier paiement','Last payment')} : ${dateCourte(dernier.date_locale,en)}`:l('Aucun remboursement noté','No repayment recorded');
+      const repere=d.repere?`${l('Repère','Guide')} : ${montantRepere(d.repere.base,d.repere.pourcentage,d.currency,reste)} ${periode(d.repere.rythme)}`:dernier?`${l('Dernier paiement','Last payment')} : ${dateCourte(dernier.date_locale,en)}`:l('Aucun remboursement noté','No repayment recorded');
       const estOuverte=ouverte===d.debt_id,edition=nomEnEdition?.id===d.debt_id?nomEnEdition:null;
       const teinte=reste===0?'linear-gradient(180deg,#4cd964,#28b446)':plusPetite?'linear-gradient(180deg,#ffb340,#ff9500)':'linear-gradient(180deg,#8f84ff,#5b4fe0)';
       return <article key={d.debt_id} aria-labelledby={`hd-titre-${d.debt_id}`} className={`rounded-2xl bg-white px-4 py-3.5 transition-shadow ${reste===0&&!estOuverte?'opacity-60':''}`} style={estOuverte?{boxShadow:'0 0 0 2px var(--ios-accent,#5b4ee8)'}:undefined}>
@@ -363,7 +365,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
           <Ligne id={`hd-paiement-date-${d.debt_id}`} libelle={l('Date','Date')}>{champDate(`hd-paiement-date-${d.debt_id}`,paymentDate,setPaymentDate)}</Ligne>
          </div>
          {bouton(l('Enregistrer le paiement','Record payment'))}
-         {d.repere&&<p className="sim-ios-note hd-classique" style={{margin:'8px 6px 0'}}>{l('Ton repère','Your guide')} : {montantRepere(d.repere.base,d.repere.pourcentage,d.currency)} {periode(d.repere.rythme)}.</p>}
+         {d.repere&&<p className="sim-ios-note hd-classique" style={{margin:'8px 6px 0'}}>{l('Ton repère','Your guide')} : {montantRepere(d.repere.base,d.repere.pourcentage,d.currency,reste)} {periode(d.repere.rythme)}.</p>}
          {message('paiement:'+d.debt_id)}
         </form>}
         {d.payments.length>0&&<><h4 className="hd-classique sim-ios-titre" style={{marginLeft:0}}>{l('Historique','History')}</h4>
@@ -378,7 +380,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
           {erreurNom&&<p id="hd-erreur-nom" role="alert" className="mt-1 text-sm text-red-700">{erreurNom}</p>}
           <div className="mt-2 flex gap-2"><button disabled={busy} className="min-h-[44px] rounded-lg px-3 text-sm font-semibold text-white" style={{background:'var(--ios-accent,#5b4ee8)'}}>{l('Enregistrer le nom','Save name')}</button><button type="button" disabled={busy} className="min-h-[44px] rounded-lg px-3 text-sm" onClick={()=>setNomEnEdition(null)}>{l('Annuler','Cancel')}</button></div>
          </form>}
-         {d.repere&&<Ligne libelle={l('Repère de remboursement','Repayment guide')}><span className="text-hd-on-surface-variant" style={{fontSize:15}}>{montantRepere(d.repere.base,d.repere.pourcentage,d.currency)} {periode(d.repere.rythme)}</span></Ligne>}
+         {d.repere&&<Ligne libelle={l('Repère de remboursement','Repayment guide')}><span className="text-hd-on-surface-variant" style={{fontSize:15}}>{montantRepere(d.repere.base,d.repere.pourcentage,d.currency,reste)} {periode(d.repere.rythme)}</span></Ligne>}
          <button type="button" disabled={busy} onClick={()=>setAConfirmer({type:'dette',id:d.debt_id,nom:nomDette(d),detail:l(`Elle disparaît de ta liste. ${d.payments.length?`Ses ${d.payments.length} remboursement${d.payments.length>1?'s':''} (${nombre(rembourse,d.currency,false)} ${d.currency}) restent comptés dans ton bilan.`:'Aucun remboursement n’avait été noté.'}`,`It disappears from your list. ${d.payments.length?`Its ${d.payments.length} repayment${d.payments.length>1?'s':''} (${nombre(rembourse,d.currency,true)} ${d.currency}) stay in your summary.`:'No repayment had been recorded.'}`)})} className="sim-ios-ligne w-full justify-center font-medium" style={{color:'#d70015',fontSize:16}}>{l('Supprimer cette dette','Delete this debt')}</button>
         </div>
        </div>}

@@ -32,6 +32,9 @@ it('« Enregistrer ma répartition » envoie toutes les parts cochées en une fo
  // Pas d'objectif « Pour investir » en USD : la part est grisée et non envoyée.
  await waitFor(()=>expect(within(feuille).getByLabelText(/Pour investir/)).toBeDisabled());
  expect(within(feuille).getByText(/Kanza 60 \(soldée\) · Papy 15/)).toBeInTheDocument();
+ // Un remboursement n'est JAMAIS déclaré sans un choix explicite du participant.
+ expect(within(feuille).getByRole('checkbox',{name:/Dettes/})).not.toBeChecked();
+ fireEvent.click(within(feuille).getByRole('checkbox',{name:/Dettes/}));
  fireEvent.click(within(feuille).getByRole('button',{name:/Enregistrer 4 parts · 400 USD/}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_currency:'USD',p_parts:[
   {part:'dime',amount:'50.00'},{part:'reserve_joie',goal_id:G,amount:'50.00'},{part:'dettes',debt_id:D1,amount:'60.00'},{part:'dettes',debt_id:D2,amount:'15.00'},{part:'vivre',amount:'225.00'}]})));
@@ -126,4 +129,33 @@ it('Ma répartition propose « Autre objectif » et l’envoie vers l’objectif
  expect(within(feuille).getByText(/objectif « École »/)).toBeInTheDocument();
  fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_parts:expect.arrayContaining([{part:'autre',goal_id:t2.goal_id,amount:'100.00'}])})));
+});
+
+it('un excédent de la part Dettes reste au participant et passe à « Pour vivre » seulement sur choix explicite',async()=>{
+ const detteCourte={...suivi,debts:[{...suivi.debts[0]!,opening_balance:'20.00'}]};
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:detteCourte,error:null};
+  if(f==='hd_finance_allocation_save')return {data:{allocation_id:a.p_request_id,deja:false},error:null};
+  throw Error(f);
+ });
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter initialEntries={['/habitudes/repartition?lang=fr']}><HabitudesRepartition/></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'500'}});
+ fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
+ const feuille=await screen.findByRole('dialog');
+ const dette=await within(feuille).findByRole('checkbox',{name:/^Dettes/});
+ const surplus=within(feuille).getByRole('checkbox',{name:/Excédent de la part Dettes/});
+ expect(dette).not.toBeChecked();
+ expect(surplus).not.toBeChecked();
+ expect(within(feuille).getByText(/Disponible pour vivre/)).toBeInTheDocument();
+ // Base 500, part dettes 75, dette existante 20, surplus 55.
+ expect(surplus.closest('li')!.textContent).toMatch(/55\s?USD/);
+ fireEvent.click(dette);
+ fireEvent.click(surplus);
+ fireEvent.click(within(feuille).getByRole('button',{name:/Enregistrer 5 parts · 400 USD/}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_parts:[
+  {part:'dime',amount:'50.00'},{part:'reserve_joie',goal_id:G,amount:'50.00'},
+  {part:'dettes',debt_id:D1,amount:'20.00'},
+  {part:'vivre',amount:'55.00'},{part:'vivre',amount:'225.00'}
+ ]})));
 });
