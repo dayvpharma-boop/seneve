@@ -124,3 +124,29 @@ it('un objectif dépassé montre l’excédent sans le transférer ni réduire l
  expect(within(resume).getByRole('status').textContent).toMatch(/Excédent de 20 USD/);
  expect(within(resume).getByRole('status').textContent).toMatch(/Aucun argent n’est déplacé automatiquement/);
 });
+
+it('préremplissage 25 USD : exige un choix entre Voiture et Achat maison avant de créer le versement',async()=>{
+ const voiture={...suivi.savings_goals[0],goal_id:'5f1c2a4e-1111-4c3b-9a55-000000000011',label:'Voiture',target_amount:'1000.00',entries:[]};
+ const maison={...suivi.savings_goals[0],goal_id:'5f1c2a4e-1111-4c3b-9a55-000000000012',label:'Achat maison',target_amount:'2000.00',entries:[]};
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[voiture,maison]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{...compteurs,withdrawals:[]},error:null};
+  if(f==='hd_finance_savings_entry_add')return {data:{entry_id:a.p_request_id,goal_id:a.p_goal_id,amount:a.p_amount,date_locale:a.p_date_locale},error:null};
+  throw Error(f);
+ });
+ const {fireEvent,waitFor}=await import('@testing-library/react');
+ const {SuiviEpargneDettes}=await import('@/components/SuiviEpargneDettes');
+ render(<MemoryRouter initialEntries={['/habitudes/epargne?montant=25&devise=USD&type=epargne_investir']}>
+  <SuiviEpargneDettes mode="epargne" userId="u"/>
+ </MemoryRouter>);
+ expect(await screen.findByText(/Sélectionne Voiture, Maison ou l’objectif approprié/)).toBeInTheDocument();
+ expect(screen.queryByRole('button',{name:'Ajouter à mon épargne'})).toBeNull();
+ expect(rpc).not.toHaveBeenCalledWith('hd_finance_savings_entry_add',expect.anything());
+ fireEvent.click(screen.getByRole('button',{name:'Achat maison'}));
+ expect(screen.getByLabelText('Montant mis de côté')).toHaveValue(25);
+ fireEvent.click(screen.getByRole('button',{name:'Ajouter à mon épargne'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_savings_entry_add',expect.objectContaining({
+  p_goal_id:maison.goal_id,p_amount:'25.00'
+ })));
+ expect(rpc).not.toHaveBeenCalledWith('hd_finance_savings_entry_add',expect.objectContaining({p_goal_id:voiture.goal_id}));
+});

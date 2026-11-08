@@ -124,8 +124,10 @@ it('Ma répartition propose « Autre objectif » et l’envoie vers l’objectif
  expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/Autre objectif.*100.*10 %/);
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
  const feuille=await screen.findByRole('dialog');
- await within(feuille).findByText(/objectif « Toiture »/);
- fireEvent.change(within(feuille).getByLabelText('Quel autre objectif ?'),{target:{value:t2.goal_id}});
+ const select=await within(feuille).findByLabelText('Choisir l’objectif : Autre objectif') as HTMLSelectElement;
+ expect(select.value).toBe('');
+ expect(within(feuille).getByRole('checkbox',{name:/^Autre objectif/})).toBeDisabled();
+ fireEvent.change(select,{target:{value:t2.goal_id}});
  expect(within(feuille).getByText(/objectif « École »/)).toBeInTheDocument();
  fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_parts:expect.arrayContaining([{part:'autre',goal_id:t2.goal_id,amount:'100.00'}])})));
@@ -158,4 +160,61 @@ it('un excédent de la part Dettes reste au participant et passe à « Pour vivr
   {part:'dettes',debt_id:D1,amount:'20.00'},
   {part:'vivre',amount:'55.00'},{part:'vivre',amount:'225.00'}
  ]})));
+});
+
+it('avec Voiture et Achat maison, la répartition ne choisit jamais Voiture par défaut et permet de verser sur Maison',async()=>{
+ const voiture='5f1c2a4e-1111-4c3b-9a55-000000000011',maison='5f1c2a4e-1111-4c3b-9a55-000000000012';
+ const objectifs=[...suivi.savings_goals,
+  {goal_id:voiture,goal_type:'epargne_investir',label:'Voiture',target_amount:'1000.00',currency:'USD',entries:[]},
+  {goal_id:maison,goal_type:'epargne_investir',label:'Achat maison',target_amount:'3000.00',currency:'USD',entries:[]}];
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:objectifs},error:null};
+  if(f==='hd_finance_allocation_save')return {data:{allocation_id:a.p_request_id,deja:false},error:null};
+  throw Error(f);
+ });
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
+ fireEvent.change(screen.getByLabelText('Coût des marchandises vendues'),{target:{value:'400'}});
+ fireEvent.change(screen.getByLabelText('Charges du commerce'),{target:{value:'100'}});
+ fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
+ const feuille=await screen.findByRole('dialog');
+ const destination=await within(feuille).findByLabelText('Choisir l’objectif : Pour investir') as HTMLSelectElement;
+ expect(destination.value).toBe('');
+ const part=within(feuille).getByRole('checkbox',{name:/^Pour investir/});
+ expect(part).toBeDisabled();
+ expect(within(feuille).getByRole('option',{name:'Voiture'})).toBeInTheDocument();
+ expect(within(feuille).getByRole('option',{name:'Achat maison'})).toBeInTheDocument();
+ fireEvent.change(destination,{target:{value:maison}});
+ expect(destination.value).toBe(maison);
+ expect(within(feuille).getByRole('checkbox',{name:/^Pour investir/})).toBeChecked();
+ fireEvent.click(within(feuille).getByRole('button',{name:/Enregistrer 4 parts · 425 USD/}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({
+  p_parts:[{part:'dime',amount:'50.00'},{part:'reserve_joie',goal_id:G,amount:'50.00'},
+   {part:'epargne_investir',goal_id:maison,amount:'100.00'},{part:'vivre',amount:'225.00'}]
+ })));
+ const payload=rpc.mock.calls.find(c=>c[0]==='hd_finance_allocation_save')?.[1];
+ expect(JSON.stringify(payload)).not.toContain(voiture);
+});
+
+it('la version anglaise distingue aussi deux objectifs d’investissement',async()=>{
+ const voiture='5f1c2a4e-1111-4c3b-9a55-000000000011',maison='5f1c2a4e-1111-4c3b-9a55-000000000012';
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[
+   ...suivi.savings_goals,
+   {goal_id:voiture,goal_type:'epargne_investir',label:'Car',target_amount:'1000.00',currency:'USD',entries:[]},
+   {goal_id:maison,goal_type:'epargne_investir',label:'House',target_amount:'3000.00',currency:'USD',entries:[]}
+  ]},error:null};
+  throw Error(f);
+ });
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter initialEntries={['/habitudes/repartition?lang=en']}><HabitudesRepartition/></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('Sales received'),{target:{value:'500'}});
+ fireEvent.click(screen.getByRole('button',{name:'Save my allocation'}));
+ const feuille=await screen.findByRole('dialog');
+ const choix=await within(feuille).findByLabelText('Choose goal: For investing') as HTMLSelectElement;
+ expect(choix.value).toBe('');
+ fireEvent.change(choix,{target:{value:maison}});
+ expect(choix.value).toBe(maison);
+ expect(within(feuille).getByRole('checkbox',{name:/^For investing/})).toBeChecked();
 });

@@ -43,6 +43,9 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const [suivi,setSuivi]=useState<SuiviFinancier|null>(null),[essai,setEssai]=useState(0),[busy,setBusy]=useState(false),[annonce,setAnnonce]=useState<{zone:Zone;texte:string;erreur:boolean}|null>(null);
  const [goal,setGoal]=useState(''),[goalName,setGoalName]=useState(''),[goalType,setGoalType]=useState<TypeObjectifEpargne>('reserve_joie'),[goalTarget,setGoalTarget]=useState(''),[goalCurrency,setGoalCurrency]=useState(DEVISE_DEFAUT),[contribution,setContribution]=useState(''),[contributionDate,setContributionDate]=useState(aujourdhui);
  const [nouvelObjectif,setNouvelObjectif]=useState(false);
+ // En arrivant d'une répartition, ne pas préremplir le PREMIER objectif
+ // si plusieurs investissements de même devise sont possibles.
+ const [choixVersementRequis,setChoixVersementRequis]=useState(false);
  const [debtBalance,setDebtBalance]=useState(''),[debtCurrency,setDebtCurrency]=useState(DEVISE_DEFAUT),[debtBase,setDebtBase]=useState(''),[debtPercent,setDebtPercent]=useState(''),[paymentAmount,setPaymentAmount]=useState(''),[paymentDate,setPaymentDate]=useState(aujourdhui);
  const [ouverte,setOuverte]=useState(''),[ajoutDette,setAjoutDette]=useState(false);
  const [nomNouvelleDette,setNomNouvelleDette]=useState('');
@@ -90,9 +93,19 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   if(prerempli.current||state!=='pret'||!suivi||!montantRecu||!/^\d+(?:\.\d{1,2})?$/.test(montantRecu))return;
   prerempli.current=true;
   if(mode==='epargne'){
-   const cible=suivi.savings_goals.find(g=>g.goal_type===typeRecu&&g.currency===deviseRecue)??suivi.savings_goals.find(g=>g.currency===deviseRecue);
-   if(cible){setGoal(cible.goal_id);setContribution(montantRecu);setAnnonce({zone:'versement',texte:l(`Montant venu de ta répartition : vérifie-le, puis ajoute-le.`,`Amount from your allocation: check it, then add it.`),erreur:false});}
-   else{setNouvelObjectif(true);setAnnonce({zone:'objectif',texte:l(`Crée d’abord un objectif en ${deviseRecue??''} pour y mettre ce montant.`,`First create a goal in ${deviseRecue??''} to put this amount in.`),erreur:false});}
+   const candidats=suivi.savings_goals.filter(g=>g.currency===deviseRecue&&(!typeRecu||g.goal_type===typeRecu));
+   if(candidats.length===1){
+    const cible=candidats[0]!;
+    setChoixVersementRequis(false);setGoal(cible.goal_id);setContribution(montantRecu);
+    setAnnonce({zone:'versement',texte:l('Montant venu de ta répartition : vérifie-le, puis ajoute-le.','Amount from your allocation: check it, then add it.'),erreur:false});
+   }else if(candidats.length>1){
+    // Une saisie dans Maison ne doit pas alimenter silencieusement Voiture.
+    setChoixVersementRequis(true);setGoal('');setContribution(montantRecu);
+    setAnnonce({zone:'haut',texte:l('Plusieurs objectifs existent : choisis celui qui doit recevoir ce montant. Aucun versement n’est enregistré automatiquement.','You have several goals: select which one should receive this amount. No contribution is saved automatically.'),erreur:false});
+   }else{
+    setChoixVersementRequis(false);setNouvelObjectif(true);
+    setAnnonce({zone:'objectif',texte:l(`Crée d’abord un objectif en ${deviseRecue??''} pour y mettre ce montant.`,`First create a goal in ${deviseRecue??''} to put this amount in.`),erreur:false});
+   }
   }else{
    const ouvertes=suivi.debts.filter(d=>d.currency===deviseRecue&&resteDette(d)>0);
    const {propositions}=repartirSurDettes(montantCents(montantRecu),ouvertes.map(d=>({id:d.debt_id,resteCentimes:resteDette(d)})));
@@ -104,7 +117,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const titrePage=mode==='epargne'?'SÉNEVÉ Finance':l('SÉNEVÉ Suivi des dettes','SÉNEVÉ Debt tracker');
  useEffect(()=>{document.title=titrePage;document.documentElement.lang=langue;},[titrePage,langue]);
  const dettesTriees=useMemo(()=>[...(suivi?.debts??[])].sort((a,b)=>{const ar=resteDette(a),br=resteDette(b);return (ar===0?1:0)-(br===0?1:0)||a.currency.localeCompare(b.currency)||ar-br||a.debt_number-b.debt_number;}),[suivi]);
- const objectif=suivi?.savings_goals.find(g=>g.goal_id===goal)??suivi?.savings_goals[0];
+ const objectif=suivi?.savings_goals.find(g=>g.goal_id===goal)??(choixVersementRequis?undefined:suivi?.savings_goals[0]);
  const dettesOuvertes=dettesTriees.filter(d=>resteDette(d)>0);
  const notice=(message:string,zone:Zone,erreur=false)=>{setAnnonce({zone,texte:message,erreur});};
  const nomDette=(d:DetteSuivie)=>d.creditor_name??`${l('Dette','Debt')} ${d.debt_number}`;
@@ -255,10 +268,14 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
   </section>;
   return <>
    {!!suivi?.savings_goals.length&&<div role="group" aria-label={l('Mes objectifs','My goals')} className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-    {suivi.savings_goals.map(g=><button key={g.goal_id} type="button" aria-pressed={!nouvelObjectif&&g.goal_id===objectif?.goal_id} onClick={()=>{setGoal(g.goal_id);setNouvelObjectif(false);setAnnonce(null);}} className={`shrink-0 whitespace-nowrap rounded-full px-3.5 min-h-[36px] text-sm font-medium ${!nouvelObjectif&&g.goal_id===objectif?.goal_id?'bg-hd-on-surface text-white':'bg-white text-hd-on-surface'}`}>{g.label}</button>)}
+    {suivi.savings_goals.map(g=><button key={g.goal_id} type="button" aria-pressed={!nouvelObjectif&&!choixVersementRequis&&g.goal_id===objectif?.goal_id} onClick={()=>{setGoal(g.goal_id);setChoixVersementRequis(false);setNouvelObjectif(false);setAnnonce(null);}} className={`shrink-0 whitespace-nowrap rounded-full px-3.5 min-h-[36px] text-sm font-medium ${!nouvelObjectif&&g.goal_id===objectif?.goal_id?'bg-hd-on-surface text-white':'bg-white text-hd-on-surface'}`}>{g.label}</button>)}
     <button type="button" aria-pressed={nouvelObjectif} onClick={()=>{setNouvelObjectif(v=>!v);setAnnonce(null);}} className={`shrink-0 whitespace-nowrap rounded-full px-3.5 min-h-[36px] text-sm font-medium ${nouvelObjectif?'bg-hd-on-surface text-white':'bg-white text-hd-secondary'}`}>+ {l('Nouvel objectif','New goal')}</button>
    </div>}
-   {(nouvelObjectif||!objectif)?<>{!objectif&&<p className="rounded-2xl bg-white p-4 text-[15px]">{l('Crée ton premier objectif pour commencer ton suivi.','Create your first goal to start tracking.')}</p>}{formObjectif}</>:<>
+   {choixVersementRequis&&!objectif
+    ?<section role="status" className="hd-classique rounded-2xl bg-hd-surface-container-low p-4">
+      {l('Sélectionne Voiture, Maison ou l’objectif approprié dans les choix ci-dessus avant de noter ce versement. Le montant saisi restera disponible après ton choix.','Select Car, House, or the appropriate goal above before recording this contribution. The entered amount will remain available after you choose.')}
+     </section>
+    :(nouvelObjectif||!objectif)?<>{!objectif&&<p className="rounded-2xl bg-white p-4 text-[15px]">{l('Crée ton premier objectif pour commencer ton suivi.','Create your first goal to start tracking.')}</p>}{formObjectif}</>:<>
     <section aria-labelledby="hd-epargne-resume" className="hd-classique mt-3 rounded-[20px] bg-white p-[18px] shadow-[0_1px_3px_rgba(0,0,0,.04)]">
      <div className="flex items-center gap-4">
       <div className="relative size-[92px] shrink-0" role="progressbar" aria-label={l('Progression vers l’objectif','Progress to goal')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
