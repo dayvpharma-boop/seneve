@@ -1,0 +1,111 @@
+/* SÉNEVÉ — essai de palette douce, UNIQUEMENT Aujourd'hui / Habitudes & Défis.
+ * Inspiration : dégradé lavande + pêche de « Dimanche, jour de repos ».
+ * Ne modifie ni les parcours ordinaires, ni les pages Finance/Bible/Journal.
+ * Le marqueur .hd-aujourdhui-pastel se trouve sur la seule journée HD.
+ */
+
+/* Fond moins blanc, sans motif chargé : trois halos très dilués sur une base bleutée. */
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios):has(.hd-aujourdhui-pastel) {
+  background-color:#f6f8ff!important;
+  background-image:
+    radial-gradient(ellipse 380px 350px at 0% 5%,rgb(219 230 255 / .56),transparent 76%),
+    radial-gradient(ellipse 400px 380px at 100% 32%,rgb(230 221 255 / .49),transparent 74%),
+    radial-gradient(ellipse 420px 380px at 0% 78%,rgb(255 229 207 / .30),transparent 78%),
+    linear-gradient(180deg,#f6f8ff 0%,#f9f8ff 53%,#f6f8ff 100%)!important;
+}
+:root:root:root:root .hd-ecran.ios:has(.hd-aujourdhui-pastel)>main {
+  background:transparent!important;
+}
+/* Quand Aujourd'hui est ouvert via /espace, le tour de page suit le même ton. */
+:root:root:root:root body:has(.espace-page.ios .hd-aujourdhui-pastel) {
+  background:#f6f8ff!important;
+}
+
+/* Alternance pastel : les cartes restent presque blanches, jamais saturées. */
+:root:root:root:root .hd-aujourdhui-pastel>.ios-anneaux {
+  background:linear-gradient(125deg,#f6f3ff 0%,#fbfaff 48%,#eaf2ff 100%)!important;
+  border:1px solid rgb(127 119 200 / .10)!important;
+  box-shadow:0 7px 25px rgb(80 70 145 / .055)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel .ios-carte.ios-priere {
+  background:linear-gradient(128deg,#f1edff 0%,#fbfaff 66%,#f5f8ff 100%)!important;
+  border:1px solid rgb(127 119 200 / .12)!important;
+  box-shadow:0 6px 22px rgb(80 70 145 / .055)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel>button.bg-hd-surface-container {
+  background:linear-gradient(115deg,#edf4ff,#fbfaff)!important;
+  border:1px solid rgb(92 117 188 / .10)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel>details.hd-volet {
+  background:linear-gradient(115deg,#f7f3ff 0%,#fefcff 76%,#fff8f3 100%)!important;
+  border:1px solid rgb(126 114 174 / .10)!important;
+  box-shadow:0 5px 22px rgb(80 70 145 / .05)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel>details.hd-volet:nth-of-type(even) {
+  background:linear-gradient(115deg,#edf5ff 0%,#fafcff 76%,#f9f5ff 100%)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel .ios-journee>.ios-liste {
+  background:linear-gradient(160deg,#f9fbff,#eef4ff 100%)!important;
+  border:1px solid rgb(101 130 193 / .10)!important;
+  box-shadow:0 6px 20px rgb(69 84 131 / .055)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel .hd-autres-activites {
+  background:linear-gradient(130deg,#f4f0ff,#fefcff)!important;
+  border:1px solid rgb(122 109 185 / .11)!important;
+  box-shadow:0 5px 18px rgb(80 70 145 / .045)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel .hd-autres-activites>.ios-liste {
+  background:rgb(255 255 255 / .66)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel .ios-repos-volet>summary {
+  background:linear-gradient(115deg,#f7f6ff,#fdfcff)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel .hd-reflexion-jour {
+  background:linear-gradient(120deg,#fff2e7,#fffaf6 70%,#f8f4ff)!important;
+  border-top:1px solid rgb(193 136 102 / .10)!important;
+  border-right:1px solid rgb(193 136 102 / .10)!important;
+  border-bottom:1px solid rgb(193 136 102 / .10)!important;
+}
+:root:root:root:root .hd-aujourdhui-pastel .hd-defi-semaine {
+  background:linear-gradient(120deg,#edf5ff,#fbfdff 75%,#f4f1ff)!important;
+  border:1px solid rgb(101 130 193 / .10)!important;
+  box-shadow:0 5px 20px rgb(69 84 131 / .05)!important;
+}
+/* Les images, l'Amidah, les boutons de validation et le repos du dimanche
+ * conservent leur contraste et leur couleur d'origine. */
+
+/* Sombre : halos discrets sur surfaces foncées, sans bloc pastel éblouissant. */
+:root:root:root:root[data-apparence="sombre"] :is(.espace-page.ios,.hd-ecran.ios):has(.hd-aujourdhui-pastel) {
+  background:radial-gradient(ellipse 380px 360px at 100% 15%,rgb(103 88 166 / .15),transparent 74%),
+    radial-gradient(ellipse 380px 350px at 0% 70%,rgb(128 85 76 / .10),transparent 78%),#10111b!important;
+}
+:root:root:root:root[data-apparence="sombre"] body:has(.espace-page.ios .hd-aujourdhui-pastel){background:#10111b!important}
+:root:root:root:root[data-apparence="sombre"] .hd-aujourdhui-pastel :is(.ios-anneaux,.ios-carte.ios-priere,.ios-journee>.ios-liste,.hd-autres-activites,.hd-reflexion-jour,.hd-defi-semaine),
+:root:root:root:root[data-apparence="sombre"] .hd-aujourdhui-pastel>details.hd-volet,
+:root:root:root:root[data-apparence="sombre"] .hd-aujourdhui-pastel>details.hd-volet:nth-of-type(even),
+:root:root:root:root[data-apparence="sombre"] .hd-aujourdhui-pastel>button.bg-hd-surface-container {
+  background:linear-gradient(125deg,#24243b,#1c2231)!important;
+  border-color:rgb(180 171 255 / .12)!important;
+}
+:root:root:root:root[data-apparence="sombre"] .hd-aujourdhui-pastel .ios-repos-volet>summary,
+:root:root:root:root[data-apparence="sombre"] .hd-aujourdhui-pastel .hd-autres-activites>.ios-liste {
+  background:#222437!important;
+}
+
+/* Quand le thème suit automatiquement Android/iOS. */
+@media(prefers-color-scheme:dark){
+  :root:root:root:root:not([data-apparence="clair"]) :is(.espace-page.ios,.hd-ecran.ios):has(.hd-aujourdhui-pastel) {
+    background:radial-gradient(ellipse 380px 360px at 100% 15%,rgb(103 88 166 / .15),transparent 74%),
+      radial-gradient(ellipse 380px 350px at 0% 70%,rgb(128 85 76 / .10),transparent 78%),#10111b!important;
+  }
+  :root:root:root:root:not([data-apparence="clair"]) body:has(.espace-page.ios .hd-aujourdhui-pastel){background:#10111b!important}
+  :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel :is(.ios-anneaux,.ios-carte.ios-priere,.ios-journee>.ios-liste,.hd-autres-activites,.hd-reflexion-jour,.hd-defi-semaine),
+  :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel>details.hd-volet,
+  :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel>details.hd-volet:nth-of-type(even),
+  :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel>button.bg-hd-surface-container {
+    background:linear-gradient(125deg,#24243b,#1c2231)!important;
+    border-color:rgb(180 171 255 / .12)!important;
+  }
+  :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel .ios-repos-volet>summary,
+  :root:root:root:root:not([data-apparence="clair"]) .hd-aujourdhui-pastel .hd-autres-activites>.ios-liste{background:#222437!important}
+}

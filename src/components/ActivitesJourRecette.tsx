@@ -30,6 +30,7 @@ import {enregistrerCopieJourHd,type CopieJourHd} from '@/lib/habitudes-copie-jou
 import {IconeJournee} from './IconeJournee';
 import {AnneauxJournee} from './AnneauxJournee';
 import {TuileHabitude} from './IconesIphone';
+import '../styles-habitudes-aujourdhui-pastel.css';
 
 /** Heure locale « HH:MM » du participant ; null si le fuseau est invalide. */
 function heureLocale(fuseau:string,maintenant:number){try{return new Intl.DateTimeFormat('en-GB',{timeZone:fuseau,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(maintenant));}catch{return null;}}
@@ -131,7 +132,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
      {repos&&(EN_PAUSE_LE_DIMANCHE as readonly string[]).includes(a.habit_key??'')&&<span className="ios-repos-pause"><IconeHD nom="notifications_paused" className="text-[13px]"/>{l('Rappel en pause','Reminder paused')}</span>}
      <div className="ios-ligne-corps"><TuileHabitude habitKey={a.habit_key}/><DeclarationHabitude variante="stitch" complement={aRepereDuree(a.habit_key)||estLectureHabitudes(a.habit_key)?<div className="flex flex-col items-start gap-1.5"><RepereDureeHabitudes habitKey={a.habit_key} langue={langue} dansCarte/>{horsLigne&&estLectureHabitudes(a.habit_key)&&<p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('La durée de lecture demande une connexion : tu pourras noter cette lecture au retour du réseau.','Reading time needs a connection: you can record this reading when the network is back.')}</p>}{!horsLigne&&estLectureHabitudes(a.habit_key)&&<button type="button" aria-label={l(`Renseigner la durée — ${a.consigne}`,`Record time — ${a.consigne}`)} className="min-h-[44px] px-3 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-md text-hd-label-md" onClick={()=>{setLectureInitialeId(a.occurrence.occurrence_id);setLecturesOuvertes(true);}}>{l('Durée de lecture','Reading time')}</button>}</div>:undefined} lienLecture={a.habit_key==='bible_matin'||a.habit_key==='bible_soir'?{href:`${import.meta.env.BASE_URL}bible/livres?depuis=habitudes&moment=${a.habit_key==='bible_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='bible_matin'?l('Lire la Bible du matin','Read the morning Bible reading'):l('Lire la Bible du soir','Read the evening Bible reading')}:undefined} lienEcriture={a.habit_key==='gratitude_matin'||a.habit_key==='gratitude_soir'?{href:`${import.meta.env.BASE_URL}journal?ecrire=1&depuis=habitudes&gratitude=${a.habit_key==='gratitude_matin'?'matin':'soir'}&lang=${en?'en':'fr'}`,label:a.habit_key==='gratitude_matin'?l('Écrire ma gratitude du matin','Write my morning gratitude'):l('Écrire ma gratitude du soir','Write my evening gratitude')}:undefined} heure={a.heure} attenue={repos||plusTard(i)} userId={data.userId} occurrence={a.occurrence} consigne={a.consigne} critere={a.critere} etat={a.etat} langue={langue} lectureSeule={horsLigne&&estLectureHabitudes(a.habit_key)} horsLigne={horsLigne} aideDisponible={false} transport={{rpc:(nom,params)=>supabase.rpc(nom,params)}} onDemanderLecture={estLectureHabitudes(a.habit_key)?()=>{setLectureInitialeId(a.occurrence.occurrence_id);setLecturesOuvertes(true);}:undefined} onConfirme={confirmer}/></div>
     </div>;
- return <section className="hd-jour-stitch flex flex-col w-full px-hd-margin pb-hd-space-xl" aria-label={l('Mes activités quotidiennes','My daily activities')}>
+ return <section className="hd-jour-stitch hd-aujourdhui-pastel flex flex-col w-full px-hd-margin pb-hd-space-xl" aria-label={l('Mes activités quotidiennes','My daily activities')}>
   {/* Carte du jour en photo plein cadre (style iPhone du 04/11/2026). */}
   <header className="ios-jour">
    <span className="ios-puce"><time dateTime={dateLocale}>{date.charAt(0).toUpperCase()+date.slice(1)}</time> · {l('Jour','Day')} {data.jour} · {mois===1?l('30 jours gratuits','30 free days'):l(`Mois ${mois} sur 6`,`Month ${mois} of 6`)}</span>
@@ -207,14 +208,14 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    </>}
   </section>
   {/* Lecture du jour : question pour réfléchir */}
-  {texte&&<aside className="mt-hd-space-lg mb-hd-space-sm bg-hd-surface-container p-hd-space-md rounded-2xl border-l-4 border-hd-secondary flex flex-col gap-2" aria-label={l('La lecture du jour','Today’s reading')}>
+  {texte&&<aside className="hd-reflexion-jour mt-hd-space-lg mb-hd-space-sm bg-hd-surface-container p-hd-space-md rounded-2xl border-l-4 border-hd-secondary flex flex-col gap-2" aria-label={l('La lecture du jour','Today’s reading')}>
    <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{l('Un temps pour réfléchir','A moment to reflect')} · {mois===1||textePropre?`${l('Jour','Day')} ${data.jour}`:l(`Lecture ${jourLecture} reprise`,`Reading ${jourLecture} again`)}</span>
    <p className="font-hd-body-md text-hd-body-md text-hd-on-surface">{texte.texte_pedagogique}</p>
    <p className="font-hd-scripture-verse text-hd-scripture-verse text-hd-on-surface italic">{texte.question_reflexion}</p>
    <small className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Adaptation pédagogique à partir du livre. La lecture ne valide aucune activité automatiquement.','An educational adaptation based on the book. Reading does not mark any activity as completed.')}</small>
   </aside>}
   {/* Défi de la semaine : lecture seule, facultatif, aucune donnée collectée */}
-  {defi&&<section className="mb-hd-space-sm bg-hd-surface-container-lowest p-hd-space-md rounded-2xl shadow-sm flex flex-col gap-2" aria-label={l('Défi de la semaine','Challenge of the week')}>
+  {defi&&<section className="hd-defi-semaine mb-hd-space-sm bg-hd-surface-container-lowest p-hd-space-md rounded-2xl shadow-sm flex flex-col gap-2" aria-label={l('Défi de la semaine','Challenge of the week')}>
    <span className="font-hd-label-sm text-hd-label-sm text-hd-secondary uppercase tracking-wider">{defi.du===29?l('Bilan','Review'):l('Défi de la semaine','Challenge of the week')} · {en?`Days ${defi.du} to ${defi.au} · optional`:`Jours ${defi.du} à ${defi.au} · facultatif`}</span>
    <h3 className="font-hd-headline-sm text-hd-headline-sm text-hd-on-surface">{defi.titre}</h3>
    {defi.objectif&&<p className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant"><strong>{l('Objectif :','Aim:')}</strong> {defi.objectif}</p>}
