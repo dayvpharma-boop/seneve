@@ -107,9 +107,9 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
        const objectifs=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
        if(montantsType[type]<=0||objectifs.length<2)return null;
        const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
-       return <li key={type} className="sim-ios-ligne">
+       return <li key={type} className="sim-ios-ligne" style={{flexDirection:"column",alignItems:"stretch",gap:6}}>
         <label htmlFor={`hd-choix-${type}`}>{l(`Choisir l’objectif : ${nom}`,`Choose goal: ${nom}`)}</label>
-        <select id={`hd-choix-${type}`} required value={objectifsChoisis[type]??''}
+        <select id={`hd-choix-${type}`} required style={{width:"100%",minWidth:0,minHeight:44}} value={objectifsChoisis[type]??''}
           onChange={e=>{demande.current=crypto.randomUUID();setObjectifsChoisis(prev=>({...prev,[type]:e.target.value}));}}
           aria-describedby={`hd-choix-aide-${type}`}>
          <option value="">{l('Sélectionner…','Select…')}</option>
