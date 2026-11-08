@@ -149,12 +149,15 @@
 }
 
 /* Bible : accueil et catalogue uniquement. La lecture et les ambiances choisies
- * (ivoire, sépia, nocturne) conservent leur contraste et leur papier. */
-:root:root:root:root .bb-page.ios:not(.bb-page-lecture):not(.bb-ambiance-sepia):not(.bb-ambiance-nocturne) :is(.bb-carte,.bb-recherche,.bb-menu) {
+ * (ivoire, sépia, nocturne) conservent leur contraste et leur papier.
+ * IMPORTANT : la grande carte du verset « Reprendre la lecture / Pour commencer »
+ * et sa citation gardent leur ancien dégradé bleu nuit / violet profond.
+ * Ne pas les recolorer avec le pastel global. */
+:root:root:root:root .bb-page.ios:not(.bb-page-lecture):not(.bb-ambiance-sepia):not(.bb-ambiance-nocturne) :is(.bb-carte:not(.bb-reprendre),.bb-recherche,.bb-menu) {
   background-image:var(--sv-carte-bleue)!important;
   box-shadow:var(--sv-ombre)!important;
 }
-:root:root:root:root .bb-page.ios:not(.bb-page-lecture):not(.bb-ambiance-sepia):not(.bb-ambiance-nocturne) :is(.bb-carte.bb-reprendre,.bb-citation) {
+:root:root:root:root .bb-page.ios:not(.bb-page-lecture):not(.bb-ambiance-sepia):not(.bb-ambiance-nocturne) .bb-citation:not(.bb-reprendre .bb-citation) {
   background-image:var(--sv-carte-violette)!important;
 }
 
