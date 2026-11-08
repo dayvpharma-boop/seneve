@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
  * ouvraient la page suivante en français). Si la page précédente était en anglais (?lang=en ou /en)
  * et que la nouvelle adresse ne précise aucune langue, on ajoute ?lang=en. Un choix explicite
  * (?lang=fr, lien « Français ») reste respecté. L'administration n'est pas concernée.
+ * « Aujourd'hui » (/espace) prend la langue du compte connecté (08/11/2026) : la règle s'y arrête.
  */
 export function langueDeLAdresse(pathname: string, search: string): 'en' | 'fr' | null {
   const l = new URLSearchParams(search).get('lang');
@@ -20,6 +21,7 @@ export function GarderLangue() {
   useEffect(() => {
     const ici = langueDeLAdresse(location.pathname, location.search);
     if (ici) { precedente.current = ici; return; }
+    if (location.pathname === '/espace') { precedente.current = null; return; }
     if (precedente.current === 'en' && !location.pathname.startsWith('/admin')) {
       const params = new URLSearchParams(location.search);
       params.set('lang', 'en');

@@ -313,6 +313,15 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     // Avant le chargement, la langue de la page précédente est gardée (elle sert de langue de secours).
     if (charge) document.documentElement.lang = enTete ? 'en' : 'fr';
   }, [charge, enTete]);
+  // Signalé par Dr Justin le 08/11/2026 : après le compte anglais, son compte français restait en anglais.
+  // Une fois le parcours connu, c'est sa langue qui compte : un ?lang=en hérité de la page précédente est retiré.
+  const parcoursConnu = !!data?.parcours.length;
+  useEffect(() => {
+    if (!parcoursConnu || enTete || params.get('lang') !== 'en') return;
+    const p = new URLSearchParams(params); p.delete('lang');
+    const search = p.toString();
+    navigate({ pathname: location.pathname, search: search ? `?${search}` : '', hash: location.hash }, { replace: true, state: location.state });
+  }, [parcoursConnu, enTete, params, navigate, location.pathname, location.hash, location.state]);
   const header = (repere?: ReactNode, notice?: ReactNode) => <header className="today-head page-tete">
     <div className="barre-haut barre-espace"><p className="brand logo-marque"><img src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={32} height={32} /><span>SÉNEVÉ<small>{enTete ? 'Today' : 'Aujourd’hui'}</small></span></p><Apparence langue={enTete ? 'en' : 'fr'} compact/><ClocheNotifications langue={enTete ? 'en' : 'fr'} /><Link className="today-profil" to={enTete ? '/profil?lang=en' : '/profil'} aria-label={enTete ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.parcours.length===1&&data.parcours[0]?.duree===7&&data.parcours[0]?.etat==='active'?data.prenom.charAt(0).toUpperCase():<IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div>
     {notice}
