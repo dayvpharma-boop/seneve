@@ -1095,7 +1095,7 @@
    Même dessin : un seul bord, un seul arrondi, une seule marge intérieure, un seul écart entre les blocs. */
 :root:root:root:root .espace-page .hd-stitch:has(> .hd-jour-stitch){border:0!important;background:transparent!important;overflow:visible!important}
 :root:root:root:root .espace-page .hd-raccourcis{margin-left:0!important;margin-right:0!important}
-:root:root:root:root .hd-jour-stitch{--hd-carte-pad:18px;--hd-carte-rayon:20px;display:flex!important;flex-direction:column;gap:20px;padding-left:0!important;padding-right:0!important}
+:root:root:root:root .hd-jour-stitch{--hd-carte-pad:18px;--hd-carte-rayon:20px;display:flex!important;flex-direction:column;gap:16px;padding-left:0!important;padding-right:0!important}
 :root:root:root:root .hd-jour-stitch>*{margin-top:0!important;margin-bottom:0!important}
 :root:root:root:root .hd-jour-stitch>:is(.ios-anneaux,.ios-repos,details,aside,[aria-label="Défi de la semaine"]){border-radius:var(--hd-carte-rayon)!important;padding-left:var(--hd-carte-pad)!important;padding-right:var(--hd-carte-pad)!important}
 :root:root:root:root .hd-jour-stitch .ios-titre-section,
