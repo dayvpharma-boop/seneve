@@ -196,7 +196,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
      <IconeHD nom="expand_more" className="text-[22px] shrink-0 text-hd-on-surface-variant transition-transform group-open:rotate-180"/>
     </summary>
     <div className="ios-liste flex flex-col px-2 pb-3">{autresActivites.map((a,i)=>ligne(a,i+3,false))}</div>
-   </details>
+   </details>}
    {auRepos.length>0&&<>
     <h3 className="ios-titre-section mt-4">{l('Si tu veux','If you like')}</h3>
     <details className="ios-repos-volet">
