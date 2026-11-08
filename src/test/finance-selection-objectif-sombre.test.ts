@@ -33,7 +33,7 @@ describe('Objectifs SÉNEVÉ Finance — bouton sélectionné en mode sombre',()
   expect(ratio('#202331','#ffffff')).toBeGreaterThan(10);
  });
  it('limite les modifications au thème sombre de SÉNEVÉ Finance',()=>{
-  const nouveau=css.slice(css.indexOf('/* Écran Finance, choix de l’objectif en mode sombre'));
+  const nouveau=css.slice(css.indexOf('/* Écran Finance, choix de l\'objectif en mode sombre'));
   expect(nouveau).toContain('data-apparence="sombre"');
   expect(nouveau).toContain('.hd-ecran.ios');
   expect(nouveau).toContain('.finance-cartes-lisibles .finance-choix-objectifs');
