@@ -178,19 +178,23 @@ it('enregistre la vente nette dans le bloc et calcule la répartition sur le seu
  expect(screen.getByLabelText('Ventes encaissées')).toHaveValue('');
 },20000);
 
-it('retire une charge après confirmation et recharge le bloc',async()=>{
+it('bloque la répartition après le retrait de la dernière charge même si un solde est disponible',async()=>{
  retirerCharge.mockImplementation(async()=>{
   chargerCharges.mockResolvedValue({...chargesReglees,charges:[]});
  });
  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
  render(<MemoryRouter><HabitudesRepartition/></MemoryRouter>);
  const options=await screen.findByRole('button',{name:'Options pour Loyer'});
+ expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeEnabled();
  expect(screen.queryByRole('button',{name:'Supprimer Loyer'})).toBeNull();
  fireEvent.click(options);
  fireEvent.click(screen.getByRole('button',{name:'Supprimer Loyer'}));
  expect(retirerCharge).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'Confirmer la suppression'}));
- await waitFor(()=>expect(screen.queryByText('Loyer')).toBeNull());
+ await screen.findByText('Ajoute une charge du mois, puis couvre-la pour débloquer la répartition.');
+ expect(screen.queryByText('Loyer')).toBeNull();
+ expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeDisabled();
+ expect(screen.getByRole('button',{name:'Historique du solde'})).toBeVisible();
  expect(retirerCharge).toHaveBeenCalledWith('inscription','loyer');
 },20000);
 

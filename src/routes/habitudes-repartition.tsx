@@ -181,12 +181,13 @@ export function HabitudesRepartition(){
     <p>{chargesRequises&&!chargesOK
      ?etatCharges==='verification'?l('Vérification des charges en cours.','Checking business expenses.')
       :etatCharges==='indisponible'?l('Les charges doivent être chargées avant d’enregistrer.','Load your expenses before saving.')
+      :etatCharges==='sans-charge'?l('Ajoute une charge du mois, puis couvre-la pour débloquer la répartition.','Add and cover a monthly expense to unlock allocation.')
       :l('La répartition s’ouvre lorsque les encaissements couvrent les charges du mois.','Allocation opens once receipts cover this month’s expenses.')
      :!r||r.base<=0?chargesRequises?l('Il n’y a aucun solde à répartir pour l’instant.','There is no balance to allocate yet.'):l('Indique le montant reçu pour calculer la répartition.','Enter the amount received to calculate your allocation.')
      :l('Vérifie tes parts avant de les ajouter à Mes compteurs.','Review your shares before adding them to My Counters.')}</p>
    </div>
 
-   {chargesRequises&&etatCharges==='a-regler'&&<button type="button" className="rep-historique-lien" aria-haspopup="dialog" onClick={()=>setHistorique(true)}>
+   {chargesRequises&&(etatCharges==='a-regler'||etatCharges==='sans-charge')&&<button type="button" className="rep-historique-lien" aria-haspopup="dialog" onClick={()=>setHistorique(true)}>
     {l('Historique du solde','Balance history')} <span aria-hidden="true">›</span>
    </button>}
    {historique&&chargesRequises&&<HistoriqueSoldeRepartition devise={devise} langue={langue}
