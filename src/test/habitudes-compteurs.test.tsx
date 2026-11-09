@@ -15,7 +15,7 @@ const suivi={enrollment_id:E,savings_goals:[{goal_id:G,goal_type:'reserve_joie',
  debts:[{debt_id:D1,debt_number:1,opening_balance:'60.00',currency:'USD',creditor_name:'Kanza',monthly_basis:null,repayment_percent:null,weekly_basis:null,weekly_repayment_percent:null,payments:[]},
   {debt_id:D2,debt_number:2,opening_balance:'200.00',currency:'USD',creditor_name:'Papy',monthly_basis:null,repayment_percent:null,weekly_basis:null,weekly_repayment_percent:null,payments:[]}]};
 const chargesMensuelles=(available_amount:string)=>({
- enrollment_id:E,available_amount,active_block:{block_id:id(90),month_start:'2026-11-01'},
+ enrollment_id:E,available_amount,tithe_due:(Number(available_amount)*0.1).toFixed(2),active_block:{block_id:id(90),month_start:'2026-11-01'},
  charges:[{charge_id:id(91),label:'Loyer',expected_amount:'300.00',currency:'EUR',
   period_start:'2026-11-01',period_end:'2026-11-30',
   payments:[{payment_id:id(92),amount:'300.00',date_locale:'2026-11-09'}]}],

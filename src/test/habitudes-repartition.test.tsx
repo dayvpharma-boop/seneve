@@ -15,7 +15,7 @@ vi.mock('@/lib/habitudes-finance-charges', async importOriginal => ({
  retirerChargeEntreprise:retirerCharge,
 }));
 const chargesReglees:DonneesChargesEntreprise = {
- enrollment_id:'inscription',available_amount:'1000.00',
+ enrollment_id:'inscription',available_amount:'1000.00',tithe_due:'100.00',
  active_block:{block_id:'bloc',month_start:'2026-11-01'},
  charges:[{charge_id:'loyer',label:'Loyer',currency:'EUR',expected_amount:'300.00',
   period_start:'2026-11-01',period_end:'2026-11-30',
@@ -51,7 +51,7 @@ it('propose la part « Dettes » d’abord sur la plus petite dette',()=>{
  expect(repartirSurDettes(7500000,[{id:'papy',resteCentimes:12000000},{id:'kanza',resteCentimes:6000000}])).toEqual({propositions:[{id:'kanza',centimes:6000000,solde:true},{id:'papy',centimes:1500000,solde:false}],surplus:0});
 });
 it('la page affiche la répartition et garde les pourcentages dans leurs limites',async()=>{
- chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'500000.00'});
+ chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'500000.00',tithe_due:'50000.00'});
  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
  render(<MemoryRouter initialEntries={['/habitudes/repartition?pour=epargne']}><HabitudesRepartition/></MemoryRouter>);
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000000'}});
@@ -156,10 +156,10 @@ it('distingue une erreur de chargement d’un bloc absent et déverrouille aprè
 
 it('enregistre la vente nette dans le bloc et calcule la répartition sur le seul solde confirmé',async()=>{
  const charge={...chargesReglees.charges[0]!,currency:'USD',payments:[]};
- const avant={...chargesReglees,available_amount:'0',charges:[charge]};
+ const avant={...chargesReglees,available_amount:'0',tithe_due:'0',charges:[charge]};
  chargerCharges.mockResolvedValue(avant);
  noterVente.mockImplementation(async()=>{
-  chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'50.00',
+  chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'50.00',tithe_due:'5.00',
    charges:[{...charge,payments:chargesReglees.charges[0]!.payments}]});
   return {couvert:'300.00',reste:'50.00'};
  });
@@ -190,3 +190,25 @@ it('retire une charge après confirmation et recharge le bloc',async()=>{
  await waitFor(()=>expect(screen.queryByText('Loyer')).toBeNull());
  expect(retirerCharge).toHaveBeenCalledWith('inscription','loyer');
 },20000);
+
+it('ne propose aucune nouvelle dîme sur les 325 USD restants après une dîme déjà enregistrée',async()=>{
+ chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'325.00',tithe_due:'0.00'});
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter><HabitudesRepartition/></MemoryRouter>);
+ const base=await screen.findByRole('region',{name:'Solde à répartir'});
+ expect(base.textContent).toContain('325 USD');
+ const dime=within(base).getByText('Dîme').closest('li')!;
+ expect(within(dime).getByText('0')).toBeVisible();
+ expect(within(dime).getByText('Aucune dîme à enregistrer sur ce solde')).toBeVisible();
+ expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeEnabled();
+},20000);
+
+it('préserve le solde quand la dîme vient seulement du nouveau net ou d’une dîme laissée à enregistrer',()=>{
+ const nouveau=repartir('525',POURCENTAGES_DEFAUT,2,'20');
+ expect(nouveau.dime).toBe(20);
+ expect(nouveau.offrande+nouveau.reserve+nouveau.investir+nouveau.autre+nouveau.dettes+nouveau.vivre+nouveau.dime).toBe(525);
+ const enAttente=repartir('100',POURCENTAGES_DEFAUT,2,'90');
+ expect(enAttente.dime).toBe(90);
+ expect(enAttente.vivre).toBe(0);
+ expect(enAttente.reserve+enAttente.investir+enAttente.dettes).toBeCloseTo(10);
+});
