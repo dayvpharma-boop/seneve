@@ -43,12 +43,12 @@ export function HabitudesRepartition(){
  const [p,setP]=useState<Pourcentages>(POURCENTAGES_DEFAUT);
  const [feuille,setFeuille]=useState(false);
  const [etatCharges,setEtatCharges]=useState<EtatAccesCharges>('verification');
- const [chargesPayees,setChargesPayees]=useState(0);
+ const [soldeEncaissements,setSoldeEncaissements]=useState('0');
  const chargesOK=etatCharges==='reglees';
- const actualiserCharges=useCallback((etat:EtatAccesCharges,montant:number)=>{
+ const actualiserCharges=useCallback((etat:EtatAccesCharges,disponible:string)=>{
   if(etat!=='reglees')setFeuille(false);
   setEtatCharges(etat);
-  setChargesPayees(montant);
+  setSoldeEncaissements(disponible);
  },[]);
  const chargesRequises=profil==='commerce'||profil==='entreprise';
  useEffect(()=>{document.title=l('SÉNEVÉ Répartition','SÉNEVÉ Allocation');document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
@@ -56,13 +56,16 @@ export function HabitudesRepartition(){
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
  let r:ReturnType<typeof repartir>|null=null,erreur=false;
- if(recu.trim()!==''&&(!chargesRequises||chargesOK)){try{const fraisCalcul=profil==='salarie'?frais:String(chargesPayees+(Number(frais.replace(',','.'))||0));r=repartir(baseRepartition(profil,recu,marchandises,fraisCalcul),p,dec);}catch{erreur=true;}}
+ if(chargesRequises?chargesOK&&Number(soldeEncaissements)>0:recu.trim()!==''){
+  try{r=repartir(chargesRequises?soldeEncaissements:baseRepartition(profil,recu,marchandises,frais),p,dec);}
+  catch{erreur=true;}
+ }
  const choisir=(v:ProfilRevenu)=>{
-  if(v!==profil)actualiserCharges('verification',0);
+  if(v!==profil)actualiserCharges('verification','0');
   setProfil(v);setRecu('');setMarchandises('');setFrais('');
  };
  const changerDevise=(v:string)=>{
-  if(v!==devise)actualiserCharges('verification',0);
+  if(v!==devise)actualiserCharges('verification','0');
   setDevise(v);
  };
  const PROFILS:{v:ProfilRevenu;nom:string;rythme:string;icone:string;fond:string}[]=[
@@ -73,7 +76,7 @@ export function HabitudesRepartition(){
  ];
  const periode=profil==='commerce'?l('Cette semaine','This week'):profil==='autre'?l('Ce que j’ai reçu','What I received'):l('Ce mois','This month');
  const aide=profil==='salarie'?l('Le transport ou les outils payés pour ton travail, s’ils ne te sont pas remboursés.','Transport or tools paid for your work, if they are not reimbursed.')
-  :chargesRequises?l('Indique ici les dépenses ponctuelles déjà payées. Suis le loyer et les autres charges mensuelles ci-dessous.','Enter one-time expenses already paid here. Track rent and other monthly expenses below.')
+  :chargesRequises?l('Indique les frais de cette vente. Les charges mensuelles seront couvertes avec le montant net.','Enter the costs for this sale. Monthly expenses are covered from the net amount.')
   :l('Un don en argent compte en entier. Un prêt n’est pas un revenu : ne l’écris pas ici.','A cash gift counts in full. A loan is not income: do not enter it here.');
  const libelleRecu=profil==='salarie'?l('Salaire reçu','Salary received'):profil==='commerce'?l('Ventes encaissées','Sales received'):profil==='entreprise'?l('Argent encaissé','Money received'):l('Montant reçu (don, aide…)','Amount received (gift, help…)');
  const calcul=profil==='salarie'?l('Salaire − dépenses de travail','Salary − work expenses'):profil==='commerce'?l('Ventes − marchandises − charges','Sales − goods − expenses'):profil==='entreprise'?l('Encaissé − dépenses du travail','Received − work expenses'):l('Le montant reçu, en entier','The full amount received');
@@ -95,7 +98,7 @@ export function HabitudesRepartition(){
  return <CadreHabitudes titre={l('SÉNEVÉ Répartition','SÉNEVÉ Allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à SÉNEVÉ Suivi des dettes','Back to SÉNEVÉ Debt tracker'):l('Revenir à SÉNEVÉ Finance','Back to SÉNEVÉ Finance')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
   <div className="sim-ios rep-page mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg">
    <h1 className="ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('SÉNEVÉ Répartition','SÉNEVÉ Allocation')}</h1>
-   <p className="sim-ios-sous hd-classique">{l('Choisis ton profil, écris ce que tu as reçu : tu vois où va chaque franc. Rien n’est enregistré.','Choose your profile and enter what you received: you see where every franc goes. Nothing is saved.')}</p>
+   <p className="sim-ios-sous hd-classique">{l('Choisis ton profil et saisis ce que tu as reçu. Pour une activité, enregistre l’encaissement pour couvrir les charges du mois.','Choose your profile and enter what you received. For a business, record the receipt to cover monthly expenses.')}</p>
 
    <h2 className="hd-classique sim-ios-titre">{l('Je suis','I am')}</h2>
    <div role="radiogroup" aria-label={l('Mon profil','My profile')} className="rep-profils">
@@ -113,18 +116,24 @@ export function HabitudesRepartition(){
    </div>
    <div className="sim-ios-groupe hd-classique mt-2.5">
     {profil==='commerce'&&champ('hd-rep-marchandises',l('Coût des marchandises vendues','Cost of goods sold'),marchandises,setMarchandises)}
-    {profil!=='autre'&&champ('hd-rep-frais',profil==='salarie'?l('Dépenses de travail non remboursées','Unreimbursed work expenses'):profil==='commerce'?l('Charges du commerce','Business expenses'):l('Dépenses du travail','Work expenses'),frais,setFrais)}
+    {profil!=='autre'&&champ('hd-rep-frais',profil==='salarie'?l('Dépenses de travail non remboursées','Unreimbursed work expenses'):profil==='commerce'?l('Autres frais de la vente','Other sale costs'):l('Dépenses du travail','Work expenses'),frais,setFrais)}
     <div className="sim-ios-ligne"><label htmlFor="hd-rep-devise">{l('Monnaie','Currency')}</label><ChoixDevise id="hd-rep-devise" valeur={devise} onChange={changerDevise} langue={en?'en':'fr'}/></div>
    </div>
    <p className="sim-ios-note hd-classique">{aide}</p>
-   {chargesRequises&&<ChargesEntreprise key={profil+devise} devise={devise} langue={langue} onEtat={actualiserCharges}/>}
+   {chargesRequises&&<ChargesEntreprise key={profil+devise} devise={devise} langue={langue}
+    onEtat={actualiserCharges} saisie={{recu,marchandises:profil==='commerce'?marchandises:'',frais}}
+    apresEncaissement={()=>{
+     setRecu(valeur=>valeur===recu?'':valeur);
+     setMarchandises(valeur=>valeur===marchandises?'':valeur);
+     setFrais(valeur=>valeur===frais?'':valeur);
+    }}/>}
    <div className="hd-classique rep-validation">
     <button type="button" disabled={!r||r.base<=0||(chargesRequises&&!chargesOK)} onClick={()=>setFeuille(true)} className="sim-ios-bouton rep-bouton w-full disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>
     <p>{chargesRequises&&!chargesOK
      ?etatCharges==='verification'?l('Vérification des charges en cours.','Checking business expenses.')
       :etatCharges==='indisponible'?l('Les charges doivent être chargées avant d’enregistrer.','Load your expenses before saving.')
-      :l('Règle toutes les charges du bloc mensuel pour continuer.','Pay all expenses in the monthly block to continue.')
-     :!r||r.base<=0?l('Indique le montant reçu pour calculer la répartition.','Enter the amount received to calculate your allocation.')
+      :l('La répartition s’ouvre lorsque les encaissements couvrent les charges du mois.','Allocation opens once receipts cover this month’s expenses.')
+     :!r||r.base<=0?chargesRequises?l('Il n’y a aucun solde à répartir pour l’instant.','There is no balance to allocate yet.'):l('Indique le montant reçu pour calculer la répartition.','Enter the amount received to calculate your allocation.')
      :l('Vérifie tes parts avant de les ajouter à Mes compteurs.','Review your shares before adding them to My Counters.')}</p>
    </div>
    {erreur&&<p role="alert" className="sim-ios-alerte hd-classique">{l('Vérifie les montants : écris seulement des chiffres, par exemple 500000 ou 1000,50.','Check the amounts: digits only, for example 500000 or 1000.50.')}</p>}
@@ -138,9 +147,9 @@ export function HabitudesRepartition(){
       <text x="52" y="66" textAnchor="middle" className="rep-anneau-legende">{l('pour vivre','for living')}</text>
      </svg>
      <div className="min-w-0">
-      <small className="rep-heros-sur"><span id="hd-rep-base">{l('Base retenue','Selected basis')}</span> · {periode.toLocaleLowerCase(langue)}</small>
+      <small className="rep-heros-sur"><span id="hd-rep-base">{chargesRequises?l('Solde à répartir','Balance to allocate'):l('Base retenue','Selected basis')}</span>{!chargesRequises&&' · '+periode.toLocaleLowerCase(langue)}</small>
       <b className="rep-heros-montant">{r?`${nombre(r.base)} ${devise}`:'—'}</b>
-      <p>{r?l(`${nombre(r.vivre)} ${devise} restent pour vivre après tes parts.`,`${nombre(r.vivre)} ${devise} remain for living after your shares.`):calcul}</p>
+      <p>{r?l(`${nombre(r.vivre)} ${devise} restent pour vivre après tes parts.`,`${nombre(r.vivre)} ${devise} remain for living after your shares.`):chargesRequises?l('Le solde des ventes apparaît ici après les charges.','The sales balance appears here after expenses.'):calcul}</p>
      </div>
     </div>
     <h3 className="sim-ios-titre flex justify-between"><span>{l('Mes parts','My shares')}</span><span style={{textTransform:'none'}}>{l(`Total ${totalParts} %`,`Total ${totalParts}%`)}</span></h3>
@@ -160,10 +169,10 @@ export function HabitudesRepartition(){
       <span className="rep-part-droite"><b className="tabular-nums rep-vivre-montant">{r?nombre(r.vivre):'—'}</b><span className="rep-fixe">{vivrePct} %</span></span>
      </li>
     </ul>
-    {!r&&!erreur&&<p className="sim-ios-note">{l('Écris ce que tu as reçu : la répartition apparaît tout de suite.','Enter what you received: the allocation appears straight away.')}</p>}
+    {!chargesRequises&&!r&&!erreur&&<p className="sim-ios-note">{l('Écris ce que tu as reçu : la répartition apparaît tout de suite.','Enter what you received: the allocation appears straight away.')}</p>}
    </section>}
 
-   {feuille&&r&&(!chargesRequises||chargesOK)&&<EnregistrerRepartition montants={r} devise={devise} langue={langue} onFermer={()=>setFeuille(false)}/>}
+   {feuille&&r&&(!chargesRequises||chargesOK)&&<EnregistrerRepartition depuisEncaissements={chargesRequises} montants={r} devise={devise} langue={langue} onFermer={()=>setFeuille(false)}/>}
    <p className="sim-ios-note hd-classique mt-4 flex items-start gap-2"><Trace nom="cadenas" className="rep-note-icone"/>{l('Ces pourcentages sont des repères d’enseignement, pas une obligation ni un conseil financier personnel. Aucun argent ne bouge.','These percentages are teaching guides, not an obligation or personal financial advice. No money moves.')}</p>
   </div>
  </CadreHabitudes>;
