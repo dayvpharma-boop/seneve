@@ -19,8 +19,8 @@ function analyserCharges(v:unknown):ChargeEntreprise[]{
 function analyser(data:unknown,enrollmentId:string):DonneesChargesEntreprise{
  if(!objet(data)||data.enrollment_id!==enrollmentId||!Array.isArray(data.archives))throw Error('Suivi des charges incohérent');
  let active:{block_id:string;month_start:string}|null=null;
- if(data.active_block!==null){const a=data.active_block;if(!objet(a)||!uuid(a.block_id)||!date(a.month_start))throw Error('Bloc mensuel incohérent');active={block_id:a.block_id,month_start:a.month_start};}
- const archives=data.archives.map((x:unknown)=>{if(!objet(x)||!uuid(x.block_id)||!date(x.month_start))throw Error('Archive de charges incohérente');return {block_id:x.block_id,month_start:x.month_start,charges:analyserCharges(x.charges)};});
+ if(data.active_block!==null){const a=data.active_block;if(!objet(a)||!uuid(a.block_id)||!date(a.month_start))throw Error('Bloc mensuel incohérent');active={block_id:a.block_id,month_start:a.month_start as string};}
+ const archives=data.archives.map((x:unknown)=>{if(!objet(x)||!uuid(x.block_id)||!date(x.month_start))throw Error('Archive de charges incohérente');return {block_id:x.block_id,month_start:x.month_start as string,charges:analyserCharges(x.charges)};});
  return {active_block:active,charges:analyserCharges(data.charges),archives};
 }
 export async function chargerChargesEntreprise(enrollmentId:string,dateLocale:string,currency:string){
