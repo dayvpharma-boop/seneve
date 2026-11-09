@@ -234,7 +234,8 @@ it('ouvre l’historique depuis le solde et permet seulement de supprimer une en
   fireEvent.click(await screen.findByRole('button',{name:/Solde à répartir 371,35 USD/}));
   const volet=screen.getByRole('dialog',{name:'Historique du solde'});
   expect(await within(volet).findByText('Solde reporté')).toBeVisible();
-  expect(within(volet).getAllByText('lundi 9 novembre 2026')).toHaveLength(3);
+  expect(within(volet).getAllByText(/lundi 9 novembre 2026 à 18:00/)).toHaveLength(2);
+  expect(within(volet).getByText(/lundi 9 novembre 2026 à 17:00/)).toBeVisible();
   const actions=within(volet).getAllByRole('button',{name:/Supprimer l’encaissement/});
   expect(actions).toHaveLength(1);
   fireEvent.click(actions[0]!);
