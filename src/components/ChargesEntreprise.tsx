@@ -223,8 +223,8 @@ export function ChargesEntreprise({devise, langue, onEtat}:{
             <form className="rep-charges-form" onSubmit={e => {
               e.preventDefault();
               if (!nom.trim() || !montantPrevu) return;
-              const [annee, numero] = mois.split('-').map(Number);
-              const fin = new Date(Date.UTC(annee, numero, 0)).toISOString().slice(0,10);
+              const debut = new Date(mois + 'T12:00:00Z');
+              const fin = new Date(Date.UTC(debut.getUTCFullYear(), debut.getUTCMonth() + 1, 0)).toISOString().slice(0,10);
               void modifier('ajout', JSON.stringify([mois, devise, nom.trim(), montantPrevu]),
                 (id, demande) => creerChargeEntreprise(id,{label:nom,amount:montantPrevu,currency:devise,start:mois,end:fin},demande),
                 l('Rubrique ajoutée.','Expense added.'),

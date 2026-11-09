@@ -139,7 +139,7 @@
 :root:root:root .rep-page .rep-charges-action,
 :root:root:root .rep-page .rep-validation .rep-bouton{
   display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;
-  padding:10px 14px;border:0;border-radius:14px;background:#49439b;color:#fff;
+  margin:0;padding:10px 14px;border:0;border-radius:14px;background:#49439b;color:#fff;
   -webkit-text-fill-color:currentColor;font-size:16px;font-weight:650;text-align:center;text-decoration:none;cursor:pointer;
 }
 :root:root:root .rep-page .rep-charges-action{background:var(--charges-violet)}
