@@ -7,20 +7,26 @@ import {baseRepartition,maximumPart,repartir,repartirSurDettes,POURCENTAGES_DEFA
 
 vi.mock('@/lib/habitudes-configuration',()=>({habitudesActivees:()=>true,suiviFinancierActive:()=>true}));
 vi.mock('@/components/CadreHabitudes',()=>({CadreHabitudes:({children}:{children:ReactNode})=><>{children}</>}));
-const {chargerCharges} = vi.hoisted(() => ({chargerCharges:vi.fn()}));
+const {chargerCharges,noterVente,retirerCharge} = vi.hoisted(() => ({chargerCharges:vi.fn(),noterVente:vi.fn(),retirerCharge:vi.fn()}));
 vi.mock('@/lib/habitudes-finance-charges', async importOriginal => ({
  ...await importOriginal<typeof import('@/lib/habitudes-finance-charges')>(),
  chargerChargesEntreprise:chargerCharges,
+ enregistrerEncaissementEntreprise:noterVente,
+ retirerChargeEntreprise:retirerCharge,
 }));
 const chargesReglees:DonneesChargesEntreprise = {
- enrollment_id:'inscription',
+ enrollment_id:'inscription',available_amount:'1000.00',
  active_block:{block_id:'bloc',month_start:'2026-11-01'},
  charges:[{charge_id:'loyer',label:'Loyer',currency:'EUR',expected_amount:'300.00',
   period_start:'2026-11-01',period_end:'2026-11-30',
   payments:[{payment_id:'paiement',amount:'300.00',date_locale:'2026-11-01'}]}],
  archives:[],
 };
-beforeEach(() => {chargerCharges.mockReset().mockResolvedValue(chargesReglees);});
+beforeEach(() => {
+ chargerCharges.mockReset().mockResolvedValue(chargesReglees);
+ noterVente.mockReset();
+ retirerCharge.mockReset();
+});
 afterEach(()=>cleanup());
 
 it('calcule la base selon le profil, avec les règles de la dîme',()=>{
@@ -45,12 +51,13 @@ it('propose la part « Dettes » d’abord sur la plus petite dette',()=>{
  expect(repartirSurDettes(7500000,[{id:'papy',resteCentimes:12000000},{id:'kanza',resteCentimes:6000000}])).toEqual({propositions:[{id:'kanza',centimes:6000000,solde:true},{id:'papy',centimes:1500000,solde:false}],surplus:0});
 });
 it('la page affiche la répartition et garde les pourcentages dans leurs limites',async()=>{
+ chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'500000.00'});
  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
  render(<MemoryRouter initialEntries={['/habitudes/repartition?pour=epargne']}><HabitudesRepartition/></MemoryRouter>);
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000000'}});
  fireEvent.change(screen.getByLabelText('Coût des marchandises vendues'),{target:{value:'400000'}});
- fireEvent.change(screen.getByLabelText('Charges du commerce'),{target:{value:'100000'}});
- const base=await screen.findByRole('region',{name:'Base retenue'});
+ fireEvent.change(screen.getByLabelText('Autres frais de la vente'),{target:{value:'100000'}});
+ const base=await screen.findByRole('region',{name:'Solde à répartir'});
  expect(base.textContent).toMatch(/500\s?000 USD/);
  expect(within(base).getByText('Pour vivre').closest('li')!.textContent).toMatch(/225\s?000/);
  expect(screen.getByRole('button',{name:'Augmenter : Réserve de joie'})).toBeDisabled();
@@ -82,7 +89,7 @@ it('le dollar américain est en premier et le franc congolais juste après le kw
  fireEvent.click(within(feuille).getByRole('option',{name:/Dollar américain/}));
  expect(screen.queryByRole('dialog',{name:'Monnaie'})).toBeNull();
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
- expect((await screen.findByRole('region',{name:'Base retenue'})).textContent).toMatch(/1\s?000 USD/);
+ expect((await screen.findByRole('region',{name:'Solde à répartir'})).textContent).toMatch(/1\s?000 USD/);
 },20000);
 
 it('Réserve de joie : de 0 à 10 % (demande du 08/11/2026), 10 % proposés au départ',async()=>{
@@ -140,9 +147,46 @@ it('distingue une erreur de chargement d’un bloc absent et déverrouille aprè
  expect(enregistrer).toBeDisabled();
  const reessayer=await screen.findByRole('button',{name:'Réessayer'});
  expect(screen.queryByRole('button',{name:'Créer le bloc du mois'})).toBeNull();
- expect(screen.queryByRole('region',{name:'Base retenue'})).toBeNull();
+ expect(screen.queryByRole('region',{name:'Solde à répartir'})).toBeNull();
  fireEvent.click(reessayer);
  await waitFor(()=>expect(enregistrer).toBeEnabled());
  expect(screen.getByText('Loyer')).toBeVisible();
- expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/1\s?000 USD/);
+ expect(screen.getByRole('region',{name:'Solde à répartir'}).textContent).toMatch(/1\s?000 USD/);
+},20000);
+
+it('enregistre la vente nette dans le bloc et calcule la répartition sur le seul solde confirmé',async()=>{
+ const charge={...chargesReglees.charges[0]!,currency:'USD',payments:[]};
+ const avant={...chargesReglees,available_amount:'0',charges:[charge]};
+ chargerCharges.mockResolvedValue(avant);
+ noterVente.mockImplementation(async()=>{
+  chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'50.00',
+   charges:[{...charge,payments:chargesReglees.charges[0]!.payments}]});
+  return {couvert:'300.00',reste:'50.00'};
+ });
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter><HabitudesRepartition/></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'500'}});
+ fireEvent.change(screen.getByLabelText('Coût des marchandises vendues'),{target:{value:'100'}});
+ fireEvent.change(screen.getByLabelText('Autres frais de la vente'),{target:{value:'50'}});
+ await screen.findByText('Loyer');
+ expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeDisabled();
+ fireEvent.click(screen.getByRole('button',{name:'Enregistrer l’encaissement'}));
+ const base=await screen.findByRole('region',{name:'Solde à répartir'});
+ expect(base.textContent).toContain('50 USD');
+ expect(noterVente).toHaveBeenCalledWith('inscription','USD',expect.stringMatching(/-01$/),
+  {recu:'500',marchandises:'100',frais:'50'},expect.any(String));
+ expect(screen.getByLabelText('Ventes encaissées')).toHaveValue('');
+},20000);
+
+it('retire une charge après confirmation et recharge le bloc',async()=>{
+ retirerCharge.mockImplementation(async()=>{
+  chargerCharges.mockResolvedValue({...chargesReglees,charges:[]});
+ });
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter><HabitudesRepartition/></MemoryRouter>);
+ fireEvent.click(await screen.findByRole('button',{name:'Supprimer Loyer'}));
+ expect(retirerCharge).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'Confirmer la suppression'}));
+ await waitFor(()=>expect(screen.queryByText('Loyer')).toBeNull());
+ expect(retirerCharge).toHaveBeenCalledWith('inscription','loyer');
 },20000);

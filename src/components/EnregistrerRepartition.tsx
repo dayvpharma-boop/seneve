@@ -13,7 +13,7 @@ const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 
 /** Feuille « Enregistrer ma répartition » (maquette validée le 07/11/2026) : chaque part est vérifiée, cochée ou non,
  * puis toute la répartition est notée en une seule fois (tout ou rien). Aucun argent ne bouge. */
-export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montants:Montants;devise:string;langue:string;onFermer:()=>void}){
+export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEncaissements=false}:{montants:Montants;depuisEncaissements?:boolean;devise:string;langue:string;onFermer:()=>void}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const navigate=useNavigate();
  const [suivi,setSuivi]=useState<SuiviFinancier|null|'aucun'|'erreur'>(null);
@@ -100,7 +100,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
   setEnCours(true);setErreur('');
   try{
    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date>aujourdhui()){setErreur(l('Choisis une date qui n’est pas dans le futur.','Choose a date that is not in the future.'));setEnCours(false);return;}
-   await enregistrerRepartition(suivi.enrollment_id,devise,date,choisies.flatMap(x=>x.parts),demande.current);
+   await enregistrerRepartition(suivi.enrollment_id,devise,date,choisies.flatMap(x=>x.parts),demande.current,depuisEncaissements);
    const soldees=lignes.find(x=>x.cle==='dettes'&&x.possible&&coche('dettes'))?.destination.match(/\((soldée|paid off)\)/g)?.length??0;
    navigate(`/habitudes/compteurs${en?'?lang=en':''}`,{state:{message:l(`Répartition enregistrée : ${choisies.length} part${choisies.length>1?'s':''}, ${nombre(total)} ${devise}.${soldees?` ${soldees} dette${soldees>1?'s':''} soldée${soldees>1?'s':''}.`:''}`,`Allocation saved: ${choisies.length} part${choisies.length>1?'s':''}, ${nombre(total)} ${devise}.${soldees?` ${soldees} debt${soldees>1?'s':''} paid off.`:''}`)}});
   }catch(e){setErreur(e instanceof CompteursIndisponibles?l('Les compteurs ne sont pas encore ouverts. Réessaie un peu plus tard.','Counters are not open yet. Try again a little later.'):l('La répartition n’a pas été enregistrée. Vérifie les montants et réessaie.','The allocation was not saved. Check the amounts and try again.'));setEnCours(false);}
@@ -150,7 +150,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
     {selectionManquante&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Choisis la destination de chaque part ayant plusieurs objectifs avant d’enregistrer. Pour ne pas répartir une part, décoche-la après avoir choisi son objectif.','Choose the destination for each share with multiple goals before saving. To exclude a share, untick it after selecting its goal.')}</p>}
     <button type="button" disabled={!choisies.length||selectionManquante||choixSurplusManquant||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
     {erreur&&<p role="alert" className="sim-ios-alerte">{erreur}</p>}
-    <p className="sim-ios-note">{l('Ce qui reste décoché n’est pas noté ; tu pourras l’ajouter plus tard. Aucun argent ne bouge.','Anything left unticked is not recorded; you can add it later. No money moves.')}</p>
+    <p className="sim-ios-note">{depuisEncaissements?l('Les montants décochés restent dans le solde à répartir.','Unticked amounts stay in the balance to allocate.'):l('Tu peux noter les parts décochées plus tard.','You can record unticked shares later.')}</p>
    </>}
   </div>
  </div>;

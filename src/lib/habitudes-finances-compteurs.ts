@@ -40,9 +40,9 @@ export async function chargerCompteurs(enrollmentId:string):Promise<Compteurs>{
  return analyser(data);
 }
 
-export async function enregistrerRepartition(enrollmentId:string,devise:string,dateLocale:string,parts:PartRepartition[],requestId:string){
+export async function enregistrerRepartition(enrollmentId:string,devise:string,dateLocale:string,parts:PartRepartition[],requestId:string,depuisEncaissements=false){
  if(!deviseAcceptee(devise)||!date(dateLocale)||!parts.length||parts.some(p=>!montantValidePourDevise(p.amount,devise)||Number(p.amount)<=0))throw Error('Répartition invalide');
- const {data,error}=await supabase.rpc('hd_finance_allocation_save',{p_enrollment_id:enrollmentId,p_currency:devise,p_date_locale:dateLocale,p_parts:parts,p_request_id:requestId});
+ const {data,error}=await supabase.rpc(depuisEncaissements?'hd_finance_business_allocation_save':'hd_finance_allocation_save',{p_enrollment_id:enrollmentId,p_currency:devise,p_date_locale:dateLocale,p_parts:parts,p_request_id:requestId});
  if(error){if(absente(error))throw new CompteursIndisponibles();throw error;}
  if(!objet(data)||data.allocation_id!==requestId)throw Error('Répartition non confirmée');
  return data;

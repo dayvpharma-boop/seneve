@@ -3,7 +3,7 @@ import {supabase} from './supabase';
 type ChargeEntreprisePaiement={payment_id:string;amount:string;date_locale:string};
 export type ChargeEntreprise={charge_id:string;label:string;expected_amount:string;currency:string;period_start:string;period_end:string;payments:ChargeEntreprisePaiement[]};
 export type BlocChargeArchive={block_id:string;month_start:string;charges:ChargeEntreprise[]};
-export type DonneesChargesEntreprise={enrollment_id:string;active_block:{block_id:string;month_start:string}|null;charges:ChargeEntreprise[];archives:BlocChargeArchive[]};
+export type DonneesChargesEntreprise={enrollment_id:string;available_amount:string;active_block:{block_id:string;month_start:string}|null;charges:ChargeEntreprise[];archives:BlocChargeArchive[]};
 const objet=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
 const montant=(v:unknown)=>typeof v==='string'&&/^\d{1,10}(?:\.\d{1,2})?$/.test(v)&&Number(v)>0;
@@ -16,12 +16,17 @@ function analyserCharges(v:unknown):ChargeEntreprise[]{
   return {charge_id:x.charge_id as string,label:x.label,expected_amount:x.expected_amount as string,currency:x.currency,period_start:x.period_start as string,period_end:x.period_end as string,payments};
  });
 }
+function solde(v:unknown):v is string {
+ return typeof v==='string' && /^\d+(?:\.\d{1,2})?$/.test(v) && Number.isSafeInteger(Math.round(Number(v)*100));
+}
 function analyser(data:unknown,enrollmentId:string|null):DonneesChargesEntreprise{
  if(!objet(data)||!uuid(data.enrollment_id)||(enrollmentId!==null&&data.enrollment_id!==enrollmentId)||!Array.isArray(data.archives))throw Error('Suivi des charges incohérent');
  let active:{block_id:string;month_start:string}|null=null;
  if(data.active_block!==null){const a=data.active_block;if(!objet(a)||!uuid(a.block_id)||!date(a.month_start))throw Error('Bloc mensuel incohérent');active={block_id:a.block_id,month_start:a.month_start as string};}
  const archives=data.archives.map((x:unknown)=>{if(!objet(x)||!uuid(x.block_id)||!date(x.month_start))throw Error('Archive de charges incohérente');return {block_id:x.block_id,month_start:x.month_start as string,charges:analyserCharges(x.charges)};});
- return {enrollment_id:data.enrollment_id,active_block:active,charges:analyserCharges(data.charges),archives};
+ const disponible=data.available_amount??'0';
+ if(!solde(disponible))throw Error('Solde des encaissements incohérent');
+ return {enrollment_id:data.enrollment_id,available_amount:disponible,active_block:active,charges:analyserCharges(data.charges),archives};
 }
 export async function chargerChargesEntreprise(enrollmentId:string|null,dateLocale:string,currency:string){
  const {data,error}=await supabase.rpc('hd_finance_business_charges_get',{p_enrollment_id:enrollmentId,p_date:dateLocale,p_currency:currency});
@@ -39,9 +44,20 @@ export async function creerChargeEntreprise(enrollmentId:string,d:{label:string;
  const {data,error}=await supabase.rpc('hd_finance_business_charge_add',{p_enrollment_id:enrollmentId,p_label:d.label.trim(),p_expected_amount:amount,p_currency:d.currency,p_period_start:d.start,p_period_end:d.end,p_request_id:requestId});
  if(error)throw error;if(!objet(data)||data.charge_id!==requestId)throw Error('Création de charge non confirmée');return data;
 }
-export async function enregistrerPaiementCharge(enrollmentId:string,chargeId:string,amount:string,dateLocale:string,requestId:string){
- if(!uuid(chargeId)||!uuid(requestId)||!/^\d{4}-\d{2}-\d{2}$/.test(dateLocale)||!/^\d+(?:[.,]\d{1,2})?$/.test(amount.trim()))throw Error('Paiement invalide');
- const value=Number(amount.replace(',','.')).toFixed(2);
- const {data,error}=await supabase.rpc('hd_finance_business_charge_payment_add',{p_enrollment_id:enrollmentId,p_charge_id:chargeId,p_amount:value,p_date_locale:dateLocale,p_request_id:requestId});
- if(error)throw error;if(!objet(data)||data.payment_id!==requestId||data.charge_id!==chargeId)throw Error('Paiement non confirmé');return data;
+export async function enregistrerEncaissementEntreprise(
+ enrollmentId:string,devise:string,mois:string,montants:{recu:string;marchandises:string;frais:string},requestId:string,
+) {
+ const {data,error}=await supabase.rpc('hd_finance_business_receipt_add',{
+  p_enrollment_id:enrollmentId,p_currency:devise,p_month_start:mois,p_gross:montants.recu,
+  p_goods:montants.marchandises,p_costs:montants.frais,p_request_id:requestId,
+ });
+ if(error)throw error;
+ if(!objet(data)||data.receipt_id!==requestId||!solde(data.covered)||!solde(data.remaining))throw Error('Encaissement non confirmé');
+ return {couvert:data.covered,reste:data.remaining};
+}
+
+export async function retirerChargeEntreprise(enrollmentId:string,chargeId:string) {
+ const {data,error}=await supabase.rpc('hd_finance_business_charge_archive',{p_enrollment_id:enrollmentId,p_charge_id:chargeId});
+ if(error)throw error;
+ if(!objet(data)||data.charge_id!==chargeId)throw Error('Retrait non confirmé');
 }

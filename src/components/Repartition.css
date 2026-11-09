@@ -150,3 +150,17 @@
   outline:2px solid var(--ios-accent,#49439b);outline-offset:3px;
 }
 :root:root:root .rep-charges .rep-charges-retour{padding-top:8px;border-top:1px solid var(--ios-ligne,#e5e5ea)}
+
+:root:root:root .rep-page .rep-encaissement-calcul{display:grid;gap:6px}
+:root:root:root .rep-page .rep-encaissement-calcul p{
+  display:flex;justify-content:space-between;gap:6px 12px;flex-wrap:wrap;
+}
+:root:root:root .rep-page .rep-encaissement-calcul strong{
+  color:var(--ios-encre,#1c1c1e);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
+}
+:root:root:root .rep-page .rep-charge-retirer{
+  min-height:44px;padding:6px 0;border:0;background:transparent;cursor:pointer;
+  color:#a52b3d;font-size:14px;font-weight:600;
+}
+:root:root:root[data-apparence="sombre"] .rep-page .rep-charge-retirer{color:#ffadb8}
+:root:root:root .rep-page .rep-charge-retirer:disabled{opacity:.6;cursor:default}
