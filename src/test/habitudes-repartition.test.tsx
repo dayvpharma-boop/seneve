@@ -1,11 +1,26 @@
-import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import type {ReactNode} from 'react';
+import type {DonneesChargesEntreprise} from '@/lib/habitudes-finance-charges';
 import {MemoryRouter} from 'react-router-dom';
-import {afterEach,expect,it,vi} from 'vitest';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {baseRepartition,maximumPart,repartir,repartirSurDettes,POURCENTAGES_DEFAUT} from '@/lib/habitudes-repartition';
 
 vi.mock('@/lib/habitudes-configuration',()=>({habitudesActivees:()=>true,suiviFinancierActive:()=>true}));
 vi.mock('@/components/CadreHabitudes',()=>({CadreHabitudes:({children}:{children:ReactNode})=><>{children}</>}));
+const {chargerCharges} = vi.hoisted(() => ({chargerCharges:vi.fn()}));
+vi.mock('@/lib/habitudes-finance-charges', async importOriginal => ({
+ ...await importOriginal<typeof import('@/lib/habitudes-finance-charges')>(),
+ chargerChargesEntreprise:chargerCharges,
+}));
+const chargesReglees:DonneesChargesEntreprise = {
+ enrollment_id:'inscription',
+ active_block:{block_id:'bloc',month_start:'2026-11-01'},
+ charges:[{charge_id:'loyer',label:'Loyer',currency:'EUR',expected_amount:'300.00',
+  period_start:'2026-11-01',period_end:'2026-11-30',
+  payments:[{payment_id:'paiement',amount:'300.00',date_locale:'2026-11-01'}]}],
+ archives:[],
+};
+beforeEach(() => {chargerCharges.mockReset().mockResolvedValue(chargesReglees);});
 afterEach(()=>cleanup());
 
 it('calcule la base selon le profil, avec les règles de la dîme',()=>{
@@ -35,7 +50,7 @@ it('la page affiche la répartition et garde les pourcentages dans leurs limites
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000000'}});
  fireEvent.change(screen.getByLabelText('Coût des marchandises vendues'),{target:{value:'400000'}});
  fireEvent.change(screen.getByLabelText('Charges du commerce'),{target:{value:'100000'}});
- const base=screen.getByRole('region',{name:'Base retenue'});
+ const base=await screen.findByRole('region',{name:'Base retenue'});
  expect(base.textContent).toMatch(/500\s?000 USD/);
  expect(within(base).getByText('Pour vivre').closest('li')!.textContent).toMatch(/225\s?000/);
  expect(screen.getByRole('button',{name:'Augmenter : Réserve de joie'})).toBeDisabled();
@@ -67,7 +82,7 @@ it('le dollar américain est en premier et le franc congolais juste après le kw
  fireEvent.click(within(feuille).getByRole('option',{name:/Dollar américain/}));
  expect(screen.queryByRole('dialog',{name:'Monnaie'})).toBeNull();
  fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
- expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/1\s?000 USD/);
+ expect((await screen.findByRole('region',{name:'Base retenue'})).textContent).toMatch(/1\s?000 USD/);
 },20000);
 
 it('Réserve de joie : de 0 à 10 % (demande du 08/11/2026), 10 % proposés au départ',async()=>{
@@ -115,3 +130,19 @@ it('exercice dette : 75 réservés, seulement 20 dus, 55 restent sans faux rembo
  });
  expect(repartirSurDettes(7500,[])).toEqual({propositions:[],surplus:7500});
 });
+
+it('distingue une erreur de chargement d’un bloc absent et déverrouille après une nouvelle lecture réussie',async()=>{
+ chargerCharges.mockRejectedValueOnce(Error('Réseau indisponible'));
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter><HabitudesRepartition/></MemoryRouter>);
+ fireEvent.change(screen.getByLabelText('Ventes encaissées'),{target:{value:'1000'}});
+ const enregistrer=screen.getByRole('button',{name:'Enregistrer ma répartition'});
+ expect(enregistrer).toBeDisabled();
+ const reessayer=await screen.findByRole('button',{name:'Réessayer'});
+ expect(screen.queryByRole('button',{name:'Créer le bloc du mois'})).toBeNull();
+ expect(screen.queryByRole('region',{name:'Base retenue'})).toBeNull();
+ fireEvent.click(reessayer);
+ await waitFor(()=>expect(enregistrer).toBeEnabled());
+ expect(screen.getByText('Loyer')).toBeVisible();
+ expect(screen.getByRole('region',{name:'Base retenue'}).textContent).toMatch(/1\s?000 USD/);
+},20000);

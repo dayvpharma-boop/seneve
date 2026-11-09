@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      pages_artifact: ${{ steps.pages-artifact.outputs.name }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -63,8 +65,12 @@ jobs:
         run: |
           mkdir -p dist/recette-hd
           cp -R _recette-hd/dist-recette-hd/. dist/recette-hd/
+      - name: Nommer le fichier de publication
+        id: pages-artifact
+        run: echo "name=github-pages-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-pages-artifact@v3
         with:
+          name: ${{ steps.pages-artifact.outputs.name }}
           path: dist
   deploy:
     needs: build
@@ -75,3 +81,5 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact }}
