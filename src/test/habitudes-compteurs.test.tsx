@@ -234,3 +234,27 @@ it('la version anglaise distingue aussi deux objectifs d’investissement',async
  expect(choix.value).toBe(maison);
  expect(within(feuille).getByRole('checkbox',{name:/^For investing/})).toBeChecked();
 });
+
+it('plafonne les parts d’épargne au disponible manquant et conserve le surplus à répartir',async()=>{
+ const reserve={...suivi.savings_goals[0]!,target_amount:'50.00'};
+ const investissement={...reserve,goal_id:id(30),goal_type:'epargne_investir',label:'Maison',target_amount:'160.00'};
+ const retrait={withdrawal_id:id(31),goal_id:investissement.goal_id,amount:'20.00',date_locale:'2026-11-07',motif:'depense',remise_a_zero:false};
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[reserve,investissement],debts:[]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[],withdrawals:[retrait]},error:null};
+  if(f==='hd_finance_business_allocation_save')return {data:{allocation_id:a.p_request_id,deja:false},error:null};
+  throw Error(f);
+ });
+ const {EnregistrerRepartition}=await import('@/components/EnregistrerRepartition');
+ render(<MemoryRouter><EnregistrerRepartition depuisEncaissements devise="USD" langue="fr" onFermer={()=>{}}
+  montants={{dime:0,offrande:0,reserve:50,investir:100,autre:0,dettes:75,vivre:0}}/></MemoryRouter>);
+ expect(await screen.findByText('Objectif atteint. 50 USD restent à répartir.')).toBeInTheDocument();
+ expect(screen.getByRole('checkbox',{name:/^Réserve de joie/})).toBeDisabled();
+ fireEvent.click(screen.getByRole('radio',{name:'Investissement'}));
+ expect(screen.getByText(/45 USD restent à répartir/)).toBeInTheDocument();
+ fireEvent.click(screen.getByRole('button',{name:'Enregistrer 2 parts · 130 USD'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_business_allocation_save',expect.objectContaining({p_parts:[
+  {part:'epargne_investir',goal_id:investissement.goal_id,amount:'100.00'},
+  {part:'epargne_investir',goal_id:investissement.goal_id,amount:'30.00'}
+ ]})));
+});
