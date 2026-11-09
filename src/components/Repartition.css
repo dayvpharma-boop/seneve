@@ -119,6 +119,22 @@
 :root:root:root .rep-charges-liste{list-style:none;margin:0;padding:0}
 :root:root:root .rep-charge-ligne{padding:11px 0}
 :root:root:root .rep-charge-ligne+.rep-charge-ligne{border-top:1px solid var(--ios-ligne,#e5e5ea)}
+:root:root:root .rep-charge-rangee{
+  display:grid;grid-template-columns:minmax(0,1fr) fit-content(40%) 44px;gap:6px;
+}
+:root:root:root .rep-charge-options{position:relative}
+:root:root:root .rep-charge-options-bouton{
+  display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;
+  background:transparent;color:var(--ios-doux,#63636b);cursor:pointer;
+}
+:root:root:root .rep-charge-options-bouton span{font-size:16px;letter-spacing:2px}
+:root:root:root .rep-charge-options-bouton[aria-expanded="true"]{background:var(--ios-fond,#f2f2f7)}
+:root:root:root .rep-charge-options-bouton:disabled{cursor:default;opacity:.6}
+:root:root:root .rep-charge-options-panneau{
+  position:absolute;z-index:2;inset-block-start:100%;inset-inline-end:0;padding:2px 12px;
+  border:1px solid var(--ios-ligne,#e5e5ea);border-radius:12px;background:var(--ios-carte,#fff);
+  box-shadow:0 6px 18px rgb(24 24 34 / .18);white-space:nowrap;
+}
 :root:root:root .rep-charges-pli>summary{
   display:flex;align-items:center;gap:8px;min-height:44px;font-size:15px;font-weight:600;
   cursor:pointer;list-style:none;overflow-wrap:anywhere;

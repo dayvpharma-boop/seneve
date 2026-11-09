@@ -40,6 +40,8 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
   const [nom, setNom] = useState('');
   const [montant, setMontant] = useState('');
   const [aRetirer, setARetirer] = useState<string|null>(null);
+  const [menuCharge, setMenuCharge] = useState<string|null>(null);
+  const menuActif = useRef<HTMLDivElement>(null);
   const [operation, setOperation] = useState<string|null>(null);
   const [retour, setRetour] = useState<{texte:string; vente:boolean; erreur?:boolean}|null>(null);
   const version = useRef(0);
@@ -77,6 +79,15 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
     void charger();
     return () => { version.current++; };
   }, [charger]);
+
+  useEffect(() => {
+    if (!menuCharge) return;
+    const fermerHorsMenu = (e:PointerEvent) => {
+      if (e.target instanceof Node && !menuActif.current?.contains(e.target)) setMenuCharge(null);
+    };
+    document.addEventListener('pointerdown', fermerHorsMenu);
+    return () => document.removeEventListener('pointerdown', fermerHorsMenu);
+  }, [menuCharge]);
 
   async function modifier<T>(
     cle:string, identite:string, action:(id:string, demande:string)=>Promise<T>,
@@ -135,27 +146,43 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
 
   function ligne(c:ChargeEntreprise) {
     const restant = reste(c);
+    const menuOuvert = menuCharge === c.charge_id;
     return <li key={c.charge_id} className="rep-charge-ligne">
-      <div className="rep-charges-rangee">
+      <div className="rep-charges-rangee rep-charge-rangee">
         <div><strong>{c.label}</strong><p>{l('Couvert','Covered')} {fmt(paye(c), c.currency)} / {fmt(cents(c.expected_amount), c.currency)}</p></div>
         <span className={'rep-charges-etiquette' + (restant === 0 ? ' is-regle' : '')}>
           {restant === 0 ? l('Couvert','Covered') : fmt(restant, c.currency)}
         </span>
+        {aRetirer !== c.charge_id && <div className="rep-charge-options" ref={menuOuvert ? menuActif : undefined}
+          onBlur={e => { if (menuOuvert && e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) setMenuCharge(null); }}
+          onKeyDown={e => {
+            if (e.key !== 'Escape' || !menuOuvert) return;
+            e.stopPropagation();
+            setMenuCharge(null);
+            e.currentTarget.querySelector('button')?.focus();
+          }}>
+          <button type="button" className="rep-charge-options-bouton" aria-label={l('Options pour ','Options for ')+c.label}
+            aria-expanded={menuOuvert} disabled={!!operation} onClick={() => {
+              setARetirer(null);
+              setMenuCharge(menuOuvert ? null : c.charge_id);
+            }}><span aria-hidden="true">••</span></button>
+          {menuOuvert && <div className="rep-charge-options-panneau">
+            <button type="button" className="rep-charge-retirer" aria-label={l('Supprimer ','Remove ')+c.label}
+              onClick={() => { setMenuCharge(null); setARetirer(c.charge_id); }}>{l('Supprimer','Remove')}</button>
+          </div>}
+        </div>}
       </div>
-      {aRetirer === c.charge_id ? <div className="rep-charges-form">
+      {aRetirer === c.charge_id && <div className="rep-charges-form">
         <p>{l('Retirer cette charge ? Les écritures déjà enregistrées sont conservées.','Remove this expense? Previously recorded entries are kept.')}</p>
         <button type="button" className={bouton} disabled={!!operation} onClick={() =>
           void modifier('retrait', 'retrait:'+c.charge_id, id => retirerChargeEntreprise(id,c.charge_id),
             l('Charge retirée.','Expense removed.'),l('Impossible de retirer cette charge.','Could not remove this expense.'),
             () => setARetirer(null))
         }>{l('Confirmer la suppression','Confirm removal')}</button>
-        <button type="button" className="rep-charge-retirer" onClick={() => setARetirer(null)}>
+        <button type="button" autoFocus className="rep-charge-retirer" onClick={() => setARetirer(null)}>
           {l('Annuler','Cancel')}
         </button>
-      </div> : <button type="button" className="rep-charge-retirer" aria-label={l('Supprimer ','Remove ')+c.label}
-        disabled={!!operation} onClick={() => setARetirer(c.charge_id)}>
-        {l('Supprimer','Remove')}
-      </button>}
+      </div>}
     </li>;
   }
 

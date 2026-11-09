@@ -184,7 +184,10 @@ it('retire une charge après confirmation et recharge le bloc',async()=>{
  });
  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
  render(<MemoryRouter><HabitudesRepartition/></MemoryRouter>);
- fireEvent.click(await screen.findByRole('button',{name:'Supprimer Loyer'}));
+ const options=await screen.findByRole('button',{name:'Options pour Loyer'});
+ expect(screen.queryByRole('button',{name:'Supprimer Loyer'})).toBeNull();
+ fireEvent.click(options);
+ fireEvent.click(screen.getByRole('button',{name:'Supprimer Loyer'}));
  expect(retirerCharge).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'Confirmer la suppression'}));
  await waitFor(()=>expect(screen.queryByText('Loyer')).toBeNull());
