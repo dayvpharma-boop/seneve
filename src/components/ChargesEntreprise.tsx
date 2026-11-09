@@ -16,6 +16,7 @@ export function ChargesEntreprise({devise,langue,onEtat}:{devise:string;langue:s
  const [paiement,setPaiement]=useState<Record<string,string>>({});
  const [chargement,setChargement]=useState(true),[erreur,setErreur]=useState(''),[message,setMessage]=useState(''),[occupes,setOccupes]=useState<Record<string,boolean>>({});
  const date=aujourdHui(),mois=debutMois(date),fin=finMois(date);
+ const styleBouton:React.CSSProperties={backgroundColor:'#49439B',color:'#fff',borderRadius:'14px',minHeight:'44px',padding:'10px 14px',fontWeight:600,border:'none'};
  const fmt=(v:number,c=devise)=>`${new Intl.NumberFormat(en?'en-US':'fr-FR',{maximumFractionDigits:2}).format(v/100)} ${c}`;
  const moisNom=(d:string)=>new Intl.DateTimeFormat(en?'en-US':'fr-FR',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(d+'T12:00:00Z'));
  async function rafraichir(id:string){
@@ -38,7 +39,7 @@ export function ChargesEntreprise({devise,langue,onEtat}:{devise:string;langue:s
  const carte=(c:ChargeEntreprise,archive=false)=>{const paid=c.payments.reduce((n,p)=>n+cents(p.amount),0),left=Math.max(0,cents(c.expected_amount)-paid),pct=cents(c.expected_amount)?Math.min(100,Math.round(paid/cents(c.expected_amount)*100)):0;return <article key={c.charge_id} className="rounded-xl border border-hd-outline-variant bg-white p-3">
   <div className="flex justify-between gap-2"><div><b>{c.label}</b><p className="text-xs text-hd-on-surface-variant">{archive?c.period_start+' → '+c.period_end:l('Prévu pour le mois','Scheduled for the month')}</p></div><span className="text-sm">{fmt(left,c.currency)} {l('à payer','left')}</span></div>
   <p className="mt-1 text-xs">{fmt(paid,c.currency)} / {fmt(cents(c.expected_amount),c.currency)} · {pct}%</p>
-  {left>0&&<div className="mt-2 flex gap-2"><label className="sr-only" htmlFor={'pay-'+c.charge_id}>{l('Montant payé','Amount paid')}</label><input id={'pay-'+c.charge_id} inputMode="decimal" placeholder={l('Montant payé','Amount paid')} value={paiement[c.charge_id]??''} onChange={e=>setPaiement(s=>({...s,[c.charge_id]:e.target.value}))} className="min-h-11 min-w-0 flex-1 rounded-lg border px-3"/><button type="button" className="oa-primary" disabled={!paiement[c.charge_id]||!!occupes[c.charge_id]} onClick={()=>void payer(c)}>{l('Noter le paiement','Record payment')}</button></div>}
+  {left>0&&<div className="mt-2 flex gap-2"><label className="sr-only" htmlFor={'pay-'+c.charge_id}>{l('Montant payé','Amount paid')}</label><input id={'pay-'+c.charge_id} inputMode="decimal" placeholder={l('Montant payé','Amount paid')} value={paiement[c.charge_id]??''} onChange={e=>setPaiement(s=>({...s,[c.charge_id]:e.target.value}))} className="min-h-11 min-w-0 flex-1 rounded-lg border px-3"/><button type="button" className="oa-primary" style={styleBouton} disabled={!paiement[c.charge_id]||!!occupes[c.charge_id]} onClick={()=>void payer(c)}>{l('Noter le paiement','Record payment')}</button></div>}
  </article>;};
  if(chargement)return <section className="rn-section"><h2>{l('Charges de l’entreprise','Business expenses')}</h2><p role="status">{l('Chargement…','Loading…')}</p></section>;
  if(!enrollment)return <section className="rn-section"><h2>{l('Charges de l’entreprise','Business expenses')}</h2><p>{l('Connecte-toi avec un accès actif à Habitudes & Défis pour suivre les charges et ouvrir la répartition.','Sign in with active Habits & Challenges access to track expenses and unlock allocation.')}</p><Link to={en?'/connexion?lang=en&mode=signin&suite=habitudes':'/connexion?mode=signin&suite=habitudes'} className="sim-ios-bouton mt-3 block text-center">{l('Se connecter','Sign in')}</Link></section>;
@@ -48,7 +49,7 @@ export function ChargesEntreprise({devise,langue,onEtat}:{devise:string;langue:s
   <p>{l('Un seul bloc pour chaque mois. Tu peux y ajouter plusieurs rubriques : loyer, électricité, transport et autres charges. Chaque devise reste séparée. Toutes les charges du bloc doivent être réglées avant d’ouvrir la répartition. Les mois passés restent consultables dans les archives.','One block per month. Add several expense categories to it: rent, electricity, transport and other costs. Currencies stay separate. All expenses in the block must be paid before allocation opens.')}</p>
   <div className="mt-3 rounded-2xl border border-hd-outline-variant bg-white p-4">
    <div className="flex flex-wrap items-center justify-between gap-2"><div><small className="text-hd-on-surface-variant">{l('Bloc du mois','This month’s block')}</small><h3 className="text-lg font-semibold capitalize">{moisNom(mois)}</h3></div>
-    {!bloc&&<button type="button" className="oa-primary" disabled={!!occupes.bloc} onClick={()=>void creerBloc()}>{l('Créer le bloc du mois','Create this month’s block')}</button>}
+    {!bloc&&<button type="button" className="oa-primary" style={styleBouton} disabled={!!occupes.bloc} onClick={()=>void creerBloc()}>{l('Créer le bloc du mois','Create this month’s block')}</button>}
     {bloc&&<span className="rounded-full bg-hd-secondary-container/60 px-3 py-1 text-sm">{l('Bloc actif','Active block')}</span>}
    </div>
    {!bloc&&<p className="mt-3 text-sm">{l('Crée le bloc mensuel, puis ajoute toutes les charges prévues. Un second bloc ne pourra pas être créé pour ce mois.','Create the monthly block, then add all expected expenses. A second block cannot be created for this month.')}</p>}
@@ -59,7 +60,7 @@ export function ChargesEntreprise({devise,langue,onEtat}:{devise:string;langue:s
      <label className="flex flex-col gap-1 text-sm">{l('Nom de la charge','Expense name')}<input value={chargeNom} maxLength={80} onChange={e=>setChargeNom(e.target.value)} placeholder={l('Ex. loyer de l’entreprise','e.g. business rent')} className="min-h-11 rounded-lg border px-3"/></label>
      <label className="flex flex-col gap-1 text-sm">{l('Montant prévu','Expected amount')}<input inputMode="decimal" value={chargeMontant} onChange={e=>setChargeMontant(e.target.value)} placeholder={'0 '+devise} className="min-h-11 rounded-lg border px-3"/></label>
      <p className="text-xs text-hd-on-surface-variant">{l('Devise de cette rubrique :','Currency for this expense:')} {devise}</p>
-     <button type="button" className="oa-primary" disabled={!chargeNom.trim()||!chargeMontant||!!occupes.ajout} onClick={()=>void ajouter()}>{l('Ajouter cette rubrique','Add this category')}</button>
+     <button type="button" className="oa-primary" style={styleBouton} disabled={!chargeNom.trim()||!chargeMontant||!!occupes.ajout} onClick={()=>void ajouter()}>{l('Ajouter cette rubrique','Add this category')}</button>
     </div></details>
    </>}
   </div>
