@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {montantValidePourDevise} from '@/lib/devises';
-import {chargerSuiviFinancier} from '@/lib/habitudes-finances-suivi';
 import {
   chargerChargesEntreprise, creerBlocChargesEntreprise, creerChargeEntreprise,
   enregistrerPaiementCharge, type ChargeEntreprise, type DonneesChargesEntreprise,
@@ -9,7 +8,7 @@ import {
 
 export type EtatAccesCharges = 'verification' | 'indisponible' | 'a-regler' | 'reglees';
 type EtatBloc = {type:'chargement' | 'erreur' | 'sans-acces'} |
-  {type:'charge'; enrollmentId:string; donnees:DonneesChargesEntreprise};
+  {type:'charge'; donnees:DonneesChargesEntreprise};
 
 const calendrier = new Intl.DateTimeFormat('sv-SE', {
   timeZone:'Africa/Kinshasa', year:'numeric', month:'2-digit', day:'2-digit',
@@ -45,28 +44,26 @@ export function ChargesEntreprise({devise, langue, onEtat}:{
   const ecritureEnCours = useRef(false);
   const demandes = useRef(new Map<string,string>());
 
-  const charger = useCallback(async (enrollmentId?:string) => {
+  const charger = useCallback(async () => {
     const lecture = ++version.current;
     onEtat('verification', 0);
     try {
-      const id = enrollmentId ?? (await chargerSuiviFinancier(null))?.enrollment_id;
+      const donnees = await chargerChargesEntreprise(null, date, devise);
       if (lecture !== version.current) return false;
-      if (!id) {
+      if (!donnees) {
         setEtat({type:'sans-acces'});
         onEtat('indisponible', 0);
         return false;
       }
-      const donnees = await chargerChargesEntreprise(id, date, devise);
-      if (lecture !== version.current) return false;
-      if (!donnees) throw Error('Bloc mensuel non vérifiable');
-      setEtat({type:'charge', enrollmentId:id, donnees});
+      setEtat({type:'charge', donnees});
       const soldes = !!donnees.active_block && donnees.charges.length > 0 && donnees.charges.every(c => reste(c) === 0);
       const montantPaye = donnees.charges.filter(c => c.currency === devise).reduce((total,c) => total + paye(c), 0);
       onEtat(soldes ? 'reglees' : 'a-regler', montantPaye / 100);
       return true;
-    } catch {
+    } catch (erreur) {
       if (lecture === version.current) {
-        setEtat({type:'erreur'});
+        const code = typeof erreur === 'object' && erreur !== null && 'code' in erreur ? erreur.code : null;
+        setEtat({type:code === '42501' || code === 'PGRST301' ? 'sans-acces' : 'erreur'});
         onEtat('indisponible', 0);
       }
       return false;
@@ -86,7 +83,7 @@ export function ChargesEntreprise({devise, langue, onEtat}:{
   ) {
     if (etat.type !== 'charge' || ecritureEnCours.current) return;
     const lecture = version.current;
-    const id = etat.enrollmentId;
+    const id = etat.donnees.enrollment_id;
     ecritureEnCours.current = true;
     setOperation(cle);
     setRetour(null);
@@ -104,7 +101,7 @@ export function ChargesEntreprise({devise, langue, onEtat}:{
       setRetour({texte:echec, erreur:true});
     } finally {
       if (lecture === version.current) {
-        await charger(id);
+        await charger();
         setOperation(null);
       }
       ecritureEnCours.current = false;

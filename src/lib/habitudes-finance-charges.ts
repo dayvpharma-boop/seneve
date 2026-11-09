@@ -3,7 +3,7 @@ import {supabase} from './supabase';
 type ChargeEntreprisePaiement={payment_id:string;amount:string;date_locale:string};
 export type ChargeEntreprise={charge_id:string;label:string;expected_amount:string;currency:string;period_start:string;period_end:string;payments:ChargeEntreprisePaiement[]};
 export type BlocChargeArchive={block_id:string;month_start:string;charges:ChargeEntreprise[]};
-export type DonneesChargesEntreprise={active_block:{block_id:string;month_start:string}|null;charges:ChargeEntreprise[];archives:BlocChargeArchive[]};
+export type DonneesChargesEntreprise={enrollment_id:string;active_block:{block_id:string;month_start:string}|null;charges:ChargeEntreprise[];archives:BlocChargeArchive[]};
 const objet=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
 const montant=(v:unknown)=>typeof v==='string'&&/^\d{1,10}(?:\.\d{1,2})?$/.test(v)&&Number(v)>0;
@@ -16,14 +16,14 @@ function analyserCharges(v:unknown):ChargeEntreprise[]{
   return {charge_id:x.charge_id as string,label:x.label,expected_amount:x.expected_amount as string,currency:x.currency,period_start:x.period_start as string,period_end:x.period_end as string,payments};
  });
 }
-function analyser(data:unknown,enrollmentId:string):DonneesChargesEntreprise{
- if(!objet(data)||data.enrollment_id!==enrollmentId||!Array.isArray(data.archives))throw Error('Suivi des charges incohérent');
+function analyser(data:unknown,enrollmentId:string|null):DonneesChargesEntreprise{
+ if(!objet(data)||!uuid(data.enrollment_id)||(enrollmentId!==null&&data.enrollment_id!==enrollmentId)||!Array.isArray(data.archives))throw Error('Suivi des charges incohérent');
  let active:{block_id:string;month_start:string}|null=null;
  if(data.active_block!==null){const a=data.active_block;if(!objet(a)||!uuid(a.block_id)||!date(a.month_start))throw Error('Bloc mensuel incohérent');active={block_id:a.block_id,month_start:a.month_start as string};}
  const archives=data.archives.map((x:unknown)=>{if(!objet(x)||!uuid(x.block_id)||!date(x.month_start))throw Error('Archive de charges incohérente');return {block_id:x.block_id,month_start:x.month_start as string,charges:analyserCharges(x.charges)};});
- return {active_block:active,charges:analyserCharges(data.charges),archives};
+ return {enrollment_id:data.enrollment_id,active_block:active,charges:analyserCharges(data.charges),archives};
 }
-export async function chargerChargesEntreprise(enrollmentId:string,dateLocale:string,currency:string){
+export async function chargerChargesEntreprise(enrollmentId:string|null,dateLocale:string,currency:string){
  const {data,error}=await supabase.rpc('hd_finance_business_charges_get',{p_enrollment_id:enrollmentId,p_date:dateLocale,p_currency:currency});
  if(error)throw error;if(data===null)return null;return analyser(data,enrollmentId);
 }

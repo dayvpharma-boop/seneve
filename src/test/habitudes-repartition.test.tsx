@@ -12,12 +12,8 @@ vi.mock('@/lib/habitudes-finance-charges', async importOriginal => ({
  ...await importOriginal<typeof import('@/lib/habitudes-finance-charges')>(),
  chargerChargesEntreprise:chargerCharges,
 }));
-vi.mock('@/lib/habitudes-finances-suivi', async importOriginal => ({
- ...await importOriginal<typeof import('@/lib/habitudes-finances-suivi')>(),
- chargerSuiviFinancier:async () => ({enrollment_id:'inscription'}),
-}));
-
 const chargesReglees:DonneesChargesEntreprise = {
+ enrollment_id:'inscription',
  active_block:{block_id:'bloc',month_start:'2026-11-01'},
  charges:[{charge_id:'loyer',label:'Loyer',currency:'EUR',expected_amount:'300.00',
   period_start:'2026-11-01',period_end:'2026-11-30',
