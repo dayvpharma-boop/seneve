@@ -49,7 +49,7 @@ export function HabitudesRepartition(){
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
  let r:ReturnType<typeof repartir>|null=null,erreur=false;
- if(recu.trim()!==''){try{r=repartir(baseRepartition(profil,recu,marchandises,profil==='salarie'?frais:String(chargesPayees)),p,dec);}catch{erreur=true;}}
+ if(recu.trim()!==''){try{const fraisCalcul=profil==='salarie'?frais:String(chargesPayees+(Number(frais.replace(',','.'))||0));r=repartir(baseRepartition(profil,recu,marchandises,fraisCalcul),p,dec);}catch{erreur=true;}}
  const choisir=(v:ProfilRevenu)=>{setProfil(v);setRecu('');setMarchandises('');setFrais('');};
  const PROFILS:{v:ProfilRevenu;nom:string;rythme:string;icone:string;fond:string}[]=[
   {v:'salarie',nom:l('Salarié','Employee'),rythme:l('par mois','monthly'),icone:'mallette',fond:'linear-gradient(135deg,#5ac8fa,#007aff)'},
@@ -100,10 +100,11 @@ export function HabitudesRepartition(){
    </div>
    <div className="sim-ios-groupe hd-classique mt-2.5">
     {profil==='commerce'&&champ('hd-rep-marchandises',l('Coût des marchandises vendues','Cost of goods sold'),marchandises,setMarchandises)}
-    {profil==='salarie'&&champ('hd-rep-frais',l('Dépenses de travail non remboursées','Unreimbursed work expenses'),frais,setFrais)}
+    {profil!=='autre'&&champ('hd-rep-frais',profil==='salarie'?l('Dépenses de travail non remboursées','Unreimbursed work expenses'):profil==='commerce'?l('Charges du commerce','Business expenses'):l('Dépenses du travail','Work expenses'),frais,setFrais)}
     <div className="sim-ios-ligne"><label htmlFor="hd-rep-devise">{l('Monnaie','Currency')}</label><ChoixDevise id="hd-rep-devise" valeur={devise} onChange={setDevise} langue={en?'en':'fr'}/></div>
    </div>
    <p className="sim-ios-note hd-classique">{aide}</p>
+   {(profil==='commerce'||profil==='entreprise')&&<p className="sim-ios-note hd-classique">{l('Dans le champ de dépenses ci-dessus, indique seulement les dépenses ponctuelles déjà payées qui ne sont pas listées dans les charges de l’entreprise.','In the expenses field above, enter only one-time costs already paid that are not listed below as business charges.')}</p>}
    {chargesRequises&&<ChargesEntreprise devise={devise} langue={langue} onEtat={(ok,montant)=>{setChargesOK(ok);setChargesPayees(montant);}}/>}
    {erreur&&<p role="alert" className="sim-ios-alerte hd-classique">{l('Vérifie les montants : écris seulement des chiffres, par exemple 500000 ou 1000,50.','Check the amounts: digits only, for example 500000 or 1000.50.')}</p>}
 
