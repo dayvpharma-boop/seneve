@@ -146,14 +146,18 @@ it('un excédent de la part Dettes reste au participant et passe à « Pour vivr
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
  const feuille=await screen.findByRole('dialog');
  const dette=await within(feuille).findByRole('checkbox',{name:/^Dettes/});
- const surplus=within(feuille).getByRole('checkbox',{name:/Excédent de la part Dettes/});
+ const surplus=within(feuille).getByRole('checkbox',{name:/Excédent à affecter/});
  expect(dette).not.toBeChecked();
  expect(surplus).not.toBeChecked();
- expect(within(feuille).getByText(/Disponible pour vivre/)).toBeInTheDocument();
+ expect(within(feuille).getByRole('button',{name:/Enregistrer 3 parts · 325 USD/})).toBeDisabled();
  // Base 500, part dettes 75, dette existante 20, surplus 55.
- expect(surplus.closest('li')!.textContent).toMatch(/55\s?USD/);
+ expect(surplus.closest('li')!.textContent).toMatch(/55\\s?USD/);
  fireEvent.click(dette);
- fireEvent.click(surplus);
+ fireEvent.click(within(feuille).getByRole('radio',{name:'Investissement'}));
+ expect(within(feuille).getByRole('alert').textContent).toMatch(/Crée d’abord un objectif/);
+ expect(within(feuille).getByRole('button',{name:/Enregistrer 4 parts · 345 USD/})).toBeDisabled();
+ fireEvent.click(within(feuille).getByRole('radio',{name:'Pour vivre'}));
+ expect(surplus).toBeChecked();
  fireEvent.click(within(feuille).getByRole('button',{name:/Enregistrer 5 parts · 400 USD/}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_allocation_save',expect.objectContaining({p_parts:[
   {part:'dime',amount:'50.00'},{part:'reserve_joie',goal_id:G,amount:'50.00'},
