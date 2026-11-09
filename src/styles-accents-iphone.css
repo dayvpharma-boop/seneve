@@ -1,0 +1,26 @@
+/* Généré le 09/11/2026 à partir de styles-iphone.css : les violets figés suivent la couleur d’accent choisie.
+ * Sans couleur choisie (Lavande), rien ne change. Ne pas modifier à la main : relancer le générateur. */
+:root[data-accent]:root:root .ios-jour{
+ background:linear-gradient(180deg,#0000 10%,#0000 35%,#000b 100%),url("/illustrations/seneve-pousse-photo-v1-720.webp") center/cover,color-mix(in srgb,var(--ios-accent) 44%,#000)}
+:root[data-accent] .ios-anneau-journee .ios-anneau-trait{stroke:color-mix(in srgb,var(--ios-accent) 89%,#fff)}
+:root[data-accent]:root:root li.ios-anneau-journee::before{background:color-mix(in srgb,var(--ios-accent) 89%,#fff)}
+:root[data-accent]:root:root .ios-prochain{background:linear-gradient(135deg,color-mix(in srgb,var(--ios-accent) 44%,#000),color-mix(in srgb,var(--ios-accent) 28%,#000))}
+:root[data-accent]:root:root .ios-tuile-indigo{background:linear-gradient(180deg,color-mix(in srgb,var(--ios-accent) 66%,#fff),var(--ios-accent))}
+:root[data-accent]:root:root .ios-tuile-nuit{background:linear-gradient(180deg,#4c4a8a,color-mix(in srgb,var(--ios-accent) 44%,#000))}
+:root[data-accent]:root:root .parcours-page.ios .progres-suite{background:linear-gradient(135deg,color-mix(in srgb,var(--ios-accent) 44%,#000),color-mix(in srgb,var(--ios-accent) 28%,#000))!important}
+:root[data-accent]:root:root .parcours-page.ios .bilan-pastille{background:linear-gradient(180deg,color-mix(in srgb,var(--ios-accent) 66%,#fff),var(--ios-accent))!important}
+:root[data-accent]:root:root .bl-page.ios .bl-parcours{background:color-mix(in srgb,var(--ios-accent) 44%,#000)!important}
+:root[data-accent]:root:root .bb-page.ios .bb-carte.bb-reprendre{background:radial-gradient(120% 80% at 100% 0%,color-mix(in srgb,var(--ios-accent) 79%,#fff) 0%,transparent 55%),linear-gradient(160deg,color-mix(in srgb,var(--ios-accent) 49%,#000),color-mix(in srgb,var(--ios-accent) 26%,#000))!important}
+:root[data-accent]:root:root .bb-page.ios .bb-puce-claire{background:linear-gradient(180deg,color-mix(in srgb,var(--ios-accent) 66%,#fff),var(--ios-accent))!important}
+:root[data-accent]:root:root .pv-page.ios .pv-tuile:is([data-icone="equipe"],:root[data-accent] [data-icone="lune"]){background:linear-gradient(180deg,color-mix(in srgb,var(--ios-accent) 66%,#fff),var(--ios-accent))!important}
+:root[data-accent]:root:root .oa-page.ios .oa-features li svg{background:linear-gradient(180deg,color-mix(in srgb,var(--ios-accent) 66%,#fff),var(--ios-accent))}
+:root[data-accent]:root:root .ios-test .home-reassure svg{background:linear-gradient(180deg,color-mix(in srgb,var(--ios-accent) 66%,#fff),var(--ios-accent))}
+:root[data-accent]:root:root:root .hd-public.ios .hd-public-hero{background:radial-gradient(120% 85% at 0% 0%,color-mix(in srgb,var(--ios-accent) 78%,#fff) 0%,var(--ios-accent) 30%,color-mix(in srgb,var(--ios-accent) 47%,#000) 62%,#0b0a14 100%)}
+:root[data-accent]:root:root:root .hd-ecran.ios ul.flex-col>li:nth-child(1)>span.rounded-full.bg-hd-surface-container-low{background:linear-gradient(180deg,color-mix(in srgb,var(--ios-accent) 66%,#fff),var(--ios-accent))!important}
+:root[data-accent]:root:root:root .hd-ecran.ios ul.flex-col>li:nth-child(6)>span.rounded-full.bg-hd-surface-container-low{background:linear-gradient(180deg,#4c4a8a,color-mix(in srgb,var(--ios-accent) 44%,#000))!important}
+:root[data-accent]:root:root .pv-page.ios .pv-identite .pf-avatar{background:linear-gradient(160deg,color-mix(in srgb,var(--ios-accent) 62%,#fff),var(--ios-accent))!important}
+:root[data-accent]:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,color-mix(in srgb,var(--ios-accent) 82%,#fff),var(--ios-accent) 60%,color-mix(in srgb,var(--ios-accent) 89%,#000))!important}
+:root[data-accent]:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,color-mix(in srgb,var(--ios-accent) 82%,#fff),var(--ios-accent) 60%,color-mix(in srgb,var(--ios-accent) 89%,#000))!important}
+:root[data-accent]:root:root .espace-page aside.decouverte-hd.dhd-forme{background:radial-gradient(120% 85% at 0% 0%,color-mix(in srgb,var(--ios-accent) 78%,#fff) 0%,var(--ios-accent) 30%,color-mix(in srgb,var(--ios-accent) 47%,#000) 62%,#0b0a14 100%)}
+:root[data-accent]:root:root:root #s-result.resultat-anneaux .result-action{background:linear-gradient(150deg,color-mix(in srgb,var(--ios-accent) 78%,#fff),var(--ios-accent) 55%,color-mix(in srgb,var(--ios-accent) 76%,#000))!important}
+:root[data-accent]:root:root:root[data-apparence="sombre"] .barre-nav a.ios-onglet[aria-current="page"]{color:var(--ios-accent,color-mix(in srgb,var(--ios-accent) 50%,#fff))!important}

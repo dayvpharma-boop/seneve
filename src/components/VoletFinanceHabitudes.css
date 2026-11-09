@@ -8,17 +8,17 @@
 :root:root:root .vf-ligne{position:relative;display:flex;align-items:center;gap:12px;min-height:58px;padding:8px 14px}
 :root:root:root .vf-ligne+.vf-ligne::before{content:"";position:absolute;left:56px;right:0;top:0;border-top:.5px solid var(--ios-ligne,#e5e5ea)}
 :root:root:root .vf-anneau{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:conic-gradient(#34c759 var(--p),rgb(118 118 128 / .16) 0);-webkit-mask:radial-gradient(circle,transparent 9px,#000 10px);mask:radial-gradient(circle,transparent 9px,#000 10px)}
-:root:root:root .vf-anneau-dette{background:conic-gradient(#5b4ee8 var(--p),rgb(118 118 128 / .16) 0)}
+:root:root:root .vf-anneau-dette{background:conic-gradient(var(--ios-accent,#5b4ee8) var(--p),rgb(118 118 128 / .16) 0)}
 :root:root:root .vf-nom{flex:1;min-width:0}
 :root:root:root .vf-nom b{display:block;font-size:16px;font-weight:500;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 :root:root:root .vf-nom small{display:block;font-size:13px;color:var(--ios-doux,#6e6e73)}
 :root:root:root .vf-pct{font-size:14px;font-weight:600;color:var(--ios-doux,#6e6e73);font-variant-numeric:tabular-nums}
-:root:root:root .vf-total{margin-bottom:10px;padding:14px 16px;border-radius:16px;color:#fff;background:linear-gradient(135deg,#7d7aff,#5b4ee8)}
+:root:root:root .vf-total{margin-bottom:10px;padding:14px 16px;border-radius:16px;color:#fff;background:linear-gradient(135deg,#7d7aff,var(--ios-accent,#5b4ee8))}
 :root:root:root .vf-total p{margin:0}
 :root:root:root .vf-total small{display:block;font-size:13px;opacity:.85}
 :root:root:root .vf-total b{display:block;font-size:26px;font-weight:700;letter-spacing:-.02em}
 :root:root:root .vf-note{margin:4px 2px 8px;font-size:14px;line-height:1.4;color:var(--ios-doux,#6e6e73)}
-:root:root:root .vf-lien{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin-top:10px;padding:0 14px;border-radius:14px;background:var(--ios-carte,#fff);color:var(--ios-accent,#5b4ee8);font-size:16px;font-weight:500;text-decoration:none;box-shadow:0 1px 2px rgb(0 0 0 / .05)}
+:root:root:root .vf-lien{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin-top:10px;padding:0 14px;border-radius:14px;background:var(--ios-carte,#fff);color:var(--ios-accent,var(--ios-accent,#5b4ee8));font-size:16px;font-weight:500;text-decoration:none;box-shadow:0 1px 2px rgb(0 0 0 / .05)}
 :root:root:root .vf-raccourcis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 :root:root:root .vf-raccourcis a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 8px;border-radius:12px;background:rgb(118 118 128 / .12);color:var(--ios-encre,#1c1c1e);font-size:13.5px;font-weight:500;text-decoration:none;text-align:center}
 @media (prefers-reduced-motion:reduce){:root:root:root .vf-curseur{transition:none}}

@@ -1,7 +1,7 @@
 /* « Mon abonnement », dessin v2 validé par Dr Justin le 08/11/2026 : style Réglages d'iPhone.
  * Échelle de texte : grand titre 32, titre de carte 22, corps 17, sous-titre 15, note 13, légende 11.
  * Listes groupées, séparateurs qui commencent après l'icône, icônes au trait sur carrés arrondis colorés. */
-.ab-page{--ab-encre:var(--vivant-encre,#151b36);--ab-doux:var(--vivant-secondaire,#5f6478);--ab-faible:#3c3c434d;--ab-carte:var(--vivant-surface,#fff);--ab-sep:#3c3c4329;--ab-accent:#5b4ee8;--ab-accent-fond:#5b4ee81f;--ab-choisie:#f6f5ff;--ab-vert:#34c759;--ab-vert-texte:#248a3d;--ab-vert-fond:#e8f8ec;--ab-segment:#7676801f;--ab-ressort:cubic-bezier(.32,.72,0,1)}
+.ab-page{--ab-encre:var(--vivant-encre,#151b36);--ab-doux:var(--vivant-secondaire,#5f6478);--ab-faible:#3c3c434d;--ab-carte:var(--vivant-surface,#fff);--ab-sep:#3c3c4329;--ab-accent:var(--ios-accent,#5b4ee8);--ab-accent-fond:color-mix(in srgb,var(--ab-accent) 12%,transparent);--ab-choisie:color-mix(in srgb,var(--ab-accent) 6%,#fff);--ab-vert:#34c759;--ab-vert-texte:#248a3d;--ab-vert-fond:#e8f8ec;--ab-segment:#7676801f;--ab-ressort:cubic-bezier(.32,.72,0,1)}
 .ab-page .ab-retour{margin:0 2px;font:600 11.5px/1.4 Poppins,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--ab-doux)}
 .ab-page .ab-titre{margin:4px 0 0;font:700 32px/1.2 Poppins,system-ui,sans-serif;letter-spacing:-.4px;color:var(--ab-encre)}
 .ab-page .ab-intro{margin:6px 2px 22px;font-size:15px;line-height:1.4;color:var(--ab-doux)}
@@ -124,8 +124,8 @@
 @media (prefers-reduced-motion:reduce){.ab-curseur,.ab-tout svg,.ab-f{transition:none}}
 
 /* Mode sombre : surfaces de l'application, accents éclaircis. */
-:root[data-apparence="sombre"] .ab-page{--ab-carte:var(--vivant-surface,#1c1c1e);--ab-sep:#ffffff1f;--ab-faible:#ebebf54d;--ab-accent:#a59bff;--ab-accent-fond:#a59bff26;--ab-choisie:#a59bff1a;--ab-vert-texte:#7ee2a0;--ab-vert-fond:#34c75926;--ab-segment:#7676803d}
-:root[data-apparence="sombre"] .ab-cta{background:#7c6ff2}
+:root[data-apparence="sombre"] .ab-page{--ab-carte:var(--vivant-surface,#1c1c1e);--ab-sep:#ffffff1f;--ab-faible:#ebebf54d;--ab-accent:var(--ios-accent,#a59bff);--ab-accent-fond:color-mix(in srgb,var(--ab-accent) 15%,transparent);--ab-choisie:color-mix(in srgb,var(--ab-accent) 10%,transparent);--ab-vert-texte:#7ee2a0;--ab-vert-fond:#34c75926;--ab-segment:#7676803d}
+:root[data-apparence="sombre"] .ab-cta{background:var(--ios-accent,#7c6ff2)}
 :root[data-apparence="sombre"] .ab-valeur{background:#34c7591f;color:#9df0bd}
 :root[data-apparence="sombre"] .ab-etiq-or{background:#c8961e33;color:#ffd98a}
 :root[data-apparence="sombre"] .ab-alerte{color:#ffcc80}

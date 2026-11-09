@@ -12,3 +12,15 @@
 :root:root[data-accent="olive"]{--accent:#4f6526;--accent-fonce:#384a18;--accent-moyen:#7f9a4a;--accent-doux:#ebf0dc;--accent-pale:#dfe7c8;--accent-nuit:#c3d58a;--accent-nuit-sur:#1d2608;--accent-nuit-doux:#262a1d;--palette-accent:#4f6526;--palette-sur-accent:#384a18;--palette-or:#7f9a4a;--palette-or-doux:#dfe7c8;--palette-or-pale:#ebf0dc;--palette-nuit-accent:#c3d58a}
 :root:root[data-accent="orancien"]{--accent:#86661c;--accent-fonce:#634a10;--accent-moyen:#b8964a;--accent-doux:#f6eedb;--accent-pale:#efe2c2;--accent-nuit:#e3c27a;--accent-nuit-sur:#2b2007;--accent-nuit-doux:#2b261b;--palette-accent:#86661c;--palette-sur-accent:#634a10;--palette-or:#b8964a;--palette-or-doux:#efe2c2;--palette-or-pale:#f6eedb;--palette-nuit-accent:#e3c27a}
 :root:root[data-accent="miel"]{--accent:#975a06;--accent-fonce:#6f4103;--accent-moyen:#cf8a2e;--accent-doux:#fbecd8;--accent-pale:#f6dfbd;--accent-nuit:#f4b860;--accent-nuit-sur:#2e1a00;--accent-nuit-doux:#2e2419;--palette-accent:#975a06;--palette-sur-accent:#6f4103;--palette-or:#cf8a2e;--palette-or-doux:#f6dfbd;--palette-or-pale:#fbecd8;--palette-nuit-accent:#f4b860}
+
+/* 09/11/2026 : la nouvelle interface iPhone utilise --ios-accent (onglets, boutons, cases, anneaux…).
+ * On la relie à la couleur choisie, en clair comme en sombre ; « Lavande » garde le violet d'origine. */
+:root:root:root:root[data-accent]{--ios-accent:var(--accent);--ios-accent-2:var(--accent-moyen)}
+:root:root:root:root[data-accent][data-apparence="sombre"]{--ios-accent:var(--accent-nuit);--ios-accent-2:var(--accent-nuit)}
+@media (prefers-color-scheme:dark){:root:root:root:root[data-accent]:not([data-apparence="clair"]):not([data-apparence="sombre"]){--ios-accent:var(--accent-nuit);--ios-accent-2:var(--accent-nuit)}}
+
+/* 09/11/2026 : la palette choisie (Sable, Sauge, Argile, Ardoise) colore aussi le fond de la nouvelle interface, en mode clair.
+ * « Ivoire » (par défaut) et le mode sombre gardent leurs fonds d'origine. */
+:root:root:root:root[data-palette]:not([data-palette="ivoire"]):not([data-apparence="sombre"]){--ios-fond:var(--palette-papier);--ios-carte:var(--palette-surface);--ios-ligne:var(--palette-ligne)}
+:root:root:root:root[data-palette]:not([data-palette="ivoire"]):not([data-apparence="sombre"]) :is(.espace-page,.parcours-page,.bl-page,.pv-page,.ab-page,.hd-stitch,.bb-page,.nt-page,.oa-page){--vivant-fond:var(--palette-papier);--vivant-surface:var(--palette-surface);--bb-fond:var(--palette-papier);--bb-carte:var(--palette-surface)}
+:root:root:root:root[data-palette]:not([data-palette="ivoire"]):not([data-apparence="sombre"]) :is(body,.espace-page,.parcours-page,.pv-page,.bb-page,main.wrap){background:var(--palette-papier)!important;background-image:none!important}

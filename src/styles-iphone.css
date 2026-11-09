@@ -50,7 +50,7 @@
 :root:root:root .ios-anneaux svg{flex:none}
 :root:root:root .ios-anneaux circle{fill:none;stroke-width:12;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%}
 :root:root:root .ios-anneau-trait{transition:stroke-dashoffset 900ms var(--ios-ressort)}
-:root:root:root .ios-anneau-journee .ios-anneau-fond{stroke:#5b4ee82e}.ios-anneau-journee .ios-anneau-trait{stroke:#6a5cf0}
+:root:root:root .ios-anneau-journee .ios-anneau-fond{stroke:var(--ios-accent)2e}.ios-anneau-journee .ios-anneau-trait{stroke:#6a5cf0}
 :root:root:root .ios-anneau-mois .ios-anneau-fond{stroke:#30d15830}.ios-anneau-mois .ios-anneau-trait{stroke:#30d158}
 :root:root:root .ios-anneau-semaine .ios-anneau-fond{stroke:#ff9f0a33}.ios-anneau-semaine .ios-anneau-trait{stroke:#ff9f0a}
 :root:root:root .ios-anneaux h2{margin:0;font:700 20px/1.2 var(--ios-police);letter-spacing:-.015em;color:var(--ios-encre)}
@@ -539,7 +539,7 @@
 :root:root:root:root .hd-public.ios .hd-public-retour{border:0;background:var(--ios-carte);color:var(--ios-encre);width:40px;height:40px;font-size:19px;box-shadow:0 1px 2px #0000000f}
 :root:root:root:root .hd-public.ios .hd-public-brand{font:600 13px var(--ios-police);letter-spacing:.22em}
 :root:root:root:root .hd-public.ios .hd-public-top>a{color:var(--ios-accent);text-decoration:none;font-weight:500}
-:root:root:root:root .hd-public.ios .hd-public-hero{border-radius:30px!important;padding:24px 22px 22px;color:#fefefe;background:radial-gradient(120% 85% at 0% 0%,#7b6cf6 0%,#5b4ee8 30%,#2a2170 62%,#0b0a14 100%)}
+:root:root:root:root .hd-public.ios .hd-public-hero{border-radius:30px!important;padding:24px 22px 22px;color:#fefefe;background:radial-gradient(120% 85% at 0% 0%,#7b6cf6 0%,var(--ios-accent) 30%,#2a2170 62%,#0b0a14 100%)}
 :root:root:root:root .hd-public.ios .hd-public-tag{border:0;background:rgb(255 255 255 / .16);font:600 13px var(--ios-police);padding:6px 12px}
 :root:root:root:root .hd-public.ios .hd-public-hero h1{font:800 clamp(34px,7vw,52px)/1.05 var(--ios-police)!important;letter-spacing:-.025em;margin:14px 0 6px}
 :root:root:root:root .hd-public.ios .hd-public-lead{font-size:19px;line-height:1.3;opacity:.9;margin:0}
@@ -554,7 +554,7 @@
 :root:root:root:root .hd-public.ios .hd-public-chiffres dd{margin:2px 0 0;font:500 12px/1.3 var(--ios-police);opacity:.78}
 :root:root:root:root .hd-public.ios .hd-public-hero .hd-public-small{font-size:13px;opacity:.85}
 :root:root:root:root .hd-public.ios .hd-public-actions{flex-direction:column;gap:8px;margin-top:16px}
-:root:root:root:root .hd-public.ios .hd-public-actions .hd-public-cta{width:100%;min-height:52px;border-radius:16px!important;background:#fefefe;color:#5b4ee8;font:700 16px var(--ios-police)}
+:root:root:root:root .hd-public.ios .hd-public-actions .hd-public-cta{width:100%;min-height:52px;border-radius:16px!important;background:#fefefe;color:var(--ios-accent);font:700 16px var(--ios-police)}
 :root:root:root:root .hd-public.ios .hd-public-actions .hd-public-cta-secondary{background:rgb(255 255 255 / .14);border:0;color:#fefefe;font-weight:600}
 :root:root:root:root .hd-public.ios .hd-public-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:8px;padding:16px 0 4px}
 :root:root:root:root .hd-public.ios .hd-public-nav a{white-space:nowrap;border:0;border-radius:999px!important;background:var(--ios-carte);color:var(--ios-accent);font:600 14px var(--ios-police);padding:10px 15px;display:inline-flex;align-items:center;box-shadow:0 1px 2px #0000000a}
@@ -572,12 +572,12 @@
 :root:root:root:root .hd-public.ios .hd-public-rhythm{border-top:.5px solid var(--ios-ligne);margin:14px -20px 0}
 :root:root:root:root .hd-public.ios .hd-public-rhythm li{grid-template-columns:48px 10px 1fr;gap:12px;padding:13px 20px;border-bottom:.5px solid var(--ios-ligne)}
 :root:root:root:root .hd-public.ios .hd-public-rhythm li:last-child{border-bottom:0}
-:root:root:root:root .hd-public.ios .hd-public-rhythm li::before{content:"";grid-column:2;grid-row:1;width:10px;height:10px;border-radius:50%;background:var(--pastille,#5b4ee8)}
+:root:root:root:root .hd-public.ios .hd-public-rhythm li::before{content:"";grid-column:2;grid-row:1;width:10px;height:10px;border-radius:50%;background:var(--pastille,var(--ios-accent))}
 :root:root:root:root .hd-public.ios .hd-public-rhythm li>span:last-child{grid-column:3;grid-row:1}
 :root:root:root:root .hd-public.ios .hd-public-time{grid-column:1;grid-row:1;color:var(--ios-accent);font-weight:700}
 :root:root:root:root .hd-public.ios .hd-public-rhythm li:nth-child(5n+1){--pastille:#ff9f0a}
 :root:root:root:root .hd-public.ios .hd-public-rhythm li:nth-child(5n+2){--pastille:#30d158}
-:root:root:root:root .hd-public.ios .hd-public-rhythm li:nth-child(5n+3){--pastille:#5b4ee8}
+:root:root:root:root .hd-public.ios .hd-public-rhythm li:nth-child(5n+3){--pastille:var(--ios-accent)}
 :root:root:root:root .hd-public.ios .hd-public-rhythm li:nth-child(5n+4){--pastille:#0a84ff}
 :root:root:root:root .hd-public.ios .hd-public-rhythm li:nth-child(5n+5){--pastille:#ff375f}
 :root:root:root:root .hd-public.ios .hd-public-editor{border:0;background:var(--ios-fond);border-radius:20px;margin:16px 0}
@@ -743,8 +743,8 @@
 /* Identité centrée : grand avatar avec anneau dégradé, prénom, objectif en citation */
 :root:root:root .pv-page.ios .pv-identite{position:relative;display:flex!important;flex-direction:column-reverse!important;align-items:center!important;text-align:center!important;gap:14px!important;margin:6px 0 22px!important;padding:26px 18px 22px!important;border-radius:26px!important;background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--ios-accent) 16%,transparent),transparent 62%),var(--ios-carte)!important;box-shadow:0 1px 2px rgb(0 0 0 / .04),0 10px 30px -12px rgb(0 0 0 / .12)!important;overflow:hidden}
 :root:root:root .pv-page.ios .pv-identite .pf-photo{margin:0!important;display:flex;flex-direction:column;align-items:center;gap:6px}
-:root:root:root .pv-page.ios .pv-identite .pf-photo-avatar{width:112px!important;height:112px!important;padding:4px;border-radius:50%;background:conic-gradient(from 200deg,#5b4ee8,#af52de,#ff9500,#34c759,#5b4ee8)}
-:root:root:root .pv-page.ios .pv-identite .pf-avatar{width:100%!important;height:100%!important;border-radius:50%!important;border:3px solid var(--ios-carte)!important;background:linear-gradient(160deg,#8f84ff,#5b4ee8)!important;color:rgb(255 255 255)!important;font:700 44px/1 var(--ios-police)!important;display:grid!important;place-items:center;overflow:hidden}
+:root:root:root .pv-page.ios .pv-identite .pf-photo-avatar{width:112px!important;height:112px!important;padding:4px;border-radius:50%;background:conic-gradient(from 200deg,var(--ios-accent),#af52de,#ff9500,#34c759,var(--ios-accent))}
+:root:root:root .pv-page.ios .pv-identite .pf-avatar{width:100%!important;height:100%!important;border-radius:50%!important;border:3px solid var(--ios-carte)!important;background:linear-gradient(160deg,#8f84ff,var(--ios-accent))!important;color:rgb(255 255 255)!important;font:700 44px/1 var(--ios-police)!important;display:grid!important;place-items:center;overflow:hidden}
 :root:root:root .pv-page.ios .pv-identite .pf-avatar img{width:100%;height:100%;object-fit:cover}
 :root:root:root .pv-page.ios .pv-identite .pf-photo-choisir{width:34px!important;height:34px!important;right:0!important;bottom:2px!important;border-radius:50%!important;border:3px solid var(--ios-carte)!important;background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 2px 6px rgb(0 0 0 / .18)!important}
 :root:root:root .pv-page.ios .pv-identite .pf-photo-choisir svg{color:rgb(255 255 255)!important}
@@ -832,7 +832,7 @@
 :root:root:root .espace-page.ios .prog-tab .jn-tab-barre{position:absolute;left:14px;right:14px;bottom:10px;height:3px;border-radius:3px;background:rgb(120 120 128 / .16);overflow:hidden}
 :root:root:root .espace-page.ios .prog-tab .jn-tab-barre i{position:absolute;inset:0 auto 0 0;width:var(--avancement,0%);border-radius:3px;background:#34c759}
 :root:root:root .espace-page.ios .prog-tab[data-etat="termine"] .jn-tab-barre i{background:#8e8e93}
-:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,#5b4ee8 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 10px 24px -12px rgb(91 78 232 / .75),inset 0 1px 0 rgb(255 255 255 / .18)!important}
+:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,var(--ios-accent) 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 10px 24px -12px rgb(91 78 232 / .75),inset 0 1px 0 rgb(255 255 255 / .18)!important}
 :root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-meta{color:rgb(255 255 255 / .82)!important}
 :root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-meta::before{background:rgb(255 255 255);box-shadow:0 0 0 3px rgb(255 255 255 / .25)}
 :root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .25)}
@@ -854,7 +854,7 @@
 :root:root:root .parcours-page.ios .prog-tab .jn-tab-barre{position:absolute;left:14px;right:14px;bottom:10px;height:3px;border-radius:3px;background:rgb(120 120 128 / .16);overflow:hidden}
 :root:root:root .parcours-page.ios .prog-tab .jn-tab-barre i{position:absolute;inset:0 auto 0 0;width:var(--avancement,0%);border-radius:3px;background:#34c759}
 :root:root:root .parcours-page.ios .prog-tab[data-etat="termine"] .jn-tab-barre i{background:#8e8e93}
-:root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,#5b4ee8 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 10px 24px -12px rgb(91 78 232 / .75),inset 0 1px 0 rgb(255 255 255 / .18)!important}
+:root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,var(--ios-accent) 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 10px 24px -12px rgb(91 78 232 / .75),inset 0 1px 0 rgb(255 255 255 / .18)!important}
 :root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"] small{color:rgb(255 255 255 / .82)!important}
 :root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"] small::before{background:rgb(255 255 255);box-shadow:0 0 0 3px rgb(255 255 255 / .25)}
 :root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .25)}
@@ -888,14 +888,14 @@
 :root:root:root .pf-photo-bouton{position:relative;display:block;width:100%;height:100%;padding:0;margin:0;border:0;border-radius:50%;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s cubic-bezier(.2,.7,.2,1)}
 :root:root:root .pf-photo-bouton:active:not(:disabled){transform:scale(.96)}
 :root:root:root .pf-photo-bouton:disabled{cursor:default}
-:root:root:root .pf-photo-bouton:focus-visible{outline:3px solid var(--ios-accent,#5b4ee8);outline-offset:3px}
+:root:root:root .pf-photo-bouton:focus-visible{outline:3px solid var(--ios-accent,var(--ios-accent));outline-offset:3px}
 :root:root:root .pf-photo-bouton .pf-avatar{display:grid;place-items:center;width:100%;height:100%}
-:root:root:root .pf-photo-pastille{position:absolute;right:4%;bottom:4%;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ios-accent,#5b4ee8);color:rgb(255 255 255);border:2.5px solid var(--ios-carte,rgb(255 255 255));box-shadow:0 2px 6px rgb(0 0 0 / .18)}
+:root:root:root .pf-photo-pastille{position:absolute;right:4%;bottom:4%;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ios-accent,var(--ios-accent));color:rgb(255 255 255);border:2.5px solid var(--ios-carte,rgb(255 255 255));box-shadow:0 2px 6px rgb(0 0 0 / .18)}
 :root:root:root .pf-photo-pastille svg{width:13px!important;height:13px!important;color:rgb(255 255 255)!important}
 :root:root:root .pf-photo-bouton:disabled .pf-photo-pastille{opacity:.55}
 :root:root:root .pf-photo-menu{display:flex;flex-direction:column;width:min(260px,100%);margin:10px auto 0;border-radius:14px;overflow:hidden;background:var(--ios-carte,rgb(255 255 255));box-shadow:0 0 0 .5px rgb(60 60 67 / .14),0 12px 30px -12px rgb(0 0 0 / .35);animation:pf-menu-apparait .18s cubic-bezier(.2,.7,.2,1)}
 :root:root:root .pf-photo-menu p{margin:0!important;padding:12px 16px 10px!important;font:400 13px/1.35 var(--ios-police)!important;color:var(--ios-doux)!important;text-align:center}
-:root:root:root .pf-photo-menu button{min-height:46px;padding:0 16px;border:0;border-radius:0;background:none;font:500 16px var(--ios-police)!important;color:var(--ios-accent,#5b4ee8)!important;text-align:center;cursor:pointer;box-shadow:inset 0 .5px 0 rgb(60 60 67 / .18)}
+:root:root:root .pf-photo-menu button{min-height:46px;padding:0 16px;border:0;border-radius:0;background:none;font:500 16px var(--ios-police)!important;color:var(--ios-accent,var(--ios-accent))!important;text-align:center;cursor:pointer;box-shadow:inset 0 .5px 0 rgb(60 60 67 / .18)}
 :root:root:root .pf-photo-menu button:first-child{box-shadow:none}
 :root:root:root .pf-photo-menu p+button{box-shadow:inset 0 .5px 0 rgb(60 60 67 / .18)}
 :root:root:root .pf-photo-menu button:active{background:rgb(120 120 128 / .12)}
@@ -910,25 +910,25 @@
 @keyframes pf-menu-apparait{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){:root:root:root .pf-photo-menu{animation:none}:root:root:root .pf-photo-bouton{transition:none}}
 /* Inscription Habitudes & Défis : bloc « Mes rappels » (06/11/2026), bien visible, avant les engagements */
-:root:root:root .hd-rappels-inscription{margin:0 0 18px;padding:16px;border-radius:20px;background:linear-gradient(160deg,color-mix(in srgb,var(--ios-accent,#5b4ee8) 12%,var(--ios-carte,#fff)),var(--ios-carte,#fff) 70%);box-shadow:0 0 0 .5px color-mix(in srgb,var(--ios-accent,#5b4ee8) 28%,transparent),0 10px 26px -16px color-mix(in srgb,var(--ios-accent,#5b4ee8) 60%,transparent)}
+:root:root:root .hd-rappels-inscription{margin:0 0 18px;padding:16px;border-radius:20px;background:linear-gradient(160deg,color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 12%,var(--ios-carte,#fff)),var(--ios-carte,#fff) 70%);box-shadow:0 0 0 .5px color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 28%,transparent),0 10px 26px -16px color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 60%,transparent)}
 :root:root:root .hd-rappels-inscription-tete{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 :root:root:root .hd-rappels-inscription-icone{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;color:rgb(255 255 255);background:linear-gradient(180deg,#ff6482,#ff2d55);box-shadow:inset 0 1px 0 rgb(255 255 255 / .25),0 6px 14px -6px rgb(255 45 85 / .6)}
 :root:root:root .hd-rappels-inscription-icone svg{color:rgb(255 255 255)!important;fill:currentColor}
 :root:root:root .hd-rappels-inscription-titre{font:700 18px/1.2 var(--ios-police,system-ui)!important;letter-spacing:-.01em;color:var(--ios-encre,#1c1c1e)!important}
-:root:root:root .hd-rappels-inscription-badge{align-self:flex-start;margin-top:3px;padding:2px 8px;border-radius:999px;font:600 11.5px/1.4 var(--ios-police,system-ui)!important;color:var(--ios-accent,#5b4ee8)!important;background:color-mix(in srgb,var(--ios-accent,#5b4ee8) 14%,transparent)}
+:root:root:root .hd-rappels-inscription-badge{align-self:flex-start;margin-top:3px;padding:2px 8px;border-radius:999px;font:600 11.5px/1.4 var(--ios-police,system-ui)!important;color:var(--ios-accent,var(--ios-accent))!important;background:color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 14%,transparent)}
 :root:root:root .hd-rappels-inscription-texte{margin:0 0 12px!important;font:400 14px/1.45 var(--ios-police,system-ui)!important;color:var(--ios-doux,#6e6e73)!important}
 :root:root:root .hd-rappels-inscription-interrupteur{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 14px;border-radius:14px;background:var(--ios-carte,#fff);box-shadow:0 0 0 .5px rgb(60 60 67 / .12);font:600 15.5px/1.3 var(--ios-police,system-ui);color:var(--ios-encre,#1c1c1e);cursor:pointer}
 :root:root:root .hd-rappels-inscription-interrupteur input{appearance:none;-webkit-appearance:none;flex:none;position:relative;width:51px;height:31px;margin:0;border-radius:999px;background:rgb(120 120 128 / .24);cursor:pointer;transition:background-color .2s}
 :root:root:root .hd-rappels-inscription-interrupteur input::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:rgb(255 255 255);box-shadow:0 3px 8px rgb(0 0 0 / .15),0 1px 1px rgb(0 0 0 / .16);transition:transform .22s cubic-bezier(.2,.7,.2,1)}
 :root:root:root .hd-rappels-inscription-interrupteur input:checked{background:#34c759}
 :root:root:root .hd-rappels-inscription-interrupteur input:checked::after{transform:translateX(20px)}
-:root:root:root .hd-rappels-inscription-interrupteur input:focus-visible{outline:3px solid var(--ios-accent,#5b4ee8);outline-offset:2px}
+:root:root:root .hd-rappels-inscription-interrupteur input:focus-visible{outline:3px solid var(--ios-accent,var(--ios-accent));outline-offset:2px}
 :root:root:root .hd-rappels-inscription-liste{margin:10px 0 0;padding:0;border:0;min-width:0}
 :root:root:root .hd-rappels-inscription-liste legend{padding:0 4px;margin-bottom:6px;font:600 12px/1.2 var(--ios-police,system-ui);letter-spacing:.02em;text-transform:uppercase;color:var(--ios-doux,#6e6e73)}
 :root:root:root .hd-rappels-inscription-liste ul{list-style:none;margin:0;padding:0;border-radius:14px;overflow:hidden;background:var(--ios-carte,#fff);box-shadow:0 0 0 .5px rgb(60 60 67 / .12)}
 :root:root:root .hd-rappels-inscription-liste li+li{box-shadow:inset 0 .5px 0 rgb(60 60 67 / .16)}
 :root:root:root .hd-rappels-inscription-liste label{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 14px;font:400 15px/1.3 var(--ios-police,system-ui);color:var(--ios-encre,#1c1c1e);cursor:pointer}
-:root:root:root .hd-rappels-inscription-liste input[type=checkbox]{flex:none;width:22px;height:22px;accent-color:var(--ios-accent,#5b4ee8)}
+:root:root:root .hd-rappels-inscription-liste input[type=checkbox]{flex:none;width:22px;height:22px;accent-color:var(--ios-accent,var(--ios-accent))}
 :root:root:root .hd-rappels-inscription-liste p{margin:8px 4px 0!important;font:400 12.5px/1.4 var(--ios-police,system-ui)!important;color:var(--ios-doux,#6e6e73)!important}
 :root:root:root .hd-rappels-inscription-resultat{display:flex;align-items:flex-start;gap:8px;margin:0!important;padding:10px 12px;border-radius:12px;font:500 14px/1.4 var(--ios-police,system-ui)!important;color:var(--ios-encre,#1c1c1e)!important;background:rgb(52 199 89 / .12)}
 :root:root:root .hd-rappels-inscription-resultat[data-etat="actifs"] svg{color:#28a745}
@@ -948,7 +948,7 @@
 
 /* Carte « Habitudes & Défis » de la page Aujourd'hui, design app Forme choisi le 06/11/2026 (proposition C), aux couleurs de l'application avec un peu de noir.
    Noir #050505 et blanc #fefefe : l'outil des thèmes remplace #000 et #fff par les couleurs du thème. */
-:root:root:root .espace-page aside.decouverte-hd.dhd-forme{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;margin:14px 0 22px;padding:20px;border:0;border-radius:22px;background:radial-gradient(120% 85% at 0% 0%,#7b6cf6 0%,#5b4ee8 30%,#2a2170 62%,#0b0a14 100%);color:#fefefe;box-shadow:0 18px 36px -18px #1a1640cc}
+:root:root:root .espace-page aside.decouverte-hd.dhd-forme{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;margin:14px 0 22px;padding:20px;border:0;border-radius:22px;background:radial-gradient(120% 85% at 0% 0%,#7b6cf6 0%,var(--ios-accent) 30%,#2a2170 62%,#0b0a14 100%);color:#fefefe;box-shadow:0 18px 36px -18px #1a1640cc}
 :root:root:root .espace-page .dhd-forme .decouverte-hd-badge{all:unset;grid-column:1;font:700 13px/1.2 var(--ios-police);letter-spacing:.05em;text-transform:uppercase;color:#ffffffe6}
 :root:root:root .espace-page .dhd-forme .dhd-anneaux{grid-column:2;grid-row:1/3}
 :root:root:root .espace-page .dhd-forme .dhd-anneau-fond,:root:root:root .espace-page .dhd-forme .dhd-anneau-trait{fill:none;stroke-width:9;stroke-linecap:round}
@@ -961,7 +961,7 @@
 :root:root:root .espace-page .dhd-forme .dhd-chiffres div{display:flex;flex-direction:column-reverse;border-radius:14px;background:#ffffff1a;padding:10px}
 :root:root:root .espace-page .dhd-forme .dhd-chiffres dd{margin:0;color:#fefefe;font:700 20px/1.1 var(--ios-police)}
 :root:root:root .espace-page .dhd-forme .dhd-chiffres dt{color:#ffffffc7;font:500 12px/1.3 var(--ios-police)}
-:root:root:root .espace-page .dhd-forme a.decouverte-hd-activer{grid-column:1/-1;display:flex;justify-content:center;align-items:center;min-height:50px;margin:0;padding:0 14px;border-radius:14px;background:#fefefe;color:#5b4ee8!important;font:700 17px/1.2 var(--ios-police);text-align:center;text-decoration:none!important;transition:transform 120ms ease-out}
+:root:root:root .espace-page .dhd-forme a.decouverte-hd-activer{grid-column:1/-1;display:flex;justify-content:center;align-items:center;min-height:50px;margin:0;padding:0 14px;border-radius:14px;background:#fefefe;color:var(--ios-accent)!important;font:700 17px/1.2 var(--ios-police);text-align:center;text-decoration:none!important;transition:transform 120ms ease-out}
 :root:root:root .espace-page .dhd-forme a.decouverte-hd-activer:active{transform:scale(.97)}
 :root:root:root .espace-page .dhd-forme a.decouverte-hd-plus{grid-column:1/-1;justify-self:center;align-self:center;min-height:36px;display:flex;align-items:center;color:#ffffffd9!important;font:500 14px/1.2 var(--ios-police);text-decoration:none!important}
 :root:root:root .espace-page .dhd-forme a:focus-visible{outline:3px solid #fefefe;outline-offset:3px}
@@ -979,15 +979,15 @@
 :root:root:root:root #s-quiz.quiz-tactile .quiz-nav .count-main{font:600 13px/1.2 var(--ios-police);color:var(--ios-doux)}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-anneau{position:relative;width:120px;height:120px;margin:6px auto 4px}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-anneau circle{fill:none;stroke-linecap:round}
-:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-fond{stroke:#5b4ee82a;stroke-width:12}
-:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-trait{stroke:#5b4ee8;stroke-width:12;transition:stroke-dashoffset 600ms var(--ios-ressort,ease)}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-fond{stroke:var(--ios-accent)2a;stroke-width:12}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-trait{stroke:var(--ios-accent);stroke-width:12;transition:stroke-dashoffset 600ms var(--ios-ressort,ease)}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-fond.quiz-anneau-racine{stroke:#30d1582a;stroke-width:10}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-anneau-trait.quiz-anneau-racine{stroke:#30d158;stroke-width:10}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-anneau b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 26px/1 var(--ios-police);letter-spacing:-.02em;color:var(--ios-encre)}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-anneau b small{font:600 15px/1 var(--ios-police);color:var(--ios-doux);margin-left:1px}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-racine-entete{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;margin:4px 0 0}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-racine-entete > div{display:flex;flex-direction:column;align-items:center;gap:2px}
-:root:root:root:root #s-quiz.quiz-tactile .quiz-racine-num{margin:0;padding:6px 12px;border-radius:999px;background:#5b4ee81f;color:#5b4ee8;font:700 12.5px/1.2 var(--ios-police);letter-spacing:.03em;text-transform:uppercase}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-racine-num{margin:0;padding:6px 12px;border-radius:999px;background:var(--ios-accent)1f;color:var(--ios-accent);font:700 12.5px/1.2 var(--ios-police);letter-spacing:.03em;text-transform:uppercase}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-racine{margin:6px 0 0;font:700 17px/1.25 var(--ios-police);color:var(--ios-encre)}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-restantes{background:none;color:var(--ios-doux);font:500 13px/1.2 var(--ios-police);padding:0}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-card{margin:16px 0 0;padding:0;border:0;background:none;box-shadow:none;text-align:center}
@@ -1004,9 +1004,9 @@
 :root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(2) .scale-button{background:#ff9f0a!important}
 :root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(3) .scale-button{background:#ffcc00!important;color:#3a2f00!important}
 :root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(4) .scale-button{background:#30d158!important}
-:root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(5) .scale-button{background:#5b4ee8!important}
+:root:root:root:root #s-quiz.quiz-tactile .scale-option:nth-child(5) .scale-button{background:var(--ios-accent)!important}
 :root:root:root:root #s-quiz.quiz-tactile .scale-button:active{transform:scale(.92)}
-:root:root:root:root #s-quiz.quiz-tactile .scale-button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ios-fond),0 0 0 6px #5b4ee8}
+:root:root:root:root #s-quiz.quiz-tactile .scale-button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ios-fond),0 0 0 6px var(--ios-accent)}
 :root:root:root:root #s-quiz.quiz-tactile .scale-label{font:500 11.5px/1.2 var(--ios-police);color:var(--ios-doux)}
 :root:root:root:root #s-quiz.quiz-tactile .scale:has(.scale-label) + .ends{display:none}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-seuil .quote{font:italic 15px/1.45 Lora,Georgia,serif;color:var(--ios-doux);border:0;padding:0;margin:0}
@@ -1033,7 +1033,7 @@
 :root:root:root:root #s-result.resultat-anneaux .score-grand b{font:800 22px var(--ios-police);color:var(--ios-encre)}
 :root:root:root:root #s-result.resultat-anneaux .strength-tete{display:flex;align-items:center;gap:12px}
 :root:root:root:root #s-result.resultat-anneaux .strength-tete h2{margin:0}
-:root:root:root:root #s-result.resultat-anneaux .result-action{background:linear-gradient(150deg,#7b6cf6,#5b4ee8 55%,#3e33b8)!important;color:#fefefe}
+:root:root:root:root #s-result.resultat-anneaux .result-action{background:linear-gradient(150deg,#7b6cf6,var(--ios-accent) 55%,#3e33b8)!important;color:#fefefe}
 :root:root:root:root #s-result.resultat-anneaux .result-action .tag{color:#ffffffd9!important;background:transparent!important}
 :root:root:root:root #s-result.resultat-anneaux .result-action .action-box{background:transparent!important;border:0!important;padding:0!important}
 :root:root:root:root #s-result.resultat-anneaux .result-action .action{color:#fefefe!important;font:700 18px/1.3 var(--ios-police)!important}
@@ -1052,7 +1052,7 @@
 :root:root:root:root #s-result.resultat-anneaux .root-category b{display:inline-block;margin-right:4px;padding:1px 6px;border-radius:5px;background:#ff375f;color:#fefefe;font:700 9.5px/1.4 var(--ios-police);text-transform:uppercase}
 :root:root:root:root #s-result.resultat-anneaux .result-next .btn-link{min-height:50px;border-radius:14px!important;border:0!important;font:600 16px var(--ios-police)!important;display:flex;justify-content:center;align-items:center;gap:8px}
 :root:root:root:root #s-result.resultat-anneaux .result-next > .btn-link{background:#25d366!important;color:#fefefe!important}
-:root:root:root:root #s-result.resultat-anneaux .result-espace .btn-link{background:#5b4ee8!important;color:#fefefe!important}
+:root:root:root:root #s-result.resultat-anneaux .result-espace .btn-link{background:var(--ios-accent)!important;color:#fefefe!important}
 @media (max-width:330px){:root:root:root:root #s-result.resultat-anneaux .root-rows{grid-template-columns:1fr}}
 :root:root:root:root #s-result.resultat-anneaux .score-grand{background:transparent!important;padding:0!important;border:0!important;color:var(--ios-encre)!important;box-shadow:none!important}
 :root:root:root:root #s-result.resultat-anneaux .root-row-top{flex-direction:column!important;align-items:flex-start!important;gap:1px!important}
@@ -1126,7 +1126,7 @@
 :root:root:root:root .barre-nav ul{height:100%!important;max-width:none!important;margin:0!important;padding:0 6px!important;display:flex!important;justify-content:space-around!important;align-items:center!important}
 :root:root:root:root .barre-nav li{flex:0 0 auto!important;display:flex!important;justify-content:center!important;min-width:0!important}
 :root:root:root:root .barre-nav a.ios-onglet{width:auto!important;min-width:0!important;gap:2px!important;padding:0 clamp(6px,1.6vw,10px)!important;font:500 10px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif!important;letter-spacing:.1px!important;color:#8e8e93!important}
-:root:root:root:root .barre-nav a.ios-onglet[aria-current="page"]{color:var(--ios-accent,#5b4ee8)!important;font-weight:600!important}
+:root:root:root:root .barre-nav a.ios-onglet[aria-current="page"]{color:var(--ios-accent,var(--ios-accent))!important;font-weight:600!important}
 :root:root:root:root .barre-nav a.ios-onglet svg,:root:root:root:root .barre-nav .ios-onglet-icone{width:23px!important;height:23px!important}
 :root:root:root:root[data-apparence="sombre"] .barre-nav{background:rgba(28,28,30,.72)!important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.14),0 8px 28px rgba(0,0,0,.55)!important}
 :root:root:root:root[data-apparence="sombre"] .barre-nav a.ios-onglet{color:#98989f!important}
