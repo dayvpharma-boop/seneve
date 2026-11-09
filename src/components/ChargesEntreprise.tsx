@@ -129,7 +129,8 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
   const bloc = donnees?.active_block;
   const charges = donnees?.charges ?? [];
   const monnaies = [...new Set([devise, ...charges.map(c => c.currency)])];
-  const toutRegle = charges.every(c => reste(c) === 0);
+  const aDesCharges = charges.length > 0;
+  const toutRegle = aDesCharges && charges.every(c => reste(c) === 0);
   const montantPrevu = montantSaisi(montant, devise);
   const bouton = 'rep-charges-action';
   const normaliser = (valeur:string) => valeur.trim().replace(',', '.');
@@ -239,7 +240,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
         <div className="rep-charges-rangee">
           <div><p>{l('Bloc mensuel','Monthly block')}</p><h3 className="rep-charges-mois">{moisNom(mois)}</h3></div>
           {bloc && <span className={'rep-charges-etiquette' + (toutRegle ? ' is-regle' : '')}>
-            {toutRegle ? l('Couvert','Covered') : l('En cours','In progress')}
+            {!aDesCharges ? l('Aucune charge','No expenses') : toutRegle ? l('Couvert','Covered') : l('En cours','In progress')}
           </span>}
         </div>
         {!bloc && <>
@@ -250,7 +251,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
           }>{operation === 'bloc' ? l('Création…','Creating…') : l('Créer le bloc du mois','Create this month’s block')}</button>
         </>}
         {bloc && <>
-          {charges.length > 0 ? <>
+          {aDesCharges ? <>
             {monnaies.filter(m => charges.some(c => c.currency === m)).map(m => {
               const groupe = charges.filter(c => c.currency === m);
               const total = groupe.reduce((n,c) => n + cents(c.expected_amount), 0);
