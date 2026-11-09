@@ -2,13 +2,13 @@ import './SimulateurEpargne.css';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {Link,useNavigate} from 'react-router-dom';
 import {IconeHD} from './IconeHabitudes';
-import {chargerSuiviFinancier,type SuiviFinancier,type TypeObjectifEpargne} from '@/lib/habitudes-finances-suivi';
-import {CompteursIndisponibles,enregistrerRepartition,type PartRepartition} from '@/lib/habitudes-finances-compteurs';
+import {chargerSuiviFinancier,type ObjectifEpargne,type SuiviFinancier,type TypeObjectifEpargne} from '@/lib/habitudes-finances-suivi';
+import {chargerCompteurs,CompteursIndisponibles,disponibleObjectif,enregistrerRepartition,type Compteurs,type PartRepartition} from '@/lib/habitudes-finances-compteurs';
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {decimalesDevise} from '@/lib/devises';
 
 type Montants={dime:number;offrande:number;reserve:number;investir:number;autre:number;dettes:number;vivre:number};
-type Ligne={cle:string;nom:string;destination:string;montant:number;parts:PartRepartition[];possible:boolean;couleur:string;details?:string};
+type Ligne={cle:string;nom:string;destination:string;montant:number;parts:PartRepartition[];possible:boolean;couleur:string;details?:string;montantInitial?:number};
 const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 
 /** Feuille « Enregistrer ma répartition » (maquette validée le 07/11/2026) : chaque part est vérifiée, cochée ou non,
@@ -16,6 +16,7 @@ const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEncaissements=false}:{montants:Montants;depuisEncaissements?:boolean;devise:string;langue:string;onFermer:()=>void}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr;
  const navigate=useNavigate();
+ const [compteurs,setCompteurs]=useState<Compteurs|null>(null);
  const [suivi,setSuivi]=useState<SuiviFinancier|null|'aucun'|'erreur'>(null);
  // Les enveloppes sont cochées au départ ; rembourser une dette et affecter son excédent exigent un choix volontaire.
  const [decoches,setDecoches]=useState<Record<string,boolean>>({});
@@ -31,7 +32,10 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
  const chaine=(n:number)=>n.toFixed(dec);
- useEffect(()=>{let actif=true;void chargerSuiviFinancier(null).then(s=>{if(actif)setSuivi(s??'aucun');}).catch(()=>{if(actif)setSuivi('erreur');});return()=>{actif=false;};},[]);
+ useEffect(()=>{let actif=true;void chargerSuiviFinancier(null).then(async s=>{
+  const c=s?await chargerCompteurs(s.enrollment_id).catch(()=>null):null;
+  if(actif){setCompteurs(c);setSuivi(s??'aucun');}
+ }).catch(()=>{if(actif)setSuivi('erreur');});return()=>{actif=false;};},[]);
  // Clé stable : la page recrée l’objet des montants à chaque rendu.
  const cleMontants=JSON.stringify(montants);
  const lignes=useMemo<Ligne[]>(()=>{
@@ -44,14 +48,39 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
   };
   const out:Ligne[]=[{cle:'dime',nom:l('Dîme','Tithe'),destination:l('Dans ma caisse de dîme · pas encore donnée','In my tithe counter · not yet given'),montant:montants.dime,parts:[{part:'dime',amount:chaine(montants.dime)}],possible:true,couleur:'#b8862b'}];
   if(montants.offrande>0)out.push({cle:'offrande',nom:l('Offrande','Offering'),destination:l('Mes offrandes','My offerings'),montant:montants.offrande,parts:[{part:'offrande',amount:chaine(montants.offrande)}],possible:true,couleur:'#b05bd6'});
-  for(const [cle,type,nom,coul,m] of [['reserve','reserve_joie',l('Réserve de joie','Family joy reserve'),'#2f9e62',montants.reserve],['investir','epargne_investir',l('Pour investir','For investing'),'#2f6fe0',montants.investir]] as const){
+  // Les deux parts « investissement » peuvent viser le même objectif.
+  const dejaPrevu=new Map<string,number>();
+  const partObjectif=(g:ObjectifEpargne,m:number,retenue:boolean)=>{
+   const affecte=dejaPrevu.get(g.goal_id)??0;
+   const restant=Math.max(0,Math.round(Number(g.target_amount)*100)-disponibleObjectif(compteurs,g.goal_id,g.entries)-affecte);
+   const propose=Math.round(m*100);
+   const verse=Math.min(propose,restant);
+   if(retenue)dejaPrevu.set(g.goal_id,affecte+verse);
+   const surplus=(propose-verse)/100;
+   return {
+    montant:verse/100,
+    parts:verse>0?[{part:g.goal_type,goal_id:g.goal_id,amount:chaine(verse/100)}]:[],
+    possible:verse>0,
+    destination:l(`objectif « ${g.label} »`,`goal “${g.label}”`),
+    details:surplus>0
+     ?l(`${verse===0?'Objectif atteint. ':''}${nombre(surplus)} ${devise} restent à répartir.`,
+        `${verse===0?'Goal reached. ':''}${nombre(surplus)} ${devise} remain unallocated.`)
+     :undefined
+   };
+  };
+  for(const [cle,type,nom,couleur,m] of [
+   ['reserve','reserve_joie',l('Réserve de joie','Family joy reserve'),'#2f9e62',montants.reserve],
+   ['investir','epargne_investir',l('Pour investir','For investing'),'#2f6fe0',montants.investir],
+   ['autre','autre',l('Autre objectif','Other goal'),'#c2410c',montants.autre]
+  ] as const){
    if(m<=0)continue;
-   const g=objectif(type),multiples=candidats(type).length>1;
-   out.push({cle,nom,destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):multiples?l('Choisis l’objectif précis ci-dessous : cette part n’est pas encore sélectionnée.','Choose the specific goal below: this share is not yet selected.'):l(`crée d’abord un objectif en ${devise} dans SÉNEVÉ Finance`,`first create a ${devise} goal in SÉNEVÉ Finance`),montant:m,parts:g?[{part:type,goal_id:g.goal_id,amount:chaine(m)}]:[],possible:!!g,couleur:coul});
-  }
-  if(montants.autre>0){
-   const g=objectif('autre'),multiples=candidats('autre').length>1;
-   out.push({cle:'autre',nom:l('Autre objectif','Other goal'),destination:g?l(`objectif « ${g.label} »`,`goal “${g.label}”`):multiples?l('Choisis l’objectif précis ci-dessous.','Choose the specific goal below.'):l(`crée d’abord un « Autre objectif » en ${devise} dans SÉNEVÉ Finance`,`first create an “Other goal” in ${devise} in SÉNEVÉ Finance`),montant:montants.autre,parts:g?[{part:'autre',goal_id:g.goal_id,amount:chaine(montants.autre)}]:[],possible:!!g,couleur:'#c2410c'});
+   const g=objectif(type);
+   out.push({cle,nom,couleur,...(g?partObjectif(g,m,!decoches[cle]):{
+    montant:m,parts:[],possible:false,
+    destination:candidats(type).length>1
+     ?l('Choisis l’objectif précis ci-dessous.','Choose the specific goal below.')
+     :l(`crée d’abord un objectif en ${devise} dans SÉNEVÉ Finance`,`first create a ${devise} goal in SÉNEVÉ Finance`)
+   })});
   }
   if(montants.dettes>0){
    const dettes=(s?.debts??[]).filter(d=>d.currency===devise).map(d=>({d,reste:Math.round(Number(d.opening_balance)*100)-d.payments.reduce((n,p)=>n+Math.round(Number(p.amount)*100),0)}));
@@ -67,21 +96,22 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
     const totalRestant=dettes.reduce((n,x)=>n+Math.max(0,x.reste),0)/100;
     const details=l(`Part dettes : ${nombre(montants.dettes)} ${devise} · dettes restantes : ${nombre(totalRestant)} ${devise} · excédent : ${nombre(montantSurplus)} ${devise}`,`Debt share: ${nombre(montants.dettes)} ${devise} · remaining debts: ${nombre(totalRestant)} ${devise} · surplus: ${nombre(montantSurplus)} ${devise}`);
     const objectifInvestissement=destinationSurplus==='investissement'?objectif('epargne_investir'):null;
+    const partInvestie=objectifInvestissement?partObjectif(objectifInvestissement,montantSurplus,true):null;
     const partsSurplus:PartRepartition[]=destinationSurplus==='vivre'
-     ?[{part:'vivre',amount:chaine(montantSurplus)}]
-     :destinationSurplus==='investissement'&&objectifInvestissement
-      ?[{part:'epargne_investir',goal_id:objectifInvestissement.goal_id,amount:chaine(montantSurplus)}]:[];
+     ?[{part:'vivre',amount:chaine(montantSurplus)}]:partInvestie?.parts??[];
     const destination=destinationSurplus==='vivre'?l('Pour vivre','For living')
-     :destinationSurplus==='investissement'?objectifInvestissement?l('objectif « '+objectifInvestissement.label+' »','goal “'+objectifInvestissement.label+'”'):l('objectif d’investissement à choisir','investment goal to choose')
+     :destinationSurplus==='investissement'?partInvestie?.destination??l('objectif d’investissement à choisir','investment goal to choose')
      :l('destination obligatoire à choisir','required destination to choose');
-    out.push({cle:'surplus_dettes',nom:l('Excédent à affecter','Surplus to allocate'),destination,montant:montantSurplus,parts:partsSurplus,possible:destinationSurplus==='vivre'||!!objectifInvestissement,couleur:'#5b4ee8',details});
+    out.push({cle:'surplus_dettes',nom:l('Excédent à affecter','Surplus to allocate'),destination,
+     montant:partInvestie?.montant??montantSurplus,montantInitial:montantSurplus,parts:partsSurplus,possible:partsSurplus.length>0,
+     couleur:'#5b4ee8',details:[details,partInvestie?.details].filter(Boolean).join(' ')});
    }
   }
   if(montants.vivre>0)out.push({cle:'vivre',nom:l('Pour vivre','For living'),destination:l('Pour vivre','For living'),montant:montants.vivre,parts:[{part:'vivre',amount:chaine(montants.vivre)}],possible:true,couleur:'#a1a1a6'});
-  return out.filter(x=>x.montant>0);
- },[suivi,cleMontants,devise,en,objectifsChoisis,destinationSurplus,decoches]);
+  return out.filter(x=>x.montant>0||x.details);
+ },[suivi,compteurs,cleMontants,devise,en,objectifsChoisis,destinationSurplus,decoches]);
  const ligneSurplus=lignes.find(x=>x.cle==='surplus_dettes');
- const montantSurplus=ligneSurplus?.montant??0;
+ const montantSurplus=ligneSurplus?.montantInitial??0;
  const candidatsInvestir=suivi&&typeof suivi==='object'?suivi.savings_goals.filter(g=>g.goal_type==='epargne_investir'&&g.currency===devise):[];
  const choisies=lignes.filter(x=>x.possible&&coche(x.cle));
  const typesObjectifs:[TypeObjectifEpargne,number][]=[
@@ -103,7 +133,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
    await enregistrerRepartition(suivi.enrollment_id,devise,date,choisies.flatMap(x=>x.parts),demande.current,depuisEncaissements);
    const soldees=lignes.find(x=>x.cle==='dettes'&&x.possible&&coche('dettes'))?.destination.match(/\((soldée|paid off)\)/g)?.length??0;
    navigate(`/habitudes/compteurs${en?'?lang=en':''}`,{state:{message:l(`Répartition enregistrée : ${choisies.length} part${choisies.length>1?'s':''}, ${nombre(total)} ${devise}.${soldees?` ${soldees} dette${soldees>1?'s':''} soldée${soldees>1?'s':''}.`:''}`,`Allocation saved: ${choisies.length} part${choisies.length>1?'s':''}, ${nombre(total)} ${devise}.${soldees?` ${soldees} debt${soldees>1?'s':''} paid off.`:''}`)}});
-  }catch(e){setErreur(e instanceof CompteursIndisponibles?l('Les compteurs ne sont pas encore ouverts. Réessaie un peu plus tard.','Counters are not open yet. Try again a little later.'):l('La répartition n’a pas été enregistrée. Vérifie les montants et réessaie.','The allocation was not saved. Check the amounts and try again.'));setEnCours(false);}
+  }catch(e){setErreur(e instanceof CompteursIndisponibles?l('Les compteurs ne sont pas encore ouverts. Réessaie un peu plus tard.','Counters are not open yet. Try again a little later.'):e&&typeof e==='object'&&'code' in e&&e.code==='PFC01'?l('Le disponible d’un objectif a changé. Ferme puis rouvre la répartition pour recalculer les parts.','A goal balance changed. Close and reopen the allocation to recalculate the shares.'):l('La répartition n’a pas été enregistrée. Vérifie les montants et réessaie.','The allocation was not saved. Check the amounts and try again.'));setEnCours(false);}
  }
  return <div className="fixed inset-0 z-[60] flex flex-col justify-end" role="dialog" aria-modal="true" aria-labelledby="hd-feuille-titre">
   <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={onFermer}/>

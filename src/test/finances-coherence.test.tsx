@@ -108,7 +108,7 @@ it('Supprimer une dette : confirmation avec ses remboursements, puis elle dispar
  expect(screen.queryByText(/Il reste à rembourser/)).toBeNull();
 });
 
-it('un objectif dépassé montre l’excédent sans le transférer ni réduire le solde',async()=>{
+it('un objectif déjà dépassé affiche son excédent et bloque les nouveaux versements',async()=>{
  rpc.mockImplementation(async(f:string)=>{
   if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[{
    ...suivi.savings_goals[0],target_amount:'100.00',
@@ -122,7 +122,8 @@ it('un objectif dépassé montre l’excédent sans le transférer ni réduire l
  const resume=await screen.findByRole('region',{name:'Moto-taxi'});
  expect(within(resume).getByRole('progressbar').getAttribute('aria-valuenow')).toBe('100');
  expect(within(resume).getByRole('status').textContent).toMatch(/Excédent de 20 USD/);
- expect(within(resume).getByRole('status').textContent).toMatch(/Aucun argent n’est déplacé automatiquement/);
+ expect(within(resume).getByRole('status').textContent).toMatch(/versements déjà enregistrés/);
+ expect(screen.queryByRole('button',{name:'Ajouter à mon épargne'})).not.toBeInTheDocument();
 });
 
 it('préremplissage 25 USD : exige un choix entre Voiture et Achat maison avant de créer le versement',async()=>{
