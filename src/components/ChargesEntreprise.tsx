@@ -27,7 +27,7 @@ function Chevron() {
 }
 
 export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaissement}:{
-  devise:string; langue:string; onEtat:(etat:EtatAccesCharges, disponible:string)=>void;
+  devise:string; langue:string; onEtat:(etat:EtatAccesCharges, disponible:string, dimeRestante?:string)=>void;
   saisie:{recu:string; marchandises:string; frais:string};
   apresEncaissement:()=>void;
 }) {
@@ -59,7 +59,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
       }
       setEtat({type:'charge', donnees});
       const soldes = !!donnees.active_block && donnees.charges.every(c => reste(c) === 0);
-      onEtat(soldes ? 'reglees' : 'a-regler', donnees.available_amount);
+      onEtat(soldes ? 'reglees' : 'a-regler', donnees.available_amount, donnees.tithe_due);
       return true;
     } catch (erreur) {
       if (lecture === version.current) {

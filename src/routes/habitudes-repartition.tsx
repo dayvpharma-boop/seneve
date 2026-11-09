@@ -43,12 +43,12 @@ export function HabitudesRepartition(){
  const [p,setP]=useState<Pourcentages>(POURCENTAGES_DEFAUT);
  const [feuille,setFeuille]=useState(false);
  const [etatCharges,setEtatCharges]=useState<EtatAccesCharges>('verification');
- const [soldeEncaissements,setSoldeEncaissements]=useState('0');
+ const [soldeEncaissements,setSoldeEncaissements]=useState({disponible:'0',dimeRestante:'0'});
  const chargesOK=etatCharges==='reglees';
- const actualiserCharges=useCallback((etat:EtatAccesCharges,disponible:string)=>{
+ const actualiserCharges=useCallback((etat:EtatAccesCharges,disponible:string,dimeRestante='0')=>{
   if(etat!=='reglees')setFeuille(false);
   setEtatCharges(etat);
-  setSoldeEncaissements(disponible);
+  setSoldeEncaissements({disponible,dimeRestante});
  },[]);
  const chargesRequises=profil==='commerce'||profil==='entreprise';
  useEffect(()=>{document.title=l('SÉNEVÉ Répartition','SÉNEVÉ Allocation');document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
@@ -56,8 +56,8 @@ export function HabitudesRepartition(){
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
  let r:ReturnType<typeof repartir>|null=null,erreur=false;
- if(chargesRequises?chargesOK&&Number(soldeEncaissements)>0:recu.trim()!==''){
-  try{r=repartir(chargesRequises?soldeEncaissements:baseRepartition(profil,recu,marchandises,frais),p,dec);}
+ if(chargesRequises?chargesOK&&Number(soldeEncaissements.disponible)>0:recu.trim()!==''){
+  try{r=repartir(chargesRequises?soldeEncaissements.disponible:baseRepartition(profil,recu,marchandises,frais),p,dec,chargesRequises?soldeEncaissements.dimeRestante:undefined);}
   catch{erreur=true;}
  }
  const choisir=(v:ProfilRevenu)=>{
@@ -82,7 +82,10 @@ export function HabitudesRepartition(){
  const calcul=profil==='salarie'?l('Salaire − dépenses de travail','Salary − work expenses'):profil==='commerce'?l('Ventes − marchandises − charges','Sales − goods − expenses'):profil==='entreprise'?l('Encaissé − dépenses du travail','Received − work expenses'):l('Le montant reçu, en entier','The full amount received');
  const champ=(id:string,libelle:string,valeur:string,changer:(v:string)=>void)=><div className="sim-ios-ligne"><label htmlFor={id}>{libelle}</label><span className="rep-moins" aria-hidden="true">−</span><span className="flex items-center gap-1.5"><input id={id} type="text" inputMode="decimal" autoComplete="off" maxLength={24} placeholder="0" value={valeur} onChange={e=>changer(e.target.value)}/><span className="text-hd-on-surface-variant" style={{fontSize:15}}>{devise}</span></span></div>;
  const PARTS:{cle:CleRepartition;nom:string;info:string}[]=[
-  {cle:'dime',nom:l('Dîme','Tithe'),info:l('10 % fixés par l’enseignement','10% set by the teaching')},
+  {cle:'dime',nom:l('Dîme','Tithe'),info:chargesRequises
+   ?r&&r.dime===0?l('Aucune dîme à enregistrer sur ce solde','No tithe to record on this balance')
+    :l('10 % du net après charges, moins la dîme déjà notée','10% of net receipts after expenses, minus tithe already recorded')
+   :l('10 % fixés par l’enseignement','10% set by the teaching')},
   {cle:'offrande',nom:l('Offrande','Offering'),info:l('libre, selon toi','free, as you choose')},
   {cle:'reserve',nom:l('Réserve de joie','Family joy reserve'),info:l('de 0 à 10 %','0 to 10%')},
   {cle:'investir',nom:l('Pour investir','For investing'),info:l('jusqu’à 30 %','up to 30%')},
@@ -94,7 +97,10 @@ export function HabitudesRepartition(){
  const vivrePct=r&&r.base>0?Math.round(r.vivre/r.base*100):100-totalParts;
  // Anneau : une couleur par part, « Pour vivre » ferme le cercle.
  const R=42,C=2*Math.PI*R;let depart=0;
- const segments=[...PARTS.map(x=>({cle:x.cle as CleRepartition|'vivre',pct:p[x.cle]})),{cle:'vivre' as const,pct:Math.max(0,100-totalParts)}].filter(s=>s.pct>0).map(s=>{const long=C*s.pct/100,seg={...s,dash:`${Math.max(0,long-1.5)} ${C}`,offset:-depart};depart+=long;return seg;});
+ const pctAffiche=(cle:CleRepartition|'vivre')=>chargesRequises&&r&&r.base>0
+  ?r[cle]/r.base*100
+  :cle==='vivre'?100-totalParts:p[cle];
+ const segments=[...PARTS.map(x=>({cle:x.cle as CleRepartition|'vivre',pct:pctAffiche(x.cle)})),{cle:'vivre' as const,pct:pctAffiche('vivre')}].filter(s=>s.pct>0).map(s=>{const long=C*s.pct/100,seg={...s,dash:`${Math.max(0,long-1.5)} ${C}`,offset:-depart};depart+=long;return seg;});
  return <CadreHabitudes titre={l('SÉNEVÉ Répartition','SÉNEVÉ Allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à SÉNEVÉ Suivi des dettes','Back to SÉNEVÉ Debt tracker'):l('Revenir à SÉNEVÉ Finance','Back to SÉNEVÉ Finance')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
   <div className="sim-ios rep-page mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg">
    <h1 className="ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('SÉNEVÉ Répartition','SÉNEVÉ Allocation')}</h1>
@@ -143,14 +149,14 @@ export function HabitudesRepartition(){
       <p>{r?l(`${nombre(r.vivre)} ${devise} restent pour vivre après tes parts.`,`${nombre(r.vivre)} ${devise} remain for living after your shares.`):chargesRequises?l('Le solde des ventes apparaît ici après les charges.','The sales balance appears here after expenses.'):calcul}</p>
      </div>
     </div>
-    <h3 className="sim-ios-titre flex justify-between"><span>{l('Mes parts','My shares')}</span><span style={{textTransform:'none'}}>{l(`Total ${totalParts} %`,`Total ${totalParts}%`)}</span></h3>
+    <h3 className="sim-ios-titre flex justify-between"><span>{l('Mes parts','My shares')}</span><span style={{textTransform:'none'}}>{l(`Total ${chargesRequises&&r?.base?100-vivrePct:totalParts} %`,`Total ${chargesRequises&&r?.base?100-vivrePct:totalParts}%`)}</span></h3>
     <ul className="rep-parts">
      {PARTS.map(x=>{const b=LIMITES_REPARTITION[x.cle];return <li key={x.cle} className="rep-part">
       <span className="rep-tuile" style={{background:COULEURS[x.cle]}}><Trace nom={x.cle}/></span>
       <span className="rep-part-nom"><b>{x.nom}</b><small>{x.info}</small></span>
       <span className="rep-part-droite">
        <b className="tabular-nums">{r?`${nombre(r[x.cle])}`:'—'}</b>
-       {b.pas===0?<span className="rep-fixe"><Trace nom="cadenas"/>{p[x.cle]} %</span>
+       {b.pas===0?<span className="rep-fixe"><Trace nom="cadenas"/>{chargesRequises&&r?.dime===0?l('0 à noter','0 to record'):`${p[x.cle]} %`}</span>
         :<span className="rep-stepper"><button type="button" aria-label={l(`Baisser : ${x.nom}`,`Decrease: ${x.nom}`)} disabled={p[x.cle]<=b.min||(chargesRequises&&!chargesOK)} onClick={()=>reglage(x.cle,-1)}>−</button><span aria-live="polite">{p[x.cle]} %</span><button type="button" aria-label={l(`Augmenter : ${x.nom}`,`Increase: ${x.nom}`)} disabled={p[x.cle]>=maximumPart(x.cle,p)||(chargesRequises&&!chargesOK)} onClick={()=>reglage(x.cle,1)}>+</button></span>}
       </span>
      </li>;})}

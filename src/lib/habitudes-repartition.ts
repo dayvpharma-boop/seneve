@@ -36,9 +36,9 @@ export function baseRepartition(profil:ProfilRevenu,recu:string,marchandises:str
 /** Montants en unités de la devise, sans créer ni perdre la plus petite unité.
  * L'arrondi indépendant de chaque part pouvait dépasser la base (ex. 0,03 USD).
  * Méthode des plus grands restes : les parts et « Pour vivre » totalisent exactement la base.
- * Le taux de dîme reste fixe à 10 % ; aucune répartition supérieure à 100 % n'est acceptée.
+ * Pour un solde d’activité, le montant de dîme restant vient du suivi des encaissements.
  */
-export function repartir(base:string,p:Pourcentages,decimales:number){
+export function repartir(base:string,p:Pourcentages,decimales:number,dimeRestante?:string){
  if(decimales!==0&&decimales!==2)throw Error('Précision de devise invalide');
  const montant=Number(base),f=10**decimales;
  if(!Number.isFinite(montant)||montant<0||montant>9_999_999_999.99)throw Error('Base invalide');
@@ -50,10 +50,28 @@ export function repartir(base:string,p:Pourcentages,decimales:number){
  const total=cles.reduce((n,c)=>n+p[c],0);
  if(total>100)throw Error('Le total ne peut pas dépasser 100 %');
  const parts=[...cles,'vivre'] as const;
+ const baseUnites=BigInt(b);
  const pourcentages=[...cles.map(c=>p[c]),100-total];
+ let denominateur=100n;
+ let numerateurs=pourcentages.map(pct=>baseUnites*BigInt(pct));
+ if(dimeRestante!==undefined){
+  const montantDime=Math.round(Number(dimeRestante)*f);
+  if(!Number.isSafeInteger(montantDime)||montantDime<0)throw Error('Dîme restante invalide');
+  const dime=BigInt(Math.min(b,montantDime));
+  const disponible=baseUnites-dime;
+  const poidsAutres=BigInt(total-p.dime);
+  if(baseUnites*poidsAutres>disponible*100n){
+   // Si une dîme avait été laissée de côté, réserver son montant avant les autres parts.
+   denominateur=poidsAutres;
+   numerateurs=[dime*denominateur,...cles.slice(1).map(c=>disponible*BigInt(p[c])),0n];
+  }else{
+   numerateurs[0]=dime*100n;
+   numerateurs[parts.length-1]=disponible*100n-baseUnites*poidsAutres;
+  }
+ }
  const quotas=parts.map((cle,i)=>{
-  const exact=BigInt(b)*BigInt(pourcentages[i]!);
-  return {cle,unites:Number(exact/100n),reste:Number(exact%100n),ordre:i};
+  const exact=numerateurs[i]!;
+  return {cle,unites:Number(exact/denominateur),reste:Number(exact%denominateur),ordre:i};
  });
  let aRepartir=b-quotas.reduce((n,q)=>n+q.unites,0);
  for(const q of [...quotas].sort((a,z)=>z.reste-a.reste||a.ordre-z.ordre)){
