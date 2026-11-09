@@ -212,3 +212,34 @@ it('préserve le solde quand la dîme vient seulement du nouveau net ou d’une 
  expect(enAttente.vivre).toBe(0);
  expect(enAttente.reserve+enAttente.investir+enAttente.dettes).toBeCloseTo(10);
 });
+
+it('ouvre l’historique depuis le solde et permet seulement de supprimer une entrée disponible',async()=>{
+ const historique=await import('@/lib/habitudes-finance-historique');
+ const entree={id:'nouvelle',kind:0 as const,created_at:'2026-11-09T17:00:00Z',date_locale:'2026-11-09',
+  amount:'46.35',balance:'371.35',net:'46.35',removal_block:null};
+ const report={id:'repartition',kind:1 as const,created_at:'2026-11-09T16:00:00Z',date_locale:'2026-11-09',
+  amount:'975.00',balance:'325.00'};
+ const utilisee={...entree,id:'ancienne',amount:'1300.00',balance:'1300.00',removal_block:'allocation' as const};
+ const lecture=vi.spyOn(historique,'chargerHistoriqueSolde')
+  .mockResolvedValueOnce({mouvements:[entree,report,utilisee],suite:false})
+  .mockResolvedValue({mouvements:[report,utilisee],suite:false});
+ const supprimer=vi.spyOn(historique,'supprimerEncaissementDuSolde').mockResolvedValue({disponible:'325.00',dimeRestante:'0.00'});
+ try{
+  chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'371.35',tithe_due:'4.64'});
+  const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+  render(<MemoryRouter><HabitudesRepartition/></MemoryRouter>);
+  fireEvent.click(await screen.findByRole('button',{name:/Solde à répartir 371,35 USD/}));
+  const volet=screen.getByRole('dialog',{name:'Historique du solde'});
+  expect(await within(volet).findByText('Solde reporté')).toBeVisible();
+  expect(within(volet).getAllByText('lundi 9 novembre 2026')).toHaveLength(3);
+  const actions=within(volet).getAllByRole('button',{name:/Supprimer l’encaissement/});
+  expect(actions).toHaveLength(1);
+  fireEvent.click(actions[0]!);
+  expect(supprimer).not.toHaveBeenCalled();
+  fireEvent.click(within(volet).getByRole('button',{name:'Confirmer la suppression'}));
+  await waitFor(()=>expect(supprimer).toHaveBeenCalledWith('USD','nouvelle'));
+  await within(volet).findByText('Encaissement supprimé. Le solde a été actualisé.');
+  fireEvent.click(within(volet).getByRole('button',{name:'Fermer'}));
+  expect(screen.getByRole('button',{name:/Solde à répartir 325 USD/})).toBeVisible();
+ }finally{lecture.mockRestore();supprimer.mockRestore();}
+},20000);

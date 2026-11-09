@@ -9,6 +9,7 @@ import {baseRepartition,maximumPart,repartir,LIMITES_REPARTITION,POURCENTAGES_DE
 import {NotFound} from '@/routes/introuvable';
 import {ChoixDevise} from '@/components/ChoixDevise';
 import {EnregistrerRepartition} from '@/components/EnregistrerRepartition';
+import {HistoriqueSoldeRepartition} from '@/components/HistoriqueSoldeRepartition';
 import {ChargesEntreprise,type EtatAccesCharges} from '@/components/ChargesEntreprise';
 
 const COULEURS:Record<CleRepartition|'vivre',string>={dime:'#c69214',offrande:'#af52de',reserve:'#ff9500',investir:'#34c759',autre:'#5856d6',dettes:'#ff3b30',vivre:'#5b4ee8'};
@@ -42,6 +43,7 @@ export function HabitudesRepartition(){
  const [devise,setDevise]=useState('USD');
  const [p,setP]=useState<Pourcentages>(POURCENTAGES_DEFAUT);
  const [feuille,setFeuille]=useState(false);
+ const [historique,setHistorique]=useState(false);
  const [etatCharges,setEtatCharges]=useState<EtatAccesCharges>('verification');
  const [soldeEncaissements,setSoldeEncaissements]=useState({disponible:'0',dimeRestante:'0'});
  const chargesOK=etatCharges==='reglees';
@@ -51,6 +53,7 @@ export function HabitudesRepartition(){
   setSoldeEncaissements({disponible,dimeRestante});
  },[]);
  const chargesRequises=profil==='commerce'||profil==='entreprise';
+ const TitreSolde=chargesRequises?'button':'div';
  useEffect(()=>{document.title=l('SÉNEVÉ Répartition','SÉNEVÉ Allocation');document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
  if(!habitudesActivees())return <NotFound/>;
  const dec=decimalesDevise(devise);
@@ -61,11 +64,11 @@ export function HabitudesRepartition(){
   catch{erreur=true;}
  }
  const choisir=(v:ProfilRevenu)=>{
-  if(v!==profil)actualiserCharges('verification','0');
+  if(v!==profil){setHistorique(false);actualiserCharges('verification','0');}
   setProfil(v);setRecu('');setMarchandises('');setFrais('');
  };
  const changerDevise=(v:string)=>{
-  if(v!==devise)actualiserCharges('verification','0');
+  if(v!==devise){setHistorique(false);actualiserCharges('verification','0');}
   setDevise(v);
  };
  const PROFILS:{v:ProfilRevenu;nom:string;rythme:string;icone:string;fond:string}[]=[
@@ -144,8 +147,12 @@ export function HabitudesRepartition(){
       <text x="52" y="66" textAnchor="middle" className="rep-anneau-legende">{l('pour vivre','for living')}</text>
      </svg>
      <div className="min-w-0">
+      <TitreSolde className={chargesRequises?'rep-historique-ouvrir':undefined} type={chargesRequises?'button':undefined}
+       aria-haspopup={chargesRequises?'dialog':undefined} onClick={chargesRequises?()=>setHistorique(true):undefined}>
       <small className="rep-heros-sur"><span id="hd-rep-base">{chargesRequises?l('Solde à répartir','Balance to allocate'):l('Base retenue','Selected basis')}</span>{!chargesRequises&&' · '+periode.toLocaleLowerCase(langue)}</small>
-      <b className="rep-heros-montant">{r?`${nombre(r.base)} ${devise}`:'—'}</b>
+      <b className="rep-heros-montant">{chargesRequises?`${nombre(Number(soldeEncaissements.disponible))} ${devise}`:r?`${nombre(r.base)} ${devise}`:'—'}</b>
+      {chargesRequises&&<span className="rep-historique-lien">{l('Voir l’historique','View history')} <span aria-hidden="true">›</span></span>}
+      </TitreSolde>
       <p>{r?l(`${nombre(r.vivre)} ${devise} restent pour vivre après tes parts.`,`${nombre(r.vivre)} ${devise} remain for living after your shares.`):chargesRequises?l('Le solde des ventes apparaît ici après les charges.','The sales balance appears here after expenses.'):calcul}</p>
      </div>
     </div>
@@ -179,6 +186,11 @@ export function HabitudesRepartition(){
      :l('Vérifie tes parts avant de les ajouter à Mes compteurs.','Review your shares before adding them to My Counters.')}</p>
    </div>
 
+   {chargesRequises&&etatCharges==='a-regler'&&<button type="button" className="rep-historique-lien" aria-haspopup="dialog" onClick={()=>setHistorique(true)}>
+    {l('Historique du solde','Balance history')} <span aria-hidden="true">›</span>
+   </button>}
+   {historique&&chargesRequises&&<HistoriqueSoldeRepartition devise={devise} langue={langue}
+    onFermer={()=>setHistorique(false)} onSolde={setSoldeEncaissements}/>}
    {feuille&&r&&(!chargesRequises||chargesOK)&&<EnregistrerRepartition depuisEncaissements={chargesRequises} montants={r} devise={devise} langue={langue} onFermer={()=>setFeuille(false)}/>}
    <p className="sim-ios-note hd-classique mt-4 flex items-start gap-2"><Trace nom="cadenas" className="rep-note-icone"/>{l('Ces pourcentages sont des repères d’enseignement, pas une obligation ni un conseil financier personnel. Aucun argent ne bouge.','These percentages are teaching guides, not an obligation or personal financial advice. No money moves.')}</p>
   </div>
