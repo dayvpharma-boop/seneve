@@ -129,7 +129,7 @@ export function HabitudesRepartition(){
       <span className="rep-part-droite">
        <b className="tabular-nums">{r?`${nombre(r[x.cle])}`:'—'}</b>
        {b.pas===0?<span className="rep-fixe"><Trace nom="cadenas"/>{p[x.cle]} %</span>
-        :<span className="rep-stepper"><button type="button" aria-label={l(`Baisser : ${x.nom}`,`Decrease: ${x.nom}`)} disabled={p[x.cle]<=b.min} onClick={()=>reglage(x.cle,-1)} disabled={p[x.cle]<=b.min||(chargesRequises&&!chargesOK)}>−</button><span aria-live="polite">{p[x.cle]} %</span><button type="button" aria-label={l(`Augmenter : ${x.nom}`,`Increase: ${x.nom}`)} disabled={p[x.cle]>=maximumPart(x.cle,p)} onClick={()=>reglage(x.cle,1)} disabled={p[x.cle]>=maximumPart(x.cle,p)||(chargesRequises&&!chargesOK)}>+</button></span>}
+        :<span className="rep-stepper"><button type="button" aria-label={l(`Baisser : ${x.nom}`,`Decrease: ${x.nom}`)} disabled={p[x.cle]<=b.min||(chargesRequises&&!chargesOK)} onClick={()=>reglage(x.cle,-1)}>−</button><span aria-live="polite">{p[x.cle]} %</span><button type="button" aria-label={l(`Augmenter : ${x.nom}`,`Increase: ${x.nom}`)} disabled={p[x.cle]>=maximumPart(x.cle,p)||(chargesRequises&&!chargesOK)} onClick={()=>reglage(x.cle,1)}>+</button></span>}
       </span>
      </li>;})}
      <li className="rep-part rep-part-vivre">
