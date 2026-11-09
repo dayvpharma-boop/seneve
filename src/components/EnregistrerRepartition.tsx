@@ -1,6 +1,6 @@
 import './SimulateurEpargne.css';
 import {useEffect,useMemo,useRef,useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Link,useNavigate} from 'react-router-dom';
 import {IconeHD} from './IconeHabitudes';
 import {chargerSuiviFinancier,type SuiviFinancier,type TypeObjectifEpargne} from '@/lib/habitudes-finances-suivi';
 import {CompteursIndisponibles,enregistrerRepartition,type PartRepartition} from '@/lib/habitudes-finances-compteurs';
@@ -19,13 +19,14 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
  const [suivi,setSuivi]=useState<SuiviFinancier|null|'aucun'|'erreur'>(null);
  // Les enveloppes sont cochées au départ ; rembourser une dette et affecter son excédent exigent un choix volontaire.
  const [decoches,setDecoches]=useState<Record<string,boolean>>({});
- const coche=(cle:string)=>cle==='dettes'||cle==='surplus_dettes'?decoches[cle]===false:!decoches[cle];
+ const coche=(cle:string)=>cle==='surplus_dettes'?destinationSurplus!==null:cle==='dettes'?decoches[cle]===false:!decoches[cle];
  const [enCours,setEnCours]=useState(false),[erreur,setErreur]=useState('');
  // Date choisie par la personne (demande du 07/11/2026) : aujourd’hui au départ, jamais dans le futur.
  const [date,setDate]=useState(aujourdhui);
  // Chaque objectif a son identifiant : deux investissements de même type/devise
  // (Voiture et Achat maison) ne doivent jamais être confondus.
  const [objectifsChoisis,setObjectifsChoisis]=useState<Partial<Record<TypeObjectifEpargne,string>>>({});
+ const [destinationSurplus,setDestinationSurplus]=useState<'vivre'|'investissement'|null>(null);
  const demande=useRef(crypto.randomUUID());
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
@@ -61,23 +62,39 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
    // Une part prévue peut dépasser toutes les dettes encore ouvertes. La différence
    // reste au participant : jamais de faux remboursement ni de transfert automatique.
    // Une case explicite permet de l'affecter à « Pour vivre ».
-   if(surplus>0)out.push({cle:'surplus_dettes',nom:l('Excédent de la part Dettes','Unused Debts share'),destination:l('Disponible pour vivre · coche si tu veux le noter dans cette caisse','Available for living · tick to record it in this counter'),montant:surplus/100,parts:[{part:'vivre',amount:chaine(surplus/100)}],possible:true,couleur:'#5b4ee8'});
+   if(surplus>0){
+    const montantSurplus=surplus/100;
+    const objectifInvestissement=destinationSurplus==='investissement'?objectif('epargne_investir'):null;
+    const partsSurplus:PartRepartition[]=destinationSurplus==='vivre'
+     ?[{part:'vivre',amount:chaine(montantSurplus)}]
+     :destinationSurplus==='investissement'&&objectifInvestissement
+      ?[{part:'epargne_investir',goal_id:objectifInvestissement.goal_id,amount:chaine(montantSurplus)}]:[];
+    const destination=destinationSurplus==='vivre'?l('Pour vivre','For living')
+     :destinationSurplus==='investissement'?objectifInvestissement?l('objectif « '+objectifInvestissement.label+' »','goal “'+objectifInvestissement.label+'”'):l('objectif d’investissement à choisir','investment goal to choose')
+     :l('destination obligatoire à choisir','required destination to choose');
+    out.push({cle:'surplus_dettes',nom:l('Excédent à affecter','Surplus to allocate'),destination,montant:montantSurplus,parts:partsSurplus,possible:destinationSurplus==='vivre'||!!objectifInvestissement,couleur:'#5b4ee8'});
+   }
   }
   if(montants.vivre>0)out.push({cle:'vivre',nom:l('Pour vivre','For living'),destination:l('Pour vivre','For living'),montant:montants.vivre,parts:[{part:'vivre',amount:chaine(montants.vivre)}],possible:true,couleur:'#a1a1a6'});
   return out.filter(x=>x.montant>0);
- },[suivi,cleMontants,devise,en,objectifsChoisis]);
+ },[suivi,cleMontants,devise,en,objectifsChoisis,destinationSurplus]);
+ const ligneSurplus=lignes.find(x=>x.cle==='surplus_dettes');
+ const montantSurplus=ligneSurplus?.montant??0;
+ const candidatsInvestir=suivi&&typeof suivi==='object'?suivi.savings_goals.filter(g=>g.goal_type==='epargne_investir'&&g.currency===devise):[];
  const choisies=lignes.filter(x=>x.possible&&coche(x.cle));
  const typesObjectifs:[TypeObjectifEpargne,number][]=[
-  ['reserve_joie',montants.reserve],['epargne_investir',montants.investir],['autre',montants.autre]
+  ['reserve_joie',montants.reserve],['epargne_investir',Math.max(montants.investir,destinationSurplus==='investissement'?montantSurplus:0)],['autre',montants.autre]
  ];
  const selectionManquante=!!suivi&&typeof suivi==='object'&&typesObjectifs.some(([type,montant])=>{
   if(montant<=0)return false;
   const candidats=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
-  return candidats.length>1&&!candidats.some(g=>g.goal_id===objectifsChoisis[type]);
+  return (candidats.length>1&&!candidats.some(g=>g.goal_id===objectifsChoisis[type]))||
+   (type==='epargne_investir'&&destinationSurplus==='investissement'&&candidats.length===0);
  });
+ const choixSurplusManquant=!!ligneSurplus&&!destinationSurplus;
  const total=choisies.reduce((n,x)=>n+x.montant,0);
  async function enregistrer(){
-  if(!suivi||typeof suivi!=='object'||!choisies.length||selectionManquante||enCours)return;
+  if(!suivi||typeof suivi!=='object'||!choisies.length||selectionManquante||choixSurplusManquant||enCours)return;
   setEnCours(true);setErreur('');
   try{
    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date>aujourdhui()){setErreur(l('Choisis une date qui n’est pas dans le futur.','Choose a date that is not in the future.'));setEnCours(false);return;}
@@ -91,19 +108,27 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
   <div className="sim-ios hd-classique relative max-h-[88vh] overflow-y-auto rounded-t-[14px] px-4 pb-8 pt-2 shadow-[0_-8px_30px_rgba(0,0,0,.18)]" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <div aria-hidden="true" className="mx-auto mb-2.5 h-[5px] w-9 rounded-full bg-[#c7c7cc]"/>
    <div className="mb-1.5 grid grid-cols-[1fr_auto_1fr] items-center"><button type="button" onClick={onFermer} className="justify-self-start text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)',minHeight:44}}>{l('Annuler','Cancel')}</button><h2 id="hd-feuille-titre" className="text-[17px] font-semibold" style={{margin:0}}>{l('Enregistrer','Save')}</h2><span/></div>
-   <p className="sim-ios-sous">{l('Vérifie ce que tu mets de côté. Coche « Dettes » seulement après un remboursement réel. Un excédent reste disponible : tu peux choisir de le noter dans « Pour vivre ». Une dîme mise de côté n’est pas encore donnée.','Review what you set aside. Tick “Debts” only after an actual repayment. Any surplus stays available: you may choose to record it under “For living”. Tithe set aside has not yet been given.')}</p>
+   <p className="sim-ios-sous">{l('Vérifie chaque part. Coche « Dettes » seulement après un remboursement réel. Si la part Dettes dépasse les dettes restantes, choisis obligatoirement où affecter l’excédent : vivre ou investir. Aucun argent n’est transféré automatiquement.','Review each share. Tick “Debts” only after an actual repayment. If the Debts share exceeds what is still owed, choose where to allocate the surplus: living or investing. No money is transferred automatically.')}</p>
    <div className="sim-ios-groupe mb-3"><div className="sim-ios-ligne"><label htmlFor="hd-repartition-date">{l('Date de la répartition','Allocation date')}</label><input id="hd-repartition-date" type="date" max={aujourdhui()} value={date} onChange={e=>{demande.current=crypto.randomUUID();setDate(e.target.value);}} style={{width:150,color:'var(--ios-accent,#5b4ee8)'}}/></div></div>
    {suivi===null&&<p role="status" className="rounded-xl bg-white p-4">{l('Chargement de ton suivi…','Loading your tracker…')}</p>}
    {(suivi==='aucun'||suivi==='erreur')&&<p role="alert" className="rounded-xl bg-white p-4">{suivi==='aucun'?l('Connecte-toi avec un accès actif à Habitudes & Défis pour enregistrer ta répartition.','Sign in with active Habits & Challenges access to save your allocation.'):l('Ton suivi n’est pas disponible pour le moment.','Your tracker is not available right now.')}</p>}
    {suivi&&typeof suivi==='object'&&<>
     <ul className="sim-ios-groupe" style={{listStyle:'none',margin:0,padding:0}}>
      {lignes.map(x=><li key={x.cle} className="sim-ios-ligne" style={{minHeight:62,opacity:x.possible&&coche(x.cle)?1:.5}}>
-      <input id={`hd-part-${x.cle}`} type="checkbox" disabled={!x.possible} checked={x.possible&&coche(x.cle)} onChange={e=>{demande.current=crypto.randomUUID();setDecoches(c=>({...c,[x.cle]:!e.target.checked}));}} style={{width:24,height:24,accentColor:'var(--ios-accent,#5b4ee8)',flex:'none'}}/>
+      <input id={`hd-part-${x.cle}`} type="checkbox" disabled={!x.possible||x.cle==='surplus_dettes'} checked={x.possible&&coche(x.cle)} onChange={e=>{if(x.cle==='surplus_dettes')return;demande.current=crypto.randomUUID();setDecoches(c=>({...c,[x.cle]:!e.target.checked}));}} style={{width:24,height:24,accentColor:'var(--ios-accent,#5b4ee8)',flex:'none'}}/>
       <label htmlFor={`hd-part-${x.cle}`} style={{flex:1,minWidth:0}}><span className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 rounded-sm" style={{background:x.couleur}}/>{x.nom}</span><small className="block text-[13px] text-hd-on-surface-variant">→ {x.destination}</small></label>
       <b className="tabular-nums whitespace-nowrap">{nombre(x.montant)} {devise}</b>
      </li>)}
+     {ligneSurplus&&<li key="surplus-destination" className="block rounded-xl bg-white p-3">
+      <p className="mb-2 text-sm font-semibold">{l('Choisis obligatoirement la destination de l’excédent :','Choose where the surplus goes:')}</p>
+      <div role="radiogroup" aria-label={l('Destination de l’excédent','Surplus destination')} className="sim-ios-segment">
+       <button type="button" role="radio" aria-checked={destinationSurplus==='vivre'} onClick={()=>{demande.current=crypto.randomUUID();setDestinationSurplus('vivre');}}>{l('Pour vivre','For living')}</button>
+       <button type="button" role="radio" aria-checked={destinationSurplus==='investissement'} onClick={()=>{demande.current=crypto.randomUUID();setDestinationSurplus('investissement');}}>{l('Investissement','Investment')}</button>
+      </div>
+      {destinationSurplus==='investissement'&&candidatsInvestir.length===0&&<p role="alert" className="sim-ios-note">{l('Crée d’abord un objectif « Pour investir » dans SÉNEVÉ Finance pour enregistrer cet excédent.','First create a “For investing” goal in SÉNEVÉ Finance to record this surplus.')} <Link to={en?'/habitudes/epargne?lang=en':'/habitudes/epargne'} className="underline">{l('Ouvrir SÉNEVÉ Finance','Open SÉNEVÉ Finance')}</Link></p>}
+     </li>}
      {(['reserve_joie','epargne_investir','autre'] as const).map(type=>{
-       const montantsType={reserve_joie:montants.reserve,epargne_investir:montants.investir,autre:montants.autre};
+       const montantsType={reserve_joie:montants.reserve,epargne_investir:Math.max(montants.investir,destinationSurplus==='investissement'?montantSurplus:0),autre:montants.autre};
        const objectifs=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
        if(montantsType[type]<=0||objectifs.length<2)return null;
        const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
@@ -119,8 +144,9 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
        </li>;
      })}
     </ul>
+    {choixSurplusManquant&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Sélectionne « Pour vivre » ou « Investissement » pour continuer.','Select “For living” or “Investment” to continue.')}</p>}
     {selectionManquante&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Choisis la destination de chaque part ayant plusieurs objectifs avant d’enregistrer. Pour ne pas répartir une part, décoche-la après avoir choisi son objectif.','Choose the destination for each share with multiple goals before saving. To exclude a share, untick it after selecting its goal.')}</p>}
-    <button type="button" disabled={!choisies.length||selectionManquante||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
+    <button type="button" disabled={!choisies.length||selectionManquante||choixSurplusManquant||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
     {erreur&&<p role="alert" className="sim-ios-alerte">{erreur}</p>}
     <p className="sim-ios-note">{l('Ce qui reste décoché n’est pas noté ; tu pourras l’ajouter plus tard. Aucun argent ne bouge.','Anything left unticked is not recorded; you can add it later. No money moves.')}</p>
    </>}
