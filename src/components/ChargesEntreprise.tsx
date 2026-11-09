@@ -20,7 +20,7 @@ export function ChargesEntreprise({devise,langue,onEtat}:{devise:string;langue:s
   const total=liste.reduce((n,c)=>n+cents(c.expected_amount),0),paid=liste.reduce((n,c)=>n+c.payments.reduce((m,p)=>m+cents(p.amount),0),0);
   onEtat(total===0||paid>=total,paid/100);
  }
- useEffect(()=>{let vivant=true;setChargement(true);onEtat(false,0);void chargerSuiviFinancier(null).then(async s=>{if(!vivant)return;if(!s){setEnrollment(null);setChargement(false);return;}setEnrollment(s.enrollment_id);await rafraichir(s.enrollment_id);if(vivant)setChargement(false);}).catch(()=>{if(vivant){setErreur(l('Impossible de charger les charges.','Could not load business charges.'));setChargement(false);onEtat(false);}});return()=>{vivant=false;};},[devise,date]); // eslint-disable-line react-hooks/exhaustive-deps
+ useEffect(()=>{let vivant=true;setChargement(true);onEtat(false,0);void chargerSuiviFinancier(null).then(async s=>{if(!vivant)return;if(!s){setEnrollment(null);setChargement(false);return;}setEnrollment(s.enrollment_id);await rafraichir(s.enrollment_id);if(vivant)setChargement(false);}).catch(()=>{if(vivant){setErreur(l('Impossible de charger les charges.','Could not load business charges.'));setChargement(false);onEtat(false,0);}});return()=>{vivant=false;};},[devise,date]); // eslint-disable-line react-hooks/exhaustive-deps
  const attendu=charges.reduce((n,c)=>n+cents(c.expected_amount),0);
  const paye=charges.reduce((n,c)=>n+c.payments.reduce((m,p)=>m+cents(p.amount),0),0);
  const reste=Math.max(0,attendu-paye);
