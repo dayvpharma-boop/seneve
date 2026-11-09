@@ -53,6 +53,8 @@ export function HabitudesRepartition(){
   setSoldeEncaissements({disponible,dimeRestante});
  },[]);
  const chargesRequises=profil==='commerce'||profil==='entreprise';
+ const repartitionBloquee=chargesRequises&&!chargesOK;
+ const afficherRepartition=!chargesRequises||(etatCharges!=='verification'&&etatCharges!=='indisponible');
  const TitreSolde=chargesRequises?'button':'div';
  useEffect(()=>{document.title=l('SÉNEVÉ Répartition','SÉNEVÉ Allocation');document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
  if(!habitudesActivees())return <NotFound/>;
@@ -138,13 +140,13 @@ export function HabitudesRepartition(){
     }}/>}
    {erreur&&<p role="alert" className="sim-ios-alerte hd-classique">{l('Vérifie les montants : écris seulement des chiffres, par exemple 500000 ou 1000,50.','Check the amounts: digits only, for example 500000 or 1000.50.')}</p>}
 
-   {(!chargesRequises||chargesOK)&&<section aria-labelledby="hd-rep-base" className="hd-classique mt-6">
+   {afficherRepartition&&<section aria-labelledby="hd-rep-base" className="hd-classique mt-6">
     <div className="rep-heros">
      <svg className="rep-anneau" viewBox="0 0 104 104" aria-hidden="true">
       <circle cx="52" cy="52" r={R} fill="none" stroke="rgb(118 118 128 / .14)" strokeWidth="14"/>
-      <g transform="rotate(-90 52 52)">{segments.map(s=><circle key={s.cle} cx="52" cy="52" r={R} fill="none" stroke={COULEURS[s.cle]} strokeWidth="14" strokeDasharray={s.dash} strokeDashoffset={s.offset}/>)}</g>
-      <text x="52" y="50" textAnchor="middle" className="rep-anneau-pct">{vivrePct} %</text>
-      <text x="52" y="66" textAnchor="middle" className="rep-anneau-legende">{l('pour vivre','for living')}</text>
+      {!repartitionBloquee&&<g transform="rotate(-90 52 52)">{segments.map(s=><circle key={s.cle} cx="52" cy="52" r={R} fill="none" stroke={COULEURS[s.cle]} strokeWidth="14" strokeDasharray={s.dash} strokeDashoffset={s.offset}/>)}</g>}
+      <text x="52" y="50" textAnchor="middle" className="rep-anneau-pct">{repartitionBloquee?'—':`${vivrePct} %`}</text>
+      <text x="52" y="66" textAnchor="middle" className="rep-anneau-legende">{repartitionBloquee?l('Bloquée','Locked'):l('pour vivre','for living')}</text>
      </svg>
      <div className="min-w-0">
       <TitreSolde className={chargesRequises?'rep-historique-ouvrir':undefined} type={chargesRequises?'button':undefined}
@@ -153,10 +155,10 @@ export function HabitudesRepartition(){
       <b className="rep-heros-montant">{chargesRequises?`${nombre(Number(soldeEncaissements.disponible))} ${devise}`:r?`${nombre(r.base)} ${devise}`:'—'}</b>
       {chargesRequises&&<span className="rep-historique-lien">{l('Voir l’historique','View history')} <span aria-hidden="true">›</span></span>}
       </TitreSolde>
-      <p>{r?l(`${nombre(r.vivre)} ${devise} restent pour vivre après tes parts.`,`${nombre(r.vivre)} ${devise} remain for living after your shares.`):chargesRequises?l('Le solde des ventes apparaît ici après les charges.','The sales balance appears here after expenses.'):calcul}</p>
+      <p>{repartitionBloquee?l('Solde en attente de répartition.','Balance awaiting allocation.'):r?l(`${nombre(r.vivre)} ${devise} restent pour vivre après tes parts.`,`${nombre(r.vivre)} ${devise} remain for living after your shares.`):chargesRequises?l('Le solde des ventes apparaît ici après les charges.','The sales balance appears here after expenses.'):calcul}</p>
      </div>
     </div>
-    <h3 className="sim-ios-titre flex justify-between"><span>{l('Mes parts','My shares')}</span><span style={{textTransform:'none'}}>{l(`Total ${chargesRequises&&r?.base?100-vivrePct:totalParts} %`,`Total ${chargesRequises&&r?.base?100-vivrePct:totalParts}%`)}</span></h3>
+    <h3 className="sim-ios-titre flex justify-between"><span>{l('Mes parts','My shares')}</span><span style={{textTransform:'none'}}>{repartitionBloquee?l('Inactive','Locked'):l(`Total ${chargesRequises&&r?.base?100-vivrePct:totalParts} %`,`Total ${chargesRequises&&r?.base?100-vivrePct:totalParts}%`)}</span></h3>
     <ul className="rep-parts">
      {PARTS.map(x=>{const b=LIMITES_REPARTITION[x.cle];return <li key={x.cle} className="rep-part">
       <span className="rep-tuile" style={{background:COULEURS[x.cle]}}><Trace nom={x.cle}/></span>
@@ -164,21 +166,21 @@ export function HabitudesRepartition(){
       <span className="rep-part-droite">
        <b className="tabular-nums">{r?`${nombre(r[x.cle])}`:'—'}</b>
        {b.pas===0?<span className="rep-fixe"><Trace nom="cadenas"/>{chargesRequises&&r?.dime===0?l('0 à noter','0 to record'):`${p[x.cle]} %`}</span>
-        :<span className="rep-stepper"><button type="button" aria-label={l(`Baisser : ${x.nom}`,`Decrease: ${x.nom}`)} disabled={p[x.cle]<=b.min||(chargesRequises&&!chargesOK)} onClick={()=>reglage(x.cle,-1)}>−</button><span aria-live="polite">{p[x.cle]} %</span><button type="button" aria-label={l(`Augmenter : ${x.nom}`,`Increase: ${x.nom}`)} disabled={p[x.cle]>=maximumPart(x.cle,p)||(chargesRequises&&!chargesOK)} onClick={()=>reglage(x.cle,1)}>+</button></span>}
+        :<span className="rep-stepper"><button type="button" aria-label={l(`Baisser : ${x.nom}`,`Decrease: ${x.nom}`)} disabled={p[x.cle]<=b.min||repartitionBloquee} onClick={()=>reglage(x.cle,-1)}>−</button><span aria-live="polite">{p[x.cle]} %</span><button type="button" aria-label={l(`Augmenter : ${x.nom}`,`Increase: ${x.nom}`)} disabled={p[x.cle]>=maximumPart(x.cle,p)||repartitionBloquee} onClick={()=>reglage(x.cle,1)}>+</button></span>}
       </span>
      </li>;})}
      <li className="rep-part rep-part-vivre">
       <span className="rep-tuile" style={{background:COULEURS.vivre}}><Trace nom="vivre"/></span>
       <span className="rep-part-nom"><b>{l('Pour vivre','For living')}</b><small>{l('ce qui reste pour la maison','what is left for home')}</small></span>
-      <span className="rep-part-droite"><b className="tabular-nums rep-vivre-montant">{r?nombre(r.vivre):'—'}</b><span className="rep-fixe">{vivrePct} %</span></span>
+      <span className="rep-part-droite"><b className="tabular-nums rep-vivre-montant">{r?nombre(r.vivre):'—'}</b><span className="rep-fixe">{repartitionBloquee?'—':`${vivrePct} %`}</span></span>
      </li>
     </ul>
     {!chargesRequises&&!r&&!erreur&&<p className="sim-ios-note">{l('Écris ce que tu as reçu : la répartition apparaît tout de suite.','Enter what you received: the allocation appears straight away.')}</p>}
    </section>}
 
    <div className="hd-classique rep-validation">
-    <button type="button" disabled={!r||r.base<=0||(chargesRequises&&!chargesOK)} onClick={()=>setFeuille(true)} className="sim-ios-bouton rep-bouton w-full disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>
-    <p>{chargesRequises&&!chargesOK
+    <button type="button" disabled={!r||r.base<=0||repartitionBloquee} onClick={()=>setFeuille(true)} className="sim-ios-bouton rep-bouton w-full disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>
+    <p>{repartitionBloquee
      ?etatCharges==='verification'?l('Vérification des charges en cours.','Checking business expenses.')
       :etatCharges==='indisponible'?l('Les charges doivent être chargées avant d’enregistrer.','Load your expenses before saving.')
       :etatCharges==='sans-charge'?l('Ajoute une charge du mois, puis couvre-la pour débloquer la répartition.','Add and cover a monthly expense to unlock allocation.')
@@ -187,9 +189,6 @@ export function HabitudesRepartition(){
      :l('Vérifie tes parts avant de les ajouter à Mes compteurs.','Review your shares before adding them to My Counters.')}</p>
    </div>
 
-   {chargesRequises&&(etatCharges==='a-regler'||etatCharges==='sans-charge')&&<button type="button" className="rep-historique-lien" aria-haspopup="dialog" onClick={()=>setHistorique(true)}>
-    {l('Historique du solde','Balance history')} <span aria-hidden="true">›</span>
-   </button>}
    {historique&&chargesRequises&&<HistoriqueSoldeRepartition devise={devise} langue={langue}
     onFermer={()=>setHistorique(false)} onSolde={setSoldeEncaissements}/>}
    {feuille&&r&&(!chargesRequises||chargesOK)&&<EnregistrerRepartition depuisEncaissements={chargesRequises} montants={r} devise={devise} langue={langue} onFermer={()=>setFeuille(false)}/>}

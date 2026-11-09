@@ -171,8 +171,7 @@ it('enregistre la vente nette dans le bloc et calcule la répartition sur le seu
  await screen.findByText('Loyer');
  expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeDisabled();
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer l’encaissement'}));
- const base=await screen.findByRole('region',{name:'Solde à répartir'});
- expect(base.textContent).toContain('50 USD');
+ await waitFor(()=>expect(screen.getByRole('region',{name:'Solde à répartir'}).textContent).toContain('50 USD'));
  expect(noterVente).toHaveBeenCalledWith('inscription','USD',expect.stringMatching(/-01$/),
   {recu:'500',marchandises:'100',frais:'50'},expect.any(String));
  expect(screen.getByLabelText('Ventes encaissées')).toHaveValue('');
@@ -194,7 +193,10 @@ it('bloque la répartition après le retrait de la dernière charge même si un 
  await screen.findByText('Ajoute une charge du mois, puis couvre-la pour débloquer la répartition.');
  expect(screen.queryByText('Loyer')).toBeNull();
  expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeDisabled();
- expect(screen.getByRole('button',{name:'Historique du solde'})).toBeVisible();
+ const repartition=screen.getByRole('region',{name:'Solde à répartir'});
+ expect(within(repartition).getByText('Mes parts')).toBeVisible();
+ expect(within(repartition).getByRole('button',{name:'Augmenter : Dettes'})).toBeDisabled();
+ expect(within(repartition).getByRole('button',{name:/Solde à répartir.*Voir l’historique/})).toBeEnabled();
  expect(retirerCharge).toHaveBeenCalledWith('inscription','loyer');
 },20000);
 
