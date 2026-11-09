@@ -16,7 +16,10 @@ export function HistoriqueSoldeRepartition({devise,langue,onFermer,onSolde}:{dev
  const chargementSuite=useRef(false);
  const monnaie=new Intl.NumberFormat(en?'en-US':'fr-FR',{maximumFractionDigits:decimalesDevise(devise)});
  const format=(v:string)=>`${monnaie.format(Number(v))} ${devise}`;
- const calendrier=new Intl.DateTimeFormat(en?'en-US':'fr-FR',{dateStyle:'full',timeZone:'UTC'});
+ const locale=en?'en-US':'fr-FR';
+ const calendrier=new Intl.DateTimeFormat(locale,{dateStyle:'full',timeZone:'UTC'});
+ const heureKinshasa=new Intl.DateTimeFormat(locale,{dateStyle:'full',timeStyle:'short',timeZone:'Africa/Kinshasa',hourCycle:'h23'});
+ const jourKinshasa=new Intl.DateTimeFormat('sv-SE',{timeZone:'Africa/Kinshasa',year:'numeric',month:'2-digit',day:'2-digit'});
 
  useEffect(()=>{
   const volet=dialogue.current;
@@ -82,11 +85,15 @@ export function HistoriqueSoldeRepartition({devise,langue,onFermer,onSolde}:{dev
    {chargement&&mouvements.length===0&&<p role="status">{l('Chargement de l’historique…','Loading history…')}</p>}
    {!chargement&&!erreur&&!mouvements.length&&<p>{l('Aucune opération dans cette devise.','No entries in this currency.')}</p>}
    {mouvements.length>0&&<ol className="rep-historique-liste">
-    {mouvements.map(m=><li key={m.kind+':'+m.id}>
+    {mouvements.map(m=>{
+     const enregistrement=new Date(m.created_at);
+     const memeJour=jourKinshasa.format(enregistrement)===m.date_locale;
+     return <li key={m.kind+':'+m.id}>
      <div className="rep-historique-ligne">
       <div>
        <strong>{m.kind===0?l('Encaissement','Receipt'):l('Solde reporté','Balance carried forward')}</strong>
-       <time dateTime={m.date_locale}>{calendrier.format(new Date(m.date_locale+'T12:00:00Z'))}</time>
+       {!memeJour&&<time dateTime={m.date_locale}>{calendrier.format(new Date(m.date_locale+'T12:00:00Z'))}</time>}
+       <time dateTime={m.created_at}>{!memeJour&&l('Enregistré le ','Recorded on ')}{heureKinshasa.format(enregistrement)}</time>
       </div>
       <strong>{format(m.kind===0?m.amount:m.balance)}</strong>
      </div>
@@ -103,7 +110,7 @@ export function HistoriqueSoldeRepartition({devise,langue,onFermer,onSolde}:{dev
       <button type="button" className="rep-charge-retirer" disabled={suppression} onClick={()=>void confirmerSuppression()}>{l('Confirmer la suppression','Confirm removal')}</button>
       <button type="button" disabled={suppression} onClick={()=>setASupprimer(null)}>{l('Annuler','Cancel')}</button>
      </div>}
-    </li>)}
+    </li>;})}
    </ol>}
    {suite&&<button type="button" disabled={chargement||suppression} onClick={()=>void afficherSuite()}>
     {chargement?l('Chargement…','Loading…'):l('Afficher plus','Show more')}
