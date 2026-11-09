@@ -164,3 +164,40 @@
 }
 :root:root:root[data-apparence="sombre"] .rep-page .rep-charge-retirer{color:#ffadb8}
 :root:root:root .rep-page .rep-charge-retirer:disabled{opacity:.6;cursor:default}
+
+:root:root:root .rep-page .rep-historique-ouvrir{
+  display:block;max-width:100%;min-height:44px;border:0;padding:0;background:transparent;color:inherit;
+  text-align:start;cursor:pointer;
+}
+:root:root:root .rep-page .rep-historique-lien{
+  border:0;background:transparent;color:var(--ios-accent,#5b4ee8);font-size:14px;font-weight:700;
+}
+:root:root:root .rep-page button.rep-historique-lien{align-self:flex-start;min-height:44px;cursor:pointer}
+:root:root:root .rep-page .rep-historique-ouvrir:focus-visible{
+  outline:2px solid var(--ios-accent,#5b4ee8);outline-offset:4px;border-radius:8px;
+}
+:root:root:root .rep-historique{
+  position:fixed;inset:auto 0 0;width:min(100%,600px);max-width:100%;max-height:88dvh;
+  margin:0 auto;padding:0;border:0;border-radius:24px 24px 0 0;
+  color:var(--ios-encre,CanvasText);background:var(--ios-fond,Canvas);overflow:auto;overscroll-behavior:contain;
+}
+:root:root:root .rep-historique::backdrop{background:rgba(20,22,35,.48)}
+:root:root:root .rep-historique-contenu{padding:18px 16px max(24px,env(safe-area-inset-bottom))}
+:root:root:root .rep-historique :is(.rep-historique-entete,.rep-historique-ligne){
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-width:0;overflow-wrap:anywhere;
+}
+:root:root:root .rep-historique-entete{margin-bottom:14px}
+:root:root:root .rep-historique-entete h2{margin:0;font-size:22px}
+:root:root:root .rep-historique :is(p,time){margin:4px 0 0;color:var(--ios-doux,#63636b);font-size:14px}
+:root:root:root .rep-historique time{display:block}
+:root:root:root .rep-historique-liste{
+  display:grid;gap:8px;padding:0;margin:12px 0 0;list-style:none;
+}
+:root:root:root .rep-historique-liste li{
+  min-width:0;padding:12px;border-radius:16px;background:var(--ios-carte,Canvas);overflow-wrap:anywhere;
+}
+:root:root:root .rep-historique button{min-height:44px;color:var(--ios-accent,#5b4ee8);font-weight:700}
+:root:root:root .rep-historique button.rep-charge-retirer{color:var(--ios-danger,#a52b3d)}
+:root:root:root[data-apparence="sombre"] .rep-historique button.rep-charge-retirer{color:#ffadb8}
+:root:root:root .rep-historique-confirmation{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px}
+:root:root:root .rep-historique-confirmation p{flex-basis:100%}
