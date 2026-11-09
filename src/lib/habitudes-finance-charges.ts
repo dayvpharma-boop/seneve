@@ -10,8 +10,8 @@ function analyser(data:unknown,enrollmentId:string):ChargeEntreprise[]{
  if(!objet(data)||data.enrollment_id!==enrollmentId||!Array.isArray(data.charges))throw Error('Suivi des charges incohérent');
  return data.charges.map((x:unknown)=>{
   if(!objet(x)||!uuid(x.charge_id)||typeof x.label!=='string'||!montant(x.expected_amount)||typeof x.currency!=='string'||!/^[A-Z]{3}$/.test(x.currency)||!date(x.period_start)||!date(x.period_end)||!Array.isArray(x.payments))throw Error('Charge incohérente');
-  const payments=x.payments.map((p:unknown)=>{if(!objet(p)||!uuid(p.payment_id)||!montant(p.amount)||!date(p.date_locale))throw Error('Paiement de charge incohérent');return {payment_id:p.payment_id,amount:p.amount,date_locale:p.date_locale};});
-  return {charge_id:x.charge_id,label:x.label,expected_amount:x.expected_amount,currency:x.currency,period_start:x.period_start,period_end:x.period_end,payments};
+  const payments=x.payments.map((p:unknown)=>{if(!objet(p)||!uuid(p.payment_id)||!montant(p.amount)||!date(p.date_locale))throw Error('Paiement de charge incohérent');return {payment_id:p.payment_id as string,amount:p.amount as string,date_locale:p.date_locale as string};});
+  return {charge_id:x.charge_id as string,label:x.label,expected_amount:x.expected_amount as string,currency:x.currency,period_start:x.period_start as string,period_end:x.period_end as string,payments};
  });
 }
 export async function chargerChargesEntreprise(enrollmentId:string,dateLocale:string,currency:string){
