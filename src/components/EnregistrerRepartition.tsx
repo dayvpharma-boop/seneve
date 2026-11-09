@@ -19,6 +19,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
  const [suivi,setSuivi]=useState<SuiviFinancier|null|'aucun'|'erreur'>(null);
  // Les enveloppes sont cochées au départ ; rembourser une dette et affecter son excédent exigent un choix volontaire.
  const [decoches,setDecoches]=useState<Record<string,boolean>>({});
+ const [destinationSurplus,setDestinationSurplus]=useState<'vivre'|'investissement'|null>(null);
  const coche=(cle:string)=>cle==='surplus_dettes'?destinationSurplus!==null:cle==='dettes'?decoches[cle]===false:!decoches[cle];
  const [enCours,setEnCours]=useState(false),[erreur,setErreur]=useState('');
  // Date choisie par la personne (demande du 07/11/2026) : aujourd’hui au départ, jamais dans le futur.
@@ -26,7 +27,6 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
  // Chaque objectif a son identifiant : deux investissements de même type/devise
  // (Voiture et Achat maison) ne doivent jamais être confondus.
  const [objectifsChoisis,setObjectifsChoisis]=useState<Partial<Record<TypeObjectifEpargne,string>>>({});
- const [destinationSurplus,setDestinationSurplus]=useState<'vivre'|'investissement'|null>(null);
  const demande=useRef(crypto.randomUUID());
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
