@@ -8,7 +8,7 @@ import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {decimalesDevise} from '@/lib/devises';
 
 type Montants={dime:number;offrande:number;reserve:number;investir:number;autre:number;dettes:number;vivre:number};
-type Ligne={cle:string;nom:string;destination:string;montant:number;parts:PartRepartition[];possible:boolean;couleur:string};
+type Ligne={cle:string;nom:string;destination:string;montant:number;parts:PartRepartition[];possible:boolean;couleur:string;details?:string};
 const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 
 /** Feuille « Enregistrer ma répartition » (maquette validée le 07/11/2026) : chaque part est vérifiée, cochée ou non,
@@ -62,8 +62,10 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
    // Une part prévue peut dépasser toutes les dettes encore ouvertes. La différence
    // reste au participant : jamais de faux remboursement ni de transfert automatique.
    // Une case explicite permet de l'affecter à « Pour vivre ».
-   if(surplus>0){
+   if(surplus>0&&decoches.dettes!==true){
     const montantSurplus=surplus/100;
+    const totalRestant=dettes.reduce((n,x)=>n+Math.max(0,x.reste),0)/100;
+    const details=l(`Part dettes : ${nombre(montants.dettes)} ${devise} · dettes restantes : ${nombre(totalRestant)} ${devise} · excédent : ${nombre(montantSurplus)} ${devise}`,`Debt share: ${nombre(montants.dettes)} ${devise} · remaining debts: ${nombre(totalRestant)} ${devise} · surplus: ${nombre(montantSurplus)} ${devise}`);
     const objectifInvestissement=destinationSurplus==='investissement'?objectif('epargne_investir'):null;
     const partsSurplus:PartRepartition[]=destinationSurplus==='vivre'
      ?[{part:'vivre',amount:chaine(montantSurplus)}]
@@ -72,12 +74,12 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
     const destination=destinationSurplus==='vivre'?l('Pour vivre','For living')
      :destinationSurplus==='investissement'?objectifInvestissement?l('objectif « '+objectifInvestissement.label+' »','goal “'+objectifInvestissement.label+'”'):l('objectif d’investissement à choisir','investment goal to choose')
      :l('destination obligatoire à choisir','required destination to choose');
-    out.push({cle:'surplus_dettes',nom:l('Excédent à affecter','Surplus to allocate'),destination,montant:montantSurplus,parts:partsSurplus,possible:destinationSurplus==='vivre'||!!objectifInvestissement,couleur:'#5b4ee8'});
+    out.push({cle:'surplus_dettes',nom:l('Excédent à affecter','Surplus to allocate'),destination,montant:montantSurplus,parts:partsSurplus,possible:destinationSurplus==='vivre'||!!objectifInvestissement,couleur:'#5b4ee8',details});
    }
   }
   if(montants.vivre>0)out.push({cle:'vivre',nom:l('Pour vivre','For living'),destination:l('Pour vivre','For living'),montant:montants.vivre,parts:[{part:'vivre',amount:chaine(montants.vivre)}],possible:true,couleur:'#a1a1a6'});
   return out.filter(x=>x.montant>0);
- },[suivi,cleMontants,devise,en,objectifsChoisis,destinationSurplus]);
+ },[suivi,cleMontants,devise,en,objectifsChoisis,destinationSurplus,decoches]);
  const ligneSurplus=lignes.find(x=>x.cle==='surplus_dettes');
  const montantSurplus=ligneSurplus?.montant??0;
  const candidatsInvestir=suivi&&typeof suivi==='object'?suivi.savings_goals.filter(g=>g.goal_type==='epargne_investir'&&g.currency===devise):[];
@@ -116,11 +118,11 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer}:{montan
     <ul className="sim-ios-groupe" style={{listStyle:'none',margin:0,padding:0}}>
      {lignes.map(x=><li key={x.cle} className="sim-ios-ligne" style={{minHeight:62,opacity:x.possible&&coche(x.cle)?1:.5}}>
       <input id={`hd-part-${x.cle}`} type="checkbox" disabled={!x.possible||x.cle==='surplus_dettes'} checked={x.possible&&coche(x.cle)} onChange={e=>{if(x.cle==='surplus_dettes')return;demande.current=crypto.randomUUID();setDecoches(c=>({...c,[x.cle]:!e.target.checked}));}} style={{width:24,height:24,accentColor:'var(--ios-accent,#5b4ee8)',flex:'none'}}/>
-      <label htmlFor={`hd-part-${x.cle}`} style={{flex:1,minWidth:0}}><span className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 rounded-sm" style={{background:x.couleur}}/>{x.nom}</span><small className="block text-[13px] text-hd-on-surface-variant">→ {x.destination}</small></label>
+      <label htmlFor={`hd-part-${x.cle}`} style={{flex:1,minWidth:0}}><span className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 rounded-sm" style={{background:x.couleur}}/>{x.nom}</span><small className="block text-[13px] text-hd-on-surface-variant">→ {x.destination}</small>{x.details&&<small className="block text-[12px] text-hd-on-surface-variant">{x.details}</small>}</label>
       <b className="tabular-nums whitespace-nowrap">{nombre(x.montant)} {devise}</b>
      </li>)}
      {ligneSurplus&&<li key="surplus-destination" className="block rounded-xl bg-white p-3">
-      <p className="mb-2 text-sm font-semibold">{l('Choisis obligatoirement la destination de l’excédent :','Choose where the surplus goes:')}</p>
+      <p className="mb-2 text-sm font-semibold">{l('Choisis où affecter cet excédent :','Choose where this surplus goes:')}</p>
       <div role="radiogroup" aria-label={l('Destination de l’excédent','Surplus destination')} className="sim-ios-segment">
        <button type="button" role="radio" aria-checked={destinationSurplus==='vivre'} onClick={()=>{demande.current=crypto.randomUUID();setDestinationSurplus('vivre');}}>{l('Pour vivre','For living')}</button>
        <button type="button" role="radio" aria-checked={destinationSurplus==='investissement'} onClick={()=>{demande.current=crypto.randomUUID();setDestinationSurplus('investissement');}}>{l('Investissement','Investment')}</button>
