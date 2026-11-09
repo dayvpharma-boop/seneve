@@ -1,4 +1,5 @@
 import {useEffect,useMemo,useState} from 'react';
+import {Link} from 'react-router-dom';
 import {chargerSuiviFinancier} from '@/lib/habitudes-finances-suivi';
 import {chargerChargesEntreprise,creerChargeEntreprise,enregistrerPaiementCharge,type ChargeEntreprise} from '@/lib/habitudes-finance-charges';
 
@@ -33,7 +34,7 @@ export function ChargesEntreprise({devise,langue,onEtat}:{devise:string;langue:s
   {left>0&&<div className="mt-2 flex gap-2"><label className="sr-only" htmlFor={'pay-'+c.charge_id}>{l('Montant payé','Amount paid')}</label><input id={'pay-'+c.charge_id} inputMode="decimal" placeholder={l('Montant payé','Amount paid')} value={paiement[c.charge_id]??''} onChange={e=>setPaiement(s=>({...s,[c.charge_id]:e.target.value}))} className="min-h-11 min-w-0 flex-1 rounded-lg border px-3"/><button type="button" className="oa-primary" disabled={!paiement[c.charge_id]||!!occupes[c.charge_id]} onClick={()=>void payer(c)}>{l('Noter le paiement','Record payment')}</button></div>}
  </article>}),[charges,paiement,occupes,devise,en]);
  if(chargement)return <section className="rn-section"><h2>{l('Charges de l’entreprise','Business expenses')}</h2><p role="status">{l('Chargement…','Loading…')}</p></section>;
- if(!enrollment)return <section className="rn-section"><h2>{l('Charges de l’entreprise','Business expenses')}</h2><p>{l('Connecte-toi avec un accès actif à Habitudes & Défis pour suivre les charges et ouvrir la répartition.','Sign in with active Habits & Challenges access to track charges and unlock allocation.')}</p></section>;
+ if(!enrollment)return <section className="rn-section"><h2>{l('Charges de l’entreprise','Business expenses')}</h2><p>{l('Connecte-toi avec un accès actif à Habitudes & Défis pour suivre les charges et ouvrir la répartition.','Sign in with active Habits & Challenges access to track charges and unlock allocation.')}</p><Link to={en?'/connexion?lang=en&mode=signin&suite=habitudes':'/connexion?mode=signin&suite=habitudes'} className="sim-ios-bouton mt-3 block text-center">{l('Se connecter','Sign in')}</Link></section>;
  return <section className="rn-section" aria-labelledby="charges-entreprise-titre">
   <h2 id="charges-entreprise-titre">{l('Priorité : charges de l’entreprise','Priority: business expenses')}</h2>
   <p>{l('Enregistre le loyer, l’électricité, le transport et les autres charges. La répartition reste verrouillée jusqu’à leur paiement complet pour cette période et cette devise.','Record rent, electricity, transport and other expenses. Allocation stays locked until they are fully paid for this period and currency.')}</p>
