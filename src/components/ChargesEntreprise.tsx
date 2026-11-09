@@ -143,7 +143,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
         </span>
       </div>
       {aRetirer === c.charge_id ? <div className="rep-charges-form">
-        <p>{l('Retirer cette charge ? Les montants déjà enregistrés restent dans l’historique.','Remove this expense? Previously recorded amounts stay in the history.')}</p>
+        <p>{l('Retirer cette charge ? Les écritures déjà enregistrées sont conservées.','Remove this expense? Previously recorded entries are kept.')}</p>
         <button type="button" className={bouton} disabled={!!operation} onClick={() =>
           void modifier('retrait', 'retrait:'+c.charge_id, id => retirerChargeEntreprise(id,c.charge_id),
             l('Charge retirée.','Expense removed.'),l('Impossible de retirer cette charge.','Could not remove this expense.'),
@@ -180,6 +180,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
       {retour?.vente ? <p role={retour.erreur ? 'alert' : 'status'}>{retour.texte}</p> : <p>
         {saisie.recu.trim() && !venteValide
           ? l('Vérifie les montants dans la devise choisie.','Check the amounts for the selected currency.')
+          : donnees && !bloc ? l('Crée le bloc du mois ci-dessous pour enregistrer ta première vente.','Create this month’s block below to record your first sale.')
           : l('Le loyer puis les autres charges sont couverts en priorité, dans la devise de la vente.','Rent and then other expenses are covered first, in the sale currency.')}
       </p>}
     </div>
