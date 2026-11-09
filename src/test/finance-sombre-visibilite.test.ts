@@ -41,7 +41,7 @@ describe('SÉNEVÉ Finance : seules les cartes blanches sont corrigées en mode 
   expect(css).toContain('background:#eee8fc!important');
   expect(css).toContain('color:#151b36!important');
   expect(css).toContain('-webkit-text-fill-color:#151b36!important');
-  expect(css).toContain('border:2px solid #49439b!important');
+  expect(css).toContain('border:2px solid var(--accent,#49439b)!important');
   expect(contraste('#151b36','#eee8fc')).toBeGreaterThan(7);
   const dernier=css.slice(css.indexOf('/* Objectif sélectionné en mode sombre (Voiture'));
   expect(dernier).toContain('data-apparence="sombre"');
