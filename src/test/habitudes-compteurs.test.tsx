@@ -151,7 +151,7 @@ it('un excédent de la part Dettes reste au participant et passe à « Pour vivr
  expect(surplus).not.toBeChecked();
  expect(within(feuille).getByRole('button',{name:/Enregistrer 3 parts · 325 USD/})).toBeDisabled();
  // Base 500, part dettes 75, dette existante 20, surplus 55.
- expect(surplus.closest('li')!.textContent).toMatch(/55\\s?USD/);
+ expect(surplus.closest('li')!.textContent).toMatch(/55\s?USD/);
  fireEvent.click(dette);
  fireEvent.click(within(feuille).getByRole('radio',{name:'Investissement'}));
  expect(within(feuille).getByRole('alert').textContent).toMatch(/Crée d’abord un objectif/);
