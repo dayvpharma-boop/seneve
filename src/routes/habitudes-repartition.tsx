@@ -42,7 +42,7 @@ export function HabitudesRepartition(){
  const [devise,setDevise]=useState('USD');
  const [p,setP]=useState<Pourcentages>(POURCENTAGES_DEFAUT);
  const [feuille,setFeuille]=useState(false);
- const [chargesOK,setChargesOK]=useState(false),[chargesPayees,setChargesPayees]=useState(0);
+ const [chargesOK,setChargesOK]=useState(true),[chargesPayees,setChargesPayees]=useState(0);
  const chargesRequises=profil==='commerce'||profil==='entreprise';
  useEffect(()=>{document.title=l('SÉNEVÉ Répartition','SÉNEVÉ Allocation');document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
  if(!habitudesActivees())return <NotFound/>;
