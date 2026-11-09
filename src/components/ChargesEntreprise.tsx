@@ -6,7 +6,7 @@ import {
   enregistrerEncaissementEntreprise, retirerChargeEntreprise, type ChargeEntreprise, type DonneesChargesEntreprise,
 } from '@/lib/habitudes-finance-charges';
 
-export type EtatAccesCharges = 'verification' | 'indisponible' | 'a-regler' | 'reglees';
+export type EtatAccesCharges = 'verification' | 'indisponible' | 'sans-charge' | 'a-regler' | 'reglees';
 type EtatBloc = {type:'chargement' | 'erreur' | 'sans-acces'} |
   {type:'charge'; donnees:DonneesChargesEntreprise};
 
@@ -60,8 +60,10 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
         return false;
       }
       setEtat({type:'charge', donnees});
-      const soldes = !!donnees.active_block && donnees.charges.every(c => reste(c) === 0);
-      onEtat(soldes ? 'reglees' : 'a-regler', donnees.available_amount, donnees.tithe_due);
+      const etatCharges = !donnees.active_block || donnees.charges.length === 0
+        ? 'sans-charge'
+        : donnees.charges.every(c => reste(c) === 0) ? 'reglees' : 'a-regler';
+      onEtat(etatCharges, donnees.available_amount, donnees.tithe_due);
       return true;
     } catch (erreur) {
       if (lecture === version.current) {
@@ -265,7 +267,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
               </div>;
             })}
             <ul className="rep-charges-liste">{charges.map(ligne)}</ul>
-          </> : <p>{l('Aucune charge dans ce bloc. Ajoute une rubrique si tu as des frais mensuels.','There are no expenses in this block. Add an expense if you have monthly costs.')}</p>}
+          </> : <p>{l('Aucune charge dans ce bloc. Ajoute une rubrique pour commencer.','There are no expenses in this block. Add an expense to get started.')}</p>}
           <details className="rep-charges-pli rep-charges-ajout">
             <summary>{l('Ajouter une rubrique','Add an expense')}<Chevron/></summary>
             <form className="rep-charges-form" onSubmit={e => {
