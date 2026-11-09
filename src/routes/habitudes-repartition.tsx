@@ -127,15 +127,6 @@ export function HabitudesRepartition(){
      setMarchandises(valeur=>valeur===marchandises?'':valeur);
      setFrais(valeur=>valeur===frais?'':valeur);
     }}/>}
-   <div className="hd-classique rep-validation">
-    <button type="button" disabled={!r||r.base<=0||(chargesRequises&&!chargesOK)} onClick={()=>setFeuille(true)} className="sim-ios-bouton rep-bouton w-full disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>
-    <p>{chargesRequises&&!chargesOK
-     ?etatCharges==='verification'?l('Vérification des charges en cours.','Checking business expenses.')
-      :etatCharges==='indisponible'?l('Les charges doivent être chargées avant d’enregistrer.','Load your expenses before saving.')
-      :l('La répartition s’ouvre lorsque les encaissements couvrent les charges du mois.','Allocation opens once receipts cover this month’s expenses.')
-     :!r||r.base<=0?chargesRequises?l('Il n’y a aucun solde à répartir pour l’instant.','There is no balance to allocate yet.'):l('Indique le montant reçu pour calculer la répartition.','Enter the amount received to calculate your allocation.')
-     :l('Vérifie tes parts avant de les ajouter à Mes compteurs.','Review your shares before adding them to My Counters.')}</p>
-   </div>
    {erreur&&<p role="alert" className="sim-ios-alerte hd-classique">{l('Vérifie les montants : écris seulement des chiffres, par exemple 500000 ou 1000,50.','Check the amounts: digits only, for example 500000 or 1000.50.')}</p>}
 
    {(!chargesRequises||chargesOK)&&<section aria-labelledby="hd-rep-base" className="hd-classique mt-6">
@@ -171,6 +162,16 @@ export function HabitudesRepartition(){
     </ul>
     {!chargesRequises&&!r&&!erreur&&<p className="sim-ios-note">{l('Écris ce que tu as reçu : la répartition apparaît tout de suite.','Enter what you received: the allocation appears straight away.')}</p>}
    </section>}
+
+   <div className="hd-classique rep-validation">
+    <button type="button" disabled={!r||r.base<=0||(chargesRequises&&!chargesOK)} onClick={()=>setFeuille(true)} className="sim-ios-bouton rep-bouton w-full disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>
+    <p>{chargesRequises&&!chargesOK
+     ?etatCharges==='verification'?l('Vérification des charges en cours.','Checking business expenses.')
+      :etatCharges==='indisponible'?l('Les charges doivent être chargées avant d’enregistrer.','Load your expenses before saving.')
+      :l('La répartition s’ouvre lorsque les encaissements couvrent les charges du mois.','Allocation opens once receipts cover this month’s expenses.')
+     :!r||r.base<=0?chargesRequises?l('Il n’y a aucun solde à répartir pour l’instant.','There is no balance to allocate yet.'):l('Indique le montant reçu pour calculer la répartition.','Enter the amount received to calculate your allocation.')
+     :l('Vérifie tes parts avant de les ajouter à Mes compteurs.','Review your shares before adding them to My Counters.')}</p>
+   </div>
 
    {feuille&&r&&(!chargesRequises||chargesOK)&&<EnregistrerRepartition depuisEncaissements={chargesRequises} montants={r} devise={devise} langue={langue} onFermer={()=>setFeuille(false)}/>}
    <p className="sim-ios-note hd-classique mt-4 flex items-start gap-2"><Trace nom="cadenas" className="rep-note-icone"/>{l('Ces pourcentages sont des repères d’enseignement, pas une obligation ni un conseil financier personnel. Aucun argent ne bouge.','These percentages are teaching guides, not an obligation or personal financial advice. No money moves.')}</p>
