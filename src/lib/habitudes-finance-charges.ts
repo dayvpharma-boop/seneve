@@ -6,8 +6,8 @@ export type BlocChargeArchive={block_id:string;month_start:string;charges:Charge
 export type DonneesChargesEntreprise={active_block:{block_id:string;month_start:string}|null;charges:ChargeEntreprise[];archives:BlocChargeArchive[]};
 const objet=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
-const montant=(v:unknown)=>typeof v==='string'&&/^\\d{1,10}(?:\\.\\d{1,2})?$/.test(v)&&Number(v)>0;
-const date=(v:unknown)=>typeof v==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(v);
+const montant=(v:unknown)=>typeof v==='string'&&/^\d{1,10}(?:\.\d{1,2})?$/.test(v)&&Number(v)>0;
+const date=(v:unknown)=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v);
 function analyserCharges(v:unknown):ChargeEntreprise[]{
  if(!Array.isArray(v))throw Error('Liste des charges incohérente');
  return v.map((x:unknown)=>{
@@ -34,13 +34,13 @@ export async function creerBlocChargesEntreprise(enrollmentId:string,monthStart:
  return {block_id:data.block_id,month_start:data.month_start,created:data.created===true};
 }
 export async function creerChargeEntreprise(enrollmentId:string,d:{label:string;amount:string;currency:string;start:string;end:string},requestId:string){
- if(!uuid(requestId)||!d.label.trim()||d.label.trim().length>80||!/^\\d{4}-\\d{2}-\\d{2}$/.test(d.start)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(d.end)||d.end<d.start)throw Error('Charge invalide');
+ if(!uuid(requestId)||!d.label.trim()||d.label.trim().length>80||!/^\d{4}-\d{2}-\d{2}$/.test(d.start)||!/^\d{4}-\d{2}-\d{2}$/.test(d.end)||d.end<d.start)throw Error('Charge invalide');
  const amount=Number(d.amount.replace(',','.')).toFixed(2);
  const {data,error}=await supabase.rpc('hd_finance_business_charge_add',{p_enrollment_id:enrollmentId,p_label:d.label.trim(),p_expected_amount:amount,p_currency:d.currency,p_period_start:d.start,p_period_end:d.end,p_request_id:requestId});
  if(error)throw error;if(!objet(data)||data.charge_id!==requestId)throw Error('Création de charge non confirmée');return data;
 }
 export async function enregistrerPaiementCharge(enrollmentId:string,chargeId:string,amount:string,dateLocale:string,requestId:string){
- if(!uuid(chargeId)||!uuid(requestId)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(dateLocale)||!/^\\d+(?:[.,]\\d{1,2})?$/.test(amount.trim()))throw Error('Paiement invalide');
+ if(!uuid(chargeId)||!uuid(requestId)||!/^\d{4}-\d{2}-\d{2}$/.test(dateLocale)||!/^\d+(?:[.,]\d{1,2})?$/.test(amount.trim()))throw Error('Paiement invalide');
  const value=Number(amount.replace(',','.')).toFixed(2);
  const {data,error}=await supabase.rpc('hd_finance_business_charge_payment_add',{p_enrollment_id:enrollmentId,p_charge_id:chargeId,p_amount:value,p_date_locale:dateLocale,p_request_id:requestId});
  if(error)throw error;if(!objet(data)||data.payment_id!==requestId||data.charge_id!==chargeId)throw Error('Paiement non confirmé');return data;
