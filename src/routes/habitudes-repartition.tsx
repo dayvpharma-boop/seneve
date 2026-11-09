@@ -106,6 +106,10 @@ export function HabitudesRepartition(){
    <p className="sim-ios-note hd-classique">{aide}</p>
    {(profil==='commerce'||profil==='entreprise')&&<p className="sim-ios-note hd-classique">{l('Dans le champ de dépenses ci-dessus, indique seulement les dépenses ponctuelles déjà payées qui ne sont pas listées dans les charges de l’entreprise.','In the expenses field above, enter only one-time costs already paid that are not listed below as business charges.')}</p>}
    {chargesRequises&&<ChargesEntreprise devise={devise} langue={langue} onEtat={(ok,montant)=>{setChargesOK(ok);setChargesPayees(montant);}}/>}
+   <div className="hd-classique mt-4 rounded-2xl border border-hd-outline-variant bg-white p-3 shadow-sm">
+    <button type="button" disabled={!r||r.base<=0||(chargesRequises&&!chargesOK)} onClick={()=>setFeuille(true)} className="sim-ios-bouton rep-bouton w-full disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>
+    <p className="mt-2 text-sm text-hd-on-surface-variant">{!r||r.base<=0?l('Le calcul se met à jour pendant la saisie. Écris le montant reçu pour continuer.','The calculation updates as you type. Enter the amount received to continue.'):chargesRequises&&!chargesOK?l('Les charges doivent être réglées avant de répartir le reste.','Business expenses must be paid before allocating the remainder.'):l('Vérifie les parts dans l’écran suivant. Elles seront ajoutées à Mes compteurs seulement après ta confirmation.','Review the shares on the next screen. They are added to My Counters only after you confirm.')}</p>
+   </div>
    {erreur&&<p role="alert" className="sim-ios-alerte hd-classique">{l('Vérifie les montants : écris seulement des chiffres, par exemple 500000 ou 1000,50.','Check the amounts: digits only, for example 500000 or 1000.50.')}</p>}
 
    <section aria-labelledby="hd-rep-base" className="hd-classique mt-6">
@@ -143,8 +147,6 @@ export function HabitudesRepartition(){
    </section>
 
    {chargesRequises&&!chargesOK&&<p role="status" className="sim-ios-note hd-classique mt-3">{l('La répartition reste verrouillée jusqu’au paiement complet des charges de cette période et de cette devise.','Allocation stays locked until all expenses for this period and currency are paid.')}</p>}
-   {r&&r.base>0&&<button type="button" disabled={chargesRequises&&!chargesOK} onClick={()=>setFeuille(true)} className="hd-classique sim-ios-bouton mt-4 rep-bouton disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>}
-   {r&&r.base>0&&<p className="sim-ios-note hd-classique">{l('Tu vérifies chaque part avant que rien ne soit enregistré. Aucun argent ne bouge : SÉNEVÉ note seulement ce que tu as fait.','You check each part before anything is saved. No money moves: SÉNEVÉ only records what you did.')}</p>}
    {feuille&&r&&<EnregistrerRepartition montants={r} devise={devise} langue={langue} onFermer={()=>setFeuille(false)}/>}
    <p className="sim-ios-note hd-classique mt-4 flex items-start gap-2"><Trace nom="cadenas" className="rep-note-icone"/>{l('Ces pourcentages sont des repères d’enseignement, pas une obligation ni un conseil financier personnel. Aucun argent ne bouge.','These percentages are teaching guides, not an obligation or personal financial advice. No money moves.')}</p>
   </div>
