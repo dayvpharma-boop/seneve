@@ -3,7 +3,7 @@ import {supabase} from './supabase';
 type ChargeEntreprisePaiement={payment_id:string;amount:string;date_locale:string};
 export type ChargeEntreprise={charge_id:string;label:string;expected_amount:string;currency:string;period_start:string;period_end:string;payments:ChargeEntreprisePaiement[]};
 export type BlocChargeArchive={block_id:string;month_start:string;charges:ChargeEntreprise[]};
-export type DonneesChargesEntreprise={enrollment_id:string;available_amount:string;tithe_due:string;active_block:{block_id:string;month_start:string}|null;charges:ChargeEntreprise[];archives:BlocChargeArchive[]};
+export type DonneesChargesEntreprise={enrollment_id:string;available_amount:string;fresh_amount?:string;tithe_due:string;active_block:{block_id:string;month_start:string}|null;charges:ChargeEntreprise[];archives:BlocChargeArchive[]};
 const objet=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
 const montant=(v:unknown)=>typeof v==='string'&&/^\d{1,10}(?:\.\d{1,2})?$/.test(v)&&Number(v)>0;
@@ -27,7 +27,9 @@ function analyser(data:unknown,enrollmentId:string|null):DonneesChargesEntrepris
  const disponible=data.available_amount??'0';
  if(!solde(disponible))throw Error('Solde des encaissements incohérent');
  if(!solde(data.tithe_due))throw Error('Dîme restante incohérente');
- return {enrollment_id:data.enrollment_id,available_amount:disponible,tithe_due:data.tithe_due,active_block:active,charges:analyserCharges(data.charges),archives};
+ // Base nouvelle (hd_finance_base_nouvelle.sql) : facultative pour rester compatible avec un serveur ancien.
+ if(data.fresh_amount!==undefined&&!solde(data.fresh_amount))throw Error('Base nouvelle incohérente');
+ return {enrollment_id:data.enrollment_id,available_amount:disponible,...(data.fresh_amount!==undefined?{fresh_amount:data.fresh_amount as string}:{}),tithe_due:data.tithe_due,active_block:active,charges:analyserCharges(data.charges),archives};
 }
 export async function chargerChargesEntreprise(enrollmentId:string|null,dateLocale:string,currency:string){
  const {data,error}=await supabase.rpc('hd_finance_business_charges_get',{p_enrollment_id:enrollmentId,p_date:dateLocale,p_currency:currency});

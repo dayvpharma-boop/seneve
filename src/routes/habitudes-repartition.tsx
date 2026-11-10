@@ -5,7 +5,7 @@ import {useSearchParams} from 'react-router-dom';
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {habitudesActivees} from '@/lib/habitudes-configuration';
 import {decimalesDevise} from '@/lib/devises';
-import {baseRepartition,maximumPart,repartir,LIMITES_REPARTITION,POURCENTAGES_DEFAUT,type CleRepartition,type Pourcentages,type ProfilRevenu} from '@/lib/habitudes-repartition';
+import {baseRepartition,maximumPart,repartir,repartirSolde,LIMITES_REPARTITION,POURCENTAGES_DEFAUT,type CleRepartition,type Pourcentages,type ProfilRevenu} from '@/lib/habitudes-repartition';
 import {NotFound} from '@/routes/introuvable';
 import {ChoixDevise} from '@/components/ChoixDevise';
 import {EnregistrerRepartition} from '@/components/EnregistrerRepartition';
@@ -45,12 +45,12 @@ export function HabitudesRepartition(){
  const [feuille,setFeuille]=useState(false);
  const [historique,setHistorique]=useState(false);
  const [etatCharges,setEtatCharges]=useState<EtatAccesCharges>('verification');
- const [soldeEncaissements,setSoldeEncaissements]=useState({disponible:'0',dimeRestante:'0'});
+ const [soldeEncaissements,setSoldeEncaissements]=useState<{disponible:string;dimeRestante:string;nouveau?:string}>({disponible:'0',dimeRestante:'0'});
  const chargesOK=etatCharges==='reglees';
- const actualiserCharges=useCallback((etat:EtatAccesCharges,disponible:string,dimeRestante='0')=>{
+ const actualiserCharges=useCallback((etat:EtatAccesCharges,disponible:string,dimeRestante='0',nouveau?:string)=>{
   if(etat!=='reglees')setFeuille(false);
   setEtatCharges(etat);
-  setSoldeEncaissements({disponible,dimeRestante});
+  setSoldeEncaissements({disponible,dimeRestante,...(nouveau!==undefined?{nouveau}:{})});
  },[]);
  const chargesRequises=profil==='commerce'||profil==='entreprise';
  const repartitionBloquee=chargesRequises&&!chargesOK;
@@ -60,9 +60,9 @@ export function HabitudesRepartition(){
  if(!habitudesActivees())return <NotFound/>;
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
- let r:ReturnType<typeof repartir>|null=null,erreur=false;
+ let r:ReturnType<typeof repartirSolde>|null=null,erreur=false;
  if(chargesRequises?chargesOK&&Number(soldeEncaissements.disponible)>0:recu.trim()!==''){
-  try{r=repartir(chargesRequises?soldeEncaissements.disponible:baseRepartition(profil,recu,marchandises,frais),p,dec,chargesRequises?soldeEncaissements.dimeRestante:undefined);}
+  try{r=chargesRequises?repartirSolde(soldeEncaissements,p,dec):{...repartir(baseRepartition(profil,recu,marchandises,frais),p,dec),retour:0};}
   catch{erreur=true;}
  }
  const choisir=(v:ProfilRevenu)=>{
@@ -153,6 +153,7 @@ export function HabitudesRepartition(){
        aria-haspopup={chargesRequises?'dialog':undefined} onClick={chargesRequises?()=>setHistorique(true):undefined}>
       <small className="rep-heros-sur"><span id="hd-rep-base">{chargesRequises?l('Solde à répartir','Balance to allocate'):l('Base retenue','Selected basis')}</span>{!chargesRequises&&' · '+periode.toLocaleLowerCase(langue)}</small>
       <b className="rep-heros-montant">{chargesRequises?`${nombre(Number(soldeEncaissements.disponible))} ${devise}`:r?`${nombre(r.base)} ${devise}`:'—'}</b>
+      {chargesRequises&&r&&r.retour>0&&<small className="rep-heros-sur" style={{display:'block',marginTop:2}}>{l(`dont ${nombre(r.retour)} ${devise} déjà réparti, sans pourcentage`,`including ${nombre(r.retour)} ${devise} already allocated, no percentages`)}</small>}
       {chargesRequises&&<span className="rep-historique-lien">{l('Voir l’historique','View history')} <span aria-hidden="true">›</span></span>}
       </TitreSolde>
       <p>{repartitionBloquee?l('Solde en attente de répartition.','Balance awaiting allocation.'):r?l(`${nombre(r.vivre)} ${devise} restent pour vivre après tes parts.`,`${nombre(r.vivre)} ${devise} remain for living after your shares.`):chargesRequises?l('Le solde des ventes apparaît ici après les charges.','The sales balance appears here after expenses.'):calcul}</p>
@@ -179,13 +180,13 @@ export function HabitudesRepartition(){
    </section>}
 
    <div className="hd-classique rep-validation">
-    <button type="button" disabled={!r||r.base<=0||repartitionBloquee} onClick={()=>setFeuille(true)} className="sim-ios-bouton rep-bouton w-full disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>
+    <button type="button" disabled={!r||r.base+r.retour<=0||repartitionBloquee} onClick={()=>setFeuille(true)} className="sim-ios-bouton rep-bouton w-full disabled:opacity-50"><Trace nom="coche"/>{l('Enregistrer ma répartition','Save my allocation')}</button>
     <p>{repartitionBloquee
      ?etatCharges==='verification'?l('Vérification des charges en cours.','Checking business expenses.')
       :etatCharges==='indisponible'?l('Les charges doivent être chargées avant d’enregistrer.','Load your expenses before saving.')
       :etatCharges==='sans-charge'?l('Ajoute une charge du mois, puis couvre-la pour débloquer la répartition.','Add and cover a monthly expense to unlock allocation.')
       :l('La répartition s’ouvre lorsque les encaissements couvrent les charges du mois.','Allocation opens once receipts cover this month’s expenses.')
-     :!r||r.base<=0?chargesRequises?l('Il n’y a aucun solde à répartir pour l’instant.','There is no balance to allocate yet.'):l('Indique le montant reçu pour calculer la répartition.','Enter the amount received to calculate your allocation.')
+     :!r||r.base+r.retour<=0?chargesRequises?l('Il n’y a aucun solde à répartir pour l’instant.','There is no balance to allocate yet.'):l('Indique le montant reçu pour calculer la répartition.','Enter the amount received to calculate your allocation.')
      :l('Vérifie tes parts avant de les ajouter à Mes compteurs.','Review your shares before adding them to My Counters.')}</p>
    </div>
 

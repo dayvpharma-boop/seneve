@@ -309,3 +309,23 @@ it('plafonne les parts d’épargne au disponible manquant et conserve le surplu
   {part:'epargne_investir',goal_id:investissement.goal_id,amount:'30.00'}
  ]})));
 });
+
+it('l’argent déjà réparti revenu au solde y reste par défaut, ou part en entier pour vivre, sans pourcentage',async()=>{
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,debts:[]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[],withdrawals:[]},error:null};
+  if(f==='hd_finance_business_allocation_save')return {data:{allocation_id:a.p_request_id,deja:false},error:null};
+  throw Error(f);
+ });
+ const {EnregistrerRepartition}=await import('@/components/EnregistrerRepartition');
+ render(<MemoryRouter><EnregistrerRepartition depuisEncaissements devise="USD" langue="fr" onFermer={()=>{}}
+  montants={{dime:0,offrande:0,reserve:0,investir:0,autre:0,dettes:0,vivre:0,retour:100}}/></MemoryRouter>);
+ const titre='Où va l’argent déjà réparti (100 USD) ?';
+ expect(await screen.findByText('Déjà réparti, revenu au solde')).toBeInTheDocument();
+ expect(screen.getByText(/Aucun pourcentage : cet argent a déjà été réparti/)).toBeInTheDocument();
+ expect(declencheur(document.body,titre)).toHaveAccessibleName(titre+' : Laisser dans le solde');
+ expect(screen.getByRole('button',{name:'Coche au moins une part'})).toBeDisabled();
+ choisir(document.body,titre,'Pour vivre');
+ fireEvent.click(screen.getByRole('button',{name:'Enregistrer 1 part · 100 USD'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_business_allocation_save',expect.objectContaining({p_parts:[{part:'vivre',amount:'100.00'}]})));
+});

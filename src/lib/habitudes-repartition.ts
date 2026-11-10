@@ -82,6 +82,19 @@ export function repartir(base:string,p:Pourcentages,decimales:number,dimeRestant
  return {base:b/f,dime:montants.dime,offrande:montants.offrande,reserve:montants.reserve,investir:montants.investir,autre:montants.autre,dettes:montants.dettes,vivre:montants.vivre};
 }
 
+/** Solde d'activité (demande de Dr Justin du 10/11/2026) : les pourcentages ne s'appliquent qu'à l'argent NOUVEAU,
+ * jamais encore réparti. L'argent revenu au solde (excédent laissé, part décochée) a déjà eu ses pourcentages :
+ * il reste à part dans « retour », sauf ce qu'il faut pour la dîme encore due. Sans « nouveau » (serveur ancien),
+ * tout le solde est traité comme nouveau, comme avant. */
+export function repartirSolde(s:{disponible:string;dimeRestante:string;nouveau?:string},p:Pourcentages,decimales:number){
+ const f=10**decimales,u=(v:string)=>Math.round(Number(v)*f);
+ const total=u(s.disponible),nouveau=Math.min(total,s.nouveau===undefined?total:u(s.nouveau)),du=u(s.dimeRestante);
+ if(![total,nouveau,du].every(n=>Number.isSafeInteger(n)&&n>=0))throw Error('Solde invalide');
+ const r=repartir((nouveau/f).toFixed(decimales),p,decimales,s.dimeRestante);
+ const dime=Math.round(r.dime*f),horsBase=Math.min(total-nouveau,Math.max(0,du-dime));
+ return {...r,base:(nouveau+horsBase)/f,dime:(dime+horsBase)/f,retour:(total-nouveau-horsBase)/f};
+}
+
 /** Propose comment répartir une part « Dettes » : d'abord la plus petite dette, puis la suivante (soldes en centimes). */
 export function repartirSurDettes(montantCentimes:number,dettes:{id:string;resteCentimes:number}[]){
  let reste=Math.max(0,montantCentimes);const out:{id:string;centimes:number;solde:boolean}[]=[];

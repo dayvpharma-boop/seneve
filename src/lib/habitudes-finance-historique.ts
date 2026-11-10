@@ -6,7 +6,8 @@ export type MouvementSolde=MouvementCommun&(
  {kind:0;net:string;removal_block:'charges'|'allocation'|null} |
  {kind:1}
 );
-export type SoldeMisAJour={disponible:string;dimeRestante:string};
+/** nouveau : part du solde jamais répartie (pourcentages) ; absent sur un serveur ancien = tout le solde. */
+export type SoldeMisAJour={disponible:string;dimeRestante:string;nouveau?:string};
 
 const objet=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const montant=(v:unknown):v is string=>typeof v==='string'&&/^\d+(?:\.\d{1,2})?$/.test(v)&&Number.isSafeInteger(Math.round(Number(v)*100));
@@ -36,5 +37,5 @@ export async function supprimerEncaissementDuSolde(devise:string,id:string):Prom
  if(error)throw error;
  if(!objet(data)||data.receipt_id!==id||!montant(data.available_amount)||!montant(data.tithe_due))
   throw Error('Suppression de l’encaissement non confirmée');
- return {disponible:data.available_amount,dimeRestante:data.tithe_due};
+ return {disponible:data.available_amount,dimeRestante:data.tithe_due,...(montant(data.fresh_amount)?{nouveau:data.fresh_amount}:{})};
 }

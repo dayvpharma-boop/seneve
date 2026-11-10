@@ -253,3 +253,27 @@ it('ouvre l’historique depuis le solde et permet seulement de supprimer une en
   expect(screen.getByRole('button',{name:/Solde à répartir 325 USD/})).toBeVisible();
  }finally{lecture.mockRestore();supprimer.mockRestore();}
 },20000);
+
+it('solde d’activité : les pourcentages ne s’appliquent qu’à l’argent nouveau, l’argent revenu au solde reste à part',async()=>{
+ const {repartirSolde}=await import('@/lib/habitudes-repartition');
+ // 10 000 déjà répartis, 1 000 d'excédent revenus au solde, rien de nouveau : aucun pourcentage repris.
+ const revenu=repartirSolde({disponible:'1000.00',dimeRestante:'0.00',nouveau:'0'},POURCENTAGES_DEFAUT,2);
+ expect(revenu).toMatchObject({base:0,dime:0,reserve:0,investir:0,dettes:0,vivre:0,retour:1000});
+ // Nouvelle entrée de 5 000 : les pourcentages portent sur 5 000 seulement, les 1 000 restent à part.
+ const ensuite=repartirSolde({disponible:'6000.00',dimeRestante:'500.00',nouveau:'5000.00'},POURCENTAGES_DEFAUT,2);
+ expect(ensuite).toMatchObject({base:5000,dime:500,reserve:500,investir:1000,dettes:750,vivre:2250,retour:1000});
+ // Une dîme laissée à enregistrer se paie encore sur l'argent revenu au solde.
+ expect(repartirSolde({disponible:'100.00',dimeRestante:'90.00',nouveau:'0'},POURCENTAGES_DEFAUT,2)).toMatchObject({base:90,dime:90,vivre:0,retour:10});
+ // Serveur ancien (sans base nouvelle) : tout le solde est nouveau, comme avant.
+ expect(repartirSolde({disponible:'525.00',dimeRestante:'20.00'},POURCENTAGES_DEFAUT,2)).toMatchObject({...repartir('525',POURCENTAGES_DEFAUT,2,'20'),retour:0});
+});
+
+it('la page montre la part déjà répartie et ne calcule les parts que sur l’argent nouveau',async()=>{
+ chargerCharges.mockResolvedValue({...chargesReglees,available_amount:'6000.00',fresh_amount:'5000.00',tithe_due:'500.00'});
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter><HabitudesRepartition/></MemoryRouter>);
+ const base=await screen.findByRole('region',{name:'Solde à répartir'});
+ await waitFor(()=>expect(base.textContent).toMatch(/dont 1[\s ]000 USD déjà réparti, sans pourcentage/));
+ const dettes=within(base).getByText('Dettes').closest('li')!;
+ expect(dettes.textContent).toMatch(/750/);
+},20000);

@@ -7,7 +7,8 @@ import {chargerCompteurs,CompteursIndisponibles,disponibleObjectif,enregistrerRe
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {decimalesDevise} from '@/lib/devises';
 
-type Montants={dime:number;offrande:number;reserve:number;investir:number;autre:number;dettes:number;vivre:number};
+// retour : argent déjà réparti revenu au solde (hd_finance_base_nouvelle.sql) ; aucun pourcentage ne s'y applique.
+type Montants={dime:number;offrande:number;reserve:number;investir:number;autre:number;dettes:number;vivre:number;retour?:number};
 type Ligne={cle:string;nom:string;destination:string;montant:number;parts:PartRepartition[];possible:boolean;couleur:string;details?:string;montantInitial?:number};
 const aujourdhui=()=>new Intl.DateTimeFormat('en-CA').format(new Date());
 
@@ -23,7 +24,9 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
  const [decoches,setDecoches]=useState<Record<string,boolean>>({});
  // « Solde à répartir » (demande du 10/11/2026) : l'excédent n'est pas enregistré et reste à répartir plus tard.
  const [destinationSurplus,setDestinationSurplus]=useState<'vivre'|'investissement'|'solde'|null>(null);
- const coche=(cle:string)=>cle==='surplus_dettes'?destinationSurplus!==null:!decoches[cle];
+ // L'argent déjà réparti reste dans le solde par défaut ; il peut aller vers vivre ou l'investissement, sans pourcentage.
+ const [destinationRetour,setDestinationRetour]=useState<'solde'|'vivre'|'investissement'>('solde');
+ const coche=(cle:string)=>cle==='surplus_dettes'?destinationSurplus!==null:cle==='retour'?destinationRetour!=='solde':!decoches[cle];
  const [enCours,setEnCours]=useState(false),[erreur,setErreur]=useState('');
  // Date choisie par la personne (demande du 07/11/2026) : aujourd’hui au départ, jamais dans le futur.
  const [date,setDate]=useState(aujourdhui);
@@ -112,19 +115,31 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
    }
   }
   if(montants.vivre>0)out.push({cle:'vivre',nom:l('Pour vivre','For living'),destination:l('Pour vivre','For living'),montant:montants.vivre,parts:[{part:'vivre',amount:chaine(montants.vivre)}],possible:true,couleur:'#a1a1a6'});
+  const retour=montants.retour??0;
+  if(retour>0){
+   const investis=destinationRetour==='investissement'?objectifs('epargne_investir'):[];
+   const partInvestie=investis.length?partObjectif(investis,retour,true):null;
+   const parts:PartRepartition[]=destinationRetour==='vivre'?[{part:'vivre',amount:chaine(retour)}]:partInvestie?.parts??[];
+   out.push({cle:'retour',nom:l('Déjà réparti, revenu au solde','Already allocated, back in balance'),couleur:'#8e8e93',
+    destination:destinationRetour==='vivre'?l('Pour vivre','For living'):destinationRetour==='investissement'?partInvestie?.destination??l('objectif d’investissement à créer','investment goal to create'):l('Reste dans le solde à répartir','Stays in the balance to allocate'),
+    montant:partInvestie?.montant??retour,montantInitial:retour,parts,possible:parts.length>0,
+    details:[l('Aucun pourcentage : cet argent a déjà été réparti.','No percentages: this money was already allocated.'),partInvestie?.details].filter(Boolean).join(' ')});
+  }
   return out.filter(x=>x.montant>0||x.details);
- },[suivi,compteurs,cleMontants,devise,en,objectifsChoisis,destinationSurplus,decoches]);
+ },[suivi,compteurs,cleMontants,devise,en,objectifsChoisis,destinationSurplus,destinationRetour,decoches]);
  const ligneSurplus=lignes.find(x=>x.cle==='surplus_dettes');
  const montantSurplus=ligneSurplus?.montantInitial??0;
+ const montantRetour=lignes.find(x=>x.cle==='retour')?.montantInitial??0;
+ const investiHorsParts=(destinationSurplus==='investissement'?montantSurplus:0)+(destinationRetour==='investissement'?montantRetour:0);
  const candidatsInvestir=suivi&&typeof suivi==='object'?suivi.savings_goals.filter(g=>g.goal_type==='epargne_investir'&&g.currency===devise):[];
  const choisies=lignes.filter(x=>x.possible&&coche(x.cle));
  const typesObjectifs:[TypeObjectifEpargne,number][]=[
-  ['reserve_joie',montants.reserve],['epargne_investir',Math.max(montants.investir,destinationSurplus==='investissement'?montantSurplus:0)],['autre',montants.autre]
+  ['reserve_joie',montants.reserve],['epargne_investir',Math.max(montants.investir,investiHorsParts)],['autre',montants.autre]
  ];
  // Plus de choix obligatoire : « Automatique » est le réglage par défaut. Seul l'excédent envoyé vers
  // l'investissement sans objectif « Pour investir » bloque l'enregistrement.
  const selectionManquante=!!suivi&&typeof suivi==='object'&&typesObjectifs.some(([type,montant])=>
-  montant>0&&type==='epargne_investir'&&destinationSurplus==='investissement'&&!suivi.savings_goals.some(g=>g.goal_type===type&&g.currency===devise));
+  montant>0&&type==='epargne_investir'&&(destinationSurplus==='investissement'||destinationRetour==='investissement')&&!suivi.savings_goals.some(g=>g.goal_type===type&&g.currency===devise));
  const choixSurplusManquant=!!ligneSurplus&&!destinationSurplus;
  const total=choisies.reduce((n,x)=>n+x.montant,0);
  async function enregistrer(){
@@ -152,12 +167,23 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
      const iSurplus=lignes.findIndex(x=>x.cle==='surplus_dettes');
      const liste=(xs:Ligne[])=>xs.length>0&&<ul className="sim-ios-groupe" style={{listStyle:'none',margin:'0 0 0',padding:0}}>
       {xs.map(x=><li key={x.cle} className="sim-ios-ligne" style={{minHeight:62,opacity:x.possible&&coche(x.cle)?1:.5}}>
-       <input id={`hd-part-${x.cle}`} type="checkbox" disabled={!x.possible||x.cle==='surplus_dettes'} checked={x.possible&&coche(x.cle)} onChange={e=>{if(x.cle==='surplus_dettes')return;demande.current=crypto.randomUUID();setDecoches(c=>({...c,[x.cle]:!e.target.checked}));}} style={{width:24,height:24,accentColor:'var(--ios-accent,#5b4ee8)',flex:'none'}}/>
+       <input id={`hd-part-${x.cle}`} type="checkbox" disabled={!x.possible||x.cle==='surplus_dettes'||x.cle==='retour'} checked={x.possible&&coche(x.cle)} onChange={e=>{if(x.cle==='surplus_dettes'||x.cle==='retour')return;demande.current=crypto.randomUUID();setDecoches(c=>({...c,[x.cle]:!e.target.checked}));}} style={{width:24,height:24,accentColor:'var(--ios-accent,#5b4ee8)',flex:'none'}}/>
        <label htmlFor={`hd-part-${x.cle}`} style={{flex:1,minWidth:0}}><span className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 rounded-sm" style={{background:x.couleur}}/>{x.nom}</span><small className="block text-[13px] text-hd-on-surface-variant">→ {x.destination}</small>{x.details&&<small className="block text-[12px] text-hd-on-surface-variant">{x.details}</small>}</label>
        <b className="tabular-nums whitespace-nowrap">{nombre(x.montant)} {devise}</b>
       </li>)}
      </ul>;
-     if(iSurplus<0)return liste(lignes);
+     // La ligne « Déjà réparti » a aussi son menu, juste en dessous d'elle (toujours en dernier).
+     const iRetour=lignes.findIndex(x=>x.cle==='retour');
+     const finRetour=iRetour<0?null:<>
+      <ChoixIOS id="hd-retour" aChoisir={l('Choisir','Choose')} libelle={l(`Déjà réparti · ${nombre(montantRetour)} ${devise}`,`Already allocated · ${nombre(montantRetour)} ${devise}`)} titre={l(`Où va l’argent déjà réparti (${nombre(montantRetour)} ${devise}) ?`,`Where does the already allocated money (${nombre(montantRetour)} ${devise}) go?`)}
+       valeur={destinationRetour} onChoisir={v=>{demande.current=crypto.randomUUID();setDestinationRetour(v as 'solde'|'vivre'|'investissement');}}
+       options={[
+        {cle:'solde',titre:l('Laisser dans le solde','Keep in the balance'),aide:l('Rien n’est noté ; aucun pourcentage ne sera repris dessus.','Nothing is recorded; no percentages will be taken from it.'),icone:'pie_chart',couleur:'#8e8e93'},
+        {cle:'vivre',titre:l('Pour vivre','For living'),aide:l('Noté pour vivre, en entier.','Recorded for living, in full.'),icone:'payments',couleur:'#34c759'},
+        {cle:'investissement',titre:l('Investissement','Investment'),aide:l('Versé sur tes objectifs « Pour investir ».','Paid into your “For investing” goals.'),icone:'potted_plant',couleur:'#007aff'}]}/>
+      {destinationRetour==='investissement'&&candidatsInvestir.length===0&&<p role="alert" className="sim-ios-note">{l('Crée d’abord un objectif « Pour investir » dans SÉNEVÉ Finance.','First create a “For investing” goal in SÉNEVÉ Finance.')}</p>}
+     </>;
+     if(iSurplus<0)return iRetour<0?liste(lignes):<>{liste(lignes.slice(0,iRetour+1))}{finRetour}</>;
      return <>
       {liste(lignes.slice(0,iSurplus+1))}
       <ChoixIOS id="hd-surplus" aChoisir={l('Choisir','Choose')} libelle={l(`Excédent · ${nombre(montantSurplus)} ${devise}`,`Surplus · ${nombre(montantSurplus)} ${devise}`)} titre={l(`Où va l’excédent de ${nombre(montantSurplus)} ${devise} ?`,`Where does the ${nombre(montantSurplus)} ${devise} surplus go?`)}
@@ -168,12 +194,13 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
         {cle:'solde',titre:l('Solde à répartir','Balance to allocate'),aide:l('Rien n’est noté : l’argent reste à répartir plus tard.','Nothing is recorded: the money stays to allocate later.'),icone:'pie_chart',couleur:'#8e8e93'}]}/>
       {destinationSurplus==='investissement'&&candidatsInvestir.length===0&&<p role="alert" className="sim-ios-note">{l('Crée d’abord un objectif « Pour investir » dans SÉNEVÉ Finance pour enregistrer cet excédent.','First create a “For investing” goal in SÉNEVÉ Finance to record this surplus.')} <Link to={en?'/habitudes/epargne?lang=en':'/habitudes/epargne'} className="underline">{l('Ouvrir SÉNEVÉ Finance','Open SÉNEVÉ Finance')}</Link></p>}
       {choixSurplusManquant&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Sélectionne « Pour vivre », « Investissement » ou « Solde à répartir » pour continuer.','Select “For living”, “Investment” or “Balance to allocate” to continue.')}</p>}
-      {lignes.length>iSurplus+1&&<div style={{marginTop:14}}>{liste(lignes.slice(iSurplus+1))}</div>}
+      {lignes.length>iSurplus+1&&<div style={{marginTop:14}}>{liste(lignes.slice(iSurplus+1,iRetour<0?undefined:iRetour+1))}</div>}
+      {finRetour}
      </>;
     })()}
     {/* Choix de l'objectif façon Réglages iOS : Automatique d'abord, puis un objectif précis. */}
     {(['reserve_joie','epargne_investir','autre'] as const).map(type=>{
-     const montantsType={reserve_joie:montants.reserve,epargne_investir:Math.max(montants.investir,destinationSurplus==='investissement'?montantSurplus:0),autre:montants.autre};
+     const montantsType={reserve_joie:montants.reserve,epargne_investir:Math.max(montants.investir,investiHorsParts),autre:montants.autre};
      const objectifs=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
      if(montantsType[type]<=0||objectifs.length<2)return null;
      const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
@@ -185,7 +212,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
     })}
     <button type="button" disabled={!choisies.length||selectionManquante||choixSurplusManquant||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
     {erreur&&<p role="alert" className="sim-ios-alerte">{erreur}</p>}
-    <p className="sim-ios-note">{depuisEncaissements?l('Les montants décochés restent dans le solde à répartir.','Unticked amounts stay in the balance to allocate.'):l('Tu peux noter les parts décochées plus tard.','You can record unticked shares later.')}</p>
+    <p className="sim-ios-note">{depuisEncaissements?l('Les montants décochés restent dans le solde à répartir, sans nouveau pourcentage.','Unticked amounts stay in the balance to allocate, with no new percentages.'):l('Tu peux noter les parts décochées plus tard.','You can record unticked shares later.')}</p>
    </>}
   </div>
  </div>;
