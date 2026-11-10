@@ -16,17 +16,23 @@ const id=(n:number)=>`0b6f3c1e-${String(n).padStart(4,'0')}-4c3b-9a55-0000000000
 const auj=new Intl.DateTimeFormat('en-CA').format(new Date());
 const debutMois=auj.slice(0,8)+'01';
 const t=new Date().toISOString();
-let efface:Set<string>;
+// Comme le serveur (hd_finance_coherence.sql) : un effacement partiel MASQUE les lignes (les soldes ne bougent pas) ;
+// seul « Tout effacer » sur la période « Tout » supprime vraiment.
+let remiseAZero:boolean,masques:Set<string>;
 const suivi=()=>({enrollment_id:E,archived_goals:[],archived_debts:[],
- savings_goals:[{goal_id:GI,goal_type:'epargne_investir',label:'Moto-taxi',target_amount:'1000.00',currency:'USD',entries:efface.has('tout')?[]:[{entry_id:id(1),amount:'200.00',date_locale:auj,created_at:t}]}],
- debts:[{debt_id:D,debt_number:1,opening_balance:'200.00',currency:'USD',creditor_name:'Papy',monthly_basis:null,repayment_percent:null,weekly_basis:null,weekly_repayment_percent:null,payments:efface.has('dettes')||efface.has('tout')?[]:[{payment_id:id(3),amount:'40.00',date_locale:auj,created_at:t}]}]});
-const compteurs=()=>({enrollment_id:E,
- moves:efface.has('tout')?[]:[{move_id:id(4),envelope:'dime',direction:'entree',motif:null,amount:'20.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null,created_at:t}],
- withdrawals:efface.has('investi')||efface.has('tout')?[]:[{withdrawal_id:id(5),goal_id:GI,motif:'investi',amount:'150.00',date_locale:auj,remise_a_zero:false,created_at:t}]});
-beforeEach(()=>{efface=new Set();rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+ savings_goals:[{goal_id:GI,goal_type:'epargne_investir',label:'Moto-taxi',target_amount:'1000.00',currency:'USD',entries:remiseAZero?[]:[{entry_id:id(1),amount:'200.00',date_locale:auj,created_at:t}]}],
+ debts:[{debt_id:D,debt_number:1,opening_balance:'200.00',currency:'USD',creditor_name:'Papy',monthly_basis:null,repayment_percent:null,weekly_basis:null,weekly_repayment_percent:null,payments:remiseAZero?[]:[{payment_id:id(3),amount:'40.00',date_locale:auj,created_at:t}]}]});
+const compteurs=()=>({enrollment_id:E,masques:[...masques],
+ moves:remiseAZero?[]:[{move_id:id(4),envelope:'dime',direction:'entree',motif:null,amount:'20.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null,created_at:t}],
+ withdrawals:remiseAZero?[]:[{withdrawal_id:id(5),goal_id:GI,motif:'investi',amount:'150.00',date_locale:auj,remise_a_zero:false,created_at:t}]});
+beforeEach(()=>{remiseAZero=false;masques=new Set();rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
  if(f==='hd_finance_tracker_get')return {data:suivi(),error:null};
  if(f==='hd_finance_counters_get')return {data:compteurs(),error:null};
- if(f==='hd_finance_bilan_effacer'){efface.add(a.p_quoi as string);return {data:{sorties:0,retraits:1,remboursements:0,entrees:0,versements:0,repartitions:0},error:null};}
+ if(f==='hd_finance_bilan_effacer'){
+  const q=a.p_quoi as string;
+  if(q==='tout'&&a.p_depuis===null)remiseAZero=true;
+  else{if(q==='investi'||q==='tout')masques.add(id(5));if(q==='dettes'||q==='tout')masques.add(id(3));if(q==='tout'){masques.add(id(1));masques.add(id(4));}}
+  return {data:{sorties:0,retraits:1,remboursements:0,entrees:0,versements:0,repartitions:0,masque:!remiseAZero},error:null};}
  throw Error(f);});});
 
 async function ouvrir(){
@@ -39,18 +45,22 @@ async function ouvrir(){
 }
 const ligne=(bilan:HTMLElement,txt:string)=>within(bilan).getByText(txt).closest('div')!.textContent;
 
-it('Effacer une ligne : confirmation avec le nombre et le montant, puis la ligne revient à 0 et la caisse remonte',async()=>{
+it('Effacer une ligne : confirmation avec le nombre et le montant, la ligne revient à 0 mais la caisse NE remonte PAS',async()=>{
  const bilan=await ouvrir();
  expect(within(bilan).queryByRole('button',{name:'Effacer : Entré dans les caisses'})).toBeNull();
  fireEvent.click(within(bilan).getByRole('button',{name:'Effacer : Investi'}));
  const boite=screen.getByRole('alertdialog');
  expect(boite.textContent).toMatch(/1 ligne \(150 USD\), pour ce mois/);
  expect(boite.textContent).toMatch(/On ne peut pas revenir en arrière/);
+ expect(boite.textContent).toMatch(/Tes caisses ne changent pas/);
+ expect(boite.textContent).not.toMatch(/remonte/);
  fireEvent.click(within(boite).getByRole('button',{name:'Effacer 150 USD'}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_bilan_effacer',{p_enrollment_id:E,p_currency:'USD',p_depuis:debutMois,p_quoi:'investi',p_confirmation:null}));
  expect(await screen.findByText(/« Investi » est effacé pour ce mois/)).toBeInTheDocument();
  expect(ligne(bilan,'Investi')).toMatch(/[^0-9.,]0 USD$/);
- expect(screen.getByRole('article',{name:'Pour investir'}).textContent).toMatch(/200USD disponibles/);
+ // 200 versés − 150 investis : l'argent investi ne revient pas dans la caisse.
+ expect(screen.getByRole('article',{name:'Pour investir'}).textContent).toMatch(/50USD disponibles/);
+ expect(screen.getByRole('article',{name:'Pour investir'}).textContent).not.toMatch(/200USD disponibles/);
  expect(ligne(bilan,'Remboursé sur les dettes')).toMatch(/40 USD/);
 });
 
@@ -84,6 +94,9 @@ it('Tout effacer : exige l’e-mail du compte et le bon mot de passe, puis tout 
  expect(signInWithPassword).toHaveBeenLastCalledWith({email:'papa@exemple.org',password:'x'});
  expect(await screen.findByText(/Tout est effacé pour ce mois, en USD/)).toBeInTheDocument();
  for(const n of ['Entré dans les caisses','Investi','Remboursé sur les dettes'])expect(ligne(bilan,n)).toMatch(/[^0-9.,]0 USD$/);
+ // Effacement d'une période : les caisses gardent leur montant.
+ expect(screen.getByRole('article',{name:'Dîme'}).textContent).toMatch(/20USD disponibles/);
+ expect(screen.getByRole('article',{name:'Pour investir'}).textContent).toMatch(/50USD disponibles/);
 });
 
 it('Tout effacer, compte Google sans mot de passe : il faut écrire EFFACER ; la période « Tout » efface tout l’historique',async()=>{
@@ -103,11 +116,23 @@ it('Tout effacer, compte Google sans mot de passe : il faut écrire EFFACER ; la
  expect(signInWithPassword).not.toHaveBeenCalled();
 });
 
-it('Mon épargne suit : après l’effacement des retraits, l’objectif n’affiche plus « utilisé »',async()=>{
- efface.add('investi');
+it('Mon épargne suit : le retrait effacé quitte l’historique, mais le disponible reste 50 (il ne revient pas à 200)',async()=>{
+ masques.add(id(5));
  const {SuiviEpargneDettes}=await import('@/components/SuiviEpargneDettes');
  render(<MemoryRouter initialEntries={['/habitudes/epargne']}><SuiviEpargneDettes mode="epargne" userId="u"/></MemoryRouter>);
  const resume=await screen.findByRole('region',{name:'Moto-taxi'});
- await waitFor(()=>expect(resume.textContent).not.toMatch(/utilisé 150/));
+ await waitFor(()=>expect(resume.textContent).toMatch(/utilisé 150/));
+ expect(resume.textContent).toMatch(/50[^0-9]/);
  expect(within(screen.getByRole('region',{name:'Historique'})).getAllByRole('listitem').some(li=>/− 150/.test(li.textContent!))).toBe(false);
+});
+
+it('Compteurs injoignables : le suivi affiche une erreur au lieu d’un disponible qui oublierait les retraits',async()=>{
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:suivi(),error:null};
+  if(f==='hd_finance_counters_get')return {data:null,error:{code:'08006',message:'réseau coupé'}};
+  throw Error(f);});
+ const {SuiviEpargneDettes}=await import('@/components/SuiviEpargneDettes');
+ render(<MemoryRouter initialEntries={['/habitudes/epargne']}><SuiviEpargneDettes mode="epargne" userId="u"/></MemoryRouter>);
+ expect(await screen.findByRole('alert')).toHaveTextContent(/pas disponible/);
+ expect(screen.queryByText(/200,00|200 \$/)).toBeNull();
 });

@@ -5,7 +5,7 @@ import {IconeVolet} from './IconeVolet';
 import {SimulateurEpargne} from './SimulateurEpargne';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {chargerSuiviFinancier,type DetteSuivie,type SuiviFinancier} from '@/lib/habitudes-finances-suivi';
-import {chargerCompteurs,disponibleObjectif,type Compteurs} from '@/lib/habitudes-finances-compteurs';
+import {chargerCompteursOuAbsents,disponibleObjectif,type Compteurs} from '@/lib/habitudes-finances-compteurs';
 import {decimalesDevise} from '@/lib/devises';
 import './VoletFinanceHabitudes.css';
 
@@ -23,7 +23,7 @@ export function VoletFinanceHabitudes({langue}:{langue:string}){
  const [ouvert,setOuvert]=useState(false),[onglet,setOnglet]=useState<Onglet>(actif?'epargne':'simulateur');
  const [suivi,setSuivi]=useState<SuiviFinancier|null|undefined>(undefined),[cpt,setCpt]=useState<Compteurs|null>(null),[erreur,setErreur]=useState(false);
  useEffect(()=>{if(!ouvert||!actif||suivi!==undefined)return;let vivant=true;
-  void chargerSuiviFinancier(null).then(async s=>{if(!vivant)return;setSuivi(s);if(s){const c=await chargerCompteurs(s.enrollment_id).catch(()=>null);if(vivant)setCpt(c);}}).catch(()=>{if(vivant){setErreur(true);setSuivi(null);}});
+  void chargerSuiviFinancier(null).then(async s=>{if(!vivant)return;setSuivi(s);if(s){const c=await chargerCompteursOuAbsents(s.enrollment_id);if(vivant)setCpt(c);}}).catch(()=>{if(vivant){setErreur(true);setSuivi(null);}});
   return()=>{vivant=false;};},[ouvert,actif,suivi]);
  const ONGLETS:[Onglet,string][]=actif?[['epargne',l('Épargne','Savings')],['dettes',l('Dettes','Debts')],['simulateur',l('Simulateur','Simulator')]]:[];
  const lien=(vers:string,texte:string)=><Link to={vers} className="vf-lien"><span>{texte}</span><IconeHD nom="chevron_right" className="text-[20px]"/></Link>;

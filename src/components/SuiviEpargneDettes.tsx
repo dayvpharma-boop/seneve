@@ -10,7 +10,7 @@ import {decimalesDevise,deviseAcceptee,montantValidePourDevise} from '@/lib/devi
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {ChoixDevise,ChoixTypeObjectif} from './ChoixDevise';
 import {momentLisible} from '@/lib/date-heure-finances';
-import {chargerCompteurs,type Compteurs,type Motif} from '@/lib/habitudes-finances-compteurs';
+import {chargerCompteursOuAbsents,estMasquee,type Compteurs,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {NotFound} from '@/routes/introuvable';
 
 type Mode='epargne'|'dettes';
@@ -81,7 +81,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
    const contenu=await chargerSuiviFinancier(null);
    if(!contenu){setSuivi(null);setState('vide');return;}
    setSuivi(contenu);setGoal(current=>contenu.savings_goals.some(g=>g.goal_id===current)?current:contenu.savings_goals[0]?.goal_id??'');
-   setCpt(await chargerCompteurs(contenu.enrollment_id).catch(()=>null));
+   setCpt(await chargerCompteursOuAbsents(contenu.enrollment_id));
    setState('pret');
   }catch{setState('erreur');}
  },[userId,essai]);
@@ -145,7 +145,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
    setBusy(false);
   }
  }
-async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinancier(inscription));setCpt(await chargerCompteurs(inscription).catch(()=>null));}
+async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFinancier(inscription));setCpt(await chargerCompteursOuAbsents(inscription));}catch{setState('erreur');}}
  async function supprimer(){
   if(!aConfirmer||!inscription||busy)return;const c=aConfirmer;setBusy(true);
   try{
@@ -167,7 +167,7 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
   notice(message,zone);
   try {
    setSuivi(await chargerSuiviFinancier(inscription!));
-   setCpt(await chargerCompteurs(inscription!).catch(()=>null));
+   setCpt(await chargerCompteursOuAbsents(inscription!));
   } catch {
    setState('erreur');
   }
@@ -309,7 +309,8 @@ async function relire(){if(!inscription)return;setSuivi(await chargerSuiviFinanc
     </section>
     <section aria-labelledby="hd-titre-historique">
      <h2 id="hd-titre-historique" className="hd-classique sim-ios-titre">{l('Historique','History')}</h2>
-     {objectif.entries.length+retraitsDe(objectif.goal_id).length?<ol className="sim-ios-groupe hd-classique">{[...objectif.entries.map(x=>({id:x.entry_id,date:x.date_locale,cree:x.created_at,signe:1,montant:montantCents(x.amount),motif:null as Motif|null,zero:false})),...retraitsDe(objectif.goal_id).map(w=>({id:w.withdrawal_id,date:w.date_locale,cree:w.created_at,signe:-1,montant:montantCents(w.amount),motif:w.motif as Motif|null,zero:w.remise_a_zero}))].sort((a,b)=>b.date.localeCompare(a.date)||(b.cree??'').localeCompare(a.cree??'')).map(x=><li key={x.id} className="sim-ios-ligne"><time dateTime={x.date} className="flex-1">{momentLisible(x.date,x.cree,en)}{x.signe<0?` · ${({donne:l('donné','given'),depense:l('dépensé','spent'),investi:l('investi','invested'),autre:l('autre','other')} as Record<string,string>)[x.motif??'autre']}${x.zero?l(' · remis à zéro',' · reset to zero'):''}`:''}</time><strong className={`tabular-nums ${x.signe>0?'text-emerald-700':'text-red-700'}`}>{x.signe>0?'+':'−'} {nombre(x.montant,objectif.currency,en)}</strong></li>)}</ol>
+     {/* Les lignes effacées du bilan ne s'affichent plus ; elles comptent toujours dans le disponible. */}
+     {objectif.entries.filter(x=>!estMasquee(cpt,x.entry_id)).length+retraitsDe(objectif.goal_id).filter(w=>!estMasquee(cpt,w.withdrawal_id)).length?<ol className="sim-ios-groupe hd-classique">{[...objectif.entries.filter(x=>!estMasquee(cpt,x.entry_id)).map(x=>({id:x.entry_id,date:x.date_locale,cree:x.created_at,signe:1,montant:montantCents(x.amount),motif:null as Motif|null,zero:false})),...retraitsDe(objectif.goal_id).filter(w=>!estMasquee(cpt,w.withdrawal_id)).map(w=>({id:w.withdrawal_id,date:w.date_locale,cree:w.created_at,signe:-1,montant:montantCents(w.amount),motif:w.motif as Motif|null,zero:w.remise_a_zero}))].sort((a,b)=>b.date.localeCompare(a.date)||(b.cree??'').localeCompare(a.cree??'')).map(x=><li key={x.id} className="sim-ios-ligne"><time dateTime={x.date} className="flex-1">{momentLisible(x.date,x.cree,en)}{x.signe<0?` · ${({donne:l('donné','given'),depense:l('dépensé','spent'),investi:l('investi','invested'),autre:l('autre','other')} as Record<string,string>)[x.motif??'autre']}${x.zero?l(' · remis à zéro',' · reset to zero'):''}`:''}</time><strong className={`tabular-nums ${x.signe>0?'text-emerald-700':'text-red-700'}`}>{x.signe>0?'+':'−'} {nombre(x.montant,objectif.currency,en)}</strong></li>)}</ol>
       :<p className="sim-ios-note hd-classique">{l('Aucun versement pour le moment.','No contributions yet.')}</p>}
     </section>
     <div className="sim-ios-groupe hd-classique mt-6"><button type="button" disabled={busy} onClick={()=>setAConfirmer({type:'objectif',id:objectif.goal_id,nom:objectif.label,detail:l(`Il disparaît de tes objectifs, de la répartition et des compteurs. Ses ${objectif.entries.length} versement${objectif.entries.length>1?'s':''} (${nombre(verse,objectif.currency,false)} ${objectif.currency}) restent dans ton bilan.`,`It disappears from your goals, allocation and counters. Its ${objectif.entries.length} contribution${objectif.entries.length>1?'s':''} (${nombre(verse,objectif.currency,true)} ${objectif.currency}) stay in your summary.`)})} className="sim-ios-ligne w-full justify-center font-medium" style={{color:'#d70015',fontSize:16}}>{l('Supprimer cet objectif','Delete this goal')}</button></div>

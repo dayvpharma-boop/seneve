@@ -31,7 +31,7 @@ it('calcule et conserve le rythme hebdomadaire à côté des dettes mensuelles e
       dettes.push(dette);
       return {data:dette,error:null};
     }
-    throw Error(fonction);
+    if(fonction==='hd_finance_counters_get')return {data:null,error:{code:'PGRST202',message:'Could not find the function'}}; throw Error(fonction);
   });
 
   render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="participant"/></MemoryRouter>);
@@ -74,7 +74,7 @@ it('ajoute un nom à une dette existante et la présélectionne pour le rembours
     if (fonction==='hd_finance_debt_rename') {
       return {data:{debt_id:args.p_debt_id,creditor_name:args.p_creditor_name},error:null};
     }
-    throw Error(fonction);
+    if(fonction==='hd_finance_counters_get')return {data:null,error:{code:'PGRST202',message:'Could not find the function'}}; throw Error(fonction);
   });
 
   render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="participant"/></MemoryRouter>);
@@ -101,7 +101,7 @@ it('un repère de paiement de 180 USD est plafonné au solde restant de 20 USD',
    monthly_basis:'600.00',repayment_percent:'30.00',weekly_basis:null,weekly_repayment_percent:null,
    payments:[{payment_id:'caaa5555-0000-4000-8000-000000000001',amount:'30.00',date_locale:'2026-11-01'}]
   }]},error:null};
-  throw Error(f);
+  if(f==='hd_finance_counters_get')return {data:null,error:{code:'PGRST202',message:'Could not find the function'}}; throw Error(f);
  });
  render(<MemoryRouter><SuiviEpargneDettes mode="dettes" userId="participant"/></MemoryRouter>);
  const fiche=await screen.findByRole('article',{name:'Fournisseur'});

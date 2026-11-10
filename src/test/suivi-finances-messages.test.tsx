@@ -12,7 +12,7 @@ afterEach(()=>{cleanup();rpc.mockReset();cadre.mockReset();});
 const inscription='a58c18be-22d3-4e33-8a73-554fdfd693af';
 const objectif={goal_id:'5f1c2a4e-1111-4c3b-9a55-000000000001',goal_type:'reserve_joie',label:'Réserve',target_amount:'100.00',currency:'USD',entries:[{entry_id:'0b6f3c1e-2222-4c3b-9a55-000000000002',amount:'25.00',date_locale:'2026-11-07'}]};
 const dette={debt_id:'7c011210-b780-41a4-9ec4-8f6566b27755',debt_number:1,opening_balance:'120.00',currency:'USD',creditor_name:'Banque',monthly_basis:null,repayment_percent:null,weekly_basis:null,weekly_repayment_percent:null,payments:[{payment_id:'0b6f3c1e-3333-4c3b-9a55-000000000003',amount:'20.00',date_locale:'2026-11-05'}]};
-function charger(){rpc.mockImplementation(async(f:string)=>{if(f==='hd_finance_tracker_get')return {data:{enrollment_id:inscription,savings_goals:[objectif],debts:[dette]},error:null};throw Error(f);});}
+function charger(){rpc.mockImplementation(async(f:string)=>{if(f==='hd_finance_tracker_get')return {data:{enrollment_id:inscription,savings_goals:[objectif],debts:[dette]},error:null};if(f==='hd_finance_counters_get')return {data:null,error:{code:'PGRST202',message:'Could not find the function'}}; throw Error(f);});}
 
 it('écrit les dates en toutes lettres',()=>{
  expect(dateLisible('2026-11-07',false)).toBe('7 novembre 2026');
