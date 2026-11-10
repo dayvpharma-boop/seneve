@@ -140,7 +140,9 @@ it('Ma répartition propose « Autre objectif » et l’envoie vers l’objectif
  const feuille=await screen.findByRole('dialog');
  const select=await within(feuille).findByLabelText('Choisir l’objectif : Autre objectif') as HTMLSelectElement;
  expect(select.value).toBe('');
- expect(within(feuille).getByRole('checkbox',{name:/^Autre objectif/})).toBeDisabled();
+ // Automatique : École (300 manquants) passe avant Toiture (500).
+ expect(within(feuille).getByRole('checkbox',{name:/^Autre objectif/})).toBeChecked();
+ expect(within(feuille).getByText(/→ École 100$/)).toBeInTheDocument();
  fireEvent.change(select,{target:{value:t2.goal_id}});
  expect(within(feuille).getByText(/objectif « École »/)).toBeInTheDocument();
  fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
@@ -179,7 +181,33 @@ it('un excédent de la part Dettes reste au participant et passe à « Pour vivr
  ]})));
 });
 
-it('avec Voiture et Achat maison, la répartition ne choisit jamais Voiture par défaut et permet de verser sur Maison',async()=>{
+it('plusieurs objectifs : « Automatique » remplit d’abord celui à qui il manque le moins, puis le suivant',async()=>{
+ const voiture='5f1c2a4e-1111-4c3b-9a55-000000000011',maison='5f1c2a4e-1111-4c3b-9a55-000000000012';
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_business_charges_get')return {data:chargesMensuelles('500.00'),error:null};
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[...suivi.savings_goals,
+   {goal_id:maison,goal_type:'epargne_investir',label:'Achat maison',target_amount:'3000.00',currency:'USD',entries:[]},
+   {goal_id:voiture,goal_type:'epargne_investir',label:'Voiture',target_amount:'30.00',currency:'USD',entries:[]}]},error:null};
+  if(f==='hd_finance_business_allocation_save')return {data:{allocation_id:a.p_request_id,deja:false},error:null};
+  throw Error(f);
+ });
+ const {HabitudesRepartition}=await import('@/routes/habitudes-repartition');
+ render(<MemoryRouter initialEntries={['/habitudes/repartition']}><HabitudesRepartition/></MemoryRouter>);
+ await waitFor(()=>expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeEnabled());
+ fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
+ const feuille=await screen.findByRole('dialog');
+ const choix=await within(feuille).findByLabelText('Choisir l’objectif : Pour investir') as HTMLSelectElement;
+ expect(choix.value).toBe('');
+ expect(within(feuille).getByRole('option',{name:/Automatique/})).toBeInTheDocument();
+ // Base 500, part investir 100 : Voiture (30 manquants) d'abord, puis Achat maison.
+ expect(within(feuille).getByRole('checkbox',{name:/^Pour investir/})).toBeChecked();
+ expect(within(feuille).getByText(/Voiture 30 \(atteint\) · Achat maison 70/)).toBeInTheDocument();
+ fireEvent.click(within(feuille).getByRole('button',{name:/Enregistrer 5 parts · 500 USD/}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_business_allocation_save',expect.objectContaining({
+  p_parts:expect.arrayContaining([{part:'epargne_investir',goal_id:voiture,amount:'30.00'},{part:'epargne_investir',goal_id:maison,amount:'70.00'}])})));
+});
+
+it('avec Voiture et Achat maison, on peut quand même tout verser sur Maison',async()=>{
  const voiture='5f1c2a4e-1111-4c3b-9a55-000000000011',maison='5f1c2a4e-1111-4c3b-9a55-000000000012';
  const objectifs=[...suivi.savings_goals,
   {goal_id:voiture,goal_type:'epargne_investir',label:'Voiture',target_amount:'1000.00',currency:'USD',entries:[]},
@@ -197,10 +225,8 @@ it('avec Voiture et Achat maison, la répartition ne choisit jamais Voiture par 
  const feuille=await screen.findByRole('dialog');
  const destination=await within(feuille).findByLabelText('Choisir l’objectif : Pour investir') as HTMLSelectElement;
  expect(destination.value).toBe('');
- const part=within(feuille).getByRole('checkbox',{name:/^Pour investir/});
- expect(part).toBeDisabled();
- expect(within(feuille).getByRole('option',{name:'Voiture'})).toBeInTheDocument();
- expect(within(feuille).getByRole('option',{name:'Achat maison'})).toBeInTheDocument();
+ expect(within(feuille).getByRole('option',{name:'Tout sur « Voiture »'})).toBeInTheDocument();
+ expect(within(feuille).getByRole('option',{name:'Tout sur « Achat maison »'})).toBeInTheDocument();
  fireEvent.change(destination,{target:{value:maison}});
  expect(destination.value).toBe(maison);
  expect(within(feuille).getByRole('checkbox',{name:/^Pour investir/})).toBeChecked();

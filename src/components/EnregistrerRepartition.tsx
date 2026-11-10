@@ -42,30 +42,33 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
  const lignes=useMemo<Ligne[]>(()=>{
   const s=suivi&&typeof suivi==='object'?suivi:null;
   const candidats=(type:TypeObjectifEpargne)=>(s?.savings_goals??[]).filter(g=>g.goal_type===type&&g.currency===devise);
-  const objectif=(type:TypeObjectifEpargne)=>{
-   const liste=candidats(type);
-   // Auto-affectation seulement quand l'objectif est unique.
-   return liste.length===1?liste[0]:liste.find(g=>g.goal_id===objectifsChoisis[type]);
+  // Par défaut (« Automatique »), tous les objectifs du type reçoivent la part, du plus petit reste au plus grand,
+  // comme les dettes (demande de Dr Justin du 10/11/2026). Un objectif choisi dans la liste reçoit tout.
+  const objectifs=(type:TypeObjectifEpargne)=>{
+   const liste=candidats(type),choisi=liste.find(g=>g.goal_id===objectifsChoisis[type]);
+   return choisi?[choisi]:liste;
   };
   const out:Ligne[]=[{cle:'dime',nom:l('Dîme','Tithe'),destination:l('Dans ma caisse de dîme · pas encore donnée','In my tithe counter · not yet given'),montant:montants.dime,parts:[{part:'dime',amount:chaine(montants.dime)}],possible:true,couleur:'#b8862b'}];
   if(montants.offrande>0)out.push({cle:'offrande',nom:l('Offrande','Offering'),destination:l('Mes offrandes','My offerings'),montant:montants.offrande,parts:[{part:'offrande',amount:chaine(montants.offrande)}],possible:true,couleur:'#b05bd6'});
   // Les deux parts « investissement » peuvent viser le même objectif.
   const dejaPrevu=new Map<string,number>();
-  const partObjectif=(g:ObjectifEpargne,m:number,retenue:boolean)=>{
-   const affecte=dejaPrevu.get(g.goal_id)??0;
-   const restant=Math.max(0,Math.round(Number(g.target_amount)*100)-disponibleObjectif(compteurs,g.goal_id,g.entries)-affecte);
+  const partObjectif=(liste:ObjectifEpargne[],m:number,retenue:boolean)=>{
    const propose=Math.round(m*100);
-   const verse=Math.min(propose,restant);
-   if(retenue)dejaPrevu.set(g.goal_id,affecte+verse);
-   const surplus=(propose-verse)/100;
+   const {propositions,surplus:reste}=repartirSurDettes(propose,liste.map(g=>({id:g.goal_id,
+    resteCentimes:Math.max(0,Math.round(Number(g.target_amount)*100)-disponibleObjectif(compteurs,g.goal_id,g.entries)-(dejaPrevu.get(g.goal_id)??0))})));
+   if(retenue)for(const p of propositions)dejaPrevu.set(p.id,(dejaPrevu.get(p.id)??0)+p.centimes);
+   const verse=propose-reste,surplus=reste/100,plusieurs=liste.length>1;
+   const parGoal=(id:string)=>liste.find(g=>g.goal_id===id)!;
    return {
     montant:verse/100,
-    parts:verse>0?[{part:g.goal_type,goal_id:g.goal_id,amount:chaine(verse/100)}]:[],
+    parts:propositions.map(p=>({part:parGoal(p.id).goal_type,goal_id:p.id,amount:chaine(p.centimes/100)})),
     possible:verse>0,
-    destination:l(`objectif « ${g.label} »`,`goal “${g.label}”`),
+    destination:!plusieurs?l(`objectif « ${liste[0]!.label} »`,`goal “${liste[0]!.label}”`)
+     :propositions.length?propositions.map(p=>`${parGoal(p.id).label} ${nombre(p.centimes/100)}${p.solde?l(' (atteint)',' (reached)'):''}`).join(' · ')
+     :l('tous les objectifs sont atteints','all goals are reached'),
     details:surplus>0
-     ?l(`${verse===0?'Objectif atteint. ':''}${nombre(surplus)} ${devise} restent à répartir.`,
-        `${verse===0?'Goal reached. ':''}${nombre(surplus)} ${devise} remain unallocated.`)
+     ?l(`${verse===0?(plusieurs?'Objectifs atteints. ':'Objectif atteint. '):''}${nombre(surplus)} ${devise} restent à répartir.`,
+        `${verse===0?(plusieurs?'Goals reached. ':'Goal reached. '):''}${nombre(surplus)} ${devise} remain unallocated.`)
      :undefined
    };
   };
@@ -75,12 +78,10 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
    ['autre','autre',l('Autre objectif','Other goal'),'#c2410c',montants.autre]
   ] as const){
    if(m<=0)continue;
-   const g=objectif(type);
-   out.push({cle,nom,couleur,...(g?partObjectif(g,m,!decoches[cle]):{
+   const liste=objectifs(type);
+   out.push({cle,nom,couleur,...(liste.length?partObjectif(liste,m,!decoches[cle]):{
     montant:m,parts:[],possible:false,
-    destination:candidats(type).length>1
-     ?l('Choisis l’objectif précis ci-dessous.','Choose the specific goal below.')
-     :l(`crée d’abord un objectif en ${devise} dans SÉNEVÉ Finance`,`first create a ${devise} goal in SÉNEVÉ Finance`)
+    destination:l(`crée d’abord un objectif en ${devise} dans SÉNEVÉ Finance`,`first create a ${devise} goal in SÉNEVÉ Finance`)
    })});
   }
   if(montants.dettes>0){
@@ -96,8 +97,8 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
     const montantSurplus=surplus/100;
     const totalRestant=dettes.reduce((n,x)=>n+Math.max(0,x.reste),0)/100;
     const details=l(`Part dettes : ${nombre(montants.dettes)} ${devise} · dettes restantes : ${nombre(totalRestant)} ${devise} · excédent : ${nombre(montantSurplus)} ${devise}`,`Debt share: ${nombre(montants.dettes)} ${devise} · remaining debts: ${nombre(totalRestant)} ${devise} · surplus: ${nombre(montantSurplus)} ${devise}`);
-    const objectifInvestissement=destinationSurplus==='investissement'?objectif('epargne_investir'):null;
-    const partInvestie=objectifInvestissement?partObjectif(objectifInvestissement,montantSurplus,true):null;
+    const objectifsInvestissement=destinationSurplus==='investissement'?objectifs('epargne_investir'):[];
+    const partInvestie=objectifsInvestissement.length?partObjectif(objectifsInvestissement,montantSurplus,true):null;
     const partsSurplus:PartRepartition[]=destinationSurplus==='vivre'
      ?[{part:'vivre',amount:chaine(montantSurplus)}]:partInvestie?.parts??[];
     const destination=destinationSurplus==='vivre'?l('Pour vivre','For living')
@@ -118,12 +119,10 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
  const typesObjectifs:[TypeObjectifEpargne,number][]=[
   ['reserve_joie',montants.reserve],['epargne_investir',Math.max(montants.investir,destinationSurplus==='investissement'?montantSurplus:0)],['autre',montants.autre]
  ];
- const selectionManquante=!!suivi&&typeof suivi==='object'&&typesObjectifs.some(([type,montant])=>{
-  if(montant<=0)return false;
-  const candidats=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
-  return (candidats.length>1&&!candidats.some(g=>g.goal_id===objectifsChoisis[type]))||
-   (type==='epargne_investir'&&destinationSurplus==='investissement'&&candidats.length===0);
- });
+ // Plus de choix obligatoire : « Automatique » est le réglage par défaut. Seul l'excédent envoyé vers
+ // l'investissement sans objectif « Pour investir » bloque l'enregistrement.
+ const selectionManquante=!!suivi&&typeof suivi==='object'&&typesObjectifs.some(([type,montant])=>
+  montant>0&&type==='epargne_investir'&&destinationSurplus==='investissement'&&!suivi.savings_goals.some(g=>g.goal_type===type&&g.currency===devise));
  const choixSurplusManquant=!!ligneSurplus&&!destinationSurplus;
  const total=choisies.reduce((n,x)=>n+x.montant,0);
  async function enregistrer(){
@@ -167,18 +166,17 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
        const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
        return <li key={type} className="sim-ios-ligne" style={{flexDirection:"column",alignItems:"stretch",gap:6}}>
         <label htmlFor={`hd-choix-${type}`}>{l(`Choisir l’objectif : ${nom}`,`Choose goal: ${nom}`)}</label>
-        <select id={`hd-choix-${type}`} required style={{width:"100%",minWidth:0,minHeight:44}} value={objectifsChoisis[type]??''}
+        <select id={`hd-choix-${type}`} style={{width:"100%",minWidth:0,minHeight:44}} value={objectifsChoisis[type]??''}
           onChange={e=>{demande.current=crypto.randomUUID();setObjectifsChoisis(prev=>({...prev,[type]:e.target.value}));}}
           aria-describedby={`hd-choix-aide-${type}`}>
-         <option value="">{l('Sélectionner…','Select…')}</option>
-         {objectifs.map(g=><option key={g.goal_id} value={g.goal_id}>{g.label}</option>)}
+         <option value="">{l('Automatique (du plus petit au plus grand)','Automatic (smallest to largest)')}</option>
+         {objectifs.map(g=><option key={g.goal_id} value={g.goal_id}>{l(`Tout sur « ${g.label} »`,`All to “${g.label}”`)}</option>)}
         </select>
-        <small id={`hd-choix-aide-${type}`} className="text-[12px] text-hd-on-surface-variant">{l('Sans choix, cette part ne sera pas enregistrée.','Without a selection, this share will not be saved.')}</small>
+        <small id={`hd-choix-aide-${type}`} className="text-[12px] text-hd-on-surface-variant">{l('Automatique : la part va d’abord à l’objectif à qui il manque le moins, puis au suivant.','Automatic: the share goes first to the goal closest to completion, then to the next.')}</small>
        </li>;
      })}
     </ul>
     {choixSurplusManquant&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Sélectionne « Pour vivre » ou « Investissement » pour continuer.','Select “For living” or “Investment” to continue.')}</p>}
-    {selectionManquante&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Choisis la destination de chaque part ayant plusieurs objectifs avant d’enregistrer. Pour ne pas répartir une part, décoche-la après avoir choisi son objectif.','Choose the destination for each share with multiple goals before saving. To exclude a share, untick it after selecting its goal.')}</p>}
     <button type="button" disabled={!choisies.length||selectionManquante||choixSurplusManquant||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
     {erreur&&<p role="alert" className="sim-ios-alerte">{erreur}</p>}
     <p className="sim-ios-note">{depuisEncaissements?l('Les montants décochés restent dans le solde à répartir.','Unticked amounts stay in the balance to allocate.'):l('Tu peux noter les parts décochées plus tard.','You can record unticked shares later.')}</p>
