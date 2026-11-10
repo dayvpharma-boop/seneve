@@ -147,51 +147,66 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
    {suivi===null&&<p role="status" className="rounded-xl bg-white p-4">{l('Chargement de ton suivi…','Loading your tracker…')}</p>}
    {(suivi==='aucun'||suivi==='erreur')&&<p role="alert" className="rounded-xl bg-white p-4">{suivi==='aucun'?l('Connecte-toi avec un accès actif à Habitudes & Défis pour enregistrer ta répartition.','Sign in with active Habits & Challenges access to save your allocation.'):l('Ton suivi n’est pas disponible pour le moment.','Your tracker is not available right now.')}</p>}
    {suivi&&typeof suivi==='object'&&<>
-    <ul className="sim-ios-groupe" style={{listStyle:'none',margin:0,padding:0}}>
-     {lignes.map(x=><li key={x.cle} className="sim-ios-ligne" style={{minHeight:62,opacity:x.possible&&coche(x.cle)?1:.5}}>
-      <input id={`hd-part-${x.cle}`} type="checkbox" disabled={!x.possible||x.cle==='surplus_dettes'} checked={x.possible&&coche(x.cle)} onChange={e=>{if(x.cle==='surplus_dettes')return;demande.current=crypto.randomUUID();setDecoches(c=>({...c,[x.cle]:!e.target.checked}));}} style={{width:24,height:24,accentColor:'var(--ios-accent,#5b4ee8)',flex:'none'}}/>
-      <label htmlFor={`hd-part-${x.cle}`} style={{flex:1,minWidth:0}}><span className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 rounded-sm" style={{background:x.couleur}}/>{x.nom}</span><small className="block text-[13px] text-hd-on-surface-variant">→ {x.destination}</small>{x.details&&<small className="block text-[12px] text-hd-on-surface-variant">{x.details}</small>}</label>
-      <b className="tabular-nums whitespace-nowrap">{nombre(x.montant)} {devise}</b>
-     </li>)}
-     {(['reserve_joie','epargne_investir','autre'] as const).map(type=>{
-       const montantsType={reserve_joie:montants.reserve,epargne_investir:Math.max(montants.investir,destinationSurplus==='investissement'?montantSurplus:0),autre:montants.autre};
-       const objectifs=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
-       if(montantsType[type]<=0||objectifs.length<2)return null;
-       const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
-       return <li key={type} className="sim-ios-ligne" style={{flexDirection:"column",alignItems:"stretch",gap:6}}>
-        <label htmlFor={`hd-choix-${type}`}>{l(`Choisir l’objectif : ${nom}`,`Choose goal: ${nom}`)}</label>
-        <select id={`hd-choix-${type}`} style={{width:"100%",minWidth:0,minHeight:44}} value={objectifsChoisis[type]??''}
-          onChange={e=>{demande.current=crypto.randomUUID();setObjectifsChoisis(prev=>({...prev,[type]:e.target.value}));}}
-          aria-describedby={`hd-choix-aide-${type}`}>
-         <option value="">{l('Automatique (du plus petit au plus grand)','Automatic (smallest to largest)')}</option>
-         {objectifs.map(g=><option key={g.goal_id} value={g.goal_id}>{l(`Tout sur « ${g.label} »`,`All to “${g.label}”`)}</option>)}
-        </select>
-        <small id={`hd-choix-aide-${type}`} className="text-[12px] text-hd-on-surface-variant">{l('Automatique : la part va d’abord à l’objectif à qui il manque le moins, puis au suivant.','Automatic: the share goes first to the goal closest to completion, then to the next.')}</small>
-       </li>;
-     })}
-    </ul>
-    {/* Choix de l'excédent façon Réglages iOS (demande du 10/11/2026) : liste groupée, pastille de couleur, coche. */}
-    {ligneSurplus&&<section aria-labelledby="hd-surplus-titre">
-     <h3 id="hd-surplus-titre" className="sim-ios-titre">{l(`Où va l’excédent de ${nombre(montantSurplus)} ${devise} ?`,`Where does the ${nombre(montantSurplus)} ${devise} surplus go?`)}</h3>
-     <div role="radiogroup" aria-labelledby="hd-surplus-titre" className="sim-ios-groupe">
-      {([
-       ['vivre',l('Pour vivre','For living'),l('Ajouté à ta part pour vivre.','Added to your living share.'),'payments','#34c759'],
-       ['investissement',l('Investissement','Investment'),l('Versé sur tes objectifs « Pour investir ».','Paid into your “For investing” goals.'),'potted_plant','#007aff'],
-       ['solde',l('Solde à répartir','Balance to allocate'),l('Rien n’est noté : l’argent reste à répartir plus tard.','Nothing is recorded: the money stays to allocate later.'),'pie_chart','#8e8e93']
-      ] as const).map(([cle,titre,aide,icone,couleur])=><button key={cle} type="button" role="radio" aria-checked={destinationSurplus===cle} aria-label={titre} aria-describedby={`hd-surplus-aide-${cle}`}
-        onClick={()=>{demande.current=crypto.randomUUID();setDestinationSurplus(cle);}} className="sim-ios-ligne sim-ios-choix">
-       <span aria-hidden="true" className="sim-ios-pastille" style={{background:couleur}}><IconeHD nom={icone} taille={18}/></span>
-       <span className="sim-ios-choix-texte"><span>{titre}</span><small id={`hd-surplus-aide-${cle}`}>{aide}</small></span>
-       <span aria-hidden="true" className="sim-ios-coche">{destinationSurplus===cle&&<IconeHD nom="check" taille={20}/>}</span>
-      </button>)}
-     </div>
-     {destinationSurplus==='investissement'&&candidatsInvestir.length===0&&<p role="alert" className="sim-ios-note">{l('Crée d’abord un objectif « Pour investir » dans SÉNEVÉ Finance pour enregistrer cet excédent.','First create a “For investing” goal in SÉNEVÉ Finance to record this surplus.')} <Link to={en?'/habitudes/epargne?lang=en':'/habitudes/epargne'} className="underline">{l('Ouvrir SÉNEVÉ Finance','Open SÉNEVÉ Finance')}</Link></p>}
-    </section>}
-    {choixSurplusManquant&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Sélectionne « Pour vivre », « Investissement » ou « Solde à répartir » pour continuer.','Select “For living”, “Investment” or “Balance to allocate” to continue.')}</p>}
+    {/* Le choix de l'excédent s'affiche juste sous la ligne « Excédent à affecter » (demande du 10/11/2026). */}
+    {(()=>{
+     const iSurplus=lignes.findIndex(x=>x.cle==='surplus_dettes');
+     const liste=(xs:Ligne[])=>xs.length>0&&<ul className="sim-ios-groupe" style={{listStyle:'none',margin:'0 0 0',padding:0}}>
+      {xs.map(x=><li key={x.cle} className="sim-ios-ligne" style={{minHeight:62,opacity:x.possible&&coche(x.cle)?1:.5}}>
+       <input id={`hd-part-${x.cle}`} type="checkbox" disabled={!x.possible||x.cle==='surplus_dettes'} checked={x.possible&&coche(x.cle)} onChange={e=>{if(x.cle==='surplus_dettes')return;demande.current=crypto.randomUUID();setDecoches(c=>({...c,[x.cle]:!e.target.checked}));}} style={{width:24,height:24,accentColor:'var(--ios-accent,#5b4ee8)',flex:'none'}}/>
+       <label htmlFor={`hd-part-${x.cle}`} style={{flex:1,minWidth:0}}><span className="flex items-center gap-2"><span aria-hidden="true" className="size-2.5 rounded-sm" style={{background:x.couleur}}/>{x.nom}</span><small className="block text-[13px] text-hd-on-surface-variant">→ {x.destination}</small>{x.details&&<small className="block text-[12px] text-hd-on-surface-variant">{x.details}</small>}</label>
+       <b className="tabular-nums whitespace-nowrap">{nombre(x.montant)} {devise}</b>
+      </li>)}
+     </ul>;
+     if(iSurplus<0)return liste(lignes);
+     return <>
+      {liste(lignes.slice(0,iSurplus+1))}
+      <ChoixIOS id="hd-surplus" titre={l(`Où va l’excédent de ${nombre(montantSurplus)} ${devise} ?`,`Where does the ${nombre(montantSurplus)} ${devise} surplus go?`)}
+       valeur={destinationSurplus} onChoisir={v=>{demande.current=crypto.randomUUID();setDestinationSurplus(v as 'vivre'|'investissement'|'solde');}}
+       options={[
+        {cle:'vivre',titre:l('Pour vivre','For living'),aide:l('Ajouté à ta part pour vivre.','Added to your living share.'),icone:'payments',couleur:'#34c759'},
+        {cle:'investissement',titre:l('Investissement','Investment'),aide:l('Versé sur tes objectifs « Pour investir ».','Paid into your “For investing” goals.'),icone:'potted_plant',couleur:'#007aff'},
+        {cle:'solde',titre:l('Solde à répartir','Balance to allocate'),aide:l('Rien n’est noté : l’argent reste à répartir plus tard.','Nothing is recorded: the money stays to allocate later.'),icone:'pie_chart',couleur:'#8e8e93'}]}/>
+      {destinationSurplus==='investissement'&&candidatsInvestir.length===0&&<p role="alert" className="sim-ios-note">{l('Crée d’abord un objectif « Pour investir » dans SÉNEVÉ Finance pour enregistrer cet excédent.','First create a “For investing” goal in SÉNEVÉ Finance to record this surplus.')} <Link to={en?'/habitudes/epargne?lang=en':'/habitudes/epargne'} className="underline">{l('Ouvrir SÉNEVÉ Finance','Open SÉNEVÉ Finance')}</Link></p>}
+      {choixSurplusManquant&&<p role="status" className="sim-ios-note" style={{color:'var(--ios-encre,#1c1c1e)'}}>{l('Sélectionne « Pour vivre », « Investissement » ou « Solde à répartir » pour continuer.','Select “For living”, “Investment” or “Balance to allocate” to continue.')}</p>}
+      {lignes.length>iSurplus+1&&<div style={{marginTop:14}}>{liste(lignes.slice(iSurplus+1))}</div>}
+     </>;
+    })()}
+    {/* Choix de l'objectif façon Réglages iOS : Automatique d'abord, puis un objectif précis. */}
+    {(['reserve_joie','epargne_investir','autre'] as const).map(type=>{
+     const montantsType={reserve_joie:montants.reserve,epargne_investir:Math.max(montants.investir,destinationSurplus==='investissement'?montantSurplus:0),autre:montants.autre};
+     const objectifs=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
+     if(montantsType[type]<=0||objectifs.length<2)return null;
+     const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
+     const couleur=type==='reserve_joie'?'#2f9e62':type==='epargne_investir'?'#2f6fe0':'#c2410c';
+     return <ChoixIOS key={type} id={`hd-choix-${type}`} titre={l(`Choisir l’objectif : ${nom}`,`Choose goal: ${nom}`)}
+      valeur={objectifsChoisis[type]??''} onChoisir={v=>{demande.current=crypto.randomUUID();setObjectifsChoisis(prev=>({...prev,[type]:v}));}}
+      options={[{cle:'',titre:l('Automatique','Automatic'),aide:l('D’abord l’objectif à qui il manque le moins, puis le suivant.','First the goal closest to completion, then the next.'),icone:'tune',couleur},
+       ...objectifs.map(g=>({cle:g.goal_id,titre:g.label,aide:l(`Toute la part sur « ${g.label} » · il manque ${nombre(Math.max(0,Math.round(Number(g.target_amount)*100)-disponibleObjectif(compteurs,g.goal_id,g.entries))/100)} ${devise}`,`The whole share to “${g.label}” · ${nombre(Math.max(0,Math.round(Number(g.target_amount)*100)-disponibleObjectif(compteurs,g.goal_id,g.entries))/100)} ${devise} still needed`),icone:'bookmark',couleur}))]}/>;
+    })}
     <button type="button" disabled={!choisies.length||selectionManquante||choixSurplusManquant||enCours} onClick={()=>void enregistrer()} className="sim-ios-bouton disabled:opacity-50" style={{marginTop:14}}><IconeHD nom="check_circle" className="mr-2 text-[20px]"/>{enCours?l('Enregistrement…','Saving…'):choisies.length?l(`Enregistrer ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`,`Save ${choisies.length} part${choisies.length>1?'s':''} · ${nombre(total)} ${devise}`):l('Coche au moins une part','Tick at least one part')}</button>
     {erreur&&<p role="alert" className="sim-ios-alerte">{erreur}</p>}
     <p className="sim-ios-note">{depuisEncaissements?l('Les montants décochés restent dans le solde à répartir.','Unticked amounts stay in the balance to allocate.'):l('Tu peux noter les parts décochées plus tard.','You can record unticked shares later.')}</p>
    </>}
   </div>
  </div>;
+}
+
+type OptionIOS={cle:string;titre:string;aide:string;icone:string;couleur:string};
+/** Liste de choix façon Réglages iOS : pastille, titre + aide, et à droite un rond coché bien visible
+ * (rond bleu plein avec ✓ quand c'est choisi, rond gris vide sinon). Styles en ligne pour ne pas être écrasés. */
+function ChoixIOS({id,titre,options,valeur,onChoisir}:{id:string;titre:string;options:OptionIOS[];valeur:string|null;onChoisir:(cle:string)=>void}){
+ return <section aria-labelledby={`${id}-titre`} style={{marginTop:6}}>
+  <h3 id={`${id}-titre`} className="sim-ios-titre">{titre}</h3>
+  <div role="radiogroup" aria-labelledby={`${id}-titre`} className="sim-ios-groupe">
+   {options.map(o=>{const choisi=valeur===o.cle;return <button key={o.cle||'auto'} type="button" role="radio" aria-checked={choisi} aria-label={o.titre} aria-describedby={`${id}-aide-${o.cle||'auto'}`}
+     onClick={()=>onChoisir(o.cle)} className="sim-ios-ligne sim-ios-choix" style={{background:choisi?'rgb(0 122 255 / .08)':undefined}}>
+    <span aria-hidden="true" className="sim-ios-pastille" style={{background:o.couleur,color:'#fff'}}><IconeHD nom={o.icone} taille={18}/></span>
+    <span className="sim-ios-choix-texte"><span style={{fontWeight:choisi?600:400}}>{o.titre}</span><small id={`${id}-aide-${o.cle||'auto'}`}>{o.aide}</small></span>
+    <span aria-hidden="true" data-choisi={choisi} style={{display:'inline-flex',flex:'none',alignItems:'center',justifyContent:'center',width:26,height:26,borderRadius:'50%',
+     background:choisi?'#007aff':'transparent',border:choisi?'0':'2px solid #c7c7cc',color:'#fff',boxSizing:'border-box',transition:'background-color .15s ease'}}>
+     {choisi&&<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+    </span>
+   </button>;})}
+  </div>
+ </section>;
 }

@@ -138,12 +138,14 @@ it('Ma répartition propose « Autre objectif » et l’envoie vers l’objectif
  expect(screen.getByRole('region',{name:'Solde à répartir'}).textContent).toMatch(/Autre objectif.*100.*10 %/);
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
  const feuille=await screen.findByRole('dialog');
- const select=await within(feuille).findByLabelText('Choisir l’objectif : Autre objectif') as HTMLSelectElement;
- expect(select.value).toBe('');
+ const choix=await within(feuille).findByRole('radiogroup',{name:'Choisir l’objectif : Autre objectif'});
+ expect(within(choix).getByRole('radio',{name:'Automatique'})).toHaveAttribute('aria-checked','true');
  // Automatique : École (300 manquants) passe avant Toiture (500).
  expect(within(feuille).getByRole('checkbox',{name:/^Autre objectif/})).toBeChecked();
  expect(within(feuille).getByText(/→ École 100$/)).toBeInTheDocument();
- fireEvent.change(select,{target:{value:t2.goal_id}});
+ fireEvent.click(within(choix).getByRole('radio',{name:'École'}));
+ expect(within(choix).getByRole('radio',{name:'École'})).toHaveAttribute('aria-checked','true');
+ expect(within(choix).getByRole('radio',{name:'Automatique'})).toHaveAttribute('aria-checked','false');
  expect(within(feuille).getByText(/objectif « École »/)).toBeInTheDocument();
  fireEvent.click(within(feuille).getByRole('button',{name:/^Enregistrer \d+ part/}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_business_allocation_save',expect.objectContaining({p_parts:expect.arrayContaining([{part:'autre',goal_id:t2.goal_id,amount:'100.00'}])})));
@@ -169,6 +171,9 @@ it('un excédent de la part Dettes reste au participant et passe à « Pour vivr
  // Base 500, part dettes 75, dette existante 20, surplus 55.
  expect(surplus.closest('li')!.textContent).toMatch(/55\s?USD/);
  fireEvent.click(within(feuille).getByRole('radio',{name:'Investissement'}));
+ // La coche suit chaque choix, pas seulement « Pour vivre ».
+ expect(within(feuille).getByRole('radio',{name:'Investissement'}).querySelector('[data-choisi="true"] svg')).not.toBeNull();
+ expect(within(feuille).getByRole('radio',{name:'Pour vivre'}).querySelector('[data-choisi="true"]')).toBeNull();
  expect(within(feuille).getByRole('alert').textContent).toMatch(/Crée d’abord un objectif/);
  expect(within(feuille).getByRole('button',{name:/Enregistrer 4 parts · 345 USD/})).toBeDisabled();
  // « Solde à répartir » : l'excédent n'est pas noté, il reste à répartir ; on peut enregistrer le reste.
@@ -201,9 +206,8 @@ it('plusieurs objectifs : « Automatique » remplit d’abord celui à qui il ma
  await waitFor(()=>expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeEnabled());
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
  const feuille=await screen.findByRole('dialog');
- const choix=await within(feuille).findByLabelText('Choisir l’objectif : Pour investir') as HTMLSelectElement;
- expect(choix.value).toBe('');
- expect(within(feuille).getByRole('option',{name:/Automatique/})).toBeInTheDocument();
+ const choix=await within(feuille).findByRole('radiogroup',{name:'Choisir l’objectif : Pour investir'});
+ expect(within(choix).getByRole('radio',{name:'Automatique'})).toHaveAttribute('aria-checked','true');
  // Base 500, part investir 100 : Voiture (30 manquants) d'abord, puis Achat maison.
  expect(within(feuille).getByRole('checkbox',{name:/^Pour investir/})).toBeChecked();
  expect(within(feuille).getByText(/Voiture 30 \(atteint\) · Achat maison 70/)).toBeInTheDocument();
@@ -228,12 +232,11 @@ it('avec Voiture et Achat maison, on peut quand même tout verser sur Maison',as
  await waitFor(()=>expect(screen.getByRole('button',{name:'Enregistrer ma répartition'})).toBeEnabled());
  fireEvent.click(screen.getByRole('button',{name:'Enregistrer ma répartition'}));
  const feuille=await screen.findByRole('dialog');
- const destination=await within(feuille).findByLabelText('Choisir l’objectif : Pour investir') as HTMLSelectElement;
- expect(destination.value).toBe('');
- expect(within(feuille).getByRole('option',{name:'Tout sur « Voiture »'})).toBeInTheDocument();
- expect(within(feuille).getByRole('option',{name:'Tout sur « Achat maison »'})).toBeInTheDocument();
- fireEvent.change(destination,{target:{value:maison}});
- expect(destination.value).toBe(maison);
+ const destination=await within(feuille).findByRole('radiogroup',{name:'Choisir l’objectif : Pour investir'});
+ expect(within(destination).getByRole('radio',{name:'Automatique'})).toHaveAttribute('aria-checked','true');
+ expect(within(destination).getByRole('radio',{name:'Voiture'})).toHaveAttribute('aria-checked','false');
+ fireEvent.click(within(destination).getByRole('radio',{name:'Achat maison'}));
+ expect(within(destination).getByRole('radio',{name:'Achat maison'})).toHaveAttribute('aria-checked','true');
  expect(within(feuille).getByRole('checkbox',{name:/^Pour investir/})).toBeChecked();
  fireEvent.click(within(feuille).getByRole('button',{name:/Enregistrer 5 parts · 500 USD/}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_business_allocation_save',expect.objectContaining({
@@ -261,10 +264,10 @@ it('la version anglaise distingue aussi deux objectifs d’investissement',async
  await waitFor(()=>expect(screen.getByRole('button',{name:'Save my allocation'})).toBeEnabled());
  fireEvent.click(screen.getByRole('button',{name:'Save my allocation'}));
  const feuille=await screen.findByRole('dialog');
- const choix=await within(feuille).findByLabelText('Choose goal: For investing') as HTMLSelectElement;
- expect(choix.value).toBe('');
- fireEvent.change(choix,{target:{value:maison}});
- expect(choix.value).toBe(maison);
+ const choix=await within(feuille).findByRole('radiogroup',{name:'Choose goal: For investing'});
+ expect(within(choix).getByRole('radio',{name:'Automatic'})).toHaveAttribute('aria-checked','true');
+ fireEvent.click(within(choix).getByRole('radio',{name:'House'}));
+ expect(within(choix).getByRole('radio',{name:'House'})).toHaveAttribute('aria-checked','true');
  expect(within(feuille).getByRole('checkbox',{name:/^For investing/})).toBeChecked();
 });
 
