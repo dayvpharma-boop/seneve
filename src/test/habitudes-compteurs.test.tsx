@@ -171,6 +171,11 @@ it('un excédent de la part Dettes reste au participant et passe à « Pour vivr
  fireEvent.click(within(feuille).getByRole('radio',{name:'Investissement'}));
  expect(within(feuille).getByRole('alert').textContent).toMatch(/Crée d’abord un objectif/);
  expect(within(feuille).getByRole('button',{name:/Enregistrer 4 parts · 345 USD/})).toBeDisabled();
+ // « Solde à répartir » : l'excédent n'est pas noté, il reste à répartir ; on peut enregistrer le reste.
+ fireEvent.click(within(feuille).getByRole('radio',{name:'Solde à répartir'}));
+ expect(within(feuille).getByRole('radio',{name:'Solde à répartir'})).toHaveAttribute('aria-checked','true');
+ expect(surplus).not.toBeChecked();
+ expect(within(feuille).getByRole('button',{name:/Enregistrer 4 parts · 345 USD/})).toBeEnabled();
  fireEvent.click(within(feuille).getByRole('radio',{name:'Pour vivre'}));
  expect(surplus).toBeChecked();
  fireEvent.click(within(feuille).getByRole('button',{name:/Enregistrer 5 parts · 400 USD/}));

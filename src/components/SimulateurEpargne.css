@@ -113,3 +113,15 @@
   border:2px solid var(--accent,#49439b)!important;
   box-shadow:0 0 0 1px var(--accent,#49439b),0 2px 8px rgba(0,0,0,.18)!important;
 }
+/* Liste de choix façon Réglages iOS (excédent de la part Dettes) : pastille de couleur, titre + aide, coche à droite. */
+:root .sim-ios-choix{width:100%;min-height:60px;margin:0;padding:8px 16px;border:0;border-radius:0;background:transparent;font:inherit;text-align:left;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease}
+:root .sim-ios-choix:active{background:rgb(118 118 128 / .12)}
+:root .sim-ios-choix:focus-visible{outline:2px solid var(--ios-accent,#5b4ee8);outline-offset:-2px}
+:root .sim-ios-groupe .sim-ios-choix+.sim-ios-choix::before{left:60px}
+:root .sim-ios-pastille{display:inline-flex;flex:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;color:#fff}
+:root .sim-ios-pastille svg{fill:currentColor}
+:root .sim-ios-choix-texte{display:flex;flex:1;min-width:0;flex-direction:column;gap:2px;font-size:16px;line-height:1.3}
+:root .sim-ios-choix-texte small{font-size:13px;line-height:1.35;color:var(--ios-doux,#6e6e73)}
+:root .sim-ios-coche{display:inline-flex;flex:none;width:22px;justify-content:center;color:var(--ios-accent,#007aff)}
+:root .sim-ios-coche svg{fill:currentColor}
+:root .sim-ios-choix[aria-checked="true"] .sim-ios-choix-texte>span{font-weight:600}
