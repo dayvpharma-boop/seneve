@@ -17,7 +17,7 @@ const auj=new Intl.DateTimeFormat('en-CA').format(new Date());
 const debutMois=auj.slice(0,8)+'01';
 const t=new Date().toISOString();
 // Comme le serveur (hd_finance_coherence.sql) : un effacement partiel MASQUE les lignes (les soldes ne bougent pas) ;
-// seul « Tout effacer » sur la période « Tout » supprime vraiment.
+// « Tout remettre à zéro » supprime vraiment, toujours depuis le début (10/11/2026).
 let remiseAZero:boolean,masques:Set<string>;
 const suivi=()=>({enrollment_id:E,archived_goals:[],archived_debts:[],
  savings_goals:[{goal_id:GI,goal_type:'epargne_investir',label:'Moto-taxi',target_amount:'1000.00',currency:'USD',entries:remiseAZero?[]:[{entry_id:id(1),amount:'200.00',date_locale:auj,created_at:t}]}],
@@ -43,6 +43,7 @@ async function ouvrir(){
  fireEvent.click(within(bilan).getByRole('button',{name:'Modifier'}));
  return bilan;
 }
+const feuilleFermee=()=>document.body;
 const ligne=(bilan:HTMLElement,txt:string)=>within(bilan).getByText(txt).closest('div')!.textContent;
 
 it('Effacer une ligne : confirmation avec le nombre et le montant, la ligne revient à 0 mais la caisse NE remonte PAS',async()=>{
@@ -72,14 +73,14 @@ it('Annuler ne touche à rien',async()=>{
  expect(rpc).not.toHaveBeenCalledWith('hd_finance_bilan_effacer',expect.anything());
 });
 
-it('Tout effacer : exige l’e-mail du compte et le bon mot de passe, puis tout revient à zéro',async()=>{
+it('Tout remettre à zéro : exige l’e-mail du compte et le bon mot de passe, puis tout revient vraiment à zéro, même avec la période « Ce mois »',async()=>{
  getUser.mockResolvedValue({data:{user:{id:'u',email:'papa@exemple.org',identities:[{provider:'email'}]}}});
  signInWithPassword.mockResolvedValueOnce({data:{user:null},error:{message:'Invalid login credentials'}}).mockResolvedValueOnce({data:{user:{id:'u'}},error:null});
  const bilan=await ouvrir();
- fireEvent.click(within(bilan).getByRole('button',{name:'Tout effacer…'}));
- const feuille=await screen.findByRole('dialog',{name:'Tout effacer'});
+ fireEvent.click(within(bilan).getByRole('button',{name:'Tout remettre à zéro…'}));
+ const feuille=await screen.findByRole('dialog',{name:'Tout remettre à zéro'});
  const email=await within(feuille).findByLabelText('E-mail');
- const envoyer=within(feuille).getByRole('button',{name:'Tout effacer'});
+ const envoyer=within(feuille).getByRole('button',{name:'Tout remettre à zéro'});
  fireEvent.change(email,{target:{value:'autre@exemple.org'}});
  fireEvent.change(within(feuille).getByLabelText('Mot de passe'),{target:{value:'x'}});
  fireEvent.click(envoyer);
@@ -90,28 +91,29 @@ it('Tout effacer : exige l’e-mail du compte et le bon mot de passe, puis tout 
  expect(await within(feuille).findByRole('alert')).toHaveTextContent(/incorrect/);
  expect(rpc).not.toHaveBeenCalledWith('hd_finance_bilan_effacer',expect.anything());
  fireEvent.click(envoyer);
- await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_bilan_effacer',{p_enrollment_id:E,p_currency:'USD',p_depuis:debutMois,p_quoi:'tout',p_confirmation:'EFFACER'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_bilan_effacer',{p_enrollment_id:E,p_currency:'USD',p_depuis:null,p_quoi:'tout',p_confirmation:'EFFACER'}));
  expect(signInWithPassword).toHaveBeenLastCalledWith({email:'papa@exemple.org',password:'x'});
- expect(await screen.findByText(/Tout est effacé pour ce mois, en USD/)).toBeInTheDocument();
+ expect(await screen.findByText(/Tout est remis à zéro, en USD/)).toBeInTheDocument();
  for(const n of ['Entré dans les caisses','Investi','Remboursé sur les dettes'])expect(ligne(bilan,n)).toMatch(/[^0-9.,]0 USD$/);
- // Effacement d'une période : les caisses gardent leur montant.
- expect(screen.getByRole('article',{name:'Dîme'}).textContent).toMatch(/20USD disponibles/);
- expect(screen.getByRole('article',{name:'Pour investir'}).textContent).toMatch(/50USD disponibles/);
+ // Remise à zéro complète : les caisses et les objectifs repartent de 0.
+ expect(screen.getByRole('article',{name:'Dîme'}).textContent).toMatch(/0USD disponibles/);
+ expect(screen.getByRole('article',{name:'Dîme'}).textContent).not.toMatch(/20USD disponibles/);
+ expect(within(feuilleFermee()).queryByRole('dialog')).toBeNull();
 });
 
-it('Tout effacer, compte Google sans mot de passe : il faut écrire EFFACER ; la période « Tout » efface tout l’historique',async()=>{
+it('Tout remettre à zéro, compte Google sans mot de passe : il faut écrire EFFACER ; la période « Tout » efface tout l’historique',async()=>{
  getUser.mockResolvedValue({data:{user:{id:'u',email:'papa@gmail.com',identities:[{provider:'google'}]}}});
  const bilan=await ouvrir();
  fireEvent.click(within(bilan).getByRole('radio',{name:'Tout'}));
- fireEvent.click(within(bilan).getByRole('button',{name:'Tout effacer…'}));
- const feuille=await screen.findByRole('dialog',{name:'Tout effacer'});
+ fireEvent.click(within(bilan).getByRole('button',{name:'Tout remettre à zéro…'}));
+ const feuille=await screen.findByRole('dialog',{name:'Tout remettre à zéro'});
  const champ=await within(feuille).findByLabelText('Confirmation');
  expect(within(feuille).queryByLabelText('Mot de passe')).toBeNull();
  fireEvent.change(champ,{target:{value:'oui'}});
- fireEvent.click(within(feuille).getByRole('button',{name:'Tout effacer'}));
+ fireEvent.click(within(feuille).getByRole('button',{name:'Tout remettre à zéro'}));
  expect(await within(feuille).findByRole('alert')).toHaveTextContent(/EFFACER/);
  fireEvent.change(champ,{target:{value:'effacer'}});
- fireEvent.click(within(feuille).getByRole('button',{name:'Tout effacer'}));
+ fireEvent.click(within(feuille).getByRole('button',{name:'Tout remettre à zéro'}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_bilan_effacer',expect.objectContaining({p_depuis:null,p_quoi:'tout',p_confirmation:'EFFACER'})));
  expect(signInWithPassword).not.toHaveBeenCalled();
 });
