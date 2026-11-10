@@ -160,7 +160,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
      if(iSurplus<0)return liste(lignes);
      return <>
       {liste(lignes.slice(0,iSurplus+1))}
-      <ChoixIOS id="hd-surplus" titre={l(`Où va l’excédent de ${nombre(montantSurplus)} ${devise} ?`,`Where does the ${nombre(montantSurplus)} ${devise} surplus go?`)}
+      <ChoixIOS id="hd-surplus" aChoisir={l('Choisir','Choose')} libelle={l(`Excédent · ${nombre(montantSurplus)} ${devise}`,`Surplus · ${nombre(montantSurplus)} ${devise}`)} titre={l(`Où va l’excédent de ${nombre(montantSurplus)} ${devise} ?`,`Where does the ${nombre(montantSurplus)} ${devise} surplus go?`)}
        valeur={destinationSurplus} onChoisir={v=>{demande.current=crypto.randomUUID();setDestinationSurplus(v as 'vivre'|'investissement'|'solde');}}
        options={[
         {cle:'vivre',titre:l('Pour vivre','For living'),aide:l('Ajouté à ta part pour vivre.','Added to your living share.'),icone:'payments',couleur:'#34c759'},
@@ -178,7 +178,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
      if(montantsType[type]<=0||objectifs.length<2)return null;
      const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
      const couleur=type==='reserve_joie'?'#2f9e62':type==='epargne_investir'?'#2f6fe0':'#c2410c';
-     return <ChoixIOS key={type} id={`hd-choix-${type}`} titre={l(`Choisir l’objectif : ${nom}`,`Choose goal: ${nom}`)}
+     return <ChoixIOS key={type} id={`hd-choix-${type}`} aChoisir={l('Choisir','Choose')} libelle={l(`Objectif · ${nom}`,`Goal · ${nom}`)} titre={l(`Choisir l’objectif : ${nom}`,`Choose goal: ${nom}`)}
       valeur={objectifsChoisis[type]??''} onChoisir={v=>{demande.current=crypto.randomUUID();setObjectifsChoisis(prev=>({...prev,[type]:v}));}}
       options={[{cle:'',titre:l('Automatique','Automatic'),aide:l('D’abord l’objectif à qui il manque le moins, puis le suivant.','First the goal closest to completion, then the next.'),icone:'tune',couleur},
        ...objectifs.map(g=>({cle:g.goal_id,titre:g.label,aide:l(`Toute la part sur « ${g.label} » · il manque ${nombre(Math.max(0,Math.round(Number(g.target_amount)*100)-disponibleObjectif(compteurs,g.goal_id,g.entries))/100)} ${devise}`,`The whole share to “${g.label}” · ${nombre(Math.max(0,Math.round(Number(g.target_amount)*100)-disponibleObjectif(compteurs,g.goal_id,g.entries))/100)} ${devise} still needed`),icone:'bookmark',couleur}))]}/>;
@@ -192,21 +192,41 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
 }
 
 type OptionIOS={cle:string;titre:string;aide:string;icone:string;couleur:string};
-/** Liste de choix façon Réglages iOS : pastille, titre + aide, et à droite un rond coché bien visible
- * (rond bleu plein avec ✓ quand c'est choisi, rond gris vide sinon). Styles en ligne pour ne pas être écrasés. */
-function ChoixIOS({id,titre,options,valeur,onChoisir}:{id:string;titre:string;options:OptionIOS[];valeur:string|null;onChoisir:(cle:string)=>void}){
- return <section aria-labelledby={`${id}-titre`} style={{marginTop:6}}>
-  <h3 id={`${id}-titre`} className="sim-ios-titre">{titre}</h3>
-  <div role="radiogroup" aria-labelledby={`${id}-titre`} className="sim-ios-groupe">
-   {options.map(o=>{const choisi=valeur===o.cle;return <button key={o.cle||'auto'} type="button" role="radio" aria-checked={choisi} aria-label={o.titre} aria-describedby={`${id}-aide-${o.cle||'auto'}`}
-     onClick={()=>onChoisir(o.cle)} className="sim-ios-ligne sim-ios-choix" style={{background:choisi?'rgb(0 122 255 / .08)':undefined}}>
-    <span aria-hidden="true" className="sim-ios-pastille" style={{background:o.couleur,color:'#fff'}}><IconeHD nom={o.icone} taille={18}/></span>
-    <span className="sim-ios-choix-texte"><span style={{fontWeight:choisi?600:400}}>{o.titre}</span><small id={`${id}-aide-${o.cle||'auto'}`}>{o.aide}</small></span>
-    <span aria-hidden="true" data-choisi={choisi} style={{display:'inline-flex',flex:'none',alignItems:'center',justifyContent:'center',width:26,height:26,borderRadius:'50%',
-     background:choisi?'#007aff':'transparent',border:choisi?'0':'2px solid #c7c7cc',color:'#fff',boxSizing:'border-box',transition:'background-color .15s ease'}}>
-     {choisi&&<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+/** Menu compact façon iOS (demande du 10/11/2026 : la liste était trop longue) : une seule ligne montre le choix
+ * actuel ; un appui ouvre un petit menu avec une coche bleue sur l'option choisie ; choisir referme le menu.
+ * Styles en ligne pour ne pas être écrasés par les feuilles de style anciennes. */
+function ChoixIOS({id,titre,libelle,aChoisir,options,valeur,onChoisir}:{id:string;titre:string;libelle:string;aChoisir:string;options:OptionIOS[];valeur:string|null;onChoisir:(cle:string)=>void}){
+ const [ouvert,setOuvert]=useState(false);
+ const racine=useRef<HTMLDivElement>(null),bouton=useRef<HTMLButtonElement>(null);
+ const actuelle=options.find(o=>o.cle===valeur);
+ useEffect(()=>{
+  if(!ouvert)return;
+  const dehors=(e:PointerEvent)=>{if(racine.current&&!racine.current.contains(e.target as Node))setOuvert(false);};
+  const echap=(e:KeyboardEvent)=>{if(e.key==='Escape'){setOuvert(false);bouton.current?.focus();}};
+  document.addEventListener('pointerdown',dehors);document.addEventListener('keydown',echap);
+  return()=>{document.removeEventListener('pointerdown',dehors);document.removeEventListener('keydown',echap);};
+ },[ouvert]);
+ return <div ref={racine} style={{marginTop:12}}>
+  <div className="sim-ios-groupe">
+   <button ref={bouton} type="button" aria-haspopup="true" aria-expanded={ouvert} aria-controls={`${id}-menu`} aria-label={`${titre} : ${actuelle?.titre??aChoisir}`}
+    onClick={()=>setOuvert(o=>!o)} className="sim-ios-ligne sim-ios-choix" style={{minHeight:52}}>
+    <span aria-hidden="true" className="sim-ios-pastille" style={{background:actuelle?.couleur??'#c7c7cc',color:'#fff'}}><IconeHD nom={actuelle?.icone??'help_outline'} taille={18}/></span>
+    <span className="sim-ios-choix-texte"><span>{libelle}</span></span>
+    <span style={{display:'inline-flex',alignItems:'center',gap:4,maxWidth:'50%',fontSize:16,color:actuelle?'var(--ios-accent,#007aff)':'#ff9500',fontWeight:actuelle?400:600}}>
+     <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{actuelle?.titre??aChoisir}</span>
+     <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" style={{flex:'none',transform:ouvert?'rotate(180deg)':undefined,transition:'transform .2s ease'}}><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
     </span>
-   </button>;})}
+   </button>
   </div>
- </section>;
+  {ouvert&&<div id={`${id}-menu`} role="radiogroup" aria-label={titre} style={{marginTop:6,overflow:'hidden',borderRadius:14,background:'var(--ios-carte,#fff)',boxShadow:'0 10px 30px rgb(0 0 0 / .16),0 0 0 .5px rgb(0 0 0 / .06)'}}>
+   {options.map(o=>{const choisi=valeur===o.cle;return <button key={o.cle||'auto'} type="button" role="radio" aria-checked={choisi} aria-label={o.titre} aria-describedby={`${id}-aide-${o.cle||'auto'}`}
+     onClick={()=>{onChoisir(o.cle);setOuvert(false);bouton.current?.focus();}} className="sim-ios-ligne sim-ios-choix" style={{minHeight:48,paddingTop:6,paddingBottom:6}}>
+    <span aria-hidden="true" data-choisi={choisi} style={{display:'inline-flex',flex:'none',width:20,justifyContent:'center',color:'#007aff'}}>
+     {choisi&&<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+    </span>
+    <span className="sim-ios-choix-texte"><span style={{fontWeight:choisi?600:400}}>{o.titre}</span><small id={`${id}-aide-${o.cle||'auto'}`}>{o.aide}</small></span>
+    <span aria-hidden="true" className="sim-ios-pastille" style={{width:26,height:26,background:o.couleur,color:'#fff'}}><IconeHD nom={o.icone} taille={16}/></span>
+   </button>;})}
+  </div>}
+ </div>;
 }
