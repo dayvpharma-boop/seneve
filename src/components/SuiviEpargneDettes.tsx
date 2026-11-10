@@ -269,9 +269,24 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
     {message('objectif')}
    </form>
   </section>;
+  // Montant global de l'épargne, par monnaie, comme le total des dettes (demande du 10/11/2026).
+  const objectifsTous=suivi?.savings_goals??[];
+  const dispoObjectif=(g:typeof objectifsTous[number])=>totalCents(g.entries)-totalCents(retraitsDe(g.goal_id));
+  const TYPES:[string,string,string][]=[['reserve_joie',l('Réserve de joie','Joy reserve'),'#ffb340'],['epargne_investir',l('Pour investir','Investing'),'#4cd964'],['autre',l('Autre','Other'),'#a5a3ff']];
   return <>
+   {Array.from(new Set(objectifsTous.map(g=>g.currency))).map(devise=>{
+    const groupe=objectifsTous.filter(g=>g.currency===devise);
+    const dispo=groupe.reduce((n,g)=>n+Math.max(0,dispoObjectif(g)),0),visee=groupe.reduce((n,g)=>n+montantCents(g.target_amount),0);
+    const p=visee?Math.min(100,Math.round(dispo/visee*100)):0;
+    return <section key={devise} aria-label={l(`Épargne totale en ${devise}`,`Total savings in ${devise}`)} className="hd-classique mb-3 rounded-[20px] p-[18px] text-white shadow-[0_12px_30px_rgba(31,138,62,.22)]" style={{background:'linear-gradient(160deg,#2fb24c,#1d7a36)'}}>
+     <p className="text-[13px] uppercase tracking-wider opacity-85">{l('Mon épargne totale','My total savings')}</p>
+     <p className="mt-0.5 mb-2.5 text-[32px] font-bold leading-tight tracking-tight tabular-nums [overflow-wrap:anywhere]">{formatter(dispo,devise,en)}</p>
+     <div className="h-1.5 overflow-hidden rounded-full bg-white/25"><div className="h-full rounded-full bg-white" style={{width:`${p}%`,transition:'width .6s cubic-bezier(.32,.72,0,1)'}}/></div>
+     <div className="mt-1.5 flex justify-between gap-2 text-[13px] opacity-90"><span>{l(`Sur ${nombre(visee,devise,false)} visés · ${groupe.length} objectif${groupe.length>1?'s':''}`,`Of ${nombre(visee,devise,true)} targeted · ${groupe.length} goal${groupe.length>1?'s':''}`)}</span><span>{p} %</span></div>
+     <div className="mt-3 flex flex-wrap gap-1.5">{TYPES.filter(([t])=>groupe.some(g=>g.goal_type===t)).map(([t,nom,coul])=><span key={t} className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[12.5px] font-medium"><span aria-hidden="true" className="size-2 rounded-full" style={{background:coul}}/>{nom} · {nombre(groupe.filter(g=>g.goal_type===t).reduce((n,g)=>n+Math.max(0,dispoObjectif(g)),0),devise,en)}</span>)}</div>
+    </section>;})}
    {!!suivi?.savings_goals.length&&<div role="group" aria-label={l('Mes objectifs','My goals')} className="finance-choix-objectifs flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-    {suivi.savings_goals.map(g=><button key={g.goal_id} type="button" aria-pressed={!nouvelObjectif&&!choixVersementRequis&&g.goal_id===objectif?.goal_id} onClick={()=>{setGoal(g.goal_id);setChoixVersementRequis(false);setNouvelObjectif(false);setAnnonce(null);}} className={`shrink-0 whitespace-nowrap rounded-full px-3.5 min-h-[36px] text-sm font-medium ${!nouvelObjectif&&g.goal_id===objectif?.goal_id?'bg-hd-on-surface text-white':'bg-white text-hd-on-surface'}`}>{g.label}</button>)}
+    {suivi.savings_goals.map(g=><button key={g.goal_id} type="button" aria-pressed={!nouvelObjectif&&!choixVersementRequis&&g.goal_id===objectif?.goal_id} onClick={()=>{setGoal(g.goal_id);setChoixVersementRequis(false);setNouvelObjectif(false);setAnnonce(null);}} className={`shrink-0 whitespace-nowrap rounded-full px-3.5 min-h-[36px] text-sm font-medium inline-flex items-center gap-2 teinte-${g.goal_type} ${!nouvelObjectif&&g.goal_id===objectif?.goal_id?'bg-hd-on-surface text-white':'bg-white text-hd-on-surface'}`}><span aria-hidden="true" className="teinte-point"/>{g.label}</button>)}
     <button type="button" aria-pressed={nouvelObjectif} onClick={()=>{setNouvelObjectif(v=>!v);setAnnonce(null);}} className={`shrink-0 whitespace-nowrap rounded-full px-3.5 min-h-[36px] text-sm font-medium ${nouvelObjectif?'bg-hd-on-surface text-white':'bg-white text-hd-secondary'}`}>+ {l('Nouvel objectif','New goal')}</button>
    </div>}
    {choixVersementRequis&&!objectif
@@ -279,14 +294,14 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
       {l('Sélectionne Voiture, Maison ou l’objectif approprié dans les choix ci-dessus avant de noter ce versement. Le montant saisi restera disponible après ton choix.','Select Car, House, or the appropriate goal above before recording this contribution. The entered amount will remain available after you choose.')}
      </section>
     :(nouvelObjectif||!objectif)?<>{!objectif&&<p className="rounded-2xl bg-white p-4 text-[15px]">{l('Crée ton premier objectif pour commencer ton suivi.','Create your first goal to start tracking.')}</p>}{formObjectif}</>:<>
-    <section aria-labelledby="hd-epargne-resume" className="hd-classique mt-3 rounded-[20px] bg-white p-[18px] shadow-[0_1px_3px_rgba(0,0,0,.04)]">
+    <section aria-labelledby="hd-epargne-resume" className={`hd-classique mt-3 rounded-[20px] bg-white p-[18px] shadow-[0_1px_3px_rgba(0,0,0,.04)] teinte-objectif teinte-${objectif.goal_type}`}>
      <div className="flex items-center gap-4">
       <div className="relative size-[92px] shrink-0" role="progressbar" aria-label={l('Progression vers l’objectif','Progress to goal')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
-       <svg viewBox="0 0 36 36" className="size-[92px] -rotate-90" aria-hidden="true"><circle cx="18" cy="18" r="15.5" fill="none" stroke="#e5f5ec" strokeWidth="4"/><circle cx="18" cy="18" r="15.5" fill="none" stroke="#2f9e62" strokeWidth="4" strokeLinecap="round" strokeDasharray={`${(pct/100*97.4).toFixed(1)} 97.4`} style={{transition:'stroke-dasharray .6s cubic-bezier(.32,.72,0,1)'}}/></svg>
+       <svg viewBox="0 0 36 36" className="size-[92px] -rotate-90" aria-hidden="true"><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--teinte-fond)" strokeWidth="4"/><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--teinte)" strokeWidth="4" strokeLinecap="round" strokeDasharray={`${(pct/100*97.4).toFixed(1)} 97.4`} style={{transition:'stroke-dasharray .6s cubic-bezier(.32,.72,0,1)'}}/></svg>
        <b className="absolute inset-0 grid place-items-center text-xl font-bold">{pct} %</b>
       </div>
       <div className="min-w-0">
-       <span className="inline-block rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">{objectif.goal_type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):objectif.goal_type==='epargne_investir'?l('Épargne pour investir','Savings for investing'):l('Autre objectif','Other goal')}</span>
+       <span className="teinte-etiquette inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold"><span aria-hidden="true" className="teinte-point"/>{objectif.goal_type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):objectif.goal_type==='epargne_investir'?l('Épargne pour investir','Savings for investing'):l('Autre objectif','Other goal')}</span>
        <h2 id="hd-epargne-resume" className="sr-only">{objectif.label}</h2>
        <div className="mt-1 text-[28px] font-bold leading-tight tracking-tight [overflow-wrap:anywhere]">{formatter(total,objectif.currency,en)}</div>
        <div className="text-sm text-hd-on-surface-variant">{l('disponible','available')} · {l('sur','of')} {formatter(cible,objectif.currency,en)} · {l('reste','left')} {nombre(reste,objectif.currency,en)}</div>
@@ -294,7 +309,7 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
        {excedent>0&&<p role="status" className="mt-1 text-[13px] text-hd-on-surface-variant">{l(`Excédent de ${nombre(excedent,objectif.currency,false)} ${objectif.currency} sur ta cible. Cet excédent provient de versements déjà enregistrés dans cet objectif.`,`Surplus of ${nombre(excedent,objectif.currency,true)} ${objectif.currency} above your target. This surplus comes from contributions already recorded in this goal.`)}</p>}
       </div>
      </div>
-     <p className="mt-3.5 flex items-center gap-2.5 rounded-xl bg-emerald-50 px-3 py-2.5 text-sm text-emerald-900"><IconeHD nom={total>=cible?'nature_people':'potted_plant'} className="shrink-0 text-[24px] text-emerald-700"/>{encouragement}</p>
+     <p className="teinte-encouragement mt-3.5 flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm"><IconeHD nom={total>=cible?'nature_people':'potted_plant'} className="teinte-icone shrink-0 text-[24px]"/>{encouragement}</p>
     </section>
     <section aria-labelledby="hd-titre-versement">
      <h2 id="hd-titre-versement" className="hd-classique sim-ios-titre">{l('Ajouter un versement','Add a contribution')}</h2>
@@ -303,7 +318,7 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
        <Ligne id="hd-versement-montant" libelle={l('Montant mis de côté','Amount set aside')}>{champMontant('hd-versement-montant',contribution,setContribution,objectif.currency,'25000',String(reste/100))}</Ligne>
        <Ligne id="hd-versement-date" libelle={l('Date','Date')}>{champDate('hd-versement-date',contributionDate,setContributionDate)}</Ligne>
       </div>
-      {bouton(l('Ajouter à mon épargne','Add to savings'),'#2f9e62')}
+      {bouton(l('Ajouter à mon épargne','Add to savings'),({reserve_joie:'#c96f00',epargne_investir:'#2f9e62',autre:'#5856d6'} as Record<string,string>)[objectif.goal_type]??'#2f9e62')}
       {message('versement')}
      </form>}
     </section>

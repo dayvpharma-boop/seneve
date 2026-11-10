@@ -296,3 +296,8 @@
 :root:root:root .rep-page .rep-charges .chg-formulaire .rep-charges-action:disabled{background:var(--ios-ligne,#e5e5ea);color:var(--ios-doux,#63636b)}
 :root:root:root .rep-charges .chg-devise{flex:none;font-style:normal;font-size:16px;color:var(--ios-doux,#6e6e73)}
 :root:root:root .rep-charges .rep-charge-options-bouton span{font-size:13px;letter-spacing:1px}
+/* Lignes de saisie (marchandises, frais) : libellé sur une ou deux lignes, montant compact à droite (10/11/2026). */
+:root:root:root .rep-page .sim-ios-groupe .sim-ios-ligne{min-height:52px;padding-top:4px;padding-bottom:4px}
+:root:root:root .rep-page .sim-ios-groupe .sim-ios-ligne label{font-size:15px;line-height:1.25}
+:root:root:root .rep-page .sim-ios-groupe .sim-ios-ligne input:not([type="checkbox"]):not([type="radio"]){width:72px}
+:root:root:root .rep-page .rep-moins{padding-right:0}

@@ -77,9 +77,9 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
    };
   };
   for(const [cle,type,nom,couleur,m] of [
-   ['reserve','reserve_joie',l('Réserve de joie','Family joy reserve'),'#2f9e62',montants.reserve],
-   ['investir','epargne_investir',l('Pour investir','For investing'),'#2f6fe0',montants.investir],
-   ['autre','autre',l('Autre objectif','Other goal'),'#c2410c',montants.autre]
+   ['reserve','reserve_joie',l('Réserve de joie','Family joy reserve'),'#ff9500',montants.reserve],
+   ['investir','epargne_investir',l('Pour investir','For investing'),'#34c759',montants.investir],
+   ['autre','autre',l('Autre objectif','Other goal'),'#5856d6',montants.autre]
   ] as const){
    if(m<=0)continue;
    const liste=objectifs(type);
@@ -204,7 +204,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
      const objectifs=suivi.savings_goals.filter(g=>g.goal_type===type&&g.currency===devise);
      if(montantsType[type]<=0||objectifs.length<2)return null;
      const nom=type==='reserve_joie'?l('Réserve de joie','Family joy reserve'):type==='epargne_investir'?l('Pour investir','For investing'):l('Autre objectif','Other goal');
-     const couleur=type==='reserve_joie'?'#2f9e62':type==='epargne_investir'?'#2f6fe0':'#c2410c';
+     const couleur=type==='reserve_joie'?'#ff9500':type==='epargne_investir'?'#34c759':'#5856d6';
      return <ChoixIOS key={type} id={`hd-choix-${type}`} aChoisir={l('Choisir','Choose')} libelle={l(`Objectif · ${nom}`,`Goal · ${nom}`)} titre={l(`Choisir l’objectif : ${nom}`,`Choose goal: ${nom}`)}
       valeur={objectifsChoisis[type]??''} onChoisir={v=>{demande.current=crypto.randomUUID();setObjectifsChoisis(prev=>({...prev,[type]:v}));}}
       options={[{cle:'',titre:l('Automatique','Automatic'),aide:l('D’abord l’objectif à qui il manque le moins, puis le suivant.','First the goal closest to completion, then the next.'),icone:'tune',couleur},

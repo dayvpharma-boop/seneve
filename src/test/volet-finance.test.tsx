@@ -30,6 +30,8 @@ it('« SÉNEVÉ Finance » remplace « Épargne » et montre épargne, dettes et
  // Épargne : 200 versés − 50 retirés = 150 sur 1 000 (comme dans SÉNEVÉ Finance).
  const epargne=await screen.findByRole('tabpanel',{name:'Épargne'});
  await waitFor(()=>expect(epargne.textContent).toMatch(/Moto-taxi.*150 USD sur 1\s?000 USD.*15 %/));
+ // Montant global de l'épargne, comme « Il reste à rembourser » côté dettes (10/11/2026).
+ expect(epargne.textContent).toMatch(/Mon épargne totale150 USDsur 1\s?000 USD · 15 %/);
  expect(within(epargne).getByRole('link',{name:'Ouvrir SÉNEVÉ Finance'})).toHaveAttribute('href','/habitudes/epargne');
  // Dettes : seulement celles qui restent à rembourser.
  fireEvent.click(within(onglets).getByRole('tab',{name:'Dettes'}));
