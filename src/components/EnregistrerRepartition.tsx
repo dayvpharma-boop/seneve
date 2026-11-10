@@ -18,10 +18,11 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
  const navigate=useNavigate();
  const [compteurs,setCompteurs]=useState<Compteurs|null>(null);
  const [suivi,setSuivi]=useState<SuiviFinancier|null|'aucun'|'erreur'>(null);
- // Les enveloppes sont cochées au départ ; rembourser une dette et affecter son excédent exigent un choix volontaire.
+ // Toutes les parts sont cochées au départ, Dettes compris (demande de Dr Justin du 10/11/2026 : le pourcentage
+ // choisi vaut décision de rembourser) ; décocher Dettes si l'argent n'est pas encore donné. L'excédent exige un choix.
  const [decoches,setDecoches]=useState<Record<string,boolean>>({});
  const [destinationSurplus,setDestinationSurplus]=useState<'vivre'|'investissement'|null>(null);
- const coche=(cle:string)=>cle==='surplus_dettes'?destinationSurplus!==null:cle==='dettes'?decoches[cle]===false:!decoches[cle];
+ const coche=(cle:string)=>cle==='surplus_dettes'?destinationSurplus!==null:!decoches[cle];
  const [enCours,setEnCours]=useState(false),[erreur,setErreur]=useState('');
  // Date choisie par la personne (demande du 07/11/2026) : aujourd’hui au départ, jamais dans le futur.
  const [date,setDate]=useState(aujourdhui);
@@ -140,7 +141,7 @@ export function EnregistrerRepartition({montants,devise,langue,onFermer,depuisEn
   <div className="sim-ios hd-classique relative max-h-[88vh] overflow-y-auto rounded-t-[14px] px-4 pb-8 pt-2 shadow-[0_-8px_30px_rgba(0,0,0,.18)]" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <div aria-hidden="true" className="mx-auto mb-2.5 h-[5px] w-9 rounded-full bg-[#c7c7cc]"/>
    <div className="mb-1.5 grid grid-cols-[1fr_auto_1fr] items-center"><button type="button" onClick={onFermer} className="justify-self-start text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)',minHeight:44}}>{l('Annuler','Cancel')}</button><h2 id="hd-feuille-titre" className="text-[17px] font-semibold" style={{margin:0}}>{l('Enregistrer','Save')}</h2><span/></div>
-   <p className="sim-ios-sous">{l('Vérifie chaque part. Coche « Dettes » seulement après un remboursement réel. Si la part Dettes dépasse les dettes restantes, choisis obligatoirement où affecter l’excédent : vivre ou investir. Aucun argent n’est transféré automatiquement.','Review each share. Tick “Debts” only after an actual repayment. If the Debts share exceeds what is still owed, choose where to allocate the surplus: living or investing. No money is transferred automatically.')}</p>
+   <p className="sim-ios-sous">{l('Vérifie chaque part. « Dettes » est cochée : cela note le remboursement. Décoche-la si tu n’as pas encore donné l’argent. Si la part Dettes dépasse les dettes restantes, choisis obligatoirement où affecter l’excédent : vivre ou investir. Aucun argent n’est transféré automatiquement.','Review each share. “Debts” is ticked: this records the repayment. Untick it if you have not paid the money yet. If the Debts share exceeds what is still owed, choose where to allocate the surplus: living or investing. No money is transferred automatically.')}</p>
    <div className="sim-ios-groupe mb-3"><div className="sim-ios-ligne"><label htmlFor="hd-repartition-date">{l('Date de la répartition','Allocation date')}</label><input id="hd-repartition-date" type="date" max={aujourdhui()} value={date} onChange={e=>{demande.current=crypto.randomUUID();setDate(e.target.value);}} style={{width:150,color:'var(--ios-accent,#5b4ee8)'}}/></div></div>
    {suivi===null&&<p role="status" className="rounded-xl bg-white p-4">{l('Chargement de ton suivi…','Loading your tracker…')}</p>}
    {(suivi==='aucun'||suivi==='erreur')&&<p role="alert" className="rounded-xl bg-white p-4">{suivi==='aucun'?l('Connecte-toi avec un accès actif à Habitudes & Défis pour enregistrer ta répartition.','Sign in with active Habits & Challenges access to save your allocation.'):l('Ton suivi n’est pas disponible pour le moment.','Your tracker is not available right now.')}</p>}
