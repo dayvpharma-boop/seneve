@@ -26,6 +26,34 @@ function Chevron() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>;
 }
 
+/** Pastille de couleur selon le nom de la rubrique (loyer, électricité, eau…), comme les Réglages iOS. */
+const PASTILLES:[RegExp,string,string][]=[
+  [/loyer|rent|maison|bureau|boutique|local/i,'#ff9500','M4 11.5 12 5l8 6.5M6.5 10v9h11v-9M10 19v-5h4v5'],
+  [/[ée]lectri|courant|snel|power|light|lumi[èe]re/i,'#ffcc00','M13 3 6 13h5l-1 8 7-10h-5l1-8Z'],
+  [/eau|water|regideso/i,'#32ade6','M12 4c3 4 5.5 7 5.5 10a5.5 5.5 0 0 1-11 0C6.5 11 9 8 12 4Z'],
+  [/transport|carburant|essence|fuel|taxi|moto|voiture|car/i,'#34c759','M5 16V11l2-5h10l2 5v5M5 16h14M5 16v2m14-2v2M8 13h.01M16 13h.01'],
+  [/internet|wifi|t[ée]l[ée]phone|phone|cr[ée]dit|forfait/i,'#5856d6','M5 10a10 10 0 0 1 14 0M8 13.5a5.5 5.5 0 0 1 8 0M12 17h.01'],
+  [/salaire|employ|personnel|staff|aide/i,'#af52de','M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM5 20a7 7 0 0 1 14 0'],
+  [/imp[ôo]t|taxe|tax|patente/i,'#ff3b30','M7 4h10v16l-2-1.5L13 20l-1-1.5L11 20l-2-1.5L7 20V4Zm3 5h4m-4 4h4'],
+];
+function Pastille({nom}:{nom:string}) {
+  const [, couleur, trace]=PASTILLES.find(([motif]) => motif.test(nom)) ?? [null,'#8e8e93','M4 12V5h7l9 9-7 7-9-9Zm4-3h.01'];
+  return <span aria-hidden="true" className="chg-pastille" style={{background:couleur}}><svg viewBox="0 0 24 24"><path d={trace}/></svg></span>;
+}
+const SUGGESTIONS:[string,string][]=[['Loyer','Rent'],['Électricité','Electricity'],['Eau','Water'],['Transport','Transport'],['Internet','Internet'],['Salaire','Salary']];
+
+/** Anneau de couverture façon Apple (Activité) : vert quand tout est couvert. */
+function Anneau({valeur,max,libelle}:{valeur:number;max:number;libelle:string}) {
+  const pct=max>0?Math.min(1,valeur/max):0, r=26, c=2*Math.PI*r;
+  return <span className="chg-anneau" role="progressbar" aria-label={libelle} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct*100)}>
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="32" r={r} className="chg-anneau-fond"/>
+      <circle cx="32" cy="32" r={r} className="chg-anneau-valeur" style={{stroke:pct>=1?'#34c759':'#007aff',strokeDasharray:`${c*pct} ${c}`}} transform="rotate(-90 32 32)"/>
+    </svg>
+    <b>{Math.round(pct*100)}<small>%</small></b>
+  </span>;
+}
+
 export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaissement}:{
   devise:string; langue:string; onEtat:(etat:EtatAccesCharges, disponible:string, dimeRestante?:string, nouveau?:string)=>void;
   saisie:{recu:string; marchandises:string; frais:string};
@@ -40,6 +68,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
   const [nom, setNom] = useState('');
   const [montant, setMontant] = useState('');
   const [aRetirer, setARetirer] = useState<string|null>(null);
+  const [ajoutOuvert, setAjoutOuvert] = useState(false);
   const [menuCharge, setMenuCharge] = useState<string|null>(null);
   const menuActif = useRef<HTMLDivElement>(null);
   const [operation, setOperation] = useState<string|null>(null);
@@ -150,11 +179,15 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
   function ligne(c:ChargeEntreprise) {
     const restant = reste(c);
     const menuOuvert = menuCharge === c.charge_id;
-    return <li key={c.charge_id} className="rep-charge-ligne">
-      <div className="rep-charges-rangee rep-charge-rangee">
-        <div><strong>{c.label}</strong><p>{l('Couvert','Covered')} {fmt(paye(c), c.currency)} / {fmt(cents(c.expected_amount), c.currency)}</p></div>
-        <span className={'rep-charges-etiquette' + (restant === 0 ? ' is-regle' : '')}>
-          {restant === 0 ? l('Couvert','Covered') : fmt(restant, c.currency)}
+    const prevu = cents(c.expected_amount);
+    return <li key={c.charge_id} className="rep-charge-ligne chg-ligne">
+      <div className="chg-rangee">
+        <Pastille nom={c.label}/>
+        <div className="chg-texte"><strong>{c.label}</strong>
+          <span className="chg-barre" aria-hidden="true"><span style={{width:`${prevu>0?Math.min(100,paye(c)/prevu*100):0}%`,background:restant===0?'#34c759':'#007aff'}}/></span>
+          <p>{l('Couvert','Covered')} {fmt(paye(c), c.currency)} / {fmt(prevu, c.currency)}</p></div>
+        <span className={'chg-montant' + (restant === 0 ? ' is-regle' : '')}>
+          {restant === 0 ? <><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg>{l('Couvert','Covered')}</> : <>{fmt(restant, c.currency)}<small>{l('à couvrir','to cover')}</small></>}
         </span>
         {aRetirer !== c.charge_id && <div className="rep-charge-options" ref={menuOuvert ? menuActif : undefined}
           onBlur={e => { if (menuOuvert && e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) setMenuCharge(null); }}
@@ -168,7 +201,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
             aria-expanded={menuOuvert} disabled={!!operation} onClick={() => {
               setARetirer(null);
               setMenuCharge(menuOuvert ? null : c.charge_id);
-            }}><span aria-hidden="true">••</span></button>
+            }}><span aria-hidden="true">•••</span></button>
           {menuOuvert && <div className="rep-charge-options-panneau">
             <button type="button" className="rep-charge-retirer" aria-label={l('Supprimer ','Remove ')+c.label}
               onClick={() => { setMenuCharge(null); setARetirer(c.charge_id); }}>{l('Supprimer','Remove')}</button>
@@ -239,9 +272,10 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
         </Link>
       </>}
       {donnees && <>
-        <div className="rep-charges-rangee">
-          <div><p>{l('Bloc mensuel','Monthly block')}</p><h3 className="rep-charges-mois">{moisNom(mois)}</h3></div>
-          {bloc && <span className={'rep-charges-etiquette' + (toutRegle ? ' is-regle' : '')}>
+        <div className="chg-entete">
+          <div><p className="chg-surtitre">{l('Bloc mensuel','Monthly block')}</p><h3 className="rep-charges-mois">{moisNom(mois)}</h3></div>
+          {bloc && <span className={'chg-statut' + (!aDesCharges ? '' : toutRegle ? ' is-regle' : ' is-encours')}>
+            <span aria-hidden="true" className="chg-statut-point"/>
             {!aDesCharges ? l('Aucune charge','No expenses') : toutRegle ? l('Couvert','Covered') : l('En cours','In progress')}
           </span>}
         </div>
@@ -259,18 +293,21 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
               const total = groupe.reduce((n,c) => n + cents(c.expected_amount), 0);
               const verse = groupe.reduce((n,c) => n + paye(c), 0);
               const restant = groupe.reduce((n,c) => n + reste(c), 0);
-              return <div key={m} className="rep-charges-bilan">
-                <p>{l('Reste à payer','Remaining')}</p>
-                <strong>{fmt(restant, m)}</strong>
-                <progress value={Math.min(verse,total)} max={total} aria-label={l('Charges réglées en ','Paid expenses in ') + m}/>
-                <p>{l('Couvert','Covered')} {fmt(verse, m)} / {fmt(total, m)}</p>
+              return <div key={m} className="chg-bilan">
+                <Anneau valeur={Math.min(verse,total)} max={total} libelle={l('Charges réglées en ','Paid expenses in ') + m}/>
+                <div className="chg-bilan-texte">
+                  <p>{restant===0?l('Tout est couvert','Everything is covered'):l('Reste à payer','Remaining')}</p>
+                  <strong>{fmt(restant, m)}</strong>
+                  <p>{l('Couvert','Covered')} {fmt(verse, m)} / {fmt(total, m)}</p>
+                </div>
               </div>;
             })}
-            <ul className="rep-charges-liste">{charges.map(ligne)}</ul>
-          </> : <p>{l('Aucune charge dans ce bloc. Ajoute une rubrique pour commencer.','There are no expenses in this block. Add an expense to get started.')}</p>}
-          <details className="rep-charges-pli rep-charges-ajout">
-            <summary>{l('Ajouter une rubrique','Add an expense')}<Chevron/></summary>
-            <form className="rep-charges-form" onSubmit={e => {
+            <ul className="rep-charges-liste chg-liste">{charges.map(ligne)}</ul>
+          </> : <p className="chg-vide">{l('Aucune charge dans ce bloc. Ajoute une rubrique pour commencer.','There are no expenses in this block. Add an expense to get started.')}</p>}
+          {!ajoutOuvert ? <button type="button" className="chg-ajouter" aria-expanded={false} disabled={!!operation} onClick={() => setAjoutOuvert(true)}>
+            <span aria-hidden="true" className="chg-plus"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>
+            {l('Ajouter une rubrique','Add an expense')}
+          </button> : <form className="chg-formulaire" aria-label={l('Nouvelle rubrique','New expense')} onSubmit={e => {
               e.preventDefault();
               if (!nom.trim() || !montantPrevu) return;
               const debut = new Date(mois + 'T12:00:00Z');
@@ -279,20 +316,34 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
                 (id, demande) => creerChargeEntreprise(id,{label:nom,amount:montantPrevu,currency:devise,start:mois,end:fin},demande),
                 l('Rubrique ajoutée.','Expense added.'),
                 l('Impossible de confirmer l’ajout de la rubrique.','Could not confirm that the expense was added.'),
-                () => {setNom('');setMontant('');});
+                () => {setNom('');setMontant('');setAjoutOuvert(false);});
             }}>
-              <label>{l('Nom de la charge','Expense name')}
-                <input value={nom} maxLength={80} onChange={e => setNom(e.target.value)} placeholder={l('Ex. loyer','e.g. rent')}/>
+            <div className="chg-formulaire-tete">
+              <button type="button" className="chg-lien" onClick={() => {setAjoutOuvert(false);setNom('');setMontant('');}}>{l('Annuler','Cancel')}</button>
+              <b>{l('Nouvelle rubrique','New expense')}</b>
+              <button type="submit" className="chg-lien chg-lien-fort" disabled={!!operation || !nom.trim() || !montantPrevu}>
+                {operation === 'ajout' ? l('Ajout…','Adding…') : l('Ajouter','Add')}
+              </button>
+            </div>
+            <div className="chg-apercu"><Pastille nom={nom}/><span>{nom.trim()||l('Nom de la rubrique','Expense name')}</span><b>{montantPrevu?fmt(cents(montantPrevu),devise):'—'}</b></div>
+            <div className="chg-puces" role="group" aria-label={l('Suggestions','Suggestions')}>
+              {SUGGESTIONS.map(([fr,english]) => { const v=l(fr,english); return <button key={fr} type="button" aria-pressed={nom.trim()===v} className="chg-puce" onClick={() => setNom(v)}><Pastille nom={v}/>{v}</button>; })}
+            </div>
+            <div className="chg-groupe">
+              <label className="chg-champ"><span>{l('Nom de la charge','Expense name')}</span>
+                <input value={nom} maxLength={80} autoFocus onChange={e => setNom(e.target.value)} placeholder={l('Ex. loyer','e.g. rent')}/>
               </label>
-              <label>{l('Montant prévu','Expected amount')} · {devise}
+              <label className="chg-champ"><span>{l('Montant prévu','Expected amount')}</span>
                 <input inputMode="decimal" autoComplete="off" maxLength={13} value={montant}
                   onChange={e => setMontant(e.target.value)} placeholder="0"/>
+                <em className="chg-devise">{devise}</em>
               </label>
-              <button type="submit" className={bouton} disabled={!!operation || !nom.trim() || !montantPrevu}>
-                {operation === 'ajout' ? l('Ajout…','Adding…') : l('Ajouter cette rubrique','Add this expense')}
-              </button>
-            </form>
-          </details>
+            </div>
+            <p className="chg-note">{l(`Pour tout ${moisNom(mois).toLowerCase()}. Le loyer est couvert en premier par tes encaissements.`,`For all of ${moisNom(mois)}. Rent is covered first by your receipts.`)}</p>
+            <button type="submit" className={bouton} disabled={!!operation || !nom.trim() || !montantPrevu}>
+              {operation === 'ajout' ? l('Ajout…','Adding…') : l('Ajouter cette rubrique','Add this expense')}
+            </button>
+          </form>}
         </>}
       </>}
       {retour && !retour.vente && <p role={retour.erreur ? 'alert' : 'status'} className="rep-charges-retour">{retour.texte}</p>}

@@ -217,3 +217,82 @@
 :root:root:root[data-apparence="sombre"] .rep-historique button.rep-charge-retirer{color:#ffadb8}
 :root:root:root .rep-historique-confirmation{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px}
 :root:root:root .rep-historique-confirmation p{flex-basis:100%}
+
+/* Charges de l’entreprise façon Apple (demande du 10/11/2026) : en-tête du mois, anneau de couverture,
+   rubriques en liste groupée avec pastilles de couleur, ligne « + Ajouter » et formulaire en feuille groupée. */
+:root:root:root .rep-charges .chg-entete{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+:root:root:root .rep-charges .chg-surtitre{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ios-doux,#6e6e73)}
+:root:root:root .rep-charges .chg-entete h3{margin-top:2px;font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+:root:root:root .rep-charges .chg-statut{display:inline-flex;align-items:center;gap:6px;flex:none;margin-top:4px;padding:5px 11px;border-radius:999px;font-size:13px;font-weight:600;background:rgb(118 118 128 / .12);color:var(--ios-doux,#6e6e73)}
+:root:root:root .rep-charges .chg-statut-point{width:7px;height:7px;border-radius:50%;background:currentColor}
+:root:root:root .rep-charges .chg-statut.is-regle{background:rgb(52 199 89 / .14);color:#1f8a3e}
+:root:root:root .rep-charges .chg-statut.is-encours{background:rgb(255 149 0 / .14);color:#c46a00}
+:root:root:root[data-apparence="sombre"] .rep-charges .chg-statut.is-regle{color:#5fe08a}
+:root:root:root[data-apparence="sombre"] .rep-charges .chg-statut.is-encours{color:#ffb54d}
+
+:root:root:root .rep-charges .chg-bilan{display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:18px;background:var(--ios-fond,#f2f2f7)}
+:root:root:root .rep-charges .chg-bilan-texte{min-width:0}
+:root:root:root .rep-charges .chg-bilan-texte strong{display:block;margin:1px 0;font-size:clamp(24px,7vw,30px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:var(--ios-encre,#1c1c1e)}
+:root:root:root .rep-charges .chg-bilan-texte p{font-size:13px}
+:root:root:root .rep-charges .chg-anneau{position:relative;display:grid;place-items:center;flex:none;width:68px;height:68px}
+:root:root:root .rep-charges .chg-anneau svg{position:absolute;inset:0;width:100%;height:100%}
+:root:root:root .rep-charges .chg-anneau circle{fill:none;stroke-width:8;stroke-linecap:round}
+:root:root:root .rep-charges .chg-anneau-fond{stroke:rgb(118 118 128 / .18)}
+:root:root:root .rep-charges .chg-anneau-valeur{transition:stroke-dasharray .5s cubic-bezier(.32,.72,0,1)}
+:root:root:root .rep-charges .chg-anneau b{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ios-encre,#1c1c1e)}
+:root:root:root .rep-charges .chg-anneau b small{font-size:10px;font-weight:600}
+
+:root:root:root .rep-charges .chg-liste{margin:0 -16px;border-top:.5px solid var(--ios-ligne,#e5e5ea);border-bottom:.5px solid var(--ios-ligne,#e5e5ea)}
+:root:root:root .rep-charges .chg-ligne{padding:0}
+:root:root:root .rep-charges .chg-ligne+.chg-ligne{border-top:0}
+:root:root:root .rep-charges .chg-rangee{position:relative;display:flex;align-items:center;gap:14px;min-height:64px;padding:8px 6px 8px 16px}
+:root:root:root .rep-charges .chg-ligne+.chg-ligne .chg-rangee::before{content:"";position:absolute;top:0;left:62px;right:0;border-top:.5px solid var(--ios-ligne,#e5e5ea)}
+:root:root:root .rep-charges .chg-pastille{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:9px;box-shadow:inset 0 0 0 .5px rgb(0 0 0 / .06)}
+:root:root:root .rep-charges .chg-pastille svg{width:19px;height:19px;stroke:#fff;stroke-width:2;fill:none}
+:root:root:root .rep-charges .chg-texte{flex:1;min-width:0}
+:root:root:root .rep-charges .chg-texte strong{display:block;font-size:16px;font-weight:600;letter-spacing:-.01em;overflow-wrap:anywhere;color:var(--ios-encre,#1c1c1e)}
+:root:root:root .rep-charges .chg-texte p{font-size:12.5px}
+:root:root:root .rep-charges .chg-barre{display:block;height:4px;margin:5px 0 4px;border-radius:4px;background:rgb(118 118 128 / .16);overflow:hidden}
+:root:root:root .rep-charges .chg-barre span{display:block;height:100%;border-radius:4px;transition:width .4s ease}
+:root:root:root .rep-charges .chg-montant{display:flex;flex-direction:column;align-items:flex-end;flex:none;max-width:38%;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;color:var(--ios-encre,#1c1c1e);overflow-wrap:anywhere}
+:root:root:root .rep-charges .chg-montant small{font-size:11.5px;font-weight:500;color:var(--ios-doux,#6e6e73)}
+:root:root:root .rep-charges .chg-montant.is-regle{flex-direction:row;align-items:center;gap:3px;color:#1f8a3e}
+:root:root:root[data-apparence="sombre"] .rep-charges .chg-montant.is-regle{color:#5fe08a}
+:root:root:root .rep-charges .chg-montant svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.8;fill:none}
+:root:root:root .rep-charges .chg-vide{text-align:center;padding:6px 0}
+
+:root:root:root .rep-charges .chg-ajouter{display:flex;align-items:center;gap:12px;width:100%;min-height:50px;margin:0;padding:6px 0;border:0;background:transparent;font:inherit;font-size:16px;font-weight:500;color:#007aff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:root:root:root .rep-charges .chg-ajouter:active{opacity:.55}
+:root:root:root .rep-charges .chg-ajouter:disabled{opacity:.45;cursor:default}
+:root:root:root .rep-charges .chg-plus{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#007aff}
+:root:root:root .rep-charges .chg-plus svg{width:17px;height:17px;stroke:#fff;stroke-width:2.6;fill:none}
+
+:root:root:root .rep-charges .chg-formulaire{display:grid;gap:12px;margin:0 -16px -16px;padding:4px 16px 16px;border-radius:0 0 21px 21px;background:var(--ios-fond,#f2f2f7);animation:chg-ouvrir .28s cubic-bezier(.32,.72,0,1)}
+@keyframes chg-ouvrir{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){:root:root:root .rep-charges .chg-formulaire{animation:none}}
+:root:root:root .rep-charges .chg-formulaire-tete{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:48px}
+:root:root:root .rep-charges .chg-formulaire-tete b{font-size:17px;font-weight:600;color:var(--ios-encre,#1c1c1e)}
+:root:root:root .rep-charges .chg-lien{justify-self:start;min-height:44px;padding:0;border:0;background:transparent;font:inherit;font-size:17px;color:#007aff;cursor:pointer}
+:root:root:root .rep-charges .chg-lien-fort{justify-self:end;font-weight:600}
+:root:root:root .rep-charges .chg-lien:disabled{color:var(--ios-doux,#a1a1a6);cursor:default}
+:root:root:root .rep-charges .chg-apercu{display:flex;align-items:center;gap:12px;min-height:60px;padding:0 16px;border-radius:14px;background:var(--ios-carte,#fff)}
+:root:root:root .rep-charges .chg-apercu>span:not(.chg-pastille){flex:1;min-width:0;font-size:17px;font-weight:600;overflow-wrap:anywhere;color:var(--ios-encre,#1c1c1e)}
+:root:root:root .rep-charges .chg-apercu b{font-size:17px;font-variant-numeric:tabular-nums;color:var(--ios-encre,#1c1c1e)}
+:root:root:root .rep-charges .chg-puces{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:2px 16px 4px;scrollbar-width:none}
+:root:root:root .rep-charges .chg-puces::-webkit-scrollbar{display:none}
+:root:root:root .rep-charges .chg-puce{display:inline-flex;align-items:center;gap:7px;flex:none;min-height:38px;padding:4px 13px 4px 5px;border:0;border-radius:999px;background:var(--ios-carte,#fff);font:inherit;font-size:14px;font-weight:500;color:var(--ios-encre,#1c1c1e);cursor:pointer;box-shadow:0 1px 2px rgb(0 0 0 / .05)}
+:root:root:root .rep-charges .chg-puce .chg-pastille{width:28px;height:28px;border-radius:50%}
+:root:root:root .rep-charges .chg-puce .chg-pastille svg{width:15px;height:15px}
+:root:root:root .rep-charges .chg-puce[aria-pressed="true"]{box-shadow:0 0 0 2px #007aff}
+:root:root:root .rep-charges .chg-groupe{overflow:hidden;border-radius:14px;background:var(--ios-carte,#fff)}
+:root:root:root .rep-charges .chg-champ{position:relative;display:flex;align-items:center;gap:12px;min-height:50px;padding:0 16px;font-size:16px;color:var(--ios-encre,#1c1c1e)}
+:root:root:root .rep-charges .chg-champ+.chg-champ::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:.5px solid var(--ios-ligne,#e5e5ea)}
+:root:root:root .rep-charges .chg-champ>span{flex:none;max-width:48%}
+:root:root:root .rep-charges .chg-formulaire .chg-champ input{flex:1;min-width:0;min-height:48px;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;outline:none;font:inherit;font-size:16px;text-align:right;color:var(--ios-encre,#1c1c1e)}
+:root:root:root .rep-charges .chg-formulaire .chg-champ input::placeholder{color:var(--ios-doux,#a1a1a6);opacity:.7}
+:root:root:root .rep-charges .chg-champ:focus-within>span{color:#007aff}
+:root:root:root .rep-charges .chg-note{padding:0 4px;font-size:12.5px}
+:root:root:root .rep-page .rep-charges .chg-formulaire .rep-charges-action{background:#007aff;border-radius:14px}
+:root:root:root .rep-page .rep-charges .chg-formulaire .rep-charges-action:disabled{background:var(--ios-ligne,#e5e5ea);color:var(--ios-doux,#63636b)}
+:root:root:root .rep-charges .chg-devise{flex:none;font-style:normal;font-size:16px;color:var(--ios-doux,#6e6e73)}
+:root:root:root .rep-charges .rep-charge-options-bouton span{font-size:13px;letter-spacing:1px}
