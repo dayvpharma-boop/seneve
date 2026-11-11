@@ -8,7 +8,9 @@
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
 const CACHE = 'seneve-site-v79-mise-a-jour-immediate-20261103';
-const ATTENTE_RESEAU_MS = 1500;
+// 11/11/2026 : 1500 → 700 ms. Sur réseau lent, la copie s'affiche plus vite ; une nouvelle version reste
+// téléchargée en arrière-plan et annoncée par « Nouvelle version prête · Actualiser ».
+const ATTENTE_RESEAU_MS = 700;
 const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';

@@ -712,3 +712,10 @@ h2.quiz-racine { font-size:20px; margin:0 0 12px; }
 .coach-boutons { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
 .coach-boutons > :is(.btn,.btn-secondaire) { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:48px; flex:none; text-decoration:none; text-align:center; }
 .coach-boutons svg { flex:none; }
+
+/* Indicateur pendant le téléchargement d’une page (11/11/2026) : invisible les 250 premières ms. */
+.seneve-attente{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:60vh;opacity:0;animation:seneve-attente-voir .2s ease .25s forwards;font:500 14px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;color:#6e6e73}
+.seneve-attente-rond{width:26px;height:26px;border-radius:50%;border:3px solid rgb(118 118 128 / .22);border-top-color:#5b4ee8;animation:seneve-attente-tour .8s linear infinite}
+@keyframes seneve-attente-voir{to{opacity:1}}
+@keyframes seneve-attente-tour{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.seneve-attente-rond{animation-duration:2.4s}}

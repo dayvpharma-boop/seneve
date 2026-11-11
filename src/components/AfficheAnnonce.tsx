@@ -12,12 +12,11 @@ import './AfficheAnnonce.css';
  *  ni pendant la lecture d'un chapitre de la Bible. Une seule vérification par ouverture de l'application. */
 export type Affiche = { id: string; titre: string; texte: string; langue: string; image: string | null; bouton_texte: string | null; bouton_lien: string | null; fin: string | null };
 
-const PAGES_EXCLUES = /^\/(|p|en|connexion|admin|mot-de-passe-oublie|nouveau-mot-de-passe|confidentialite|bible\/[^/]+\/\d+)$/;
 const CLE_SESSION = 'seneve:affiche-verifiee';
 
-export function pageAutorisee(chemin: string): boolean {
-  return !PAGES_EXCLUES.test(chemin.replace(/\/$/, '') || '/') && chemin !== '/';
-}
+// La liste des pages vit dans un fichier sans dépendance, lu au démarrage sans charger cette affiche.
+import { pageAutorisee } from '@/lib/affiche-pages';
+export { pageAutorisee };
 
 export function lienInterne(lien: string): boolean { return lien.startsWith('/') && !lien.startsWith('//'); }
 

@@ -2,9 +2,9 @@ import {PhotosParticipant} from '@/components/AvatarParticipant';
 import {suivrePreferencesVisuelles} from './lib/preferences-visuelles';
 import {suivreApparence} from './lib/apparence';
 import './styles-offres-acces.css';
-import { StrictMode, Suspense, lazy } from 'react';
+import { StrictMode, Suspense, lazy, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 // Polices hébergées avec le site (et non chez Google) : elles restent disponibles hors connexion.
 import '@fontsource/lora/latin-400.css';
 import '@fontsource/lora/latin-500.css';
@@ -39,7 +39,7 @@ import './styles-confidentialite-maquette.css';
 import './styles-polices-validees.css';
 import { TestPage } from '@/routes/index';
 import { GarderLangue } from '@/components/GarderLangue';
-import { AfficheAnnonce } from '@/components/AfficheAnnonce';
+import { pageAutorisee } from '@/lib/affiche-pages';
 import './styles-introuvable.css';
 import './styles-accents.css';
 import './styles-ilots-clairs.css';
@@ -82,6 +82,23 @@ const BibleLecture = lazy(() => bible().then(m => ({ default: m.BibleLecture }))
 const BibleRecherche = lazy(() => bible().then(m => ({ default: m.BibleRecherche })));
 const BibleAnnotations = lazy(() => bible().then(m => ({ default: m.BibleAnnotations })));
 
+// L'affiche d'annonce utilise Supabase : elle n'est chargée que sur les pages où elle peut apparaître,
+// jamais sur l'accueil public ni la connexion (allègement du démarrage, 11/11/2026).
+const AfficheChargee = lazy(() => import('@/components/AfficheAnnonce').then(m => ({ default: m.AfficheAnnonce })));
+function AfficheAnnonce() {
+  const { pathname } = useLocation();
+  const [vue, setVue] = useState(false);
+  // Une fois chargée, elle reste montée : elle gère elle-même les pages exclues et sa vérification unique.
+  if (!vue && pageAutorisee(pathname)) setVue(true);
+  return vue ? <Suspense fallback={null}><AfficheChargee /></Suspense> : null;
+}
+
+/** Pendant le téléchargement d'une page : un indicateur discret au lieu d'un écran vide (11/11/2026).
+ *  Il n'apparaît qu'après 250 ms, pour ne pas clignoter quand la page est déjà sur le téléphone. */
+function Attente() {
+  return <div className="seneve-attente" role="status" aria-live="polite"><span className="seneve-attente-rond" aria-hidden="true" /><span className="seneve-attente-texte">{document.documentElement.lang === 'en' ? 'Loading…' : 'Chargement…'}</span></div>;
+}
+
 suivreApparence();
 suivrePreferencesVisuelles();
 enregistrerServiceWorker();
@@ -91,7 +108,7 @@ if (root) createRoot(root).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <PhotosParticipant><GarderLangue /><AfficheAnnonce />
-      <Suspense fallback={null}><Routes>
+      <Suspense fallback={<Attente />}><Routes>
         <Route path="/" element={<TestPage />} />
         <Route path="/p" element={<TestPage defaultSource="partage" />} />
         <Route path="/en" element={<TestPage defaultLanguage="en" />} />
