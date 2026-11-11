@@ -77,3 +77,9 @@
 .admin-annonce-etat.is-programmee { color:#1f5f9e; }
 .admin-annonce-etat.is-en-cours { color:#2a7548; }
 .admin-annonce-etat.is-terminee, .admin-annonce-etat.is-retiree { color:#6b6b6b; }
+
+/* Pastille de la cloche façon iOS (11/11/2026) : des règles générales des écrans iPhone retiraient son fond,
+   sa taille et sa police, le « 9+ » se superposait alors à la cloche. Pastille rouge système, anneau de la
+   couleur de l'en-tête, posée en haut à droite du rond sans toucher le dessin de la cloche. */
+:root:root:root:root .cloche-notifications .cloche-pastille{position:absolute!important;top:0!important;right:0!important;left:auto!important;bottom:auto!important;display:inline-flex!important;align-items:center;justify-content:center;min-width:19px!important;width:auto!important;height:19px!important;margin:0!important;padding:0 5px!important;box-sizing:border-box;border-radius:999px!important;background:#ff3b30!important;color:#fff!important;-webkit-text-fill-color:#fff;font:600 11px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;letter-spacing:-.02em!important;font-variant-numeric:tabular-nums;text-align:center;box-shadow:0 0 0 2px var(--ios-fond,#f2f2f7)!important;pointer-events:none;transform:translateX(22%)}
+:root:root:root:root[data-apparence="sombre"] .cloche-notifications .cloche-pastille{background:#ff453a!important;box-shadow:0 0 0 2px #1c1c1e!important}
