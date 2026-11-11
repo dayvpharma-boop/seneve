@@ -1,0 +1,26 @@
+/* Calendrier de choix de jours, façon iPhone (11/11/2026). */
+:root:root:root .cp{--cp-accent:var(--ios-accent,#5b4ee8);--cp-encre:#1d1d1f;--cp-doux:#8e8e93;--cp-carte:#fff;--cp-plage:color-mix(in srgb,var(--cp-accent) 14%,transparent)}
+:root:root:root .cp-raccourcis{display:flex;gap:8px;margin:0 0 10px;overflow-x:auto;scrollbar-width:none}
+:root:root:root:root .cp-raccourcis button{flex:none;min-height:34px;padding:0 14px!important;border:0!important;border-radius:999px!important;background:rgb(118 118 128 / .12)!important;color:var(--cp-encre)!important;font:500 14px/1 var(--ios-police,-apple-system,system-ui,sans-serif)!important;box-shadow:none!important}
+:root:root:root:root .cp-raccourcis button[aria-pressed="true"]{background:var(--cp-accent)!important;color:#fff!important}
+:root:root:root .cp-carte{padding:12px 10px 10px;border-radius:16px;background:var(--cp-carte)}
+:root:root:root .cp-entete{display:flex;align-items:center;justify-content:space-between;padding:0 4px 8px 8px}
+:root:root:root .cp-titre{font:600 17px/1.2 var(--ios-police,-apple-system,system-ui,sans-serif);letter-spacing:-.02em;color:var(--cp-encre)}
+:root:root:root .cp-fleches{display:flex;gap:4px}
+:root:root:root:root .cp-fleches button{display:grid;place-items:center;width:40px;height:40px;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;color:var(--cp-accent)!important;box-shadow:none!important}
+:root:root:root .cp-fleches button:disabled{opacity:.3}
+:root:root:root .cp-grille{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:2px}
+:root:root:root .cp-jsem{padding:2px 0 6px;font:600 12px/1 var(--ios-police,-apple-system,system-ui,sans-serif);color:var(--cp-doux);text-align:center;text-transform:uppercase}
+:root:root:root .cp-case{display:grid;place-items:center;height:44px}
+:root:root:root .cp-dans{background:var(--cp-plage)}
+:root:root:root .cp-debut,:root:root:root .cp-lundi{border-top-left-radius:22px;border-bottom-left-radius:22px}
+:root:root:root .cp-fin,:root:root:root .cp-dimanche{border-top-right-radius:22px;border-bottom-right-radius:22px}
+:root:root:root:root .cp-case button{display:grid;place-items:center;width:40px;height:40px;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;font:400 17px/1 var(--ios-police,-apple-system,system-ui,sans-serif)!important;color:var(--cp-encre)!important;font-variant-numeric:tabular-nums;transition:transform .12s ease}
+:root:root:root:root .cp-case button.cp-aujourdhui{color:var(--cp-accent)!important;font-weight:600!important}
+:root:root:root:root .cp-case button:disabled{color:rgb(60 60 67 / .25)!important}
+:root:root:root:root :is(.cp-debut,.cp-fin) button{background:var(--cp-accent)!important;color:#fff!important;font-weight:600!important}
+:root:root:root .cp-case button:active:not(:disabled){transform:scale(.9)}
+:root:root:root .cp-case button:focus-visible{outline:2px solid var(--cp-accent);outline-offset:1px}
+:root:root:root:root .cp-aide{min-height:18px;margin:8px 4px 0!important;padding:0!important;font-size:13px;line-height:1.4;color:var(--cp-doux)}
+:root:root:root:root[data-apparence="sombre"] .cp{--cp-encre:#f5f5f7;--cp-doux:#98989d;--cp-carte:#1c1c1e}
+:root:root:root:root:root[data-apparence="sombre"] .cp-case button:disabled{color:rgb(235 235 245 / .25)!important}

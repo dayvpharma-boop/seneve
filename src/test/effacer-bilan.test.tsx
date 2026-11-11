@@ -17,8 +17,9 @@ const auj=new Intl.DateTimeFormat('en-CA').format(new Date());
 const debutMois=auj.slice(0,8)+'01';
 const t=new Date().toISOString();
 // Comme le serveur (hd_finance_coherence.sql) : un effacement partiel MASQUE les lignes (les soldes ne bougent pas) ;
-// « Tout remettre à zéro » supprime vraiment, toujours depuis le début (10/11/2026).
+// « Effacer cette période » supprime vraiment, mais seulement la semaine ou le mois en cours (11/11/2026).
 let remiseAZero:boolean,masques:Set<string>;
+const veille=new Intl.DateTimeFormat('en-CA').format(new Date(Date.now()-86400000));
 const suivi=()=>({enrollment_id:E,archived_goals:[],archived_debts:[],
  savings_goals:[{goal_id:GI,goal_type:'epargne_investir',label:'Moto-taxi',target_amount:'1000.00',currency:'USD',entries:remiseAZero?[]:[{entry_id:id(1),amount:'200.00',date_locale:auj,created_at:t}]}],
  debts:[{debt_id:D,debt_number:1,opening_balance:'200.00',currency:'USD',creditor_name:'Papy',monthly_basis:null,repayment_percent:null,weekly_basis:null,weekly_repayment_percent:null,payments:remiseAZero?[]:[{payment_id:id(3),amount:'40.00',date_locale:auj,created_at:t}]}]});
@@ -28,9 +29,10 @@ const compteurs=()=>({enrollment_id:E,masques:[...masques],
 beforeEach(()=>{remiseAZero=false;masques=new Set();rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
  if(f==='hd_finance_tracker_get')return {data:suivi(),error:null};
  if(f==='hd_finance_counters_get')return {data:compteurs(),error:null};
+ if(f==='hd_finance_jours_effacer'){if(a.p_du===veille)return {data:null,error:{message:'Effacement impossible : de l’argent de ces jours a déjà été utilisé plus tard'}};remiseAZero=true;return {data:{du:a.p_du,au:a.p_au,masque:false},error:null};}
  if(f==='hd_finance_bilan_effacer'){
   const q=a.p_quoi as string;
-  if(q==='tout'&&a.p_depuis===null)remiseAZero=true;
+  if(q==='tout'&&a.p_confirmation==='EFFACER')remiseAZero=true;
   else{if(q==='investi'||q==='tout')masques.add(id(5));if(q==='dettes'||q==='tout')masques.add(id(3));if(q==='tout'){masques.add(id(1));masques.add(id(4));}}
   return {data:{sorties:0,retraits:1,remboursements:0,entrees:0,versements:0,repartitions:0,masque:!remiseAZero},error:null};}
  throw Error(f);});});
@@ -70,17 +72,20 @@ it('Annuler ne touche à rien',async()=>{
  fireEvent.click(within(bilan).getByRole('button',{name:'Effacer : Remboursé sur les dettes'}));
  fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button',{name:'Annuler'}));
  expect(screen.queryByRole('alertdialog')).toBeNull();
- expect(rpc).not.toHaveBeenCalledWith('hd_finance_bilan_effacer',expect.anything());
+ expect(rpc).not.toHaveBeenCalledWith('hd_finance_jours_effacer',expect.anything());
 });
 
-it('Tout remettre à zéro : exige l’e-mail du compte et le bon mot de passe, puis tout revient vraiment à zéro, même avec la période « Ce mois »',async()=>{
+it('Effacer des jours : calendrier, « Ce mois-ci », e-mail et mot de passe exigés, puis seuls ces jours sont effacés',async()=>{
  getUser.mockResolvedValue({data:{user:{id:'u',email:'papa@exemple.org',identities:[{provider:'email'}]}}});
  signInWithPassword.mockResolvedValueOnce({data:{user:null},error:{message:'Invalid login credentials'}}).mockResolvedValueOnce({data:{user:{id:'u'}},error:null});
  const bilan=await ouvrir();
- fireEvent.click(within(bilan).getByRole('button',{name:'Tout remettre à zéro…'}));
- const feuille=await screen.findByRole('dialog',{name:'Tout remettre à zéro'});
+ fireEvent.click(within(bilan).getByRole('button',{name:'Effacer des jours…'}));
+ const feuille=await screen.findByRole('dialog',{name:'Effacer des jours'});
  const email=await within(feuille).findByLabelText('E-mail');
- const envoyer=within(feuille).getByRole('button',{name:'Tout remettre à zéro'});
+ expect(within(feuille).getByRole('button',{name:'Choisis les jours'})).toBeDisabled();
+ fireEvent.click(within(feuille).getByRole('button',{name:'Ce mois-ci'}));
+ expect(within(feuille).getByText(/Tous les autres jours restent intacts/)).toBeInTheDocument();
+ const envoyer=within(feuille).getByRole('button',{name:/Effacer (ce jour|ces \d+ jours)/});
  fireEvent.change(email,{target:{value:'autre@exemple.org'}});
  fireEvent.change(within(feuille).getByLabelText('Mot de passe'),{target:{value:'x'}});
  fireEvent.click(envoyer);
@@ -91,30 +96,35 @@ it('Tout remettre à zéro : exige l’e-mail du compte et le bon mot de passe, 
  expect(await within(feuille).findByRole('alert')).toHaveTextContent(/incorrect/);
  expect(rpc).not.toHaveBeenCalledWith('hd_finance_bilan_effacer',expect.anything());
  fireEvent.click(envoyer);
- await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_bilan_effacer',{p_enrollment_id:E,p_currency:'USD',p_depuis:null,p_quoi:'tout',p_confirmation:'EFFACER'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_jours_effacer',{p_enrollment_id:E,p_currency:'USD',p_du:debutMois,p_au:auj,p_confirmation:'EFFACER'}));
  expect(signInWithPassword).toHaveBeenLastCalledWith({email:'papa@exemple.org',password:'x'});
- expect(await screen.findByText(/Tout est remis à zéro, en USD/)).toBeInTheDocument();
+ expect(await screen.findByText(/Tout ce qui a été noté (le|du) .*en USD, est effacé\. Les autres jours n’ont pas changé\./)).toBeInTheDocument();
  for(const n of ['Entré dans les caisses','Investi','Remboursé sur les dettes'])expect(ligne(bilan,n)).toMatch(/[^0-9.,]0 USD$/);
- // Remise à zéro complète : les caisses et les objectifs repartent de 0.
+ // Les données du mois effacées : les caisses de ce mois repartent de 0.
  expect(screen.getByRole('article',{name:'Dîme'}).textContent).toMatch(/0USD disponibles/);
  expect(screen.getByRole('article',{name:'Dîme'}).textContent).not.toMatch(/20USD disponibles/);
  expect(within(feuilleFermee()).queryByRole('dialog')).toBeNull();
 });
 
-it('Tout remettre à zéro, compte Google sans mot de passe : il faut écrire EFFACER ; la période « Tout » efface tout l’historique',async()=>{
+it('Effacer un seul jour au calendrier, compte Google : EFFACER exigé ; refus clair si l’argent de ce jour a servi plus tard',async()=>{
  getUser.mockResolvedValue({data:{user:{id:'u',email:'papa@gmail.com',identities:[{provider:'google'}]}}});
  const bilan=await ouvrir();
  fireEvent.click(within(bilan).getByRole('radio',{name:'Tout'}));
- fireEvent.click(within(bilan).getByRole('button',{name:'Tout remettre à zéro…'}));
- const feuille=await screen.findByRole('dialog',{name:'Tout remettre à zéro'});
+ fireEvent.click(within(bilan).getByRole('button',{name:'Effacer des jours…'}));
+ const feuille=await screen.findByRole('dialog',{name:'Effacer des jours'});
  const champ=await within(feuille).findByLabelText('Confirmation');
  expect(within(feuille).queryByLabelText('Mot de passe')).toBeNull();
+ const jourVeille=within(feuille).queryByRole('button',{name:new RegExp(new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric'}).format(new Date(Date.now()-86400000)))});
+ if(!jourVeille)fireEvent.click(within(feuille).getByRole('button',{name:'Mois précédent'}));
+ const veilleBtn=within(feuille).getByRole('button',{name:new RegExp(new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric'}).format(new Date(Date.now()-86400000)))});
+ fireEvent.click(veilleBtn);fireEvent.click(veilleBtn);
  fireEvent.change(champ,{target:{value:'oui'}});
- fireEvent.click(within(feuille).getByRole('button',{name:'Tout remettre à zéro'}));
+ fireEvent.click(within(feuille).getByRole('button',{name:'Effacer ce jour'}));
  expect(await within(feuille).findByRole('alert')).toHaveTextContent(/EFFACER/);
  fireEvent.change(champ,{target:{value:'effacer'}});
- fireEvent.click(within(feuille).getByRole('button',{name:'Tout remettre à zéro'}));
- await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_bilan_effacer',expect.objectContaining({p_depuis:null,p_quoi:'tout',p_confirmation:'EFFACER'})));
+ fireEvent.click(within(feuille).getByRole('button',{name:'Effacer ce jour'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_jours_effacer',expect.objectContaining({p_du:veille,p_au:veille,p_confirmation:'EFFACER'})));
+ expect(await within(feuille).findByRole('alert')).toHaveTextContent(/Rien n’a été effacé : de l’argent entré ces jours-là a déjà été utilisé plus tard/);
  expect(signInWithPassword).not.toHaveBeenCalled();
 });
 

@@ -7,7 +7,8 @@ import {IconeHD} from '@/components/IconeHabitudes';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {chargerSuiviFinancier,type SuiviFinancier} from '@/lib/habitudes-finances-suivi';
 import {supabase} from '@/lib/supabase';
-import {chargerCompteurs,CompteursIndisponibles,effacerBilan,type QuoiEffacer,disponibleCompteur,disponibleCompteurAu,disponibleObjectif,disponibleObjectifAu,estMasquee,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
+import {CalendrierPlage,nbJours,type Plage} from '@/components/CalendrierPlage';
+import {chargerCompteurs,EffacementImpossible,effacerJours,CompteursIndisponibles,effacerBilan,type QuoiEffacer,disponibleCompteur,disponibleCompteurAu,disponibleObjectif,disponibleObjectifAu,estMasquee,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {decimalesDevise,montantValidePourDevise} from '@/lib/devises';
 import {NotFound} from '@/routes/introuvable';
 import {momentLisible} from '@/lib/date-heure-finances';
@@ -98,6 +99,10 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
  const [modifier,setModifier]=useState(false);
  const [aEffacer,setAEffacer]=useState<{quoi:Exclude<QuoiEffacer,'tout'>;nom:string;nb:number;centimes:number}|null>(null);
  const [toutEffacer,setToutEffacer]=useState(false);
+ // « Effacer des jours » (décision de Dr Justin du 11/11/2026) : la personne choisit un jour ou une suite de jours dans un calendrier ;
+ // seules les données de ces jours sont effacées, tout le reste reste intact.
+ const [plage,setPlage]=useState<Plage|null>(null);
+ const libelleEffacer=!plage?'':plage.du===plage.au?l(`le ${dateLisible(plage.du)}`,`on ${dateLisible(plage.du)}`):l(`du ${dateLisible(plage.du)} au ${dateLisible(plage.au)} (${nbJours(plage)} jours)`,`from ${dateLisible(plage.du)} to ${dateLisible(plage.au)} (${nbJours(plage)} days)`);
  const [compte,setCompte]=useState<{email:string;motDePasse:boolean}|null>(null);
  const [email,setEmail]=useState(''),[motDePasse,setMotDePasse]=useState(''),[mot,setMot]=useState(''),[erreurEffacer,setErreurEffacer]=useState('');
  const depuis=periode==='tout'?null:debut;
@@ -112,23 +117,24 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
   finally{setBusy(false);}
  }
  async function ouvrirToutEffacer(){
-  setErreurEffacer('');setMotDePasse('');setMot('');setToutEffacer(true);
+  setErreurEffacer('');setMotDePasse('');setMot('');setPlage(null);setToutEffacer(true);
   try{const {data}=await supabase.auth.getUser();const u=data.user;const avecMotDePasse=!!u?.identities?.some(i=>i.provider==='email');setCompte({email:u?.email??'',motDePasse:avecMotDePasse});setEmail('');}
   catch{setCompte({email:'',motDePasse:false});}
  }
  async function confirmerToutEffacer(e:FormEvent){
   e.preventDefault();if(!suivi||busy||!compte)return;setErreurEffacer('');
+  if(!plage){setErreurEffacer(l('Choisis d’abord les jours à effacer dans le calendrier.','First choose the days to erase in the calendar.'));return;}
   if(compte.motDePasse){
    if(email.trim().toLowerCase()!==compte.email.toLowerCase()||!motDePasse){setErreurEffacer(l('Écris l’e-mail de ton compte et ton mot de passe.','Enter your account e-mail and your password.'));return;}
   }else if(mot.trim().toUpperCase()!=='EFFACER'){setErreurEffacer(l('Écris EFFACER pour confirmer.','Type EFFACER to confirm.'));return;}
   setBusy(true);
   try{
    if(compte.motDePasse){const {data,error}=await supabase.auth.signInWithPassword({email:compte.email,password:motDePasse});if(error||!data.user){setErreurEffacer(l('E-mail ou mot de passe incorrect.','Wrong e-mail or password.'));return;}}
-   // Remise à zéro complète, toujours depuis le début (demande du 10/11/2026) : la période choisie ne compte pas ici.
-   await effacerBilan(suivi.enrollment_id,dev,null,'tout','EFFACER');
+   // Effacement réel des seuls jours choisis (11/11/2026) : le reste de l'historique ne change pas.
+   await effacerJours(suivi.enrollment_id,dev,plage.du,plage.au);
    setToutEffacer(false);setModifier(false);setMotDePasse('');await relireTout();
-   setAnnonce({zone:'bilan',texte:l(`Tout est remis à zéro, en ${dev}. Caisses, objectifs, dettes et solde à répartir repartent de zéro.`,`Everything is reset, in ${dev}. Counters, goals, debts and the balance to allocate start again from zero.`),erreur:false});
-  }catch{setErreurEffacer(l('L’effacement n’a pas pu se faire. Réessaie.','Erasing did not work. Try again.'));}
+   setAnnonce({zone:'bilan',texte:l(`Tout ce qui a été noté ${libelleEffacer}, en ${dev}, est effacé. Les autres jours n’ont pas changé.`,`Everything recorded ${libelleEffacer}, in ${dev}, is erased. Other days did not change.`),erreur:false});
+  }catch(err){setErreurEffacer(err instanceof EffacementImpossible?l('Rien n’a été effacé : de l’argent entré ces jours-là a déjà été utilisé plus tard. Ajoute aussi les jours suivants, jusqu’à la dépense ou la répartition concernée.','Nothing was erased: money recorded on these days was already used later. Also include the following days, up to the related expense or allocation.'):l('L’effacement n’a pas pu se faire. Réessaie.','Erasing did not work. Try again.'));}
   finally{setBusy(false);}
  }
  return <CadreHabitudes titre={l('SÉNEVÉ Compte','SÉNEVÉ Account')} langue={langue} retour={`/espace${suffixe}`} retourLibelle={l('Revenir à ma journée','Back to my day')} liens={{aujourdhui:`/espace${suffixe}`}} actif="aujourdhui" cloche>
@@ -179,8 +185,8 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
      </div>
      {message('bilan')}
      {modifier?<>
-      <p className="hd-classique sim-ios-note">{l('Le bouton − retire une ligne de l’historique et du bilan pour la période choisie, sans changer tes caisses ni tes dettes. Pour vraiment repartir de zéro, utilise « Tout remettre à zéro ».','The − button removes a line from history and the summary for the chosen period, without changing your counters or debts. To really start again from zero, use “Reset everything”.')}</p>
-      <button type="button" disabled={busy} onClick={()=>void ouvrirToutEffacer()} className="hd-classique sim-ios-bouton" style={{marginTop:14,background:'rgb(215 0 21 / .08)',color:'#d70015'}}>{l('Tout remettre à zéro…','Reset everything…')}</button>
+      <p className="hd-classique sim-ios-note">{l('Le bouton − retire une ligne de l’historique et du bilan pour la période choisie, sans changer tes caisses ni tes dettes. Pour vraiment effacer des jours (un jour, quelques jours, un mois…), utilise « Effacer des jours ».','The − button removes a line from history and the summary for the chosen period, without changing your counters or debts. To really erase days (one day, a few days, a month…), use “Erase days”. To really start again from zero, use “Reset everything”.')}</p>
+      <button type="button" disabled={busy} onClick={()=>void ouvrirToutEffacer()} className="hd-classique sim-ios-bouton" style={{marginTop:14,background:'rgb(215 0 21 / .08)',color:'#d70015'}}>{l('Effacer des jours…','Erase days…')}</button>
      </>:<p className="hd-classique sim-ios-note">{l('Le bilan compte tout l’historique de la période, même après une remise à zéro, y compris les remboursements de dettes. « Modifier » permet de l’effacer.','The summary counts the whole history of the period, even after a reset, including debt repayments. “Edit” lets you erase it.')}</p>}
     </section>
     {aEffacer&&<div className="fixed inset-0 z-[60] grid place-items-center px-8" role="alertdialog" aria-modal="true" aria-labelledby="hd-effacer-titre">
@@ -198,10 +204,12 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
      <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={()=>setToutEffacer(false)}/>
      <form onSubmit={e=>void confirmerToutEffacer(e)} noValidate className="sim-ios hd-classique relative max-h-[90vh] overflow-y-auto rounded-t-[14px] px-4 pb-8 pt-2" style={{background:'var(--ios-fond,#f2f2f7)'}}>
       <div aria-hidden="true" className="mx-auto mb-2.5 h-[5px] w-9 rounded-full bg-[#c7c7cc]"/>
-      <div className="mb-2 grid grid-cols-[1fr_auto_1fr] items-center"><button type="button" onClick={()=>setToutEffacer(false)} className="justify-self-start text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)',minHeight:44}}>{l('Annuler','Cancel')}</button><h2 id="hd-tout-effacer-titre" style={{margin:0,fontSize:17,fontWeight:600}}>{l('Tout remettre à zéro','Reset everything')}</h2><span/></div>
-      <div className="rounded-[14px] p-3.5 text-sm leading-relaxed" style={{background:'#fde8ea',color:'#9b0011'}}><b>{l(`Depuis le début, en ${dev} :`,`Since the start, in ${dev}:`)}</b>
-       <ul style={{margin:'6px 0',paddingLeft:18,listStyle:'disc'}}><li>{l('toutes les caisses reviennent à 0 (dîme, offrande, pour vivre) ;','every counter goes back to 0 (tithe, offering, living);')}</li><li>{l('les versements et retraits de tes objectifs sont effacés : ils repartent de 0 ;','your goals’ contributions and withdrawals are erased: they start again from 0;')}</li><li>{l('les remboursements de tes dettes sont effacés : chaque dette revient à son montant de départ ;','your debt repayments are erased: each debt goes back to its starting amount;')}</li><li>{l('les encaissements et les répartitions sont effacés : le « Solde à répartir » revient à 0, et les charges du mois sont à couvrir de nouveau ;','receipts and allocations are erased: the “Balance to allocate” goes back to 0, and this month’s expenses must be covered again;')}</li><li>{l('l’historique et le bilan sont vides.','history and the summary are empty.')}</li></ul>
-       {l('Tes objectifs, tes dettes et tes charges restent, avec leur nom et leur montant prévu.','Your goals, debts and expenses remain, with their names and planned amounts.')} <b>{l('On ne peut pas revenir en arrière.','This cannot be undone.')}</b></div>
+      <div className="mb-2 grid grid-cols-[1fr_auto_1fr] items-center"><button type="button" onClick={()=>setToutEffacer(false)} className="justify-self-start text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)',minHeight:44}}>{l('Annuler','Cancel')}</button><h2 id="hd-tout-effacer-titre" style={{margin:0,fontSize:17,fontWeight:600}}>{l('Effacer des jours','Erase days')}</h2><span/></div>
+      <CalendrierPlage valeur={plage} changer={setPlage} langue={langue}/>
+      {plage&&<div className="mt-3 rounded-[14px] p-3.5 text-sm leading-relaxed" style={{background:'#fde8ea',color:'#9b0011'}}><b>{l(`Seulement ${libelleEffacer}, en ${dev} :`,`Only ${libelleEffacer}, in ${dev}:`)}</b>
+       <ul style={{margin:'6px 0',paddingLeft:18,listStyle:'disc'}}><li>{l('les entrées et sorties des caisses (dîme, offrande, pour vivre) de ces jours sont effacées ;','counter entries and exits (tithe, offering, living) on these days are erased;')}</li><li>{l('les versements et retraits de tes objectifs de ces jours sont effacés ;','your goals’ contributions and withdrawals on these days are erased;')}</li><li>{l('les remboursements de dettes de ces jours sont effacés : une dette qui n’est plus soldée redevient en cours ;','debt repayments on these days are erased: a debt that is no longer paid off becomes open again;')}</li><li>{l('les dépenses de SÉNEVÉ Dépenses de ces jours sont effacées ;','SÉNEVÉ Expenses entries on these days are erased;')}</li><li>{l('les encaissements, les répartitions et les paiements de charges de ces jours sont effacés : le « Solde à répartir » est recalculé.','receipts, allocations and cost payments on these days are erased: the “Balance to allocate” is recalculated.')}</li></ul>
+       <b>{l('Tous les autres jours restent intacts.','All other days stay intact.')}</b> 
+       {l('Tes objectifs, tes dettes et tes charges restent, avec leur nom et leur montant prévu.','Your goals, debts and business costs remain, with their names and planned amounts.')} <b>{l('On ne peut pas revenir en arrière.','This cannot be undone.')}</b></div>}
       {!compte&&<p role="status" className="sim-ios-note">{l('Vérification de ton compte…','Checking your account…')}</p>}
       {compte?.motDePasse&&<><h3 className="sim-ios-titre">{l('Pour confirmer, écris ton e-mail et ton mot de passe','To confirm, enter your e-mail and password')}</h3>
        <div className="sim-ios-groupe"><div className="sim-ios-ligne"><label htmlFor="hd-effacer-email">{l('E-mail','E-mail')}</label><input id="hd-effacer-email" type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} placeholder={l('ton e-mail','your e-mail')} style={{width:'60%',textAlign:'right'}}/></div>
@@ -209,7 +217,7 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
       {compte&&!compte.motDePasse&&<><h3 className="sim-ios-titre">{l('Ton compte n’a pas de mot de passe (connexion Google) : écris EFFACER','Your account has no password (Google sign-in): type EFFACER')}</h3>
        <div className="sim-ios-groupe"><div className="sim-ios-ligne"><label htmlFor="hd-effacer-mot">{l('Confirmation','Confirmation')}</label><input id="hd-effacer-mot" autoComplete="off" value={mot} onChange={e=>setMot(e.target.value)} placeholder="EFFACER" style={{width:'55%',textAlign:'right'}}/></div></div></>}
       {erreurEffacer&&<p role="alert" className="sim-ios-alerte">{erreurEffacer}</p>}
-      <button type="submit" disabled={busy||!compte} className="sim-ios-bouton disabled:opacity-60" style={{marginTop:14,background:'#d70015'}}>{busy?l('Effacement…','Erasing…'):l('Tout remettre à zéro','Reset everything')}</button>
+      <button type="submit" disabled={busy||!compte||!plage} className="sim-ios-bouton disabled:opacity-60" style={{marginTop:14,background:'#d70015'}}>{busy?l('Effacement…','Erasing…'):!plage?l('Choisis les jours','Choose the days'):plage.du===plage.au?l('Effacer ce jour','Erase this day'):l(`Effacer ces ${nbJours(plage)} jours`,`Erase these ${nbJours(plage)} days`)}</button>
      </form>
     </div>}
    </>}
