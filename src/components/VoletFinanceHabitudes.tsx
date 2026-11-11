@@ -34,7 +34,8 @@ export function VoletFinanceHabitudes({langue}:{langue:string}){
  const dettes=(suivi?.debts??[]).filter(d=>resteDette(d)>0);
  // Montant global de l'épargne, comme « Il reste à rembourser » côté dettes (demande du 10/11/2026).
  const epargneTotale=objectifs.reduce<Record<string,{dispo:number;cible:number}>>((m,g)=>{const t=m[g.currency]??{dispo:0,cible:0};return {...m,[g.currency]:{dispo:t.dispo+Math.max(0,disponibleObjectif(cpt,g.goal_id,g.entries)),cible:t.cible+cents(g.target_amount)}};},{});
- const totaux=dettes.reduce<Record<string,number>>((m,d)=>({...m,[d.currency]:(m[d.currency]??0)+resteDette(d)}),{});
+ // Dettes : reste, montant de départ et part remboursée, comme côté épargne (demande du 11/11/2026).
+ const totaux=dettes.reduce<Record<string,{reste:number;debut:number}>>((m,d)=>{const t=m[d.currency]??{reste:0,debut:0};return {...m,[d.currency]:{reste:t.reste+resteDette(d),debut:t.debut+cents(d.opening_balance)}};},{});
  return <details id="hd-epargne" className="hd-volet mb-hd-space-lg rounded-2xl bg-hd-surface-container-lowest p-hd-space-md shadow-sm" onToggle={e=>setOuvert(e.currentTarget.open)}>
   <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[48px] cursor-pointer flex items-center gap-3 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeVolet nom="finance"/><span className="flex-1">SÉNEVÉ Finance</span><IconeHD nom="expand_more" className="hd-volet-chevron text-[22px] text-hd-on-surface-variant"/></summary>
   <div className="vf hd-classique pt-2">
@@ -56,9 +57,9 @@ export function VoletFinanceHabitudes({langue}:{langue:string}){
     {suivi===undefined?chargement:erreur?<p role="alert" className="vf-note">{l('Ton suivi ne peut pas être chargé pour le moment.','Your tracker cannot be loaded right now.')}</p>
      :!dettes.length?<p className="vf-note">{l('Aucune dette à rembourser. Tu peux en noter une dans SÉNEVÉ Suivi des dettes.','No debt to repay. You can add one in SÉNEVÉ Debt tracker.')}</p>
      :<>
-      <div className="vf-total">{Object.entries(totaux).map(([dev,c])=><p key={dev}><small>{l('Il reste à rembourser','Still to repay')}</small><b>{montant(c,dev,en)}</b></p>)}</div>
+      <div className="vf-total">{Object.entries(totaux).map(([dev,t])=><p key={dev}><small>{l('Il reste à rembourser','Still to repay')}</small><b>{montant(t.reste,dev,en)}</b><small>{l('sur','of')} {montant(t.debut,dev,en)} · {t.debut>0?Math.round((t.debut-t.reste)/t.debut*100):0} % {l('remboursé','repaid')}</small></p>)}</div>
       <ul className="vf-liste">{dettes.map(d=>{const debut=cents(d.opening_balance),reste=resteDette(d),pct=debut>0?Math.round((debut-reste)/debut*100):0;
-       return <li key={d.debt_id} className="vf-ligne"><span className="vf-anneau vf-anneau-dette" style={{['--p' as string]:`${pct}%`}} aria-hidden="true"/><span className="vf-nom"><b>{d.creditor_name||l(`Dette ${d.debt_number}`,`Debt ${d.debt_number}`)}</b><small>{l('Reste','Left')} {montant(reste,d.currency,en)}</small></span><span className="vf-pct">{pct} %</span></li>;})}</ul>
+       return <li key={d.debt_id} className="vf-ligne"><span className="vf-anneau vf-anneau-dette" style={{['--p' as string]:`${pct}%`}} aria-hidden="true"/><span className="vf-nom"><b>{d.creditor_name||l(`Dette ${d.debt_number}`,`Debt ${d.debt_number}`)}</b><small>{l('Reste','Left')} {montant(reste,d.currency,en)} {l('sur','of')} {montant(debut,d.currency,en)}</small></span><span className="vf-pct">{pct} %</span></li>;})}</ul>
      </>}
     {lien(`/habitudes/dettes${q}`,l('Ouvrir SÉNEVÉ Suivi des dettes','Open SÉNEVÉ Debt tracker'))}
    </div>}

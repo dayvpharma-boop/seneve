@@ -37,7 +37,8 @@ it('« SÉNEVÉ Finance » remplace « Épargne » et montre épargne, dettes et
  fireEvent.click(within(onglets).getByRole('tab',{name:'Dettes'}));
  const dettes=screen.getByRole('tabpanel',{name:'Dettes'});
  expect(dettes.textContent).toMatch(/Il reste à rembourser150 USD/);
- expect(dettes.textContent).toMatch(/Papy.*Reste 150 USD.*25 %/);
+ expect(dettes.textContent).toMatch(/Papy.*Reste 150 USD sur 200 USD.*25 %/);
+ expect(dettes.textContent).toMatch(/Il reste à rembourser150 USDsur 200 USD · 25 % remboursé/);
  expect(dettes.textContent).not.toMatch(/Soldée/);
  expect(within(dettes).getByRole('link',{name:'Ouvrir SÉNEVÉ Suivi des dettes'})).toHaveAttribute('href','/habitudes/dettes');
  fireEvent.click(within(onglets).getByRole('tab',{name:'Simulateur'}));
