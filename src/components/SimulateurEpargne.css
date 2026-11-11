@@ -139,3 +139,92 @@
 :root .teinte-objectif .teinte-etiquette{background:var(--teinte-fond);color:var(--teinte-texte)}
 :root .teinte-objectif .teinte-encouragement{background:var(--teinte-fond);color:var(--teinte-texte)}
 :root .teinte-objectif .teinte-icone{color:var(--teinte)}
+
+/* ───────────────────────────────────────────────────────────────────────────
+ * Simulateur d'épargne façon Apple (demande du 11/11/2026), limité à .sim-pro.
+ * Le Simulateur de la dîme et les autres pages gardent leur présentation.
+ * Aucun changement de calcul, de libellé ni de comportement.
+ * ─────────────────────────────────────────────────────────────────────────── */
+:root:root:root .sim-pro{--sp-encre:#1d1d1f;--sp-doux:#86868b;--sp-fond:#f5f5f7;--sp-carte:#fff;--sp-ligne:rgb(60 60 67 / .12);--sp-accent:var(--ios-accent,#5b4ee8);--sp-joie:#ff9500;--sp-investir:#30b350;--sp-reste:rgb(255 255 255 / .35);--sp-ease:cubic-bezier(.32,.72,0,1);color:var(--sp-encre);-webkit-font-smoothing:antialiased}
+
+/* Phrase d'introduction : discrète, comme une légende iOS. */
+:root:root:root:root .sim-pro .sim-ios-sous{margin:2px 4px 14px!important;padding:0!important;font-size:13px;line-height:1.45;letter-spacing:-.005em;color:var(--sp-doux)}
+
+/* Commerçant / Salarié : contrôle segmenté avec curseur qui glisse. */
+:root:root:root .sim-pro .sim-ios-segment{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:12px;background:rgb(118 118 128 / .12)}
+:root:root:root .sim-pro .sim-ios-curseur{position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/2);border-radius:9px;background:var(--sp-carte);box-shadow:0 3px 8px rgb(0 0 0 / .12),0 3px 1px rgb(0 0 0 / .04);transform:translateX(calc(100% * var(--i,0)));transition:transform .35s var(--sp-ease)}
+:root:root:root .sim-pro .sim-ios-segment button,:root:root:root .sim-pro .sim-ios-segment button[aria-checked="true"]{position:relative;z-index:1;min-height:36px;background:transparent!important;box-shadow:none!important;font-size:14px;font-weight:500;color:var(--sp-doux);transition:color .25s ease}
+:root:root:root .sim-pro .sim-ios-segment button[aria-checked="true"]{font-weight:600;color:var(--sp-encre)}
+
+/* Titres de section : petites capitales grises, jamais en gras. */
+:root:root:root:root .sim-pro .sim-ios-titre{margin:26px 16px 8px!important;padding:0!important;font-family:inherit!important;font-size:12.5px!important;font-weight:500!important;line-height:1.2!important;letter-spacing:.06em!important;text-transform:uppercase;color:var(--sp-doux)!important}
+
+/* Groupes : cartes blanches à coins continus sur fond gris très clair. */
+:root:root:root:root .sim-pro .sim-ios-groupe{border-radius:16px!important;background:var(--sp-carte)!important;box-shadow:0 1px 2px rgb(0 0 0 / .04),0 0 0 .5px rgb(0 0 0 / .04)}
+:root:root:root .sim-ios-dans-volet .sim-pro .sim-ios-groupe{background:var(--sp-fond)!important;box-shadow:none}
+:root:root:root .sim-pro .sim-ios-ligne{gap:12px;min-height:54px;padding:6px 14px 6px 16px}
+:root:root:root .sim-pro .sim-ios-ligne+.sim-ios-ligne::before{left:16px;border-top-color:var(--sp-ligne)}
+:root:root:root .sim-pro .sim-ios-ligne label{font-size:15px;font-weight:400;letter-spacing:-.01em;line-height:1.25;color:var(--sp-encre)}
+
+/* Montants : une pastille claire qui montre qu'on peut écrire, le signe − à l'intérieur. */
+:root:root:root .sim-pro .sim-ios-champ{display:flex;flex:none;align-items:center;gap:4px;width:108px;min-height:38px;padding:0 11px;border-radius:10px;background:rgb(118 118 128 / .1);transition:background-color .2s ease,box-shadow .2s ease}
+:root:root:root .sim-ios-dans-volet .sim-pro .sim-ios-champ{background:var(--sp-carte)}
+:root:root:root .sim-pro .sim-ios-champ .sim-ios-signe{width:auto;font-size:15px;font-weight:500;color:#e5484d}
+:root:root:root:root .sim-pro .sim-ios-ligne .sim-ios-champ input{flex:1;width:100%!important;min-width:0;min-height:38px;font-size:16px;font-weight:500;letter-spacing:-.01em}
+:root:root:root .sim-pro .sim-ios-ligne:focus-within .sim-ios-champ{box-shadow:0 0 0 2px var(--sp-accent)}
+:root:root:root .sim-pro .sim-ios-ligne:focus-within label{color:var(--sp-encre)}
+
+/* Pourcentages : point de couleur, valeur teintée, boutons ronds et jauge fine. */
+:root:root:root .sim-pro .sim-ios-reserve{--teinte:var(--sp-joie)}
+:root:root:root .sim-pro .sim-ios-investir{--teinte:var(--sp-investir)}
+:root:root:root .sim-pro .sim-ios-point{flex:none;width:9px;height:9px;border-radius:50%;background:var(--teinte,var(--sp-doux))}
+:root:root:root .sim-pro .sim-ios-ligne-pct{gap:10px;padding-bottom:12px}
+:root:root:root .sim-pro .sim-ios-ligne-pct::after{content:"";position:absolute;left:35px;right:14px;bottom:8px;height:3px;border-radius:3px;background:linear-gradient(var(--teinte),var(--teinte)) 0 0/var(--jauge) 100% no-repeat,rgb(118 118 128 / .14);transition:background-size .35s var(--sp-ease)}
+:root:root:root .sim-pro .sim-ios-pas{gap:10px}
+:root:root:root .sim-pro .sim-ios-pas .sim-ios-valeur{min-width:46px;font-size:17px;font-weight:600;letter-spacing:-.02em;color:var(--teinte)}
+:root:root:root .sim-pro .sim-ios-stepper{gap:8px;background:transparent}
+:root:root:root .sim-pro .sim-ios-stepper span{display:none}
+:root:root:root .sim-pro .sim-ios-stepper button{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--sp-carte);box-shadow:0 1px 3px rgb(0 0 0 / .1),0 0 0 .5px rgb(0 0 0 / .06);font-size:19px;font-weight:500;color:var(--sp-encre);transition:transform .15s ease,opacity .2s ease}
+:root:root:root .sim-pro .sim-ios-stepper button:active{transform:scale(.9);background:var(--sp-carte)}
+:root:root:root .sim-pro .sim-ios-stepper button:disabled{opacity:.35;box-shadow:none;background:rgb(118 118 128 / .12)}
+:root:root:root .sim-pro .sim-ios-stepper button:focus-visible{outline:2px solid var(--sp-accent);outline-offset:2px}
+
+:root:root:root:root .sim-pro .sim-ios-note{margin:8px 16px 0!important;padding:0!important;font-size:12.5px;line-height:1.45;color:var(--sp-doux)}
+
+/* Résultat : carte nuit élégante, montant principal en grand, répartition en barre. */
+:root:root:root .sim-pro .sim-ios-resultat{margin-top:26px;padding:22px 20px 20px;border-radius:24px;background:radial-gradient(120% 90% at 0% 0%,#3b3893 0%,transparent 60%),linear-gradient(160deg,#25235f,#141332);box-shadow:0 18px 40px rgb(20 19 50 / .28),inset 0 1px 0 rgb(255 255 255 / .08);animation:sim-pro-entree .45s var(--sp-ease)}
+:root:root:root .sim-pro .sim-ios-resultat-etiquette{font-size:12px;font-weight:500;letter-spacing:.08em;opacity:.6}
+:root:root:root .sim-pro .sim-ios-resultat-base{margin:4px 0 14px;font-size:40px;font-weight:700;line-height:1.05;letter-spacing:-.035em}
+:root:root:root .sim-pro .sim-ios-barre{display:flex;gap:3px;height:8px;margin:0 0 16px;border-radius:8px;overflow:hidden}
+:root:root:root .sim-pro .sim-ios-barre span{flex-basis:0;min-width:0;border-radius:8px;transition:flex-grow .4s var(--sp-ease)}
+:root:root:root .sim-pro .sim-ios-barre-joie{background:var(--sp-joie)}
+:root:root:root .sim-pro .sim-ios-barre-investir{background:var(--sp-investir)}
+:root:root:root .sim-pro .sim-ios-barre-reste{background:var(--sp-reste)}
+:root:root:root .sim-pro .sim-ios-deux{gap:10px}
+:root:root:root .sim-pro .sim-ios-boite{padding:14px;border-radius:16px;background:rgb(255 255 255 / .08);box-shadow:inset 0 0 0 .5px rgb(255 255 255 / .1)}
+:root:root:root .sim-pro .sim-ios-boite small{display:flex;align-items:center;gap:6px;font-size:12.5px;opacity:.75}
+:root:root:root .sim-pro .sim-ios-boite small::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--teinte)}
+:root:root:root .sim-pro .sim-ios-boite-joie{--teinte:var(--sp-joie)}
+:root:root:root .sim-pro .sim-ios-boite-investir{--teinte:var(--sp-investir)}
+:root:root:root .sim-pro .sim-ios-boite b{margin-top:6px;font-size:26px;letter-spacing:-.03em}
+:root:root:root .sim-pro .sim-ios-boite i{display:block;margin-top:2px;font-size:12px;opacity:.55}
+:root:root:root .sim-pro .sim-ios-reste{display:flex;align-items:baseline;gap:8px;margin-top:16px;font-size:14px;line-height:1.45;opacity:.85}
+:root:root:root .sim-pro .sim-ios-point-reste{--teinte:rgb(255 255 255 / .55);transform:translateY(-1px)}
+
+/* En attente : carte grise apaisée plutôt qu'un grand bloc violet vide. */
+:root:root:root .sim-pro .sim-ios-resultat:has(.sim-ios-attente){padding:18px;background:var(--sp-fond);box-shadow:none;color:var(--sp-doux);animation:none}
+:root:root:root .sim-ios-dans-volet .sim-pro .sim-ios-resultat:has(.sim-ios-attente){background:var(--sp-fond)}
+:root:root:root .sim-pro .sim-ios-attente{display:flex;align-items:center;gap:12px;font-size:14.5px;line-height:1.4;opacity:1;color:var(--sp-doux)}
+:root:root:root .sim-pro .sim-ios-attente-icone{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;background:var(--sp-carte);font-size:22px;color:var(--sp-accent);box-shadow:0 1px 2px rgb(0 0 0 / .06)}
+
+/* Effacer : bouton pilule discret. */
+:root:root:root .sim-pro .sim-ios-effacer{min-height:40px;margin:16px auto 0;padding:0 18px;border-radius:999px;background:rgb(118 118 128 / .1);font-size:15px;font-weight:500;color:var(--sp-accent);transition:transform .15s ease}
+:root:root:root .sim-pro .sim-ios-effacer:active{transform:scale(.96)}
+
+@keyframes sim-pro-entree{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){:root:root:root .sim-pro .sim-ios-resultat,:root:root:root .sim-pro .sim-ios-curseur,:root:root:root .sim-pro .sim-ios-barre span{animation:none;transition:none}}
+
+/* Mode sombre : mêmes formes, couleurs système sombres. */
+:root:root:root:root[data-apparence="sombre"] .sim-pro{--sp-encre:#f5f5f7;--sp-doux:#98989d;--sp-fond:#1c1c1e;--sp-carte:#2c2c2e;--sp-ligne:rgb(84 84 88 / .55)}
+:root:root:root:root[data-apparence="sombre"] .sim-ios-dans-volet .sim-pro .sim-ios-champ{background:#3a3a3c}
+:root:root:root:root[data-apparence="sombre"] .sim-pro .sim-ios-ligne .sim-ios-champ input{color:var(--sp-encre)!important;-webkit-text-fill-color:var(--sp-encre)}
