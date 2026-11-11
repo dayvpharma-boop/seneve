@@ -1,0 +1,21 @@
+/* SÉNEVÉ Bénéfices (11/11/2026) : reprend le style de SÉNEVÉ Dépenses (classes dp-*), carte verte nuit pour le bénéfice. */
+:root:root:root .bn-page .bn-heros{background:radial-gradient(120% 90% at 0% 0%,#2f8f55 0%,transparent 60%),linear-gradient(160deg,#17452c,#0e2318);box-shadow:0 18px 40px rgb(14 35 24 / .25),inset 0 1px 0 rgb(255 255 255 / .08)}
+:root:root:root .bn-page .bn-heros.bn-perte{background:radial-gradient(120% 90% at 0% 0%,#8f3b2f 0%,transparent 60%),linear-gradient(160deg,#4a1d17,#22100c)}
+:root:root:root:root .bn-page .bn-ecart{margin-top:4px!important;opacity:.6}
+:root:root:root .bn-page .bn-moins b{color:var(--dp-doux)}
+:root:root:root .bn-page .bn-total-ligne{min-height:58px;background:color-mix(in srgb,#34c759 8%,transparent)}
+:root:root:root .bn-page .bn-total-ligne .dp-ligne-texte b,:root:root:root .bn-page .bn-total-ligne .dp-ligne-montant b{font-size:17px;font-weight:700}
+:root:root:root .bn-page .bn-total-ligne::before{left:14px!important}
+
+/* Graphique des 6 derniers mois : colonnes arrondies, mois choisi en vert plein. */
+:root:root:root .bn-page .bn-graphique{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;padding:16px 12px 12px;border-radius:16px;background:var(--dp-carte)}
+:root:root:root:root .bn-page .bn-colonne{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;color:var(--dp-encre)}
+:root:root:root .bn-page .bn-valeur{min-height:14px;max-width:100%;overflow:hidden;font-size:10px;font-weight:600;color:var(--dp-doux);text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums}
+:root:root:root .bn-page .bn-piste{display:flex;align-items:flex-end;width:100%;max-width:34px;height:110px;border-radius:9px;background:rgb(118 118 128 / .1);overflow:hidden}
+:root:root:root .bn-page .bn-piste i{display:block;width:100%;border-radius:9px;background:color-mix(in srgb,#34c759 45%,transparent);transition:height .35s cubic-bezier(.32,.72,0,1)}
+:root:root:root .bn-page .bn-actif .bn-piste i{background:#34c759}
+:root:root:root .bn-page .bn-negatif .bn-piste i{background:color-mix(in srgb,#ff3b30 45%,transparent)}
+:root:root:root .bn-page .bn-actif.bn-negatif .bn-piste i{background:#ff3b30}
+:root:root:root .bn-page .bn-mois{font-size:12px;font-weight:500;color:var(--dp-doux)}
+:root:root:root .bn-page .bn-actif .bn-mois{font-weight:700;color:var(--dp-encre)}
+:root:root:root:root .bn-page .bn-lien{margin-top:22px;text-decoration:none;background:rgb(118 118 128 / .12);color:var(--dp-accent);box-shadow:none}
