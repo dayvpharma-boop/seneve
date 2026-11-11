@@ -4,7 +4,7 @@ import {supabase} from '@/lib/supabase';
  * dans SÉNEVÉ Répartition (Commerçant). Bénéfice = ventes − marchandises − autres frais − charges du mois payées. */
 export type Vente={id:string;currency:string;date_locale:string;gross:string;goods:string;other:string;charges:string};
 export type Revenu={id:string;currency:string;date_locale:string;amount:string};
-export type Benefices={ventes:Vente[];revenus:Revenu[]};
+export type Benefices={ventes:Vente[];revenus:Revenu[];resteARepartir?:Record<string,string>};
 export type BilanMois={ventes:number;marchandises:number;frais:number;charges:number;benefice:number;nbVentes:number;revenus:number};
 
 const montant=(v:unknown)=>typeof v==='string'&&/^-?\d{1,14}(?:\.\d{1,4})?$/.test(v);
@@ -17,7 +17,8 @@ export async function chargerBenefices(enrollmentId:string):Promise<Benefices>{
  if(!objet(data))throw Error('Bénéfices incohérents');
  const ventes=(Array.isArray(data.ventes)?data.ventes:[]).filter((v):v is Vente=>objet(v)&&typeof v.id==='string'&&typeof v.currency==='string'&&jour(v.date_locale)&&montant(v.gross)&&montant(v.goods)&&montant(v.other)&&montant(v.charges));
  const revenus=(Array.isArray(data.revenus)?data.revenus:[]).filter((v):v is Revenu=>objet(v)&&typeof v.id==='string'&&typeof v.currency==='string'&&jour(v.date_locale)&&montant(v.amount));
- return {ventes,revenus};
+ const reste=objet(data.reste_a_repartir)?Object.fromEntries(Object.entries(data.reste_a_repartir).filter((e):e is [string,string]=>montant(e[1]))):{};
+ return {ventes,revenus,resteARepartir:reste};
 }
 
 const c=(v:string)=>Math.round(Number(v)*100);

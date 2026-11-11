@@ -7,6 +7,7 @@ import {IconeHD} from '@/components/IconeHabitudes';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {chargerSuiviFinancier,type SuiviFinancier} from '@/lib/habitudes-finances-suivi';
 import {supabase} from '@/lib/supabase';
+import {chargerBenefices,type Benefices} from '@/lib/habitudes-finances-benefices';
 import {CalendrierPlage,nbJours,type Plage} from '@/components/CalendrierPlage';
 import {chargerCompteurs,EffacementImpossible,effacerJours,CompteursIndisponibles,effacerBilan,type QuoiEffacer,disponibleCompteur,disponibleCompteurAu,disponibleObjectif,disponibleObjectifAu,estMasquee,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {decimalesDevise,montantValidePourDevise} from '@/lib/devises';
@@ -35,12 +36,15 @@ export function HabitudesCompteurs({userId}:{userId:string}){
  const [etat,setEtat]=useState<'chargement'|'pret'|'vide'|'indisponible'|'erreur'>('chargement');
  const [devise,setDevise]=useState(''),[periode,setPeriode]=useState<Periode>('mois');
  const [ouverte,setOuverte]=useState(''),[motif,setMotif]=useState<Motif>('donne'),[montant,setMontant]=useState(''),[date,setDate]=useState(aujourdhui);
+ // « Encaissé » et « Pas encore réparti » en tête du bilan (12/11/2026) : facultatifs, la page reste utilisable sans eux.
+ const [recettes,setRecettes]=useState<Benefices|null>(null);
  const [busy,setBusy]=useState(false),[annonce,setAnnonce]=useState<{zone:string;texte:string;erreur:boolean}|null>(etatNav?.message?{zone:'haut',texte:etatNav.message,erreur:false}:null);
  const suffixe=en?'?lang=en':'';
  const charger=useCallback(async()=>{
   try{
    const s=await chargerSuiviFinancier(null);if(!s){setEtat('vide');return;}
    setSuivi(s);
+   void chargerBenefices(s.enrollment_id).then(setRecettes).catch(()=>setRecettes(null));
    try{setCpt(await chargerCompteurs(s.enrollment_id));setEtat('pret');}
    catch(e){if(e instanceof CompteursIndisponibles){setEtat('indisponible');return;}throw e;}
   }catch{setEtat('erreur');}
@@ -75,6 +79,8 @@ export function HabitudesCompteurs({userId}:{userId:string}){
  // Le bilan compte aussi les objectifs et dettes supprimés (mis de côté) : l'historique n'est jamais perdu.
  const caissesSupprimees:Caisse[]=(suivi?.archived_goals??[]).filter(g=>g.currency===dev).map(g=>({cle:g.goal_id,nom:g.label,sous:'',couleur:'',icone:'',goalId:g.goal_id}));
  const bilan=useMemo(()=>{const b={entre:0,donne:0,depense:0,investi:0,autre:0,dettes:0};for(const c of [...caisses,...caissesSupprimees])for(const x of lignesDe(c))if(x.date>=debut){if(x.signe===1)b.entre+=x.centimes;else b[x.motif??'autre']+=x.centimes;}for(const d of [...(suivi?.debts??[]),...(suivi?.archived_debts??[])])if(d.currency===dev)for(const p of d.payments)if(p.date_locale>=debut&&!estMasquee(cpt,p.payment_id))b.dettes+=centimes(p.amount);return b;},[cpt,suivi,dev,debut,en]);
+ const encaisse=recettes?[...recettes.ventes.filter(v=>v.currency===dev&&v.date_locale>=debut).map(v=>v.gross),...recettes.revenus.filter(v=>v.currency===dev&&v.date_locale>=debut).map(v=>v.amount)].reduce((t,v)=>t+centimes(v),0):null;
+ const pasReparti=recettes?.resteARepartir?.[dev]!==undefined?centimes(recettes.resteARepartir[dev]!):null;
  function ouvrir(c:Caisse){setOuverte(o=>o===c.cle?'':c.cle);setMontant('');setMotif(c.enveloppe==='vivre'?'depense':c.goalId?'investi':'donne');setDate(aujourdhui());setAnnonce(null);}
  async function noter(c:Caisse,toutUtilise:boolean){
   if(!suivi||busy)return;const zone='caisse:'+c.cle;
@@ -109,7 +115,7 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
  const libellePeriode=periode==='tout'?l('sur tout l’historique','over the whole history'):periode==='annee'?l('pour cette année','for this year'):periode==='mois'?l('pour ce mois','for this month'):l('pour cette semaine','for this week');
  const nombreDe=(quoi:Exclude<QuoiEffacer,'tout'>)=>{let n=0;if(quoi==='dettes'){for(const d of [...(suivi?.debts??[]),...(suivi?.archived_debts??[])])if(d.currency===dev)for(const p of d.payments)if(p.date_locale>=debut&&!estMasquee(cpt,p.payment_id))n++;return n;}
   for(const c of [...caisses,...caissesSupprimees])for(const x of lignesDe(c))if(x.date>=debut&&x.signe===-1&&(x.motif??'autre')===quoi)n++;return n;};
- async function relireTout(){if(!suivi)return;setSuivi(await chargerSuiviFinancier(suivi.enrollment_id)??suivi);setCpt(await chargerCompteurs(suivi.enrollment_id));}
+ async function relireTout(){if(!suivi)return;void chargerBenefices(suivi.enrollment_id).then(setRecettes).catch(()=>setRecettes(null));setSuivi(await chargerSuiviFinancier(suivi.enrollment_id)??suivi);setCpt(await chargerCompteurs(suivi.enrollment_id));}
  async function effacerLigne(){
   if(!aEffacer||!suivi||busy)return;setBusy(true);
   try{await effacerBilan(suivi.enrollment_id,dev,depuis,aEffacer.quoi,null);const nom=aEffacer.nom;setAEffacer(null);await relireTout();setAnnonce({zone:'bilan',texte:l(`« ${nom} » est effacé ${libellePeriode}.`,`“${nom}” is erased ${libellePeriode}.`),erreur:false});}
@@ -181,6 +187,8 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
      <div className="flex items-end justify-between"><h2 id="hd-bilan" className="hd-classique sim-ios-titre">{l('Mon bilan','My summary')} · {dev}</h2><button type="button" onClick={()=>{setModifier(v=>!v);setAnnonce(null);}} style={{color:'var(--ios-accent,#5b4ee8)',fontSize:15,minHeight:44,marginBottom:-6,paddingLeft:12}}>{modifier?l('Terminé','Done'):l('Modifier','Edit')}</button></div>
      <div role="radiogroup" aria-label={l('Période','Period')} className="hd-classique sim-ios-segment">{PERIODES.map(([p,n])=><button key={p} type="button" role="radio" aria-checked={periode===p} onClick={()=>setPeriode(p)}>{n}</button>)}</div>
      <div className="sim-ios-groupe hd-classique mt-3">
+      {encaisse!==null&&<div className="sim-ios-ligne" style={modifier?{opacity:.45}:undefined}><span aria-hidden="true" className="size-3 rounded" style={{background:'#3a3a3c'}}/><span style={{flex:1}}><span className="block">{l('Encaissé','Received')}</span><small className="block text-[12px] font-normal text-hd-on-surface-variant">{l('montant exact reçu, sans rien enlever','exact amount received, nothing deducted')}</small></span><b className="tabular-nums">{nombre(encaisse)} {dev}</b></div>}
+      {pasReparti!==null&&<div className="sim-ios-ligne" style={modifier?{opacity:.45}:undefined}><span aria-hidden="true" className="size-3 rounded" style={{background:'#ff9500'}}/><span style={{flex:1}}><span className="block">{l('Pas encore réparti','Not yet allocated')}</span><small className="block text-[12px] font-normal text-hd-on-surface-variant">{l('à ce jour','as of today')}</small></span><b className="tabular-nums">{nombre(pasReparti)} {dev}</b></div>}
       {([['entre',l('Entré dans les caisses','Added to counters'),'#2f9e62'],['donne',l('Donné','Given'),'#b8862b'],['depense',l('Dépensé','Spent'),'#e0662f'],['investi',l('Investi','Invested'),'#2f6fe0'],['autre',l('Autre','Other'),'#a1a1a6'],['dettes',l('Remboursé sur les dettes','Repaid on debts'),'#7c3aed']] as const).map(([k,n,coul])=><div key={k} className="sim-ios-ligne" style={modifier&&k==='entre'?{opacity:.45}:undefined}>{modifier&&k!=='entre'&&<button type="button" aria-label={l(`Effacer : ${n}`,`Erase: ${n}`)} disabled={bilan[k]===0||busy} onClick={()=>setAEffacer({quoi:k,nom:n,nb:nombreDe(k),centimes:bilan[k]})} className="-my-[11px] -ml-[11px] grid size-[44px] shrink-0 place-items-center disabled:opacity-30"><span aria-hidden="true" className="grid size-[22px] place-items-center rounded-full" style={{background:'#d70015',color:'#fff',fontWeight:700,lineHeight:1}}>−</span></button>}<span aria-hidden="true" className="size-3 rounded" style={{background:coul}}/><span style={{flex:1}}>{n}</span><b className="tabular-nums">{nombre(bilan[k])} {dev}</b></div>)}
      </div>
      {message('bilan')}
