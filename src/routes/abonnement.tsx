@@ -4,6 +4,7 @@ import {retourPrecedent} from '@/lib/retour-precedent';
 import {supabase} from '@/lib/supabase';
 import {IconeTrait as T} from '@/components/IconeTrait';
 import {BarreNav} from '@/components/BarreNav';
+import {imageOffre} from '@/lib/offres-images';
 import {FORMULES,VALEUR_SEPAREE_PLUS,chargerMonAbonnement,economieAn,offreAbonnement,prixAnnuelMensualise,type IdFormule,type MonAbonnement} from '@/lib/abonnements';
 import './profil-v2.css';
 import './abonnement.css';
@@ -98,6 +99,8 @@ export function Abonnement(){
  const selection=choix??(actuelle==='graine'?'plus':actuelle),d=FORMULES.find(x=>x.id===selection)!;
  const annuel=periode==='an'&&d.an!==null,lien=d.id==='graine'?null:donnees.liens[offreAbonnement(d.id,periode,langue)];
  const avantages=tout?d.avantages:d.avantages.slice(0,NB_VISIBLES);
+ // Visuel Chariow de la formule (12/11/2026), le même que sur la page de paiement : Sénevé et Sénevé Plus seulement.
+ const visuel=d.id==='senev'||d.id==='plus'?imageOffre(offreAbonnement(d.id,periode,langue),langue):null;
  const nomFormule=(id:IdFormule)=>l(...FORMULES.find(x=>x.id===id)!.nom);
  const contenuGraine=l('Ton mois gratuit comprend Habitudes & Défis, SÉNEVÉ Finance, le Test des 7 Racines, la Bible et ton journal.','Your free month includes Habits & Challenges, SÉNEVÉ Finance, the 7 Roots Test, the Bible and your journal.');
 
@@ -134,6 +137,7 @@ export function Abonnement(){
   {/* Détail de la formule choisie */}
   <section className={`ab-carte ab-detail ab-detail-${d.id}`} aria-label={nomFormule(d.id)}>
    <div className="ab-detail-tete"><Embleme id={d.id}/><div><h3>{l(...d.nom)}</h3><p>{l(...d.accroche)}</p></div></div>
+   {visuel&&<img className="ab-visuel" src={visuel.src} width={visuel.largeur} height={visuel.hauteur} loading="lazy" alt={l(`Visuel ${d.nom[0]}, ${annuel?'1 an':'1 mois'}`,`${d.nom[1]} visual, ${annuel?'1 year':'1 month'}`)}/>}
    {d.mois>0&&<p className="ab-montant"><b>{prix(annuel?d.an!:d.mois)}</b><span>{annuel?l('par an','a year'):l('par mois','a month')}</span>{annuel&&<small>{l(`soit ${prix(prixAnnuelMensualise(d)!)} par mois`,`i.e. ${prix(prixAnnuelMensualise(d)!)} a month`)}</small>}</p>}
    {annuel&&<p className="ab-economie">{l(`Tu économises ${prix(economieAn(d))} par an`,`You save ${prix(economieAn(d))} a year`)}</p>}
    {d.id==='plus'&&<p className="ab-valeur">{l('Ces contenus vaudraient ','This content would cost ')}<b>{prix(Math.round(VALEUR_SEPAREE_PLUS))}</b>{l(' achetés séparément.',' bought separately.')}</p>}

@@ -135,3 +135,6 @@
 .ab-ligne{padding-top:6px;padding-bottom:6px}
 /* La police ne dépend pas de la page visitée avant (styles-profil.css impose Literata sur .pf-page). */
 .pf-page.pv-page.ab-page{font:400 16px/1.4 Poppins,system-ui,sans-serif}
+
+/* Visuel Chariow de la formule choisie (12/11/2026). */
+.ab-page .ab-visuel{display:block;width:min(100%,240px);height:auto;margin:14px auto 4px;border-radius:14px;box-shadow:0 1px 2px rgb(0 0 0 / .12)}

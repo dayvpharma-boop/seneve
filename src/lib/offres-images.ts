@@ -4,6 +4,11 @@ const CHARIOW:Record<string,[produit:string,hauteur:number]>={
  FORMATION_30J_EN:['prd_lhpbe7w2',449],FORMATION_90J_EN:['prd_9dpd5e43',540],
  ACCOMPAGNEMENT_30J_FR:['prd_gh92snpf',508],ACCOMPAGNEMENT_90J_FR:['prd_nxxh7lut',508],
  ACCOMPAGNEMENT_30J_EN:['prd_chq1uan9',449],ACCOMPAGNEMENT_90J_EN:['prd_lwbim0c6',449],
+ // Abonnements (visuels créés le 12/11/2026, 360 × 450).
+ ABONNEMENT_SENEVE_MOIS_FR:['prd_96ryvw31',450],ABONNEMENT_SENEVE_AN_FR:['prd_qiurdmp9',450],
+ ABONNEMENT_PLUS_MOIS_FR:['prd_h3vrqqmd',450],ABONNEMENT_PLUS_AN_FR:['prd_xe7ztah4',450],
+ ABONNEMENT_SENEVE_MOIS_EN:['prd_m7ohegvs',450],ABONNEMENT_SENEVE_AN_EN:['prd_b9gl6kss',450],
+ ABONNEMENT_PLUS_MOIS_EN:['prd_akmxiqk5',450],ABONNEMENT_PLUS_AN_EN:['prd_suk1i66g',450],
 };
 export type ImageOffre={src:string;srcSet?:string;largeur:number;hauteur:number};
 export function imageOffre(offreId:string,langue:string):ImageOffre|null{
