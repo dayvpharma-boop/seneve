@@ -1,0 +1,27 @@
+/* SÉNEVÉ Rapport (12/11/2026) : réglages façon iPhone, puis une feuille blanche identique à l'impression. */
+:root:root:root .rp-page .rp-segment{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:3px;border-radius:12px;background:rgb(118 118 128 / .12)}
+:root:root:root:root .rp-page .rp-segment button{min-height:36px;padding:0 2px!important;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important;font:500 13.5px/1.1 var(--ios-police,-apple-system,system-ui,sans-serif)!important;color:var(--dp-encre)!important}
+:root:root:root:root .rp-page .rp-segment button[aria-checked="true"]{background:var(--dp-carte)!important;font-weight:600!important;box-shadow:0 3px 8px rgb(0 0 0 / .12),0 3px 1px rgb(0 0 0 / .04)!important}
+:root:root:root .rp-page .rp-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 0;padding:4px;border-radius:14px;background:var(--dp-carte)}
+:root:root:root .rp-page .rp-nav span{flex:1;font-size:15.5px;font-weight:600;letter-spacing:-.01em;text-align:center}
+:root:root:root:root .rp-page .rp-nav button{display:grid;place-items:center;width:44px;height:44px;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;color:var(--dp-accent)!important;box-shadow:none!important}
+:root:root:root .rp-page .rp-nav button:disabled{opacity:.3}
+:root:root:root .rp-page .rp-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 0}
+:root:root:root:root .rp-page .rp-actions button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 8px!important;border:0!important;border-radius:14px!important;background:var(--dp-accent)!important;color:#fff!important;font:600 15px/1.1 var(--ios-police,-apple-system,system-ui,sans-serif)!important;box-shadow:none!important}
+:root:root:root:root .rp-page .rp-actions button:last-child{background:#2b579a!important}
+:root:root:root .rp-page .rp-actions button:disabled{opacity:.5}
+:root:root:root:root .rp-page .rp-aide{margin:8px 4px 0!important;padding:0!important;font-size:12.5px;line-height:1.45;color:var(--dp-doux)}
+:root:root:root .rp-page .rp-papier{margin:18px 0 0;padding:22px 18px;border-radius:6px;background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgb(0 0 0 / .08),0 10px 30px rgb(0 0 0 / .08);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Calibri,Arial,sans-serif;overflow-x:auto}
+:root:root:root .rp-page .rp-papier table{min-width:100%}
+:root:root:root .rp-page .rp-papier :is(h1,h2,p,td,th){font-family:inherit}
+
+/* Impression et PDF : seule la feuille du rapport est imprimée. */
+@media print{
+ @page{size:A4;margin:16mm}
+ html,body{background:#fff!important}
+ body *{visibility:hidden!important}
+ .rp-papier,.rp-papier *{visibility:visible!important}
+ .rp-papier{position:absolute!important;inset:0 auto auto 0!important;width:100%!important;margin:0!important;padding:0!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}
+ .rp-papier tr{break-inside:avoid}
+}
+@media screen and (max-width:480px){:root:root:root .rp-page .rp-papier{padding:18px 12px}:root:root:root .rp-page .rp-papier :is(table){font-size:12px!important}:root:root:root .rp-page .rp-papier :is(td,th){padding:5px 4px!important}:root:root:root .rp-page .rp-papier h1{font-size:20px!important}}
