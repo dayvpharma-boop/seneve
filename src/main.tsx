@@ -184,3 +184,5 @@ import './styles-test-accueil-moderne.css';
 import './styles-aujourdhui-lavande.css';
 import './styles-iphone.css';
 import './styles-accents-iphone.css';
+// Polissage « unslop » (12/11/2026) : toujours en dernier.
+import './styles-unslop.css';

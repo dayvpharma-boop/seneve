@@ -1,0 +1,29 @@
+/* Polissage « unslop » de toute l'application (12/11/2026, demande de Dr Justin après Finance).
+ * Méthode : unslop par Damir Sokolovsky (@heydamir), CC BY 4.0.
+ * Chargée en dernier : elle ne fait qu'aplatir ce qui faisait « interface générée ».
+ * 1. Petits titres et étiquettes en casse normale (plus de MAJUSCULES espacées), sauf la marque SÉNEVÉ
+ *    et l'administration, qui garde son propre style.
+ * 2. Une seule carte forte par écran, en couleur pleine : plus de halos radiaux ni de dégradés sur les
+ *    grandes cartes. La couleur d'accent choisie par la personne reste la seule couleur. */
+
+/* 1. Casse normale */
+:root:root:root:root:root body :not(:is(.admin-maquette,.am-page,.af-page,.ae-page,.admin-fidele,[class*="admin"],.brand,.logo-marque,[class*="marque"],[class*="brand"]),:is(.admin-maquette,.am-page,.af-page,.ae-page,.admin-fidele,[class*="admin"],.brand,.logo-marque,[class*="marque"],[class*="brand"]) *){
+  text-transform:none!important;
+}
+
+/* 2. Grandes cartes : couleur pleine, plus de halo */
+:root:root:root:root:root:root .hd-public.ios .hd-public-hero,
+:root:root:root:root:root:root .espace-page aside.decouverte-hd.dhd-forme{
+  background:color-mix(in srgb,var(--ios-accent) 46%,#0b0a14)!important;
+}
+:root:root:root:root:root:root .bb-page.ios .bb-carte.bb-reprendre{
+  background:color-mix(in srgb,var(--ios-accent) 46%,#0b0a14)!important;
+}
+:root:root:root:root:root:root .ios-prochain,
+:root:root:root:root:root:root .parcours-page.ios .progres-suite{
+  background:color-mix(in srgb,var(--ios-accent) 40%,#000)!important;
+}
+:root:root:root:root:root:root :is(.espace-page,.parcours-page).ios .prog-tab[role=tab][aria-selected="true"],
+:root:root:root:root:root:root #s-result.resultat-anneaux .result-action{
+  background:var(--ios-accent)!important;
+}

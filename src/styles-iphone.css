@@ -26,7 +26,7 @@
 :root:root:root .espace-page.ios .today-head .barre-haut{grid-column:1/-1;grid-row:1;display:flex;justify-content:flex-end;gap:8px;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;min-height:0}
 :root:root:root .espace-page.ios .today-head .logo-marque{margin-right:auto;opacity:.9}
 :root:root:root .espace-page.ios .today-head .logo-marque small{display:none}
-:root:root:root .espace-page.ios .ios-date{grid-column:1;margin:8px 0 0;font:600 13px/1.2 var(--ios-police);letter-spacing:.02em;text-transform:uppercase;color:var(--ios-doux)}
+:root:root:root .espace-page.ios .ios-date{grid-column:1;margin:8px 0 0;font:600 13px/1.2 var(--ios-police);letter-spacing:0;text-transform:none;color:var(--ios-doux)}
 .espace-page.ios .ios-date::first-letter{text-transform:uppercase}
 :root:root:root .espace-page.ios .today-head h1{grid-column:1;margin:2px 0 0!important;font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
 /* Onglets de parcours en pastilles iOS */
@@ -39,7 +39,7 @@
 :root:root:root .ios-jour{position:relative;margin:14px 0 0;min-height:300px;border-radius:24px;overflow:hidden;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;color:rgb(255 255 255);
  background:linear-gradient(180deg,#0000 10%,#0000 35%,#000b 100%),url("/illustrations/seneve-pousse-photo-v1-720.webp") center/cover,#2c2a5e;box-shadow:0 18px 40px -20px #000a}
 :root:root:root .ios-puce{position:absolute;top:14px;left:14px;right:14px;width:max-content;max-width:calc(100% - 28px);padding:6px 11px;border-radius:999px;background:#ffffff2e;backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);font:600 12.5px/1.3 var(--ios-police)}
-:root:root:root .ios-jour small{font:600 12px/1.2 var(--ios-police);letter-spacing:.07em;text-transform:uppercase;opacity:.85}
+:root:root:root .ios-jour small{font:600 12px/1.2 var(--ios-police);letter-spacing:0;text-transform:none;opacity:.85}
 :root:root:root .ios-jour h2{margin:0;font:800 28px/1.1 var(--ios-police);letter-spacing:-.02em;color:rgb(255 255 255)}
 :root:root:root .ios-jour p{margin:0;font:italic 16px/1.4 Lora,Georgia,serif;opacity:.92;color:rgb(255 255 255)}
 :root:root:root .ios-jour-bouton{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;min-height:50px;border-radius:14px;background:rgb(255 255 255);color:#1c1c1e!important;font:600 16px var(--ios-police);text-decoration:none!important;transition:transform 120ms ease-out}
@@ -73,12 +73,12 @@
 :root:root:root .ios-segment-curseur{position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px)/var(--n));border-radius:8px;background:var(--ios-carte);box-shadow:0 3px 8px #0000001f,0 1px 1px #0000000f;transform:translateX(calc(100% * var(--i)));transition:transform 360ms var(--ios-ressort)}
 :root[data-apparence="sombre"] .ios-segment-curseur{background:#636366}
 :root:root:root .ios-segment button{position:relative;z-index:1;min-height:34px;border:0;background:none;font:600 13.5px var(--ios-police);color:var(--ios-encre);cursor:pointer}
-:root:root:root .ios-bouton{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border:0;border-radius:14px;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent));color:rgb(255 255 255)!important;font:600 16px var(--ios-police);text-decoration:none!important;cursor:pointer;box-shadow:0 8px 18px -10px var(--ios-accent);transition:transform 120ms ease-out}
+:root:root:root .ios-bouton{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border:0;border-radius:14px;background:var(--ios-accent);color:rgb(255 255 255)!important;font:600 16px var(--ios-police);text-decoration:none!important;cursor:pointer;box-shadow:0 1px 2px rgb(0 0 0 / .12);transition:transform 120ms ease-out}
 :root:root:root .ios-note{margin:0;font:400 12.5px/1.4 var(--ios-police);color:var(--ios-doux)}
 
 /* Prochain rendez-vous */
 :root:root:root .ios-prochain{display:flex;align-items:center;gap:14px;padding:16px;border-radius:22px;background:linear-gradient(135deg,#2c2a5e,#1a1840);color:rgb(255 255 255)!important;text-decoration:none!important;box-shadow:0 18px 36px -20px #2c2a5ecc;transition:transform 120ms ease-out}
-:root:root:root .ios-prochain small{display:block;font:600 11.5px var(--ios-police);letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+:root:root:root .ios-prochain small{display:block;font:600 11.5px var(--ios-police);letter-spacing:0;text-transform:none;opacity:.7}
 :root:root:root .ios-prochain time{display:block;font:800 34px/1 var(--ios-police);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 :root:root:root .ios-prochain-texte{flex:1;min-width:0}
 :root:root:root .ios-prochain-texte b{display:block;font:700 18px/1.2 var(--ios-police)}
@@ -130,7 +130,7 @@
 /* Grand titre */
 :root:root:root .parcours-page.ios .parcours-marque{padding:8px 4px 0!important;background:none!important;border:0!important}
 :root:root:root .parcours-page.ios .parcours-intro{padding:6px 4px 4px!important}
-:root:root:root .parcours-page.ios .parcours-repere{margin:0!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .parcours-page.ios .parcours-repere{margin:0!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:0!important;text-transform:none;color:var(--ios-doux)!important}
 :root:root:root .parcours-page.ios .parcours-repere span{display:none!important}
 :root:root:root .parcours-page.ios .parcours-intro h1{margin:2px 0 0!important;font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
 :root:root:root .parcours-page.ios .progres-intro{margin:6px 4px 14px!important;font:400 15px/1.45 var(--ios-police)!important;color:var(--ios-doux)!important}
@@ -163,8 +163,8 @@
 /* Participation et chiffres */
 :root:root:root .parcours-page.ios .pc-participation progress{height:8px!important;border-radius:999px!important;overflow:hidden;appearance:none;-webkit-appearance:none;background:#7676801f!important;border:0!important}
 :root:root:root .parcours-page.ios .pc-participation progress::-webkit-progress-bar{background:#7676801f;border-radius:999px}
-:root:root:root .parcours-page.ios .pc-participation progress::-webkit-progress-value{background:linear-gradient(90deg,var(--ios-accent-2),var(--ios-accent));border-radius:999px}
-:root:root:root .parcours-page.ios .pc-participation progress::-moz-progress-bar{background:linear-gradient(90deg,var(--ios-accent-2),var(--ios-accent));border-radius:999px}
+:root:root:root .parcours-page.ios .pc-participation progress::-webkit-progress-value{background:var(--ios-accent);border-radius:999px}
+:root:root:root .parcours-page.ios .pc-participation progress::-moz-progress-bar{background:var(--ios-accent);border-radius:999px}
 :root:root:root .parcours-page.ios .progres-chiffres{gap:8px!important}
 :root:root:root .parcours-page.ios .progres-chiffres li{background:#7676800f!important;border:0!important;border-radius:16px!important;box-shadow:none!important;padding:12px 8px!important}
 :root:root:root .parcours-page.ios .progres-chiffres li strong{font:800 28px/1 var(--ios-police)!important;letter-spacing:-.02em}
@@ -202,7 +202,7 @@
 /* Barre du haut et grand titre */
 :root:root:root .bl-page.ios .bl-header{background:none!important;border:0!important;box-shadow:none!important}
 :root:root:root .bl-page.ios .bl-header strong{font:600 13px var(--ios-police)!important;color:var(--ios-doux)!important}
-:root:root:root .bl-page.ios .bl-intro .bl-label{font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .bl-page.ios .bl-intro .bl-label{font:600 13px/1.2 var(--ios-police)!important;letter-spacing:0!important;text-transform:none;color:var(--ios-doux)!important}
 :root:root:root .bl-page.ios .bl-intro .bl-label svg{display:none}
 :root:root:root .bl-page.ios .bl-intro h1{margin:2px 0 0!important;font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
 :root:root:root .bl-page.ios .bl-soustitre{font:400 15px/1.45 var(--ios-police)!important;color:var(--ios-doux)!important}
@@ -228,7 +228,7 @@
 :root:root:root .bl-page.ios .bl-liste-formats strong{font:600 16px var(--ios-police)!important;color:var(--ios-encre)!important}
 :root:root:root .bl-page.ios .bl-liste-formats small,:root:root:root .bl-page.ios .bl-liste-formats span span{color:var(--ios-doux)!important}
 /* Boutons */
-:root:root:root .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a){min-height:50px!important;border-radius:14px!important;border:0!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important;transition:transform 120ms ease-out}
+:root:root:root .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a){min-height:50px!important;border-radius:14px!important;border:0!important;background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important;font:600 16px var(--ios-police)!important;transition:transform 120ms ease-out}
 :root:root:root .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a) *{color:rgb(255 255 255)!important}
 :root:root:root .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a):active{transform:scale(.97)}
 /* Parcours & offres : grande photo plein cadre */
@@ -304,7 +304,7 @@
 :root:root:root .bb-page.ios .bb-outils strong{font:600 16px var(--ios-police)!important;color:var(--ios-encre)!important}
 :root:root:root .bb-page.ios .bb-outils small{color:var(--ios-doux)!important}
 /* Téléchargement */
-:root:root:root .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *){background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border:0!important;border-radius:14px!important;min-height:50px!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *){background:var(--ios-accent)!important;color:rgb(255 255 255)!important;border:0!important;border-radius:14px!important;min-height:50px!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important;font:600 16px var(--ios-police)!important}
 :root:root:root .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *) *{color:rgb(255 255 255)!important}
 :root:root:root .bb-page.ios .bb-pied{color:var(--ios-doux)!important}
 :root:root:root:root[data-apparence="sombre"] .bb-page.ios :is(.bb-carte:not(.bb-reprendre),.bb-testaments a,.bb-outils a) :is(h2,h3,strong,blockquote,p){color:var(--ios-encre)!important}
@@ -317,7 +317,7 @@
 /* Grand titre */
 :root:root:root .journal-page.ios .today-head{background:none!important;border:0!important;box-shadow:none!important;padding:6px 4px 10px!important}
 :root:root:root .journal-page.ios .today-head .logo-marque small{display:none}
-:root:root:root .journal-page.ios .journal-repere{margin:8px 0 0!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .journal-page.ios .journal-repere{margin:8px 0 0!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:0!important;text-transform:none;color:var(--ios-doux)!important}
 :root:root:root .journal-page.ios .journal-repere span{display:none!important}
 :root:root:root .journal-page.ios .today-head h1{margin:2px 0 0!important;font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
 /* Confidentialité : une ligne discrète avec un cadenas en tuile */
@@ -344,7 +344,7 @@
 :root:root:root .journal-page.ios .share-check>span{font:500 15px/1.35 var(--ios-police)!important;color:var(--ios-encre)!important}
 :root:root:root .journal-page.ios .share-check .muted{font:400 12.5px/1.4 var(--ios-police)!important;color:var(--ios-doux)!important}
 /* Boutons */
-:root:root:root .journal-page.ios :is(.journal-form .btn,.journal-nouvelle){min-height:52px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important;transition:transform 120ms ease-out,opacity 200ms ease}
+:root:root:root .journal-page.ios :is(.journal-form .btn,.journal-nouvelle){min-height:52px!important;border:0!important;border-radius:14px!important;background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important;font:600 16px var(--ios-police)!important;transition:transform 120ms ease-out,opacity 200ms ease}
 :root:root:root .journal-page.ios :is(.journal-form .btn,.journal-nouvelle) *{color:rgb(255 255 255)!important}
 :root:root:root .journal-page.ios .journal-form .btn:disabled{opacity:.4!important;box-shadow:none!important}
 :root:root:root .journal-page.ios :is(.journal-form .btn,.journal-nouvelle):active:not(:disabled){transform:scale(.97)}
@@ -367,7 +367,7 @@
 :root:root:root body:has(.pv-page.ios){background:var(--ios-fond)!important}
 :root:root:root:root[data-apparence="sombre"] :is(body:has(.pv-page.ios),.pv-page.ios){background:rgb(0 0 0)!important}
 :root:root:root .pv-page.ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,time,li,label,summary,input,select){font-family:var(--ios-police)!important}
-:root:root:root .pv-page.ios .pv-surtitre{font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase!important;color:var(--ios-doux)!important}
+:root:root:root .pv-page.ios .pv-surtitre{font:600 13px/1.2 var(--ios-police)!important;letter-spacing:0!important;text-transform:none!important;color:var(--ios-doux)!important}
 :root:root:root .pv-page.ios .pv-titre{font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
 :root:root:root .pv-page.ios .pv-intro{font:400 15px/1.45 var(--ios-police)!important;color:var(--ios-doux)!important}
 :root:root:root .pv-page.ios h2.pv-surtitre{margin:24px 16px 6px!important;font:500 13px var(--ios-police)!important}
@@ -401,13 +401,13 @@
 :root:root:root:root[data-apparence="sombre"] :is(body:has(:is(.nt-page,.coach-page,.aide-page).ios),:is(.nt-page,.coach-page,.aide-page).ios){background:rgb(0 0 0)!important}
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(h1,h2,h3,h4,p,small,b,strong,span,a,button,time,li,label,input,select,summary):not(.day-text,.day-text *){font-family:var(--ios-police)!important}
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios h1{font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
-:root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(.aide-repere,.nt-section>h2,.nt-section-titre){font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(.aide-repere,.nt-section>h2,.nt-section-titre){font:600 13px/1.2 var(--ios-police)!important;letter-spacing:0!important;text-transform:none;color:var(--ios-doux)!important}
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios .aide-repere span{display:none}
 /* Cartes, champs, boutons */
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(.card,.coach-cadre,.coach-editorial,.coach-confidentialite,.aide-urgence){background:var(--ios-carte)!important;border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(textarea,input:not([type=checkbox]):not([type=radio]),select){background:#7676801f!important;border:0!important;border-radius:12px!important;box-shadow:none!important;color:var(--ios-encre)!important;font-size:16px!important}
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios :is(textarea,input,select):focus{outline:3px solid color-mix(in srgb,var(--ios-accent) 35%,transparent)!important;outline-offset:1px}
-:root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire){min-height:50px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire){min-height:50px!important;border:0!important;border-radius:14px!important;background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important;font:600 16px var(--ios-police)!important}
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire) *{color:rgb(255 255 255)!important}
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn:disabled{opacity:.4!important;box-shadow:none!important}
 :root:root:root :is(.nt-page,.coach-page,.aide-page).ios .btn-danger{background:transparent!important;color:#ff3b30!important;border:0!important}
@@ -428,7 +428,7 @@
 /* Coach : bulles façon Messages */
 :root:root:root .coach-page.ios .coach-bulle{border:0!important;border-radius:20px!important;box-shadow:none!important;background:#e9e9eb!important;color:#1c1c1e!important}
 :root:root:root:root[data-apparence="sombre"] .coach-page.ios .coach-bulle{background:#26252a!important;color:var(--ios-encre)!important}
-:root:root:root:root .coach-page.ios .coach-msg-moi .coach-bulle{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important}
+:root:root:root:root .coach-page.ios .coach-msg-moi .coach-bulle{background:var(--ios-accent)!important;color:rgb(255 255 255)!important}
 :root:root:root .coach-page.ios .coach-quota{background:color-mix(in srgb,#ff9500 16%,var(--ios-carte))!important;color:#a15c00!important;border:0!important;border-radius:999px!important}
 :root:root:root .coach-page.ios .coach-saisie,:root:root:root .coach-page.ios .coach-form{background:color-mix(in srgb,var(--ios-carte) 80%,transparent)!important;backdrop-filter:blur(20px) saturate(180%);border-radius:22px!important;border:0!important}
 :root:root:root .coach-page.ios .prog-tab{border:0!important;border-radius:999px!important;background:var(--ios-carte)!important;color:var(--ios-encre)!important;font:600 14px var(--ios-police)!important;box-shadow:0 1px 2px rgb(0 0 0 / .06)!important}
@@ -455,13 +455,13 @@
 /* Champs, boutons, cartes communs */
 :root:root:root :is(.oa-page.ios,.connexion.ios,.ios-test) :is(input:not([type=checkbox]):not([type=radio]),select,textarea),:root:root:root .connexion.ios .auth-input{background:#7676801f!important;border:0!important;border-radius:12px!important;box-shadow:none!important;color:var(--ios-encre)!important;min-height:48px!important;font-size:16px!important}
 :root:root:root :is(.oa-page.ios,.connexion.ios,.ios-test) :is(input,select,textarea):focus{outline:3px solid color-mix(in srgb,var(--ios-accent) 35%,transparent)!important;outline-offset:1px}
-:root:root:root :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.btn:not(.btn-link),.oa-primary){min-height:52px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 17px var(--ios-police)!important;text-transform:none!important;letter-spacing:-.01em!important;transition:transform 120ms ease-out}
+:root:root:root :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.btn:not(.btn-link),.oa-primary){min-height:52px!important;border:0!important;border-radius:14px!important;background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important;font:600 17px var(--ios-police)!important;text-transform:none!important;letter-spacing:-.01em!important;transition:transform 120ms ease-out}
 :root:root:root :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.btn:not(.btn-link),.oa-primary) *{color:rgb(255 255 255)!important}
 :root:root:root :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.btn:not(.btn-link),.oa-primary):active{transform:scale(.97)}
 :root:root:root :is(.oa-page.ios,.connexion.ios,.ios-test) .card,:root:root:root .oa-page.ios .oa-card,:root:root:root .ios-test .home-card{background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
 /* Offres */
 :root:root:root .oa-page.ios .oa-header{background:none!important;border:0!important;box-shadow:none!important}
-:root:root:root .oa-page.ios .oa-eyebrow{font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em!important;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .oa-page.ios .oa-eyebrow{font:600 13px/1.2 var(--ios-police)!important;letter-spacing:0!important;text-transform:none;color:var(--ios-doux)!important}
 :root:root:root .oa-page.ios .oa-eyebrow svg{display:none}
 :root:root:root .oa-page.ios .oa-title{font:800 34px/1.06 var(--ios-police)!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
 :root:root:root .oa-page.ios .oa-card h2,:root:root:root .oa-page.ios .oa-card h3{font:700 21px/1.2 var(--ios-police)!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
@@ -493,11 +493,11 @@
 :root:root:root .ios-test .home-steps li>:first-child,:root:root:root .ios-test .home-steps li::marker{color:var(--ios-accent)!important}
 :root:root:root .ios-test :is(.quiz-card,.result-hero,.result-next,.result-strength,.root-list-card,.action-card){background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
 :root:root:root .ios-test .quiz-echelle :is(button,label){border:0!important;border-radius:12px!important;background:#7676801f!important;color:var(--ios-encre)!important;font:600 16px var(--ios-police)!important;box-shadow:none!important;transition:transform 120ms ease-out,background-color 150ms ease}
-:root:root:root .ios-test .quiz-echelle :is(button,label):is([aria-pressed="true"],[aria-checked="true"],:has(input:checked)){background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important}
+:root:root:root .ios-test .quiz-echelle :is(button,label):is([aria-pressed="true"],[aria-checked="true"],:has(input:checked)){background:var(--ios-accent)!important;color:rgb(255 255 255)!important}
 :root:root:root .ios-test .quiz-echelle :is(button,label):active{transform:scale(.94)}
 :root:root:root .ios-test progress{height:6px!important;border-radius:999px!important;overflow:hidden;appearance:none;-webkit-appearance:none;background:#7676801f!important;border:0!important}
 :root:root:root .ios-test progress::-webkit-progress-bar{background:#7676801f;border-radius:999px}
-:root:root:root .ios-test progress::-webkit-progress-value{background:linear-gradient(90deg,var(--ios-accent-2),var(--ios-accent));border-radius:999px}
+:root:root:root .ios-test progress::-webkit-progress-value{background:var(--ios-accent);border-radius:999px}
 :root:root:root:root[data-apparence="sombre"] :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.card,.oa-card,.home-card,.quiz-card) :is(h2,h3,strong,p:not(.muted)){color:var(--ios-encre)!important}
 
 /* ── Habitudes & Défis : sous-pages (style iPhone, 05/11/2026) ── */
@@ -508,7 +508,7 @@
 :root:root:root .hd-ecran.ios>header{background:color-mix(in srgb,var(--ios-fond) 78%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important;box-shadow:0 .5px 0 var(--ios-ligne)!important}
 :root:root:root .hd-ecran.ios>header span{color:var(--ios-encre)!important}
 :root:root:root .hd-ecran.ios>header span.text-hd-secondary{color:var(--ios-doux)!important;font-weight:600!important}
-:root:root:root .hd-ecran.ios>header .bg-hd-primary{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important}
+:root:root:root .hd-ecran.ios>header .bg-hd-primary{background:var(--ios-accent)!important}
 /* Barre du bas : comme la barre de l'espace */
 :root:root:root .hd-ecran.ios .hd-onglets{background:color-mix(in srgb,var(--ios-carte) 72%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important;box-shadow:none!important;border-top:.5px solid var(--ios-ligne)!important}
 :root:root:root .hd-ecran.ios .hd-onglets .ios-onglet{color:var(--ios-doux)!important;gap:2px!important}
@@ -518,7 +518,7 @@
 :root:root:root .hd-ecran.ios :is(h1,.font-hd-headline-lg){font-weight:800!important;letter-spacing:-.025em!important;color:var(--ios-encre)!important}
 :root:root:root .hd-ecran.ios :is(h2,h3,.font-hd-headline-md,.font-hd-headline-sm){letter-spacing:-.02em!important;color:var(--ios-encre)!important}
 :root:root:root .hd-ecran.ios :is(.bg-hd-surface-container-lowest,.bg-hd-surface-container-low):is(.rounded-2xl,.rounded-xl,.rounded-3xl){background:var(--ios-carte)!important;border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
-:root:root:root .hd-ecran.ios :is(.bg-hd-secondary,.bg-hd-primary):is(button,a){background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border-radius:14px!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important}
+:root:root:root .hd-ecran.ios :is(.bg-hd-secondary,.bg-hd-primary):is(button,a){background:var(--ios-accent)!important;color:rgb(255 255 255)!important;border-radius:14px!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important}
 :root:root:root .hd-ecran.ios :is(.bg-hd-secondary,.bg-hd-primary):is(button,a) *{color:rgb(255 255 255)!important}
 :root:root:root .hd-ecran.ios :is(.bg-hd-secondary-container,.bg-hd-surface-container):is(button,a){background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;border-radius:14px!important;box-shadow:none!important}
 :root:root:root .hd-ecran.ios :is(button,a):active{transform:scale(.97)}
@@ -586,7 +586,7 @@
 :root:root:root:root .hd-public.ios .hd-public-editor-fields input{border:0;background:#7676801f;color:var(--ios-encre)}
 :root:root:root:root .hd-public.ios .hd-public-collision{border-left-color:#ff9f0a}
 :root:root:root:root .hd-public.ios .hd-public-prayer{border-left:0;padding-left:20px;margin:14px 0 0}
-:root:root:root:root .hd-public.ios .hd-public-prayer .btn-primaire{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:14px;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent));color:#fefefe;font:600 16px var(--ios-police);text-decoration:none;border:0}
+:root:root:root:root .hd-public.ios .hd-public-prayer .btn-primaire{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:14px;background:var(--ios-accent);color:#fefefe;font:600 16px var(--ios-police);text-decoration:none;border:0}
 :root:root:root:root .hd-public.ios .hd-public-footer{border-top:0;padding:26px 8px 8px;text-align:center;color:var(--ios-doux)}
 :root:root:root:root .hd-public.ios .hd-public-footer p{line-height:1.5;margin:0 0 6px}
 :root:root:root:root .hd-public.ios .hd-public-footer a{color:var(--ios-accent);text-decoration:none;font-weight:600;padding:12px 10px}
@@ -609,7 +609,7 @@
 :root:root:root:root :is(.espace-page.ios,.hd-ecran.ios,dialog) :is(button[aria-label^="Fait — "],button[aria-label^="Done — "]) *{color:#1f8a3b!important}
 :root:root:root:root[data-apparence="sombre"] :is(.espace-page.ios,.hd-ecran.ios,dialog) :is(button[aria-label^="Fait — "],button[aria-label^="Done — "]),:root:root:root:root[data-apparence="sombre"] :is(.espace-page.ios,.hd-ecran.ios,dialog) :is(button[aria-label^="Fait — "],button[aria-label^="Done — "]) *{color:#5fe08a!important}
 /* Boutons « J'ai réalisé » et autres actions principales de la journée */
-:root:root:root:root .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border-radius:14px!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important}
+:root:root:root:root .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary{background:var(--ios-accent)!important;color:rgb(255 255 255)!important;border-radius:14px!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important}
 :root:root:root:root .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary *{color:rgb(255 255 255)!important}
 :root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .hd-jour-stitch :is(button,a):is(.bg-hd-surface-container,.bg-hd-secondary-container){background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;border:0!important;border-radius:999px!important}
 /* Correction : une petite feuille d'action iPhone */
@@ -617,7 +617,7 @@
 :root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low:has(button) .flex-wrap{display:grid!important;grid-template-columns:1fr;gap:8px!important}
 :root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button{min-height:46px!important;width:100%;justify-content:center;border:0!important;border-radius:12px!important;font:600 15.5px var(--ios-police)!important;box-shadow:none!important}
 :root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:first-child{background:var(--ios-carte)!important;color:#ff3b30!important}
-:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:nth-child(2){background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important}
+:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:nth-child(2){background:var(--ios-accent)!important;color:rgb(255 255 255)!important}
 /* Volets (cultes, dîme, historique) : en-tête comme une ligne de réglage */
 :root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) details:is(.hd-volet,.hd-historique-jour)>summary{min-height:56px!important;font:600 17px var(--ios-police)!important;color:var(--ios-encre)!important}
 :root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) details:is(.hd-volet,.hd-historique-jour)>summary svg:first-child,:root:root:root:root :is(.espace-page.ios,.hd-ecran.ios) details.hd-volet>summary .material-symbols-outlined:first-child{color:var(--ios-accent)!important}
@@ -636,7 +636,7 @@
 :root:root:root:root dialog.hd-lecteur-priere .ap-commandes-repere button{border:0!important;border-radius:999px!important;background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;font:600 14px var(--ios-police)!important}
 :root:root:root:root dialog.hd-lecteur-priere .ap-actions{background:color-mix(in srgb,var(--ios-carte) 80%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important;border-top:.5px solid var(--ios-ligne)!important;box-shadow:none!important}
 :root:root:root:root dialog.hd-lecteur-priere .ap-boutons button{border:0!important;border-radius:14px!important;background:#7676801f!important;color:var(--ios-encre)!important;box-shadow:none!important;font:600 14.5px var(--ios-police)!important;min-height:48px}
-:root:root:root:root dialog.hd-lecteur-priere .ap-boutons .ap-confirmer,:root:root:root:root dialog.hd-lecteur-priere .ap-boutons button:last-child:not(:disabled){background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important}
+:root:root:root:root dialog.hd-lecteur-priere .ap-boutons .ap-confirmer,:root:root:root:root dialog.hd-lecteur-priere .ap-boutons button:last-child:not(:disabled){background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important}
 :root:root:root:root dialog.hd-lecteur-priere .ap-boutons :is(.ap-confirmer,button:last-child:not(:disabled)) *{color:rgb(255 255 255)!important}
 /* Lectures du jour : feuille iPhone */
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere){background:var(--ios-fond)!important}
@@ -644,7 +644,7 @@
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(h1,h2,h3,p,small,span,button,a,label,input):not(.font-hd-scripture-verse){font-family:var(--ios-police)!important}
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(h1,h2){font-weight:700!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(.bg-hd-surface-container-lowest,.card,article){background:var(--ios-carte)!important;border:0!important;border-radius:20px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important}
-:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a).bg-hd-secondary{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border-radius:14px!important}
+:root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a).bg-hd-secondary{background:var(--ios-accent)!important;color:rgb(255 255 255)!important;border-radius:14px!important}
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a):is(.bg-hd-surface-container,.bg-hd-secondary-container){background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;border-radius:999px!important}
 :root:root:root:root dialog.hd-stitch:not(.hd-lecteur-priere) :is(input:not([type=checkbox]):not([type=radio]),select){background:#7676801f!important;border:0!important;border-radius:12px!important;color:var(--ios-encre)!important;font-size:16px!important}
 
@@ -653,7 +653,7 @@
 :root:root:root .espace-page.ios .accueil-vivant{display:none!important}
 :root:root:root .espace-page.ios :is(.card,.audio-card,.objectif-card,.jardin-card,.repli,.reprise-card,.action-card,.question-card,.parole-card){background:var(--ios-carte)!important;border:0!important;border-radius:22px!important;box-shadow:0 1px 2px rgb(0 0 0 / .04)!important;color:var(--ios-encre)!important}
 :root:root:root .espace-page.ios .card :is(h2,h3),:root:root:root .espace-page.ios .today-section>:is(h2,header h2,div h2){font:700 21px/1.2 var(--ios-police)!important;letter-spacing:-.02em!important;color:var(--ios-encre)!important}
-:root:root:root .espace-page.ios :is(.btn:not(.btn-link):not(.link),.moment-btn,.action-btn){min-height:50px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root .espace-page.ios :is(.btn:not(.btn-link):not(.link),.moment-btn,.action-btn){min-height:50px!important;border:0!important;border-radius:14px!important;background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important;font:600 16px var(--ios-police)!important}
 :root:root:root .espace-page.ios :is(.btn:not(.btn-link):not(.link),.moment-btn,.action-btn) *{color:rgb(255 255 255)!important}
 :root:root:root .espace-page.ios :is(.btn:not(.btn-link):not(.link),.moment-btn,.action-btn):disabled{opacity:.45!important;box-shadow:none!important}
 /* Progression de la semaine : pastilles rondes façon app Forme */
@@ -690,15 +690,15 @@
 :root:root:root :is(.confidentialite,.introuvable-maquette).ios details>summary{min-height:52px;font:600 17px var(--ios-police)!important;color:var(--ios-encre)!important}
 :root:root:root .confidentialite.ios table{border-collapse:separate!important;border-spacing:0;background:var(--ios-carte)!important;border-radius:16px!important;overflow:hidden;border:0!important}
 :root:root:root .confidentialite.ios :is(td,th){border:0!important;border-bottom:.5px solid var(--ios-ligne)!important;padding:10px 12px!important;font-size:14px!important}
-:root:root:root .confidentialite.ios th{color:var(--ios-doux)!important;font-weight:600!important;text-transform:uppercase;font-size:12px!important;letter-spacing:.02em}
-:root:root:root :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action){min-height:50px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root .confidentialite.ios th{color:var(--ios-doux)!important;font-weight:600!important;text-transform:none;font-size:12px!important;letter-spacing:.02em}
+:root:root:root :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action){min-height:50px!important;border:0!important;border-radius:14px!important;background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important;font:600 16px var(--ios-police)!important}
 :root:root:root :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action) *{color:rgb(255 255 255)!important}
 :root:root:root :is(.confidentialite,.introuvable-maquette).ios a:not(.btn):not(.introuvable-action):not(.introuvable-principal){color:var(--ios-accent)!important}
 /* Page introuvable : la graine dans une pastille douce, le reste en cartes iPhone */
 :root:root:root .introuvable-maquette.ios blockquote{background:var(--ios-carte)!important;border-left:3px solid var(--ios-accent)!important;border-radius:4px 16px 16px 4px!important}
 /* Mot de passe : titres et repère comme la Connexion */
 :root:root:root .recup-page.ios h1{font:800 32px/1.08 var(--ios-police)!important;letter-spacing:-.025em!important}
-:root:root:root:root .introuvable-maquette.ios .introuvable-principal{min-height:52px!important;border:0!important;border-radius:14px!important;background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;box-shadow:0 8px 18px -10px var(--ios-accent)!important;font:600 16px var(--ios-police)!important}
+:root:root:root:root .introuvable-maquette.ios .introuvable-principal{min-height:52px!important;border:0!important;border-radius:14px!important;background:var(--ios-accent)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important;font:600 16px var(--ios-police)!important}
 :root:root:root:root .introuvable-maquette.ios .introuvable-principal *{color:rgb(255 255 255)!important}
 :root:root:root:root .introuvable-maquette.ios .introuvable-accueil{border:0!important;border-radius:14px!important;background:color-mix(in srgb,var(--ios-accent) 12%,transparent)!important;color:var(--ios-accent)!important;min-height:48px;font:600 16px var(--ios-police)!important}
 :root:root:root:root .introuvable-maquette.ios .introuvable-embleme{border-radius:28px!important;box-shadow:0 12px 30px -16px rgb(0 0 0 / .35)!important}
@@ -721,7 +721,7 @@
 :root:root:root .bl-page.ios :is(.lp-agrandir,.lp-cote){background:rgb(28 28 30 / .55)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important;color:rgb(255 255 255)!important;border:0!important}
 :root:root:root .bl-page.ios .lp-feuille{border-radius:22px 22px 0 0!important;background:color-mix(in srgb,var(--ios-carte) 92%,transparent)!important;backdrop-filter:blur(24px) saturate(180%)!important}
 :root:root:root .bl-page.ios .lp-feuille :is(button,textarea,h2,p,li,span){font-family:var(--ios-police)!important}
-:root:root:root .bl-page.ios .lp-feuille .lp-principal{background:linear-gradient(180deg,var(--ios-accent-2),var(--ios-accent))!important;color:rgb(255 255 255)!important;border:0!important;border-radius:14px!important}
+:root:root:root .bl-page.ios .lp-feuille .lp-principal{background:var(--ios-accent)!important;color:rgb(255 255 255)!important;border:0!important;border-radius:14px!important}
 :root:root:root .bl-page.ios .lp-feuille .lp-supprimer{color:#ff3b30!important;background:transparent!important;border:0!important}
 :root:root:root .bl-page.ios .lp-feuille textarea{background:#7676801f!important;border:0!important;border-radius:12px!important}
 :root:root:root .bl-page.ios .lp-astuce{color:var(--ios-doux)!important;font-family:var(--ios-police)!important}
@@ -832,13 +832,13 @@
 :root:root:root .espace-page.ios .prog-tab .jn-tab-barre{position:absolute;left:14px;right:14px;bottom:10px;height:3px;border-radius:3px;background:rgb(120 120 128 / .16);overflow:hidden}
 :root:root:root .espace-page.ios .prog-tab .jn-tab-barre i{position:absolute;inset:0 auto 0 0;width:var(--avancement,0%);border-radius:3px;background:#34c759}
 :root:root:root .espace-page.ios .prog-tab[data-etat="termine"] .jn-tab-barre i{background:#8e8e93}
-:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,var(--ios-accent) 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 10px 24px -12px rgb(91 78 232 / .75),inset 0 1px 0 rgb(255 255 255 / .18)!important}
+:root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,var(--ios-accent) 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12),inset 0 1px 0 rgb(255 255 255 / .18)!important}
 :root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-meta{color:rgb(255 255 255 / .82)!important}
 :root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-meta::before{background:rgb(255 255 255);box-shadow:0 0 0 3px rgb(255 255 255 / .25)}
 :root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .25)}
 :root:root:root:root .espace-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-barre i{background:rgb(255 255 255)}
 :root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .prog-tab{box-shadow:0 0 0 .5px rgb(255 255 255 / .08)!important}
-:root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{box-shadow:0 10px 24px -12px rgb(91 78 232 / .9),inset 0 1px 0 rgb(255 255 255 / .14)!important}
+:root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .prog-tab[role=tab][aria-selected="true"]{box-shadow:0 1px 2px rgb(0 0 0 / .12),inset 0 1px 0 rgb(255 255 255 / .14)!important}
 @media (prefers-reduced-motion:reduce){:root:root:root .espace-page.ios .prog-tab{transition:none}:root:root:root .espace-page.ios .prog-tab:active{transform:none}}
 /* Parcours : mêmes cartes façon Apple que sur Aujourd'hui (pastille d'état en haut, nom, barre d'avancement) */
 :root:root:root .parcours-page.ios .prog-tabs{gap:10px!important;padding:4px 2px 14px!important;scroll-padding-inline-start:44px!important}
@@ -854,17 +854,17 @@
 :root:root:root .parcours-page.ios .prog-tab .jn-tab-barre{position:absolute;left:14px;right:14px;bottom:10px;height:3px;border-radius:3px;background:rgb(120 120 128 / .16);overflow:hidden}
 :root:root:root .parcours-page.ios .prog-tab .jn-tab-barre i{position:absolute;inset:0 auto 0 0;width:var(--avancement,0%);border-radius:3px;background:#34c759}
 :root:root:root .parcours-page.ios .prog-tab[data-etat="termine"] .jn-tab-barre i{background:#8e8e93}
-:root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,var(--ios-accent) 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 10px 24px -12px rgb(91 78 232 / .75),inset 0 1px 0 rgb(255 255 255 / .18)!important}
+:root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"]{background:linear-gradient(160deg,#7468f2,var(--ios-accent) 60%,#4c3fd6)!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12),inset 0 1px 0 rgb(255 255 255 / .18)!important}
 :root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"] small{color:rgb(255 255 255 / .82)!important}
 :root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"] small::before{background:rgb(255 255 255);box-shadow:0 0 0 3px rgb(255 255 255 / .25)}
 :root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .25)}
 :root:root:root:root .parcours-page.ios .prog-tab[role=tab][aria-selected="true"] .jn-tab-barre i{background:rgb(255 255 255)}
 :root:root:root:root:root[data-apparence="sombre"] .parcours-page.ios .prog-tab{box-shadow:0 0 0 .5px rgb(255 255 255 / .08)!important}
-:root:root:root:root:root[data-apparence="sombre"] .parcours-page.ios .prog-tab[role=tab][aria-selected="true"]{box-shadow:0 10px 24px -12px rgb(91 78 232 / .9),inset 0 1px 0 rgb(255 255 255 / .14)!important}
+:root:root:root:root:root[data-apparence="sombre"] .parcours-page.ios .prog-tab[role=tab][aria-selected="true"]{box-shadow:0 1px 2px rgb(0 0 0 / .12),inset 0 1px 0 rgb(255 255 255 / .14)!important}
 @media (prefers-reduced-motion:reduce){:root:root:root .parcours-page.ios .prog-tab{transition:none}:root:root:root .parcours-page.ios .prog-tab:active{transform:none}}
 /* Aujourd'hui (Habitudes & Défis) : raccourcis du bas en liste groupée façon iPhone (tuile de couleur, titre, explication, chevron) */
 :root:root:root .hd-raccourcis{margin:8px 16px 24px}
-:root:root:root .hd-raccourcis-titre{margin:0 4px 8px!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:.02em;text-transform:uppercase;color:var(--ios-doux)!important}
+:root:root:root .hd-raccourcis-titre{margin:0 4px 8px!important;font:600 13px/1.2 var(--ios-police)!important;letter-spacing:0;text-transform:none;color:var(--ios-doux)!important}
 :root:root:root .hd-raccourcis-liste li{position:relative}
 :root:root:root .hd-raccourcis-liste li+li::before{content:"";position:absolute;top:0;left:58px;right:0;height:.5px;background:rgb(60 60 67 / .2)}
 :root:root:root:root[data-apparence="sombre"] .hd-raccourcis-liste li+li::before{background:rgb(255 255 255 / .14)}
@@ -910,7 +910,7 @@
 @keyframes pf-menu-apparait{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){:root:root:root .pf-photo-menu{animation:none}:root:root:root .pf-photo-bouton{transition:none}}
 /* Inscription Habitudes & Défis : bloc « Mes rappels » (06/11/2026), bien visible, avant les engagements */
-:root:root:root .hd-rappels-inscription{margin:0 0 18px;padding:16px;border-radius:20px;background:linear-gradient(160deg,color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 12%,var(--ios-carte,#fff)),var(--ios-carte,#fff) 70%);box-shadow:0 0 0 .5px color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 28%,transparent),0 10px 26px -16px color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 60%,transparent)}
+:root:root:root .hd-rappels-inscription{margin:0 0 18px;padding:16px;border-radius:20px;background:linear-gradient(160deg,color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 12%,var(--ios-carte,#fff)),var(--ios-carte,#fff) 70%);box-shadow:0 0 0 .5px color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 28%,transparent),0 1px 3px rgb(0 0 0 / .08)}
 :root:root:root .hd-rappels-inscription-tete{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 :root:root:root .hd-rappels-inscription-icone{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;color:rgb(255 255 255);background:linear-gradient(180deg,#ff6482,#ff2d55);box-shadow:inset 0 1px 0 rgb(255 255 255 / .25),0 6px 14px -6px rgb(255 45 85 / .6)}
 :root:root:root .hd-rappels-inscription-icone svg{color:rgb(255 255 255)!important;fill:currentColor}
@@ -924,7 +924,7 @@
 :root:root:root .hd-rappels-inscription-interrupteur input:checked::after{transform:translateX(20px)}
 :root:root:root .hd-rappels-inscription-interrupteur input:focus-visible{outline:3px solid var(--ios-accent,var(--ios-accent));outline-offset:2px}
 :root:root:root .hd-rappels-inscription-liste{margin:10px 0 0;padding:0;border:0;min-width:0}
-:root:root:root .hd-rappels-inscription-liste legend{padding:0 4px;margin-bottom:6px;font:600 12px/1.2 var(--ios-police,system-ui);letter-spacing:.02em;text-transform:uppercase;color:var(--ios-doux,#6e6e73)}
+:root:root:root .hd-rappels-inscription-liste legend{padding:0 4px;margin-bottom:6px;font:600 12px/1.2 var(--ios-police,system-ui);letter-spacing:0;text-transform:none;color:var(--ios-doux,#6e6e73)}
 :root:root:root .hd-rappels-inscription-liste ul{list-style:none;margin:0;padding:0;border-radius:14px;overflow:hidden;background:var(--ios-carte,#fff);box-shadow:0 0 0 .5px rgb(60 60 67 / .12)}
 :root:root:root .hd-rappels-inscription-liste li+li{box-shadow:inset 0 .5px 0 rgb(60 60 67 / .16)}
 :root:root:root .hd-rappels-inscription-liste label{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 14px;font:400 15px/1.3 var(--ios-police,system-ui);color:var(--ios-encre,#1c1c1e);cursor:pointer}
@@ -949,7 +949,7 @@
 /* Carte « Habitudes & Défis » de la page Aujourd'hui, design app Forme choisi le 06/11/2026 (proposition C), aux couleurs de l'application avec un peu de noir.
    Noir #050505 et blanc #fefefe : l'outil des thèmes remplace #000 et #fff par les couleurs du thème. */
 :root:root:root .espace-page aside.decouverte-hd.dhd-forme{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;margin:14px 0 22px;padding:20px;border:0;border-radius:22px;background:radial-gradient(120% 85% at 0% 0%,#7b6cf6 0%,var(--ios-accent) 30%,#2a2170 62%,#0b0a14 100%);color:#fefefe;box-shadow:0 18px 36px -18px #1a1640cc}
-:root:root:root .espace-page .dhd-forme .decouverte-hd-badge{all:unset;grid-column:1;font:700 13px/1.2 var(--ios-police);letter-spacing:.05em;text-transform:uppercase;color:#ffffffe6}
+:root:root:root .espace-page .dhd-forme .decouverte-hd-badge{all:unset;grid-column:1;font:700 13px/1.2 var(--ios-police);letter-spacing:0;text-transform:none;color:#ffffffe6}
 :root:root:root .espace-page .dhd-forme .dhd-anneaux{grid-column:2;grid-row:1/3}
 :root:root:root .espace-page .dhd-forme .dhd-anneau-fond,:root:root:root .espace-page .dhd-forme .dhd-anneau-trait{fill:none;stroke-width:9;stroke-linecap:round}
 :root:root:root .espace-page .dhd-forme .dhd-anneau-rouge .dhd-anneau-fond{stroke:#ffffff40}.dhd-forme .dhd-anneau-rouge .dhd-anneau-trait{stroke:#fefefe}
@@ -987,7 +987,7 @@
 :root:root:root:root #s-quiz.quiz-tactile .quiz-anneau b small{font:600 15px/1 var(--ios-police);color:var(--ios-doux);margin-left:1px}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-racine-entete{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;margin:4px 0 0}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-racine-entete > div{display:flex;flex-direction:column;align-items:center;gap:2px}
-:root:root:root:root #s-quiz.quiz-tactile .quiz-racine-num{margin:0;padding:6px 12px;border-radius:999px;background:var(--ios-accent)1f;color:var(--ios-accent);font:700 12.5px/1.2 var(--ios-police);letter-spacing:.03em;text-transform:uppercase}
+:root:root:root:root #s-quiz.quiz-tactile .quiz-racine-num{margin:0;padding:6px 12px;border-radius:999px;background:var(--ios-accent)1f;color:var(--ios-accent);font:700 12.5px/1.2 var(--ios-police);letter-spacing:.03em;text-transform:none}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-racine{margin:6px 0 0;font:700 17px/1.25 var(--ios-police);color:var(--ios-encre)}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-restantes{background:none;color:var(--ios-doux);font:500 13px/1.2 var(--ios-police);padding:0}
 :root:root:root:root #s-quiz.quiz-tactile .quiz-card{margin:16px 0 0;padding:0;border:0;background:none;box-shadow:none;text-align:center}
@@ -1021,7 +1021,7 @@
 
 /* Test des 7 Racines, page de résultat : design « anneaux Forme » (proposition B choisie le 06/11/2026). */
 :root:root:root:root #s-result.resultat-anneaux{font-family:var(--ios-police)}
-:root:root:root:root #s-result.resultat-anneaux .resultat-puce{text-align:center;font:600 12.5px/1.2 var(--ios-police);letter-spacing:.04em;text-transform:uppercase;color:var(--ios-doux)}
+:root:root:root:root #s-result.resultat-anneaux .resultat-puce{text-align:center;font:600 12.5px/1.2 var(--ios-police);letter-spacing:0;text-transform:none;color:var(--ios-doux)}
 :root:root:root:root #s-result.resultat-anneaux #rtitle{text-align:center;font:800 28px/1.1 var(--ios-police)!important;letter-spacing:-.02em;color:var(--ios-encre)}
 :root:root:root:root #s-result.resultat-anneaux .roue-racines{display:flex;flex-direction:column;align-items:center;gap:10px;margin:14px 0 4px}
 :root:root:root:root #s-result.resultat-anneaux .roue-racines ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;font:500 11.5px/1.3 var(--ios-police);color:var(--ios-doux)}
@@ -1049,7 +1049,7 @@
 :root:root:root:root #s-result.resultat-anneaux .root-row-bottom{min-width:0}
 :root:root:root:root #s-result.resultat-anneaux .root-category{font:500 11px/1.25 var(--ios-police);color:var(--ios-doux)}
 :root:root:root:root #s-result.resultat-anneaux .root-row.is-start{box-shadow:inset 0 0 0 2px #ff375f}
-:root:root:root:root #s-result.resultat-anneaux .root-category b{display:inline-block;margin-right:4px;padding:1px 6px;border-radius:5px;background:#ff375f;color:#fefefe;font:700 9.5px/1.4 var(--ios-police);text-transform:uppercase}
+:root:root:root:root #s-result.resultat-anneaux .root-category b{display:inline-block;margin-right:4px;padding:1px 6px;border-radius:5px;background:#ff375f;color:#fefefe;font:700 9.5px/1.4 var(--ios-police);text-transform:none}
 :root:root:root:root #s-result.resultat-anneaux .result-next .btn-link{min-height:50px;border-radius:14px!important;border:0!important;font:600 16px var(--ios-police)!important;display:flex;justify-content:center;align-items:center;gap:8px}
 :root:root:root:root #s-result.resultat-anneaux .result-next > .btn-link{background:#25d366!important;color:#fefefe!important}
 :root:root:root:root #s-result.resultat-anneaux .result-espace .btn-link{background:var(--ios-accent)!important;color:#fefefe!important}
@@ -1073,7 +1073,7 @@
 
 /* Dimanche allégé (maquette validée le 08/11/2026) : carte en verre, volet « Au repos aujourd'hui ». */
 :root:root:root .ios-repos{display:flex;gap:14px;align-items:flex-start;margin:16px 0 20px;padding:18px;border-radius:24px;background:color-mix(in srgb,var(--ios-carte) 62%,transparent);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:inset 0 0 0 .5px color-mix(in srgb,#fff 70%,transparent),0 8px 30px rgb(88 78 232 / .12);background-image:radial-gradient(120% 90% at 100% 0%,rgb(255 216 176 / .45),transparent 60%),radial-gradient(90% 80% at 0% 0%,rgb(217 212 255 / .6),transparent 65%);font-family:var(--ios-police)}
-:root:root:root .ios-repos-icone{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;color:#fff;background:linear-gradient(135deg,var(--ios-accent-2),var(--ios-accent))}
+:root:root:root .ios-repos-icone{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;color:#fff;background:var(--ios-accent)}
 :root:root:root .ios-repos small{display:block;font-size:13px;font-weight:600;color:var(--ios-accent);letter-spacing:-.005em}
 :root:root:root .ios-repos h2{margin:2px 0 4px;font-size:22px;line-height:1.15;font-weight:700;letter-spacing:-.01em;color:var(--ios-encre)}
 :root:root:root .ios-repos p{margin:0;font-size:15px;line-height:1.35;color:var(--ios-doux)}
