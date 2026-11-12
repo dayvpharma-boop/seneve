@@ -1,4 +1,5 @@
 import {AvatarParticipant} from '@/components/AvatarParticipant';
+import { LogoSeneve } from '@/components/LogoSeneve';
 import { Link } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { Icone } from './Icone';
@@ -69,7 +70,7 @@ export function AccueilDecouverte({ prenom, starting, commencer, reglages, foote
   const l = langue === 'en' ? 'en' : 'fr';
   const t = TEXTES[l];
   return <>
-    <header className="decouverte-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span><Link className="decouverte-avatar" to={langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={langue === 'en' ? 'My profile' : 'Mon profil'}><AvatarParticipant>{prenom ? prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link></header>
+    <header className="decouverte-marque"><span><LogoSeneve taille={26} /><strong>SÉNEVÉ</strong></span><Link className="decouverte-avatar" to={langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={langue === 'en' ? 'My profile' : 'Mon profil'}><AvatarParticipant>{prenom ? prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link></header>
     <section className="decouverte-bienvenue"><h1>{prenom ? `${t.bonjour} ${prenom}` : t.bonjour}</h1><p>{t.pret}</p></section>
     <CarteHabitudes langue={l} />
     <article className="decouverte-carte" aria-labelledby="titre-decouverte">

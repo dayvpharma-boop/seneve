@@ -1,4 +1,5 @@
 import '../styles-jardin-accueil.css';
+import { LogoSeneve } from '@/components/LogoSeneve';
 import {Apparence} from '@/components/Apparence';
 import {lireTailleResultat} from '@/components/LectureResultat';
 import {ChoixRacines} from '@/components/ChoixRacines';
@@ -208,7 +209,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
  </header>;
  return <main className={`wrap ios-test${screen === 'home' ? ' jardin-accueil' : ''}`}>
   <section id="s-home" hidden={screen !== 'home'}>
-   <header className="barre-haut home-head"><p className="brand logo-marque"><Icone nom="graine" taille={20} />{t.brand}</p>{languageLink}<Apparence langue={language} compact/></header>
+   <header className="barre-haut home-head"><p className="brand logo-marque"><LogoSeneve taille={20} />{t.brand}</p>{languageLink}<Apparence langue={language} compact/></header>
    <div className="jardin-hero">
    <div className="jardin-message">
    <h1>{t.homeTitle}</h1>
@@ -277,7 +278,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
    </div>
   </section>
   <section id="s-result" className="resultat-anneaux" data-lecture={tailleLecture} hidden={screen !== 'result'}>
-   <header className="resultat-outils"><PrototypeButton className="result-retour" aria-label={en ? 'Back to the test home' : 'Revenir à l’accueil du test'} onClick={() => setScreen('home')}><Icone nom="fleche_gauche" taille={22}/></PrototypeButton><p className="result-brand"><Icone nom="graine" taille={24}/>SÉNEVÉ</p><Apparence langue={language} compact contraste/></header>
+   <header className="resultat-outils"><PrototypeButton className="result-retour" aria-label={en ? 'Back to the test home' : 'Revenir à l’accueil du test'} onClick={() => setScreen('home')}><Icone nom="fleche_gauche" taille={22}/></PrototypeButton><p className="result-brand"><LogoSeneve taille={24} />SÉNEVÉ</p><Apparence langue={language} compact contraste/></header>
    <p className="resultat-puce">{t.resultBrand}</p><h1 id="rtitle" tabIndex={-1} ref={title}>{t.resultTitle}</h1>
     <div id="rbody">{screen === 'result' && <ResultBody language={language} answers={answers} chosenRoot={chosenRoot} onChoose={setChosenRoot} mantle={mantle} />}</div>
     <p className="muted result-final">{t.final}</p>

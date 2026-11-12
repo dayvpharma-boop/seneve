@@ -1,4 +1,5 @@
 import {requiseCeJour} from '@/lib/habitudes-dimanche';
+import { LogoSeneve } from '@/components/LogoSeneve';
 import './espace-moderne.css';
 import {PlanningJourHabitudes} from '@/components/PlanningJourHabitudes';
 import {SimulateurDime} from '@/components/SimulateurDime';
@@ -44,7 +45,6 @@ import { AudioCard } from '@/components/AudioCard';
 import { compteJardin } from '@/lib/jardin';
 import { bilan as bilanParcours, jourDeReprise, REPRISE_TEXTES, semaineDuJour, serieObstacle } from '@/lib/progres';
 import { nomParcours, referenceAffichee, textes } from '@/lib/espace-textes';
-import { Icone } from '@/components/Icone';
 import { RaccourcisHabitudes, raccourcisHabitudes } from '@/components/RaccourcisHabitudes';
 import { IconeMaquette } from '@/components/IconeMaquette';
 import { IconeJournee } from '@/components/IconeJournee';
@@ -501,7 +501,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     const date = majuscule(new Intl.DateTimeFormat(T.locale, { timeZone: 'Africa/Kinshasa', weekday: 'long', day: 'numeric', month: 'long' }).format(dateDuJour(enr.date_debut, jourVu)));
     const { action, question } = activitesDu(jourVu);
     return page(enr.langue, <>
-      <header className="lecture-header"><button type="button" className="back-btn" aria-label={T.retour} onClick={fermer}><IconeLecture nom="arrow_back" taille={20} /></button><Icone nom="graine" taille={26} /><span>{enr.langue === 'en' ? 'Today’s reading' : 'Séance du jour'}</span><Link className="lecture-avatar" to={enr.langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={enr.langue === 'en' ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link></header>
+      <header className="lecture-header"><button type="button" className="back-btn" aria-label={T.retour} onClick={fermer}><IconeLecture nom="arrow_back" taille={20} /></button><LogoSeneve taille={26} /><span>{enr.langue === 'en' ? 'Today’s reading' : 'Séance du jour'}</span><Link className="lecture-avatar" to={enr.langue === 'en' ? '/profil?lang=en' : '/profil'} aria-label={enr.langue === 'en' ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link></header>
       {!m || !m.ouvert
         ? <div className="card"><p role="status">{m?.heure ? T.momentFerme(m.heure) : T.jourFerme(jourVu)}</p></div>
         : <article className="moment-page" aria-labelledby="titre-moment">

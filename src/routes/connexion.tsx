@@ -1,9 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { LogoSeneve } from '@/components/LogoSeneve';
 import { BoutonsConnexionSociale } from '@/components/BoutonsConnexionSociale';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { siteUrl, supabase } from '@/lib/supabase';
 import { IconeConnexion } from '@/components/IconeConnexion';
-import { Icone } from '@/components/Icone';
 import { PenseeLivre } from '@/components/RepereParcours';
 import './connexion-moderne.css';
 import {useEnLigne} from '@/lib/hors-ligne';
@@ -152,7 +152,7 @@ export function Connexion() {
   return <main className={`wrap connexion auth-maquette auth-${tab} ios`}>
     <header className="auth-header">
       <Link className="auth-back" to="/" aria-label={langue === 'en' ? 'Back to the test' : 'Revenir au test'}><IconeConnexion nom="arrow_back" taille={22} /></Link>
-      <span className="auth-brand"><Icone nom="graine" taille={22} /><strong>SÉNEVÉ</strong></span>
+      <span className="auth-brand"><LogoSeneve taille={22} /><strong>SÉNEVÉ</strong></span>
       <Link className="auth-language" to={(langue === 'en' ? '/connexion?lang=fr' : '/connexion?lang=en')+(suiteHabitudes?`&mode=${tab}&suite=habitudes`:'')}><IconeConnexion nom="language" taille={16} /><span>{T.autreLangue}</span><IconeConnexion nom="expand_more" taille={16} /></Link>
     </header>
     <div className="auth-layout"><div className="auth-overview">

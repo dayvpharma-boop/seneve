@@ -1,4 +1,5 @@
 import './progres-moderne.css';
+import { LogoSeneve } from '@/components/LogoSeneve';
 import {calendrierHabitudes,dureeHabitudes,fuseauHabitudes} from '@/lib/habitudes-calendrier';
 import {lignesPaginees,parPaquets} from '@/lib/lignes-paginees';
 import {calendrierPeriodes,dateDuJourHabitudes,MOIS_HABITUDES,moisHabitudes,type PeriodeHabitudes} from '@/lib/habitudes-periodes';
@@ -15,7 +16,6 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { BarreNav } from '@/components/BarreNav';
 import { amenerOngletAuDebut, dateDuJour, pickDefault, placerOngletAujourdhui } from '@/lib/espace';
-import { Icone } from '@/components/Icone';
 import { nomParcours } from '@/lib/espace-textes';
 import { bilan, progresTextes, semaines, semaineTextes, type Bilan } from '@/lib/progres';
 import { JardinCard } from '@/components/JardinCard';
@@ -163,7 +163,7 @@ export function Progres() {
   const back = <Link className="link" to={langue==='en'?'/espace?lang=en':'/espace'}>← {T.retour}</Link>;
   // En-tête commun à l'espace : marque puis grand titre ; style iPhone du 05/11/2026 sans la carte photo répétée sur chaque page.
   const en = langue === 'en';
-  const tete = <><header className="parcours-marque"><span><Icone nom="graine" taille={26} /><strong>SÉNEVÉ</strong></span>{data && <Link className="parcours-avatar" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header><RaccourcisParcours langue={langue} /></>;
+  const tete = <><header className="parcours-marque"><span><LogoSeneve taille={26} /><strong>SÉNEVÉ</strong></span>{data && <Link className="parcours-avatar" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data.prenom ? data.prenom.charAt(0).toUpperCase() : 'S'}</AvatarParticipant></Link>}</header><header className="parcours-intro"><p className="parcours-repere"><span />{en ? 'Inner journey' : 'Cheminement intérieur'}</p><h1>{en ? 'My journey' : 'Mon parcours'}</h1></header><RaccourcisParcours langue={langue} /></>;
   if (failed && copie) return <ProgresHorsLigne copie={copie} langue={langue} tete={tete} reessayer={() => void refresh()} />;
   if (failed && !enLigne) return <main className="wrap avec-nav parcours-page ios">{tete}<CarteHorsConnexion langue={langue} texte={en ? 'There is no saved copy of your progress on this device.' : 'Aucune copie de tes progrès n’est disponible sur cet appareil.'} reessayer={() => void refresh()} /><BarreNav langue={langue} maquette iconesJournee /></main>;
   if (failed) return <main className="wrap avec-nav parcours-page ios">{tete}<div className="card"><p role="alert">{T.erreur}</p><button type="button" className="btn action-btn" onClick={() => void refresh()}>{T.reessayer}</button></div>{back}<BarreNav langue={langue} maquette iconesJournee /></main>;

@@ -1,4 +1,5 @@
 import { IllustrationPage } from '@/components/IllustrationPage';
+import { LogoSeneve } from '@/components/LogoSeneve';
 // Styles de l'administration : chargés avec cette page seulement (les participants ne les téléchargent pas).
 import '@/styles-administration-tableau.css';
 import '@/styles-administration-bureau.css';
@@ -20,7 +21,6 @@ import { ConventionsAdmin } from '@/components/ConventionsAdmin';
 import { InterventionAdministration,IncidentsIntervention,identifiantDemande } from '@/components/InterventionAdministration';
 import { IconeAdministration } from '@/components/IconeAdministration';
 import {IconePilotage} from '@/components/IconePilotage';
-import { Icone } from '@/components/Icone';
 import { IconeConfidentialite } from '@/components/IconeConfidentialite';
 import { PilotageAdmin } from '@/components/PilotageAdmin';
 import { EchangesDemande } from '@/components/EchangesDemande';
@@ -71,7 +71,7 @@ export function Admin() {
   useEffect(() => { void refresh(); }, [refresh]);
   useEffect(() => { document.title = 'Administration — SÉNEVÉ'; document.documentElement.lang = 'fr'; }, []);
 
-  const head = <><header className="admin-maquette-header"><Link className="admin-identite" to="/espace"><Icone nom="graine"/><strong>SÉNEVÉ</strong></Link><h1>· Administration</h1><Link className="admin-profil" to="/espace" aria-label="Mon espace"><IconeConfidentialite nom="person" taille={20}/></Link></header><IllustrationPage theme="administration" langue={'fr'} /></>;
+  const head = <><header className="admin-maquette-header"><Link className="admin-identite" to="/espace"><LogoSeneve taille={22} /><strong>SÉNEVÉ</strong></Link><h1>· Administration</h1><Link className="admin-profil" to="/espace" aria-label="Mon espace"><IconeConfidentialite nom="person" taille={20}/></Link></header><IllustrationPage theme="administration" langue={'fr'} /></>;
   if (state !== 'ok' || !data) return <EtatAdministration etat={state==='ok'?'failed':state} heureErreur={heureErreur} reessayer={()=>{setState('loading');void refresh();}}/>;
 
   const liste = filtrer(data.requests, filtre);

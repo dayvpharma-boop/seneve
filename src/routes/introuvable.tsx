@@ -1,9 +1,9 @@
 import {AvatarParticipant} from '@/components/AvatarParticipant';
+import { LogoSeneve } from '@/components/LogoSeneve';
 import {useEffect} from 'react';
 import {Link,useNavigate,useSearchParams} from 'react-router-dom';
 import {IconeConfidentialite} from '@/components/IconeConfidentialite';
 import {IconeAdministration} from '@/components/IconeAdministration';
-import {Icone} from '@/components/Icone';
 
 const TEXTES = {
   fr: { titre: 'Page introuvable', retour: 'Revenir en arrière', espace: 'Mon espace', etiquette: '404 · Chemin inexploré', texte: 'Cette page n’existe pas ou a été déplacée.', citation: '« Même un pas de côté peut ramener à l’essentiel. »', recentrer: 'Un temps pour se recentrer', alt: 'Une cour paisible éclairée par la lumière du matin', legende: 'Un temps de pause dans la marche quotidienne.', test: 'Revenir au Test des 7 Racines', accueil: 'Revenir à l’accueil', aide: 'Besoin d’aide ? Écrire à l’équipe', pied: 'SÉNEVÉ · Un pas chaque jour' },
@@ -19,7 +19,7 @@ export function NotFound(){
   const suffixe=en?'?lang=en':'';
   useEffect(()=>{document.title=`${T.titre} — SÉNEVÉ`;document.documentElement.lang=en?'en':'fr';},[T,en]);
   return <main className="introuvable-maquette ios">
-    <header><button type="button" aria-label={T.retour} onClick={()=>window.history.state?.idx>0?navigate(-1):navigate('/')}><IconeConfidentialite nom="arrow_back" taille={20}/></button><div><span><Icone nom="graine"/> SÉNEVÉ</span><small>{T.titre}</small></div><Link to={`/profil${suffixe}`} aria-label={en?'My profile':'Mon profil'} className="introuvable-profil"><AvatarParticipant><IconeConfidentialite nom="person" taille={18}/></AvatarParticipant></Link></header>
+    <header><button type="button" aria-label={T.retour} onClick={()=>window.history.state?.idx>0?navigate(-1):navigate('/')}><IconeConfidentialite nom="arrow_back" taille={20}/></button><div><span><LogoSeneve taille={22} /> SÉNEVÉ</span><small>{T.titre}</small></div><Link to={`/profil${suffixe}`} aria-label={en?'My profile':'Mon profil'} className="introuvable-profil"><AvatarParticipant><IconeConfidentialite nom="person" taille={18}/></AvatarParticipant></Link></header>
     <p className="introuvable-folio">Folio 404</p>
     <section className="introuvable-centre"><div className="introuvable-embleme"><img src={`${import.meta.env.BASE_URL}illustrations/page-introuvable-graine.svg`} alt=""/></div><p className="introuvable-etiquette">{T.etiquette}</p><h1>{T.titre}</h1><p>{T.texte}</p>
     <blockquote><p>{T.citation}</p><footer><span>{T.recentrer}</span><IconeAdministration nom="auto_stories" taille={16}/></footer></blockquote></section>

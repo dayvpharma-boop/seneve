@@ -1,10 +1,10 @@
 import {AvatarParticipant} from '@/components/AvatarParticipant';
+import { LogoSeneve } from '@/components/LogoSeneve';
 import {useEffect,useState,type ReactNode} from 'react';
 import {Link} from 'react-router-dom';
 import { avecLangue } from '@/lib/espace';
 import {supabase} from '@/lib/supabase';
 import type {Bilan} from '@/lib/progres';
-import {Icone} from '@/components/Icone';
 import {IconeFin} from '@/components/IconeFin';
 import {SuiteCard} from '@/components/SuiteCard';
 
@@ -17,7 +17,7 @@ export function FinParcours({prenom,nom,enrollmentId,programmeId,langue,b,clotur
  const note=journal?.id===enrollmentId?journal.note:null;
  const etats=en?{realisee:'Done',partielle:'Partly done',preparee:'Prepared',non_commencee:'Not recorded'}:{realisee:'Action réalisée',partielle:'Action faite en partie',preparee:'Action préparée',non_commencee:'Non enregistrée'};
  return <>
-  <header className="fin-barre"><p><Icone nom="graine" taille={24}/><span>SÉNEVÉ</span></p><span className="fin-initiale" aria-hidden="true"><AvatarParticipant>{prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></header>
+  <header className="fin-barre"><p><LogoSeneve taille={24} /><span>SÉNEVÉ</span></p><span className="fin-initiale" aria-hidden="true"><AvatarParticipant>{prenom.trim().charAt(0).toUpperCase()}</AvatarParticipant></span></header>
   <header className="fin-intro"><p className="fin-badge"><IconeFin nom="spa" taille={15}/>{cloture&&!b.termine?(en?'Journey closed':'Parcours clôturé'):(en?`Journey completed · ${b.duree} days`:`Parcours terminé · ${b.duree} jours`)}</p><h1>{en?'Hello':'Bonjour'}{prenom?` ${prenom}`:''}</h1><p>{nom}</p></header>
   {onglets}
   <section className="fin-bilan" aria-label={en?'Journey review':'Bilan du parcours'}>

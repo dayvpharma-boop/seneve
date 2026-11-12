@@ -1,4 +1,5 @@
 import {retourPrecedent} from '@/lib/retour-precedent';
+import { LogoSeneve } from '@/components/LogoSeneve';
 import {contexteBilanHabitudes,cleBrouillonBilan} from '@/lib/habitudes-journal-bilan';
 import {AvatarParticipant} from '@/components/AvatarParticipant';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
@@ -9,7 +10,6 @@ import { BarreNav } from '@/components/BarreNav';
 import { IconeMaquette } from '@/components/IconeMaquette';
 import { eventIdFor } from '@/lib/espace';
 import { NOTE_MAX, draft, formatDateHeure, journalTextes, texteValide } from '@/lib/journal';
-import { Icone } from '@/components/Icone';
 import { IconeJournal } from '@/components/IconeJournal';
 import { IconeJournee } from '@/components/IconeJournee';
 import { useEnLigne } from '@/lib/hors-ligne';
@@ -141,7 +141,7 @@ function JournalDuCompte({ userId }: { userId: string }) {
   const titreGratitude = gratitude === 'matin' ? (en ? 'Morning gratitude' : 'Gratitude du matin') : (en ? 'Evening gratitude' : 'Gratitude du soir');
   const retourBilan = bilan ? <Link className="link" to={`/habitudes/aujourdhui?historique=1${en?'&lang=en':''}#hd-historique`}>← {en?'Back to my reviews':'Revenir à mes bilans'}</Link> : null;
   const retourJour = gratitude && <Link className="link" to={en ? '/habitudes/aujourdhui?lang=en' : '/habitudes/aujourdhui'}>← {en ? 'Back to my day' : 'Revenir à ma journée'}</Link>;
-  const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><Icone nom="graine" taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><Link className="journal-profil" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
+  const tete = <header className="today-head page-tete"><div className="barre-haut barre-espace"><p className="brand logo-marque"><LogoSeneve taille={24} /><span>SÉNEVÉ<small>{en ? 'Journal' : 'Journal'}</small></span></p><Link className="journal-profil" to={en ? '/profil?lang=en' : '/profil'} aria-label={en ? 'My profile' : 'Mon profil'}><AvatarParticipant>{data?.prenom.trim().charAt(0).toUpperCase() || <IconeMaquette nom="person" taille={18} />}</AvatarParticipant></Link></div><p className="journal-repere"><span />{en ? 'One step each day' : 'Un pas chaque jour'}</p><h1>{T.titreJournal}</h1></header>;
   const intro = <div className="journal-confidentialite"><IconeJournal nom="lock" taille={20} /><p className="journal-intro">{T.introJournal}</p></div>;
   const back = <Link className="link" onClick={retourPrecedent} to="/espace">← {T.retour}</Link>;
   if (failed && !enLigne) return <main className="wrap avec-nav journal-page journal-nouveau ios journal-horsligne">{tete}
