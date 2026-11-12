@@ -39,6 +39,18 @@ const minutes=(h:string)=>{const [a,b]=h.split(':').map(Number);return (a??0)*60
 /** Écran « Aujourd’hui » des maquettes Stitch : mêmes lectures serveur, mêmes déclarations, même historique.
  * Le prochain rendez-vous n’est qu’un repère d’affichage : il ne valide ni n’envoie rien.
  */
+/** Ma journée par groupes de trois (demande de Dr Justin du 12/11/2026) : le premier groupe qui contient encore
+ * une activité à faire reste ouvert, même si elle n'est pas faite ; quand ses trois activités sont faites, il se
+ * replie dans « Déjà faites » et le groupe suivant apparaît, jusqu'à la journée complète. Une activité « en partie »
+ * n'est pas faite. Les groupes suivants restent accessibles avec leurs états réels. */
+export function grouperJournee<T extends {etat?:{etat?:string}|null}>(journee:T[]){
+ const faite=(a:T)=>a.etat?.etat==='realisee';
+ const groupes:T[][]=[];for(let i=0;i<journee.length;i+=3)groupes.push(journee.slice(i,i+3));
+ const i=groupes.findIndex(g=>g.some(a=>!faite(a)));
+ return i<0?{faites:journee,enCours:[] as T[],suivantes:[] as T[]}
+  :{faites:groupes.slice(0,i).flat(),enCours:groupes[i]!,suivantes:groupes.slice(i+1).flat()};
+}
+
 export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,langue,fuseau='Africa/Kinshasa',finExclue=null,copie,avantDefis}:{enrollmentId:string;participantId:string;dateLocale:string;langue:string;fuseau?:string;finExclue?:string|null;
  /** Sans réseau : journée gardée sur l'appareil (décision du 29/10/2026). Aucun appel serveur pour l'afficher. */
  copie?:CopieJourHd;
@@ -61,6 +73,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  // la prière dans son lecteur, la Bible dans la lecture du jour, sinon la carte de l'activité, mise en évidence.
  const cibleOuverte=useRef<string|null>(null);
  const autresActivitesRef=useRef<HTMLDetailsElement>(null);
+ const faitesRef=useRef<HTMLDetailsElement>(null);
  useEffect(()=>{
   if(!data)return;
   let surbrillance:number|undefined;
@@ -73,8 +86,9 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    // Un rappel peut désigner une action parmi celles repliées.
    const ordonnees=[...data.activites].sort((x,y)=>x.heure.localeCompare(y.heure));
    const journee=estDimanche(dateLocale)?ordonnees.filter(x=>x.occurrence.requise):ordonnees;
-   if(journee.findIndex(x=>x.occurrence.occurrence_id===id)>=3&&autresActivitesRef.current)
-    autresActivitesRef.current.open=true;
+   const groupes=grouperJournee(journee),dans=(l:typeof journee)=>l.some(x=>x.occurrence.occurrence_id===id);
+   if(dans(groupes.suivantes)&&autresActivitesRef.current)autresActivitesRef.current.open=true;
+   if(dans(groupes.faites)&&faitesRef.current)faitesRef.current.open=true;
    if(momentPriere(a.habit_key))setPriereId(id);
    else if(!horsLigne&&estLectureHabitudes(a.habit_key)){setLectureInitialeId(id);setLecturesOuvertes(true);}
    if(surbrillance!==undefined)window.clearTimeout(surbrillance);
@@ -117,13 +131,13 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
  const dimanche=estDimanche(dateLocale);
  const visibles=dimanche?activites.filter(a=>a.occurrence.requise):activites;
  const auRepos=dimanche?activites.filter(a=>!a.occurrence.requise):[];
- // Seulement trois activités visibles ; toutes les autres restent accessibles avec leurs états réels.
- const autresActivites=visibles.slice(3);
+ // Groupes de trois (12/11/2026) : le groupe en cours est visible, les groupes finis sont repliés, les suivants rangés.
+ const {faites:dejaFaites,enCours,suivantes:autresActivites}=grouperJournee(visibles);
  const autresConfirmees=autresActivites.filter(a=>a.etat?.etat==='realisee'&&a.etat.synchronisation==='synchronise').length;
  const prochain=visibles.find(a=>ouverte(a)&&h!==null&&a.heure>=h)??visibles.find(ouverte)??null;
  const ecart=prochain&&h?minutes(prochain.heure)-minutes(h):null;
  const iProchain=prochain?visibles.indexOf(prochain):-1;
- const ouvrirProchain=()=>{if(iProchain>=3&&autresActivitesRef.current)autresActivitesRef.current.open=true;};
+ const ouvrirProchain=()=>{if(prochain&&autresActivites.includes(prochain)&&autresActivitesRef.current)autresActivitesRef.current.open=true;};
  // Les rendez-vous éloignés du soir sont présentés en lignes discrètes, comme dans la maquette ; un appui les déplie.
  const plusTard=(i:number)=>!dimanche&&iProchain>=0&&i>iProchain+2&&minutes(visibles[i]!.heure)>=18*60;
  const premierPlusTard=visibles.findIndex((_,i)=>plusTard(i));
@@ -185,18 +199,30 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
    </div>
    <progress className="sr-only" aria-label={l('Activités réalisées aujourd’hui','Activities completed today')} value={dimanche?bilan!.requises_realisees:bilan!.realisees} max={dimanche?bilan!.requises:bilan!.total}/>
    <div className="ios-liste flex flex-col">
-    {visibles.slice(0,3).map((a,i)=>ligne(a,i,false))}
+    {enCours.map(a=>ligne(a,visibles.indexOf(a),false))}
    </div>
+   {enCours.length===0&&visibles.length>0&&<p role="status" className="ios-carte flex items-center gap-3 px-4 py-3 font-hd-label-lg text-hd-label-lg text-hd-on-surface"><IconeHD nom="check_circle" className="text-[24px] shrink-0 text-hd-secondary"/>{dimanche?l('Ce qui compte aujourd’hui est fait.','What counts today is done.'):l('Ta journée est complète.','Your day is complete.')}</p>}
    {autresActivites.length>0&&<details key={cle} ref={autresActivitesRef} className="hd-autres-activites group rounded-2xl bg-hd-surface-container-lowest shadow-sm">
     <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[52px] cursor-pointer px-4 py-2.5 flex items-center gap-3 rounded-2xl text-hd-on-surface">
      <IconeHD nom="calendar_view_week" className="text-[22px] shrink-0 text-hd-secondary"/>
      <span className="flex-1 min-w-0 flex flex-col">
-      <strong className="font-hd-label-lg text-hd-label-lg"><span className="group-open:hidden">{l(`Voir les ${autresActivites.length} autres activités`,`Show ${autresActivites.length} other activities`)}</span><span className="hidden group-open:inline">{l('Masquer les autres activités','Hide other activities')}</span></strong>
+      <strong className="font-hd-label-lg text-hd-label-lg"><span className="group-open:hidden">{l(`Voir les ${autresActivites.length} activités suivantes`,`Show the next ${autresActivites.length} activities`)}</span><span className="hidden group-open:inline">{l('Masquer les activités suivantes','Hide the next activities')}</span></strong>
       <small className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{autresConfirmees} / {autresActivites.length} {l('réalisées et synchronisées','completed and synchronised')}</small>
      </span>
      <IconeHD nom="expand_more" className="text-[22px] shrink-0 text-hd-on-surface-variant transition-transform group-open:rotate-180"/>
     </summary>
-    <div className="ios-liste flex flex-col px-2 pb-3">{autresActivites.map((a,i)=>ligne(a,i+3,false))}</div>
+    <div className="ios-liste flex flex-col px-2 pb-3">{autresActivites.map(a=>ligne(a,visibles.indexOf(a),false))}</div>
+   </details>}
+   {dejaFaites.length>0&&<details key={cle+':faites'} ref={faitesRef} className="hd-autres-activites hd-activites-faites group rounded-2xl bg-hd-surface-container-lowest shadow-sm">
+    <summary className="list-none [&::-webkit-details-marker]:hidden min-h-[52px] cursor-pointer px-4 py-2.5 flex items-center gap-3 rounded-2xl text-hd-on-surface">
+     <IconeHD nom="check_circle" className="text-[22px] shrink-0 text-hd-secondary"/>
+     <span className="flex-1 min-w-0 flex flex-col">
+      <strong className="font-hd-label-lg text-hd-label-lg">{l(`Déjà faites · ${dejaFaites.length}`,`Already done · ${dejaFaites.length}`)}</strong>
+      <small className="font-hd-body-sm text-hd-body-sm text-hd-on-surface-variant">{l('Touche pour revoir ou corriger','Tap to review or correct')}</small>
+     </span>
+     <IconeHD nom="expand_more" className="text-[22px] shrink-0 text-hd-on-surface-variant transition-transform group-open:rotate-180"/>
+    </summary>
+    <div className="ios-liste flex flex-col px-2 pb-3">{dejaFaites.map(a=>ligne(a,visibles.indexOf(a),false))}</div>
    </details>}
    {auRepos.length>0&&<>
     <h3 className="ios-titre-section mt-4">{l('Si tu veux','If you like')}</h3>

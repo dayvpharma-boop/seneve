@@ -64,7 +64,7 @@ it('« Mes habitudes » est placé juste avant « Suivre mes défis facultatifs 
  expect(nav.compareDocumentPosition(screen.getByRole('region',{name:'Ma journée'}))&Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
 });
 
-it('en semaine : trois activités restent visibles, les autres se déplient avec le total déjà confirmé',async()=>{
+it('en semaine : le premier groupe de trois reste visible tant qu’il n’est pas fini, les suivantes se déplient',async()=>{
  const source=jour(LUNDI,false);
  const creer=(n:number,habit_key:string,consigne:string,heure:string)=>({...source.activites[0]!,habit_key,consigne,heure,occurrence:{...source.activites[0]!.occurrence,occurrence_id:id(n)}});
  const derniere={...source.activites[3]!,etat:{...source.activites[3]!.occurrence,etat:'realisee',synchronisation:'synchronise',aide_demandee:false}};
@@ -78,7 +78,8 @@ it('en semaine : trois activités restent visibles, les autres se déplient avec
  const volet=journee.querySelector('details.hd-autres-activites') as HTMLDetailsElement;
  expect(volet).not.toBeNull();
  expect(volet.open).toBe(false);
- expect(volet.querySelector('summary')!.textContent).toMatch(/Voir les 3 autres activités/);
+ expect(volet.querySelector('summary')!.textContent).toMatch(/Voir les 3 activités suivantes/);
+ expect(journee.querySelector('details.hd-activites-faites')).toBeNull();
  expect(volet.querySelector('summary')!.textContent).toMatch(/1 \/ 3 réalisées et synchronisées/);
  fireEvent.click(volet.querySelector('summary')!);
  expect(volet.open).toBe(true);
@@ -87,13 +88,53 @@ it('en semaine : trois activités restent visibles, les autres se déplient avec
  expect(volet.open).toBe(false);
 });
 
+// Groupes de trois (demande du 12/11/2026).
+const fait=(a:ReturnType<typeof jour>['activites'][number])=>({...a,etat:{...a.occurrence,etat:'realisee',synchronisation:'synchronise',aide_demandee:false}});
+it('les trois premières faites se replient dans « Déjà faites » et le groupe suivant apparaît',async()=>{
+ const source=jour(LUNDI,false);
+ mocks.charger.mockResolvedValue({...source,activites:source.activites.map((a,i)=>i<3?fait(a):a)});
+ afficher(LUNDI);
+ const journee=await screen.findByRole('region',{name:'Ma journée'});
+ const liste=journee.querySelector('.ios-liste')!;
+ expect(liste.children).toHaveLength(1);
+ expect(liste.textContent).toMatch(/Prière du soir/);
+ expect(liste.textContent).not.toMatch(/Gratitude du matin/);
+ const faites=journee.querySelector('details.hd-activites-faites') as HTMLDetailsElement;
+ expect(faites.open).toBe(false);
+ expect(faites.querySelector('summary')!.textContent).toMatch(/Déjà faites · 3/);
+ fireEvent.click(faites.querySelector('summary')!);
+ expect(within(faites).getByRole('heading',{name:'Gratitude du matin'})).toBeInTheDocument();
+});
+
+it('une seule activité faite ne replie pas le groupe : les trois restent ouvertes',async()=>{
+ const source=jour(LUNDI,false);
+ mocks.charger.mockResolvedValue({...source,activites:source.activites.map((a,i)=>i===0?fait(a):a)});
+ afficher(LUNDI);
+ const journee=await screen.findByRole('region',{name:'Ma journée'});
+ const liste=journee.querySelector('.ios-liste')!;
+ expect(liste.children).toHaveLength(3);
+ expect(liste.textContent).toMatch(/Gratitude du matin/);
+ expect(journee.querySelector('details.hd-activites-faites')).toBeNull();
+});
+
+it('quand tout est fait : « Ta journée est complète », tout est replié dans « Déjà faites »',async()=>{
+ const source=jour(LUNDI,false);
+ mocks.charger.mockResolvedValue({...source,activites:source.activites.map(fait)});
+ afficher(LUNDI);
+ const journee=await screen.findByRole('region',{name:'Ma journée'});
+ expect(within(journee).getByText('Ta journée est complète.')).toBeInTheDocument();
+ expect(journee.querySelector('details.hd-activites-faites summary')!.textContent).toMatch(/Déjà faites · 4/);
+});
+
 it('le bouton Commencer ouvre une activité rangée parmi les suivantes',async()=>{
  const source=jour(LUNDI,false);
- const activites=source.activites.map((a,i)=>i<3?{...a,etat:{...a.occurrence,etat:'realisee',synchronisation:'synchronise',aide_demandee:false}}:a);
+ const creer=(n:number,habit_key:string,consigne:string,heure:string)=>({...source.activites[0]!,habit_key,consigne,heure,occurrence:{...source.activites[0]!.occurrence,occurrence_id:id(n)}});
+ // Le groupe en cours (3 premières) a une activité « en partie » ; les suivantes commencent à 20 h.
+ const activites=[...source.activites.slice(0,3).map((a,i)=>i<2?fait(a):{...a,etat:{...a.occurrence,etat:'partielle',synchronisation:'synchronise',aide_demandee:false}}),source.activites[3]!,creer(5,'lecture_personnelle','Lecture personnelle','20:00')];
  mocks.charger.mockResolvedValue({...source,activites});
  const vue=afficher(LUNDI);
  const journee=await screen.findByRole('region',{name:'Ma journée'});
- const volet=journee.querySelector('details.hd-autres-activites') as HTMLDetailsElement;
+ const volet=journee.querySelector('details.hd-autres-activites:not(.hd-activites-faites)') as HTMLDetailsElement;
  expect(volet.open).toBe(false);
  fireEvent.click(vue.container.querySelector('.ios-jour-bouton')!);
  expect(volet.open).toBe(true);
