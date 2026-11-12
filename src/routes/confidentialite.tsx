@@ -225,7 +225,5 @@ export function Confidentialite() {
 
     <section className="conf-contact" aria-labelledby="conf-contact-titre"><h2 id="conf-contact-titre"><IconeConfidentialite nom="mail" taille={22}/>{T.contact}</h2><p>{mail}</p><Link to={`/aide${suffixe}`}>{T.formulaire}</Link><a href={`mailto:${CONTACT}?subject=${T.sujetCopie}`}>{T.copie}</a></section>
     <div className="conf-retour"><button className="conf-principal" type="button" onClick={revenir}><IconeConfidentialite nom="check" taille={20}/>{T.compris}</button><button type="button" onClick={revenir}>{T.application}</button></div>
-    <div className="today-foot"><Link className="link" to={`/${suffixe}`}>{T.test}</Link><Link className="link" to={`/espace${suffixe}`}>{T.espace}</Link></div>
-    <p className="muted conf-credit">{langue==='en'?'App icon: ':'Icône de l’app : '}<a href="https://icons8.com/icon/10097/sprout" target="_blank" rel="noopener noreferrer">Icons8</a></p>
-  </main>;
+    <div className="today-foot"><Link className="link" to={`/${suffixe}`}>{T.test}</Link><Link className="link" to={`/espace${suffixe}`}>{T.espace}</Link></div>  </main>;
 }
