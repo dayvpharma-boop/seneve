@@ -171,6 +171,15 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
         <span className="min-w-0 flex-1"><span id={`hd-caisse-${c.cle}`} className="block text-[16px] font-semibold">{c.nom}</span><small className="block text-[12px] font-normal text-hd-on-surface-variant">{c.sous}</small></span>
         <span className="text-right"><b className="block text-[17px] tabular-nums">{nombre(d)}</b><small className="block text-[11px] font-normal text-hd-on-surface-variant">{l(`${dev} disponibles`,`${dev} available`)}</small></span>
        </button></h3>
+       {/* Dernières dépenses visibles directement sous « Pour vivre » dans Mes caisses (demande du 12/11/2026). */}
+       {c.cle==='vivre'&&!est&&(()=>{const recentes=depenses.filter(x=>x.currency===dev).slice(0,3);if(!recentes.length)return null;return <div className="mt-2.5 border-t pt-1.5" style={{borderColor:'rgb(60 60 67 / .12)'}}>
+        <ul style={{listStyle:'none',margin:0,padding:0}} aria-label={l('Dernières dépenses','Latest expenses')}>{recentes.map(x=><li key={x.expense_id} className="flex items-center gap-2.5 py-1.5" style={{minHeight:36}}>
+         <span aria-hidden="true" className="grid size-[22px] shrink-0 place-items-center rounded-md text-white" style={{background:INFOS_CATEGORIES[x.category].couleur}}><IconeHD nom={INFOS_CATEGORIES[x.category].icone} className="text-[14px]"/></span>
+         <span className="min-w-0 flex-1 truncate text-[14px]">{nomCategorie(x.category)}{x.note?<span className="text-hd-on-surface-variant"> · {x.note}</span>:null}<small className="ml-1.5 text-[12px] text-hd-on-surface-variant">{new Intl.DateTimeFormat(en?'en-GB':'fr-FR',{day:'numeric',month:'short',timeZone:'UTC'}).format(new Date(x.date_locale+'T00:00:00Z'))}</small></span>
+         <b className="shrink-0 text-[14px] tabular-nums" style={{color:'#d70015'}}>− {nombre(centimes(x.amount))}</b>
+        </li>)}</ul>
+        <Link to={`/habitudes/depenses${suffixe}`} className="flex items-center justify-between py-1.5 text-[14px] font-medium" style={{color:'var(--ios-accent,#5b4ee8)',minHeight:36}}>{l('Voir toutes mes dépenses','See all my expenses')}<IconeHD nom="chevron_right" className="text-[18px]"/></Link>
+       </div>;})()}
        {est&&<div className="mt-3">
         {d>0?<div className="rounded-xl px-2.5 pb-3 pt-1" style={{background:'var(--ios-fond,#f2f2f7)'}}>
          <h4 className="hd-classique sim-ios-titre" style={{marginTop:10}}>{l('Qu’est-ce que tu as fait de cet argent ?','What did you do with this money?')}</h4>

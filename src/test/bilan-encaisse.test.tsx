@@ -47,3 +47,17 @@ it('le détail des dépenses (catégorie, note) apparaît dans l’historique de
  fireEvent.click(screen.getByRole('button',{name:/Pour vivre/}));
  expect(await screen.findByText(/Nourriture · Marché/)).toBeInTheDocument();
 });
+
+it('Mes caisses : les dernières dépenses s’affichent directement sous « Pour vivre », avec un lien vers toutes les dépenses',async()=>{
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{enrollment_id:E,savings_goals:[],debts:[],archived_goals:[],archived_debts:[]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[{move_id:id(1),envelope:'vivre',direction:'entree',motif:null,amount:'100.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null}],withdrawals:[]},error:null};
+  if(f==='hd_finance_expenses_get')return {data:[{expense_id:id(10),category:'nourriture',amount:'10.00',currency:'USD',date_locale:auj,note:'Marché',liee:false,move_id:null,created_at:auj+'T08:00:00Z'}],error:null};
+  if(f==='hd_finance_benefices_get')return {data:{ventes:[],revenus:[]},error:null};
+  throw Error(f);});
+ const {HabitudesCompteurs}=await import('@/routes/habitudes-compteurs');
+ render(<MemoryRouter><HabitudesCompteurs userId="u"/></MemoryRouter>);
+ const liste=await screen.findByRole('list',{name:'Dernières dépenses'});
+ expect(liste.textContent).toMatch(/Nourriture · Marché.*− 10/);
+ expect(screen.getByRole('link',{name:/Voir toutes mes dépenses/})).toHaveAttribute('href','/habitudes/depenses');
+});
