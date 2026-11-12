@@ -62,3 +62,21 @@ it('Mes caisses : les dernières dépenses s’affichent directement sous « Pou
  expect(liste.textContent).toMatch(/Nourriture · Marché.*− 10/);
  expect(screen.getByRole('link',{name:/Voir toutes mes dépenses/})).toHaveAttribute('href','/habitudes/depenses');
 });
+
+it('Pour vivre : pas de choix « Dépensé » dans la caisse ; un lien envoie vers SÉNEVÉ Dépenses',async()=>{
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{enrollment_id:E,savings_goals:[],debts:[],archived_goals:[],archived_debts:[]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[{move_id:id(1),envelope:'vivre',direction:'entree',motif:null,amount:'100.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null},{move_id:id(2),envelope:'dime',direction:'entree',motif:null,amount:'10.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null}],withdrawals:[]},error:null};
+  if(f==='hd_finance_expenses_get')return {data:[],error:null};
+  if(f==='hd_finance_benefices_get')return {data:{ventes:[],revenus:[]},error:null};
+  throw Error(f);});
+ const {HabitudesCompteurs}=await import('@/routes/habitudes-compteurs');
+ render(<MemoryRouter><HabitudesCompteurs userId="u"/></MemoryRouter>);
+ fireEvent.click(await screen.findByRole('button',{name:/Pour vivre/}));
+ const motifs=screen.getByRole('radiogroup',{name:'Motif'});
+ expect(within(motifs).queryByRole('radio',{name:'Dépensé'})).toBeNull();
+ expect(within(motifs).getByRole('radio',{name:'Donné'})).toHaveAttribute('aria-checked','true');
+ expect(screen.getByRole('link',{name:/Une dépense de la maison \? Note-la dans SÉNEVÉ Dépenses/})).toHaveAttribute('href','/habitudes/depenses');
+ fireEvent.click(screen.getByRole('button',{name:/Dîme/}));
+ expect(within(screen.getByRole('radiogroup',{name:'Motif'})).getByRole('radio',{name:'Dépensé'})).toBeInTheDocument();
+});

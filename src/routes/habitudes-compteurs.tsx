@@ -87,7 +87,7 @@ export function HabitudesCompteurs({userId}:{userId:string}){
  const depenseParSortie=new Map(depenses.filter(d=>d.move_id).map(d=>[d.move_id as string,d]));
  const nomCategorie=(c:CategorieDepense)=>en?INFOS_CATEGORIES[c].en:INFOS_CATEGORIES[c].fr;
  const pasReparti=recettes?.resteARepartir?.[dev]!==undefined?centimes(recettes.resteARepartir[dev]!):null;
- function ouvrir(c:Caisse){setOuverte(o=>o===c.cle?'':c.cle);setMontant('');setMotif(c.enveloppe==='vivre'?'depense':c.goalId?'investi':'donne');setDate(aujourdhui());setAnnonce(null);}
+ function ouvrir(c:Caisse){setOuverte(o=>o===c.cle?'':c.cle);setMontant('');setMotif(c.goalId?'investi':'donne');setDate(aujourdhui());setAnnonce(null);}
  async function noter(c:Caisse,toutUtilise:boolean){
   if(!suivi||busy)return;const zone='caisse:'+c.cle;
   if(!toutUtilise&&(!montantValidePourDevise(montant,dev)||Number(montant)<=0)){setAnnonce({zone,texte:l('Écris un montant plus grand que 0, avec des chiffres seulement.','Enter an amount above 0, using digits only.'),erreur:true});return;}
@@ -182,7 +182,9 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
        {est&&<div className="mt-3">
         {d>0?<div className="rounded-xl px-2.5 pb-3 pt-1" style={{background:'var(--ios-fond,#f2f2f7)'}}>
          <h4 className="hd-classique sim-ios-titre" style={{marginTop:10}}>{l('Qu’est-ce que tu as fait de cet argent ?','What did you do with this money?')}</h4>
-         <div role="radiogroup" aria-label={l('Motif','Reason')} className="flex flex-wrap gap-2">{MOTIFS.map(([m,n])=><button key={m} type="button" role="radio" aria-checked={motif===m} onClick={()=>setMotif(m)} className={`min-h-[36px] rounded-full px-3.5 text-sm font-medium ${motif===m?'bg-hd-on-surface text-white':'bg-white'}`}>{n}</button>)}</div>
+         {/* « Pour vivre » : les dépenses se notent seulement dans SÉNEVÉ Dépenses, qui les retire de cette caisse (décision du 12/11/2026). */}
+         {c.enveloppe==='vivre'&&<Link to={`/habitudes/depenses${suffixe}`} className="mb-2.5 flex items-center gap-2.5 rounded-xl bg-white px-3 py-2.5 text-[14px]" style={{minHeight:44}}><span aria-hidden="true" className="grid size-[26px] shrink-0 place-items-center rounded-md text-white" style={{background:'#ff3b30'}}><IconeHD nom="receipt_long" className="text-[16px]"/></span><span className="flex-1">{l('Une dépense de la maison ? Note-la dans ','A household expense? Record it in ')}<b style={{color:'var(--ios-accent,#5b4ee8)'}}>SÉNEVÉ {l('Dépenses','Expenses')}</b></span><IconeHD nom="chevron_right" className="text-[18px] text-hd-on-surface-variant"/></Link>}
+         <div role="radiogroup" aria-label={l('Motif','Reason')} className="flex flex-wrap gap-2">{MOTIFS.filter(([m])=>!(c.enveloppe==='vivre'&&m==='depense')).map(([m,n])=><button key={m} type="button" role="radio" aria-checked={motif===m} onClick={()=>setMotif(m)} className={`min-h-[36px] rounded-full px-3.5 text-sm font-medium ${motif===m?'bg-hd-on-surface text-white':'bg-white'}`}>{n}</button>)}</div>
          <div className="sim-ios-groupe hd-classique mt-3">
           <div className="sim-ios-ligne"><label htmlFor={`hd-utilise-${c.cle}`}>{l('Montant utilisé','Amount used')}</label><span className="flex items-center gap-1.5"><input id={`hd-utilise-${c.cle}`} type="number" inputMode="decimal" min={dec?0.01:1} step={dec?0.01:1} max={(dispoAu(c,date)/100).toFixed(dec)} value={montant} onChange={e=>setMontant(e.target.value)} placeholder="0"/><span className="text-hd-on-surface-variant" style={{fontSize:15}}>{dev}</span></span></div>
           <div className="sim-ios-ligne"><label htmlFor={`hd-utilise-date-${c.cle}`}>{l('Date','Date')}</label><input id={`hd-utilise-date-${c.cle}`} type="date" max={aujourdhui()} value={date} onChange={e=>setDate(e.target.value)} style={{color:'var(--ios-accent,#5b4ee8)'}}/></div>
