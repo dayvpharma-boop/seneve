@@ -13,7 +13,7 @@
 :root:root:root .vf-nom b{display:block;font-size:16px;font-weight:500;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 :root:root:root .vf-nom small{display:block;font-size:13px;color:var(--ios-doux,#6e6e73)}
 :root:root:root .vf-pct{font-size:14px;font-weight:600;color:var(--ios-doux,#6e6e73);font-variant-numeric:tabular-nums}
-:root:root:root .vf-total{margin-bottom:10px;padding:14px 16px;border-radius:16px;color:#fff;background:linear-gradient(135deg,#7d7aff,var(--ios-accent,#5b4ee8))}
+:root:root:root .vf-total{margin-bottom:10px;padding:14px 16px;border-radius:16px;color:#fff;background:#4f45c4}
 :root:root:root .vf-total p{margin:0}
 :root:root:root .vf-total small{display:block;font-size:13px;opacity:.85}
 :root:root:root .vf-total b{display:block;font-size:26px;font-weight:700;letter-spacing:-.02em}
@@ -32,7 +32,7 @@
 :root:root:root .vf-segment-icone{font-size:17px;flex:none}
 :root:root:root .vf-segment button[aria-selected="true"] .vf-segment-icone{color:var(--ios-accent,#5b4ee8)}
 :root:root:root .vf-anneau{background:conic-gradient(var(--c,#34c759) var(--p),rgb(118 118 128 / .16) 0)}
-:root:root:root .vf-total-epargne{background:linear-gradient(135deg,#4cd964,#1f8a3e)}
+:root:root:root .vf-total-epargne{background:#1f8a3e}
 :root:root:root .vf-total p+p{margin-top:8px}
 :root:root:root .vf-total b+small{margin-top:2px}
 :root:root:root .vf-raccourcis{display:block;margin-top:12px;border-radius:14px;background:var(--ios-carte,#fff);overflow:hidden;box-shadow:0 1px 2px rgb(0 0 0 / .05)}
