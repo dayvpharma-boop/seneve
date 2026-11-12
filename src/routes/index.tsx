@@ -264,7 +264,7 @@ export function Index({ language = 'fr', languageLink, source = null }: { langua
     <div className="quiz-card-haut"><span className="tag">{`Question ${i+1}`}</span><Icone nom="citation" taille={18} /></div>
     <p className="q" id="qtext" tabIndex={-1} ref={question}>{t.questions[i]}</p>
     {t.audioQuestions && screen === 'quiz' && <EcouterQuestion dossier={t.audioQuestions} n={i} langue={en ? 'en' : 'fr'} />}
-    <p className="tap-hint"><Icone nom="graine" taille={16} />{t.tapHint}</p>
+    <p className="tap-hint"><LogoSeneve taille={16} />{t.tapHint}</p>
    </div>
    <div className="quiz-echelle"><span>{t.scaleTitle}</span><span>{t.scaleHint}</span></div>
    <div className="scale" id="scale" role="group" aria-label={t.answerGroup}>
