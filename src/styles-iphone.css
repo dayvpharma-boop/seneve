@@ -775,7 +775,7 @@
 :root:root:root .pv-page.ios .pv-graines .pv-chiffre{font:700 34px/1 var(--ios-police)!important;color:#28a745!important}
 :root:root:root .pv-page.ios .pv-graines .pv-label{font:600 15px var(--ios-police)!important;color:var(--ios-encre)!important;text-transform:none!important;letter-spacing:0!important;margin-top:4px}
 :root:root:root .pv-page.ios .pv-graines small{font:400 12.5px/1.35 var(--ios-police)!important;color:var(--ios-doux)!important}
-:root:root:root .pv-page.ios .pv-graines .pv-rond{flex:none;width:46px!important;height:46px!important;border-radius:50%!important;background:linear-gradient(180deg,#4cd964,#28b446)!important;color:rgb(255 255 255)!important;box-shadow:0 6px 14px -4px rgb(40 180 70 / .55)!important}
+:root:root:root .pv-page.ios .pv-graines .pv-rond{flex:none;width:46px!important;height:46px!important;border-radius:50%!important;background:#28b446!important;color:rgb(255 255 255)!important;box-shadow:0 1px 2px rgb(0 0 0 / .12)!important}
 :root:root:root .pv-page.ios .pv-graines .pv-rond svg{color:rgb(255 255 255)!important}
 
 /* Mon jardin : frise de progression continue */
@@ -912,7 +912,7 @@
 /* Inscription Habitudes & Défis : bloc « Mes rappels » (06/11/2026), bien visible, avant les engagements */
 :root:root:root .hd-rappels-inscription{margin:0 0 18px;padding:16px;border-radius:20px;background:linear-gradient(160deg,color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 12%,var(--ios-carte,#fff)),var(--ios-carte,#fff) 70%);box-shadow:0 0 0 .5px color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 28%,transparent),0 1px 3px rgb(0 0 0 / .08)}
 :root:root:root .hd-rappels-inscription-tete{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-:root:root:root .hd-rappels-inscription-icone{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;color:rgb(255 255 255);background:linear-gradient(180deg,#ff6482,#ff2d55);box-shadow:inset 0 1px 0 rgb(255 255 255 / .25),0 6px 14px -6px rgb(255 45 85 / .6)}
+:root:root:root .hd-rappels-inscription-icone{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;color:rgb(255 255 255);background:linear-gradient(180deg,#ff6482,#ff2d55);box-shadow:inset 0 1px 0 rgb(255 255 255 / .25),0 1px 2px rgb(0 0 0 / .12)}
 :root:root:root .hd-rappels-inscription-icone svg{color:rgb(255 255 255)!important;fill:currentColor}
 :root:root:root .hd-rappels-inscription-titre{font:700 18px/1.2 var(--ios-police,system-ui)!important;letter-spacing:-.01em;color:var(--ios-encre,#1c1c1e)!important}
 :root:root:root .hd-rappels-inscription-badge{align-self:flex-start;margin-top:3px;padding:2px 8px;border-radius:999px;font:600 11.5px/1.4 var(--ios-police,system-ui)!important;color:var(--ios-accent,var(--ios-accent))!important;background:color-mix(in srgb,var(--ios-accent,var(--ios-accent)) 14%,transparent)}
