@@ -27,7 +27,7 @@ it('Mon bilan : « Encaissé » montre le montant exact reçu (sans enlever les 
  expect(within(bilan).getByText('Entré dans les caisses').closest('.sim-ios-ligne')!.textContent).toMatch(/135\s?000 USD/);
 });
 
-it('le détail des dépenses (catégorie, note) apparaît dans l’historique de Pour vivre et sous « Dépensé » dans le bilan',async()=>{
+it('le détail des dépenses (catégorie, note) apparaît dans l’historique de Pour vivre, pas dans le bilan',async()=>{
  rpc.mockImplementation(async(f:string)=>{
   if(f==='hd_finance_tracker_get')return {data:{enrollment_id:E,savings_goals:[],debts:[],archived_goals:[],archived_debts:[]},error:null};
   if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[
@@ -42,8 +42,9 @@ it('le détail des dépenses (catégorie, note) apparaît dans l’historique de
  const {HabitudesCompteurs}=await import('@/routes/habitudes-compteurs');
  render(<MemoryRouter><HabitudesCompteurs userId="u"/></MemoryRouter>);
  const bilan=await screen.findByRole('region',{name:/Mon bilan/});
- expect((await within(bilan).findByText('Nourriture')).closest('.sim-ios-ligne')!.textContent).toMatch(/10 USD/);
- expect(within(bilan).getByText('Transport').closest('.sim-ios-ligne')!.textContent).toMatch(/7 USD/);
+ expect(await within(bilan).findByText('Dépensé')).toBeInTheDocument();
+ expect(within(bilan).queryByText('Nourriture')).toBeNull();
+ expect(within(bilan).queryByText('Transport')).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:/Pour vivre/}));
  expect(await screen.findByText(/Nourriture · Marché/)).toBeInTheDocument();
 });
