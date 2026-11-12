@@ -1,4 +1,5 @@
 import {supabase} from './supabase';
+import {garderFinance,lireFinance} from './memoire-finance';
 
 type ChargeEntreprisePaiement={payment_id:string;amount:string;date_locale:string};
 export type ChargeEntreprise={charge_id:string;label:string;expected_amount:string;currency:string;period_start:string;period_end:string;payments:ChargeEntreprisePaiement[]};
@@ -33,8 +34,13 @@ function analyser(data:unknown,enrollmentId:string|null):DonneesChargesEntrepris
 }
 export async function chargerChargesEntreprise(enrollmentId:string|null,dateLocale:string,currency:string){
  const {data,error}=await supabase.rpc('hd_finance_business_charges_get',{p_enrollment_id:enrollmentId,p_date:dateLocale,p_currency:currency});
- if(error)throw error;if(data===null)return null;return analyser(data,enrollmentId);
+ if(error)throw error;
+ const donnees=data===null?null:analyser(data,enrollmentId);
+ garderFinance(`charges:${dateLocale.slice(0,7)}:${currency}`,donnees);
+ return donnees;
 }
+/** Dernières charges chargées pour ce mois et cette monnaie (undefined : rien en mémoire). */
+export const chargesEnMemoire=(dateLocale:string,currency:string)=>lireFinance<DonneesChargesEntreprise|null>(`charges:${dateLocale.slice(0,7)}:${currency}`);
 export async function creerBlocChargesEntreprise(enrollmentId:string,monthStart:string,requestId:string){
  if(!uuid(requestId)||!date(monthStart))throw Error('Bloc mensuel invalide');
  const {data,error}=await supabase.rpc('hd_finance_business_charge_block_create',{p_enrollment_id:enrollmentId,p_month_start:monthStart,p_request_id:requestId});

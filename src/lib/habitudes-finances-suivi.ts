@@ -1,5 +1,6 @@
 import {supabase} from './supabase';
 import {deviseAcceptee,montantValidePourDevise} from './devises';
+import {garderFinance,lireFinance} from './memoire-finance';
 
 export type TypeObjectifEpargne='reserve_joie'|'epargne_investir'|'autre';
 export type VersementEpargne={entry_id:string;amount:string;date_locale:string;created_at?:string};
@@ -66,8 +67,12 @@ export async function supprimerDette(enrollmentId:string,debtId:string,archive:b
 export async function chargerSuiviFinancier(enrollmentId:string|null) {
   const {data,error}=await supabase.rpc('hd_finance_tracker_get',{p_enrollment_id:enrollmentId});
   if (error) throw error;
-  return data===null&&enrollmentId===null ? null : verifierReponse(data,enrollmentId);
+  const suivi=data===null&&enrollmentId===null ? null : verifierReponse(data,enrollmentId);
+  garderFinance('suivi',suivi);
+  return suivi;
 }
+/** Dernier suivi chargé pendant la visite (undefined : rien en mémoire). */
+export const suiviEnMemoire=()=>lireFinance<SuiviFinancier|null>('suivi');
 export async function creerObjectifEpargne(enrollmentId:string,d:{type:TypeObjectifEpargne;label:string;target:string;currency:string},requestId:string){if(!d.label.trim()||d.label.trim().length>60||!montantValidePourDevise(d.target,d.currency)||Number(d.target)<=0||!deviseAcceptee(d.currency))throw Error('Objectif invalide');const target=montantFixe(d.target);const {data,error}=await supabase.rpc('hd_finance_savings_goal_add',{p_enrollment_id:enrollmentId,p_goal_type:d.type,p_label:d.label.trim(),p_target_amount:target,p_currency:d.currency,p_request_id:requestId});if(error)throw error;if(!objet(data)||data.goal_id!==requestId||data.goal_type!==d.type||data.label!==d.label.trim()||data.target_amount!==target||data.currency!==d.currency)throw Error('Création de l’objectif non confirmée');return data;}
 export async function enregistrerVersementEpargne(enrollmentId:string,goalId:string,amount:string,date:string,currency:string,requestId:string){if(!uuid(goalId)||!montantValidePourDevise(amount,currency)||Number(amount)<=0||!deviseAcceptee(currency)||!dateLocale(date))throw Error('Versement invalide');const value=montantFixe(amount);const {data,error}=await supabase.rpc('hd_finance_savings_entry_add',{p_enrollment_id:enrollmentId,p_goal_id:goalId,p_amount:value,p_date_locale:date,p_request_id:requestId});if(error)throw error;if(!objet(data)||data.entry_id!==requestId||data.goal_id!==goalId||data.amount!==value||data.date_locale!==date)throw Error('Versement non confirmé');return data;}
 export async function creerDetteSuivie(

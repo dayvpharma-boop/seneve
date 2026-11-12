@@ -1,5 +1,6 @@
 import {supabase} from './supabase';
 import {deviseAcceptee,montantValidePourDevise} from './devises';
+import {garderFinance,lireFinance} from './memoire-finance';
 
 /** Compteurs « Quand je reçois de l'argent » (07/11/2026) : dîme, offrande, pour vivre (entrées et sorties),
  * retraits sur les objectifs d'épargne et enregistrement d'une répartition entière (tout ou rien).
@@ -46,11 +47,14 @@ export async function chargerCompteursOuAbsents(enrollmentId:string):Promise<Com
  try{return await chargerCompteurs(enrollmentId);}
  catch(e){if(e instanceof CompteursIndisponibles)return null;throw e;}
 }
+/** Derniers compteurs chargés pendant la visite (undefined : rien en mémoire). */
+export const compteursEnMemoire=(enrollmentId:string)=>lireFinance<Compteurs>('compteurs:'+enrollmentId);
 
 export async function chargerCompteurs(enrollmentId:string):Promise<Compteurs>{
  const {data,error}=await supabase.rpc('hd_finance_counters_get',{p_enrollment_id:enrollmentId});
  if(error){if(absente(error))throw new CompteursIndisponibles();throw error;}
- return analyser(data);
+ const compteurs=analyser(data);garderFinance('compteurs:'+enrollmentId,compteurs);
+ return compteurs;
 }
 
 export async function enregistrerRepartition(enrollmentId:string,devise:string,dateLocale:string,parts:PartRepartition[],requestId:string,depuisEncaissements=false){

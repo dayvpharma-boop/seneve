@@ -4,13 +4,13 @@ import {Link,useSearchParams} from 'react-router-dom';
 import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {ComptePrive} from '@/components/ComptePrive';
 import {IconeHD} from '@/components/IconeHabitudes';
-import {chargerSuiviFinancier,supprimerObjectif,supprimerDette,creerDetteSuivie,creerObjectifEpargne,enregistrerPaiementDette,enregistrerVersementEpargne,renommerDetteSuivie,nomCreancierValide,LONGUEUR_NOM_CREANCIER,type DetteSuivie,type ObjectifEpargne,type TypeObjectifEpargne,type SuiviFinancier,type RythmeRepereDette} from '@/lib/habitudes-finances-suivi';
+import {chargerSuiviFinancier,suiviEnMemoire,supprimerObjectif,supprimerDette,creerDetteSuivie,creerObjectifEpargne,enregistrerPaiementDette,enregistrerVersementEpargne,renommerDetteSuivie,nomCreancierValide,LONGUEUR_NOM_CREANCIER,type DetteSuivie,type ObjectifEpargne,type TypeObjectifEpargne,type SuiviFinancier,type RythmeRepereDette} from '@/lib/habitudes-finances-suivi';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
 import {decimalesDevise,deviseAcceptee,montantValidePourDevise} from '@/lib/devises';
 import {repartirSurDettes} from '@/lib/habitudes-repartition';
 import {ChoixDevise,ChoixTypeObjectif} from './ChoixDevise';
 import {momentLisible} from '@/lib/date-heure-finances';
-import {chargerCompteursOuAbsents,estMasquee,type Compteurs,type Motif} from '@/lib/habitudes-finances-compteurs';
+import {chargerCompteursOuAbsents,compteursEnMemoire,estMasquee,type Compteurs,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {NotFound} from '@/routes/introuvable';
 
 type Mode='epargne'|'dettes';
@@ -39,9 +39,11 @@ function Ligne({id,libelle,children}:{id?:string;libelle:ReactNode;children?:Rea
  * Chaque saisie passe par une RPC serveur ; aucun paiement n'est lancé. */
 export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const [params]=useSearchParams(),en=params.get('lang')==='en',langue=en?'en':'fr',l=(fr:string,english:string)=>en?english:fr;
- const [state,setState]=useState<'chargement'|'pret'|'vide'|'erreur'>('chargement');
- const [suivi,setSuivi]=useState<SuiviFinancier|null>(null),[essai,setEssai]=useState(0),[busy,setBusy]=useState(false),[annonce,setAnnonce]=useState<{zone:Zone;texte:string;erreur:boolean}|null>(null);
- const [goal,setGoal]=useState(''),[goalName,setGoalName]=useState(''),[goalType,setGoalType]=useState<TypeObjectifEpargne>('reserve_joie'),[goalTarget,setGoalTarget]=useState(''),[goalCurrency,setGoalCurrency]=useState(DEVISE_DEFAUT),[contribution,setContribution]=useState(''),[contributionDate,setContributionDate]=useState(aujourdhui);
+ // Retour sur la page (12/11/2026) : la dernière version chargée s'affiche tout de suite, puis elle est relue.
+ const [memoire]=useState(()=>{const s=suiviEnMemoire();if(!s)return null;const c=compteursEnMemoire(s.enrollment_id);return c===undefined?null:{s,c};});
+ const [state,setState]=useState<'chargement'|'pret'|'vide'|'erreur'>(memoire?'pret':'chargement');
+ const [suivi,setSuivi]=useState<SuiviFinancier|null>(memoire?.s??null),[essai,setEssai]=useState(0),[busy,setBusy]=useState(false),[annonce,setAnnonce]=useState<{zone:Zone;texte:string;erreur:boolean}|null>(null);
+ const [goal,setGoal]=useState(memoire?.s.savings_goals[0]?.goal_id??''),[goalName,setGoalName]=useState(''),[goalType,setGoalType]=useState<TypeObjectifEpargne>('reserve_joie'),[goalTarget,setGoalTarget]=useState(''),[goalCurrency,setGoalCurrency]=useState(DEVISE_DEFAUT),[contribution,setContribution]=useState(''),[contributionDate,setContributionDate]=useState(aujourdhui);
  const [nouvelObjectif,setNouvelObjectif]=useState(false);
  // En arrivant d'une répartition, ne pas préremplir le PREMIER objectif
  // si plusieurs investissements de même devise sont possibles.
@@ -67,7 +69,7 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
   return {cle,id:demandes.current.get(cle)!};
  }
  // Retraits notés dans Mes compteurs (07/11/2026) : ils diminuent le disponible de l'objectif et apparaissent dans son historique.
- const [cpt,setCpt]=useState<Compteurs|null>(null);
+ const [cpt,setCpt]=useState<Compteurs|null>(memoire?.c??null);
  // Suppression (07/11/2026) : confirmation d'abord, puis « Annuler » pendant quelques secondes.
  const [aConfirmer,setAConfirmer]=useState<{type:'objectif'|'dette';id:string;nom:string;detail:string}|null>(null);
  const [annulable,setAnnulable]=useState<{type:'objectif'|'dette';id:string;nom:string}|null>(null);
@@ -76,7 +78,8 @@ export function SuiviEpargneDettes({mode,userId}:{mode:Mode;userId:string}){
  const retraitsDe=(goalId:string)=>cpt?.withdrawals.filter(w=>w.goal_id===goalId)??[];
  const disponibleDe=(g:ObjectifEpargne)=>totalCents(g.entries)-totalCents(retraitsDe(g.goal_id));
  const charger=useCallback(async()=>{
-  setState('chargement');
+  // Déjà affichée depuis la mémoire : relecture discrète, sans écran « Chargement… ».
+  setState(s=>s==='pret'?s:'chargement');
   try{
    const contenu=await chargerSuiviFinancier(null);
    if(!contenu){setSuivi(null);setState('vide');return;}

@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {montantValidePourDevise} from '@/lib/devises';
 import {
-  chargerChargesEntreprise, creerBlocChargesEntreprise, creerChargeEntreprise,
+  chargerChargesEntreprise, chargesEnMemoire, creerBlocChargesEntreprise, creerChargeEntreprise,
   enregistrerEncaissementEntreprise, retirerChargeEntreprise, type ChargeEntreprise, type DonneesChargesEntreprise,
 } from '@/lib/habitudes-finance-charges';
 
@@ -16,6 +16,13 @@ const calendrier = new Intl.DateTimeFormat('sv-SE', {
 const cents = (montant:string) => Math.round(Number(montant) * 100);
 const paye = (charge:ChargeEntreprise) => charge.payments.reduce((total, p) => total + cents(p.amount), 0);
 const reste = (charge:ChargeEntreprise) => Math.max(0, cents(charge.expected_amount) - paye(charge));
+
+/** État d'accès à la répartition selon le bloc du mois. */
+function etatDe(donnees:DonneesChargesEntreprise):EtatAccesCharges {
+  return !donnees.active_block || donnees.charges.length === 0
+    ? 'sans-charge'
+    : donnees.charges.every(c => reste(c) === 0) ? 'reglees' : 'a-regler';
+}
 
 function montantSaisi(valeur:string, devise:string) {
   const montant = valeur.trim().replace(',', '.');
@@ -64,7 +71,9 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
   const locale = en ? 'en-US' : 'fr-FR';
   const date = calendrier.format(new Date());
   const mois = date.slice(0, 8) + '01';
-  const [etat, setEtat] = useState<EtatBloc>({type:'chargement'});
+  // Retour sur la page (12/11/2026) : le bloc du mois déjà chargé s'affiche tout de suite, puis il est relu.
+  const memoire = chargesEnMemoire(date, devise);
+  const [etat, setEtat] = useState<EtatBloc>(memoire ? {type:'charge', donnees:memoire} : {type:'chargement'});
   const [nom, setNom] = useState('');
   const [montant, setMontant] = useState('');
   const [aRetirer, setARetirer] = useState<string|null>(null);
@@ -77,9 +86,9 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
   const ecritureEnCours = useRef(false);
   const demandes = useRef(new Map<string,string>());
 
-  const charger = useCallback(async () => {
+  const charger = useCallback(async (discret = false) => {
     const lecture = ++version.current;
-    onEtat('verification', '0');
+    if (!discret) onEtat('verification', '0');
     try {
       const donnees = await chargerChargesEntreprise(null, date, devise);
       if (lecture !== version.current) return false;
@@ -89,10 +98,7 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
         return false;
       }
       setEtat({type:'charge', donnees});
-      const etatCharges = !donnees.active_block || donnees.charges.length === 0
-        ? 'sans-charge'
-        : donnees.charges.every(c => reste(c) === 0) ? 'reglees' : 'a-regler';
-      onEtat(etatCharges, donnees.available_amount, donnees.tithe_due, donnees.fresh_amount);
+      onEtat(etatDe(donnees), donnees.available_amount, donnees.tithe_due, donnees.fresh_amount);
       return true;
     } catch (erreur) {
       if (lecture === version.current) {
@@ -105,9 +111,16 @@ export function ChargesEntreprise({devise, langue, onEtat, saisie, apresEncaisse
   }, [date, devise, onEtat]);
 
   useEffect(() => {
-    setEtat({type:'chargement'});
+    const gardees = chargesEnMemoire(date, devise);
     setOperation(null);
-    void charger();
+    if (gardees) {
+      setEtat({type:'charge', donnees:gardees});
+      onEtat(etatDe(gardees), gardees.available_amount, gardees.tithe_due, gardees.fresh_amount);
+      void charger(true);
+    } else {
+      setEtat({type:'chargement'});
+      void charger();
+    }
     return () => { version.current++; };
   }, [charger]);
 

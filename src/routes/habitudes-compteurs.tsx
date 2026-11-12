@@ -5,12 +5,12 @@ import {CadreHabitudes} from '@/components/CadreHabitudes';
 import {ComptePrive} from '@/components/ComptePrive';
 import {IconeHD} from '@/components/IconeHabitudes';
 import {suiviFinancierActive} from '@/lib/habitudes-configuration';
-import {chargerSuiviFinancier,type SuiviFinancier} from '@/lib/habitudes-finances-suivi';
+import {chargerSuiviFinancier,suiviEnMemoire,type SuiviFinancier} from '@/lib/habitudes-finances-suivi';
 import {supabase} from '@/lib/supabase';
 import {chargerBenefices,type Benefices} from '@/lib/habitudes-finances-benefices';
 import {CATEGORIES_DEPENSES,chargerDepenses,INFOS_CATEGORIES,type CategorieDepense,type Depense} from '@/lib/habitudes-finances-depenses';
 import {CalendrierPlage,nbJours,type Plage} from '@/components/CalendrierPlage';
-import {chargerCompteurs,EffacementImpossible,effacerJours,effacerJoursCaisse,CompteursIndisponibles,effacerBilan,type QuoiEffacer,disponibleCompteur,disponibleCompteurAu,disponibleObjectif,disponibleObjectifAu,estMasquee,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
+import {chargerCompteurs,compteursEnMemoire,EffacementImpossible,effacerJours,effacerJoursCaisse,CompteursIndisponibles,effacerBilan,type QuoiEffacer,disponibleCompteur,disponibleCompteurAu,disponibleObjectif,disponibleObjectifAu,estMasquee,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {decimalesDevise,montantValidePourDevise} from '@/lib/devises';
 import {NotFound} from '@/routes/introuvable';
 import {momentLisible} from '@/lib/date-heure-finances';
@@ -33,8 +33,10 @@ export function RouteHabitudesCompteurs(){
 export function HabitudesCompteurs({userId}:{userId:string}){
  const [q]=useSearchParams(),en=q.get('lang')==='en',langue=en?'en':'fr',l=(fr:string,english:string)=>en?english:fr;
  const etatNav=useLocation().state as {message?:string}|null;
- const [suivi,setSuivi]=useState<SuiviFinancier|null>(null),[cpt,setCpt]=useState<Compteurs|null>(null);
- const [etat,setEtat]=useState<'chargement'|'pret'|'vide'|'indisponible'|'erreur'>('chargement');
+ // Retour sur la page (12/11/2026) : la dernière version chargée s'affiche tout de suite, puis elle est relue.
+ const [memoire]=useState(()=>{const s=suiviEnMemoire();const c=s?compteursEnMemoire(s.enrollment_id):undefined;return s&&c?{s,c}:null;});
+ const [suivi,setSuivi]=useState<SuiviFinancier|null>(memoire?.s??null),[cpt,setCpt]=useState<Compteurs|null>(memoire?.c??null);
+ const [etat,setEtat]=useState<'chargement'|'pret'|'vide'|'indisponible'|'erreur'>(memoire?'pret':'chargement');
  const [devise,setDevise]=useState(''),[periode,setPeriode]=useState<Periode>('mois');
  const [ouverte,setOuverte]=useState(''),[motif,setMotif]=useState<Motif>('donne'),[montant,setMontant]=useState(''),[date,setDate]=useState(aujourdhui);
  // « Encaissé » et « Pas encore réparti » en tête du bilan (12/11/2026) : facultatifs, la page reste utilisable sans eux.
@@ -51,8 +53,8 @@ export function HabitudesCompteurs({userId}:{userId:string}){
    void chargerDepenses(s.enrollment_id).then(setDepenses).catch(()=>setDepenses([]));
    try{setCpt(await chargerCompteurs(s.enrollment_id));setEtat('pret');}
    catch(e){if(e instanceof CompteursIndisponibles){setEtat('indisponible');return;}throw e;}
-  }catch{setEtat('erreur');}
- },[userId]);
+  }catch{setEtat(e=>e==='pret'&&memoire?e:'erreur');}
+ },[userId]);// eslint-disable-line react-hooks/exhaustive-deps
  useEffect(()=>{void charger();},[charger]);
  useEffect(()=>{document.title=l('SÉNEVÉ Compte','SÉNEVÉ Account');document.documentElement.lang=langue;},[langue]);
  const devises=useMemo(()=>{const s=new Set<string>();cpt?.moves.forEach(m=>s.add(m.currency));suivi?.savings_goals.forEach(g=>s.add(g.currency));return [...s];},[cpt,suivi]);
