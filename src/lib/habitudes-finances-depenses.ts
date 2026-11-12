@@ -4,7 +4,7 @@ import {supabase} from '@/lib/supabase';
  * La dépense fait aussi baisser la caisse « Pour vivre » quand elle la couvre (le serveur décide et le dit). */
 export const CATEGORIES_DEPENSES=['nourriture','transport','logement','famille','ecole','sante','communication','autre'] as const;
 export type CategorieDepense=typeof CATEGORIES_DEPENSES[number];
-export type Depense={expense_id:string;category:CategorieDepense;amount:string;currency:string;date_locale:string;note:string|null;liee:boolean;created_at:string};
+export type Depense={expense_id:string;category:CategorieDepense;amount:string;currency:string;date_locale:string;note:string|null;liee:boolean;move_id?:string|null;created_at:string};
 
 export const INFOS_CATEGORIES:Record<CategorieDepense,{fr:string;en:string;icone:string;couleur:string}>={
  nourriture:{fr:'Nourriture',en:'Food',icone:'restaurant',couleur:'#ff9500'},

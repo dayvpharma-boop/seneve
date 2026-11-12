@@ -1,4 +1,4 @@
-import {cleanup,render,screen,within} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
 import type {ReactNode} from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,expect,it,vi} from 'vitest';
@@ -25,4 +25,25 @@ it('Mon bilan : « Encaissé » montre le montant exact reçu (sans enlever les 
  expect((await within(bilan).findByText('Encaissé')).closest('.sim-ios-ligne')!.textContent).toMatch(/211\s?000 USD/);
  expect(within(bilan).getByText('Pas encore réparti').closest('.sim-ios-ligne')!.textContent).toMatch(/60\s?200 USD/);
  expect(within(bilan).getByText('Entré dans les caisses').closest('.sim-ios-ligne')!.textContent).toMatch(/135\s?000 USD/);
+});
+
+it('le détail des dépenses (catégorie, note) apparaît dans l’historique de Pour vivre et sous « Dépensé » dans le bilan',async()=>{
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{enrollment_id:E,savings_goals:[],debts:[],archived_goals:[],archived_debts:[]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[
+   {move_id:id(1),envelope:'vivre',direction:'entree',motif:null,amount:'100.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null},
+   {move_id:id(2),envelope:'vivre',direction:'sortie',motif:'depense',amount:'10.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null},
+   {move_id:id(3),envelope:'vivre',direction:'sortie',motif:'depense',amount:'7.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null}],withdrawals:[]},error:null};
+  if(f==='hd_finance_expenses_get')return {data:[
+   {expense_id:id(10),category:'nourriture',amount:'10.00',currency:'USD',date_locale:auj,note:'Marché',liee:true,move_id:id(2),created_at:auj+'T08:00:00Z'},
+   {expense_id:id(11),category:'transport',amount:'7.00',currency:'USD',date_locale:auj,note:null,liee:true,move_id:id(3),created_at:auj+'T09:00:00Z'}],error:null};
+  if(f==='hd_finance_benefices_get')return {data:{ventes:[],revenus:[]},error:null};
+  throw Error(f);});
+ const {HabitudesCompteurs}=await import('@/routes/habitudes-compteurs');
+ render(<MemoryRouter><HabitudesCompteurs userId="u"/></MemoryRouter>);
+ const bilan=await screen.findByRole('region',{name:/Mon bilan/});
+ expect((await within(bilan).findByText('Nourriture')).closest('.sim-ios-ligne')!.textContent).toMatch(/10 USD/);
+ expect(within(bilan).getByText('Transport').closest('.sim-ios-ligne')!.textContent).toMatch(/7 USD/);
+ fireEvent.click(screen.getByRole('button',{name:/Pour vivre/}));
+ expect(await screen.findByText(/Nourriture · Marché/)).toBeInTheDocument();
 });
