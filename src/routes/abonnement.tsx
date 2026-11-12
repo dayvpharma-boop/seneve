@@ -103,7 +103,7 @@ export function Abonnement(){
 
  return <main className="pf-page pv-page ab-page avec-nav">
   {tete}
-  <p className="ab-intro">{l('De la graine à l’arbre : choisis la formule qui t’aide à avancer. Tu peux en changer à tout moment.','From seed to tree: choose the plan that helps you grow. You can change it at any time.')}</p>
+  <p className="ab-intro">{l('Choisis ta formule. Tu peux en changer à tout moment.','Choose your plan. You can change it at any time.')}</p>
 
   {/* 1. Ta formule */}
   <section className={`ab-carte ab-encours${termine?' ab-terminee':bientot?' ab-bientot':''}`} aria-label={l('Ma formule actuelle','My current plan')}>

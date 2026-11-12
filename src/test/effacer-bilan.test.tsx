@@ -55,7 +55,7 @@ it('Effacer une ligne : confirmation avec le nombre et le montant, la ligne revi
  const boite=screen.getByRole('alertdialog');
  expect(boite.textContent).toMatch(/1 ligne \(150 USD\), pour ce mois/);
  expect(boite.textContent).toMatch(/On ne peut pas revenir en arrière/);
- expect(boite.textContent).toMatch(/Tes caisses ne changent pas/);
+ expect(boite.textContent).toMatch(/Tes caisses gardent leur montant/);
  expect(boite.textContent).not.toMatch(/remonte/);
  fireEvent.click(within(boite).getByRole('button',{name:'Effacer 150 USD'}));
  await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_bilan_effacer',{p_enrollment_id:E,p_currency:'USD',p_depuis:debutMois,p_quoi:'investi',p_confirmation:null}));
