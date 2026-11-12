@@ -21,3 +21,21 @@ it('laisse le navigateur ouvrir un nouvel onglet (Ctrl ou Cmd)',()=>{
  lien();fireEvent.click(screen.getByRole('link',{name:'Retour'}),{ctrlKey:true});
  expect(back).not.toHaveBeenCalled();
 });
+
+// 12/11/2026 : après un rechargement complet (nouvelle version), l'historique repart de zéro ;
+// « Retour » ramène quand même à la page visitée juste avant, pas à Aujourd'hui.
+it('après un rechargement, revient à la page visitée juste avant (et non à la page de secours)',async()=>{
+ const {noterPage,pagePrecedente}=await import('@/lib/retour-precedent');
+ sessionStorage.clear();
+ noterPage('/habitudes/epargne');noterPage('/habitudes/compteurs');
+ window.history.replaceState({idx:0},'','/habitudes/compteurs');
+ const back=vi.spyOn(window.history,'back').mockImplementation(()=>{});
+ expect(pagePrecedente()).toBe('/habitudes/epargne');
+ lien();fireEvent.click(screen.getByRole('link',{name:'Retour'}));
+ expect(back).not.toHaveBeenCalled();
+ expect(window.location.pathname).toBe('/habitudes/epargne');
+ // Le retour retire la page de la liste ; la langue ne compte pas pour reconnaître une page.
+ noterPage('/habitudes/epargne');
+ expect(pagePrecedente('/habitudes/epargne')).toBeNull();
+ sessionStorage.clear();
+});

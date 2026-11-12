@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { noterPage } from '@/lib/retour-precedent';
 
 /**
  * Garde l'anglais d'une page à l'autre (signalé le 24/10/2026 : certains liens des pages anglaises
