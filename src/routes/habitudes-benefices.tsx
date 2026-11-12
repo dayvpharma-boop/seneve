@@ -11,6 +11,7 @@ import {chargerSuiviFinancier} from '@/lib/habitudes-finances-suivi';
 import {bilanDuMois,chargerBenefices,derniersMois,type Benefices} from '@/lib/habitudes-finances-benefices';
 import {moisPrecedent,moisSuivant} from '@/lib/habitudes-finances-depenses';
 import {decimalesDevise} from '@/lib/devises';
+import {garderFinance,lireFinance} from '@/lib/memoire-finance';
 import {NotFound} from '@/routes/introuvable';
 
 /** SÉNEVÉ Bénéfices (décision de Dr Justin du 11/11/2026, une seule activité) :
@@ -25,12 +26,14 @@ export function RouteHabitudesBenefices(){
 export function HabitudesBenefices({userId}:{userId:string}){
  const [q]=useSearchParams(),en=q.get('lang')==='en',langue=en?'en':'fr',l=(fr:string,english:string)=>en?english:fr;
  const suffixe=en?'?lang=en':'';
- const [donnees,setDonnees]=useState<Benefices|null>(null),[etat,setEtat]=useState<'chargement'|'pret'|'vide'|'erreur'>('chargement');
+ // Mémoire de la visite (12/11/2026) : au retour, la dernière version s'affiche tout de suite, puis tout est relu.
+ const [memoire]=useState(()=>lireFinance<Benefices>('benefices'));
+ const [donnees,setDonnees]=useState<Benefices|null>(memoire??null),[etat,setEtat]=useState<'chargement'|'pret'|'vide'|'erreur'>(memoire?'pret':'chargement');
  const [devise,setDevise]=useState(''),[mois,setMois]=useState(()=>aujourdhui().slice(0,7));
 
  const charger=useCallback(async()=>{
-  try{const s=await chargerSuiviFinancier(null);if(!s){setEtat('vide');return;}setDonnees(await chargerBenefices(s.enrollment_id));setEtat('pret');}
-  catch{setEtat('erreur');}
+  try{const s=await chargerSuiviFinancier(null);if(!s){setEtat('vide');return;}const b=await chargerBenefices(s.enrollment_id);setDonnees(b);garderFinance('benefices',b);setEtat('pret');}
+  catch{setEtat(e=>e==='pret'?e:'erreur');}
  },[userId]);
  useEffect(()=>{void charger();},[charger]);
  useEffect(()=>{document.title=l('SÉNEVÉ Bénéfices','SÉNEVÉ Profits');document.documentElement.lang=langue;},[langue]);

@@ -42,3 +42,39 @@ it('la mémoire appartient au compte : un autre compte recharge normalement',asy
  expect(screen.getByText(/Chargement/)).toBeInTheDocument();
  expect(screen.queryByRole('region',{name:'Moto-taxi'})).toBeNull();
 });
+
+// Dépenses, Bénéfices et Rapport gardent aussi leur dernière version (12/11/2026).
+const moisCourant=new Intl.DateTimeFormat('en-CA').format(new Date()).slice(0,7);
+it('SÉNEVÉ Dépenses : au retour, le total du mois s’affiche tout de suite',async()=>{
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves:[],withdrawals:[]},error:null};
+  if(f==='hd_finance_expenses_get')return {data:[{expense_id:'0b6f3c1e-0009-4c3b-9a55-000000000000',category:'nourriture',amount:'42.00',currency:'USD',date_locale:`${moisCourant}-01`,note:null,liee:false,created_at:`${moisCourant}-01T10:00:00Z`}],error:null};
+  throw Error(f);});
+ const {HabitudesDepenses}=await import('@/routes/habitudes-depenses');
+ const page=()=>render(<MemoryRouter><HabitudesDepenses userId="u"/></MemoryRouter>);
+ page();
+ expect((await screen.findByText(/Dépensé ce mois/)).parentElement!.textContent).toMatch(/42 USD/);
+ cleanup();
+ rpc.mockImplementation(()=>new Promise(()=>{}));
+ page();
+ expect(screen.queryByText(/Chargement/)).toBeNull();
+ expect(screen.getByText(/Dépensé ce mois/).parentElement!.textContent).toMatch(/42 USD/);
+});
+
+it('SÉNEVÉ Bénéfices : au retour, le bénéfice du mois s’affiche tout de suite',async()=>{
+ const vente={id:'r1',currency:'USD',date_locale:`${moisCourant}-02`,gross:'500',goods:'200',other:'0',charges:'0'};
+ rpc.mockImplementation(async(f:string)=>{
+  if(f==='hd_finance_tracker_get')return {data:{...suivi,savings_goals:[]},error:null};
+  if(f==='hd_finance_benefices_get')return {data:{ventes:[vente],revenus:[]},error:null};
+  throw Error(f);});
+ const {HabitudesBenefices}=await import('@/routes/habitudes-benefices');
+ const page=()=>render(<MemoryRouter><HabitudesBenefices userId="u"/></MemoryRouter>);
+ page();
+ const avant=(await screen.findByText(/Bénéfice du mois|Revenus reçus/)).parentElement!.textContent;
+ cleanup();
+ rpc.mockImplementation(()=>new Promise(()=>{}));
+ page();
+ expect(screen.queryByText(/Chargement/)).toBeNull();
+ expect(screen.getByText(/Bénéfice du mois|Revenus reçus/).parentElement!.textContent).toBe(avant);
+});

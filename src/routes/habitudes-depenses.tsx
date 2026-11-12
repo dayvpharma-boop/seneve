@@ -10,6 +10,7 @@ import {chargerSuiviFinancier} from '@/lib/habitudes-finances-suivi';
 import {chargerCompteursOuAbsents,disponibleCompteur,type Compteurs} from '@/lib/habitudes-finances-compteurs';
 import {annulerDepense,CATEGORIES_DEPENSES,chargerDepenses,INFOS_CATEGORIES,moisPrecedent,moisSuivant,noterDepense,totauxDuMois,type CategorieDepense,type Depense} from '@/lib/habitudes-finances-depenses';
 import {decimalesDevise,montantValidePourDevise} from '@/lib/devises';
+import {garderFinance,lireFinance} from '@/lib/memoire-finance';
 import {NotFound} from '@/routes/introuvable';
 
 /** SÉNEVÉ Dépenses (décision de Dr Justin du 11/11/2026) :
@@ -25,9 +26,11 @@ export function RouteHabitudesDepenses(){
 export function HabitudesDepenses({userId}:{userId:string}){
  const [q]=useSearchParams(),en=q.get('lang')==='en',langue=en?'en':'fr',l=(fr:string,english:string)=>en?english:fr;
  const suffixe=en?'?lang=en':'';
- const [inscription,setInscription]=useState<string|null>(null),[devisesSuivi,setDevisesSuivi]=useState<string[]>([]);
- const [cpt,setCpt]=useState<Compteurs|null>(null),[depenses,setDepenses]=useState<Depense[]>([]);
- const [etat,setEtat]=useState<'chargement'|'pret'|'vide'|'erreur'>('chargement');
+ // Mémoire de la visite (12/11/2026) : au retour, la dernière version s'affiche tout de suite, puis tout est relu.
+ const [memoire]=useState(()=>lireFinance<{inscription:string;devisesSuivi:string[];cpt:Compteurs|null;depenses:Depense[]}>('depenses'));
+ const [inscription,setInscription]=useState<string|null>(memoire?.inscription??null),[devisesSuivi,setDevisesSuivi]=useState<string[]>(memoire?.devisesSuivi??[]);
+ const [cpt,setCpt]=useState<Compteurs|null>(memoire?.cpt??null),[depenses,setDepenses]=useState<Depense[]>(memoire?.depenses??[]);
+ const [etat,setEtat]=useState<'chargement'|'pret'|'vide'|'erreur'>(memoire?'pret':'chargement');
  const [devise,setDevise]=useState(''),[mois,setMois]=useState(()=>aujourdhui().slice(0,7));
  const [ouvert,setOuvert]=useState(false),[montant,setMontant]=useState(''),[categorie,setCategorie]=useState<CategorieDepense|null>(null);
  const [date,setDate]=useState(aujourdhui),[note,setNote]=useState(''),[requete,setRequete]=useState(()=>crypto.randomUUID());
@@ -39,9 +42,10 @@ export function HabitudesDepenses({userId}:{userId:string}){
    setInscription(s.enrollment_id);setDevisesSuivi([...new Set(s.savings_goals.map(g=>g.currency))]);
    const [c,d]=await Promise.all([chargerCompteursOuAbsents(s.enrollment_id),chargerDepenses(s.enrollment_id)]);
    setCpt(c);setDepenses(d);setEtat('pret');
-  }catch{setEtat('erreur');}
+  }catch{setEtat(e=>e==='pret'?e:'erreur');}
  },[userId]);
  useEffect(()=>{void charger();},[charger]);
+ useEffect(()=>{if(etat==='pret'&&inscription)garderFinance('depenses',{inscription,devisesSuivi,cpt,depenses});},[etat,inscription,devisesSuivi,cpt,depenses]);
  useEffect(()=>{document.title=l('SÉNEVÉ Dépenses','SÉNEVÉ Expenses');document.documentElement.lang=langue;},[langue]);
 
  const devises=useMemo(()=>{const s=new Set<string>();cpt?.moves.forEach(m=>s.add(m.currency));devisesSuivi.forEach(d=>s.add(d));depenses.forEach(d=>s.add(d.currency));return [...s];},[cpt,devisesSuivi,depenses]);

@@ -9,13 +9,13 @@
 :root:root:root .dp-page .dp-devises button[aria-checked="true"]{background:var(--dp-encre);color:var(--dp-fond)}
 
 /* Total du mois : carte nuit. */
-:root:root:root .dp-page .dp-heros{padding:14px 20px 18px;border-radius:24px;color:#fff;background:radial-gradient(120% 90% at 0% 0%,#3b3893 0%,transparent 60%),linear-gradient(160deg,#25235f,#141332);box-shadow:0 18px 40px rgb(20 19 50 / .25),inset 0 1px 0 rgb(255 255 255 / .08)}
+:root:root:root .dp-page .dp-heros{padding:14px 20px 18px;border-radius:24px;color:#fff;background:#23224f;box-shadow:0 1px 2px rgb(0 0 0 / .12)}
 :root:root:root .dp-page .dp-mois{display:flex;align-items:center;justify-content:space-between;margin:0 -10px 10px}
 :root:root:root .dp-page .dp-mois span{font-size:15px;font-weight:600;letter-spacing:-.01em}
 :root:root:root .dp-page .dp-mois button{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:#fff}
 :root:root:root .dp-page .dp-mois button:active{background:rgb(255 255 255 / .12)}
 :root:root:root .dp-page .dp-mois button:disabled{opacity:.3}
-:root:root:root .dp-page .dp-heros-etiquette{display:block;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+:root:root:root .dp-page .dp-heros-etiquette{display:block;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;opacity:.7}
 :root:root:root .dp-page .dp-heros-total{display:block;margin:4px 0 6px;font-size:40px;font-weight:700;line-height:1.05;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
 :root:root:root:root .dp-page .dp-heros-ecart{margin:0!important;padding:0!important;font-size:14px;line-height:1.4;opacity:.75}
 :root:root:root .dp-page .dp-barre{display:flex;gap:3px;height:8px;margin:16px 0 0;border-radius:8px;overflow:hidden}
@@ -23,17 +23,17 @@
 :root:root:root:root .dp-page .dp-vivre{display:flex;align-items:center;gap:6px;margin:14px 0 0!important;padding:10px 0 0!important;border-top:.5px solid rgb(255 255 255 / .14);font-size:13.5px;opacity:.8}
 
 /* Bouton principal et formulaire. */
-:root:root:root .dp-page .dp-ajouter{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin:14px 0 0;border:0;border-radius:16px;background:var(--dp-accent);color:#fff;font:600 16px/1 inherit;letter-spacing:-.01em;box-shadow:0 6px 16px color-mix(in srgb,var(--dp-accent) 30%,transparent);transition:transform .15s ease}
+:root:root:root .dp-page .dp-ajouter{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin:14px 0 0;border:0;border-radius:16px;background:var(--dp-accent);color:#fff;font:600 16px/1 inherit;letter-spacing:-.01em;box-shadow:0 1px 2px rgb(0 0 0 / .12);transition:transform .15s ease}
 :root:root:root .dp-page .dp-ajouter[aria-expanded="true"]{background:rgb(118 118 128 / .14);color:var(--dp-encre);box-shadow:none}
 :root:root:root .dp-page .dp-ajouter:active{transform:scale(.98)}
 :root:root:root .dp-page .dp-formulaire{margin:12px 0 0;padding:18px 16px 16px;border-radius:20px;background:var(--dp-carte);box-shadow:0 1px 2px rgb(0 0 0 / .04);animation:dp-entree .35s cubic-bezier(.32,.72,0,1)}
-:root:root:root .dp-page .dp-montant-etiquette{display:block;font-size:12.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--dp-doux);text-align:center}
+:root:root:root .dp-page .dp-montant-etiquette{display:block;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--dp-doux);text-align:center}
 :root:root:root .dp-page .dp-montant{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:4px 0 14px}
 :root:root:root:root .dp-page .dp-montant input{width:100%;max-width:220px;border:0!important;background:transparent!important;box-shadow:none!important;text-align:center;font:700 44px/1.1 inherit!important;letter-spacing:-.035em;color:var(--dp-encre)!important;-webkit-text-fill-color:var(--dp-encre);font-variant-numeric:tabular-nums;outline:none}
 :root:root:root .dp-page .dp-montant input::placeholder{color:rgb(60 60 67 / .25);-webkit-text-fill-color:rgb(60 60 67 / .25)}
 :root:root:root .dp-page .dp-montant span{font-size:17px;font-weight:600;color:var(--dp-doux)}
 :root:root:root .dp-page .dp-categories{margin:0;padding:0;border:0;min-width:0}
-:root:root:root .dp-page .dp-categories legend{margin:0 0 8px 4px;padding:0;font-size:12.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--dp-doux)}
+:root:root:root .dp-page .dp-categories legend{margin:0 0 8px 4px;padding:0;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--dp-doux)}
 :root:root:root .dp-page .dp-categories [role="radiogroup"]{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 :root:root:root .dp-page .dp-categories button{display:flex;flex-direction:column;align-items:center;gap:6px;min-height:76px;padding:10px 2px 8px;border:0;border-radius:14px;background:rgb(118 118 128 / .08);font:500 11.5px/1.15 inherit;color:var(--dp-encre);text-align:center;transition:background-color .2s ease,box-shadow .2s ease,transform .15s ease}
 :root:root:root .dp-page .dp-categories button>span{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--teinte);color:#fff}
@@ -45,7 +45,7 @@
 :root:root:root .dp-page .dp-annonce-erreur{background:rgb(255 59 48 / .1);color:#a1150b}
 
 /* Listes : cartes groupées iOS. */
-:root:root:root:root .dp-page .dp-section{margin:26px 16px 8px!important;padding:0!important;font-size:12.5px!important;font-weight:500!important;letter-spacing:.06em!important;text-transform:uppercase;color:var(--dp-doux)!important}
+:root:root:root:root .dp-page .dp-section{margin:26px 16px 8px!important;padding:0!important;font-size:12.5px!important;font-weight:500!important;letter-spacing:0!important;text-transform:none;color:var(--dp-doux)!important}
 :root:root:root:root .dp-page .dp-jour{margin:14px 16px 6px!important;padding:0!important;font-size:13px!important;font-weight:600!important;color:var(--dp-doux)!important}
 :root:root:root .dp-page .dp-liste{margin:0;padding:0;list-style:none;border-radius:16px;background:var(--dp-carte);overflow:hidden}
 :root:root:root .dp-page .dp-liste li{position:relative;display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 10px 8px 14px}

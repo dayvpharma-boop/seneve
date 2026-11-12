@@ -15,6 +15,7 @@ import {chargerBenefices,type Benefices} from '@/lib/habitudes-finances-benefice
 import {construireRapport,decaler,periodeDe} from '@/lib/rapport-financier';
 import {rapportEnHtml,telechargerWord} from '@/lib/rapport-export';
 import {decimalesDevise} from '@/lib/devises';
+import {garderFinance,lireFinance} from '@/lib/memoire-finance';
 import {NotFound} from '@/routes/introuvable';
 
 /** SÉNEVÉ Rapport (décision de Dr Justin du 12/11/2026) : rapport journalier, mensuel, annuel ou sur des jours choisis,
@@ -30,8 +31,10 @@ export function RouteHabitudesRapport(){
 export function HabitudesRapport({userId}:{userId:string}){
  const [q]=useSearchParams(),en=q.get('lang')==='en',langue=en?'en':'fr',l=(fr:string,english:string)=>en?english:fr;
  const suffixe=en?'?lang=en':'';
- const [suivi,setSuivi]=useState<SuiviFinancier|null>(null),[cpt,setCpt]=useState<Compteurs|null>(null),[depenses,setDepenses]=useState<Depense[]>([]),[benefices,setBenefices]=useState<Benefices|null>(null);
- const [etat,setEtat]=useState<'chargement'|'pret'|'vide'|'erreur'>('chargement');
+ // Mémoire de la visite (12/11/2026) : au retour, le dernier rapport s'affiche tout de suite, puis tout est relu.
+ const [memoire]=useState(()=>lireFinance<{suivi:SuiviFinancier;cpt:Compteurs|null;depenses:Depense[];benefices:Benefices|null}>('rapport'));
+ const [suivi,setSuivi]=useState<SuiviFinancier|null>(memoire?.suivi??null),[cpt,setCpt]=useState<Compteurs|null>(memoire?.cpt??null),[depenses,setDepenses]=useState<Depense[]>(memoire?.depenses??[]),[benefices,setBenefices]=useState<Benefices|null>(memoire?.benefices??null);
+ const [etat,setEtat]=useState<'chargement'|'pret'|'vide'|'erreur'>(memoire?'pret':'chargement');
  const [type,setType]=useState<TypePeriode>('mois'),[jour,setJour]=useState(aujourdhui),[plage,setPlage]=useState<Plage|null>(null),[devise,setDevise]=useState('');
 
  const charger=useCallback(async()=>{
@@ -39,8 +42,8 @@ export function HabitudesRapport({userId}:{userId:string}){
    const s=await chargerSuiviFinancier(null);if(!s){setEtat('vide');return;}
    setSuivi(s);
    const [c,d,b]=await Promise.all([chargerCompteursOuAbsents(s.enrollment_id),chargerDepenses(s.enrollment_id).catch(()=>[]),chargerBenefices(s.enrollment_id).catch(()=>null)]);
-   setCpt(c);setDepenses(d);setBenefices(b);setEtat('pret');
-  }catch{setEtat('erreur');}
+   setCpt(c);setDepenses(d);setBenefices(b);garderFinance('rapport',{suivi:s,cpt:c,depenses:d,benefices:b});setEtat('pret');
+  }catch{setEtat(e=>e==='pret'?e:'erreur');}
  },[userId]);
  useEffect(()=>{void charger();},[charger]);
  useEffect(()=>{document.title=l('SÉNEVÉ Rapport','SÉNEVÉ Report');document.documentElement.lang=langue;},[langue]);
