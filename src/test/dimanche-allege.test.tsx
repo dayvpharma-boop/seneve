@@ -1,5 +1,5 @@
 import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
-import {afterEach,beforeEach,expect,it,vi} from 'vitest';
+import {afterEach,beforeEach,expect,it,onTestFinished,vi} from 'vitest';
 import {MemoryRouter} from 'react-router-dom';
 import {readFileSync} from 'node:fs';
 
@@ -127,6 +127,10 @@ it('quand tout est fait : « Ta journée est complète », tout est replié dans
 });
 
 it('le bouton Commencer ouvre une activité rangée parmi les suivantes',async()=>{
+ // Heure fixée à 15 h à Kinshasa (12/11/2026) : la prochaine activité est alors celle de 20 h, rangée parmi les
+ // suivantes. Sans heure fixe, le test n'était juste qu'entre 12 h et 21 h.
+ vi.useFakeTimers({toFake:['Date'],shouldAdvanceTime:true});vi.setSystemTime(new Date('2026-11-09T15:00:00+01:00'));
+ onTestFinished(()=>{vi.useRealTimers();});
  const source=jour(LUNDI,false);
  const creer=(n:number,habit_key:string,consigne:string,heure:string)=>({...source.activites[0]!,habit_key,consigne,heure,occurrence:{...source.activites[0]!.occurrence,occurrence_id:id(n)}});
  // Le groupe en cours (3 premières) a une activité « en partie » ; les suivantes commencent à 20 h.
