@@ -99,7 +99,7 @@ function AfficheAnnonce() {
 /** Pendant le téléchargement d'une page : un indicateur discret au lieu d'un écran vide (11/11/2026).
  *  Il n'apparaît qu'après 250 ms, pour ne pas clignoter quand la page est déjà sur le téléphone. */
 function Attente() {
-  return <div className="seneve-attente" role="status" aria-live="polite"><span className="seneve-attente-rond" aria-hidden="true" /><span className="seneve-attente-texte">{document.documentElement.lang === 'en' ? 'Loading…' : 'Chargement…'}</span></div>;
+  return <div className="seneve-attente" role="status" aria-live="polite"><img className="seneve-attente-logo" src={`${import.meta.env.BASE_URL}icons/icon.svg`} alt="" width={56} height={56} /><span className="seneve-attente-rond" aria-hidden="true" /><span className="seneve-attente-texte">{document.documentElement.lang === 'en' ? 'Loading…' : 'Chargement…'}</span></div>;
 }
 
 suivreApparence();

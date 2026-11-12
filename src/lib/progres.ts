@@ -132,7 +132,7 @@ export const OBSTACLE_TEXTES = {
 
 export const REPRISE_TEXTES = {
   fr: {
-    titre: (p: string) => p ? `Content de te revoir, ${p} 🌱` : 'Content de te revoir 🌱',
+    titre: (p: string) => p ? `Content de te revoir, ${p}` : 'Content de te revoir',
     texte: (j: number) => `Tu peux reprendre là où tu t’es arrêté : l’action du jour ${j}.`,
     bouton: (j: number) => `Reprendre au jour ${j}`,
     aide: 'Si quelque chose t’a bloqué, tu peux le dire au coach ou demander de l’aide.',
@@ -140,7 +140,7 @@ export const REPRISE_TEXTES = {
     demander: 'Demander de l’aide',
   },
   en: {
-    titre: (p: string) => p ? `Good to see you again, ${p} 🌱` : 'Good to see you again 🌱',
+    titre: (p: string) => p ? `Good to see you again, ${p}` : 'Good to see you again',
     texte: (j: number) => `You can pick up where you left off: the action of day ${j}.`,
     bouton: (j: number) => `Resume at day ${j}`,
     aide: 'If something held you back, you can tell the coach or ask for help.',

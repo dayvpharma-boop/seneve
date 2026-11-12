@@ -6,7 +6,7 @@
   "start_url": "./espace",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F5F7FE",
+  "background_color": "#14120E",
   "theme_color": "#F5F7FE",
   "icons": [
     {

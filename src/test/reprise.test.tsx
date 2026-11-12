@@ -59,14 +59,14 @@ describe('Reprise après 3 jours (espace)', () => {
 
   it('accueil bienveillant, bouton vers le jour 3, disparaît après une action enregistrée', async () => {
     render(<MemoryRouter><Espace /></MemoryRouter>);
-    const carte = await screen.findByRole('region', { name: 'Content de te revoir, Marie 🌱' });
+    const carte = await screen.findByRole('region', { name: 'Content de te revoir, Marie' });
     expect(carte).toHaveTextContent('l’action du jour 3');
     expect(carte).not.toHaveTextContent(/retard|foi/i);
     fireEvent.click(screen.getByRole('button', { name: 'Reprendre au jour 3' }));
     expect(await screen.findByText('Action 3')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: "J'ai réalisé cette action" }));
     await screen.findByText(/Action réalisée/);
-    expect(screen.queryByRole('region', { name: 'Content de te revoir, Marie 🌱' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Content de te revoir, Marie' })).not.toBeInTheDocument();
   });
 });
 
@@ -81,10 +81,10 @@ describe('Reprise : une action suffit à faire disparaître le message', () => {
 
   it('après avoir repris le jour 3, le message ne revient pas pendant la visite', async () => {
     render(<MemoryRouter><Espace /></MemoryRouter>);
-    await screen.findByRole('region', { name: 'Content de te revoir, Marie 🌱' });
+    await screen.findByRole('region', { name: 'Content de te revoir, Marie' });
     fireEvent.click(screen.getByRole('button', { name: 'Reprendre au jour 3' }));
     fireEvent.click(await screen.findByRole('button', { name: "J'ai réalisé cette action" }));
     await screen.findByText(/Action réalisée/);
-    expect(screen.queryByRole('region', { name: 'Content de te revoir, Marie 🌱' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Content de te revoir, Marie' })).not.toBeInTheDocument();
   });
 });
