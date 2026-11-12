@@ -19,7 +19,7 @@ const montantCents=(v:string)=>Math.round(Number(v)*100);
 const totalCents=(xs:{amount:string}[])=>xs.reduce((n,x)=>n+montantCents(x.amount),0);
 const resteDette=(d:DetteSuivie)=>Math.max(0,montantCents(d.opening_balance)-totalCents(d.payments));
 /** Montant lisible ; les centimes ne s'affichent que s'il y en a (« 150 000 CDF », « 25,50 $US »). */
-const formatter=(centimes:number,devise:string,en:boolean)=>{const dec=decimalesDevise(devise);return new Intl.NumberFormat(en?'en-US':'fr-FR',{style:'currency',currency:devise,minimumFractionDigits:centimes%100===0?0:dec,maximumFractionDigits:dec}).format(centimes/100);};
+const formatter=(centimes:number,devise:string,en:boolean)=>`${nombre(centimes,devise,en)} ${devise}`;
 const nombre=(centimes:number,devise:string,en:boolean)=>{const dec=decimalesDevise(devise);return new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:centimes%100===0?0:dec,maximumFractionDigits:dec}).format(centimes/100);};
 const monnaie=deviseAcceptee;
 /** Dollar proposé en premier (demande de Dr Justin du 07/11/2026, qui remplace le franc congolais). */
@@ -239,7 +239,7 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
  }
  const message=(zone:Zone)=>annonce?.zone===zone?<p role={annonce.erreur?'alert':'status'} aria-live="polite" className={`mt-2.5 flex items-start gap-2 rounded-xl p-3 text-sm ${annonce.erreur?'bg-red-50 text-red-800':'bg-emerald-50 text-emerald-900'}`}><IconeHD nom={annonce.erreur?'info':'check_circle'} className="shrink-0 text-[18px]"/>{annonce.texte}</p>:null;
  const pas=(devise:string)=>decimalesDevise(devise)===0?1:0.01;
- const titre=(texte:string,action?:ReactNode)=><h2 className="hd-classique sim-ios-titre flex items-baseline justify-between gap-2" style={{textTransform:'none'}}><span style={{textTransform:'uppercase'}}>{texte}</span>{action}</h2>;
+ const titre=(texte:string,action?:ReactNode)=><h2 className="hd-classique sim-ios-titre flex items-baseline justify-between gap-2"><span>{texte}</span>{action}</h2>;
  const bouton=(texte:string,couleur='var(--ios-accent,#5b4ee8)')=><button disabled={busy} className="hd-classique sim-ios-bouton disabled:opacity-60" style={{marginTop:12,background:couleur}}>{busy?l('Enregistrement…','Saving…'):texte}</button>;
  const champMontant=(id:string,valeur:string,changer:(v:string)=>void,devise:string,placeholder:string,max?:string)=><span className="flex items-center gap-1.5"><input id={id} required inputMode="decimal" type="number" min={pas(devise)} max={max} step={pas(devise)} value={valeur} onChange={e=>changer(e.target.value)} placeholder={placeholder}/><span className="text-hd-on-surface-variant" style={{fontSize:15}}>{devise}</span></span>;
  const champDate=(id:string,valeur:string,changer:(v:string)=>void)=><input id={id} required type="date" max={aujourdhui()} value={valeur} onChange={e=>changer(e.target.value)} style={{width:150,color:'var(--ios-accent,#5b4ee8)'}}/>;
@@ -278,8 +278,8 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
     const groupe=objectifsTous.filter(g=>g.currency===devise);
     const dispo=groupe.reduce((n,g)=>n+Math.max(0,dispoObjectif(g)),0),visee=groupe.reduce((n,g)=>n+montantCents(g.target_amount),0);
     const p=visee?Math.min(100,Math.round(dispo/visee*100)):0;
-    return <section key={devise} aria-label={l(`Épargne totale en ${devise}`,`Total savings in ${devise}`)} className="hd-classique mb-3 rounded-[20px] p-[18px] text-white shadow-[0_12px_30px_rgba(31,138,62,.22)]" style={{background:'linear-gradient(160deg,#2fb24c,#1d7a36)'}}>
-     <p className="text-[13px] uppercase tracking-wider opacity-85">{l('Mon épargne totale','My total savings')}</p>
+    return <section key={devise} aria-label={l(`Épargne totale en ${devise}`,`Total savings in ${devise}`)} className="hd-classique mb-3 rounded-[20px] p-[18px] text-white shadow-[0_1px_3px_rgba(0,0,0,.08)]" style={{background:'#1f8a3e'}}>
+     <p className="text-[14px] font-medium opacity-90">{l('Mon épargne totale','My total savings')}</p>
      <p className="mt-0.5 mb-2.5 text-[32px] font-bold leading-tight tracking-tight tabular-nums [overflow-wrap:anywhere]">{formatter(dispo,devise,en)}</p>
      <div className="h-1.5 overflow-hidden rounded-full bg-white/25"><div className="h-full rounded-full bg-white" style={{width:`${p}%`,transition:'width .6s cubic-bezier(.32,.72,0,1)'}}/></div>
      <div className="mt-1.5 flex justify-between gap-2 text-[13px] opacity-90"><span>{l(`Sur ${nombre(visee,devise,false)} visés · ${groupe.length} objectif${groupe.length>1?'s':''}`,`Of ${nombre(visee,devise,true)} targeted · ${groupe.length} goal${groupe.length>1?'s':''}`)}</span><span>{p} %</span></div>
@@ -363,8 +363,8 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
   </section>;
   return <>
    {devises.map(devise=>{const groupe=dettesTriees.filter(d=>d.currency===devise),ouverture=groupe.reduce((n,d)=>n+montantCents(d.opening_balance),0),rembourse=groupe.reduce((n,d)=>n+totalCents(d.payments),0),p=ouverture?Math.min(100,Math.round(rembourse/ouverture*100)):0;
-    return <section key={devise} aria-label={l(`Total en ${devise}`,`Total in ${devise}`)} className="hd-classique mb-3 rounded-[20px] p-[18px] text-white shadow-[0_12px_30px_rgba(73,67,155,.22)]" style={{background:'linear-gradient(160deg,#5b4fe0,#49439b)'}}>
-     <p className="text-[13px] uppercase tracking-wider opacity-80">{l('Il reste à rembourser','Left to repay')}</p>
+    return <section key={devise} aria-label={l(`Total en ${devise}`,`Total in ${devise}`)} className="hd-classique mb-3 rounded-[20px] p-[18px] text-white shadow-[0_1px_3px_rgba(0,0,0,.08)]" style={{background:'#4f45c4'}}>
+     <p className="text-[14px] font-medium opacity-90">{l('Il reste à rembourser','Left to repay')}</p>
      <p className="mt-0.5 mb-2.5 text-[32px] font-bold leading-tight tracking-tight tabular-nums [overflow-wrap:anywhere]">{formatter(Math.max(0,ouverture-rembourse),devise,en)}</p>
      <div className="h-1.5 overflow-hidden rounded-full bg-white/25"><div className="h-full rounded-full bg-white" style={{width:`${p}%`}}/></div>
      <div className="mt-1.5 flex justify-between text-[13px] opacity-85"><span>{l('Déjà remboursé','Already repaid')} {nombre(rembourse,devise,en)}</span><span>{p} %</span></div>
@@ -434,10 +434,10 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
   <div className="finance-cartes-lisibles sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg" style={{background:'var(--ios-fond,#f2f2f7)'}}>
    <h1 className="mb-3 ml-1 text-[34px] font-bold leading-tight tracking-tight">{titrePage}</h1>
    <p className="hd-classique sim-ios-sous">{mode==='epargne'?l('Tes objectifs et ce que tu mets de côté.','Your goals and what you set aside.'):l('Ce que tu dois et ce que tu as déjà remboursé.','What you owe and what you have already repaid.')}</p>
-   <Link to={`/habitudes/repartition?pour=${mode}${en?'&lang=en':''}`} className="hd-classique mb-3 flex items-center gap-3.5 rounded-[20px] px-[18px] py-4 text-white active:scale-[.98] transition-transform" style={{textDecoration:'none',background:mode==='epargne'?'linear-gradient(160deg,#5b4fe0,#49439b)':'linear-gradient(160deg,#f08a4b,#d9602a)',boxShadow:mode==='epargne'?'0 12px 30px rgba(73,67,155,.22)':'0 12px 30px rgba(217,96,42,.22)'}}>
-    <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-xl" style={{background:'rgb(255 255 255 / .18)'}}><IconeHD nom="payments" className="text-[24px]"/></span>
-    <span className="min-w-0 flex-1"><b className="block text-[17px]">{l('Quand je reçois de l’argent','When I receive money')}</b><small className="block text-sm opacity-85">{mode==='epargne'?l('Combien mettre de côté, selon ton revenu','How much to set aside, based on your income'):l('Combien rembourser, selon ton revenu','How much to repay, based on your income')}</small></span>
-    <IconeHD nom="chevron_right" className="text-[22px] opacity-80"/>
+   <Link to={`/habitudes/repartition?pour=${mode}${en?'&lang=en':''}`} className="hd-classique mb-3 flex items-center gap-3.5 rounded-[20px] bg-white px-[18px] py-4 text-hd-on-surface active:scale-[.98] transition-transform" style={{textDecoration:'none'}}>
+    <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-xl text-white" style={{background:mode==='epargne'?'#5b4ee8':'#e0662f'}}><IconeHD nom="payments" className="text-[24px]"/></span>
+    <span className="min-w-0 flex-1"><b className="block text-[17px]">{l('Quand je reçois de l’argent','When I receive money')}</b><small className="block text-sm text-hd-on-surface-variant">{mode==='epargne'?l('Combien mettre de côté, selon ton revenu','How much to set aside, based on your income'):l('Combien rembourser, selon ton revenu','How much to repay, based on your income')}</small></span>
+    <IconeHD nom="chevron_right" className="text-[22px] text-hd-on-surface-variant"/>
    </Link>
    {mode==='epargne'&&<Link to={`/habitudes/compteurs${en?'?lang=en':''}`} className="hd-classique mb-3 flex min-h-[52px] items-center gap-3 rounded-xl bg-white px-4" style={{textDecoration:'none',color:'inherit'}}><IconeHD nom="calendar_view_week" className="text-[22px] text-hd-secondary"/><span className="flex-1"><span className="block text-[16px]">{l('SÉNEVÉ Compte','SÉNEVÉ Account')}</span><small className="block text-[13px] text-hd-on-surface-variant">{l('Ce qui reste dans chaque caisse, et le bilan','What is left in each counter, and the summary')}</small></span><IconeHD nom="chevron_right" className="text-[20px] text-hd-outline"/></Link>}
    {annulable&&<p role="status" aria-live="polite" className="hd-classique mb-3 flex items-center gap-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-900"><span className="flex-1">{annulable.type==='objectif'?l(`« ${annulable.nom} » est supprimé. Son historique reste dans ton bilan.`,`“${annulable.nom}” is deleted. Its history stays in your summary.`):l(`« ${annulable.nom} » est supprimée. Son historique reste dans ton bilan.`,`“${annulable.nom}” is deleted. Its history stays in your summary.`)}</span><button type="button" disabled={busy} onClick={()=>void annulerSuppression()} className="min-h-[44px] px-2 font-semibold" style={{color:'var(--ios-accent,#5b4ee8)'}}>{l('Annuler','Undo')}</button></p>}

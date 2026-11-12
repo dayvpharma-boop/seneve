@@ -1,6 +1,6 @@
 /* Ma répartition, style Apple (maquette validée le 08/11/2026).
    Préfixe :root:root:root : passe devant la remise à zéro des écrans .hd-stitch et les styles généraux des boutons. */
-:root:root:root .rep-page{background:radial-gradient(110% 340px at 85% 0%,rgb(217 242 227 / .7),transparent 60%),radial-gradient(90% 300px at 10% 0%,rgb(227 224 255 / .8),transparent 60%),var(--ios-fond,#f2f2f7)}
+:root:root:root .rep-page{background:var(--ios-fond,#f2f2f7)}
 :root:root:root .rep-page svg{fill:none;stroke-linecap:round;stroke-linejoin:round}
 /* Profils */
 :root:root:root .rep-profils{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -48,7 +48,7 @@
 :root:root:root .rep-stepper span{min-width:42px;text-align:center;font-size:13.5px;font-weight:600;line-height:18px;border-left:.5px solid rgb(60 60 67 / .3);border-right:.5px solid rgb(60 60 67 / .3);font-variant-numeric:tabular-nums}
 :root:root:root .rep-fixe{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 10px;border-radius:8px;background:rgb(118 118 128 / .12);font-size:12.5px;font-weight:600;color:var(--ios-doux,#6e6e73)}
 :root:root:root .rep-fixe svg{width:12px;height:12px;stroke:currentColor;stroke-width:2.4}
-:root:root:root .rep-part-vivre{background:linear-gradient(135deg,rgb(91 78 232 / .06),transparent)}
+:root:root:root .rep-part-vivre{background:rgb(91 78 232 / .05)}
 :root:root:root .rep-vivre-montant{color:var(--ios-accent,var(--ios-accent,#5b4ee8));font-size:18px!important}
 :root:root:root .rep-bouton{display:flex;align-items:center;justify-content:center;gap:8px}
 :root:root:root .rep-bouton svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.2}
@@ -221,7 +221,7 @@
 /* Charges de l’entreprise façon Apple (demande du 10/11/2026) : en-tête du mois, anneau de couverture,
    rubriques en liste groupée avec pastilles de couleur, ligne « + Ajouter » et formulaire en feuille groupée. */
 :root:root:root .rep-charges .chg-entete{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-:root:root:root .rep-charges .chg-surtitre{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ios-doux,#6e6e73)}
+:root:root:root .rep-charges .chg-surtitre{font-size:14px;font-weight:500;color:var(--ios-doux,#6e6e73)}
 :root:root:root .rep-charges .chg-entete h3{margin-top:2px;font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
 :root:root:root .rep-charges .chg-statut{display:inline-flex;align-items:center;gap:6px;flex:none;margin-top:4px;padding:5px 11px;border-radius:999px;font-size:13px;font-weight:600;background:rgb(118 118 128 / .12);color:var(--ios-doux,#6e6e73)}
 :root:root:root .rep-charges .chg-statut-point{width:7px;height:7px;border-radius:50%;background:currentColor}
