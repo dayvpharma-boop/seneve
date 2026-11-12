@@ -1,4 +1,4 @@
-import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import type {ReactNode} from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,expect,it,vi} from 'vitest';
@@ -79,4 +79,33 @@ it('Pour vivre : pas de choix « Dépensé » dans la caisse ; un lien envoie ve
  expect(screen.getByRole('link',{name:/Une dépense de la maison \? Note-la dans SÉNEVÉ Dépenses/})).toHaveAttribute('href','/habitudes/depenses');
  fireEvent.click(screen.getByRole('button',{name:/Dîme/}));
  expect(within(screen.getByRole('radiogroup',{name:'Motif'})).getByRole('radio',{name:'Dépensé'})).toBeInTheDocument();
+});
+
+it('Effacer des jours dans une caisse : calendrier, résumé, avertissement « Effacer vraiment ? » obligatoire avant l’effacement',async()=>{
+ let moves=[{move_id:id(1),envelope:'dime',direction:'entree',motif:null,amount:'100.00',currency:'USD',date_locale:auj,remise_a_zero:false,allocation_id:null}];
+ rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
+  if(f==='hd_finance_tracker_get')return {data:{enrollment_id:E,savings_goals:[],debts:[],archived_goals:[],archived_debts:[]},error:null};
+  if(f==='hd_finance_counters_get')return {data:{enrollment_id:E,moves,withdrawals:[]},error:null};
+  if(f==='hd_finance_expenses_get')return {data:[],error:null};
+  if(f==='hd_finance_benefices_get')return {data:{ventes:[],revenus:[]},error:null};
+  if(f==='hd_finance_caisse_jours_effacer'){moves=[];return {data:{du:a.p_du,au:a.p_au,mouvements:1,depenses:0,versements:0,retraits:0},error:null};}
+  throw Error(f);});
+ const {HabitudesCompteurs}=await import('@/routes/habitudes-compteurs');
+ render(<MemoryRouter><HabitudesCompteurs userId="u"/></MemoryRouter>);
+ fireEvent.click(await screen.findByRole('button',{name:/Dîme/}));
+ expect(screen.queryByRole('button',{name:/Tout utilisé/})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Effacer des jours dans cette caisse…'}));
+ const feuille=await screen.findByRole('dialog',{name:/Effacer des jours/});
+ expect(within(feuille).getByRole('button',{name:'Choisis les jours'})).toBeDisabled();
+ fireEvent.click(within(feuille).getByRole('button',{name:'Aujourd’hui'}));
+ expect(feuille.textContent).toMatch(/1 opération effacée · entrées : \+ 100 USD/);
+ fireEvent.click(within(feuille).getByRole('button',{name:'Effacer ce jour'}));
+ let alerte=screen.getByRole('alertdialog',{name:'Effacer vraiment ?'});
+ fireEvent.click(within(alerte).getByRole('button',{name:'Annuler'}));
+ expect(rpc).not.toHaveBeenCalledWith('hd_finance_caisse_jours_effacer',expect.anything());
+ fireEvent.click(within(feuille).getByRole('button',{name:'Effacer ce jour'}));
+ alerte=screen.getByRole('alertdialog',{name:'Effacer vraiment ?'});
+ fireEvent.click(within(alerte).getByRole('button',{name:'Oui, effacer'}));
+ await waitFor(()=>expect(rpc).toHaveBeenCalledWith('hd_finance_caisse_jours_effacer',{p_enrollment_id:E,p_currency:'USD',p_envelope:'dime',p_goal_id:null,p_du:auj,p_au:auj,p_confirmation:'EFFACER'}));
+ expect(await screen.findByText(/Dîme : les opérations le .* sont effacées\. Les autres jours n’ont pas changé\./)).toBeInTheDocument();
 });

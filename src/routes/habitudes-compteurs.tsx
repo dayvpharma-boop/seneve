@@ -10,7 +10,7 @@ import {supabase} from '@/lib/supabase';
 import {chargerBenefices,type Benefices} from '@/lib/habitudes-finances-benefices';
 import {CATEGORIES_DEPENSES,chargerDepenses,INFOS_CATEGORIES,type CategorieDepense,type Depense} from '@/lib/habitudes-finances-depenses';
 import {CalendrierPlage,nbJours,type Plage} from '@/components/CalendrierPlage';
-import {chargerCompteurs,EffacementImpossible,effacerJours,CompteursIndisponibles,effacerBilan,type QuoiEffacer,disponibleCompteur,disponibleCompteurAu,disponibleObjectif,disponibleObjectifAu,estMasquee,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
+import {chargerCompteurs,EffacementImpossible,effacerJours,effacerJoursCaisse,CompteursIndisponibles,effacerBilan,type QuoiEffacer,disponibleCompteur,disponibleCompteurAu,disponibleObjectif,disponibleObjectifAu,estMasquee,noterRetraitEpargne,noterSortieCompteur,type Compteurs,type Enveloppe,type Motif} from '@/lib/habitudes-finances-compteurs';
 import {decimalesDevise,montantValidePourDevise} from '@/lib/devises';
 import {NotFound} from '@/routes/introuvable';
 import {momentLisible} from '@/lib/date-heure-finances';
@@ -114,6 +114,9 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
  // « Effacer des jours » (décision de Dr Justin du 11/11/2026) : la personne choisit un jour ou une suite de jours dans un calendrier ;
  // seules les données de ces jours sont effacées, tout le reste reste intact.
  const [plage,setPlage]=useState<Plage|null>(null);
+ // « Effacer des jours dans cette caisse » (12/11/2026) : remplace « Tout utilisé : remettre la caisse à zéro ».
+ // Calendrier, résumé de ce qui sera effacé, puis un avertissement à confirmer avant toute suppression.
+ const [caisseEffacer,setCaisseEffacer]=useState<Caisse|null>(null),[plageCaisse,setPlageCaisse]=useState<Plage|null>(null),[confirmerCaisse,setConfirmerCaisse]=useState(false),[erreurCaisse,setErreurCaisse]=useState('');
  const libelleEffacer=!plage?'':plage.du===plage.au?l(`le ${dateLisible(plage.du)}`,`on ${dateLisible(plage.du)}`):l(`du ${dateLisible(plage.du)} au ${dateLisible(plage.au)} (${nbJours(plage)} jours)`,`from ${dateLisible(plage.du)} to ${dateLisible(plage.au)} (${nbJours(plage)} days)`);
  const [compte,setCompte]=useState<{email:string;motDePasse:boolean}|null>(null);
  const [email,setEmail]=useState(''),[motDePasse,setMotDePasse]=useState(''),[mot,setMot]=useState(''),[erreurEffacer,setErreurEffacer]=useState('');
@@ -190,11 +193,10 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
           <div className="sim-ios-ligne"><label htmlFor={`hd-utilise-date-${c.cle}`}>{l('Date','Date')}</label><input id={`hd-utilise-date-${c.cle}`} type="date" max={aujourdhui()} value={date} onChange={e=>setDate(e.target.value)} style={{color:'var(--ios-accent,#5b4ee8)'}}/></div>
          </div>
          <button type="button" disabled={busy} onClick={()=>void noter(c,false)} className="hd-classique sim-ios-bouton disabled:opacity-60" style={{marginTop:12}}>{busy?l('Enregistrement…','Saving…'):montant&&Number(montant)>0?l(`Noter ${montant} ${dev} ${nomMotif(motif)}s`,`Record ${montant} ${dev} ${nomMotif(motif)}`):l('Noter ce montant','Record this amount')}</button>
-         <button type="button" disabled={busy} onClick={()=>void noter(c,true)} className="hd-classique sim-ios-bouton disabled:opacity-60" style={{marginTop:10,background:'rgb(215 0 21 / .08)',color:'#d70015',fontWeight:500}}>{l('Tout utilisé : remettre la caisse à zéro','All used: reset this counter to zero')}</button>
-         <p className="hd-classique sim-ios-note">{l(`Note les ${nombre(dispoAu(c,date))} ${dev} disponibles à cette date comme utilisés. La caisse repart de 0 ; l’historique reste.`,`Records the ${nombre(dispoAu(c,date))} ${dev} available on that date as used. The counter starts again from 0; history is kept.`)}</p>
         </div>:<p className="rounded-xl p-3 text-sm text-hd-on-surface-variant" style={{background:'var(--ios-fond,#f2f2f7)'}}>{l('La caisse est à zéro. Les prochaines répartitions la rempliront.','This counter is at zero. Your next allocations will fill it.')}</p>}
         {message('caisse:'+c.cle)}
         <div className="sim-ios-groupe hd-classique mt-3" style={{background:'var(--ios-fond,#f2f2f7)'}}><div className="sim-ios-ligne"><span style={{flex:1}}>{c.enveloppe&&c.enveloppe!=='vivre'?l('Donné depuis le début','Given since the start'):l('Utilisé depuis le début','Used since the start')}</span><b className="tabular-nums">{nombre(sorti)} {dev}</b></div></div>
+        {lignes.length>0&&<button type="button" disabled={busy} onClick={()=>{setCaisseEffacer(c);setPlageCaisse(null);setConfirmerCaisse(false);setErreurCaisse('');}} className="hd-classique sim-ios-bouton disabled:opacity-60" style={{marginTop:10,background:'rgb(215 0 21 / .08)',color:'#d70015',fontWeight:500}}>{l('Effacer des jours dans cette caisse…','Erase days in this counter…')}</button>}
         {lignes.length>0&&<><h4 className="hd-classique sim-ios-titre" style={{marginLeft:0}}>{l('Historique','History')}</h4>
          <ol className="sim-ios-groupe hd-classique" style={{background:'var(--ios-fond,#f2f2f7)',listStyle:'none',margin:0,padding:0}}>{[...lignes].reverse().flatMap(x=>{const li=<li key={x.id} className="sim-ios-ligne"><span style={{flex:1}}>{momentLisible(x.date,x.creeLe,en)} · {x.signe===1?(x.origine==='repartition'?l('répartition','allocation'):l('versement','contribution')):nomMotif(x.motif)}{(()=>{const d=x.signe===-1?depenseParSortie.get(x.id):undefined;return d?<small className="block text-[12.5px] text-hd-on-surface-variant"><span aria-hidden="true" className="mr-1.5 inline-block size-2 rounded-full align-middle" style={{background:INFOS_CATEGORIES[d.category].couleur}}/>{nomCategorie(d.category)}{d.note?` · ${d.note}`:''}</small>:null;})()}</span><b className="tabular-nums" style={{color:x.signe===1?'#2f9e62':'#d70015'}}>{x.signe===1?'+':'−'} {nombre(x.centimes)}</b></li>;return x.remise?[li,<li key={x.id+'-zero'} className="px-4 py-2 text-center text-xs text-hd-on-surface-variant">{l(`Caisse remise à zéro le ${dateLisible(x.date)}`,`Counter reset on ${dateLisible(x.date)}`)}</li>]:[li];})}</ol></>}
        </div>}
@@ -225,6 +227,40 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
       <button type="button" autoFocus onClick={()=>setAEffacer(null)} className="block w-full border-t border-black/20 py-3 text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)'}}>{l('Annuler','Cancel')}</button>
      </div>
     </div>}
+    {caisseEffacer&&(()=>{const c=caisseEffacer,dans=plageCaisse?lignesDe(c).filter(x=>x.date>=plageCaisse.du&&x.date<=plageCaisse.au):[];const plus=dans.filter(x=>x.signe===1).reduce((n,x)=>n+x.centimes,0),moins=dans.filter(x=>x.signe===-1).reduce((n,x)=>n+x.centimes,0);
+     const quand=!plageCaisse?'':plageCaisse.du===plageCaisse.au?l(`le ${dateLisible(plageCaisse.du)}`,`on ${dateLisible(plageCaisse.du)}`):l(`du ${dateLisible(plageCaisse.du)} au ${dateLisible(plageCaisse.au)} (${nbJours(plageCaisse)} jours)`,`from ${dateLisible(plageCaisse.du)} to ${dateLisible(plageCaisse.au)} (${nbJours(plageCaisse)} days)`);
+     async function effacerCaisse(){if(!suivi||!plageCaisse||busy)return;setBusy(true);setErreurCaisse('');
+      try{await effacerJoursCaisse(suivi.enrollment_id,dev,c.enveloppe??null,c.goalId??null,plageCaisse.du,plageCaisse.au);const nom=c.nom+(c.goalId?` · ${c.sous}`:'');setCaisseEffacer(null);setConfirmerCaisse(false);await relireTout();setAnnonce({zone:'caisse:'+c.cle,texte:l(`${nom} : les opérations ${quand} sont effacées. Les autres jours n’ont pas changé.`,`${nom}: operations ${quand} are erased. Other days did not change.`),erreur:false});}
+      catch(err){setConfirmerCaisse(false);setErreurCaisse(err instanceof EffacementImpossible?l('Rien n’a été effacé : de l’argent entré ces jours-là a déjà été utilisé plus tard dans cette caisse. Ajoute aussi les jours suivants.','Nothing was erased: money recorded on these days was already used later in this counter. Also include the following days.'):l('L’effacement n’a pas pu se faire. Réessaie.','Erasing did not work. Try again.'));}
+      finally{setBusy(false);}}
+     return <div className="fixed inset-0 z-[60] flex flex-col justify-end" role="dialog" aria-modal="true" aria-labelledby="hd-caisse-effacer-titre">
+     <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={()=>setCaisseEffacer(null)}/>
+     <div className="sim-ios hd-classique relative max-h-[90vh] overflow-y-auto rounded-t-[14px] px-4 pb-8 pt-2" style={{background:'var(--ios-fond,#f2f2f7)'}}>
+      <div aria-hidden="true" className="mx-auto mb-2.5 h-[5px] w-9 rounded-full bg-[#c7c7cc]"/>
+      <div className="mb-2 grid grid-cols-[1fr_auto_1fr] items-center"><button type="button" onClick={()=>setCaisseEffacer(null)} className="justify-self-start text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)',minHeight:44}}>{l('Annuler','Cancel')}</button><h2 id="hd-caisse-effacer-titre" style={{margin:0,fontSize:17,fontWeight:600,textAlign:'center'}}>{l('Effacer des jours','Erase days')}<small className="block text-[12px] font-normal text-hd-on-surface-variant">{c.nom}{c.goalId?` · ${c.sous}`:''}</small></h2><span/></div>
+      <CalendrierPlage valeur={plageCaisse} changer={p=>{setPlageCaisse(p);setErreurCaisse('');}} langue={langue}/>
+      {plageCaisse&&<div className="mt-3 rounded-[14px] p-3.5 text-sm leading-relaxed" style={{background:'#fde8ea',color:'#9b0011'}}>
+       {dans.length===0?l(`Aucune opération dans cette caisse ${quand}.`,`No operation in this counter ${quand}.`):<>
+        <b>{l(`Dans cette caisse seulement, ${quand} :`,`In this counter only, ${quand}:`)}</b>
+        <ul style={{margin:'6px 0',paddingLeft:18,listStyle:'disc'}}><li>{l(`${dans.length} opération${dans.length>1?'s':''} effacée${dans.length>1?'s':''}`,`${dans.length} operation${dans.length>1?'s':''} erased`)}{plus>0?l(` · entrées : + ${nombre(plus)} ${dev}`,` · entries: + ${nombre(plus)} ${dev}`):''}{moins>0?l(` · sorties : − ${nombre(moins)} ${dev}`,` · exits: − ${nombre(moins)} ${dev}`):''} ;</li>
+         {c.enveloppe==='vivre'&&<li>{l('les dépenses de SÉNEVÉ Dépenses de ces jours sont effacées aussi ;','SÉNEVÉ Expenses entries on these days are erased too;')}</li>}
+         <li>{l('les autres caisses et les autres jours ne changent pas.','other counters and other days do not change.')}</li></ul>
+        <b>{l('On ne peut pas revenir en arrière.','This cannot be undone.')}</b></>}
+      </div>}
+      {erreurCaisse&&<p role="alert" className="mt-3 rounded-[14px] bg-white p-3 text-sm" style={{color:'#d70015'}}>{erreurCaisse}</p>}
+      <button type="button" disabled={busy||!plageCaisse||dans.length===0} onClick={()=>setConfirmerCaisse(true)} className="sim-ios-bouton disabled:opacity-60" style={{marginTop:14,background:'#d70015'}}>{!plageCaisse?l('Choisis les jours','Choose the days'):plageCaisse.du===plageCaisse.au?l('Effacer ce jour','Erase this day'):l(`Effacer ces ${nbJours(plageCaisse)} jours`,`Erase these ${nbJours(plageCaisse)} days`)}</button>
+     </div>
+     {confirmerCaisse&&<div className="fixed inset-0 z-[70] grid place-items-center bg-black/40 px-8" role="alertdialog" aria-modal="true" aria-labelledby="hd-caisse-confirmer-titre" aria-describedby="hd-caisse-confirmer-texte">
+      <div className="w-full max-w-[290px] overflow-hidden rounded-[14px] text-center" style={{background:'rgb(242 242 247 / .97)'}}>
+       <div className="px-4 pb-4 pt-5"><h3 id="hd-caisse-confirmer-titre" style={{margin:'0 0 4px',fontSize:17,fontWeight:600}}>{l('Effacer vraiment ?','Really erase?')}</h3>
+        <p id="hd-caisse-confirmer-texte" style={{margin:0,fontSize:13,lineHeight:1.4}}>{l(`${dans.length} opération${dans.length>1?'s':''} de « ${c.nom} » ${quand} vont être effacée${dans.length>1?'s':''}. On ne peut pas revenir en arrière.`,`${dans.length} operation${dans.length>1?'s':''} of “${c.nom}” ${quand} will be erased. This cannot be undone.`)}</p></div>
+       <div className="grid grid-cols-2 border-t" style={{borderColor:'rgb(60 60 67 / .29)'}}>
+        <button type="button" autoFocus onClick={()=>setConfirmerCaisse(false)} className="min-h-[44px] border-r text-[17px]" style={{borderColor:'rgb(60 60 67 / .29)',color:'var(--ios-accent,#5b4ee8)'}}>{l('Annuler','Cancel')}</button>
+        <button type="button" disabled={busy} onClick={()=>void effacerCaisse()} className="min-h-[44px] text-[17px] font-semibold" style={{color:'#d70015'}}>{busy?l('Effacement…','Erasing…'):l('Oui, effacer','Yes, erase')}</button>
+       </div>
+      </div>
+     </div>}
+    </div>;})()}
     {toutEffacer&&<div className="fixed inset-0 z-[60] flex flex-col justify-end" role="dialog" aria-modal="true" aria-labelledby="hd-tout-effacer-titre">
      <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={()=>setToutEffacer(false)}/>
      <form onSubmit={e=>void confirmerToutEffacer(e)} noValidate className="sim-ios hd-classique relative max-h-[90vh] overflow-y-auto rounded-t-[14px] px-4 pb-8 pt-2" style={{background:'var(--ios-fond,#f2f2f7)'}}>

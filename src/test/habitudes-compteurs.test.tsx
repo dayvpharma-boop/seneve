@@ -53,7 +53,7 @@ it('« Enregistrer ma répartition » envoie toutes les parts cochées en une fo
   {part:'dime',amount:'50.00'},{part:'reserve_joie',goal_id:G,amount:'50.00'},{part:'dettes',debt_id:D1,amount:'60.00'},{part:'dettes',debt_id:D2,amount:'15.00'},{part:'vivre',amount:'225.00'}]})));
 });
 
-it('« Mes compteurs » : disponible, sortie notée, remise à zéro, historique et bilan gardés',async()=>{
+it('« Mes compteurs » : disponible, sorties notées, historique et bilan gardés',async()=>{
  compteurs={enrollment_id:E,moves:[{move_id:id(21),envelope:'dime',direction:'entree',motif:null,amount:'50.00',currency:'USD',date_locale:'2026-11-07',remise_a_zero:false,allocation_id:id(9)}],withdrawals:[]};
  rpc.mockImplementation(async(f:string,a:Record<string,unknown>)=>{
   if(f==='hd_finance_business_charges_get')return {data:chargesMensuelles('0.00'),error:null};
@@ -72,12 +72,14 @@ it('« Mes compteurs » : disponible, sortie notée, remise à zéro, historique
  fireEvent.change(within(dime).getByLabelText('Montant utilisé'),{target:{value:'30'}});
  fireEvent.click(within(dime).getByRole('button',{name:/Noter 30 USD donnés/}));
  await waitFor(()=>expect(dime.textContent).toMatch(/20USD disponibles/));
- fireEvent.click(within(dime).getByRole('button',{name:/Tout utilisé/}));
+ // « Tout utilisé : remettre la caisse à zéro » a été remplacé par « Effacer des jours dans cette caisse » (12/11/2026).
+ expect(within(dime).queryByRole('button',{name:/Tout utilisé/})).toBeNull();
+ expect(within(dime).getByRole('button',{name:'Effacer des jours dans cette caisse…'})).toBeInTheDocument();
+ fireEvent.change(within(dime).getByLabelText('Montant utilisé'),{target:{value:'20'}});
+ fireEvent.click(within(dime).getByRole('button',{name:/Noter 20 USD donnés/}));
  await waitFor(()=>expect(dime.textContent).toMatch(/0USD disponibles/));
- expect(rpc).toHaveBeenCalledWith('hd_finance_envelope_move_add',expect.objectContaining({p_remise_a_zero:true,p_amount:null,p_motif:'donne'}));
- // L'historique garde les trois lignes et la remise à zéro ; « Donné depuis le début » = 50.
- expect(within(dime).getByText(/Caisse remise à zéro le/)).toBeInTheDocument();
- expect(within(dime).getAllByRole('listitem').length).toBeGreaterThanOrEqual(4);
+ // L'historique garde les trois lignes ; « Donné depuis le début » = 50.
+ expect(within(dime).getAllByRole('listitem').length).toBeGreaterThanOrEqual(3);
  expect(within(dime).getByText('Donné depuis le début').closest('div')!.textContent).toMatch(/50 USD/);
  const bilan=screen.getByRole('region',{name:/Mon bilan/});
  fireEvent.click(within(bilan).getByRole('radio',{name:'Année'}));

@@ -96,6 +96,13 @@ export async function effacerJours(enrollmentId:string,devise:string,du:string,a
  if(!objet(data))throw Error('Effacement non confirmé');
  return data as Record<string,unknown>;
 }
+/** Effacer les opérations d'UNE caisse (enveloppe ou objectif) sur les jours choisis (12/11/2026). */
+export async function effacerJoursCaisse(enrollmentId:string,devise:string,enveloppe:string|null,goalId:string|null,du:string,au:string){
+ const {data,error}=await supabase.rpc('hd_finance_caisse_jours_effacer',{p_enrollment_id:enrollmentId,p_currency:devise,p_envelope:enveloppe,p_goal_id:goalId,p_du:du,p_au:au,p_confirmation:'EFFACER'});
+ if(error){if(/Effacement impossible/.test(error.message??''))throw new EffacementImpossible();throw error;}
+ if(!objet(data))throw Error('Effacement non confirmé');
+ return data as Record<string,unknown>;
+}
 const centimes=(v:string)=>Math.round(Number(v)*100);
 /** Disponible d'un compteur, en centimes, pour une monnaie. */
 export function disponibleCompteur(c:Compteurs,enveloppe:Enveloppe,devise:string){
