@@ -1191,3 +1191,14 @@
 :root:root:root:root .espace-page.ios .prog-tabs::after{flex:0 0 calc(100% - 252px)!important}
 :root:root:root:root :is(.espace-page,.parcours-page).ios .prog-tabs{scroll-snap-type:x mandatory!important;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 :root:root:root:root :is(.espace-page,.parcours-page).ios .prog-tab{scroll-snap-align:start!important;scroll-snap-stop:normal}
+
+/* Fenêtres « Supprimer / Effacer ? » (13/11/2026) : fond et texte suivent le mode clair ou sombre,
+ * sinon le texte clair du mode sombre disparaissait sur le fond gris clair. */
+:root{--alerte-fond:rgb(242 242 247 / .97);--alerte-encre:#1c1c1e;--alerte-ligne:rgb(60 60 67 / .29);--alerte-rouge:#d70015;--alerte-accent:#5b4ee8}
+:root[data-apparence="sombre"]{--alerte-fond:rgb(44 44 46 / .97);--alerte-encre:#f2f2f7;--alerte-ligne:rgb(84 84 88 / .65);--alerte-rouge:#ff453a;--alerte-accent:#a99fff}
+@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]){--alerte-fond:rgb(44 44 46 / .97);--alerte-encre:#f2f2f7;--alerte-ligne:rgb(84 84 88 / .65);--alerte-rouge:#ff453a;--alerte-accent:#a99fff}}
+:root:root:root:root .ios-alerte{background:var(--alerte-fond)!important;color:var(--alerte-encre)!important}
+:root:root:root:root .ios-alerte :is(h2,h3,p){color:var(--alerte-encre)!important}
+:root:root:root:root .ios-alerte :is(button,.border-t){border-color:var(--alerte-ligne)!important}
+:root:root:root:root .ios-alerte button[style*="d70015"]{color:var(--alerte-rouge)!important}
+:root:root:root:root .ios-alerte button:not([style*="d70015"]){color:var(--alerte-accent)!important}

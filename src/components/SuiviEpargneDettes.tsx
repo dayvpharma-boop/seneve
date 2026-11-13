@@ -451,7 +451,7 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
    {state==='pret'&&(mode==='epargne'?pageEpargne():pageDettes())}
    {aConfirmer&&<div className="fixed inset-0 z-[60] grid place-items-center px-8" role="alertdialog" aria-modal="true" aria-labelledby="hd-supprimer-titre" aria-describedby="hd-supprimer-detail">
     <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={()=>setAConfirmer(null)}/>
-    <div className="hd-classique relative w-full max-w-[290px] overflow-hidden rounded-[14px] text-center shadow-[0_10px_40px_rgba(0,0,0,.25)]" style={{background:'rgb(242 242 247 / .97)'}}>
+    <div className="hd-classique relative w-full max-w-[290px] overflow-hidden rounded-[14px] text-center shadow-[0_10px_40px_rgba(0,0,0,.25)] ios-alerte">
      <div className="px-4 pb-3.5 pt-4"><h2 id="hd-supprimer-titre" style={{margin:'0 0 4px',fontSize:17,fontWeight:600}}>{l(`Supprimer « ${aConfirmer.nom} » ?`,`Delete “${aConfirmer.nom}”?`)}</h2><p id="hd-supprimer-detail" style={{margin:0,fontSize:13,lineHeight:1.4}}>{aConfirmer.detail}</p></div>
      <button type="button" disabled={busy} onClick={()=>void supprimer()} className="block w-full border-t border-black/20 py-3 text-[17px] font-semibold" style={{color:'#d70015'}}>{busy?l('Suppression…','Deleting…'):l('Supprimer','Delete')}</button>
      <button type="button" autoFocus onClick={()=>setAConfirmer(null)} className="block w-full border-t border-black/20 py-3 text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)'}}>{l('Annuler','Cancel')}</button>

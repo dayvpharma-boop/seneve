@@ -220,7 +220,7 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
     </section>
     {aEffacer&&<div className="fixed inset-0 z-[60] grid place-items-center px-8" role="alertdialog" aria-modal="true" aria-labelledby="hd-effacer-titre">
      <button type="button" aria-label={l('Fermer','Close')} className="absolute inset-0 bg-black/30" onClick={()=>setAEffacer(null)}/>
-     <div className="hd-classique relative w-full max-w-[290px] overflow-hidden rounded-[14px] text-center shadow-[0_10px_40px_rgba(0,0,0,.25)]" style={{background:'rgb(242 242 247 / .97)'}}>
+     <div className="hd-classique relative w-full max-w-[290px] overflow-hidden rounded-[14px] text-center shadow-[0_10px_40px_rgba(0,0,0,.25)] ios-alerte">
       <div className="px-4 pb-3.5 pt-4"><h2 id="hd-effacer-titre" style={{margin:'0 0 6px',fontSize:17,fontWeight:600}}>{l(`Effacer « ${aEffacer.nom} » ?`,`Erase “${aEffacer.nom}”?`)}</h2>
        <p style={{margin:'0 0 6px',fontSize:13,lineHeight:1.4}}>{l(`${aEffacer.nb} ligne${aEffacer.nb>1?'s':''} (${nombre(aEffacer.centimes)} ${dev}), ${libellePeriode}.`,`${aEffacer.nb} line${aEffacer.nb>1?'s':''} (${nombre(aEffacer.centimes)} ${dev}), ${libellePeriode}.`)}</p>
        <p style={{margin:'0 0 6px',fontSize:13,lineHeight:1.4}}>{(aEffacer.nb>1?l('Elles disparaissent de l’historique et du bilan. ','They disappear from history and the summary. '):l('Elle disparaît de l’historique et du bilan. ','It disappears from history and the summary. '))+(aEffacer.quoi==='dettes'?l('Tes dettes gardent leur montant.','Your debts keep their amounts.'):l('Tes caisses gardent leur montant.','Your counters keep their amounts.'))}</p>
@@ -253,7 +253,7 @@ const PERIODES:[Periode,string][]=[['semaine',l('Semaine','Week')],['mois',l('Mo
       <button type="button" disabled={busy||!plageCaisse||dans.length===0} onClick={()=>setConfirmerCaisse(true)} className="sim-ios-bouton disabled:opacity-60" style={{marginTop:14,background:'#d70015'}}>{!plageCaisse?l('Choisis les jours','Choose the days'):plageCaisse.du===plageCaisse.au?l('Effacer ce jour','Erase this day'):l(`Effacer ces ${nbJours(plageCaisse)} jours`,`Erase these ${nbJours(plageCaisse)} days`)}</button>
      </div>
      {confirmerCaisse&&<div className="fixed inset-0 z-[70] grid place-items-center bg-black/40 px-8" role="alertdialog" aria-modal="true" aria-labelledby="hd-caisse-confirmer-titre" aria-describedby="hd-caisse-confirmer-texte">
-      <div className="w-full max-w-[290px] overflow-hidden rounded-[14px] text-center" style={{background:'rgb(242 242 247 / .97)'}}>
+      <div className="w-full max-w-[290px] overflow-hidden rounded-[14px] text-center ios-alerte">
        <div className="px-4 pb-4 pt-5"><h3 id="hd-caisse-confirmer-titre" style={{margin:'0 0 4px',fontSize:17,fontWeight:600}}>{l('Effacer vraiment ?','Really erase?')}</h3>
         <p id="hd-caisse-confirmer-texte" style={{margin:0,fontSize:13,lineHeight:1.4}}>{l(`${dans.length} opération${dans.length>1?'s':''} de « ${c.nom} » ${quand} vont être effacée${dans.length>1?'s':''}. On ne peut pas revenir en arrière.`,`${dans.length} operation${dans.length>1?'s':''} of “${c.nom}” ${quand} will be erased. This cannot be undone.`)}</p></div>
        <div className="grid grid-cols-2 border-t" style={{borderColor:'rgb(60 60 67 / .29)'}}>
