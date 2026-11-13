@@ -1,17 +1,123 @@
-/* Mode sombre plus doux (demande de Dr Justin du 13/11/2026) : la carte « Prochain rendez-vous », le bouton de la prière
- * et « Oui » ne sont plus des aplats vert clair éblouissants ; ils reprennent le ton sombre teinté de « Lectures du jour ». */
+/* Mode sombre plus doux (demandes de Dr Justin du 13/11/2026) : partout dans l'app, les aplats vert clair (couleur d'accent
+ * de nuit) des gros boutons et cartes deviennent un ton sombre teinté, comme « Lectures du jour ». Le texte prend l'accent ;
+ * les cartes gardent un texte blanc. Les petits repères (barres de progression, pastilles, coches) ne changent pas.
+ * Mode clair inchangé. Chargé en dernier. */
 :root{--sd-teinte:var(--accent-nuit,var(--ios-accent,#8f84ff))}
-:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;color:#f5f5f7!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--sd-teinte) 28%,transparent)}
-:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain :is(small,time,b,p){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-bouton,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-section button.bg-hd-secondary,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .bl-page.ios .lp-feuille .lp-principal,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .journal-page.ios :is(.journal-form .btn,.journal-nouvelle),
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire),
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.btn:not(.btn-link),.oa-primary),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-test .quiz-echelle :is(button,label):is([aria-pressed="true"],[aria-checked="true"]),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios :is(.bg-hd-secondary,.bg-hd-primary):is(button,a),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .hd-public.ios .hd-public-prayer .btn-primaire,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary,
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:nth-child(2),
+:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-boutons .ap-confirmer,
+:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-boutons button:last-child:not(:disabled),
+:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a).bg-hd-secondary,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .espace-page :is(.btn:not(.btn-link):not(.link):not(.btn-secondaire):not(.btn-danger),.moment-btn,.action-btn,.jn-principal,.btn-or),
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action,.introuvable-principal),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-identite .pf-photo-choisir,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-puces button[aria-pressed="true"],
+:root:root:root:root:root:root:root[data-apparence="sombre"] .parcours-page :is(.prog-tab[aria-selected="true"],.progres-suite .moment-btn,.moment-btn,.btn.action-btn),
+:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .btn:not(.link):not(.btn-link):not(.btn-secondaire):not(.btn-danger):not(:disabled),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .sim-ios-bouton,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ab-cta{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;background-image:none!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;border-color:transparent!important;box-shadow:none!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-bouton :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-section button.bg-hd-secondary :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .bl-page.ios .lp-feuille .lp-principal :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .journal-page.ios :is(.journal-form .btn,.journal-nouvelle) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.btn:not(.btn-link),.oa-primary) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-test .quiz-echelle :is(button,label):is([aria-pressed="true"],[aria-checked="true"]) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .hd-ecran.ios :is(.bg-hd-secondary,.bg-hd-primary):is(button,a) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .hd-public.ios .hd-public-prayer .btn-primaire :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:nth-child(2) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-boutons .ap-confirmer :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-boutons button:last-child:not(:disabled) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a).bg-hd-secondary :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .espace-page :is(.btn:not(.btn-link):not(.link):not(.btn-secondaire):not(.btn-danger),.moment-btn,.action-btn,.jn-principal,.btn-or) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action,.introuvable-principal) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-identite .pf-photo-choisir :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .pv-page.ios .pv-puces button[aria-pressed="true"] :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .parcours-page :is(.prog-tab[aria-selected="true"],.progres-suite .moment-btn,.moment-btn,.btn.action-btn) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .btn:not(.link):not(.btn-link):not(.btn-secondaire):not(.btn-danger):not(:disabled) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .sim-ios-bouton :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ab-cta :is(svg,span,b,strong,i,small){color:inherit!important;-webkit-text-fill-color:inherit!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .coach-page.ios .coach-msg-moi .coach-bulle,
+:root:root:root:root:root:root:root[data-apparence="sombre"] .sim-ios-resultat{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;background-image:none!important;color:#f5f5f7!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--sd-teinte) 28%,transparent)!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain :is(small,time,b,p,span,strong),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .coach-page.ios .coach-msg-moi .coach-bulle :is(small,time,b,p,span,strong),
+:root:root:root:root:root:root:root[data-apparence="sombre"] .sim-ios-resultat :is(small,time,b,p,span,strong){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain small{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;opacity:1!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain .ios-rond{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.ios-bouton,.ios-section button.bg-hd-secondary){background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;box-shadow:none!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.ios-bouton,.ios-section button.bg-hd-secondary) *{color:inherit!important;-webkit-text-fill-color:inherit!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain span.ios-rond.ios-rond,:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain span.ios-rond.ios-rond *{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important}
 @media (prefers-color-scheme:dark){
- :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;color:#f5f5f7!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--sd-teinte) 28%,transparent)}
- :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain :is(small,time,b,p){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
- :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain small{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;opacity:1!important}
- :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain .ios-rond{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important}
- :root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.ios-bouton,.ios-section button.bg-hd-secondary){background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;box-shadow:none!important}
- :root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.ios-bouton,.ios-section button.bg-hd-secondary) *{color:inherit!important;-webkit-text-fill-color:inherit!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-bouton,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-section button.bg-hd-secondary,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .bl-page.ios .lp-feuille .lp-principal,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .journal-page.ios :is(.journal-form .btn,.journal-nouvelle),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.btn:not(.btn-link),.oa-primary),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-test .quiz-echelle :is(button,label):is([aria-pressed="true"],[aria-checked="true"]),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .hd-ecran.ios :is(.bg-hd-secondary,.bg-hd-primary):is(button,a),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .hd-public.ios .hd-public-prayer .btn-primaire,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:nth-child(2),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) dialog.hd-lecteur-priere .ap-boutons .ap-confirmer,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) dialog.hd-lecteur-priere .ap-boutons button:last-child:not(:disabled),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a).bg-hd-secondary,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .espace-page :is(.btn:not(.btn-link):not(.link):not(.btn-secondaire):not(.btn-danger),.moment-btn,.action-btn,.jn-principal,.btn-or),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action,.introuvable-principal),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .pv-page.ios .pv-identite .pf-photo-choisir,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .pv-page.ios .pv-puces button[aria-pressed="true"],
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .parcours-page :is(.prog-tab[aria-selected="true"],.progres-suite .moment-btn,.moment-btn,.btn.action-btn),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .btn:not(.link):not(.btn-link):not(.btn-secondaire):not(.btn-danger):not(:disabled),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .sim-ios-bouton,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ab-cta{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;background-image:none!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;border-color:transparent!important;box-shadow:none!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-bouton :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-section button.bg-hd-secondary :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .bl-page.ios .lp-feuille .lp-principal :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .bb-page.ios .bb-carte :is(.bb-bouton-noir,button):not(.bb-reprendre *) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .journal-page.ios :is(.journal-form .btn,.journal-nouvelle) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.nt-page,.coach-page,.aide-page).ios .btn:not(.btn-danger):not(.btn-secondaire) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.oa-page.ios,.connexion.ios,.ios-test) :is(.btn:not(.btn-link),.oa-primary) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-test .quiz-echelle :is(button,label):is([aria-pressed="true"],[aria-checked="true"]) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .hd-ecran.ios :is(.bg-hd-secondary,.bg-hd-primary):is(button,a) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .hd-public.ios .hd-public-prayer .btn-primaire :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .espace-page.ios .hd-jour-stitch :is(button,a).bg-hd-secondary :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page.ios,.hd-ecran.ios) .ios-ligne .rounded-xl.bg-hd-surface-container-low .flex-wrap>button:nth-child(2) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) dialog.hd-lecteur-priere .ap-boutons .ap-confirmer :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) dialog.hd-lecteur-priere .ap-boutons button:last-child:not(:disabled) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) dialog.hd-stitch:not(.hd-lecteur-priere) :is(button,a).bg-hd-secondary :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .espace-page :is(.btn:not(.btn-link):not(.link):not(.btn-secondaire):not(.btn-danger),.moment-btn,.action-btn,.jn-principal,.btn-or) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.confidentialite,.introuvable-maquette).ios :is(.btn,a.btn,button.btn,.introuvable-action,.introuvable-principal) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .pv-page.ios .pv-identite .pf-photo-choisir :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .pv-page.ios .pv-puces button[aria-pressed="true"] :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .parcours-page :is(.prog-tab[aria-selected="true"],.progres-suite .moment-btn,.moment-btn,.btn.action-btn) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .btn:not(.link):not(.btn-link):not(.btn-secondaire):not(.btn-danger):not(:disabled) :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .sim-ios-bouton :is(svg,span,b,strong,i,small),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ab-cta :is(svg,span,b,strong,i,small){color:inherit!important;-webkit-text-fill-color:inherit!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .coach-page.ios .coach-msg-moi .coach-bulle,
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .sim-ios-resultat{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;background-image:none!important;color:#f5f5f7!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--sd-teinte) 28%,transparent)!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain :is(small,time,b,p,span,strong),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .coach-page.ios .coach-msg-moi .coach-bulle :is(small,time,b,p,span,strong),
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .sim-ios-resultat :is(small,time,b,p,span,strong){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain small{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;opacity:1!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain span.ios-rond.ios-rond,:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain span.ios-rond.ios-rond *{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important}
 }
