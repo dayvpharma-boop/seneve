@@ -186,3 +186,4 @@ import './styles-iphone.css';
 import './styles-accents-iphone.css';
 // Polissage « unslop » (12/11/2026) : toujours en dernier.
 import './styles-unslop.css';
+import './styles-sombre-doux.css';
