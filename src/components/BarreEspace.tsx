@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { LogoSeneve } from '@/components/LogoSeneve';
 
-/** Barre du haut des pages de l'espace (maquettes validées le 19/10/2026) : logo graine, SÉNEVÉ,
+/** Barre du haut des pages de l'espace (maquettes validées le 19/10/2026) : logo arbre, SÉNEVÉ,
  *  salutation facultative, et à droite un élément au choix (pastille de l'initiale, lien de langue). */
 export function BarreEspace({ salut, droite }: { salut?: string; droite?: ReactNode }) {
   return <div className="barre-haut barre-espace">

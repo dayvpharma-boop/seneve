@@ -7,7 +7,7 @@
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v79-mise-a-jour-immediate-20261103';
+const CACHE = 'seneve-site-v80-logo-arbre-20261113';
 // 11/11/2026 : 1500 → 700 ms. Sur réseau lent, la copie s'affiche plus vite ; une nouvelle version reste
 // téléchargée en arrière-plan et annoncée par « Nouvelle version prête · Actualiser ».
 const ATTENTE_RESEAU_MS = 700;
@@ -143,7 +143,19 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  if (url.pathname.startsWith(BASE + 'assets/') || url.pathname.startsWith(BASE + 'icons/') || url.pathname.endsWith('manifest.webmanifest')) {
+  // Icônes et manifeste gardent la même adresse quand le logo change (13/11/2026 : l'ancien logo restait affiché).
+  // On sert la copie tout de suite, puis on la remplace par la version publiée pour la prochaine ouverture.
+  if (url.pathname.startsWith(BASE + 'icons/') || url.pathname.endsWith('manifest.webmanifest')) {
+    const frais = fetch(req).then(async res => { if (res.ok) { const c = await caches.open(CACHE); await c.put(req, res.clone()); } return res; });
+    e.waitUntil(frais.then(() => undefined, () => undefined));
+    e.respondWith((async () => {
+      const hit = await caches.match(req, { ignoreVary: true });
+      return hit || frais;
+    })());
+    return;
+  }
+
+  if (url.pathname.startsWith(BASE + 'assets/')) {
     e.respondWith((async () => {
       const hit = await caches.match(req, { ignoreVary: true });
       if (hit) return hit;
