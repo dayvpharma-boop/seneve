@@ -27,7 +27,9 @@ function assetsDe(html) {
   }
   return urls.sort();
 }
-function signatureDe(assets) { let h = 0; for (const c of assets.join('|')) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); }
+// Si la page ne référence aucun fichier assets/ (jamais le cas en production, où Vite en ajoute toujours un),
+// la comparaison retombe sur le texte complet : la robustesse ne doit rien retirer à une page sans ces fichiers.
+function signatureDe(html) { const assets = assetsDe(html), base = assets.length ? assets.join('|') : html; let h = 0; for (const c of base) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); }
 
 async function precache() {
   const cache = await caches.open(CACHE);
@@ -39,7 +41,7 @@ async function precache() {
   await Promise.all([...urls].map(u => cache.add(u)));
   await garderLesPages(true);
   await cache.put(INDEX, res);
-  return signatureDe(assetsDe(html));
+  return signatureDe(html);
 }
 
 /** Maquette Stitch n° 1 (28/10/2026) : aucune copie du site sur l'appareil et pas de réseau. Page autonome, sans fichier externe. */
@@ -90,7 +92,7 @@ function verifierVersion(publiee = null) {
     if (!copie) return false;
     const enLigne = publiee || await fetch(INDEX, { cache: 'no-store' });
     if (!enLigne.ok) return false;
-    const [sigCopie, sigLigne] = await Promise.all([copie.clone().text().then(t => signatureDe(assetsDe(t))), enLigne.clone().text().then(t => signatureDe(assetsDe(t)))]);
+    const [sigCopie, sigLigne] = await Promise.all([copie.clone().text().then(signatureDe), enLigne.clone().text().then(signatureDe)]);
     if (sigCopie === sigLigne) return false;
     const signature = await precache();
     try {
