@@ -301,3 +301,13 @@
 :root:root:root .rep-page .sim-ios-groupe .sim-ios-ligne label{font-size:15px;line-height:1.25}
 :root:root:root .rep-page .sim-ios-groupe .sim-ios-ligne input:not([type="checkbox"]):not([type="radio"]){width:72px}
 :root:root:root .rep-page .rep-moins{padding-right:0}
+
+/* Boutons violets plus nets (demande de Dr Justin du 13/11/2026) : violet plus vif, texte blanc forcé,
+ * aussi en mode sombre où le texte devenait foncé et presque invisible. */
+:root:root:root:root .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled){
+  background:#5b4ee8!important;color:#fff!important;-webkit-text-fill-color:#fff!important;opacity:1!important;
+  box-shadow:0 4px 14px rgb(91 78 232 / .35)}
+:root:root:root:root .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled) *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+:root:root:root:root[data-apparence="sombre"] .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled){background:#6f63ff!important;box-shadow:0 4px 16px rgb(111 99 255 / .4)}
+@media (prefers-color-scheme:dark){:root:root:root:root:not([data-apparence="clair"]) .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled){background:#6f63ff!important;box-shadow:0 4px 16px rgb(111 99 255 / .4)}}
+:root:root:root:root .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):disabled{color:var(--ios-doux,#63636b)!important;-webkit-text-fill-color:var(--ios-doux,#63636b)!important}
