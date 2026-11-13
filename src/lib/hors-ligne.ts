@@ -104,7 +104,8 @@ export function enregistrerServiceWorker(): void {
   // Nouvelle version publiée pendant que la page était ouverte (03/11/2026) : proposer d'actualiser,
   // sans recharger d'office (une saisie en cours ne doit pas être perdue).
   navigator.serviceWorker.addEventListener('message', e => {
-    if ((e.data as { type?: string } | null)?.type === 'seneve-nouvelle-version') afficherNouvelleVersion();
+    const m = e.data as { type?: string; signature?: string } | null;
+    if (m?.type === 'seneve-nouvelle-version') afficherNouvelleVersion(m.signature);
   });
   // Retour dans l'app restée ouverte : demander une vérification, au plus une fois par minute.
   let derniereVerification = 0;
@@ -117,9 +118,19 @@ export function enregistrerServiceWorker(): void {
 
 // Fermé par la croix : le bandeau ne revient pas avant le prochain chargement (qui installe la nouvelle version).
 let majRemiseAPlusTard = false;
+// 13/11/2026 : sur iPhone, le bandeau revenait même après avoir actualisé (la croix n'est gardée qu'en mémoire,
+// effacée par le rechargement). La signature de la dernière version déjà annoncée est donc gardée sur l'appareil :
+// une version déjà vue ne revient pas, même après un rechargement.
+const CLE_SIGNATURE = 'seneve:maj-signature';
 
-export function afficherNouvelleVersion(): void {
+export function afficherNouvelleVersion(signature?: string): void {
   if (majRemiseAPlusTard || document.getElementById('seneve-nouvelle-version')) return;
+  if (signature) {
+    try {
+      if (localStorage.getItem(CLE_SIGNATURE) === signature) return;
+      localStorage.setItem(CLE_SIGNATURE, signature);
+    } catch { /* stockage indisponible : on affiche quand même, sans mémoire d'une annonce */ }
+  }
   const en = document.documentElement.lang === 'en';
   const bandeau = document.createElement('div');
   bandeau.id = 'seneve-nouvelle-version';

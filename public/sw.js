@@ -7,7 +7,7 @@
  * - Textes de la Bible (domaine public) : gardés dans un cache à part, conservé d'une version du site à l'autre.
  * - Données (Supabase), coach, e-mails : jamais mis en cache ici (rien de privé dans ce cache).
  */
-const CACHE = 'seneve-site-v80-logo-arbre-20261113';
+const CACHE = 'seneve-site-v81-maj-stable-20261113';
 // 11/11/2026 : 1500 → 700 ms. Sur réseau lent, la copie s'affiche plus vite ; une nouvelle version reste
 // téléchargée en arrière-plan et annoncée par « Nouvelle version prête · Actualiser ».
 const ATTENTE_RESEAU_MS = 700;
@@ -15,21 +15,31 @@ const CACHE_BIBLE = 'seneve-bible-v1';
 const BASE = new URL('./', self.location).pathname;          // ex. /seneve/
 const INDEX = BASE + 'index.html';
 
+// Fichiers JS/CSS référencés dans index.html (noms uniques à chaque publication, grâce au hash du build) :
+// comparer cette liste, plutôt que le texte complet de la page, pour savoir si une nouvelle version existe
+// (13/11/2026 : sur iPhone, comparer tout le texte déclenchait parfois « Nouvelle version » à tort, en boucle,
+// probablement à cause d'octets qui diffèrent sans rapport avec le contenu réellement publié).
+function assetsDe(html) {
+  const urls = [];
+  for (const m of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
+    const u = new URL(m[1], self.location.origin + BASE);
+    if (u.origin === self.location.origin && u.pathname.startsWith(BASE + 'assets/')) urls.push(u.pathname);
+  }
+  return urls.sort();
+}
+function signatureDe(assets) { let h = 0; for (const c of assets.join('|')) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); }
+
 async function precache() {
   const cache = await caches.open(CACHE);
   const res = await fetch(INDEX, { cache: 'no-store' });
   if (!res.ok) throw new Error('Site indisponible pour le téléchargement');
   const html = await res.clone().text();
   // Ne publier la nouvelle page qu'après ses fichiers indispensables.
-
-  const urls = new Set([BASE + 'manifest.webmanifest', BASE + 'icons/icon-192.png', BASE + 'amidah.html']);
-  for (const m of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
-    const u = new URL(m[1], self.location.origin + BASE);
-    if (u.origin === self.location.origin && u.pathname.startsWith(BASE + 'assets/')) urls.add(u.pathname);
-  }
+  const urls = new Set([BASE + 'manifest.webmanifest', BASE + 'icons/icon-192.png', BASE + 'amidah.html', ...assetsDe(html)]);
   await Promise.all([...urls].map(u => cache.add(u)));
   await garderLesPages(true);
   await cache.put(INDEX, res);
+  return signatureDe(assetsDe(html));
 }
 
 /** Maquette Stitch n° 1 (28/10/2026) : aucune copie du site sur l'appareil et pas de réseau. Page autonome, sans fichier externe. */
@@ -79,11 +89,13 @@ function verifierVersion(publiee = null) {
     const copie = await caches.match(INDEX);
     if (!copie) return false;
     const enLigne = publiee || await fetch(INDEX, { cache: 'no-store' });
-    if (!enLigne.ok || (await copie.text()) === (await enLigne.text())) return false;
-    await precache();
+    if (!enLigne.ok) return false;
+    const [sigCopie, sigLigne] = await Promise.all([copie.clone().text().then(t => signatureDe(assetsDe(t))), enLigne.clone().text().then(t => signatureDe(assetsDe(t)))]);
+    if (sigCopie === sigLigne) return false;
+    const signature = await precache();
     try {
       const fenetres = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-      for (const f of fenetres) f.postMessage({ type: 'seneve-nouvelle-version' });
+      for (const f of fenetres) f.postMessage({ type: 'seneve-nouvelle-version', signature });
     } catch { /* aucune page à prévenir */ }
     return true;
   })().catch(() => false).finally(() => { verificationEnCours = null; });
