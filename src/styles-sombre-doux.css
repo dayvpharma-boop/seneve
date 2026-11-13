@@ -121,3 +121,16 @@
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain small{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;opacity:1!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain span.ios-rond.ios-rond,:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain span.ios-rond.ios-rond *{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important}
 }
+/* Carte du parcours choisi en haut d'Aujourd'hui et de Parcours (13/11/2026, 20h05) : même ton que Prochain rendez-vous. */
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"]{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;background-image:none!important;color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--sd-teinte) 28%,transparent)!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] :is(.jn-tab-nom,.jn-tab-meta){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-meta{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .14)!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-barre i{background:var(--sd-teinte)!important}
+@media (prefers-color-scheme:dark){
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"]{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;background-image:none!important;color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--sd-teinte) 28%,transparent)!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] :is(.jn-tab-nom,.jn-tab-meta){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-meta{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .14)!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-barre i{background:var(--sd-teinte)!important}
+}
