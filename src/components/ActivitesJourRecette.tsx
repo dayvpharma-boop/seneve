@@ -4,6 +4,7 @@ import {CultesSemaineHabitudes} from './CultesSemaineHabitudes';
 import {MaDimeHabitudes} from './MaDimeHabitudes';
 import {VoletFinanceHabitudes} from './VoletFinanceHabitudes';
 import {DimancheHabitudes} from './DimancheHabitudes';
+import {EngagementsJourHabitudes} from './EngagementsJourHabitudes';
 import {LecteurPriereHabitudes,momentPriere} from './LecteurPriereHabitudes';
 import {LecturesJourHabitudes,estLectureHabitudes} from './LecturesJourHabitudes';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
@@ -172,6 +173,7 @@ export function ActivitesJourRecette({enrollmentId,participantId,dateLocale,lang
     <p className="ios-note">{l('Lire ne valide rien : appuie sur « J’ai prié » après avoir prié.','Reading completes nothing: press “I prayed” after praying.')}</p>
    </div>
   </section>}
+  {!horsLigne&&<EngagementsJourHabitudes participantId={participantId} dateLocale={dateLocale} langue={langue}/>}
   {!horsLigne&&activites.some(a=>estLectureHabitudes(a.habit_key))&&<button type="button" onClick={()=>{setLectureInitialeId(null);setLecturesOuvertes(true);}} className="mb-hd-space-lg min-h-[48px] px-4 rounded-xl bg-hd-surface-container text-hd-secondary font-hd-label-lg text-hd-label-lg flex items-center justify-center gap-2"><IconeHD nom="menu_book"/>{l('Lectures du jour','Today’s readings')}<IconeHD nom="chevron_right"/></button>}
   {/* Extras du dimanche (04/11/2026), facultatifs et jamais comptés. */}
   {!horsLigne&&estDimanche(dateLocale)&&<DimancheHabitudes enrollmentId={enrollmentId} participantId={participantId} dateLocale={dateLocale} langue={langue}/>}
