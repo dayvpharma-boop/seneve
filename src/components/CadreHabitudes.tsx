@@ -1,6 +1,7 @@
 import {retourPrecedent} from '@/lib/retour-precedent';
 import type {ReactNode} from 'react';
-import {Link} from 'react-router-dom';
+import {Link,useLocation} from 'react-router-dom';
+import {dejaSurCettePage,remonterEnHaut} from '@/lib/remonter-en-haut';
 import {IconeHD} from './IconeHabitudes';
 import {ClocheNotifications} from './ClocheNotifications';
 import {IconeOnglet} from './IconesIphone';
@@ -21,7 +22,7 @@ const ONGLETS:{id:OngletHD;fr:string;en:string}[]=[
 export function CadreHabitudes({titre,langue,actif,liens={},retour,retourLibelle,sousTitreCentre,droite,children,avecNavigation=true,cloche=false}:{
  /** Cloche des notifications : seulement sur les écrans d'un participant inscrit (aucun appel serveur sinon). */
  cloche?:boolean;titre:string;langue:string;actif?:OngletHD;liens?:Partial<Record<OngletHD,string>>;retour?:string;retourLibelle?:string;sousTitreCentre?:string;droite?:ReactNode;children:ReactNode;avecNavigation?:boolean}){
- const en=langue==='en';
+ const en=langue==='en',ici=useLocation();
  return <div className="hd-ecran ios hd-stitch bg-hd-surface text-hd-on-surface antialiased flex flex-col min-h-screen font-hd-body-md">
   {sousTitreCentre?<header className="sticky top-0 inset-x-0 z-40 bg-hd-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(29,28,19,0.04)] pt-safe">
    <div className="h-20 px-hd-margin grid grid-cols-[auto_1fr_auto] items-center gap-2">
@@ -50,7 +51,7 @@ export function CadreHabitudes({titre,langue,actif,liens={},retour,retourLibelle
      // Style iPhone (05/11/2026) : mêmes icônes que la barre de l’espace.
      const contenu=<><IconeOnglet cle={o.id} actif={courant}/><span className="font-hd-label-nav text-hd-label-nav">{en?o.en:o.fr}</span></>;
      const page=PAGES[o.id],lien=liens[o.id]??(page&&(en?`${page}?lang=en`:page));
-     return lien?<Link key={o.id} to={lien} aria-current={courant?'page':undefined} className={cl}>{contenu}</Link>:<span key={o.id} aria-disabled="true" className={cl}>{contenu}</span>;
+     return lien?<Link key={o.id} to={lien} aria-current={courant?'page':undefined} className={cl} onClick={ev=>{if(courant&&dejaSurCettePage(lien,ici.pathname,ici.search)){ev.preventDefault();remonterEnHaut();}}}>{contenu}</Link>:<span key={o.id} aria-disabled="true" className={cl}>{contenu}</span>;
     })}
    </div>
   </nav>}

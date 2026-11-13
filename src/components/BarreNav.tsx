@@ -1,6 +1,7 @@
 import {IconeOnglet} from './IconesIphone';
 import { useLayoutEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { dejaSurCettePage, remonterEnHaut } from '@/lib/remonter-en-haut';
 
 /** Barre du bas de l'espace participant : Aujourd'hui, Parcours, Bibliothèque, Bible, Journal (maquettes Bible du 22/10/2026 ;
  *  l'aide reste accessible depuis le profil et les pages). */
@@ -111,7 +112,8 @@ export function BarreNav({ langue }: { langue?: string | null; maquette?: boolea
         const cle = e.cle;
         return <li key={cle}>
           <Link ref={el => { liens.current[i] = el; }} to={langue === 'en' ? `${e.vers}?lang=en` : e.vers} className={`ios-onglet${cle === 'bible' ? ' ios-onglet-bible' : ''}`} aria-current={actif ? 'page' : undefined}
-            onPointerDown={() => placer(i, true)}>
+            onPointerDown={() => placer(i, true)}
+            onClick={ev => { const vers = langue === 'en' ? `${e.vers}?lang=en` : e.vers; if (actif && dejaSurCettePage(vers, pathname, search)) { ev.preventDefault(); remonterEnHaut(); } }}>
             {/* Style iPhone validé le 04/11/2026 : mêmes icônes partout, pleines sur l’onglet actif. */}
             <span className="ios-onglet-contenu">
               <IconeOnglet cle={cle} actif={actif}/>
