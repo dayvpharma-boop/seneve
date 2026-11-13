@@ -9,6 +9,8 @@ const CHARIOW:Record<string,[produit:string,hauteur:number]>={
  ABONNEMENT_PLUS_MOIS_FR:['prd_h3vrqqmd',450],ABONNEMENT_PLUS_AN_FR:['prd_xe7ztah4',450],
  ABONNEMENT_SENEVE_MOIS_EN:['prd_m7ohegvs',450],ABONNEMENT_SENEVE_AN_EN:['prd_b9gl6kss',450],
  ABONNEMENT_PLUS_MOIS_EN:['prd_akmxiqk5',450],ABONNEMENT_PLUS_AN_EN:['prd_suk1i66g',450],
+ // Accompagnement (visuels créés le 13/11/2026, branchés au fur et à mesure que Dr Justin crée les produits).
+ ABONNEMENT_ACCOMP_MOIS_FR:['prd_d0s7l40t',450],
 };
 export type ImageOffre={src:string;srcSet?:string;largeur:number;hauteur:number};
 export function imageOffre(offreId:string,langue:string):ImageOffre|null{
