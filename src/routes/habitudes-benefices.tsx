@@ -55,7 +55,7 @@ export function HabitudesBenefices({userId}:{userId:string}){
  return <CadreHabitudes titre={l('SÉNEVÉ Bénéfices','SÉNEVÉ Profits')} langue={langue} retour={`/espace${suffixe}`} retourLibelle={l('Revenir à ma journée','Back to my day')} liens={{aujourdhui:`/espace${suffixe}`}} actif="aujourdhui" cloche>
   <div className="dp-page bn-page sim-ios mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg">
    <h1 className="dp-titre">{l('SÉNEVÉ Bénéfices','SÉNEVÉ Profits')}</h1>
-   <p className="dp-intro">{l('Ce que rapporte ton activité, à partir des ventes notées dans SÉNEVÉ Répartition. Rien à saisir ici.','What your business brings in, from the sales recorded in SÉNEVÉ Allocation. Nothing to enter here.')}</p>
+   <p className="dp-intro">{l('Ce que rapporte ton activité, à partir des ventes notées dans SÉNEVÉ Caisse et répartition. Rien à saisir ici.','What your business brings in, from the sales recorded in SÉNEVÉ Allocation. Nothing to enter here.')}</p>
 
    {etat==='chargement'&&<p role="status" className="dp-carte-info">{l('Chargement…','Loading…')}</p>}
    {etat==='erreur'&&<p role="alert" className="dp-carte-info">{l('Tes bénéfices ne sont pas disponibles pour le moment.','Your profits are not available right now.')}</p>}
@@ -102,7 +102,7 @@ export function HabitudesBenefices({userId}:{userId:string}){
      </div>
     </>}
 
-    {!commerce&&b.revenus===0&&<p className="dp-vide"><IconeHD nom="payments" className="text-[28px]"/>{l('Rien n’est encore noté. Quand tu reçois de l’argent, note-le dans SÉNEVÉ Répartition : tes bénéfices apparaîtront ici.','Nothing recorded yet. When you receive money, record it in SÉNEVÉ Allocation: your profits will appear here.')}</p>}
+    {!commerce&&b.revenus===0&&<p className="dp-vide"><IconeHD nom="payments" className="text-[28px]"/>{l('Rien n’est encore noté. Quand tu reçois de l’argent, note-le dans SÉNEVÉ Caisse et répartition : tes bénéfices apparaîtront ici.','Nothing recorded yet. When you receive money, record it in SÉNEVÉ Allocation: your profits will appear here.')}</p>}
     <Link to={`/habitudes/repartition${suffixe}`} className="dp-ajouter bn-lien"><IconeHD nom="pie_chart" className="text-[22px]"/>{l('Noter une vente dans Répartition','Record a sale in Allocation')}</Link>
    </>}
   </div>

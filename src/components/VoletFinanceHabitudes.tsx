@@ -12,7 +12,7 @@ import './VoletFinanceHabitudes.css';
 /** Volet « SÉNEVÉ Finance » de la page Aujourd'hui (demande de Dr Justin du 08/11/2026) :
  * remplace « Épargne » ; on y voit d'un coup ses objectifs, son suivi des dettes et le simulateur.
  * Les montants sont les mêmes que dans SÉNEVÉ Finance et SÉNEVÉ Suivi des dettes (versements − retraits ; dû − remboursé). */
-type Onglet='epargne'|'dettes'|'simulateur';
+type Onglet='epargne'|'dettes'|'repartition'|'simulateur';
 const cents=(v:string)=>Math.round(Number(v)*100);
 const resteDette=(d:DetteSuivie)=>Math.max(0,cents(d.opening_balance)-d.payments.reduce((n,p)=>n+cents(p.amount),0));
 /** Couleur par type d'objectif, comme à la création (Réserve orange, Investir vert, Autre violet). */
@@ -22,12 +22,12 @@ function montant(c:number,devise:string,en:boolean){const dec=decimalesDevise(de
 export function VoletFinanceHabitudes({langue}:{langue:string}){
  const en=langue==='en',l=(fr:string,english:string)=>en?english:fr,q=en?'?lang=en':'';
  const actif=suiviFinancierActive();
- const [ouvert,setOuvert]=useState(false),[onglet,setOnglet]=useState<Onglet>(actif?'epargne':'simulateur');
+ const [ouvert,setOuvert]=useState(false),[simu,setSimu]=useState(false),[onglet,setOnglet]=useState<Onglet>(actif?'epargne':'simulateur');
  const [suivi,setSuivi]=useState<SuiviFinancier|null|undefined>(undefined),[cpt,setCpt]=useState<Compteurs|null>(null),[erreur,setErreur]=useState(false);
  useEffect(()=>{if(!ouvert||!actif||suivi!==undefined)return;let vivant=true;
   void chargerSuiviFinancier(null).then(async s=>{if(!vivant)return;setSuivi(s);if(s){const c=await chargerCompteursOuAbsents(s.enrollment_id);if(vivant)setCpt(c);}}).catch(()=>{if(vivant){setErreur(true);setSuivi(null);}});
   return()=>{vivant=false;};},[ouvert,actif,suivi]);
- const ONGLETS:[Onglet,string,string][]=actif?[['epargne',l('Épargne','Savings'),'potted_plant'],['dettes',l('Dettes','Debts'),'handshake'],['simulateur',l('Simulateur','Simulator'),'calculate']]:[];
+ const ONGLETS:[Onglet,string,string][]=actif?[['epargne',l('Épargne','Savings'),'potted_plant'],['dettes',l('Dettes','Debts'),'handshake'],['repartition',l('Répartition','Allocation'),'pie_chart']]:[];
  const lien=(vers:string,texte:string)=><Link to={vers} className="vf-lien"><span>{texte}</span><IconeHD nom="chevron_right" className="text-[20px]"/></Link>;
  const chargement=<p role="status" className="vf-note">{l('Chargement…','Loading…')}</p>;
  const objectifs=suivi?.savings_goals??[];
@@ -63,14 +63,20 @@ export function VoletFinanceHabitudes({langue}:{langue:string}){
      </>}
     {lien(`/habitudes/dettes${q}`,l('Ouvrir SÉNEVÉ Suivi des dettes','Open SÉNEVÉ Debt tracker'))}
    </div>}
+   {/* Répartition prend la place du Simulateur en haut (demande de Dr Justin du 13/11/2026) ; le Simulateur descend en bas. */}
+   {onglet==='repartition'&&<div role="tabpanel" aria-label={l('Répartition','Allocation')}>
+    <p className="vf-note">{l('Quand tu reçois de l’argent, SÉNEVÉ Caisse et répartition le partage entre tes caisses et couvre les charges du mois de ton activité.','When you receive money, SÉNEVÉ Cash & allocation shares it between your counters and covers your business’s monthly expenses.')}</p>
+    {lien(`/habitudes/repartition${q}`,l('Ouvrir SÉNEVÉ Caisse et répartition','Open SÉNEVÉ Cash & allocation'))}
+   </div>}
    {onglet==='simulateur'&&<div role="tabpanel" aria-label={l('Simulateur','Simulator')} className="sim-ios-dans-volet"><SimulateurEpargne langue={langue} replie={false}/></div>}
    {actif&&<nav aria-label={l('Raccourcis SÉNEVÉ Finance','SÉNEVÉ Finance shortcuts')} className="vf-raccourcis">
     <Link to={`/habitudes/compteurs${q}`}><span aria-hidden="true" className="vf-tuile" style={{background:'#5856d6'}}><IconeHD nom="account_balance" className="text-[18px]"/></span><span className="vf-raccourci-texte"><b>SÉNEVÉ {l('Compte','Account')}</b><small>{l('Mes caisses et mon bilan','My counters and summary')}</small></span><IconeHD nom="chevron_right" className="vf-raccourci-chevron text-[20px]"/></Link>
     <Link to={`/habitudes/depenses${q}`}><span aria-hidden="true" className="vf-tuile" style={{background:'#ff3b30'}}><IconeHD nom="receipt_long" className="text-[18px]"/></span><span className="vf-raccourci-texte"><b>SÉNEVÉ {l('Dépenses','Expenses')}</b><small>{l('Où va mon argent','Where my money goes')}</small></span><IconeHD nom="chevron_right" className="vf-raccourci-chevron text-[20px]"/></Link>
     <Link to={`/habitudes/benefices${q}`}><span aria-hidden="true" className="vf-tuile" style={{background:'#34c759'}}><IconeHD nom="payments" className="text-[18px]"/></span><span className="vf-raccourci-texte"><b>SÉNEVÉ {l('Bénéfices','Profits')}</b><small>{l('Ce que rapporte mon activité','What my business brings in')}</small></span><IconeHD nom="chevron_right" className="vf-raccourci-chevron text-[20px]"/></Link>
     <Link to={`/habitudes/rapport${q}`}><span aria-hidden="true" className="vf-tuile" style={{background:'#2b579a'}}><IconeHD nom="description" className="text-[18px]"/></span><span className="vf-raccourci-texte"><b>SÉNEVÉ {l('Rapport','Report')}</b><small>{l('Jour, mois, année · PDF et Word','Day, month, year · PDF and Word')}</small></span><IconeHD nom="chevron_right" className="vf-raccourci-chevron text-[20px]"/></Link>
-    <Link to={`/habitudes/repartition${q}`}><span aria-hidden="true" className="vf-tuile" style={{background:'#ff9500'}}><IconeHD nom="pie_chart" className="text-[18px]"/></span><span className="vf-raccourci-texte"><b>SÉNEVÉ {l('Répartition','Allocation')}</b><small>{l('Quand je reçois de l’argent','When I receive money')}</small></span><IconeHD nom="chevron_right" className="vf-raccourci-chevron text-[20px]"/></Link>
+    <button type="button" className="vf-raccourci-bouton" aria-expanded={simu} onClick={()=>setSimu(v=>!v)}><span aria-hidden="true" className="vf-tuile" style={{background:'#8e8e93'}}><IconeHD nom="calculate" className="text-[18px]"/></span><span className="vf-raccourci-texte"><b>SÉNEVÉ {l('Simulateur','Simulator')}</b><small>{l('Calculer une épargne','Work out a savings plan')}</small></span><IconeHD nom={simu?'expand_less':'expand_more'} className="vf-raccourci-chevron text-[20px]"/></button>
    </nav>}
+   {actif&&simu&&<div role="region" aria-label={l('Simulateur','Simulator')} className="sim-ios-dans-volet mt-2"><SimulateurEpargne langue={langue} replie={false}/></div>}
   </div>
  </details>;
 }

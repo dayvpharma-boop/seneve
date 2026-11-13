@@ -20,7 +20,7 @@
 :root:root:root .vf-note{margin:4px 2px 8px;font-size:14px;line-height:1.4;color:var(--ios-doux,#6e6e73)}
 :root:root:root .vf-lien{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin-top:10px;padding:0 14px;border-radius:14px;background:var(--ios-carte,#fff);color:var(--ios-accent,var(--ios-accent,#5b4ee8));font-size:16px;font-weight:500;text-decoration:none;box-shadow:0 1px 2px rgb(0 0 0 / .05)}
 :root:root:root .vf-raccourcis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-:root:root:root .vf-raccourcis a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 8px;border-radius:12px;background:rgb(118 118 128 / .12);color:var(--ios-encre,#1c1c1e);font-size:13.5px;font-weight:500;text-decoration:none;text-align:center}
+:root:root:root .vf-raccourcis :is(a,button){display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 8px;border-radius:12px;background:rgb(118 118 128 / .12);color:var(--ios-encre,#1c1c1e);font-size:13.5px;font-weight:500;text-decoration:none;text-align:center}
 @media (prefers-reduced-motion:reduce){:root:root:root .vf-curseur{transition:none}}
 
 /* Menu et raccourcis façon Apple (demande du 10/11/2026) : onglets avec icône, total d'épargne vert,
@@ -36,11 +36,14 @@
 :root:root:root .vf-total p+p{margin-top:8px}
 :root:root:root .vf-total b+small{margin-top:2px}
 :root:root:root .vf-raccourcis{display:block;margin-top:12px;border-radius:14px;background:var(--ios-carte,#fff);overflow:hidden;box-shadow:0 1px 2px rgb(0 0 0 / .05)}
-:root:root:root .vf-raccourcis a{position:relative;justify-content:flex-start;gap:12px;min-height:56px;padding:6px 10px 6px 14px;border-radius:0;background:transparent;text-align:left}
-:root:root:root .vf-raccourcis a+a::before{content:"";position:absolute;top:0;left:56px;right:0;border-top:.5px solid var(--ios-ligne,#e5e5ea)}
-:root:root:root .vf-raccourcis a:active{background:rgb(118 118 128 / .12)}
+:root:root:root .vf-raccourcis :is(a,button){position:relative;justify-content:flex-start;gap:12px;min-height:56px;padding:6px 10px 6px 14px;border-radius:0;background:transparent;text-align:left}
+:root:root:root .vf-raccourcis :is(a,button)+:is(a,button)::before{content:"";position:absolute;top:0;left:56px;right:0;border-top:.5px solid var(--ios-ligne,#e5e5ea)}
+:root:root:root .vf-raccourcis :is(a,button):active{background:rgb(118 118 128 / .12)}
 :root:root:root .vf-tuile{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:8px;color:#fff}
 :root:root:root .vf-raccourci-texte{flex:1;min-width:0}
 :root:root:root .vf-raccourci-texte b{display:block;font-size:16px;font-weight:500;letter-spacing:-.01em;color:var(--ios-encre,#1c1c1e)}
 :root:root:root .vf-raccourci-texte small{display:block;font-size:12.5px;color:var(--ios-doux,#6e6e73)}
 :root:root:root .vf-raccourci-chevron{flex:none;color:rgb(60 60 67 / .3)}
+
+/* Ligne « SÉNEVÉ Simulateur » (13/11/2026) : un bouton qui ouvre le simulateur sous la liste, même aspect que les liens. */
+:root:root:root .vf-raccourcis button{width:100%;border:0;font:inherit;color:inherit;cursor:pointer;text-align:left}

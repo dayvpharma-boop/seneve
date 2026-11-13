@@ -26,7 +26,7 @@ it('« SÉNEVÉ Finance » remplace « Épargne » et montre épargne, dettes et
  expect(rpc).not.toHaveBeenCalled(); // rien n'est chargé tant que le volet est fermé
  volet.open=true;fireEvent(volet,new Event('toggle'));
  const onglets=screen.getByRole('tablist',{name:'SÉNEVÉ Finance'});
- expect(within(onglets).getAllByRole('tab').map(t=>t.textContent)).toEqual(['Épargne','Dettes','Simulateur']);
+ expect(within(onglets).getAllByRole('tab').map(t=>t.textContent)).toEqual(['Épargne','Dettes','Répartition']);
  // Épargne : 200 versés − 50 retirés = 150 sur 1 000 (comme dans SÉNEVÉ Finance).
  const epargne=await screen.findByRole('tabpanel',{name:'Épargne'});
  await waitFor(()=>expect(epargne.textContent).toMatch(/Moto-taxi.*150 USD sur 1\s?000 USD.*15 %/));
@@ -41,9 +41,12 @@ it('« SÉNEVÉ Finance » remplace « Épargne » et montre épargne, dettes et
  expect(dettes.textContent).toMatch(/Il reste à rembourser150 USDsur 200 USD · 25 % remboursé/);
  expect(dettes.textContent).not.toMatch(/Soldée/);
  expect(within(dettes).getByRole('link',{name:'Ouvrir SÉNEVÉ Suivi des dettes'})).toHaveAttribute('href','/habitudes/dettes');
- fireEvent.click(within(onglets).getByRole('tab',{name:'Simulateur'}));
- expect(screen.getByRole('tabpanel',{name:'Simulateur'}).querySelector('.sim-ios')).not.toBeNull();
+ fireEvent.click(within(onglets).getByRole('tab',{name:'Répartition'}));
+ expect(within(screen.getByRole('tabpanel',{name:'Répartition'})).getByRole('link',{name:'Ouvrir SÉNEVÉ Caisse et répartition'})).toHaveAttribute('href','/habitudes/repartition');
+ // Le Simulateur est descendu en bas : une ligne qui l'ouvre sous la liste.
+ expect(screen.queryByRole('region',{name:'Simulateur'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:/SÉNEVÉ Simulateur/}));
+ expect(screen.getByRole('region',{name:'Simulateur'}).querySelector('.sim-ios')).not.toBeNull();
  expect(screen.getByRole('link',{name:/SÉNEVÉ Compte/})).toHaveAttribute('href','/habitudes/compteurs');
- expect(screen.getByRole('link',{name:/SÉNEVÉ Répartition/})).toHaveAttribute('href','/habitudes/repartition');
  expect(rpc.mock.calls.filter(([f])=>f==='hd_finance_tracker_get')).toHaveLength(1);
 },20000);

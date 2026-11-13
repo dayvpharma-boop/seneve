@@ -56,7 +56,7 @@ export function HabitudesRepartition(){
  const repartitionBloquee=chargesRequises&&!chargesOK;
  const afficherRepartition=!chargesRequises||(etatCharges!=='verification'&&etatCharges!=='indisponible');
  const TitreSolde=chargesRequises?'button':'div';
- useEffect(()=>{document.title=l('SÉNEVÉ Répartition','SÉNEVÉ Allocation');document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
+ useEffect(()=>{document.title=l('SÉNEVÉ Caisse et répartition','SÉNEVÉ Cash & allocation');document.documentElement.lang=langue;},[langue]);// eslint-disable-line react-hooks/exhaustive-deps
  if(!habitudesActivees())return <NotFound/>;
  const dec=decimalesDevise(devise);
  const nombre=(n:number)=>new Intl.NumberFormat(en?'en-US':'fr-FR',{minimumFractionDigits:Number.isInteger(n)?0:dec,maximumFractionDigits:dec}).format(n);
@@ -106,9 +106,9 @@ export function HabitudesRepartition(){
   ?r[cle]/r.base*100
   :cle==='vivre'?100-totalParts:p[cle];
  const segments=[...PARTS.map(x=>({cle:x.cle as CleRepartition|'vivre',pct:pctAffiche(x.cle)})),{cle:'vivre' as const,pct:pctAffiche('vivre')}].filter(s=>s.pct>0).map(s=>{const long=C*s.pct/100,seg={...s,dash:`${Math.max(0,long-1.5)} ${C}`,offset:-depart};depart+=long;return seg;});
- return <CadreHabitudes titre={l('SÉNEVÉ Répartition','SÉNEVÉ Allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à SÉNEVÉ Suivi des dettes','Back to SÉNEVÉ Debt tracker'):l('Revenir à SÉNEVÉ Finance','Back to SÉNEVÉ Finance')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
+ return <CadreHabitudes titre={l('SÉNEVÉ Caisse et répartition','SÉNEVÉ Cash & allocation')} langue={langue} retour={pour==='dettes'?`/habitudes/dettes${en?'?lang=en':''}`:`/habitudes/epargne${en?'?lang=en':''}`} retourLibelle={pour==='dettes'?l('Revenir à SÉNEVÉ Suivi des dettes','Back to SÉNEVÉ Debt tracker'):l('Revenir à SÉNEVÉ Finance','Back to SÉNEVÉ Finance')} liens={{aujourdhui:`/espace${en?'?lang=en':''}`}} actif="aujourdhui">
   <div className="sim-ios rep-page mx-auto flex w-full max-w-xl flex-col px-hd-margin pt-hd-space-md pb-hd-space-lg">
-   <h1 className="ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('SÉNEVÉ Répartition','SÉNEVÉ Allocation')}</h1>
+   <h1 className="ml-1 text-[34px] font-bold leading-tight tracking-tight">{l('SÉNEVÉ Caisse et répartition','SÉNEVÉ Cash & allocation')}</h1>
    <p className="sim-ios-sous hd-classique">{l('Choisis ton profil et saisis ce que tu as reçu. Pour une activité, enregistre l’encaissement pour couvrir les charges du mois.','Choose your profile and enter what you received. For a business, record the receipt to cover monthly expenses.')}</p>
 
    <h2 className="hd-classique sim-ios-titre">{l('Je suis','I am')}</h2>
