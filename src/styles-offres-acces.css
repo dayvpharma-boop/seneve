@@ -9,3 +9,7 @@
 #s-result .choix-etat dl{margin:0}#s-result .choix-etat dl>div{display:flex;align-items:center;gap:8px;background:white;border-radius:4px;padding:10px;margin:6px 0;font:500 14px/20px Outfit,sans-serif}#s-result .choix-etat dt{flex:1}#s-result .choix-etat dd{font-size:12px;margin:0;white-space:nowrap}
 /* Visuel Chariow des formations 30 et 90 jours (03/11/2026). */
 .oa-offer-image{display:block;width:150px;max-width:50%;height:auto;margin:0 auto 18px;border-radius:6px;box-shadow:0 14px 28px -12px rgba(10,9,7,.5)}
+
+/* Titre de groupe (familles d'offres, 13/11/2026). */
+.oa-groupe-titre{margin:28px 0 12px}
+.oa-groupe:first-of-type .oa-groupe-titre{margin-top:4px}
