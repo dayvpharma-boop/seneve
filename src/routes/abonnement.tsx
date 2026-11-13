@@ -100,7 +100,7 @@ export function Abonnement(){
  const annuel=periode==='an'&&d.an!==null,lien=d.id==='graine'?null:donnees.liens[offreAbonnement(d.id,periode,langue)];
  const avantages=tout?d.avantages:d.avantages.slice(0,NB_VISIBLES);
  // Visuel Chariow de la formule (12/11/2026), le même que sur la page de paiement : Sénevé et Sénevé Plus seulement.
- const visuel=d.id==='senev'||d.id==='plus'?imageOffre(offreAbonnement(d.id,periode,langue),langue):null;
+ const visuel=d.id!=='graine'?imageOffre(offreAbonnement(d.id,periode,langue),langue):null;
  const nomFormule=(id:IdFormule)=>l(...FORMULES.find(x=>x.id===id)!.nom);
  const contenuGraine=l('Ton mois gratuit comprend Habitudes & Défis, SÉNEVÉ Finance, le Test des 7 Racines, la Bible et ton journal.','Your free month includes Habits & Challenges, SÉNEVÉ Finance, the 7 Roots Test, the Bible and your journal.');
 
@@ -146,7 +146,7 @@ export function Abonnement(){
    {annuel&&d.bonusAn&&<><p className="ab-sous-titre">{l('Inclus avec l’année','Included with the year')}</p><ul className="ab-atouts">{d.bonusAn.map(b=><Atout key={b[0]} texte={l(...b)}/>)}</ul></>}
    <div className="ab-action">
     {d.id==='graine'?(actuelle==='graine'&&!termine?<span className="ab-cta ab-desactive">{l('Ta formule actuelle','Your current plan')}</span>:null)
-     :d.id==='accompagnement'?<Link className="ab-cta" to={`/aide?motif=accompagnement${en?'&lang=en':''}`}>{l('Demander une place','Ask for a place')}</Link>
+     :d.id==='accompagnement'&&!lien?<Link className="ab-cta" to={`/aide?motif=accompagnement${en?'&lang=en':''}`}>{l('Demander une place','Ask for a place')}</Link>
      :lien?<a className="ab-cta" href={lien} target="_blank" rel="noopener noreferrer">{d.id===actuelle?l('Renouveler','Renew'):l(`Choisir ${d.nom[0]}`,`Choose ${d.nom[1]}`)}</a>
      :<span className="ab-cta ab-desactive">{l('Bientôt disponible','Coming soon')}</span>}
     {d.id!=='graine'&&<small className="ab-rassure"><Picto nom="cadenas" taille={13}/>{l('Aucun prélèvement automatique','No automatic charge')}</small>}
