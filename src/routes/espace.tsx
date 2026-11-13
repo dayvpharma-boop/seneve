@@ -362,13 +362,16 @@ function EspaceDuCompte({ userId }: { userId: string }) {
         <Link className="link" to={`/confidentialite${s}`}>{en ? 'Privacy' : 'Confidentialité'}</Link>
         <button type="button" className="link" disabled={deconnexionEnCours} aria-expanded={confirmationDeconnexion} onClick={() => { setConfirmationDeconnexion(v => !v); setErreurDeconnexion(false); }}>{en ? 'Sign out' : 'Se déconnecter'}</button>
       </div>
-      {confirmationDeconnexion && <section className="card flex flex-col gap-3 my-3 p-4 rounded-xl" role="group" aria-label={en ? 'Confirm sign out' : 'Confirmer la déconnexion'}>
-        <p>{en ? 'Do you want to sign out on this device? Your other devices will stay connected.' : 'Veux-tu te déconnecter sur cet appareil ? Tes autres appareils resteront connectés.'}</p>
-        <div className="flex flex-wrap gap-2">
-          <button type="button" className="btn-secondaire min-h-[44px] px-4" disabled={deconnexionEnCours} onClick={() => setConfirmationDeconnexion(false)}>{en ? 'Cancel' : 'Annuler'}</button>
-          <button type="button" className="btn min-h-[44px] px-4" disabled={deconnexionEnCours} onClick={() => void signOut()}>{deconnexionEnCours ? (en ? 'Signing out…' : 'Déconnexion…') : (en ? 'Confirm sign out' : 'Confirmer la déconnexion')}</button>
+      {/* Confirmation au milieu de l'écran (demande de Dr Justin du 13/11/2026) : plus besoin de faire défiler pour confirmer. */}
+      {confirmationDeconnexion && <div className="fixed inset-0 z-[80] grid place-items-center px-8" role="alertdialog" aria-modal="true" aria-label={en ? 'Confirm sign out' : 'Confirmer la déconnexion'} aria-describedby="deconnexion-texte">
+        <button type="button" aria-label={en ? 'Close' : 'Fermer'} className="absolute inset-0 bg-black/40" disabled={deconnexionEnCours} onClick={() => setConfirmationDeconnexion(false)}/>
+        <div className="ios-alerte relative w-full max-w-[300px] overflow-hidden rounded-[14px] text-center shadow-[0_10px_40px_rgba(0,0,0,.3)]">
+          <div className="px-4 pb-4 pt-5"><h2 style={{margin:'0 0 4px',fontSize:17,fontWeight:600}}>{en ? 'Sign out?' : 'Se déconnecter ?'}</h2>
+            <p id="deconnexion-texte" style={{margin:0,fontSize:13,lineHeight:1.4}}>{en ? 'Do you want to sign out on this device? Your other devices will stay connected.' : 'Veux-tu te déconnecter sur cet appareil ? Tes autres appareils resteront connectés.'}</p></div>
+          <button type="button" className="block w-full border-t py-3 text-[17px] font-semibold" style={{color:'#d70015'}} disabled={deconnexionEnCours} onClick={() => void signOut()}>{deconnexionEnCours ? (en ? 'Signing out…' : 'Déconnexion…') : (en ? 'Confirm sign out' : 'Confirmer la déconnexion')}</button>
+          <button type="button" autoFocus className="block w-full border-t py-3 text-[17px]" style={{color:'var(--ios-accent,#5b4ee8)'}} disabled={deconnexionEnCours} onClick={() => setConfirmationDeconnexion(false)}>{en ? 'Cancel' : 'Annuler'}</button>
         </div>
-      </section>}
+      </div>}
       {erreurDeconnexion && <p role="alert" className="error">{en ? 'Unable to complete sign out. Check your connection and try again.' : 'Impossible de terminer la déconnexion. Vérifie ta connexion et réessaie.'}</p>}
     </>;
   };
