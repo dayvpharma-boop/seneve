@@ -7,17 +7,17 @@ beforeEach(()=>{vi.stubEnv('VITE_HABITUDES_DEFIS','false');vi.stubEnv('VITE_HABI
 afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllEnvs();});
 it('publie un aperçu explicite et permet de parcourir les trois jours de culte',()=>{
  render(<MemoryRouter><Habitudes/></MemoryRouter>);expect(screen.getByText('Aperçu · module en préparation')).toBeVisible();expect(screen.getByRole('heading',{name:'Habitudes & Défis'})).toBeVisible();expect(screen.getByText('jours gratuits')).toBeVisible();
- const liste=screen.getByRole('list');expect(within(liste).getAllByRole('listitem')).toHaveLength(13);fireEvent.change(screen.getByRole('combobox',{name:'Voir un jour de la semaine'}),{target:{value:'3'}});expect(within(liste).getAllByRole('listitem')).toHaveLength(14);expect(within(liste).getByText('Culte en semaine')).toBeVisible();
+ const liste=screen.getByRole('list',{name:'Rendez-vous du jour'});expect(within(liste).getAllByRole('listitem')).toHaveLength(13);fireEvent.change(screen.getByRole('combobox',{name:'Voir un jour de la semaine'}),{target:{value:'3'}});expect(within(liste).getAllByRole('listitem')).toHaveLength(14);expect(within(liste).getByText('Culte en semaine')).toBeVisible();
  expect(screen.queryByRole('button',{name:/Commencer|réalisé|inscrire/i})).toBeNull();
 });
 it('l’aperçu anglais traduit le rythme et le simulateur sans créer de compte',()=>{
- render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><Habitudes/></MemoryRouter>);expect(screen.getByRole('heading',{name:'Habits & Challenges'})).toBeVisible();expect(within(screen.getByRole('list')).getByText('Morning prayer')).toBeVisible();expect(screen.getByText('Optional tithe simulator')).toBeVisible();expect(screen.getByRole('link',{name:'Back to my space'})).toHaveAttribute('href','/espace?lang=en');expect(screen.queryByText('Prière du matin')).toBeNull();
+ render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><Habitudes/></MemoryRouter>);expect(screen.getByRole('heading',{name:'Habits & Challenges'})).toBeVisible();expect(within(screen.getByRole('list',{name:'Appointments of the day'})).getByText('Morning prayer')).toBeVisible();expect(screen.getByText('Optional tithe simulator')).toBeVisible();expect(screen.getByRole('link',{name:'Back to my space'})).toHaveAttribute('href','/espace?lang=en');expect(screen.queryByText('Prière du matin')).toBeNull();
 });
 
 function ouvrirHoraires(){const r=render(<MemoryRouter><Habitudes/></MemoryRouter>);r.container.querySelector('details')!.open=true;return r;}
 it('l’essai des horaires change la journée sans stockage ni appel réseau',()=>{
  const stockage=vi.spyOn(Storage.prototype,'setItem'),reseau=vi.spyOn(globalThis,'fetch');ouvrirHoraires();
- fireEvent.change(screen.getByLabelText('Prière du matin'),{target:{value:'07:15'}});expect(within(screen.getByRole('list')).getByText('07:15')).toBeVisible();expect(screen.getByText(/ne sont pas enregistrés dans ton compte/)).toBeVisible();expect(stockage).not.toHaveBeenCalled();expect(reseau).not.toHaveBeenCalled();
+ fireEvent.change(screen.getByLabelText('Prière du matin'),{target:{value:'07:15'}});expect(within(screen.getByRole('list',{name:'Rendez-vous du jour'})).getByText('07:15')).toBeVisible();expect(screen.getByText(/ne sont pas enregistrés dans ton compte/)).toBeVisible();expect(stockage).not.toHaveBeenCalled();expect(reseau).not.toHaveBeenCalled();
  fireEvent.change(screen.getByRole('combobox',{name:'Voir un jour de la semaine'}),{target:{value:'3'}});expect(screen.getByLabelText('Prière du matin')).toHaveValue('06:00');fireEvent.change(screen.getByRole('combobox',{name:'Voir un jour de la semaine'}),{target:{value:'1'}});expect(screen.getByLabelText('Prière du matin')).toHaveValue('07:15');
 });
 it('les trois cultes peuvent avoir des heures distinctes dans l’aperçu',()=>{
@@ -82,4 +82,12 @@ it('le bouton retour ramène à la page précédente, ou à la bibliothèque dep
  fireEvent.click(screen.getByRole('button',{name:'Revenir à la page précédente'}));expect(screen.getByText('Page bibliothèque')).toBeVisible();cleanup();
  render(<MemoryRouter initialEntries={['/habitudes?lang=en']}><Routes><Route path="/bibliotheque" element={<p>Library page</p>}/><Route path="/habitudes" element={<Habitudes/>}/></Routes></MemoryRouter>);
  fireEvent.click(screen.getByRole('button',{name:'Back to the previous page'}));expect(screen.getByText('Library page')).toBeVisible();
+});
+
+it('la présentation décrit tout le parcours, y compris SÉNEVÉ Finance (13/11/2026)',async()=>{
+ const {Habitudes}=await import('@/routes/habitudes');
+ render(<MemoryRouter initialEntries={['/habitudes']}><Habitudes/></MemoryRouter>);
+ expect(screen.getByRole('heading',{name:'Ce que contient le parcours'})).toBeVisible();
+ expect(screen.getByRole('heading',{name:'SÉNEVÉ Finance'})).toBeVisible();
+ for(const t of ['Ma journée','Mes cultes de la semaine','Mes engagements','SÉNEVÉ Caisse et répartition','SÉNEVÉ Dépenses','SÉNEVÉ Bénéfices','SÉNEVÉ Rapport','SÉNEVÉ Compte'])expect(screen.getByText(t)).toBeVisible();
 });

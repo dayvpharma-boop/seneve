@@ -15,3 +15,6 @@
 .hd-public-gauche{display:flex;align-items:center;gap:12px}
 .hd-public-retour{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:1px solid currentColor;background:transparent;color:inherit;font-size:22px;line-height:1;cursor:pointer}
 .hd-public-retour:focus-visible{outline:3px solid #c9a84c;outline-offset:2px}
+
+/* Contenu du parcours et SÉNEVÉ Finance (13/11/2026) : tuiles neutres, lisibles en mode clair comme sombre. */
+.hd-public-contenu{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:10px}@media(min-width:640px){.hd-public-contenu{grid-template-columns:1fr 1fr}}.hd-public-contenu li{display:grid;gap:4px;padding:14px 16px;border-radius:16px;background:rgb(118 118 128 / .12)}.hd-public-contenu b{font-weight:650;font-size:1.02rem}.hd-public-contenu span{font-size:.92rem;line-height:1.5;opacity:.85}
