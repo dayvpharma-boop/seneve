@@ -311,3 +311,9 @@
 :root:root:root:root[data-apparence="sombre"] .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled){background:#6f63ff!important;box-shadow:0 4px 16px rgb(111 99 255 / .4)}
 @media (prefers-color-scheme:dark){:root:root:root:root:not([data-apparence="clair"]) .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled){background:#6f63ff!important;box-shadow:0 4px 16px rgb(111 99 255 / .4)}}
 :root:root:root:root .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):disabled{color:var(--ios-doux,#63636b)!important;-webkit-text-fill-color:var(--ios-doux,#63636b)!important}
+
+/* Boutons violets plus nets (demande de Dr Justin du 13/11/2026) : texte blanc garanti, violet plus lumineux en mode sombre. */
+:root:root:root:root .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled){color:#fff!important;-webkit-text-fill-color:#fff!important}
+:root:root:root:root .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled) *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+:root:root:root:root[data-apparence="sombre"] .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled){background:#5e5ce6!important}
+@media (prefers-color-scheme:dark){:root:root:root:root:not([data-apparence="clair"]) .rep-page :is(.rep-charges-action,.rep-validation .rep-bouton):not(:disabled){background:#5e5ce6!important}}
