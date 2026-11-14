@@ -86,8 +86,8 @@
 :root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page{--dp-encre:#f5f5f7!important;--dp-doux:#98989d!important;--dp-fond:#121212!important;--dp-carte:#1c1c1e!important;--dp-ligne:rgb(84 84 88 / .55)!important;background:#121212!important;color:#f5f5f7!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page .dp-titre{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page :is(.dp-intro,.dp-section,.dp-jour,.dp-montant-etiquette){color:#98989d!important;-webkit-text-fill-color:#98989d!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page .dp-heros{background:#23224f!important;color:#fff!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page .dp-heros :is(b,small,p,span,button,svg,i){color:#fff!important;-webkit-text-fill-color:#fff!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page .dp-heros{background:#23224f!important;color:#fefefe!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page .dp-heros :is(b,small,p,span,button,svg,i){color:#fefefe!important;-webkit-text-fill-color:#fefefe!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page :is(.dp-liste,.dp-vide,.dp-carte-info,.dp-formulaire){background:#1c1c1e!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page :is(.dp-ligne-texte b,.dp-ligne-montant b){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page :is(.dp-ligne-texte small,.dp-ligne-montant small,.dp-vide,.dp-carte-info){color:#98989d!important;-webkit-text-fill-color:#98989d!important}
@@ -95,8 +95,8 @@
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page{--dp-encre:#f5f5f7!important;--dp-doux:#98989d!important;--dp-fond:#121212!important;--dp-carte:#1c1c1e!important;--dp-ligne:rgb(84 84 88 / .55)!important;background:#121212!important;color:#f5f5f7!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page .dp-titre{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page :is(.dp-intro,.dp-section,.dp-jour,.dp-montant-etiquette){color:#98989d!important;-webkit-text-fill-color:#98989d!important}
-:root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page .dp-heros{background:#23224f!important;color:#fff!important}
-:root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page .dp-heros :is(b,small,p,span,button,svg,i){color:#fff!important;-webkit-text-fill-color:#fff!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page .dp-heros{background:#23224f!important;color:#fefefe!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page .dp-heros :is(b,small,p,span,button,svg,i){color:#fefefe!important;-webkit-text-fill-color:#fefefe!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page :is(.dp-liste,.dp-vide,.dp-carte-info,.dp-formulaire){background:#1c1c1e!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page :is(.dp-ligne-texte b,.dp-ligne-montant b){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page :is(.dp-ligne-texte small,.dp-ligne-montant small,.dp-vide,.dp-carte-info){color:#98989d!important;-webkit-text-fill-color:#98989d!important}
