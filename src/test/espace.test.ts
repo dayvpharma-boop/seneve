@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { apercuMoment, avecLangue, dateDuJour, dayInfo, eventIdFor, fillPrenom, periodeMoment, pickDefault, webText } from '@/lib/espace';
+import { apercuMoment, avecLangue, dateDuJour, dayInfo, eventIdFor, fillPrenom, periodeMoment, pickDefault, hdDabord, webText } from '@/lib/espace';
 
 describe('dayInfo (Africa/Kinshasa)', () => {
   it('jour 1 le jour du début', () => {
@@ -99,6 +99,12 @@ describe('pickDefault', () => {
     expect(pickDefault([ancien, livreFutur], now)?.id).toBe('L');
     expect(pickDefault([ancien], now)?.id).toBe('A');
     expect(pickDefault([], now)).toBeNull();
+  });
+  it('Habitudes & Défis reste par défaut, même si un autre parcours a commencé après, et passe en premier onglet', () => {
+    const hd = { id: 'HD', programme_id: 'HABITUDES_DEFIS_30J_FR_V1', date_debut: '2026-09-20', duree: 30 };
+    const accompagnement = { id: 'AC', programme_id: 'ACCOMPAGNEMENT_14J_FR', date_debut: '2026-10-11', duree: 14 };
+    expect(pickDefault([accompagnement, hd], now)?.id).toBe('HD');
+    expect(hdDabord([accompagnement, decouverte, hd]).map(x => x.id)).toEqual(['HD', 'AC', 'D']);
   });
 });
 

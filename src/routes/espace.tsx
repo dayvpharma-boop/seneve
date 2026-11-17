@@ -26,7 +26,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties, type Reac
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ComptePrive } from '@/components/ComptePrive';
 import { supabase } from '@/lib/supabase';
-import { apercuMoment, avecLangue, dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, placerOngletAujourdhui, amenerOngletAuDebut, rawDay, webText } from '@/lib/espace';
+import { apercuMoment, avecLangue, dateDuJour, dayInfo, eventIdFor, momentVisible, periodeMoment, pickDefault, hdDabord, placerOngletAujourdhui, amenerOngletAuDebut, rawDay, webText } from '@/lib/espace';
 import {ParcoursAVenir,PauseParcours,ProgressionLongue,BilanTermine} from '@/components/VariantesJournee';
 import {IconeJourneeSuite} from '@/components/IconeJourneeSuite';
 import { WhatsAppLink } from '@/components/WhatsAppLink';
@@ -400,7 +400,7 @@ function EspaceDuCompte({ userId }: { userId: string }) {
     :data.periodesHabitudes?.[x.enrollment_id]?.length?calendrierPeriodes(x.date_debut,data.periodesHabitudes[x.enrollment_id]!,data.fuseauHabitudes??'Africa/Kinshasa',x.duree)
     :calendrierHabitudes(x.date_debut,x.duree,data.fuseauHabitudes??'Africa/Kinshasa');
   const tabs = data.parcours.length > 1 && <div className="prog-tabs" ref={placerOngletAujourdhui} role="tablist" aria-label={T.mesParcours}>
-    {data.parcours.map(x => { const c = calendrierDe(x); const etat = c.notStarted ? 'avenir' : x.etat === 'en_pause' ? 'pause' : c.finished ? 'termine' : 'encours'; const avancement = etat === 'termine' ? 100 : etat === 'avenir' ? 0 : Math.max(0, Math.min(100, Math.round(c.day / Math.max(1, x.duree) * 100))); return <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" data-etat={etat} style={{ '--avancement': `${avancement}%` } as CSSProperties} aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{etat === 'avenir' ? T.ongletAVenir : etat === 'pause' ? T.ongletPause : etat === 'termine' ? T.ongletTermine : T.ongletJour(c.day)}</span><span className="jn-tab-nom">{x.nom}</span><span className="jn-tab-barre" aria-hidden="true"><i /></span></button>; })}
+    {hdDabord(data.parcours).map(x => { const c = calendrierDe(x); const etat = c.notStarted ? 'avenir' : x.etat === 'en_pause' ? 'pause' : c.finished ? 'termine' : 'encours'; const avancement = etat === 'termine' ? 100 : etat === 'avenir' ? 0 : Math.max(0, Math.min(100, Math.round(c.day / Math.max(1, x.duree) * 100))); return <button type="button" role="tab" aria-label={x.nom} key={x.enrollment_id} className="prog-tab" data-etat={etat} style={{ '--avancement': `${avancement}%` } as CSSProperties} aria-selected={x.enrollment_id === enr.enrollment_id} onClick={e => { amenerOngletAuDebut(e.currentTarget); setChosen(x.enrollment_id); setSelected(null); setTousJours(false); }}><span className="jn-tab-meta">{etat === 'avenir' ? T.ongletAVenir : etat === 'pause' ? T.ongletPause : etat === 'termine' ? T.ongletTermine : T.ongletJour(c.day)}</span><span className="jn-tab-nom">{x.nom}</span><span className="jn-tab-barre" aria-hidden="true"><i /></span></button>; })}
   </div>;
   // Demande de Dr Justin (07/11/2026) : la carte Habitudes & Défis aussi quand le parcours est à venir, terminé
   // ou sans séance ce jour-là, en français comme en anglais (elle manquait sur le bilan de fin de parcours).

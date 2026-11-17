@@ -1,3 +1,5 @@
+import { estProgrammeHdReel } from './habitudes-programmes';
+
 export const TOTAL_DAYS = 7;
 
 function kinshasaDate(d: Date): string {
@@ -23,7 +25,14 @@ export function dayInfo(dateDebut: string, now: Date = new Date(), total: number
   return { day: Math.min(total, Math.max(1, raw)), finished: raw > total, notStarted: raw < 1 };
 }
 
-type Pickable = { date_debut: string; duree: number };
+type Pickable = { date_debut: string; duree: number; programme_id?: string };
+
+const estHd = (e: Pickable) => !!e.programme_id && estProgrammeHdReel(e.programme_id);
+
+/** Habitudes & Défis d'abord, les autres parcours dans leur ordre (onglets). */
+export function hdDabord<T extends Pickable>(list: T[]): T[] {
+  return [...list].sort((a, b) => Number(estHd(b)) - Number(estHd(a)));
+}
 
 /**
  * Parcours affiché par défaut quand le compte en a plusieurs :
@@ -31,6 +40,10 @@ type Pickable = { date_debut: string; duree: number };
  * 3) sinon le dernier terminé.
  */
 export function pickDefault<T extends Pickable>(list: T[], now: Date = new Date()): T | null {
+  // Demande de Dr Justin (17/11/2026) : Habitudes & Défis reste le parcours par défaut, même quand
+  // un autre parcours (ex. Accompagnement 14 jours) s'ouvre après lui. Les autres restent au choix.
+  const hd = list.filter(estHd);
+  if (hd.length && hd.length < list.length) return pickDefault(hd, now);
   const withRaw = list.map(e => ({ e, raw: rawDay(e.date_debut, now) }));
   const running = withRaw.filter(x => x.raw >= 1 && x.raw <= x.e.duree).sort((a, b) => a.raw - b.raw);
   if (running[0]) return running[0].e;
