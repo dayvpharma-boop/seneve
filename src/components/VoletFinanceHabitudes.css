@@ -53,3 +53,7 @@
 @media (prefers-color-scheme:dark){
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .vf-total :is(p,small,b,span){color:#fefefe!important;-webkit-text-fill-color:#fefefe!important}
 }
+
+/* Raccourcis placés en haut du volet, au-dessus des onglets (18/11/2026). */
+:root:root:root:root .vf > .vf-raccourcis{margin-top:0;margin-bottom:12px}
+:root:root:root:root .vf > .vf-raccourcis + .sim-ios-dans-volet{margin-top:0;margin-bottom:12px}
