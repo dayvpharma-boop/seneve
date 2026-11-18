@@ -47,3 +47,9 @@
 
 /* Ligne « SÉNEVÉ Simulateur » (13/11/2026) : un bouton qui ouvre le simulateur sous la liste, même aspect que les liens. */
 :root:root:root .vf-raccourcis button{width:100%;border:0;font:inherit;color:inherit;cursor:pointer;text-align:left}
+
+/* Mode sombre : texte blanc sur les cartes violette (dettes) et verte (épargne) du volet Finance — 18/11/2026. */
+:root:root:root:root:root:root:root[data-apparence="sombre"] .vf-total :is(p,small,b,span){color:#fefefe!important;-webkit-text-fill-color:#fefefe!important}
+@media (prefers-color-scheme:dark){
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .vf-total :is(p,small,b,span){color:#fefefe!important;-webkit-text-fill-color:#fefefe!important}
+}
