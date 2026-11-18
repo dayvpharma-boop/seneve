@@ -25,3 +25,21 @@
  .rp-papier tr{break-inside:avoid}
 }
 @media screen and (max-width:480px){:root:root:root .rp-page .rp-papier{padding:18px 12px}:root:root:root .rp-page .rp-papier :is(table){font-size:12px!important}:root:root:root .rp-page .rp-papier :is(td,th){padding:5px 4px!important}:root:root:root .rp-page .rp-papier h1{font-size:20px!important}}
+
+/* Mode sombre : l'aperçu du rapport reste une feuille blanche lisible, comme le PDF — 18/11/2026. */
+@media screen{
+:root:root:root:root:root:root:root[data-apparence="sombre"] .rp-page .rp-papier{background:#fefefe!important;background-image:none!important;color:#1d1d1f!important;-webkit-text-fill-color:#1d1d1f!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .rp-page .rp-papier :is(h1,h2,h3,td,th,b,strong,span,div,tr,caption){color:#1d1d1f!important;-webkit-text-fill-color:#1d1d1f!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .rp-page .rp-papier :is(p,small){color:#555a61!important;-webkit-text-fill-color:#555a61!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .rp-page .rp-papier :is(table,tbody,thead,tr,td){background-color:transparent!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .rp-page .rp-papier th{background-color:#f2f2f7!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .rp-page .rp-papier :is(td,th){border-color:#d1d1d6!important}
+@media (prefers-color-scheme:dark){
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .rp-page .rp-papier{background:#fefefe!important;background-image:none!important;color:#1d1d1f!important;-webkit-text-fill-color:#1d1d1f!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .rp-page .rp-papier :is(h1,h2,h3,td,th,b,strong,span,div,tr,caption){color:#1d1d1f!important;-webkit-text-fill-color:#1d1d1f!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .rp-page .rp-papier :is(p,small){color:#555a61!important;-webkit-text-fill-color:#555a61!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .rp-page .rp-papier :is(table,tbody,thead,tr,td){background-color:transparent!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .rp-page .rp-papier th{background-color:#f2f2f7!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .rp-page .rp-papier :is(td,th){border-color:#d1d1d6!important}
+}
+}
