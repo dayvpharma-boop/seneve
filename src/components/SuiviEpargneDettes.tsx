@@ -16,6 +16,9 @@ import {NotFound} from '@/routes/introuvable';
 type Mode='epargne'|'dettes';
 const ISO=/^\d{4}-\d{2}-\d{2}$/;
 const montantCents=(v:string)=>Math.round(Number(v)*100);
+/** Part remboursée en % : une décimale sous 1 % (sinon un petit paiement s'affichait « 0 % »), entier au-delà. */
+const pctRembourse=(rembourse:number,ouverture:number)=>{if(rembourse<=0||ouverture<=0)return 0;const x=Math.min(100,rembourse/ouverture*100);return x<1?Math.max(0.1,Math.round(x*10)/10):Math.min(Math.round(x),rembourse<ouverture?99:100);};
+const texteDecimal=(n:number,en:boolean)=>String(n).replace('.',en?'.':',');
 const totalCents=(xs:{amount:string}[])=>xs.reduce((n,x)=>n+montantCents(x.amount),0);
 const resteDette=(d:DetteSuivie)=>Math.max(0,montantCents(d.opening_balance)-totalCents(d.payments));
 /** Montant lisible ; les centimes ne s'affichent que s'il y en a (« 150 000 CDF », « 25,50 $US »). */
@@ -365,12 +368,12 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
    </form>
   </section>;
   return <>
-   {devises.map(devise=>{const groupe=dettesTriees.filter(d=>d.currency===devise),ouverture=groupe.reduce((n,d)=>n+montantCents(d.opening_balance),0),rembourse=groupe.reduce((n,d)=>n+totalCents(d.payments),0),p=ouverture?Math.min(100,Math.round(rembourse/ouverture*100)):0;
+   {devises.map(devise=>{const groupe=dettesTriees.filter(d=>d.currency===devise),ouverture=groupe.reduce((n,d)=>n+montantCents(d.opening_balance),0),rembourse=groupe.reduce((n,d)=>n+totalCents(d.payments),0),p=pctRembourse(rembourse,ouverture);
     return <section key={devise} aria-label={l(`Total en ${devise}`,`Total in ${devise}`)} className="hd-classique mb-3 rounded-[20px] p-[18px] text-white shadow-[0_1px_3px_rgba(0,0,0,.08)]" style={{background:'#4f45c4'}}>
      <p className="text-[14px] font-medium opacity-90">{l('Il reste à rembourser','Left to repay')}</p>
      <p className="mt-0.5 mb-2.5 text-[32px] font-bold leading-tight tracking-tight tabular-nums [overflow-wrap:anywhere]">{formatter(Math.max(0,ouverture-rembourse),devise,en)}</p>
-     <div className="h-1.5 overflow-hidden rounded-full bg-white/25"><div className="h-full rounded-full bg-white" style={{width:`${p}%`}}/></div>
-     <div className="mt-1.5 flex justify-between text-[13px] opacity-85"><span>{l('Déjà remboursé','Already repaid')} {nombre(rembourse,devise,en)}</span><span>{p} %</span></div>
+     <div className="h-1.5 overflow-hidden rounded-full bg-white/25"><div className="h-full rounded-full bg-white" style={{width:`${rembourse>0?Math.max(p,1.5):0}%`}}/></div>
+     <div className="mt-1.5 flex justify-between text-[13px] opacity-85"><span>{l('Déjà remboursé','Already repaid')} {nombre(rembourse,devise,en)}</span><span>{texteDecimal(p,en)} %</span></div>
     </section>;})}
    {dettesTriees.length>0&&<section aria-labelledby="hd-mes-dettes">
     {titre(l('Mes dettes','My debts'),<button type="button" className="text-[15px] font-normal" style={{color:'var(--ios-accent,#5b4ee8)'}} aria-expanded={ajoutDette} aria-controls="hd-ajouter-dette" onClick={()=>{setAjoutDette(true);setAnnonce(null);setTimeout(()=>formulaireDette.current?.scrollIntoView({behavior:'smooth',block:'start'}),0);}}>+ {l('Ajouter','Add')}</button>)}
@@ -380,7 +383,7 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
     <div className="mt-1 flex flex-col gap-2.5">
      {dettesTriees.map(d=>{
       const rembourse=totalCents(d.payments),reste=resteDette(d),ouv=montantCents(d.opening_balance);
-      const pourcentage=Math.min(100,Math.round(rembourse/Math.max(1,ouv)*100));
+      const pourcentage=pctRembourse(rembourse,ouv);
       const plusPetite=dettesOuvertes.find(x=>x.currency===d.currency)?.debt_id===d.debt_id;
       const dernier=d.payments.at(-1);
       const statut=reste===0?(dernier?l(`Soldée le ${dateCourte(dernier.date_locale,false)}`,`Paid off on ${dateCourte(dernier.date_locale,true)}`):l('Soldée','Paid off')):plusPetite?l('Plus petit solde · à finir d’abord','Smallest balance · finish first'):l('En cours','In progress');
@@ -393,8 +396,8 @@ async function relire(){if(!inscription)return;try{setSuivi(await chargerSuiviFi
         <span className="min-w-0 flex-1"><span id={`hd-titre-${d.debt_id}`} className="block text-[17px] font-semibold [overflow-wrap:anywhere]">{nomDette(d)}</span><small className="block text-[13px] font-normal text-hd-on-surface-variant">{statut}</small></span>
         <span className="text-right"><span className="block text-[17px] font-bold tabular-nums">{nombre(reste,d.currency,en)}</span><small className="block text-xs font-normal text-hd-on-surface-variant">{reste===0?d.currency:l(`${d.currency} restants`,`${d.currency} left`)}</small></span>
        </button></h3>
-       {reste>0&&<><div role="progressbar" aria-label={l('Progression du remboursement','Repayment progress')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pourcentage} className="mt-3 mb-1.5 h-1.5 overflow-hidden rounded-full bg-hd-surface-container"><div className="h-full rounded-full bg-emerald-600" style={{width:`${pourcentage}%`}}/></div>
-        <div className="flex justify-between gap-2 text-[13px] text-hd-on-surface-variant"><span>{estOuverte?l(`Remboursé ${nombre(rembourse,d.currency,false)} sur ${nombre(ouv,d.currency,false)}`,`Repaid ${nombre(rembourse,d.currency,true)} of ${nombre(ouv,d.currency,true)}`):repere}</span><span>{pourcentage} %</span></div></>}
+       {reste>0&&<><div role="progressbar" aria-label={l('Progression du remboursement','Repayment progress')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pourcentage} className="mt-3 mb-1.5 h-1.5 overflow-hidden rounded-full bg-hd-surface-container"><div className="h-full rounded-full bg-emerald-600" style={{width:`${rembourse>0?Math.max(pourcentage,1.5):0}%`}}/></div>
+        <div className="flex justify-between gap-2 text-[13px] text-hd-on-surface-variant"><span>{estOuverte?l(`Remboursé ${nombre(rembourse,d.currency,false)} sur ${nombre(ouv,d.currency,false)}`,`Repaid ${nombre(rembourse,d.currency,true)} of ${nombre(ouv,d.currency,true)}`):repere}</span><span>{texteDecimal(pourcentage,en)} %</span></div></>}
        {message('nom:'+d.debt_id)}
        {estOuverte&&<div id={`hd-panneau-${d.debt_id}`}>
         {reste>0&&<form onSubmit={e=>void enregistrerPaiement(e,d)} noValidate className="mt-3 rounded-xl px-2.5 pb-3 pt-1" style={{background:'var(--ios-fond,#f2f2f7)'}}>
