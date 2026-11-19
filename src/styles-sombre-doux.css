@@ -166,3 +166,25 @@
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .result-action-compte .choix-continuer{background:var(--sd-teinte)!important;background-image:none!important;color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .result-action-compte .choix-continuer :is(svg,span){color:inherit!important;-webkit-text-fill-color:inherit!important}
 }
+
+/* Mode sombre : garder le texte foncé du bouton compte et l'icône du titre en accent (19/11/2026). */
+:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .result-action-compte .choix-continuer{color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .tag :is(svg,.material-symbols-outlined,i,span){color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+@media (prefers-color-scheme:dark){
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .result-action-compte .choix-continuer{color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .tag :is(svg,.material-symbols-outlined,i,span){color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+}
+
+/* Mode sombre : pastille « Créer mon espace » (19/11/2026). */
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-bouton{background:#2c2c2e!important;box-shadow:0 10px 24px -12px rgb(0 0 0 / .8),inset 0 0 0 1px rgb(255 255 255 / .08)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-icone{background:color-mix(in srgb,var(--sd-teinte) 22%,#2c2c2e)!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-textes b{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-textes small{color:#aeaeb2!important;-webkit-text-fill-color:#aeaeb2!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-fleche{background:var(--sd-teinte)!important;color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
+@media (prefers-color-scheme:dark){
+:root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-bouton{background:#2c2c2e!important;box-shadow:0 10px 24px -12px rgb(0 0 0 / .8),inset 0 0 0 1px rgb(255 255 255 / .08)!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-icone{background:color-mix(in srgb,var(--sd-teinte) 22%,#2c2c2e)!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-textes b{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-textes small{color:#aeaeb2!important;-webkit-text-fill-color:#aeaeb2!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-fleche{background:var(--sd-teinte)!important;color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
+}
