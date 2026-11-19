@@ -147,7 +147,7 @@ export function HabitudesDepenses({userId}:{userId:string}){
     <h2 className="dp-section">{l('Mes dépenses','My expenses')}</h2>
     {parJour.length===0?<p className="dp-vide"><IconeHD nom="receipt_long" className="text-[28px]"/>{l('Aucune dépense notée ce mois-ci.','No expenses recorded this month.')}</p>
     :parJour.map(([jour,liste])=><section key={jour} aria-label={jourLisible(jour)}>
-     <h3 className="dp-jour">{jourLisible(jour)}</h3>
+     <h3 className="dp-jour"><span>{jourLisible(jour)}</span><span className="dp-jour-total">{l('Total','Total')} {nombre(liste.reduce((n,d)=>n+Math.round(Number(d.amount)*100),0))} {dev}</span></h3>
      <ul className="dp-liste">{liste.map(d=><li key={d.expense_id}>
       <span className="dp-icone" style={{background:INFOS_CATEGORIES[d.category].couleur}} aria-hidden="true"><IconeHD nom={INFOS_CATEGORIES[d.category].icone} className="text-[18px]"/></span>
       <span className="dp-ligne-texte"><b>{nomCat(d.category)}</b>{(d.note||!d.liee)&&<small>{[d.note,!d.liee?l('hors caisse Pour vivre','not taken from For living'):null].filter(Boolean).join(' · ')}</small>}</span>

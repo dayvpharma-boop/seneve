@@ -38,6 +38,8 @@ it('noter une dépense : catégorie obligatoire, envoi au serveur, caisse Pour v
  render(<MemoryRouter initialEntries={['/habitudes/depenses']}><HabitudesDepenses userId="u"/></MemoryRouter>);
  expect((await screen.findByText(/Dépensé ce mois/)).parentElement!.textContent).toMatch(/370 USD/);
  expect(screen.getByText(/hors caisse Pour vivre/)).toBeInTheDocument();
+ // Total de la journée à droite de la date (250 + 120).
+ expect(document.querySelector('.dp-jour-total')!.textContent).toBe('Total 370 USD');
 
  fireEvent.click(screen.getByRole('button',{name:/Noter une dépense/}));
  fireEvent.change(screen.getByLabelText('Montant'),{target:{value:'25'}});

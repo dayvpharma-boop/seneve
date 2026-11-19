@@ -101,3 +101,9 @@
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page :is(.dp-ligne-texte b,.dp-ligne-montant b){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page :is(.dp-ligne-texte small,.dp-ligne-montant small,.dp-vide,.dp-carte-info){color:#98989d!important;-webkit-text-fill-color:#98989d!important}
 }
+
+/* Total de la journée à droite de la date (19/11/2026). */
+:root:root:root:root .dp-page .dp-jour{display:flex!important;justify-content:space-between;align-items:baseline;gap:8px}
+:root:root:root:root .dp-page .dp-jour .dp-jour-total{font-weight:700;color:var(--dp-encre,#1d1d1f);white-space:nowrap;font-variant-numeric:tabular-nums}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .dp-page .dp-jour .dp-jour-total{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
+@media (prefers-color-scheme:dark){:root:root:root:root:root:root:root:not([data-apparence="clair"]) .dp-page .dp-jour .dp-jour-total{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}}
