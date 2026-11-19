@@ -129,10 +129,7 @@ function ResultBody({ answers, chosenRoot, onChoose, language, mantle = '' }: { 
      </div>
     {/* Image de partage repliée : elle ne s'affiche (et ne se dessine) que si la personne ouvre la section. */}
     {root && act !== null && act !== undefined && <details className="partage-repli" onToggle={e => setPartageOuvert(e.currentTarget.open)}><summary><span><IconeResultat nom="share" taille={22}/>{t.shareToggle}</span><IconeResultat nom="expand_more" taille={20}/></summary>{partageOuvert && <ShareCard editorial stitch language={language} totals={r.t} startRoot={act} />}</details>}
-    {root && <div className="card result-next"><p className="tag">{t.further}</p><p className="more">{t.furtherText}</p><a className="btn btn-link" href={whatsappUrls[language]} target="_blank" rel="noopener noreferrer"><IconeResultat nom="chat" taille={20}/>{t.whatsappButton}</a>
-      {/* Accord du 15/10/2026 : le résultat mène aussi à l'espace du site ; en anglais depuis le 18/10/2026 (page de connexion bilingue). */}
-      <div className="result-espace"><p className="more">{t.espaceTexte}</p><a className="btn btn-link" href={`${import.meta.env.BASE_URL}connexion${language === 'en' ? '?lang=en' : ''}`}><IconeResultat nom="person_outline" taille={20}/>{t.espaceBouton}</a></div>
-    </div>}
+    {/* Décision de Dr Justin du 19/11/2026 : carte « Aller plus loin » (WhatsApp + « Créer mon espace ») retirée ; le compte se crée depuis « Ta première action ». */}
     {/* L'invitation ne dépend pas de la racine : visible même avant le choix en cas d'égalité (demande du 24/10/2026). */}
     <InviteCard langue={language} resultat />
     {act !== null && act !== undefined && <RememberRoot k={act} />}

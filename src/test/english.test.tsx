@@ -44,8 +44,9 @@ describe('English test with unchanged rules', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Compassion and Tzedakah' }));
     expect(screen.getByText('Visit a widow, an orphan, or a lonely person in your circle.')).toBeVisible();
     expect(screen.getByText('Book, Appendix 1, Day 17 · Compassion and Tzedakah')).toBeVisible();
-    const link = screen.getByRole('link', { name: 'Continue on WhatsApp' });
-    expect(new URL(link.getAttribute('href') ?? '').searchParams.get('text')).toBe('Hello, I have just taken the 7 Roots Test. I would like to discover the free 7-day journey.');
+    // 19/11/2026 : plus de carte « Aller plus loin » ; le compte se crée depuis la carte de l'action.
+    expect(screen.queryByRole('link', { name: 'Continue on WhatsApp' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Continue by creating an account' })).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion?lang=en`);
     const result = document.querySelector('#s-result');
     if (!(result instanceof HTMLElement)) throw new Error('Result missing');
     const visible = result.textContent ?? '';

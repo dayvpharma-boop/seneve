@@ -31,17 +31,16 @@ describe('Résultat « Sentier »', () => {
     finishQuiz([11, 7, 13, 9, 6, 12, 10]);
     const hero = cardOf('Nous te proposons de commencer par');
     const action = cardOf('Ta première action');
-    const whatsapp = cardOf('Aller plus loin');
     const roots = cardOf('Tes 7 racines');
     const share = cardOf('Partager');
     expect(within(hero).getByRole('heading', { name: R[4]?.n ?? '' })).toBeVisible();
     expect(within(hero).getByText('Racine à développer')).toHaveClass('cat-chip');
     expect(within(hero).getByText(/cette racine a le total le plus bas/)).toBeVisible();
-    expect(follows(hero, action) && follows(action, roots) && follows(roots, share) && follows(share, whatsapp)).toBe(true);
-    // Le résultat mène aussi à l'espace du site, sous WhatsApp (15/10/2026).
-    const espace = within(whatsapp).getByRole('link', { name: 'Créer mon espace' });
-    expect(espace).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion`);
-    expect(follows(within(whatsapp).getByRole('link', { name: 'Continuer sur WhatsApp' }), espace)).toBe(true);
+    expect(follows(hero, action) && follows(action, roots) && follows(roots, share)).toBe(true);
+    // 19/11/2026 : « Aller plus loin » (WhatsApp + espace) retiré ; l'espace se crée depuis la carte de l'action.
+    expect(screen.queryByText('Aller plus loin')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Continuer sur WhatsApp' })).not.toBeInTheDocument();
+    expect(within(action).getByRole('link', { name: 'Continuer en créant un compte' })).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion`);
     // Même encadré doré que l'action du jour de l'espace.
     expect(action.querySelector('.action-box .action')).not.toBeNull();
   });
@@ -90,7 +89,7 @@ describe('Résultat « Sentier »', () => {
     expect(screen.getByText('How should I read my results?')).toBeVisible();
     expect(screen.getByText(/this root has the lowest total/)).toBeVisible();
     // Depuis le 18/10/2026, la page de connexion existe en anglais : le résultat anglais y mène.
-    expect(screen.getByRole('link', { name: 'Create my space' })).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion?lang=en`);
+    expect(screen.getByRole('link', { name: 'Continue by creating an account' })).toHaveAttribute('href', `${import.meta.env.BASE_URL}connexion?lang=en`);
   });
 });
 

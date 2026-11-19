@@ -93,6 +93,6 @@ describe('Suivi anonyme du test', () => {
     render(<Index />);
     answerAll(uniqueMin);
     expect(screen.getByRole('heading', { name: "Tes racines aujourd'hui" })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Continuer sur WhatsApp' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Continuer en créant un compte' })).toBeInTheDocument();
   });
 });

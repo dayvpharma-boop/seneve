@@ -47,35 +47,14 @@ describe('Carte « Aller plus loin »', () => {
     expect(within(detail).getByRole('link', { name: 'Continuer en créant un compte' })).toHaveAttribute('href', expect.stringMatching(/\/connexion$/));
   });
 
-  it('absente tant qu’aucune action n’est affichée, puis placée entre l’action et la précision finale', () => {
-    render(<Index />);
-    finishQuiz([15, 12, 6, 12, 9, 6, 12]);
-    expect(screen.queryByText('Aller plus loin')).not.toBeInTheDocument();
-    expect(screen.queryByText(BODY)).not.toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: 'Continuer sur WhatsApp' })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('radio', { name: 'Fidélité dans les petites choses' }));
-    expect(screen.getByText('Aller plus loin')).toBeVisible();
-    expect(within(card()).getByText(BODY)).toBeVisible();
-    const actionCard = screen.getByText('Ta première action').closest('.card') as HTMLElement;
-    const note = screen.getByText(NOTE);
-    expect(actionCard.compareDocumentPosition(card()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(card().compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  });
-
-  it('présente directement dans le cas du minimum unique, href exact et sans donnée personnelle', () => {
+  it('carte « Aller plus loin » et lien WhatsApp retirés du résultat (décision du 19/11/2026)', () => {
     render(<Index />);
     finishQuiz([15, 15, 9, 12, 6, 9, 12]);
-    expect(screen.getByText('Aller plus loin')).toBeVisible();
-    const anchor = link();
-    expect(anchor.tagName).toBe('A');
-    expect(anchor.getAttribute('target')).toBe('_blank');
-    expect(anchor.getAttribute('rel')).toBe('noopener noreferrer');
-    const href = anchor.getAttribute('href') ?? '';
-    expect(href.startsWith(PREFIX)).toBe(true);
-    const decoded = decodeURIComponent(href.slice(PREFIX.length));
-    expect(decoded).toBe(MESSAGE);
-    for (const root of R) expect(decoded).not.toContain(root.n);
-    for (const category of ['Racine à développer', 'Racine à consolider', 'Point d’appui à entretenir']) expect(decoded).not.toContain(category);
-    expect(decoded).not.toMatch(/\d+\s*\/\s*15/);
+    expect(screen.getByText('Ta première action')).toBeVisible();
+    expect(screen.queryByText('Aller plus loin')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Continuer sur WhatsApp' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Créer mon espace' })).not.toBeInTheDocument();
+    const actionCard = screen.getByText('Ta première action').closest('.card') as HTMLElement;
+    expect(within(actionCard).getByRole('link', { name: 'Continuer en créant un compte' })).toBeInTheDocument();
   });
 });
