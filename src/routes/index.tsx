@@ -99,8 +99,10 @@ function ResultBody({ answers, chosenRoot, onChoose, language, mantle = '' }: { 
   // Racine choisie, première action et, en cas d'égalité, l'inscription : ouverts sous la racine choisie (24/10/2026).
   const detail = root && act !== null && act !== undefined ? <>
     <RootCard language={language} tag={needsChoice ? t.chosen : t.suggested} k={act} total={r.t[act] ?? 3} explanation={needsChoice ? t.resultHelp.chosen : t.resultHelp.suggested} />
-    <div className="card action-card result-action"><p className="tag"><IconeResultat nom="task_alt" taille={22}/>{t.firstAction}</p><div className="action-box"><p className="action">{root.a}</p><p className="src">{t.actionSource(root.j, root.n)}</p></div></div>
-    {needsChoice && <a className="btn btn-link choix-continuer" href={`${import.meta.env.BASE_URL}connexion${language==='en'?'?lang=en':''}`}>{language==='en'?'Continue by creating an account':'Continuer en créant un compte'}</a>}
+    <div className="card action-card result-action"><p className="tag"><IconeResultat nom="task_alt" taille={22}/>{t.firstAction}</p><div className="action-box"><p className="action">{root.a}</p><p className="src">{t.actionSource(root.j, root.n)}</p></div>
+     {/* Demande du 19/11/2026 : dans la carte, une invitation à créer un compte (ou se connecter) pour suivre cette action. Facultatif : le résultat reste visible sans compte. */}
+     <div className="result-action-compte"><p>{language==='en'?'To follow this action day after day, create your free space. Already have one? Sign in on the same page.':'Pour suivre cette action jour après jour, crée ton espace gratuit. Déjà un compte\u00A0? Connecte-toi sur la même page.'}</p><a className="btn btn-link choix-continuer" href={`${import.meta.env.BASE_URL}connexion${language==='en'?'?lang=en':''}`}><IconeResultat nom="person_outline" taille={20}/>{language==='en'?'Continue by creating an account':'Continuer en créant un compte'}</a></div>
+    </div>
   </> : null;
   // Ordre du cahier n°4, §11 (rétabli le 22/10/2026) : racine forte, racine à fortifier, première action ;
   // puis le détail des 7 racines avec une barre par score, le partage et la suite.

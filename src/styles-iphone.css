@@ -1202,3 +1202,9 @@
 :root:root:root:root .ios-alerte :is(button,.border-t){border-color:var(--alerte-ligne)!important}
 :root:root:root:root .ios-alerte button[style*="d70015"]{color:var(--alerte-rouge)!important}
 :root:root:root:root .ios-alerte button:not([style*="d70015"]){color:var(--alerte-accent)!important}
+
+/* « Ta première action » : invitation au compte dans la carte (19/11/2026). */
+:root:root:root:root:root #s-result .result-action .result-action-compte{margin-top:16px;padding-top:14px;border-top:1px solid rgb(255 255 255 / .22)}
+:root:root:root:root:root #s-result .result-action .result-action-compte p{margin:0 0 10px;font-size:14px;line-height:1.45;color:#ffffffd9!important;-webkit-text-fill-color:#ffffffd9!important}
+:root:root:root:root:root #s-result .result-action .result-action-compte .choix-continuer{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;margin:0;border:0!important;border-radius:14px!important;background:#fefefe!important;background-image:none!important;color:#3e33b8!important;-webkit-text-fill-color:#3e33b8!important;font-weight:700;text-decoration:none!important}
+:root:root:root:root:root #s-result .result-action .result-action-compte .choix-continuer :is(svg,span){color:inherit!important;-webkit-text-fill-color:inherit!important}
