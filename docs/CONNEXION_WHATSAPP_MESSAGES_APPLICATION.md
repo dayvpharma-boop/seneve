@@ -1,0 +1,63 @@
+# Connexion WhatsApp et messages dans SÉNEVÉ — préparation du 20 novembre 2026
+
+## Décision du propriétaire
+- Ajouter l'inscription et la connexion par numéro WhatsApp confirmé par code temporaire, sans e-mail obligatoire.
+- Suspendre les envois WhatsApp quotidiens de la Découverte 7 jours.
+- Conserver les e-mails.
+- Donner accès aux messages dans l'application, avec rendez-vous matin, midi et soir et notifications consenties.
+
+## État vérifié
+- La branche de production est préservée. Aucun fournisseur payant n'est configuré par cette préparation.
+- Le code WhatsApp de cette branche est masqué tant que VITE_WHATSAPP_AUTH_ENABLED n'est pas égal à true.
+- Supabase Auth prend nativement en charge channel: whatsapp avec Twilio ou Twilio Verify. Le branchement du WhatsApp Cloud API Meta existant exige un chemin d'authentification dédié et vérifié ; ne pas lui envoyer directement un code produit dans le navigateur.
+- Authentification : signInWithOtp demande le code, verifyOtp avec type sms vérifie le code reçu par WhatsApp. Aucune ouverture avant une session valide.
+- shouldCreateUser vaut false dans le mode connexion. Aucun rapprochement de comptes sur le numéro saisi seul.
+- ensure_participant exige auth.uid() et ne dépend pas de la présence d'un e-mail.
+- Les deux programmes Découverte ont 7 contenus par version et un seul numéro de message par jour. Ne pas fabriquer 21 contenus.
+- Les rappels génériques push sont déjà programmés toutes les 15 minutes, avec consentement, fuseau personnel et exclusion Habitudes & Défis.
+- Limite constatée : le rappel existant utilise le premier contenu du jour et une clé par participant/jour/moment, ce qui nécessite une revue pour les multi-programmes.
+- Les notifications actuelles listent annonces, réponses et rappels reçus ; elles ne constituent pas encore une boîte de réception autonome des contenus de programme.
+
+## Suspension urgente n8n — PAS ENCORE EFFECTUÉE
+Le contrôle de l'interface n8n est désynchronisé. L'état Published est seulement inventorié ; aucune désactivation vérifiée.
+Ne pas annoncer la suspension. Ne pas révoquer les consentements des participants pour réaliser un arrêt technique.
+Avant modification : télécharger une copie du workflow et noter sa version publiée et son état.
+Examiner :
+1. RELANCES — PARCOURS DÉCOUVERTE PROSPECT
+2. RELANCES — AUDIO DE LUCIE (DÉCOUVERTE)
+3. SUIVI QUOTIDIEN
+4. SÉNEVÉ — Récapitulatif WhatsApp du soir
+Les noms ne prouvent pas le chemin d'envoi : examiner déclencheurs, dépendances et nœuds.
+Suspendre les branches d'envoi du programme PROSPECT_LIVRE_7J_FR_V1 / EN_V1, sans couper les e-mails ni la réception WhatsApp.
+Bloquer également les reprises et réservations antérieures avant l'appel fournisseur ; inspecter les exécutions déjà lancées.
+Ne jamais désactiver WHATSAPP BASE globalement : la connexion et les commandes peuvent en dépendre.
+Vérifier ensuite l'absence de nouveaux appels fournisseur pour la Découverte et conserver l'historique des envois déjà acceptés.
+
+## Activation WhatsApp — prérequis avant production
+1. Vérifier le fournisseur actuel, la capacité d'envoi d'un modèle d'authentification et sa tarification ; aucun achat de service par défaut.
+2. Configurer l'authentification téléphone, les limites de débit serveur, une expiration courte, la protection contre les abus et la longueur à 6 chiffres. Le délai client n'est pas une protection serveur.
+3. Tester les numéros de recette et codes fixes uniquement dans seneve-test ; aucun numéro de test en production.
+4. Vérifier compte sans e-mail, code expiré/faux/réutilisé, double appui, renvoi et panne fournisseur.
+5. Ajouter le lien depuis un compte e-mail déjà authentifié avec preuve de possession, sans fusion automatique ; vérifier conservation des droits, achats et progression.
+6. Contrôler ensure_participant, entrée Découverte et e-mails pour un compte sans adresse. Les tâches e-mail ne doivent pas tenter d'envoyer à une adresse absente.
+7. Activer le drapeau uniquement après ces vérifications, puis refaire une recette réelle d'inscription et de connexion.
+Le code envoyé reste un coût ponctuel d'authentification. Aucun envoi de message de programme n'est implicitement consenti.
+
+## Diffusion dans l'application — à réaliser
+- Source unique : contenus déjà publiés de la version figée de chaque inscription.
+- Boîte de réception privée par participant et inscription, indépendante de l'autorisation push et de la présence d'un appareil.
+- Trois rendez-vous selon horaires et fuseau choisis. Pour la Découverte actuelle : contenu du jour le matin ; rendez-vous d'action et de bilan à midi et le soir, sans inventer de nouveaux enseignements officiels.
+- Clé d'idempotence par inscription/version/jour/moment ; aucune rafale de rattrapage après panne.
+- Vérifier droit, état actif, calendrier local, publication et activité terminée avant préparation puis juste avant envoi.
+- Push discret ouvrant le bon programme et moment ; aucun contenu intime sur écran verrouillé.
+- Contenu consultable dans l'application même sans push ou si sa livraison échoue. Lecture différente de réalisation.
+- Pas de remplacement du numéro de connexion par une adresse e-mail inventée.
+- Conserver l'historique et arrêter après J7 sans modifier les inscriptions et versions.
+- E-mails conservés selon les règles existantes.
+- Préparer la migration et le retour arrière ; tester sur seneve-test avant production.
+- n8n peut orchestrer l'appel sécurisé, mais un planificateur Supabase existe déjà : éviter deux moteurs concurrents et les doublons.
+
+## Retour arrière du code préparé
+Désactiver VITE_WHATSAPP_AUTH_ENABLED puis revenir au commit précédent de la page de connexion.
+Aucune donnée participant ni fonction SQL n'est modifiée par ce commit.
+Le rétablissement des messages WhatsApp reste une décision explicite du propriétaire ; ne pas le faire par simple retour du frontend.

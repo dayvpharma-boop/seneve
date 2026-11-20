@@ -1,3 +1,5 @@
+import { ConnexionWhatsApp } from '@/components/ConnexionWhatsApp';
+import { connexionWhatsAppActivee } from '@/lib/connexion-whatsapp';
 import { useEffect, useState, type FormEvent } from 'react';
 import { LogoSeneve } from '@/components/LogoSeneve';
 import { BoutonsConnexionSociale } from '@/components/BoutonsConnexionSociale';
@@ -167,6 +169,10 @@ export function Connexion() {
       <button id="auth-signup" type="button" role="tab" aria-selected={tab === 'signup'} aria-controls="auth-form" onClick={() => choose('signup')}>{tab === 'signup' && <IconeConnexion nom="person_add" taille={18} />}{T.creer}</button>
       <button id="auth-signin" type="button" role="tab" aria-selected={tab === 'signin'} aria-controls="auth-form" onClick={() => choose('signin')}>{tab === 'signup' && <IconeConnexion nom="login" taille={18} />}{T.connecter}</button>
     </div>
+    {connexionWhatsAppActivee() && <ConnexionWhatsApp key={tab + langue} creation={tab === 'signup'} langue={langue} enLigne={enLigne} onConnexion={() => {
+      const retour = location.state?.retourJournal ?? location.state?.retour;
+      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : suiteHabitudes ? `/habitudes/inscription?lang=${langue}` : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
+    }} />}
     <fieldset className="auth-social-cadre" disabled={!enLigne}><BoutonsConnexionSociale langue={langue === 'en' ? 'en' : 'fr'} /></fieldset>
     <form id="auth-form" className="card form connexion-form" onSubmit={submit} aria-busy={busy} aria-labelledby={`auth-${tab}`}>
       {error && <p className="error" role="alert">{error}</p>}
