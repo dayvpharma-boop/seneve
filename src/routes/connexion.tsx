@@ -171,7 +171,7 @@ export function Connexion() {
     </div>
     {connexionWhatsAppActivee() && <ConnexionWhatsApp key={tab + langue} creation={tab === 'signup'} langue={langue} enLigne={enLigne} onConnexion={() => {
       const retour = location.state?.retourJournal ?? location.state?.retour;
-      navigate(typeof retour === 'string' && /^\\/(?:journal|admin)(?:\\?|$)/.test(retour) ? retour : suiteHabitudes ? `/habitudes/inscription?lang=${langue}` : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
+      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : suiteHabitudes ? `/habitudes/inscription?lang=${langue}` : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
     }} />}
     <fieldset className="auth-social-cadre" disabled={!enLigne}><BoutonsConnexionSociale langue={langue === 'en' ? 'en' : 'fr'} /></fieldset>
     <form id="auth-form" className="card form connexion-form" onSubmit={submit} aria-busy={busy} aria-labelledby={`auth-${tab}`}>
