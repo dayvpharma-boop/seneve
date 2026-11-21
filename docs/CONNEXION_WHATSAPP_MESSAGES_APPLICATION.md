@@ -96,3 +96,7 @@ Plus tard (entreprise vérifiée) : META_WA_MODE=modele fait partir le code avec
 - Migration supabase/seneve_065_code_connexion_whatsapp.sql : installée sur seneve-test, essais SQL réussis (aucune demande, remise, autre numéro, nouveau code, code expiré ; aucun accès anon/authenticated).
 - Fonction envoyer-code-whatsapp v2 déployée sur seneve-test.
 - Réglages Supabase à faire dans le tableau de bord : fournisseur Téléphone activé (expiration 600 s, 6 chiffres), crochet « Send SMS » en HTTPS vers la fonction, secret SEND_SMS_HOOK_SECRET.
+- Essai complet réussi sur seneve-test (21/11) : code déposé par le crochet, refus pour un autre numéro, mauvais code refusé, bon code = session, code réutilisé refusé, numéro inconnu en « Se connecter » = refus ; dans l'app : compte créé sans e-mail, arrivée dans l'espace. Données d'essai effacées.
+- seneve-prod (21/11) : migration seneve_065 installée (aucun accès anon/authenticated), fonction envoyer-code-whatsapp v1 déployée (même empreinte que le test).
+- WHATSAPP BASE : branche « Demande de code (CODE) » ajoutée après LIER (CODE ou LOGIN → remettre_code_connexion → réponse FR/EN), CODE exclu de l'audio de Lucie ; version 205c3f2d publiée. Copie avant changement : sauvegardes-n8n/WHATSAPP-BASE-21-11-2026.json (version b93b94ac).
+- Reste : réglages Supabase de seneve-prod (crochet, secret, téléphone), vrai essai avec le téléphone de Dr Justin, puis VITE_WHATSAPP_AUTH_ENABLED=true à la publication.
