@@ -110,3 +110,4 @@ Plus tard (entreprise vérifiée) : META_WA_MODE=modele fait partir le code avec
 - Le numéro déjà relié avec « Relier mon WhatsApp » est proposé d'office. Numéro déjà pris par un autre compte : refus de Supabase (phone_exists), message clair, rien n'est changé.
 - Fonction envoyer-code-whatsapp : le destinataire est sms.phone (relevé du 21/11 : pour un changement de numéro, user.phone reste l'ancien et sms.phone est le nouveau ; aucun sms_type n'est envoyé).
 - Essai sur seneve-test dans l'app : compte e-mail d'essai → numéro ajouté → déconnexion → connexion par WhatsApp → même identifiant et même e-mail. Données d'essai effacées.
+- seneve-prod : fonction envoyer-code-whatsapp v4 (destinataire sms.phone) déployée le 21/11, même empreinte que le test ; demande de code vérifiée avec un faux numéro, puis effacée.
