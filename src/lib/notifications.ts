@@ -6,11 +6,12 @@ import { supabase } from './supabase';
 export type ElementNotification =
   | { type: 'annonce'; id: string; date: string; titre: string; texte: string; langue: string; image?: string | null; video?: string | null; bouton_texte?: string | null; bouton_lien?: string | null }
   | { type: 'reponse'; id: string; date: string; texte: string; request_id: string }
+  | { type: 'programme'; id: string; date: string; moment: string; jour: number; titre: string | null; theme?: string | null; programme?: string | null; langue?: string }
   | { type: 'rappel_moment'; id: string; date: string; moment: string }
   | { type: 'rappel_habitude'; id: string; date: string; activity_id: string; habit_key: string | null };
 export type Notifications = { vu_jusqu_a: string | null; non_lues: number; elements: (ElementNotification & { nouveau?: boolean })[] };
 
-const TYPES = new Set(['annonce', 'reponse', 'rappel_moment', 'rappel_habitude']);
+const TYPES = new Set(['annonce', 'reponse', 'programme', 'rappel_moment', 'rappel_habitude']);
 
 export async function chargerNotifications(limite = 50): Promise<Notifications> {
   const { data, error } = await supabase.rpc('mes_notifications', { p_limite: limite });

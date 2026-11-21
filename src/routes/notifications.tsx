@@ -56,10 +56,16 @@ function NotificationsDuCompte() {
   if (echec && !data) return <main className="wrap avec-nav nt-page ios">{tete}<div className="card"><p role="alert">{en ? 'Your notifications cannot be loaded right now.' : 'Tes notifications ne peuvent pas être chargées pour le moment.'}</p><button type="button" className="btn action-btn" onClick={() => void charger()}>{en ? 'Try again' : 'Réessayer'}</button></div>{pied}</main>;
   if (!data) return <main className="wrap avec-nav nt-page ios">{tete}<p className="muted" role="status">{en ? 'Loading…' : 'Chargement…'}</p>{pied}</main>;
 
+  const programme = data.elements.filter(e => e.type === 'programme');
   const messages = data.elements.filter(e => e.type === 'annonce' || e.type === 'reponse');
   const rappels = data.elements.filter(e => e.type === 'rappel_moment' || e.type === 'rappel_habitude');
   const nouveau = (e: ElementNotification & { nouveau?: boolean }) => e.nouveau === true;
   return <main className="wrap avec-nav nt-page ios">{tete}
+    <section className="nt-section" aria-labelledby="nt-programme">
+      <h2 id="nt-programme">{en ? 'Programme messages' : 'Messages du programme'}</h2>
+      {programme.length ? <ul className="nt-liste">{programme.map(e => <Element key={e.type + e.id} e={e} en={en} nouveau={nouveau(e)} />)}</ul>
+        : <p className="nt-vide">{en ? 'No programme message yet. Your morning, midday and evening messages will arrive here.' : 'Aucun message de programme pour le moment. Tes messages du matin, du midi et du soir arriveront ici.'}</p>}
+    </section>
     <section className="nt-section" aria-labelledby="nt-messages">
       <h2 id="nt-messages">{en ? 'Messages from the team' : 'Messages de l’équipe'}</h2>
       {messages.length ? <ul className="nt-liste">{messages.map(e => <Element key={e.type + e.id} e={e} en={en} nouveau={nouveau(e)} />)}</ul>
@@ -80,6 +86,13 @@ function Element({ e, en, nouveau }: { e: ElementNotification; en: boolean; nouv
   let icone: SymboleNotification = 'notifications', titre = '', texte = '', lien: { to: string; label: string } | null = null;
   if (e.type === 'annonce') { icone = 'campaign'; titre = e.titre; texte = e.texte; if (e.bouton_texte && e.bouton_lien && lienInterne(e.bouton_lien)) lien = { to: e.bouton_lien, label: e.bouton_texte }; }
   else if (e.type === 'reponse') { icone = 'support_agent'; titre = en ? 'The team answered you' : 'L’équipe t’a répondu'; texte = e.texte; lien = { to: en ? '/aide?lang=en' : '/aide', label: en ? 'Open my help requests' : 'Ouvrir mes demandes d’aide' }; }
+  else if (e.type === 'programme') {
+    icone = 'auto_stories';
+    const m = e.moment === 'midi' ? (en ? 'Midday' : 'Midi') : e.moment === 'soir' ? (en ? 'Evening' : 'Soir') : (en ? 'Morning' : 'Matin');
+    titre = `${en ? 'Day' : 'Jour'} ${e.jour} · ${m}${e.titre ? ` — ${e.titre}` : ''}`;
+    texte = [e.programme, TEXTES_MOMENTS[en ? 'en' : 'fr'][e.moment]].filter(Boolean).join(' · ');
+    lien = { to: en ? '/espace?lang=en' : '/espace', label: en ? 'Open my day' : 'Ouvrir ma journée' };
+  }
   else if (e.type === 'rappel_moment') { icone = 'alarm'; titre = en ? `${e.moment === 'midi' ? 'Midday' : e.moment === 'soir' ? 'Evening' : 'Morning'} reminder` : `Rappel du ${e.moment === 'midi' ? 'midi' : e.moment === 'soir' ? 'soir' : 'matin'}`; texte = TEXTES_MOMENTS[en ? 'en' : 'fr'][e.moment] ?? ''; lien = { to: en ? '/espace?lang=en' : '/espace', label: en ? 'Open my day' : 'Ouvrir ma journée' }; }
   else { icone = 'alarm'; const nom = e.habit_key ? NOMS_HABITUDES[e.habit_key]?.[en ? 1 : 0] : undefined; titre = nom ?? (en ? 'Scheduled activity' : 'Activité prévue'); texte = en ? `It was time for: ${titre}.` : `C’était l’heure : ${titre}.`; lien = { to: `/habitudes/aujourdhui${en ? '?lang=en' : ''}${/^[0-9a-f-]{36}$/i.test(e.activity_id) ? `#hd-activite-${e.activity_id}` : ''}`, label: nom ? (en ? `Open: ${nom}` : `Ouvrir : ${nom}`) : (en ? 'Open my habits' : 'Ouvrir mes habitudes') }; }
   return <li className={`nt-element is-${e.type}${nouveau ? ' is-nouveau' : ''}`}>

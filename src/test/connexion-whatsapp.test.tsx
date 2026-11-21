@@ -37,7 +37,7 @@ describe('Connexion WhatsApp', () => {
     await screen.findByLabelText('Code de vérification');
     expect(api.send).toHaveBeenCalledWith({
       phone: '+243812345678',
-      options: { channel: 'whatsapp', shouldCreateUser: true, data: { prenom: 'Marie', langue: 'fr' } },
+      options: { channel: 'sms', shouldCreateUser: true, data: { prenom: 'Marie', langue: 'fr' } },
     });
     expect(suite).not.toHaveBeenCalled();
     expect(api.verify).not.toHaveBeenCalled();

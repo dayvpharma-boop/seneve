@@ -61,3 +61,22 @@ Le code envoyé reste un coût ponctuel d'authentification. Aucun envoi de messa
 Désactiver VITE_WHATSAPP_AUTH_ENABLED puis revenir au commit précédent de la page de connexion.
 Aucune donnée participant ni fonction SQL n'est modifiée par ce commit.
 Le rétablissement des messages WhatsApp reste une décision explicite du propriétaire ; ne pas le faire par simple retour du frontend.
+
+## Mise à jour du 21 novembre 2026
+Décisions de Dr Justin : code de connexion envoyé par **le numéro Meta actuel** ; messages du programme déposés dans l'application par **le planificateur Supabase** (pas n8n).
+
+### Messages dans l'application — INSTALLÉ (seneve-test puis seneve-prod)
+- Migration supabase/seneve_064_messages_application.sql ; ancienne version de mes_notifications sauvegardée dans supabase/sauvegardes/mes_notifications_avant_064.sql.
+- Table seneve.messages_app (aucun accès direct), fonction seneve.deposer_messages_app(), tâche « seneve-messages-application » toutes les 5 minutes.
+- Programmes à 3 messages : 1er, 2e et 3e contenus du jour à 08:00, 13:00, 19:00 (programmes.heures_messages) ou aux heures choisies par le participant. Découverte et Continuité : un message le matin (08:00 par défaut). Fuseau du participant, Africa/Kinshasa par défaut.
+- Un message par inscription, jour et moment ; aucun rattrapage des jours passés ; Habitudes & Défis exclu ; indépendant de l'accord push.
+- Cloche : section « Messages du programme » (FR/EN), badge Nouveau, lien « Ouvrir ma journée ».
+- Vérifié : dépôt unique (2e passage = 0), parcours terminé ignoré, lecture par le participant seulement, empreintes identiques test/prod (mes_notifications ad733b6c…, deposer_messages_app b54873b1…).
+
+### Code WhatsApp — PRÉPARÉ, NON ACTIVÉ
+- Fonction Edge envoyer-code-whatsapp (crochet « Send SMS » de Supabase Auth) déployée sur seneve-test ; elle répond « Crochet non configuré » tant que les secrets manquent.
+- Le site demande le code avec le canal « sms » de Supabase ; c'est le crochet qui l'envoie par WhatsApp (aucun SMS).
+- Reste à faire (Dr Justin) : modèle « Authentification » approuvé par Meta, jeton permanent, puis secrets, crochet et fournisseur Téléphone dans Supabase ; activer VITE_WHATSAPP_AUTH_ENABLED après recette.
+
+### Suspension n8n — TOUJOURS NON EFFECTUÉE
+Connexion n8n à refaire par Dr Justin.

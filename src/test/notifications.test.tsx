@@ -54,6 +54,16 @@ describe('page Notifications', () => {
     page();
     expect(await screen.findByText(/Aucun message pour le moment/)).toBeInTheDocument();
     expect(screen.getByText(/Aucun rappel ces 60 derniers jours/)).toBeInTheDocument();
+    expect(screen.getByText(/Aucun message de programme pour le moment/)).toBeInTheDocument();
+  });
+  it('affiche les messages du programme déposés dans l’application (décision du 21/11/2026)', async () => {
+    m.rpc.mockImplementation(async (n: string) => n === 'mes_notifications' ? { data: { vu_jusqu_a: null, non_lues: 1, elements: [
+      { type: 'programme', id: 'M1', date: '2026-11-21T07:00:00Z', moment: 'matin', jour: 1, titre: 'Ce qui occupe la première place', programme: 'Découverte 7 jours', nouveau: true },
+    ] }, error: null } : { data: null, error: null });
+    page();
+    expect(await screen.findByText('Jour 1 · Matin — Ce qui occupe la première place')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Messages du programme' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Ouvrir ma journée' })).toHaveAttribute('href', '/espace');
   });
 });
 

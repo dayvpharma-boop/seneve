@@ -13,10 +13,12 @@ export function normaliserTelephone(valeur: string): string | null {
 
 export async function demanderCodeWhatsApp(phone: string, creation: boolean, prenom: string, langue: 'fr' | 'en') {
   // Le serveur gère l'expiration, le nombre de tentatives et l'unicité du code.
+  // Canal « sms » pour Supabase : le crochet « Send SMS » (fonction envoyer-code-whatsapp, 21/11/2026) remet
+  // ensuite le code par WhatsApp, avec le numéro Meta de SÉNEVÉ. Aucun SMS n'est envoyé.
   // Aucune session n'est créée par cet appel. Aucun consentement marketing n'est enregistré.
   return supabase.auth.signInWithOtp({
     phone,
-    options: { channel: 'whatsapp', shouldCreateUser: creation,
+    options: { channel: 'sms', shouldCreateUser: creation,
       ...(creation ? { data: { prenom: prenom.trim(), langue } } : {}) },
   });
 }
