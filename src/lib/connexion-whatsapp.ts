@@ -1,8 +1,17 @@
 import { supabase } from './supabase';
+import { WHATSAPP_NUMBER } from './liaison';
 
 /** Activation uniquement après configuration et recette du fournisseur WhatsApp dans Supabase Auth. */
 export function connexionWhatsAppActivee(): boolean {
   return import.meta.env.VITE_WHATSAPP_AUTH_ENABLED === 'true';
+}
+
+/** Mot envoyé par la personne pour recevoir son code (WHATSAPP BASE lui répond dans la conversation qu'elle ouvre). */
+export const MOT_CODE = 'CODE';
+
+/** Ouvre WhatsApp sur le numéro de SÉNEVÉ avec « CODE » déjà écrit. */
+export function lienDemandeCode(): string {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(MOT_CODE)}`;
 }
 
 export function normaliserTelephone(valeur: string): string | null {
@@ -13,8 +22,8 @@ export function normaliserTelephone(valeur: string): string | null {
 
 export async function demanderCodeWhatsApp(phone: string, creation: boolean, prenom: string, langue: 'fr' | 'en') {
   // Le serveur gère l'expiration, le nombre de tentatives et l'unicité du code.
-  // Canal « sms » pour Supabase : le crochet « Send SMS » (fonction envoyer-code-whatsapp, 21/11/2026) remet
-  // ensuite le code par WhatsApp, avec le numéro Meta de SÉNEVÉ. Aucun SMS n'est envoyé.
+  // Canal « sms » pour Supabase : le crochet « Send SMS » (fonction envoyer-code-whatsapp) dépose le code ;
+  // la personne envoie ensuite « CODE » au WhatsApp de SÉNEVÉ, qui lui répond avec. Aucun SMS n'est envoyé.
   // Aucune session n'est créée par cet appel. Aucun consentement marketing n'est enregistré.
   return supabase.auth.signInWithOtp({
     phone,

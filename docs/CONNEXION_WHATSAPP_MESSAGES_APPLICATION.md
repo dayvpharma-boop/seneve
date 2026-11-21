@@ -80,3 +80,19 @@ Décisions de Dr Justin : code de connexion envoyé par **le numéro Meta actuel
 
 ### Suspension n8n — TOUJOURS NON EFFECTUÉE
 Connexion n8n à refaire par Dr Justin.
+
+### Suspension n8n — EFFECTUÉE le 21/11/2026 vers 12 h 25 (Kinshasa)
+- Flux « SUIVI QUOTIDIEN » (bcOVo0pVweMmj7Kt) désactivé à la demande de Dr Justin : plus aucun message de programme sur WhatsApp, pour personne. Copie avant arrêt : SENEVE 2.0/sauvegardes-n8n/SUIVI-QUOTIDIEN-avant-arret-21-11-2026.json.
+- WHATSAPP BASE reste actif (réception, commandes, liaison, code de connexion).
+
+### Connexion par code WhatsApp SANS modèle Meta — décision du 21/11/2026 après-midi
+Meta refuse le modèle « Authentification » tant que l'entreprise n'est pas vérifiée. Même principe que « Relier mon WhatsApp » : c'est la personne qui écrit d'abord.
+1. L'app demande le code à Supabase Auth (canal « sms »). Le crochet envoyer-code-whatsapp le DÉPOSE dans seneve.codes_connexion_whatsapp (10 min), sans rien envoyer.
+2. La personne touche « Ouvrir WhatsApp » et envoie « CODE » au +243 844 211 119.
+3. WHATSAPP BASE appelle seneve.remettre_code_connexion avec l'expéditeur donné par Meta et répond avec le code (conversation ouverte par la personne : gratuit, aucun modèle).
+4. La personne saisit le code ; Supabase Auth le vérifie et ouvre la session.
+Quelqu'un qui saisit le numéro d'un autre ne reçoit rien : le code ne part que vers le WhatsApp de ce numéro. Au plus 5 remises par numéro et par heure.
+Plus tard (entreprise vérifiée) : META_WA_MODE=modele fait partir le code avec le modèle Meta, sans changer l'app.
+- Migration supabase/seneve_065_code_connexion_whatsapp.sql : installée sur seneve-test, essais SQL réussis (aucune demande, remise, autre numéro, nouveau code, code expiré ; aucun accès anon/authenticated).
+- Fonction envoyer-code-whatsapp v2 déployée sur seneve-test.
+- Réglages Supabase à faire dans le tableau de bord : fournisseur Téléphone activé (expiration 600 s, 6 chiffres), crochet « Send SMS » en HTTPS vers la fonction, secret SEND_SMS_HOOK_SECRET.

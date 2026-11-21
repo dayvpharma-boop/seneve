@@ -44,6 +44,14 @@ describe('Connexion WhatsApp', () => {
     expect(screen.getByRole('button', { name: /Renvoyer dans/ })).toBeDisabled();
   });
 
+  it('invite à écrire « CODE » au WhatsApp de SÉNEVÉ pour recevoir le code', async () => {
+    ouvrir(false);
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
+    const lien = await screen.findByRole('link', { name: 'Ouvrir WhatsApp' });
+    expect(lien).toHaveAttribute('href', 'https://wa.me/243844211119?text=CODE');
+    expect(screen.getByText(/envoie/)).toHaveTextContent('Depuis ce numéro WhatsApp, envoie CODE à SÉNEVÉ.');
+  });
+
   it('se connecter ne crée pas silencieusement un compte', async () => {
     ouvrir(false);
     fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));

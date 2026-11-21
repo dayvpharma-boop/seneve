@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { demanderCodeWhatsApp, erreurWhatsApp, normaliserTelephone, verifierCodeWhatsApp } from '@/lib/connexion-whatsapp';
+import { demanderCodeWhatsApp, erreurWhatsApp, lienDemandeCode, normaliserTelephone, verifierCodeWhatsApp } from '@/lib/connexion-whatsapp';
 
 export function ConnexionWhatsApp({ creation, langue, enLigne, onConnexion }: {
   creation: boolean; langue: 'fr' | 'en'; enLigne: boolean; onConnexion: () => void;
@@ -60,14 +60,21 @@ export function ConnexionWhatsApp({ creation, langue, enLigne, onConnexion }: {
 
   return <section className="card connexion-whatsapp" aria-label={en ? 'WhatsApp sign-in' : 'Connexion WhatsApp'}>
     <h2>{en ? 'With WhatsApp' : 'Avec WhatsApp'}</h2>
-    <p>{en ? 'No email needed. Confirm your number with a temporary code.' : 'Sans e-mail. Confirme ton numéro avec un code temporaire.'}</p>
+    <p>{en ? 'No email needed. Send a message to SÉNEVÉ on WhatsApp to get your temporary code.' : 'Sans e-mail. Écris à SÉNEVÉ sur WhatsApp pour recevoir ton code temporaire.'}</p>
     {erreur && <p role="alert" className="error">{erreur}</p>}
     {!destination ? <form className="form" onSubmit={envoyer} aria-busy={occupe}>
       {creation && <label>{en ? 'Your first name' : 'Ton prénom'}<input value={prenom} onChange={e => setPrenom(e.target.value)} autoComplete="given-name" required disabled={occupe} /></label>}
       <label>{en ? 'WhatsApp number with country code' : 'Numéro WhatsApp avec indicatif pays'}<input type="tel" autoComplete="tel" inputMode="tel" placeholder="+243…" value={telephone} onChange={e => setTelephone(e.target.value)} required disabled={occupe} /></label>
       <button className="btn" disabled={occupe || !enLigne || attente > 0}>{occupe ? (en ? 'Sending…' : 'Envoi…') : attente ? (en ? `Wait ${attente} s` : `Patienter ${attente} s`) : (en ? 'Receive my WhatsApp code' : 'Recevoir mon code WhatsApp')}</button>
     </form> : <>
-      <p role="status">{en ? 'Code requested for' : 'Code demandé pour'} {destination}. {en ? 'Check WhatsApp.' : 'Consulte WhatsApp.'}</p>
+      <p role="status">{en ? 'Your code is ready for' : 'Ton code est prêt pour'} {destination}.</p>
+      <ol>
+        <li>{en
+          ? <>From this WhatsApp number, send <strong>CODE</strong> to SÉNEVÉ.</>
+          : <>Depuis ce numéro WhatsApp, envoie <strong>CODE</strong> à SÉNEVÉ.</>}</li>
+        <li>{en ? 'SÉNEVÉ replies with your 6-digit code. Enter it below.' : 'SÉNEVÉ te répond avec ton code à 6 chiffres. Saisis-le ci-dessous.'}</li>
+      </ol>
+      <a className="btn" href={lienDemandeCode()} target="_blank" rel="noopener noreferrer">{en ? 'Open WhatsApp' : 'Ouvrir WhatsApp'}</a>
       <form className="form" onSubmit={verifier} aria-busy={occupe}>
         <label>{en ? 'Verification code' : 'Code de vérification'}<input type="text" autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={code} onChange={e => setCode(e.target.value)} required disabled={occupe} /></label>
         <button className="btn" disabled={occupe || !enLigne}>{en ? 'Verify and continue' : 'Vérifier et continuer'}</button>
