@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { demanderCodeWhatsApp, erreurWhatsApp, lienDemandeCode, normaliserTelephone, verifierCodeWhatsApp } from '@/lib/connexion-whatsapp';
+import './connexion-whatsapp.css';
 
 export function ConnexionWhatsApp({ creation, langue, enLigne, onConnexion }: {
   creation: boolean; langue: 'fr' | 'en'; enLigne: boolean; onConnexion: () => void;

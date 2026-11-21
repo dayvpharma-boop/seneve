@@ -14,6 +14,8 @@ import {GoalCard} from '@/components/GoalCard';
 import {EmailMatinCard} from '@/components/EmailMatinCard';
 import {RappelsCard} from '@/components/RappelsCard';
 import {WhatsAppLink} from '@/components/WhatsAppLink';
+import {ConnexionWhatsAppCompte} from '@/components/ConnexionWhatsAppCompte';
+import {connexionWhatsAppActivee} from '@/lib/connexion-whatsapp';
 import {CodePlaceCard} from '@/components/CodePlaceCard';
 import {IconeConfidentialite as C} from '@/components/IconeConfidentialite';
 import {BarreNav} from '@/components/BarreNav';
@@ -63,7 +65,7 @@ const ICONES_ETAPES:Record<EtapeJardin,SymboleTrait>={graine:'graine',pousse:'po
 /** Profil (vue « profil ») et Mes réglages (vue « reglages ») : même chargement, même session, mêmes copies hors connexion. */
 export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
  const navigate=useNavigate();const location=useLocation();const[apparence]=useApparence();const[visuel]=usePreferencesVisuelles();
- const[ouvert,setOuvert]=useState<string|null>(null);const[resumeRappels,setResumeRappels]=useState<string|null>(null);const[resumeEmail,setResumeEmail]=useState<string|null>(null);const[resumeWhatsApp,setResumeWhatsApp]=useState<string|null>(null);const[params,setParams]=useSearchParams();const enLigne=useEnLigne();
+ const[ouvert,setOuvert]=useState<string|null>(null);const[resumeRappels,setResumeRappels]=useState<string|null>(null);const[resumeEmail,setResumeEmail]=useState<string|null>(null);const[resumeWhatsApp,setResumeWhatsApp]=useState<string|null>(null);const[resumeConnexionWA,setResumeConnexionWA]=useState<string|null>(null);const[params,setParams]=useSearchParams();const enLigne=useEnLigne();
  const[data,setData]=useState<Donnees|null>(null);const[etat,setEtat]=useState<'chargement'|'pret'|'erreur'>('chargement');const[copie,setCopie]=useState<string|null>(null);
  const[editing,setEditing]=useState(false);const[prenom,setPrenom]=useState('');const[busy,setBusy]=useState(false);const[message,setMessage]=useState('');const[erreur,setErreur]=useState('');
  const[equipe,setEquipe]=useState(false);const generation=useRef(0);const userId=useRef<string|null>(null);const en=(params.get('lang')??data?.langue)==='en';const langue=en?'en':'fr';
@@ -87,7 +89,7 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
  useEffect(()=>{const f=()=>setGraines(lireGraines());window.addEventListener(EVENEMENT_GRAINES,f);window.addEventListener('storage',f);return()=>{window.removeEventListener(EVENEMENT_GRAINES,f);window.removeEventListener('storage',f);};},[]);
  useEffect(()=>{if(vue!=='profil'||!data)return;if(copie!==null||!enLigne){setPas('indisponible');return;}let actif=true;setPas(null);chargerPas(data.parcours.map(x=>x.id)).then(r=>{if(actif)setPas(r);}).catch(()=>{if(actif)setPas('indisponible');});return()=>{actif=false;};},[vue,data,copie,enLigne]);
  // Liens vers une rubrique (#preferences, #notifications, #rappels, #whatsapp, #email-matin, #code) : la ligne s'ouvre.
- useEffect(()=>{if(etat!=='pret')return;const h=location.hash.replace('#','');const cible=h==='notifications'||h==='rappels'?'rappels':h==='preferences'?'langue':['email-matin','whatsapp','code','prenom','horaires','langue','mode','couleurs','accent','taille','version'].includes(h)?h:null;if(cible&&vue==='profil'){navigate(`/reglages${location.search}#${h}`,{replace:true});return;}if(!cible&&vue==='reglages'&&params.get('parcours')){setOuvert('horaires');return;}if(!cible)return;setOuvert(cible);requestAnimationFrame(()=>document.getElementById(`pf-${cible}`)?.scrollIntoView?.({block:'start'}));},[etat,location.hash,vue]);
+ useEffect(()=>{if(etat!=='pret')return;const h=location.hash.replace('#','');const cible=h==='notifications'||h==='rappels'?'rappels':h==='preferences'?'langue':['email-matin','whatsapp','connexion-whatsapp','code','prenom','horaires','langue','mode','couleurs','accent','taille','version'].includes(h)?h:null;if(cible&&vue==='profil'){navigate(`/reglages${location.search}#${h}`,{replace:true});return;}if(!cible&&vue==='reglages'&&params.get('parcours')){setOuvert('horaires');return;}if(!cible)return;setOuvert(cible);requestAnimationFrame(()=>document.getElementById(`pf-${cible}`)?.scrollIntoView?.({block:'start'}));},[etat,location.hash,vue]);
  const lectureSeule=!enLigne||copie!==null;const racine=racineTest();const racineLe=dateRacineTest();
  const parcours=(data?.parcours??[]).map(etatParcours);const enCours=parcours.filter(x=>x.statut==='encours'&&x.p.etat==='active').length;
  async function enregistrer(changements:{prenom?:string;langue?:string}){if(!data||busy||lectureSeule)return;const p=data;const ticket=generation.current;setBusy(true);setMessage('');setErreur('');try{const nouveau=await modifierProfil(p,changements);if(ticket!==generation.current)return;setData(nouveau);enregistrerProfil(nouveau);setEditing(false);if(changements.langue)setParams({lang:changements.langue},{replace:true});setMessage(changements.langue==='en'||(en&&!changements.langue)?'Profile saved':'Profil mis à jour');}catch{if(ticket===generation.current)setErreur(en?'Your changes could not be saved. Please try again.':'Tes modifications n’ont pas pu être enregistrées. Réessaie.');}finally{if(ticket===generation.current)setBusy(false);}}
@@ -126,6 +128,9 @@ export function Profil({vue='profil'}:{vue?:'profil'|'reglages'}){
    </Reglage>
    <LigneLien to="/aide?motif=adresse-email" icone="arobase" valeur={emailMasque}>{en?'Email address':'Adresse e-mail'}</LigneLien>
    <LigneLien to={`/mot-de-passe-oublie?lang=${langue}`} icone="cadenas">{en?'Password':'Mot de passe'}</LigneLien>
+   {connexionWhatsAppActivee()&&<Reglage id="connexion-whatsapp" icone="message" titre={en?'Sign in with WhatsApp':'Se connecter avec WhatsApp'} valeur={lectureSeule?null:resumeConnexionWA} ouvert={ouvert==='connexion-whatsapp'} basculer={basculer('connexion-whatsapp')}>
+    {lectureSeule?reconnecte(en?'Reconnect to add your WhatsApp number.':'Reconnecte-toi pour ajouter ton numéro WhatsApp.'):<ConnexionWhatsAppCompte langue={langue} enLigne={enLigne} onResume={setResumeConnexionWA}/>}
+   </Reglage>}
    <LigneLien to={`/reglages/abonnement${suffixe}`} icone="graine">{en?'My subscription':'Mon abonnement'}</LigneLien>
    <LigneLien to={`/acces?lang=${langue}`} icone="cle">{en?'My access and purchases':'Mes accès et achats'}</LigneLien>
    {equipe&&<LigneLien to="/admin" icone="equipe" className="pv-admin">Administration</LigneLien>}

@@ -39,7 +39,7 @@ export async function verifierCodeWhatsApp(phone: string, token: string) {
 export function erreurWhatsApp(message: string | undefined, en: boolean): string {
   const m = (message ?? '').toLowerCase();
   if (/rate.limit|too many|for security|only request/.test(m)) return en ? 'Too many attempts. Please wait before trying again.' : 'Trop de tentatives. Patiente avant de réessayer.';
-  if (/signups not allowed|otp_disabled|user not found/.test(m)) return en ? 'No account uses this number yet. Choose “Create an account”.' : 'Aucun compte n’utilise encore ce numéro. Choisis « Créer un compte ».';
+  if (/signups not allowed|otp_disabled|user not found/.test(m)) return en ? 'No account uses this number yet. Choose “Create an account”, or sign in with your email and add your number in My settings.' : 'Aucun compte n’utilise encore ce numéro. Choisis « Créer un compte », ou connecte-toi avec ton e-mail et ajoute ton numéro dans Mes réglages.';
   if (/expired|invalid.*otp|token.*invalid/.test(m)) return en ? 'Invalid or expired code. Request a new code.' : 'Code incorrect ou expiré. Demande un nouveau code.';
   if (/network|fetch/.test(m)) return en ? 'Check your connection and try again.' : 'Vérifie ta connexion et réessaie.';
   return en ? 'WhatsApp sign-in is unavailable. Try again later or use email.' : 'La connexion WhatsApp est indisponible. Réessaie plus tard ou utilise ton e-mail.';

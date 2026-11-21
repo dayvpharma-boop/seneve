@@ -104,3 +104,9 @@ Plus tard (entreprise vérifiée) : META_WA_MODE=modele fait partir le code avec
 - Correction pendant la recette : le crochet de seneve-prod avait été créé sans secret (« Hook requires authorization token ») ; secret généré puis recopié dans SEND_SMS_HOOK_SECRET.
 - Affichage : VITE_WHATSAPP_AUTH_ENABLED=true ajouté au build de publication (deploy.yml).
 - Limite connue : un compte e-mail existant n'est pas retrouvé par son numéro WhatsApp (même relié avec LIER). « Créer un compte » avec WhatsApp crée un compte séparé, sans fusion automatique. À traiter plus tard : ajouter le numéro à un compte e-mail déjà connecté.
+
+### Ajouter son numéro WhatsApp à un compte e-mail (21/11/2026, soir)
+- Mes réglages → « Se connecter avec WhatsApp » (ConnexionWhatsAppCompte) : supabase.auth.updateUser({ phone }) → le crochet dépose le code au NOUVEAU numéro → la personne envoie CODE → verifyOtp type « phone_change ». Ensuite connexion possible par WhatsApp OU par e-mail, même compte (aucune fusion).
+- Le numéro déjà relié avec « Relier mon WhatsApp » est proposé d'office. Numéro déjà pris par un autre compte : refus de Supabase (phone_exists), message clair, rien n'est changé.
+- Fonction envoyer-code-whatsapp : le destinataire est sms.phone (relevé du 21/11 : pour un changement de numéro, user.phone reste l'ancien et sms.phone est le nouveau ; aucun sms_type n'est envoyé).
+- Essai sur seneve-test dans l'app : compte e-mail d'essai → numéro ajouté → déconnexion → connexion par WhatsApp → même identifiant et même e-mail. Données d'essai effacées.

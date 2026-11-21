@@ -20,7 +20,12 @@
 //   Mode modèle seulement : META_WA_MODE=modele, META_WA_TOKEN, META_WA_PHONE_ID, META_WA_MODELE_FR, META_WA_MODELE_EN
 import { Webhook } from 'npm:standardwebhooks@1.0.0';
 
-type Charge = { user: { phone?: string; user_metadata?: { langue?: string } }; sms: { otp: string } };
+// Destinataire : sms.phone, le numéro choisi par Supabase pour CET envoi. Pour l'ajout d'un numéro à un compte
+// existant (Profil, 21/11/2026), c'est le nouveau numéro, alors que user.phone reste l'ancien (relevé du 21/11).
+type Charge = {
+  user: { phone?: string; user_metadata?: { langue?: string } };
+  sms: { otp: string; phone?: string };
+};
 
 const erreur = (code: number, message: string) =>
   Response.json({ error: { http_code: code, message } }, { status: code });
@@ -79,7 +84,7 @@ Deno.serve(async (req) => {
   }
 
   const otp = charge?.sms?.otp ?? '';
-  const numero = (charge?.user?.phone ?? '').replace(/^\+/, '');
+  const numero = (charge?.sms?.phone || charge?.user?.phone || '').replace(/^\+/, '');
   if (!/^[0-9]{6}$/.test(otp) || !/^[1-9][0-9]{7,14}$/.test(numero)) return erreur(400, 'Demande invalide');
   const en = charge.user.user_metadata?.langue === 'en';
 

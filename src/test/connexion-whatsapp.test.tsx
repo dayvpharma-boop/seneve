@@ -53,7 +53,7 @@ describe('Connexion WhatsApp', () => {
   });
 
   it('explique clairement qu’aucun compte n’utilise ce numéro', () => {
-    expect(erreurWhatsApp('Signups not allowed for otp', false)).toBe('Aucun compte n’utilise encore ce numéro. Choisis « Créer un compte ».');
+    expect(erreurWhatsApp('Signups not allowed for otp', false)).toBe('Aucun compte n’utilise encore ce numéro. Choisis « Créer un compte », ou connecte-toi avec ton e-mail et ajoute ton numéro dans Mes réglages.');
   });
 
   it('se connecter ne crée pas silencieusement un compte', async () => {

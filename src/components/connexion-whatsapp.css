@@ -1,0 +1,8 @@
+/* Connexion WhatsApp par message entrant (21/11/2026), page Connexion et Profil : étapes numérotées et bouton WhatsApp secondaire. */
+.connexion-whatsapp .code-etapes{margin:4px 0 12px;padding-left:22px;display:grid;gap:6px;list-style:decimal outside}
+.connexion-whatsapp .code-etapes li{display:list-item}
+.connexion-whatsapp .code-etapes li::marker{font-weight:600;color:#1f8a4c}
+.connexion-whatsapp .code-etapes li{padding-left:2px;line-height:1.45}
+.connexion-whatsapp a.code-ouvrir-whatsapp{display:flex;align-items:center;justify-content:center;min-height:48px;margin:0 0 14px;border:1.5px solid #1f8a4c;border-radius:14px;background:transparent;color:#1f8a4c;font:600 15px/1.2 Poppins,system-ui,sans-serif;text-decoration:none}
+.connexion-whatsapp a.code-ouvrir-whatsapp:hover{background:rgb(31 138 76 / .08)}
+.connexion-whatsapp .form + .link{margin-right:12px}
