@@ -10,8 +10,9 @@ afterEach(() => { cleanup(); vi.clearAllMocks(); vi.unstubAllEnvs(); });
 const ouvrir = (creation = true, onConnexion = vi.fn()) => {
   api.send.mockResolvedValue({ data: {}, error: null });
   render(<ConnexionWhatsApp creation={creation} langue="fr" enLigne onConnexion={onConnexion} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Continuer avec WhatsApp' }));
   if (creation) fireEvent.change(screen.getByLabelText('Ton prénom'), { target: { value: 'Marie' } });
-  fireEvent.change(screen.getByLabelText('Numéro WhatsApp avec indicatif pays'), { target: { value: '+243 812 345 678' } });
+  fireEvent.change(screen.getByLabelText(/Ton numéro WhatsApp/), { target: { value: '+243 812 345 678' } });
   return onConnexion;
 };
 
@@ -33,23 +34,23 @@ describe('Connexion WhatsApp', () => {
 
   it('demande un code WhatsApp sans créer de session ni naviguer', async () => {
     const suite = ouvrir();
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
-    await screen.findByLabelText('Code de vérification');
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
+    await screen.findByLabelText('Ton code à 6 chiffres');
     expect(api.send).toHaveBeenCalledWith({
       phone: '+243812345678',
       options: { channel: 'sms', shouldCreateUser: true, data: { prenom: 'Marie', langue: 'fr' } },
     });
     expect(suite).not.toHaveBeenCalled();
     expect(api.verify).not.toHaveBeenCalled();
-    expect(screen.getByRole('button', { name: /Renvoyer dans/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Nouveau code dans/ })).toBeDisabled();
   });
 
   it('invite à écrire « CODE » au WhatsApp de SÉNEVÉ pour recevoir le code', async () => {
     ouvrir(false);
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
-    const lien = await screen.findByRole('link', { name: 'Ouvrir WhatsApp' });
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
+    const lien = await screen.findByRole('link', { name: 'Envoyer CODE' });
     expect(lien).toHaveAttribute('href', 'https://wa.me/243844211119?text=CODE');
-    expect(screen.getByText(/envoie/)).toHaveTextContent('Depuis ce numéro WhatsApp, envoie CODE à SÉNEVÉ.');
+    expect(screen.getByText(/envoie le mot/)).toHaveTextContent('Depuis le +243 ••• ••• 678, envoie le mot CODE à SÉNEVÉ. Tu reçois aussitôt ton code à 6 chiffres.');
   });
 
   it('explique clairement qu’aucun compte n’utilise ce numéro', () => {
@@ -58,17 +59,17 @@ describe('Connexion WhatsApp', () => {
 
   it('se connecter ne crée pas silencieusement un compte', async () => {
     ouvrir(false);
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
-    await screen.findByLabelText('Code de vérification');
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
+    await screen.findByLabelText('Ton code à 6 chiffres');
     expect(api.send.mock.calls[0]?.[0].options.shouldCreateUser).toBe(false);
   });
 
   it('un code incorrect ne donne aucun accès', async () => {
     api.verify.mockResolvedValue({ data: { session: null }, error: { message: 'invalid otp' } });
     const suite = ouvrir();
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
-    fireEvent.change(await screen.findByLabelText('Code de vérification'), { target: { value: '123456' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Vérifier et continuer' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
+    fireEvent.change(await screen.findByLabelText('Ton code à 6 chiffres'), { target: { value: '123456' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Créer mon compte' }));
     await screen.findByRole('alert');
     expect(suite).not.toHaveBeenCalled();
   });
@@ -76,9 +77,9 @@ describe('Connexion WhatsApp', () => {
   it('seule une session vérifiée ouvre la suite', async () => {
     api.verify.mockResolvedValue({ data: { session: { user: { id: 'verified-test' } } }, error: null });
     const suite = ouvrir();
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
-    fireEvent.change(await screen.findByLabelText('Code de vérification'), { target: { value: '123456' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Vérifier et continuer' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
+    fireEvent.change(await screen.findByLabelText('Ton code à 6 chiffres'), { target: { value: '123456' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Créer mon compte' }));
     await waitFor(() => expect(suite).toHaveBeenCalledTimes(1));
     expect(api.verify).toHaveBeenCalledWith({ phone: '+243812345678', token: '123456', type: 'sms' });
   });
@@ -87,12 +88,13 @@ describe('Connexion WhatsApp', () => {
     api.send.mockResolvedValue({ data: {}, error: null });
     const suite = vi.fn();
     const vue = render(<ConnexionWhatsApp creation={false} langue="fr" enLigne onConnexion={suite} />);
-    fireEvent.change(screen.getByLabelText('Numéro WhatsApp avec indicatif pays'), { target: { value: '+243812345678' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
-    fireEvent.change(await screen.findByLabelText('Code de vérification'), { target: { value: '123456' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Continuer avec WhatsApp' }));
+    fireEvent.change(screen.getByLabelText(/Ton numéro WhatsApp/), { target: { value: '+243812345678' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
+    fireEvent.change(await screen.findByLabelText('Ton code à 6 chiffres'), { target: { value: '123456' } });
     vue.rerender(<ConnexionWhatsApp creation={false} langue="fr" enLigne={false} onConnexion={suite} />);
-    expect(screen.getByRole('button', { name: 'Vérifier et continuer' })).toBeDisabled();
-    expect(screen.getByLabelText('Code de vérification')).toHaveValue('123456');
+    expect(screen.getByRole('button', { name: 'Me connecter' })).toBeDisabled();
+    expect(screen.getByLabelText('Ton code à 6 chiffres')).toHaveValue('123456');
     expect(api.verify).not.toHaveBeenCalled();
   });
 });

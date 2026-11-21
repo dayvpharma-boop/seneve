@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 import { maskPhone } from '@/lib/liaison';
 import { lienDemandeCode, normaliserTelephone } from '@/lib/connexion-whatsapp';
+import { LogoWhatsApp } from './LogoWhatsApp';
 import './connexion-whatsapp.css';
 
 /** Mes réglages → « Se connecter avec WhatsApp » (décision de Dr Justin du 21/11/2026).
@@ -12,13 +13,13 @@ const TEXTES = {
   fr: {
     intro: 'Ajoute ton numéro WhatsApp pour te connecter aussi avec lui. Ton e-mail reste valable ; c’est le même compte.',
     actif: (n: string) => `Tu peux te connecter avec ton WhatsApp ${n} ou avec ton e-mail.`,
-    numero: 'Numéro WhatsApp avec indicatif pays', preparer: 'Recevoir mon code WhatsApp', instant: 'Un instant…',
-    pret: (n: string) => `Ton code est prêt pour ${n}.`,
-    etape1: <>Depuis ce numéro WhatsApp, envoie <strong>CODE</strong> à SÉNEVÉ.</>,
-    etape2: 'SÉNEVÉ te répond avec ton code à 6 chiffres. Saisis-le ci-dessous.',
-    ouvrir: 'Ouvrir WhatsApp', code: 'Code de vérification', confirmer: 'Confirmer mon numéro', changer: 'Changer de numéro',
+    titre: 'Se connecter avec WhatsApp', sousTitre: 'Ton e-mail reste valable : c’est le même compte.', etapes: ['Ton numéro', 'Ton code'],
+    numero: 'Ton numéro WhatsApp', numeroAide: 'Avec l’indicatif du pays', preparer: 'Recevoir mon code', instant: 'Un instant…',
+    titre2: 'Demande ton code sur WhatsApp',
+    explication: (n: string) => <>Depuis le <strong>{n}</strong>, envoie le mot <strong>CODE</strong> à SÉNEVÉ. Tu reçois aussitôt ton code à 6 chiffres.</>,
+    ouvrir: 'Envoyer CODE', code: 'Ton code à 6 chiffres', confirmer: 'Confirmer mon numéro', changer: 'Changer de numéro',
     fait: 'C’est fait : ton numéro WhatsApp est ajouté à ton compte.',
-    formatNumero: 'Indique ton numéro avec son indicatif pays, en commençant par +.', formatCode: 'Saisis le code à 6 chiffres.',
+    formatNumero: 'Indique ton numéro avec son indicatif pays, en commençant par +.', formatCode: 'Saisis les 6 chiffres reçus sur WhatsApp.',
     pris: 'Ce numéro est déjà utilisé par un autre compte SÉNEVÉ. Par sécurité, rien n’a été changé. Écris à l’équipe depuis Aide.',
     trop: 'Trop de tentatives. Patiente avant de réessayer.', mauvais: 'Code incorrect ou expiré. Demande un nouveau code.',
     reseau: 'Vérifie ta connexion et réessaie.', indispo: 'Impossible pour le moment. Réessaie plus tard.',
@@ -27,13 +28,13 @@ const TEXTES = {
   en: {
     intro: 'Add your WhatsApp number to sign in with it too. Your email still works; it is the same account.',
     actif: (n: string) => `You can sign in with your WhatsApp ${n} or with your email.`,
-    numero: 'WhatsApp number with country code', preparer: 'Receive my WhatsApp code', instant: 'One moment…',
-    pret: (n: string) => `Your code is ready for ${n}.`,
-    etape1: <>From this WhatsApp number, send <strong>CODE</strong> to SÉNEVÉ.</>,
-    etape2: 'SÉNEVÉ replies with your 6-digit code. Enter it below.',
-    ouvrir: 'Open WhatsApp', code: 'Verification code', confirmer: 'Confirm my number', changer: 'Change number',
+    titre: 'Sign in with WhatsApp', sousTitre: 'Your email still works: it is the same account.', etapes: ['Your number', 'Your code'],
+    numero: 'Your WhatsApp number', numeroAide: 'With the country code', preparer: 'Receive my code', instant: 'One moment…',
+    titre2: 'Ask for your code on WhatsApp',
+    explication: (n: string) => <>From <strong>{n}</strong>, send the word <strong>CODE</strong> to SÉNEVÉ. Your 6-digit code arrives right away.</>,
+    ouvrir: 'Send CODE', code: 'Your 6-digit code', confirmer: 'Confirm my number', changer: 'Change number',
     fait: 'Done: your WhatsApp number is added to your account.',
-    formatNumero: 'Enter your number with its country code, starting with +.', formatCode: 'Enter the 6-digit code.',
+    formatNumero: 'Enter your number with its country code, starting with +.', formatCode: 'Enter the 6 digits received on WhatsApp.',
     pris: 'This number is already used by another SÉNEVÉ account. For safety, nothing was changed. Write to the team from Help.',
     trop: 'Too many attempts. Please wait before trying again.', mauvais: 'Invalid or expired code. Request a new code.',
     reseau: 'Check your connection and try again.', indispo: 'Not possible right now. Try again later.',
@@ -109,23 +110,35 @@ export function ConnexionWhatsAppCompte({ langue, enLigne = true, onResume }: {
 
   if (actuel === undefined) return null;
 
-  return <div className="card connexion-whatsapp">
-    {actuel ? <p className={succes ? 'success' : undefined} role="status">{succes ? T.fait + ' ' : ''}{T.actif(maskPhone(actuel))}</p> : <p>{T.intro}</p>}
-    {!actuel && !destination && <form className="form" onSubmit={preparer} aria-busy={occupe}>
-      <label>{T.numero}<input type="tel" autoComplete="tel" inputMode="tel" placeholder="+243…" value={telephone} onChange={e => setTelephone(e.target.value)} required disabled={occupe} /></label>
-      <button className="btn" disabled={occupe || !enLigne}>{occupe ? T.instant : T.preparer}</button>
-    </form>}
-    {!actuel && destination && <>
-      <p role="status">{T.pret(destination)}</p>
-      <ol className="code-etapes"><li>{T.etape1}</li><li>{T.etape2}</li></ol>
-      <a className="code-ouvrir-whatsapp" href={lienDemandeCode()} target="_blank" rel="noopener noreferrer">{T.ouvrir}</a>
-      <form className="form" onSubmit={confirmer} aria-busy={occupe}>
-        <label>{T.code}<input type="text" autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={code} onChange={e => setCode(e.target.value)} required disabled={occupe} /></label>
-        <button className="btn" disabled={occupe || !enLigne}>{T.confirmer}</button>
-      </form>
-      <button type="button" className="link" disabled={occupe} onClick={() => { setDestination(null); setCode(''); setErreur(''); }}>{T.changer}</button>
+  const etape = destination ? 2 : 1;
+  return <section className="wa-panneau wa-reglages connexion-whatsapp" aria-label={T.titre}>
+    <header className="wa-tete">
+      <span className="wa-pastille"><LogoWhatsApp taille={22} blanc /></span>
+      <div><h2>{T.titre}</h2><p>{actuel ? T.actif(maskPhone(actuel)) : T.sousTitre}</p></div>
+    </header>
+    {succes && <p className="wa-succes" role="status">{T.fait}</p>}
+    {!actuel && <>
+      <ol className="wa-progression" aria-label={en ? 'Steps' : 'Étapes'}>
+        {T.etapes.map((nom, k) => <li key={nom} className={k + 1 < etape ? 'fait' : k + 1 === etape ? 'actuelle' : undefined} aria-current={k + 1 === etape ? 'step' : undefined}><span>{k + 1 < etape ? '✓' : k + 1}</span>{nom}</li>)}
+      </ol>
+      {erreur && <p className="error wa-erreur" role="alert">{erreur}</p>}
+      {!destination ? <form className="wa-formulaire" onSubmit={preparer} aria-busy={occupe}>
+        <label className="wa-champ"><span>{T.numero} <small>{T.numeroAide}</small></span><input type="tel" autoComplete="tel" inputMode="tel" placeholder="+243 81 234 5678" value={telephone} onChange={e => setTelephone(e.target.value)} required disabled={occupe} /></label>
+        <button className="wa-principal" disabled={occupe || !enLigne}>{occupe ? T.instant : T.preparer}</button>
+      </form> : <>
+        <div className="wa-etape2" role="status">
+          <h3>{T.titre2}</h3>
+          <p>{T.explication(maskPhone(destination))}</p>
+          <div className="wa-bulle" aria-hidden="true"><span>CODE</span><small>✓✓</small></div>
+          <a className="wa-ouvrir" href={lienDemandeCode()} target="_blank" rel="noopener noreferrer"><LogoWhatsApp taille={20} blanc /><span>{T.ouvrir}</span></a>
+        </div>
+        <form className="wa-formulaire" onSubmit={confirmer} aria-busy={occupe}>
+          <label className="wa-champ"><span>{T.code}</span><input className="wa-code" type="text" autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="······" value={code} onChange={e => setCode(e.target.value.replace(/D/g, ''))} required disabled={occupe} /></label>
+          <button className="wa-principal" disabled={occupe || !enLigne}>{T.confirmer}</button>
+        </form>
+        <div className="wa-liens"><button type="button" className="link" disabled={occupe} onClick={() => { setDestination(null); setCode(''); setErreur(''); }}>{T.changer}</button></div>
+      </>}
+      <p className="wa-note">{T.note}</p>
     </>}
-    {erreur && <p className="error" role="alert">{erreur}</p>}
-    {!actuel && <p className="muted">{T.note}</p>}
-  </div>;
+  </section>;
 }

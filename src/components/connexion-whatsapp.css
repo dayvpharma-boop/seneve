@@ -1,8 +1,59 @@
-/* Connexion WhatsApp par message entrant (21/11/2026), page Connexion et Profil : étapes numérotées et bouton WhatsApp secondaire. */
-.connexion-whatsapp .code-etapes{margin:4px 0 12px;padding-left:22px;display:grid;gap:6px;list-style:decimal outside}
-.connexion-whatsapp .code-etapes li{display:list-item}
-.connexion-whatsapp .code-etapes li::marker{font-weight:600;color:#1f8a4c}
-.connexion-whatsapp .code-etapes li{padding-left:2px;line-height:1.45}
-.connexion-whatsapp a.code-ouvrir-whatsapp{display:flex;align-items:center;justify-content:center;min-height:48px;margin:0 0 14px;border:1.5px solid #1f8a4c;border-radius:14px;background:transparent;color:#1f8a4c;font:600 15px/1.2 Poppins,system-ui,sans-serif;text-decoration:none}
-.connexion-whatsapp a.code-ouvrir-whatsapp:hover{background:rgb(31 138 76 / .08)}
-.connexion-whatsapp .form + .link{margin-right:12px}
+/* « Continuer avec WhatsApp » (21/11/2026) : bouton comme Google, puis panneau en deux étapes.
+   Couleurs de la page de connexion (--auth-*) avec repli pour Mes réglages. */
+.wa-entree{margin:0 0 10px}
+.wa-entree + .auth-social-cadre .auth-social{margin-top:0}
+.wa-bouton{width:100%}
+.wa-bouton svg{flex:none}
+
+.wa-panneau{
+  --wa-vert:#1f8a4c; --wa-vert-vif:#25d366; --wa-vert-doux:rgb(37 211 102 / .1);
+  --wa-encre:var(--auth-encre,var(--foreground,#151b36)); --wa-second:var(--auth-secondaire,var(--muted-foreground,#59627e));
+  --wa-ligne:var(--auth-ligne,var(--line,#dce2f0)); --wa-carte:var(--auth-carte,var(--surface,#fff)); --wa-fond:var(--auth-fond,var(--background,#f5f7fe));
+  display:grid; gap:16px; margin:0 0 16px; padding:20px 18px 18px; border:1px solid var(--wa-ligne); border-radius:20px;
+  background:var(--wa-carte); color:var(--wa-encre); font-family:Poppins,system-ui,sans-serif;
+  box-shadow:0 10px 30px -18px rgb(21 27 54 / .35);
+}
+.wa-panneau.wa-reglages{margin:0;box-shadow:none}
+.wa-tete{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.wa-pastille{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#2fd571,#1f8a4c);box-shadow:0 6px 14px -8px rgb(31 138 76 / .8)}
+.wa-tete h2{margin:0;font:600 16px/1.35 Poppins,system-ui,sans-serif;color:var(--wa-encre)}
+.wa-tete p{margin:2px 0 0;font:400 13px/1.5 Poppins,system-ui,sans-serif;color:var(--wa-second)}
+.wa-fermer{width:36px;height:36px;border:0;border-radius:50%;background:transparent;color:var(--wa-second);font:400 24px/1 system-ui,sans-serif;cursor:pointer}
+.wa-fermer:hover{background:var(--wa-fond)}
+
+.wa-progression{display:flex;gap:8px;margin:0;padding:0;list-style:none}
+.wa-progression li{flex:1;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:var(--wa-fond);color:var(--wa-second);font:500 12.5px/1.3 Poppins,system-ui,sans-serif}
+.wa-progression li span{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;font:600 11.5px/1 Poppins,system-ui,sans-serif}
+.wa-progression li.actuelle{background:var(--wa-vert-doux);color:var(--wa-vert)}
+.wa-progression li.actuelle span{background:var(--wa-vert);border-color:var(--wa-vert);color:#fff}
+.wa-progression li.fait{color:var(--wa-vert)}
+
+.wa-formulaire{display:grid;gap:14px;margin:0}
+.wa-champ{display:grid;gap:6px;margin:0}
+.wa-champ>span{font:500 13px/1.4 Poppins,system-ui,sans-serif;color:var(--wa-encre)}
+.wa-champ small{font-weight:400;color:var(--wa-second);margin-left:4px}
+.wa-champ input{width:100%;min-height:52px;margin:0;padding:12px 14px;border:1px solid var(--wa-ligne);border-radius:14px;background:var(--wa-fond);color:var(--wa-encre);font:400 15px/1.5 Poppins,system-ui,sans-serif;box-shadow:none}
+.wa-champ input:focus{outline:none;border-color:var(--wa-vert);box-shadow:0 0 0 3px rgb(37 211 102 / .2)}
+.wa-champ input.wa-code{text-align:center;font:600 26px/1.2 Poppins,system-ui,sans-serif;letter-spacing:.55em;padding-left:calc(14px + .55em);font-variant-numeric:tabular-nums}
+.wa-champ input.wa-code::placeholder{color:var(--wa-second);opacity:.45;letter-spacing:.55em}
+
+.wa-principal{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;width:100%;border:0;border-radius:14px;background:var(--auth-violet,var(--accent,#49439b));color:var(--auth-sur-violet,#fff);font:600 15px/1.2 Poppins,system-ui,sans-serif;cursor:pointer}
+.wa-principal:disabled{opacity:.55;cursor:default}
+
+.wa-etape2{display:grid;gap:10px;padding:16px;border-radius:16px;background:var(--wa-vert-doux)}
+.wa-etape2 h3{margin:0;font:600 15px/1.4 Poppins,system-ui,sans-serif;color:var(--wa-encre)}
+.wa-etape2 p{margin:0;font:400 13.5px/1.6 Poppins,system-ui,sans-serif;color:var(--wa-encre)}
+.wa-bulle{justify-self:end;display:flex;align-items:flex-end;gap:6px;padding:8px 12px;border-radius:14px 14px 4px 14px;background:#d9fdd3;color:#111b21;font:600 14px/1.2 Poppins,system-ui,sans-serif;box-shadow:0 1px 1px rgb(0 0 0 / .08)}
+.wa-bulle small{font-size:10px;color:#53bdeb;letter-spacing:-2px}
+.wa-ouvrir{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:10px 14px;text-align:center;border-radius:14px;background:var(--wa-vert);color:#fff!important;font:600 14px/1.25 Poppins,system-ui,sans-serif;text-decoration:none;box-shadow:0 8px 18px -10px rgb(31 138 76 / .9)}
+.wa-ouvrir:hover{background:#1a7a43}
+
+.wa-liens{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px}
+.wa-liens .link{font:500 13px/1.4 Poppins,system-ui,sans-serif}
+.wa-erreur{margin:0}
+.wa-note{margin:0;padding-top:12px;border-top:1px solid var(--wa-ligne);font:400 12px/1.6 Poppins,system-ui,sans-serif;color:var(--wa-second)}
+.wa-succes{margin:0;padding:12px 14px;border-radius:14px;background:var(--wa-vert-doux);color:var(--wa-vert);font:500 13.5px/1.6 Poppins,system-ui,sans-serif}
+
+:root[data-apparence="sombre"] .wa-panneau{box-shadow:none}
+:root[data-apparence="sombre"] .wa-bulle{background:#005c4b;color:#e9edef}
+:root[data-apparence="sombre"] .wa-progression li.actuelle,:root[data-apparence="sombre"] .wa-progression li.fait{color:#5fe399}

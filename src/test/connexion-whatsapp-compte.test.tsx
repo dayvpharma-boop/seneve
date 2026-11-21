@@ -22,17 +22,17 @@ describe('Profil : se connecter avec WhatsApp', () => {
     render(<ConnexionWhatsAppCompte langue="fr" onResume={resume} />);
     expect(await screen.findByText('Tu peux te connecter avec ton WhatsApp +243 ••• ••• 826 ou avec ton e-mail.')).toBeInTheDocument();
     expect(resume).toHaveBeenLastCalledWith('+243 ••• ••• 826');
-    expect(screen.queryByRole('button', { name: 'Recevoir mon code WhatsApp' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Recevoir mon code' })).toBeNull();
   });
 
   it('propose le numéro déjà relié et prépare un code de changement de numéro', async () => {
     sansNumero('+243812345678');
     api.updateUser.mockResolvedValue({ data: {}, error: null });
     render(<ConnexionWhatsAppCompte langue="fr" />);
-    const champ = await screen.findByLabelText('Numéro WhatsApp avec indicatif pays');
+    const champ = await screen.findByLabelText(/Ton numéro WhatsApp/);
     await waitFor(() => expect(champ).toHaveValue('+243812345678'));
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
-    expect(await screen.findByRole('link', { name: 'Ouvrir WhatsApp' })).toHaveAttribute('href', 'https://wa.me/243844211119?text=CODE');
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
+    expect(await screen.findByRole('link', { name: 'Envoyer CODE' })).toHaveAttribute('href', 'https://wa.me/243844211119?text=CODE');
     expect(api.updateUser).toHaveBeenCalledWith({ phone: '+243812345678' });
   });
 
@@ -41,9 +41,9 @@ describe('Profil : se connecter avec WhatsApp', () => {
     api.updateUser.mockResolvedValue({ data: {}, error: null });
     api.verifyOtp.mockResolvedValue({ data: { user: { id: 'u1' } }, error: null });
     render(<ConnexionWhatsAppCompte langue="fr" />);
-    fireEvent.change(await screen.findByLabelText('Numéro WhatsApp avec indicatif pays'), { target: { value: '+243 812 345 678' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
-    fireEvent.change(await screen.findByLabelText('Code de vérification'), { target: { value: '123456' } });
+    fireEvent.change(await screen.findByLabelText(/Ton numéro WhatsApp/), { target: { value: '+243 812 345 678' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
+    fireEvent.change(await screen.findByLabelText('Ton code à 6 chiffres'), { target: { value: '123456' } });
     fireEvent.click(screen.getByRole('button', { name: 'Confirmer mon numéro' }));
     await screen.findByText(/C’est fait : ton numéro WhatsApp est ajouté à ton compte\./);
     expect(api.verifyOtp).toHaveBeenCalledWith({ phone: '+243812345678', token: '123456', type: 'phone_change' });
@@ -53,9 +53,9 @@ describe('Profil : se connecter avec WhatsApp', () => {
     sansNumero();
     api.updateUser.mockResolvedValue({ data: {}, error: { message: 'A user with this phone number has already been registered', code: 'phone_exists' } });
     render(<ConnexionWhatsAppCompte langue="fr" />);
-    fireEvent.change(await screen.findByLabelText('Numéro WhatsApp avec indicatif pays'), { target: { value: '+243812345678' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code WhatsApp' }));
+    fireEvent.change(await screen.findByLabelText(/Ton numéro WhatsApp/), { target: { value: '+243812345678' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Recevoir mon code' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Ce numéro est déjà utilisé par un autre compte SÉNEVÉ.');
-    expect(screen.queryByLabelText('Code de vérification')).toBeNull();
+    expect(screen.queryByLabelText('Ton code à 6 chiffres')).toBeNull();
   });
 });
