@@ -100,3 +100,7 @@ Plus tard (entreprise vérifiée) : META_WA_MODE=modele fait partir le code avec
 - seneve-prod (21/11) : migration seneve_065 installée (aucun accès anon/authenticated), fonction envoyer-code-whatsapp v1 déployée (même empreinte que le test).
 - WHATSAPP BASE : branche « Demande de code (CODE) » ajoutée après LIER (CODE ou LOGIN → remettre_code_connexion → réponse FR/EN), CODE exclu de l'audio de Lucie ; version 205c3f2d publiée. Copie avant changement : sauvegardes-n8n/WHATSAPP-BASE-21-11-2026.json (version b93b94ac).
 - Reste : réglages Supabase de seneve-prod (crochet, secret, téléphone), vrai essai avec le téléphone de Dr Justin, puis VITE_WHATSAPP_AUTH_ENABLED=true à la publication.
+- Recette réelle sur seneve-prod (21/11, avec le téléphone de Dr Justin) : CODE sans demande → réponse « aucune demande » ; demande de code → code déposé ; CODE → code reçu sur WhatsApp ; bon code → session ; code réutilisé → refusé. Compte d'essai (numéro seul, sans e-mail) effacé ensuite.
+- Correction pendant la recette : le crochet de seneve-prod avait été créé sans secret (« Hook requires authorization token ») ; secret généré puis recopié dans SEND_SMS_HOOK_SECRET.
+- Affichage : VITE_WHATSAPP_AUTH_ENABLED=true ajouté au build de publication (deploy.yml).
+- Limite connue : un compte e-mail existant n'est pas retrouvé par son numéro WhatsApp (même relié avec LIER). « Créer un compte » avec WhatsApp crée un compte séparé, sans fusion automatique. À traiter plus tard : ajouter le numéro à un compte e-mail déjà connecté.

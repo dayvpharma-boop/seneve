@@ -42,6 +42,9 @@ jobs:
           VITE_HABITUDES_RAPPELS: 'true'
           VITE_HABITUDES_RELANCES: 'true'
           VITE_HABITUDES_INSCRIPTION: ouverte
+          # Connexion par numéro WhatsApp (message « CODE » envoyé par la personne) : recette réelle réussie
+          # sur seneve-prod le 21/11/2026 ; affichage décidé par Dr Justin.
+          VITE_WHATSAPP_AUTH_ENABLED: 'true'
         run: npm run build
       - name: Charger la version HD de test validée
         uses: actions/checkout@v4
