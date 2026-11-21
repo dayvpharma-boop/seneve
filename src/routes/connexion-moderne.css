@@ -62,3 +62,11 @@
 /* Lisibilité (inventaire du 01/11/2026) : aucun texte de la page de connexion sous 13 px ; 14 px pour les textes à lire. */
 :root:root[data-apparence] main.connexion.auth-maquette :is(.auth-repere,.auth-hint,.mdp-voir,.connexion-aide,.choix-double button,.auth-language span,.auth-social-cadre span,.connexion-securite span){font-size:13px}
 :root:root[data-apparence] main.connexion.auth-maquette :is(.auth-decouverte p,.connexion-achat,.connexion-achat span,.connexion-legal,.connexion-legal a,.auth-rythme strong,.auth-rythme p){font-size:14px;line-height:1.55}
+/* Connexion WhatsApp par message entrant (21/11/2026) : étapes numérotées et bouton WhatsApp secondaire. */
+.connexion-whatsapp .code-etapes{margin:4px 0 12px;padding-left:22px;display:grid;gap:6px;list-style:decimal outside}
+.connexion-whatsapp .code-etapes li{display:list-item}
+.connexion-whatsapp .code-etapes li::marker{font-weight:600;color:#1f8a4c}
+.connexion-whatsapp .code-etapes li{padding-left:2px;line-height:1.45}
+.connexion-whatsapp a.code-ouvrir-whatsapp{display:flex;align-items:center;justify-content:center;min-height:48px;margin:0 0 14px;border:1.5px solid #1f8a4c;border-radius:14px;background:transparent;color:#1f8a4c;font:600 15px/1.2 Poppins,system-ui,sans-serif;text-decoration:none}
+.connexion-whatsapp a.code-ouvrir-whatsapp:hover{background:rgb(31 138 76 / .08)}
+.connexion-whatsapp .form + .link{margin-right:12px}

@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 const api = vi.hoisted(() => ({ send: vi.fn(), verify: vi.fn() }));
 vi.mock('@/lib/supabase', () => ({ supabase: { auth: { signInWithOtp: api.send, verifyOtp: api.verify } } }));
 import { ConnexionWhatsApp } from '@/components/ConnexionWhatsApp';
-import { normaliserTelephone, connexionWhatsAppActivee } from '@/lib/connexion-whatsapp';
+import { normaliserTelephone, connexionWhatsAppActivee, erreurWhatsApp } from '@/lib/connexion-whatsapp';
 
 afterEach(() => { cleanup(); vi.clearAllMocks(); vi.unstubAllEnvs(); });
 const ouvrir = (creation = true, onConnexion = vi.fn()) => {
@@ -50,6 +50,10 @@ describe('Connexion WhatsApp', () => {
     const lien = await screen.findByRole('link', { name: 'Ouvrir WhatsApp' });
     expect(lien).toHaveAttribute('href', 'https://wa.me/243844211119?text=CODE');
     expect(screen.getByText(/envoie/)).toHaveTextContent('Depuis ce numéro WhatsApp, envoie CODE à SÉNEVÉ.');
+  });
+
+  it('explique clairement qu’aucun compte n’utilise ce numéro', () => {
+    expect(erreurWhatsApp('Signups not allowed for otp', false)).toBe('Aucun compte n’utilise encore ce numéro. Choisis « Créer un compte ».');
   });
 
   it('se connecter ne crée pas silencieusement un compte', async () => {

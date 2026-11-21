@@ -68,13 +68,13 @@ export function ConnexionWhatsApp({ creation, langue, enLigne, onConnexion }: {
       <button className="btn" disabled={occupe || !enLigne || attente > 0}>{occupe ? (en ? 'Sending…' : 'Envoi…') : attente ? (en ? `Wait ${attente} s` : `Patienter ${attente} s`) : (en ? 'Receive my WhatsApp code' : 'Recevoir mon code WhatsApp')}</button>
     </form> : <>
       <p role="status">{en ? 'Your code is ready for' : 'Ton code est prêt pour'} {destination}.</p>
-      <ol>
+      <ol className="code-etapes">
         <li>{en
           ? <>From this WhatsApp number, send <strong>CODE</strong> to SÉNEVÉ.</>
           : <>Depuis ce numéro WhatsApp, envoie <strong>CODE</strong> à SÉNEVÉ.</>}</li>
         <li>{en ? 'SÉNEVÉ replies with your 6-digit code. Enter it below.' : 'SÉNEVÉ te répond avec ton code à 6 chiffres. Saisis-le ci-dessous.'}</li>
       </ol>
-      <a className="btn" href={lienDemandeCode()} target="_blank" rel="noopener noreferrer">{en ? 'Open WhatsApp' : 'Ouvrir WhatsApp'}</a>
+      <a className="code-ouvrir-whatsapp" href={lienDemandeCode()} target="_blank" rel="noopener noreferrer">{en ? 'Open WhatsApp' : 'Ouvrir WhatsApp'}</a>
       <form className="form" onSubmit={verifier} aria-busy={occupe}>
         <label>{en ? 'Verification code' : 'Code de vérification'}<input type="text" autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={code} onChange={e => setCode(e.target.value)} required disabled={occupe} /></label>
         <button className="btn" disabled={occupe || !enLigne}>{en ? 'Verify and continue' : 'Vérifier et continuer'}</button>
