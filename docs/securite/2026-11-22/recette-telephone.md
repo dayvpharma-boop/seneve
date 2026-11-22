@@ -14,6 +14,10 @@ Les sources exactes et paramètres JWT des trois expéditeurs d'essai ont été 
 
 Les trois paquets ont passé la compilation syntaxique et la résolution des imports. Le dispatcher HD d'essai modifié a été exécuté avec RPC et transport fictifs : l'adresse interdite n'atteint pas le transport, un appareil valide est accepté et un doublon n'entraîne pas de nouvel envoi. Aucun réseau dans ce scénario.
 
+Les trois paquets sont désormais déployés **uniquement dans seneve-test** : `envoyer-rappels` v3, `envoyer-annonces` v3 et `envoyer-rappels-hd` v6. La relecture des fonctions déployées confirme que les neuf fichiers sont identiques aux paquets préparés. Les paramètres JWT restent respectivement `false`, `false`, `true`. L'envoi HD est toujours désactivé ; aucun pilote n'a été ajouté et aucun appareil n'est enregistré.
+
+Pour revenir à la version d'essai précédente, redéployer les fichiers exacts de `avant-recette/<fonction>/` avec les paramètres de `avant-recette/versions.json`. La production n'a pas été modifiée par ces déploiements.
+
 ## Première manipulation du participant
 
 1. Ouvrir la page d'essai sur le téléphone et vérifier le bandeau « SÉNEVÉ — VERSION DE TEST ».

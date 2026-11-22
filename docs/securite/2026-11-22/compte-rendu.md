@@ -11,7 +11,8 @@ Point de départ vérifié : `98bbb869633a9beaa100d99c76c0d5511677e8a5`, branche
 | F01, délai réseau | Ajout du timeout de socket de 10 secondes aux rappels et annonces ; déjà présent dans HD | Code préparé ; il ne s'agit pas d'un délai absolu de toute la tâche |
 | F02, brouillons | Nettoyage local à la déconnexion, au changement de compte et à la reprise sans session ; retrait des anciennes clés sans propriétaire | Tests de stockage et de parcours Journal/Aide réussis |
 | F02, conservation | Brouillon du compte courant conservé lors d'une reprise de session et d'un renouvellement de jeton | Tests réussis ; aucun appel de suppression des notes en base ajouté |
-| Site et fonctions Edge publics | Pas de publication ni de remplacement de fonction | Production inchangée ; correctifs Edge non déployés en essai |
+| Site et fonctions Edge de production | Pas de publication ni de remplacement de fonction | Production inchangée |
+| Expéditeurs Edge d'essai | Contrôle F01 ajouté aux versions propres à la recette ; sauvegardes préalables conservées | Déployés dans seneve-test : rappels v3, annonces v3, rappels HD v6 ; fichiers et paramètres JWT relus et identiques aux paquets préparés |
 
 La contrainte agit aussi dans `rappels_activer`, dont les paramètres, le corps et les droits préexistants restent conservés. Aucun workflow, programme, identifiant de compte, consentement ou contenu officiel n'a été renommé.
 
@@ -34,7 +35,7 @@ La suite complète de tests a été interrompue par la revue automatique de séc
 
 ## Limites et travaux restants
 
-- Essais réels Android et iPhone non effectués ; aucune notification réelle envoyée pendant cette préparation.
+- Essais réels Android et iPhone non effectués ; aucune notification réelle envoyée pendant cette préparation. En essai : aucun appareil enregistré, envoi HD désactivé et aucun pilote défini. La prochaine manipulation est la connexion du participant à son compte d'essai.
 - La validation des clés porte sur la structure d'une clé P-256 non compressée et d'un secret d'authentification de 16 octets. La bibliothèque web-push vérifie le point elliptique pendant le chiffrement, avant son appel réseau.
 - Fournisseurs pris en charge : hôtes exacts Google FCM, Apple `web.push.apple.com` et Mozilla ; les autres fournisseurs nécessitent une extension explicite de la règle et ses tests. Apple documente une famille plus large d'hôtes ; la règle présente conserve les hôtes réellement pris en charge par ce projet.
 - Aucun quota d'appareils ou limite de fréquence n'est ajouté dans ce lot ; l'amélioration contre la consommation abusive reste à dimensionner. Aucune affirmation d'élimination de tous les abus ou de garantie SSRF absolue.
