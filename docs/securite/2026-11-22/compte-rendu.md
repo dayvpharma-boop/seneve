@@ -30,6 +30,8 @@ Les brouillons Journal **et Aide** sont des saisies locales non enregistrées : 
 
 La suite complète de tests a été interrompue par la revue automatique de sécurité : une connexion vers un hôte Supabase non vérifié était demandée et la portée des données était inconnue. Elle **n'est pas déclarée réussie**. Ne pas relancer cette suite sans isoler ses appels externes et vérifier les destinations.
 
+**Mise à jour du 22 novembre :** l'exécution indépendante [GitHub Actions 45051125327](https://github.com/dayvpharma-boop/seneve/actions/runs/45051125327), sur le commit `505fe4a8248539462e931e5a230a7897509d967e`, a depuis terminé avec succès : **1 325 tests dans 189 fichiers**, TypeScript et construction du site. Les journaux et les étapes ont été consultés. Cela complète la vérification du code de ce commit ; l'interruption locale reste consignée ci-dessus.
+
 ## Limites et travaux restants
 
 - Essais réels Android et iPhone non effectués ; aucune notification réelle envoyée pendant cette préparation.
