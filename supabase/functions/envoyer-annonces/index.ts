@@ -5,6 +5,7 @@
 // Mêmes clés techniques que les rappels (push_config), lues sur le serveur seulement.
 import { createClient } from 'npm:@supabase/supabase-js@2.58.0';
 import webpush from 'npm:web-push@3.6.7';
+import {envoyerPushValide} from '../_shared/push-validation.ts';
 
 type Appareil = { endpoint: string; p256dh: string; auth: string };
 type Envoi = { envoi_id: string; annonce_id: string; titre: string; texte: string; langue: string; appareils: Appareil[] };
@@ -48,7 +49,7 @@ Deno.serve(async (req) => {
       let accepte = false, derniereErreur = '';
       for (const a of e.appareils ?? []) {
         try {
-          await webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, message, { TTL: 12 * 3600, urgency: 'normal' });
+          await envoyerPushValide(a, a => webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, message, { TTL: 12 * 3600, urgency: 'normal', timeout: 10000 }));
           accepte = true;
         } catch (err) {
           const code = (err as { statusCode?: number }).statusCode;
