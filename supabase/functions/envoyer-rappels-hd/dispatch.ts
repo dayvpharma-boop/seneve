@@ -1,4 +1,6 @@
 import {messageRappel} from './messages.ts';
+import {appareilPushValide} from '../_shared/push-validation.ts';
+export {appareilPushValide} from '../_shared/push-validation.ts';
 type Rpc=(nom:string,params?:Record<string,unknown>)=>PromiseLike<{data:unknown;error:unknown}>;
 export type AppareilPush={endpoint:string;p256dh:string;auth:string};
 export type ResultatAppareil={request_id:string;fournisseur:'google'|'apple'|'mozilla';resultat:'accepte_fournisseur'|'echec';statut_http:number|null};
@@ -9,12 +11,6 @@ export function statutHttpPush(erreur:unknown):number|null{
  return typeof code==='number'&&Number.isInteger(code)&&code>=100&&code<=599?code:null;
 }
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-/** Aucun endpoint arbitraire ou réseau interne ne doit être contacté. */
-export function appareilPushValide(x:unknown):x is AppareilPush{
- if(!x||typeof x!=='object')return false;const a=x as AppareilPush;
- if(typeof a.endpoint!=='string'||typeof a.p256dh!=='string'||typeof a.auth!=='string'||!a.p256dh||!a.auth)return false;
- try{const u=new URL(a.endpoint);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&['fcm.googleapis.com','updates.push.services.mozilla.com','web.push.apple.com'].includes(u.hostname);}catch{return false;}
-}
 /** Fin de la journée locale d'un créneau (minuit suivant, dans le fuseau du participant), en millisecondes.
  *  Demande de Dr Justin du 30/10/2026 : à minuit, les rappels de la veille s'arrêtent, la nouvelle journée a les siens. */
 export function finJourneeLocale(creneau:string|Date,fuseau:string):number{
