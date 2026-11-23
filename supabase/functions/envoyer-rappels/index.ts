@@ -5,6 +5,7 @@
 // passent jamais par l'écran ni par un message.
 import { createClient } from 'npm:@supabase/supabase-js@2.58.0';
 import webpush from 'npm:web-push@3.6.7';
+import {envoyerPushValide} from '../_shared/push-validation.ts';
 
 // Textes montrés sur l'écran du téléphone : rien de privé (cahier n°11).
 const TEXTES: Record<'fr' | 'en', Record<'matin' | 'midi' | 'soir', string>> = {
@@ -60,7 +61,7 @@ Deno.serve(async (req) => {
       let accepte = false, derniereErreur = '';
       for (const a of r.appareils ?? []) {
         try {
-          await webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, message, { TTL: 4 * 3600, urgency: 'normal' });
+          await envoyerPushValide(a, a => webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, message, { TTL: 4 * 3600, urgency: 'normal', timeout: 10000 }));
           accepte = true;
         } catch (e) {
           const code = (e as { statusCode?: number }).statusCode;

@@ -1,0 +1,49 @@
+{
+  "project_id": "rlojnuaajeubzlwofwhn",
+  "date": "2026-11-22",
+  "functions": [
+    {
+      "name": "envoyer-rappels",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "files": [
+        "index.ts",
+        "push-validation.ts"
+      ],
+      "source_readback_identical": true,
+      "ezbr_sha256": "dbd2188fa2fd93fa85a0ac061ef81431e8d8e6df862ee31c3bb06738618d7fce"
+    },
+    {
+      "name": "envoyer-annonces",
+      "version": 3,
+      "status": "ACTIVE",
+      "verify_jwt": false,
+      "files": [
+        "index.ts",
+        "push-validation.ts"
+      ],
+      "source_readback_identical": true,
+      "ezbr_sha256": "3dc3d4433026ebf3c4cc2d09083e305c86d8b6188ab2b7703caf2c27275980a7"
+    },
+    {
+      "name": "envoyer-rappels-hd",
+      "version": 6,
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "files": [
+        "index.ts",
+        "dispatch.ts",
+        "messages.ts",
+        "deno.json",
+        "push-validation.ts"
+      ],
+      "source_readback_identical": true,
+      "ezbr_sha256": "24e04ed00faf4ba04cd89bb1bbc091178e517573b1459348ae29905514b4cb03"
+    }
+  ],
+  "hd_dispatch_enabled": false,
+  "pilot_defined": false,
+  "registered_devices": 0,
+  "real_delivery_tested": false
+}

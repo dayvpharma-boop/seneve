@@ -1,0 +1,36 @@
+{
+  "project_id": "rlojnuaajeubzlwofwhn",
+  "date": "2026-11-22",
+  "functions": [
+    {
+      "name": "envoyer-rappels",
+      "version": 2,
+      "verify_jwt": false,
+      "ezbr_sha256": "6a9d22a5be99f9c94dc4286dc8532ad0670edefd834faddec3b37f79929f631e",
+      "files": [
+        "index.ts"
+      ]
+    },
+    {
+      "name": "envoyer-annonces",
+      "version": 2,
+      "verify_jwt": false,
+      "ezbr_sha256": "345be23c5215f2307ef19342d4ba4f1af41a211e04f1c8df6bdba3a9f35c56fd",
+      "files": [
+        "index.ts"
+      ]
+    },
+    {
+      "name": "envoyer-rappels-hd",
+      "version": 5,
+      "verify_jwt": true,
+      "ezbr_sha256": "f5052a16b7271ecb8c1eed60d2f9cd692c5c5d0739371d84bdc1b1473ed9fbf4",
+      "files": [
+        "index.ts",
+        "dispatch.ts",
+        "messages.ts",
+        "deno.json"
+      ]
+    }
+  ]
+}
