@@ -21,7 +21,7 @@ describe('Profil : se connecter avec WhatsApp', () => {
     const resume = vi.fn();
     render(<ConnexionWhatsAppCompte langue="fr" onResume={resume} />);
     expect(await screen.findByText('Tu peux te connecter avec ton WhatsApp +243 ••• ••• 826 ou avec ton e-mail.')).toBeInTheDocument();
-    expect(resume).toHaveBeenLastCalledWith('+243 ••• ••• 826');
+    await waitFor(() => expect(resume).toHaveBeenLastCalledWith('+243 ••• ••• 826'));
     expect(screen.queryByRole('button', { name: 'Recevoir mon code' })).toBeNull();
   });
 
