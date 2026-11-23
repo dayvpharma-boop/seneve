@@ -1,9 +1,10 @@
+import {abonnementFictif} from './fixtures-push';
 import {expect,it,vi} from 'vitest';
 import {traiterRappelsHD,statutHttpPush} from '../../supabase/functions/envoyer-rappels-hd/dispatch';
 const request_id='20000000-0000-4000-8000-000000000001';
 const reminder_id='10000000-0000-4000-8000-000000000001';
-const apple={endpoint:'https://web.push.apple.com/prive',p256dh:'CLE_PRIVEE',auth:'SECRET'};
-const google={...apple,endpoint:'https://fcm.googleapis.com/prive'};
+const apple={...abonnementFictif,endpoint:'https://web.push.apple.com/prive'};
+const google={...apple,endpoint:'https://fcm.googleapis.com/fcm/send/prive'};
 function rpc(){return vi.fn(async(n:string)=>({error:null,data:n==='hd_push_dispatch_enabled'?true:n==='hd_prepare_push_pilot'?{prepare:true}:n==='hd_claim_push_deliveries'?[{reminder_id,request_id}]:n==='hd_authorize_push_delivery'?{autorise:true,appareils:[apple,google,google]}:true}));}
 it('signale un échec Google même si Apple accepte, sans nouvel essai',async()=>{
  const observe=vi.fn(),send=vi.fn(async(a:typeof apple)=>{if(a.endpoint===google.endpoint)throw {statusCode:410,body:'SECRET',endpoint:google.endpoint};});

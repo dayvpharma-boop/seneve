@@ -78,6 +78,7 @@ const Confidentialite = lazy(() => import('@/routes/confidentialite').then(m => 
 const NewPassword = lazy(() => import('@/routes/nouveau-mot-de-passe').then(m => ({ default: m.NewPassword })));
 const ForgotPassword = lazy(() => import('@/routes/mot-de-passe-oublie').then(m => ({ default: m.ForgotPassword })));
 const Admin = lazy(() => import('@/routes/admin').then(m => ({ default: m.Admin })));
+const SecuriteAdministrateur = lazy(() => import('@/routes/admin-securite').then(m => ({ default: m.SecuriteAdministrateur })));
 const bible = () => import('@/routes/bible');
 const BibleAccueil = lazy(() => bible().then(m => ({ default: m.BibleAccueil })));
 const BibleLivres = lazy(() => bible().then(m => ({ default: m.BibleLivres })));
@@ -145,6 +146,7 @@ if (root) createRoot(root).render(
         <Route path="/journal" element={<Journal />} />
         <Route path="/aide" element={<Aide />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/securite" element={<SecuriteAdministrateur />} />
         <Route path="/coach" element={<Coach />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/progres" element={<Progres />} />

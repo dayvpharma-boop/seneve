@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { compteMemorise, memoriserCompte } from '@/lib/memoire-pages';
+import {creerNettoyageSession} from '@/lib/confidentialite-session';
 
 /** Remonte les écrans privés quand le compte change, y compris dans un autre onglet. */
 export function ComptePrive({ enfants }: { enfants: (userId: string) => ReactNode }) {
@@ -16,14 +17,16 @@ export function ComptePrive({ enfants }: { enfants: (userId: string) => ReactNod
   const en = new URLSearchParams(location.search).get('lang') === 'en';
   useEffect(() => {
     let actif = true;
-    const abonnement = supabase.auth.onAuthStateChange?.((_event, session) => {
+    const nettoyer = creerNettoyageSession();
+    const abonnement = supabase.auth.onAuthStateChange?.((evenement, session) => {
       revision.current++;
-      if (actif) { setErreur(false); setCompte(session?.user.id ?? null); }
+      if (actif) { nettoyer(evenement, session); setErreur(false); setCompte(session?.user.id ?? null); }
     });
     const auDepart = revision.current;
     void supabase.auth.getSession().then(({ data, error }) => {
       if (!actif || revision.current !== auDepart) return;
       if (error) { setErreur(true); return; }
+      nettoyer('INITIAL_SESSION', data.session);
       setCompte(data.session?.user.id ?? null);
     }).catch(() => { if (actif && revision.current === auDepart) setErreur(true); });
     return () => { actif = false; abonnement?.data.subscription.unsubscribe(); };

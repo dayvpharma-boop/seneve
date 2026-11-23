@@ -1,0 +1,20 @@
+[
+  {
+    "name": "envoyer-rappels",
+    "version": 3,
+    "verify_jwt": false,
+    "sha256": "6a9d22a5be99f9c94dc4286dc8532ad0670edefd834faddec3b37f79929f631e"
+  },
+  {
+    "name": "envoyer-annonces",
+    "version": 3,
+    "verify_jwt": false,
+    "sha256": "345be23c5215f2307ef19342d4ba4f1af41a211e04f1c8df6bdba3a9f35c56fd"
+  },
+  {
+    "name": "envoyer-rappels-hd",
+    "version": 8,
+    "verify_jwt": true,
+    "sha256": "5867182d15a8ef9a158dccfbd189b66eea8ac476912471e232add67afac73670"
+  }
+]

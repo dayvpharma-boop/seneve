@@ -139,7 +139,7 @@ export function Connexion() {
       }
       const retour = location.state?.retourJournal ?? location.state?.retour;
       // Connexion faite sur la page anglaise : l'espace s'ouvre en anglais.
-      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : suiteHabitudes ? `/habitudes/inscription?lang=${langue}` : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
+      navigate(typeof retour === 'string' && /^\/(?:journal|admin(?:\/securite)?)(?:\?|$)/.test(retour) ? retour : suiteHabitudes ? `/habitudes/inscription?lang=${langue}` : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
     } catch (err) {
       setError(authError(err instanceof Error ? err.message : 'network', langue));
     } finally { setBusy(false); }
@@ -171,7 +171,7 @@ export function Connexion() {
     </div>
     {connexionWhatsAppActivee() && <ConnexionWhatsApp key={tab + langue} creation={tab === 'signup'} langue={langue} enLigne={enLigne} onConnexion={() => {
       const retour = location.state?.retourJournal ?? location.state?.retour;
-      navigate(typeof retour === 'string' && /^\/(?:journal|admin)(?:\?|$)/.test(retour) ? retour : suiteHabitudes ? `/habitudes/inscription?lang=${langue}` : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
+      navigate(typeof retour === 'string' && /^\/(?:journal|admin(?:\/securite)?)(?:\?|$)/.test(retour) ? retour : suiteHabitudes ? `/habitudes/inscription?lang=${langue}` : langue === 'en' ? '/espace?lang=en' : '/espace', { replace: true, state: { citationBiblique: location.state?.citationBiblique } });
     }} />}
     <fieldset className="auth-social-cadre" disabled={!enLigne}><BoutonsConnexionSociale langue={langue === 'en' ? 'en' : 'fr'} /></fieldset>
     <form id="auth-form" className="card form connexion-form" onSubmit={submit} aria-busy={busy} aria-labelledby={`auth-${tab}`}>
@@ -193,7 +193,7 @@ export function Connexion() {
       {aConfirmer && aConfirmer === email && <button type="button" className="link connexion-renvoi" disabled={renvoi || attente > 0 || !enLigne} onClick={() => void renvoyer()}><IconeConnexion nom="mail" taille={16} />{attente > 0 ? T.renvoyerDans(attente) : renvoi ? T.patienter : T.renvoyer}</button>}
       <button className="btn moment-btn" type="submit" disabled={busy || !enLigne}>{busy ? T.patienter : tab === 'signup' ? T.creer : T.connecter}{tab === 'signup' ? <IconeConnexion nom="arrow_forward" taille={18} /> : <IconeConnexion nom="east" taille={18} />}</button>
     </form>
-    {(suiteHabitudes || /^\/(?:journal|admin)(?:\?|$)/.test(location.state?.retourJournal ?? location.state?.retour ?? '')) && <p className="auth-retour">{langue === 'en' ? 'After sign-in, you will return to the requested page.' : 'Après la connexion, tu retrouveras la page demandée.'}</p>}
+    {(suiteHabitudes || /^\/(?:journal|admin(?:\/securite)?)(?:\?|$)/.test(location.state?.retourJournal ?? location.state?.retour ?? '')) && <p className="auth-retour">{langue === 'en' ? 'After sign-in, you will return to the requested page.' : 'Après la connexion, tu retrouveras la page demandée.'}</p>}
     <div className="connexion-suite">
       {tab === 'signin' && <p className="connexion-inscription"><span>{T.pasEncore}</span><button type="button" onClick={() => choose('signup')}>{T.creer}</button></p>}
       <p className="connexion-securite"><IconeConnexion nom={tab === 'signup' ? 'shield_lock' : 'verified_user'} taille={16} /><span>{T.securite}</span></p>
