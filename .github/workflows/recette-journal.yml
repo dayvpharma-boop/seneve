@@ -1,0 +1,27 @@
+name: Confidentialité du journal dans Chromium
+on:
+  push:
+    branches: ['securite/2026-11-23-confidentialite-journal', main]
+    paths: ['scripts/recette/journal-browser/**', 'src/lib/journal.ts', 'src/lib/confidentialite-session.ts', 'src/lib/hors-ligne.ts', 'src/components/ComptePrive.tsx', '.github/workflows/recette-journal.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  navigateur:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund
+      - run: npm install --no-save --package-lock=false --no-audit --no-fund playwright@1.49.1
+      - run: google-chrome --version
+      - run: npx vite build --config scripts/recette/journal-browser/vite.config.ts
+      - run: node scripts/recette/journal-browser/verifier.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: preuves-journal-chromium
+          path: preuves-journal/

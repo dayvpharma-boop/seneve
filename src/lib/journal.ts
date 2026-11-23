@@ -16,7 +16,22 @@ export function texteValide(texte: string, max: number): string | null {
   return t.length >= 1 && t.length <= max ? t : null;
 }
 
-/** Brouillons isolés par compte. Les anciennes clés sans propriétaire restent intactes mais ne sont jamais attribuées à un compte. */
+/** Efface seulement les brouillons locaux, jamais les notes synchronisées en base.
+ * Au démarrage d'une session, seul le compte vérifié peut conserver ses brouillons. */
+export function effacerBrouillons(saufUserId?: string): void {
+  const garder = saufUserId ? `seneve:compte:${encodeURIComponent(saufUserId)}:` : null;
+  try {
+    for (let i = window.localStorage.length - 1; i >= 0; i--) {
+      const k = window.localStorage.key(i);
+      if (!k) continue;
+      const personnel = k.startsWith('seneve:compte:');
+      const ancien = k.startsWith('seneve:journal:') || k === 'seneve:aide' || k.startsWith('seneve:aide:');
+      if (ancien || (personnel && (!garder || !k.startsWith(garder)))) window.localStorage.removeItem(k);
+    }
+  } catch { /* stockage indisponible */ }
+}
+
+/** Brouillons isolés par compte et effacés à la déconnexion ou au changement de compte. */
 export const draft = {
   read(key: string, userId: string): string {
     if (!userId) return '';
@@ -46,7 +61,7 @@ export const JOURNAL_TEXTES = {
     iaAide: 'Désactivé par défaut. Tu peux changer d’avis à tout moment, note par note.',
     enregistrer: 'Enregistrer la note',
     enregistrement: 'Enregistrement…',
-    brouillon: 'Brouillon conservé sur cet appareil, pas encore enregistré.',
+    brouillon: 'Brouillon sur cet appareil, pas encore enregistré. Effacé à la déconnexion.',
     enregistree: 'Note enregistrée.',
     erreurNote: 'Non enregistrée. Vérifie ta connexion et réessaie.',
     trop: (n: number) => `${n} caractères au plus.`,
@@ -129,7 +144,7 @@ export const JOURNAL_TEXTES = {
     iaAide: 'Off by default. You can change your mind at any time, note by note.',
     enregistrer: 'Save note',
     enregistrement: 'Saving…',
-    brouillon: 'Draft kept on this device, not saved yet.',
+    brouillon: 'Draft on this device, not saved yet. Cleared when you sign out.',
     enregistree: 'Note saved.',
     erreurNote: 'Not saved. Check your connection and try again.',
     trop: (n: number) => `${n} characters at most.`,
