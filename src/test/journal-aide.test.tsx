@@ -209,6 +209,33 @@ describe('Mon journal', () => {
     expect(w).toMatchObject({ participant_id: 'P1', texte: 'Ma note', usage_ia_autorise: false, enrollment_id: null, activity_id: null });
   });
 
+  it.each(['fr', 'en'])('déconnexion en %s : efface la saisie locale sans supprimer la note synchronisée', async langue => {
+    const note = {entry_id:'N1',texte:'NOTE SYNCHRONISEE FICTIVE',usage_ia_autorise:false,cree_le:'2026-10-12T08:00:00Z',modifie_le:'2026-10-12T08:00:00Z',activity_id:null};
+    tables['journal_entries'] = [note];
+    at(`/journal?lang=${langue}`);
+    expect(await screen.findByText(note.texte)).toBeInTheDocument();
+    fireEvent.change(screen.getByRole('textbox'), {target:{value:'BROUILLON FICTIF NON ENREGISTRE'}});
+    expect(draft.read('journal:libre','U1')).toBe('BROUILLON FICTIF NON ENREGISTRE');
+    changerCompte(null);
+    expect(await screen.findByText('Connexion requise')).toBeInTheDocument();
+    expect(draft.read('journal:libre','U1')).toBe('');
+    expect(writes).toEqual([]);
+    expect(tables['journal_entries']).toEqual([note]);
+    cleanup(); authId='U1'; at(`/journal?lang=${langue}`);
+    expect(await screen.findByText(note.texte)).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
+    expect(writes).toEqual([]);
+  });
+
+  it('le renouvellement du jeton ne détruit ni la saisie affichée ni son brouillon', async () => {
+    at('/journal');
+    fireEvent.change(await screen.findByPlaceholderText(/Ce que tu as compris/), {target:{value:'SAISIE FICTIVE EN COURS'}});
+    act(() => { for(const f of authListeners) f('TOKEN_REFRESHED',{user:{id:'U1'}}); });
+    expect(screen.getByRole('textbox')).toHaveValue('SAISIE FICTIVE EN COURS');
+    expect(draft.read('journal:libre','U1')).toBe('SAISIE FICTIVE EN COURS');
+    expect(writes).toEqual([]);
+  });
+
   it('nouvelle tentative après échec : même identifiant, aucune note en double', async () => {
     insertErrors = [{ code: '08006', message: 'network' }, null];
     at('/journal?ecrire=1');
