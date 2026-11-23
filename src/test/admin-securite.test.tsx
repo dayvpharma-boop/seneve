@@ -1,14 +1,16 @@
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
-const m=vi.hoisted(()=>({admin:true,facteurs:[] as {id:string;status:string}[],niveau:'aal1',listener:null as null|(()=>void),enroll:vi.fn(),verify:vi.fn(),unenroll:vi.fn()}));
+const m=vi.hoisted(()=>({connecte:true,admin:true,facteurs:[] as {id:string;status:string}[],niveau:'aal1',listener:null as null|(()=>void),enroll:vi.fn(),verify:vi.fn(),unenroll:vi.fn()}));
 vi.mock('@/lib/supabase',()=>({supabase:{rpc:async()=>({data:{admin:m.admin},error:null}),auth:{
+ getSession:async()=>({data:{session:m.connecte?{user:{id:'FICTIF'}}:null},error:null}),
  onAuthStateChange:(f:()=>void)=>{m.listener=f;return{data:{subscription:{unsubscribe:()=>{m.listener=null;}}}};},
  mfa:{listFactors:async()=>({data:{all:m.facteurs.map(f=>({...f,factor_type:'totp'})),totp:m.facteurs.filter(f=>f.status==='verified')},error:null}),getAuthenticatorAssuranceLevel:async()=>({data:{currentLevel:m.niveau},error:null}),enroll:(x:unknown)=>m.enroll(x),challengeAndVerify:(x:unknown)=>m.verify(x),unenroll:(x:unknown)=>m.unenroll(x)},
 }}}));
 import {SecuriteAdministrateur} from '@/routes/admin-securite';
+it('invite une personne déconnectée à ouvrir la connexion de production',async()=>{m.connecte=false;ouvrir();const lien=await screen.findByRole('link',{name:'Me connecter'});expect(lien).toHaveAttribute('href','/connexion?mode=signin');expect(document.title).toBe('Sécurité de l’administrateur — SÉNEVÉ');expect(m.enroll).not.toHaveBeenCalled();});
 const ouvrir=()=>render(<MemoryRouter><SecuriteAdministrateur/></MemoryRouter>);
-beforeEach(()=>{m.admin=true;m.facteurs=[];m.niveau='aal1';m.enroll.mockReset();m.verify.mockReset();m.unenroll.mockReset();localStorage.clear();
+beforeEach(()=>{m.connecte=true;m.admin=true;m.facteurs=[];m.niveau='aal1';m.enroll.mockReset();m.verify.mockReset();m.unenroll.mockReset();localStorage.clear();
  m.enroll.mockResolvedValue({data:{id:'FACTEUR_FICTIF',type:'totp',totp:{qr_code:'<svg xmlns="http://www.w3.org/2000/svg"></svg>',secret:'CLE_FICTIVE_NON_REELLE'}},error:null});
  m.unenroll.mockResolvedValue({error:null});
 });afterEach(cleanup);
