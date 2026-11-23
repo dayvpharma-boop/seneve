@@ -7,7 +7,8 @@ vi.mock('@/lib/habitudes-jour-recette',()=>({chargerHistoriqueRecette:mock.charg
 import {HistoriqueRecetteHabitudes} from '@/components/HistoriqueRecetteHabitudes';
 const occurrence={occurrence_id:'A1',enrollment_id:'E1',version:1,date_locale:'2026-10-26',requise:true};
 const jour={userId:'U1',date:'2026-10-26',jour:1,activites:[{occurrence,consigne:'Prière du matin',critere:null,heure:'06:00',etat:{...occurrence,etat:'partielle',aide_demandee:false,synchronisation:'synchronise'}}]};
-beforeEach(()=>{mock.charger.mockReset().mockResolvedValue([jour]);});afterEach(cleanup);
+// Le lien HTML doit garder le préfixe de publication GitHub Pages, même si l'outil de test sert à la racine.
+beforeEach(()=>{vi.stubEnv('BASE_URL','/seneve/');mock.charger.mockReset().mockResolvedValue([jour]);});afterEach(()=>{cleanup();vi.unstubAllEnvs();});
 const props={enrollmentId:'E1',participantId:'P1',dateLocale:'2026-10-26',langue:'fr',revision:0};
 it('charge uniquement à l’ouverture volontaire et distingue les réalisations partielles',async()=>{
  render(<HistoriqueRecetteHabitudes {...props}/>);expect(mock.charger).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'Voir mon historique et mes bilans'}));await screen.findByText('Mes bilans hebdomadaires');expect(within(screen.getByRole('region',{name:'Bilans hebdomadaires'})).getByText('Réalisées en partie')).toBeVisible();expect(screen.getByText('Réalisée en partie')).toBeInTheDocument();expect(within(screen.getByRole('region',{name:'Bilans mensuels'})).getByRole('link',{name:/journal/i})).toHaveAttribute('href','/seneve/journal?ecrire=1&depuis=habitudes&bilan=mois&periode=1&inscription=E1');expect(mock.charger).toHaveBeenCalledWith('E1','P1','2026-10-26');
