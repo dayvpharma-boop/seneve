@@ -32,6 +32,6 @@ try{for(const langue of ['fr','en']){
  await p.getByRole('button',{name:'Compte A',exact:true}).click();await p.getByTestId('compte').filter({hasText:'A'}).waitFor();
  assert.equal(await p.getByRole('textbox').inputValue(),'');assert.equal(await p.getByTestId('note').textContent(),'NOTE SYNCHRONISEE FICTIVE');
  assert.deepEqual(externes,[]);resultats.push({langue,statut:'reussi',onglets:2,requete_externe:0,auth:'fictive',notes:'fictives'});
- await mkdir('preuves-journal',{recursive:true});await p.screenshot({path:'preuves-journal/'+langue+'.png'});await context.close();
+ await mkdir('preuves-journal',{recursive:true});await writeFile('preuves-journal/'+langue+'.html',await p.content());await context.close();
  }await writeFile('preuves-journal/resultats.json',JSON.stringify({source:process.env.GITHUB_SHA??null,navigateur:'Chrome fourni par GitHub',resultats},null,2));console.log(JSON.stringify(resultats));
 }finally{await browser.close();await new Promise(r=>serveur.close(r));}
