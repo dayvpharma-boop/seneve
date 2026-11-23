@@ -13,7 +13,7 @@ const serveur=createServer(async(req,res)=>{try{
  }catch{res.writeHead(500);res.end();}});
 await new Promise(r=>serveur.listen(0,'127.0.0.1',r));
 const origin='http://127.0.0.1:'+serveur.address().port;
-const browser=await chromium.launch();const resultats=[];
+const browser=await chromium.launch({channel:'chrome'});const resultats=[];
 try{for(const langue of ['fr','en']){
  const context=await browser.newContext();const externes=[];
  await context.route('**/*',route=>{if(new URL(route.request().url()).origin===origin)return route.continue();externes.push(route.request().url());return route.abort();});
@@ -33,5 +33,5 @@ try{for(const langue of ['fr','en']){
  assert.equal(await p.getByRole('textbox').inputValue(),'');assert.equal(await p.getByTestId('note').textContent(),'NOTE SYNCHRONISEE FICTIVE');
  assert.deepEqual(externes,[]);resultats.push({langue,statut:'reussi',onglets:2,requete_externe:0,auth:'fictive',notes:'fictives'});
  await mkdir('preuves-journal',{recursive:true});await p.screenshot({path:'preuves-journal/'+langue+'.png'});await context.close();
- }await writeFile('preuves-journal/resultats.json',JSON.stringify({source:process.env.GITHUB_SHA??null,navigateur:'Chromium',resultats},null,2));console.log(JSON.stringify(resultats));
+ }await writeFile('preuves-journal/resultats.json',JSON.stringify({source:process.env.GITHUB_SHA??null,navigateur:'Chrome fourni par GitHub',resultats},null,2));console.log(JSON.stringify(resultats));
 }finally{await browser.close();await new Promise(r=>serveur.close(r));}

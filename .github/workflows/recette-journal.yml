@@ -17,7 +17,7 @@ jobs:
           node-version: 22
       - run: npm ci --no-audit --no-fund
       - run: npm install --no-save --package-lock=false --no-audit --no-fund playwright@1.49.1
-      - run: npx playwright install --with-deps chromium
+      - run: google-chrome --version
       - run: npx vite build --config scripts/recette/journal-browser/vite.config.ts
       - run: node scripts/recette/journal-browser/verifier.mjs
       - uses: actions/upload-artifact@v4
