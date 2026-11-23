@@ -7,6 +7,7 @@ import {effacerProfils} from './profil';
 import {effacerCopiesProgres} from './progres-copie';
 import {effacerCopiesJourHd} from './habitudes-copie-jour';
 import {effacerMemoire} from './memoire-pages';
+import {effacerBrouillons} from './journal';
 
 const PREFIXE = 'seneve:espace:v1:';
 
@@ -62,6 +63,7 @@ export function modifierEspace<T>(userId: string, modifier: (donnees: T) => T): 
 
 /** À la déconnexion : aucune copie ne reste sur l'appareil. */
 export function effacerEspaces(): void {
+  effacerBrouillons();
   effacerMemoire();
   effacerProfils();
   effacerCopiesProgres();

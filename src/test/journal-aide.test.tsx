@@ -154,7 +154,7 @@ describe('Mon journal', () => {
     expect(screen.queryByRole('region',{name:/Gratitude/})).toBeNull();
     expect(screen.queryByRole('link',{name:/Revenir à ma journée/})).toBeNull();expect(writes).toHaveLength(0);
   });
-  it('isole les brouillons de deux comptes et restaure celui du premier après reconnexion', async () => {
+  it('efface les brouillons lors du changement de compte et ne les restaure pas après reconnexion', async () => {
     at('/journal');
     const champ = await screen.findByPlaceholderText(/Ce que tu as compris/);
     fireEvent.change(champ, { target: { value: 'Réflexion privée de Marie' } });
@@ -162,16 +162,16 @@ describe('Mon journal', () => {
     expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue('');
     fireEvent.change(screen.getByPlaceholderText(/Ce que tu as compris/), { target: { value: 'Texte du second compte' } });
     changerCompte('U1');
-    expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue('Réflexion privée de Marie');
-    expect(draft.read('journal:libre', 'U2')).toBe('Texte du second compte');
+    expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue('');
+    expect(draft.read('journal:libre', 'U2')).toBe('');
     expect(writes).toHaveLength(0);
   });
 
-  it('ne récupère jamais un ancien brouillon sans propriétaire et le conserve intact', async () => {
+  it('efface un ancien brouillon sans propriétaire sans le récupérer', async () => {
     localStorage.setItem('seneve:journal:libre', 'Ancien texte sans compte identifié');
     at('/journal');
     expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue('');
-    expect(localStorage.getItem('seneve:journal:libre')).toBe('Ancien texte sans compte identifié');
+    expect(localStorage.getItem('seneve:journal:libre')).toBeNull();
     changerCompte(null);
     expect(await screen.findByText('Connexion requise')).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).toBeNull();
@@ -183,7 +183,7 @@ describe('Mon journal', () => {
     const citation = 'Le juste vivra par la foi. — Romains 1:17';
     render(<MemoryRouter initialEntries={[{ pathname: '/journal', state: { citationBiblique: citation } }]}><Routes><Route path="/journal" element={<Journal />} /></Routes></MemoryRouter>);
     expect(await screen.findByPlaceholderText(/Ce que tu as compris/)).toHaveValue(`Mon début de réflexion\n\n${citation}\n\n`);
-    expect(draft.read('journal:libre', 'U2')).toBe('Autre compte');
+    expect(draft.read('journal:libre', 'U2')).toBe('');
   });
 
   it('isole aussi le texte et le sujet des demandes d’aide', async () => {
@@ -194,8 +194,8 @@ describe('Mon journal', () => {
     expect(await screen.findByPlaceholderText(/Par exemple/)).toHaveValue('');
     expect(screen.getByRole('button', { name: 'Mon parcours' })).toHaveAttribute('aria-pressed', 'true');
     changerCompte('U1');
-    expect(await screen.findByPlaceholderText(/Par exemple/)).toHaveValue('Demande privée de Marie');
-    expect(screen.getByRole('button', { name: 'Mon achat' })).toHaveAttribute('aria-pressed', 'true');
+    expect(await screen.findByPlaceholderText(/Par exemple/)).toHaveValue('');
+    expect(screen.getByRole('button', { name: 'Mon parcours' })).toHaveAttribute('aria-pressed', 'true');
   });
   it('note privée par défaut : le coach IA n’y a pas accès sans accord', async () => {
     at('/journal');
@@ -207,6 +207,33 @@ describe('Mon journal', () => {
     expect(await screen.findByText('Note enregistrée.')).toBeInTheDocument();
     const w = writes.find(x => x.op === 'insert')!.value as Record<string, unknown>;
     expect(w).toMatchObject({ participant_id: 'P1', texte: 'Ma note', usage_ia_autorise: false, enrollment_id: null, activity_id: null });
+  });
+
+  it.each(['fr', 'en'])('déconnexion en %s : efface la saisie locale sans supprimer la note synchronisée', async langue => {
+    const note = {entry_id:'N1',texte:'NOTE SYNCHRONISEE FICTIVE',usage_ia_autorise:false,cree_le:'2026-10-12T08:00:00Z',modifie_le:'2026-10-12T08:00:00Z',activity_id:null};
+    tables['journal_entries'] = [note];
+    at(`/journal?lang=${langue}`);
+    expect(await screen.findByText(note.texte)).toBeInTheDocument();
+    fireEvent.change(screen.getByRole('textbox'), {target:{value:'BROUILLON FICTIF NON ENREGISTRE'}});
+    expect(draft.read('journal:libre','U1')).toBe('BROUILLON FICTIF NON ENREGISTRE');
+    changerCompte(null);
+    expect(await screen.findByText('Connexion requise')).toBeInTheDocument();
+    expect(draft.read('journal:libre','U1')).toBe('');
+    expect(writes).toEqual([]);
+    expect(tables['journal_entries']).toEqual([note]);
+    cleanup(); authId='U1'; at(`/journal?lang=${langue}`);
+    expect(await screen.findByText(note.texte)).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
+    expect(writes).toEqual([]);
+  });
+
+  it('le renouvellement du jeton ne détruit ni la saisie affichée ni son brouillon', async () => {
+    at('/journal');
+    fireEvent.change(await screen.findByPlaceholderText(/Ce que tu as compris/), {target:{value:'SAISIE FICTIVE EN COURS'}});
+    act(() => { for(const f of authListeners) f('TOKEN_REFRESHED',{user:{id:'U1'}}); });
+    expect(screen.getByRole('textbox')).toHaveValue('SAISIE FICTIVE EN COURS');
+    expect(draft.read('journal:libre','U1')).toBe('SAISIE FICTIVE EN COURS');
+    expect(writes).toEqual([]);
   });
 
   it('nouvelle tentative après échec : même identifiant, aucune note en double', async () => {
@@ -236,7 +263,7 @@ describe('Mon journal', () => {
     at('/journal');
     await screen.findByPlaceholderText(/Ce que tu as compris/);
     fireEvent.change(await screen.findByPlaceholderText(/Ce que tu as compris/), { target: { value: 'en cours' } });
-    expect(screen.getByText(/Brouillon conservé sur cet appareil/)).toBeInTheDocument();
+    expect(screen.getByText(/Brouillon sur cet appareil/)).toBeInTheDocument();
     cleanup();
     at('/journal');
     expect(await screen.findByDisplayValue('en cours')).toBeInTheDocument();

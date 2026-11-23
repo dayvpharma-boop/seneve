@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import {creerNettoyageSession} from './confidentialite-session';
 
 // Projet SÉNEVÉ — clé publiable (publique par conception). Les données sont protégées par les règles par ligne (RLS).
 // Par défaut : la vraie base (seneve-prod). Pour les essais en local, le fichier .env.local
@@ -10,6 +11,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   db: { schema: 'seneve' },
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
 });
+
+supabase.auth.onAuthStateChange(creerNettoyageSession());
 
 /** Adresse complète d'une page du site (tient compte du dossier /seneve/). */
 export function siteUrl(path: string): string {
