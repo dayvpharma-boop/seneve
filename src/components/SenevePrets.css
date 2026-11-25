@@ -1,0 +1,106 @@
+/* SÉNEVÉ Prêts — style iPhone validé le 25/11/2026 (maquette comparaison-seneve-prets). Couleurs reprises de styles-iphone.css. */
+:root .sp-page{--sp-vert:#248a3d;--sp-rouge:#d70015;--sp-orange:#c93400;--sp-fond-champ:rgb(118 118 128 / .12)}
+:root[data-apparence="sombre"] .sp-page{--sp-vert:#30d158;--sp-rouge:#ff6961;--sp-orange:#ff9f0a}
+@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]) .sp-page{--sp-vert:#30d158;--sp-rouge:#ff6961;--sp-orange:#ff9f0a}}
+:root .sp-page{color:var(--ios-encre,#1c1c1e)}
+:root .sp-grand{margin:8px 4px 14px;font:800 32px/1.08 var(--ios-police,system-ui);letter-spacing:-.025em;color:var(--ios-encre,#1c1c1e)}
+:root .sp-grand-petit{font-size:26px;margin-top:4px}
+:root .sp-message{margin:0 0 12px;padding:10px 14px;border-radius:12px;background:var(--ios-carte,rgb(255 255 255));font-size:14px}
+:root .sp-vide{margin:18px 4px;text-align:center;font-size:15px;line-height:1.45;color:var(--ios-doux,#6e6e73)}
+:root .sp-icone-vide{display:inline-grid;place-items:center;width:58px;height:58px;margin-bottom:6px;border-radius:18px;background:#5856d6;color:rgb(255 255 255)}
+/* Carte résumé */
+:root .sp-resume{display:block;margin-bottom:12px;padding:18px;border-radius:22px;color:rgb(255 255 255);background:linear-gradient(145deg,#5b4ee8,#8f7bff);box-shadow:0 6px 18px rgb(91 78 232 / .23)}
+:root[data-apparence="sombre"] .sp-resume{background:linear-gradient(145deg,#4a3fd0,#7b6cf5);box-shadow:none}
+@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]) .sp-resume{background:linear-gradient(145deg,#4a3fd0,#7b6cf5);box-shadow:none}}
+:root .sp-resume small{display:block;font-size:13px;font-weight:500;opacity:.92}
+:root .sp-gros{display:block;margin:2px 0 12px;font:700 34px/1.1 var(--ios-police,system-ui);letter-spacing:-.02em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:rgb(255 255 255)}
+:root .sp-trois{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+:root .sp-trois>div{min-width:0;padding:9px 10px;border-radius:13px;background:rgb(255 255 255 / .16)}
+:root .sp-trois small{font-size:11.5px;opacity:.88}
+:root .sp-trois b{display:block;font-size:15px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:rgb(255 255 255)}
+:root .sp-barre{height:6px;margin:12px 0 6px;overflow:hidden;border-radius:9px;background:rgb(255 255 255 / .25)}
+:root .sp-barre i{display:block;height:100%;border-radius:9px;background:rgb(255 255 255);transition:width .6s var(--ios-ressort,ease)}
+:root .sp-segment{margin:16px 0 4px}
+/* Listes groupées */
+:root .sp-titre-sec{margin:18px 14px 7px;font:500 13px/1.3 var(--ios-police,system-ui);color:var(--ios-doux,#6e6e73)}
+:root .sp-groupe{margin:0;padding:0;list-style:none;overflow:hidden;border-radius:14px;background:var(--ios-carte,rgb(255 255 255))}
+:root .sp-marge{margin-top:14px}
+:root .sp-groupe>li{position:relative}
+:root .sp-groupe>li+li::before{content:"";position:absolute;top:0;right:0;left:62px;border-top:.5px solid var(--ios-ligne,#e5e5ea)}
+:root .sp-ligne{display:flex;align-items:center;gap:11px;width:100%;min-height:64px;margin:0;padding:11px 10px 11px 14px;border:0;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+:root .sp-ligne:active{background:rgb(118 118 128 / .12)}
+:root .sp-av{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;color:rgb(255 255 255);font:700 14px/1 var(--ios-police,system-ui)}
+:root .sp-av-grand{width:68px;height:68px;font-size:24px;margin-bottom:8px}
+:root .sp-milieu{flex:1;min-width:0}
+:root .sp-milieu b{display:block;overflow:hidden;font-size:15.5px;font-weight:600;white-space:nowrap;text-overflow:ellipsis}
+:root .sp-milieu small{display:block;margin-top:1px;font-size:12.5px;color:var(--ios-doux,#6e6e73)}
+:root .sp-mini{display:block;height:4px;margin-top:6px;overflow:hidden;border-radius:9px;background:var(--ios-ligne,#e5e5ea)}
+:root .sp-mini i{display:block;height:100%;border-radius:9px;background:var(--ios-accent,#5b4ee8)}
+:root .sp-mini-large{margin:10px 0 2px}
+:root .sp-droite{flex:none;text-align:right}
+:root .sp-droite b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
+:root .sp-chev{flex:none;color:var(--ios-doux,#6e6e73)}
+:root .sp-puce{display:inline-block;margin-top:3px;padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+:root .sp-retard{color:var(--sp-rouge);background:color-mix(in srgb,var(--sp-rouge) 14%,transparent)}
+:root .sp-bientot{color:var(--sp-orange);background:color-mix(in srgb,var(--sp-orange) 14%,transparent)}
+:root .sp-libre{color:var(--ios-doux,#6e6e73);background:rgb(118 118 128 / .14)}
+:root .sp-solde{color:var(--sp-vert);background:color-mix(in srgb,var(--sp-vert) 14%,transparent)}
+/* Boutons */
+:root .sp-bouton{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:48px;margin:0;padding:0 14px;border:0;border-radius:14px;font:600 15px/1.2 var(--ios-police,system-ui);cursor:pointer;transition:transform 120ms ease-out}
+:root .sp-bouton:active{transform:scale(.98)}
+:root .sp-plein{background:#5b4ee8;color:rgb(255 255 255)}
+:root .sp-doux{background:color-mix(in srgb,var(--ios-accent,#5b4ee8) 14%,transparent);color:var(--ios-accent,#5b4ee8)}
+:root .sp-danger{background:var(--sp-rouge);color:rgb(255 255 255)}
+:root .sp-danger-doux{background:var(--ios-carte,rgb(255 255 255));color:var(--sp-rouge)}
+:root .sp-ajouter{margin:18px 0 4px}
+:root .sp-lien{display:inline-flex;align-items:center;gap:4px;min-height:44px;margin:0;padding:0;border:0;background:none;font:400 15px var(--ios-police,system-ui);color:var(--ios-accent,#5b4ee8);cursor:pointer}
+:root .sp-lien:disabled,.sp-bouton:disabled{opacity:.5}
+:root .sp-gras{font-weight:600}
+:root .sp-lien-retour{display:inline-flex;align-items:center;min-height:44px;margin:0 0 0 -6px;padding:0;border:0;background:none;font:400 16px var(--ios-police,system-ui);color:var(--ios-accent,#5b4ee8);cursor:pointer}
+/* Fiche personne */
+:root .sp-tete{display:flex;flex-direction:column;align-items:center;margin:0 0 14px;text-align:center}
+:root .sp-tete h1{margin:0;font:700 22px/1.2 var(--ios-police,system-ui);overflow-wrap:anywhere;color:var(--ios-encre,#1c1c1e)}
+:root .sp-tete small{margin-top:2px;font-size:13px;color:var(--ios-doux,#6e6e73)}
+:root .sp-anneau{display:flex;align-items:center;gap:14px;margin-bottom:10px;padding:14px;border-radius:20px;background:var(--ios-carte,rgb(255 255 255));color:var(--ios-encre,#1c1c1e)}
+:root .sp-anneau svg{flex:none}
+:root .sp-anneau b{display:block;font-size:24px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+:root .sp-anneau small{display:block;font-size:13px;color:var(--ios-doux,#6e6e73)}
+:root .sp-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:4px 0}
+:root .sp-actions>:only-child{grid-column:1/-1}
+:root .sp-pret{padding:12px 14px 4px;margin-bottom:10px}
+:root .sp-pret-haut{display:flex;align-items:flex-start;gap:10px}
+:root .sp-pret-haut>div:first-child{flex:1;min-width:0}
+:root .sp-pret-haut b{display:block;font-size:15.5px;font-weight:600;overflow-wrap:anywhere}
+:root .sp-pret-haut small{display:block;margin-top:2px;font-size:12.5px;color:var(--ios-doux,#6e6e73)}
+:root .sp-pret-actions{display:flex;flex-wrap:wrap;gap:4px 18px}
+:root .sp-hist{display:flex;align-items:center;gap:11px;min-height:52px;padding:6px 8px 6px 14px}
+:root .sp-groupe>li.sp-hist+li::before{left:53px}
+:root .sp-pastille{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;color:rgb(255 255 255);font-size:14px;font-weight:700}
+:root .sp-hist>b{flex:none;font-size:15px;font-variant-numeric:tabular-nums}
+:root .sp-plus{color:var(--sp-vert)}
+:root .sp-supprimer{flex:none;display:grid;place-items:center;min-width:40px;height:40px;margin:0;padding:0 6px;border:0;border-radius:10px;background:none;color:var(--ios-doux,#6e6e73);font:600 13px var(--ios-police,system-ui);cursor:pointer}
+:root .sp-confirmer{background:var(--sp-rouge);color:rgb(255 255 255)}
+/* Formulaires */
+:root .sp-formulaire{margin:10px 0 4px}
+:root .sp-formulaire fieldset,.sp-page form fieldset{min-width:0;margin:0;padding:0;border:0}
+:root .sp-champ{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:50px;padding:0 14px;font-size:16px}
+:root .sp-champ+.sp-champ::before{content:"";position:absolute;top:0;right:0;left:14px;border-top:.5px solid var(--ios-ligne,#e5e5ea)}
+:root .sp-champ>span:first-child{flex:none}
+:root .sp-champ input,.sp-champ select{flex:1;min-width:0;min-height:44px;margin:0;padding:0;border:0;border-radius:0;outline:none;background:transparent;box-shadow:none;font:inherit;font-size:16px;text-align:right;color:inherit;font-variant-numeric:tabular-nums;color-scheme:light dark}
+:root .sp-champ select{color:var(--ios-accent,#5b4ee8)}
+:root .sp-champ input::placeholder{color:var(--ios-doux,#6e6e73);opacity:.6}
+:root .sp-champ:focus-within>span:first-child{color:var(--ios-accent,#5b4ee8)}
+:root .sp-fixe{color:var(--ios-doux,#6e6e73)}
+:root .sp-bascule{position:relative;flex:none;width:51px;height:31px;margin:0;padding:0;border:0;border-radius:99px;background:rgb(120 120 128 / .32);cursor:pointer;transition:background-color .2s ease}
+:root .sp-bascule::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:rgb(255 255 255);box-shadow:0 2px 4px rgb(0 0 0 / .2);transition:transform .25s var(--ios-ressort,ease)}
+:root .sp-bascule[aria-checked="true"]{background:#34c759}
+:root .sp-bascule[aria-checked="true"]::after{transform:translateX(20px)}
+:root .sp-aide{margin:0;padding:2px 14px 4px;font-size:13px;color:var(--ios-doux,#6e6e73)}
+:root .sp-aide .sp-lien{min-height:32px;font-size:13px;font-weight:600}
+:root .sp-pied{padding:12px 0 2px}
+:root .sp-formulaire .sp-pied{padding:8px 14px 14px}
+:root .sp-barre-form{display:flex;justify-content:space-between;align-items:center}
+@media (prefers-reduced-motion:reduce){:root .sp-barre i,:root .sp-bascule::after,:root .sp-bouton{transition:none}}
+/* Passe devant le fond gris des champs de styles-iphone.css (.hd-ecran.ios) : ici les champs sont dans des lignes groupées. */
+:root:root:root:root:root:root:root .sp-page .sp-champ :is(input,select){background:transparent!important;border-radius:0!important;text-align:right}
+:root:root:root:root:root:root:root .sp-page .sp-champ select{color:var(--ios-accent,#5b4ee8)!important}

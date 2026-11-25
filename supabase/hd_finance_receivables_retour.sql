@@ -1,3 +1,5 @@
 -- Désactivation réversible : conserver tous les prêts et remboursements, ne rien supprimer.
 revoke execute on function seneve.hd_finance_receivables_get(uuid),seneve.hd_finance_receivable_add(uuid,uuid,text,numeric,text,date,date),seneve.hd_finance_receivable_payment_add(uuid,uuid,uuid,numeric,date),seneve_private.hd_finance_receivables_get(uuid),seneve_private.hd_finance_receivable_add(uuid,uuid,text,numeric,text,date,date),seneve_private.hd_finance_receivable_payment_add(uuid,uuid,uuid,numeric,date) from authenticated;
 notify pgrst,'reload schema';
+-- Édition du 25/11 (motif, correction, suppression) : fermer aussi ces RPC. La colonne « note » et les données restent.
+revoke execute on function seneve.hd_finance_receivable_save(uuid,uuid,text,numeric,text,date,date,text),seneve.hd_finance_receivable_delete(uuid,uuid),seneve.hd_finance_receivable_payment_delete(uuid,uuid),seneve_private.hd_finance_receivable_save(uuid,uuid,text,numeric,text,date,date,text),seneve_private.hd_finance_receivable_delete(uuid,uuid),seneve_private.hd_finance_receivable_payment_delete(uuid,uuid) from authenticated;
