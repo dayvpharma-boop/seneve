@@ -43,3 +43,8 @@ beforeEach(() => {
     }
   } catch { /* pas de stockage dans cet environnement */ }
 });
+
+// Aucun appel réseau réel dans les tests unitaires. Chaque test qui en a besoin fournit sa réponse simulée.
+beforeEach(() => {
+  vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('Réseau désactivé dans les tests unitaires'); }));
+});

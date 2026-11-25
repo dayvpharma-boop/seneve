@@ -1,0 +1,12 @@
+vi.mock('@/lib/supabase',()=>({supabase:{rpc:vi.fn()}}));
+import {beforeEach,it,expect,vi} from 'vitest';
+import {render,screen,fireEvent,waitFor} from '@testing-library/react';
+import {MemoryRouter} from 'react-router-dom';
+import {OnMeDoit} from '@/components/OnMeDoit';
+const api=vi.hoisted(()=>({charger:vi.fn(),saisir:vi.fn()}));
+vi.mock('@/lib/finance-creances',async original=>({...await original<typeof import('@/lib/finance-creances')>(),chargerCreances:api.charger,saisirCreance:api.saisir}));
+vi.mock('@/components/CadreHabitudes',()=>({CadreHabitudes:({children}:{children:React.ReactNode})=><div>{children}</div>}));
+const id='00000000-0000-4000-8000-000000000001';
+beforeEach(()=>{vi.clearAllMocks();api.saisir.mockResolvedValue({});api.charger.mockResolvedValue({enrollment_id:id,loans:[{loan_id:id,borrower:'Paul',amount:'100.00',currency:'USD',loan_date:'2026-11-01',due_date:null,payments:[{payment_id:id,amount:'30.00',payment_date:'2026-11-02'}]}]});});
+it('affiche le restant et bloque un remboursement trop élevé',async()=>{render(<MemoryRouter><OnMeDoit userId="u"/></MemoryRouter>);await screen.findByText('Paul');fireEvent.click(screen.getByText('Noter un remboursement reçu'));fireEvent(screen.getByText('Noter un remboursement reçu').parentElement!,new Event('toggle'));await waitFor(()=>expect(screen.getByLabelText('Montant reçu')).toBeTruthy());fireEvent.change(screen.getByLabelText('Montant reçu'),{target:{value:'71'}});fireEvent.submit(screen.getByRole('button',{name:'Enregistrer le remboursement'}).closest('form')!);expect(api.saisir).not.toHaveBeenCalled();expect(screen.getByRole('status').textContent).toContain('Vérifie le montant');});
+it('affiche une erreur de chargement sans inventer un solde',async()=>{api.charger.mockRejectedValue(Error());render(<MemoryRouter><OnMeDoit userId="u"/></MemoryRouter>);expect(await screen.findByRole('alert')).toHaveTextContent('Suivi indisponible');expect(screen.queryByText('Paul')).toBeNull();});

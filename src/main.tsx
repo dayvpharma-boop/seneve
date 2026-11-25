@@ -71,6 +71,7 @@ const HabitudesDepenses = lazy(() => import('@/routes/habitudes-depenses').then(
 const HabitudesBenefices = lazy(() => import('@/routes/habitudes-benefices').then(m => ({ default: m.RouteHabitudesBenefices })));
 const HabitudesRapport = lazy(() => import('@/routes/habitudes-rapport').then(m => ({ default: m.RouteHabitudesRapport })));
 const HabitudesRepartition = lazy(() => import('@/routes/habitudes-repartition').then(m => ({ default: m.HabitudesRepartition })));
+const OnMeDoit = lazy(() => import('@/components/OnMeDoit').then(m => ({ default: m.RouteOnMeDoit })));
 const SuiviEpargneDettes = lazy(() => import('@/components/SuiviEpargneDettes').then(m => ({ default: m.RouteSuiviEpargneDettes })));
 const Offres = lazy(() => import('@/routes/offres').then(m => ({ default: m.Offres })));
 const Bibliotheque = lazy(() => import('@/routes/bibliotheque').then(m => ({ default: m.Bibliotheque })));
@@ -128,6 +129,7 @@ if (root) createRoot(root).render(
         <Route path="/habitudes/benefices" element={<HabitudesBenefices />} />
         <Route path="/habitudes/rapport" element={<HabitudesRapport />} />
         <Route path="/habitudes/epargne" element={<SuiviEpargneDettes mode="epargne" />} />
+        <Route path="/habitudes/creances" element={<OnMeDoit />} />
         <Route path="/habitudes/dettes" element={<SuiviEpargneDettes mode="dettes" />} />
         <Route path="/bibliotheque" element={<Bibliotheque/>}/>
         <Route path="/livre" element={<Bibliotheque detail/>}/>
