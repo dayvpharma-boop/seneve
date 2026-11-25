@@ -90,7 +90,7 @@ export function OnMeDoit({userId}:{userId:string}) {
     <small>{l('Reste à récupérer','Still owed')}</small><strong className="sp-gros">{argent(t.total-t.recu,t.devise)}</strong>
     <div className="sp-trois"><div><small>{l('Prêté','Lent')}</small><b>{nombre(t.total,t.devise)}</b></div><div><small>{l('Reçu','Received')}</small><b>{nombre(t.recu,t.devise)}</b></div><div><small>{l('Personnes','People')}</small><b>{new Set(suivi.loans.filter(x=>x.currency===t.devise&&resteCreance(x)>0).map(x=>x.borrower.trim().toLowerCase())).size}</b></div></div>
     <div className="sp-barre" aria-hidden="true"><i style={{width:`${pct}%`}}/></div><small>{l(`${pct} % déjà remboursé`,`${pct}% already repaid`)}</small></section>;})}
-   {!suivi.loans.length?<div className="sp-vide"><span className="sp-icone-vide" aria-hidden="true"><IconeHD nom="handshake" className="text-[30px]"/></span><p>{l('Aucun prêt enregistré. Ajoute une personne qui te doit de l’argent.','No loans recorded. Add someone who owes you money.')}</p></div>:<>
+   {!suivi.loans.length?<div className="sp-vide"><span className="sp-icone-vide" aria-hidden="true"><IconeHD nom="currency_exchange" className="text-[30px]"/></span><p>{l('Aucun prêt enregistré. Ajoute une personne qui te doit de l’argent.','No loans recorded. Add someone who owes you money.')}</p></div>:<>
     <div className="sim-ios-segment sp-segment" role="radiogroup" aria-label={l('Prêts','Loans')}>
      <button type="button" role="radio" aria-checked={segment==='cours'} onClick={()=>setSegment('cours')}>{l('En cours','Active')} · {enCours.length}</button>
      <button type="button" role="radio" aria-checked={segment==='soldes'} onClick={()=>setSegment('soldes')}>{l('Soldés','Repaid')} · {soldes.length}</button>

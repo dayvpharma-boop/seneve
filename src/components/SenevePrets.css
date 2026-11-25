@@ -7,11 +7,9 @@
 :root .sp-grand-petit{font-size:26px;margin-top:4px}
 :root .sp-message{margin:0 0 12px;padding:10px 14px;border-radius:12px;background:var(--ios-carte,rgb(255 255 255));font-size:14px}
 :root .sp-vide{margin:18px 4px;text-align:center;font-size:15px;line-height:1.45;color:var(--ios-doux,#6e6e73)}
-:root .sp-icone-vide{display:inline-grid;place-items:center;width:58px;height:58px;margin-bottom:6px;border-radius:18px;background:#5856d6;color:rgb(255 255 255)}
-/* Carte résumé */
-:root .sp-resume{display:block;margin-bottom:12px;padding:18px;border-radius:22px;color:rgb(255 255 255);background:linear-gradient(145deg,#5b4ee8,#8f7bff);box-shadow:0 6px 18px rgb(91 78 232 / .23)}
-:root[data-apparence="sombre"] .sp-resume{background:linear-gradient(145deg,#4a3fd0,#7b6cf5);box-shadow:none}
-@media (prefers-color-scheme:dark){:root:not([data-apparence="clair"]) .sp-resume{background:linear-gradient(145deg,#4a3fd0,#7b6cf5);box-shadow:none}}
+:root .sp-icone-vide{display:inline-grid;place-items:center;width:58px;height:58px;margin-bottom:6px;border-radius:18px;background:#ff9500;color:rgb(255 255 255)}
+/* Carte résumé : violet plein, sans dégradé (demande du 26/11/2026), comme la carte du Simulateur. */
+:root .sp-resume{display:block;margin-bottom:12px;padding:18px;border-radius:22px;color:rgb(255 255 255);background:#5b4ee8;box-shadow:0 1px 3px rgb(0 0 0 / .08)}
 :root .sp-resume small{display:block;font-size:13px;font-weight:500;opacity:.92}
 :root .sp-gros{display:block;margin:2px 0 12px;font:700 34px/1.1 var(--ios-police,system-ui);letter-spacing:-.02em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:rgb(255 255 255)}
 :root .sp-trois{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
