@@ -30,7 +30,7 @@ export function OnMeDoit({userId}:{userId:string}) {
  }
  const champ=(id:string,label:string,value:string,onChange:(s:string)=>void,type='text',min?:string,max?:string)=><label className="flex flex-col gap-2 py-2" htmlFor={id}>{label}<input className="rounded-xl border p-3 min-h-[44px]" style={{background:'var(--ios-fond,#f2f2f7)',color:'inherit',minWidth:0,width:'100%'}} id={id} type={type} value={value} required onChange={e=>onChange(e.target.value)} min={min} max={max} maxLength={type==='text'?80:undefined} inputMode={type==='number'?'decimal':undefined} step={type==='number'?'any':undefined}/></label>;
  const totaux=suivi?.loans.reduce<Record<string,{total:number;reste:number}>>((a,x)=>{const t=a[x.currency]??{total:0,reste:0};a[x.currency]={total:t.total+centsCreance(x.amount),reste:t.reste+resteCreance(x)};return a;},{})??{};
- return <CadreHabitudes titre={l('On me doit','Money owed to me')} langue={langue} retour={`/espace${en?'?lang=en':''}`} actif="aujourdhui"><main className="sim-ios mx-auto w-full max-w-xl px-4 pb-8">
+ return <CadreHabitudes titre={l('SÉNEVÉ Prêts','SÉNEVÉ Loans')} langue={langue} retour={`/espace${en?'?lang=en':''}`} actif="aujourdhui"><main className="sim-ios mx-auto w-full max-w-xl px-4 pb-8">
  <p className="my-4">{l('Les sommes que tu as prêtées et les remboursements reçus.','Money you have lent and repayments received.')}</p>
  <p className="sim-ios-note">{l('Suivi privé. Ces saisies ne modifient pas tes caisses et ne sont pas réparties comme un revenu. Aucun transfert ni message automatique.','Private tracker. These entries do not change your cash balances or allocate income. No automatic transfers or messages.')}</p>
  {message&&<p role="status" className="my-4 rounded-xl border p-3">{message}</p>}
