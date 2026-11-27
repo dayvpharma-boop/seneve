@@ -1,0 +1,81 @@
+/* Lisibilité des textes (demande de Dr Justin du 27/11/2026 : « les textes sont trop blancs, trop pâles »).
+ * Audit automatique de toutes les pages en mode sombre et en mode clair, sur écran de téléphone :
+ * chaque texte doit atteindre 4,5:1 (3:1 pour les grands titres) face à son fond.
+ * Chargé tout à la fin : les sélecteurs répètent :root pour passer devant styles-iphone et styles-sombre-doux.
+ * Le blanc est écrit rgb(255 255 255) car le greffon des palettes remplace #fff par la surface de la palette. */
+
+/* ── 1. Lecteur de prière (Amidah) en mode sombre ──
+ * Avant : le fond de la fenêtre restait clair (couleur de palette) alors que l'en-tête, les commandes et les textes
+ * passaient en version de nuit → textes blancs sur fond clair, boutons A−/A+ et « English » invisibles.
+ * Maintenant : tout le cadre est sombre ; seule la page du texte reste blanche (« îlot clair » du 31/10). */
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere{background:rgb(0 0 0)!important;color:#f2f2f7!important;color-scheme:dark}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-tete{background:rgb(0 0 0 / .86)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-tete>button{color:#f2f2f7!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-tailles{background:transparent!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-tailles button{background:#2c2c2e!important;color:#f2f2f7!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-meta{color:#d1d1d6!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-meta>span:first-child{background:rgb(255 224 143 / .14)!important;color:#ffe08f!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-langues{background:#1c1c1e!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-langues button{color:#f2f2f7!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-langues button[aria-pressed="true"]{background:#3a3a3c!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-langues>span{color:#aeaeb2!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-information{background:#1c1c1e!important;color:#c7c7cc!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-signets{background:rgb(0 0 0 / .92)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-commandes-repere button{background:color-mix(in srgb,var(--sd-teinte) 22%,#1c1c1e)!important;color:var(--sd-texte)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere :is(.ap-signets p,.ap-signets small,.ap-source,.ap-etat){color:#aeaeb2!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-actions{background:rgb(28 28 30 / .94)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-actions :is(button,a):not(.ap-boutons *){color:#c7c7cc!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-boutons :is(button,a):not(.ap-confirmer){background:#2c2c2e!important;color:#f2f2f7!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-boutons :is(button,a):not(.ap-confirmer) *{color:inherit!important}
+
+/* Lecteur, dans les deux modes : un bouton indisponible reste lisible (il paraît grisé, pas effacé). */
+:root:root:root:root:root:root:root:root dialog.hd-lecteur-priere :is(button:disabled,[aria-disabled="true"]){opacity:.75!important}
+:root:root:root:root:root:root:root:root dialog.hd-lecteur-priere .ap-langues>span{color:#636366!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-langues>span{color:#aeaeb2!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) dialog.hd-lecteur-priere .ap-information{color:#48484a!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) dialog.hd-lecteur-priere .ap-commandes-repere button{color:var(--accent-fonce,#4437c9)!important}
+/* « Prière déclarée » : c'est une confirmation, elle doit se lire nettement. */
+:root:root:root:root:root:root:root:root dialog.hd-lecteur-priere .ap-boutons .ap-confirmer:disabled{opacity:1!important;background:color-mix(in srgb,var(--ios-accent,#5b4ee8) 14%,rgb(255 255 255))!important;color:var(--accent-fonce,#3a3194)!important;-webkit-text-fill-color:var(--accent-fonce,#3a3194)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] dialog.hd-lecteur-priere .ap-boutons .ap-confirmer:disabled{background:color-mix(in srgb,var(--sd-teinte) 22%,#1c1c1e)!important;color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
+:root:root:root:root:root:root:root:root dialog.hd-lecteur-priere .ap-boutons .ap-confirmer:disabled *{color:inherit!important;-webkit-text-fill-color:inherit!important}
+
+/* ── 2. Cadres blancs affichés en mode sombre : l'accent doit reprendre sa version de jour (foncée). ── */
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.ilot-clair,[id^="hd-activite-"] article,.hd-lectures-bloc,.bb-ambiance-ivoire .bb-texte,.hd-lecteur-priere .ap-texte,.finance-cartes-lisibles section.bg-white){--ios-accent:var(--accent,#5b4ee8);--ios-accent-2:var(--accent-moyen,#5b4ee8)}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] .bb-ambiance-ivoire .bb-texte .bb-verset sup{color:var(--accent,#5b4ee8)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] .finance-cartes-lisibles section.bg-white a{color:var(--accent,#5b4ee8)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.hd-public-hero .hd-public-cta:not(.hd-public-cta-secondary),.decouverte-hd-activer){color:var(--accent,#5b4ee8)!important;-webkit-text-fill-color:var(--accent,#5b4ee8)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.hd-public-hero .hd-public-cta:not(.hd-public-cta-secondary),.decouverte-hd-activer) *{color:inherit!important;-webkit-text-fill-color:inherit!important}
+
+/* ── 3. Encadrés orange (aide d'urgence, compteur du coach) en mode sombre ── */
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] .aide-page .aide-urgence :is(p,h2,strong,a){color:#f2f2f7!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] .coach-page .coach-quota{color:#ffb340!important}
+
+/* ── 4. Boutons indisponibles (« Envoyer ma demande », « Utiliser ce code »…) : grisés mais lisibles. ── */
+:root:root:root:root:root:root:root:root :is(.btn,.action-btn,.moment-btn):disabled{opacity:1!important;background:#e5e5ea!important;background-image:none!important;color:#636366!important;-webkit-text-fill-color:#636366!important;box-shadow:none!important;border-color:transparent!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.btn,.action-btn,.moment-btn):disabled{background:#2c2c2e!important;color:#aeaeb2!important;-webkit-text-fill-color:#aeaeb2!important}
+:root:root:root:root:root:root:root:root :is(.btn,.action-btn,.moment-btn):disabled *{color:inherit!important;-webkit-text-fill-color:inherit!important}
+
+/* ── 5. Finances (simulateur, répartition, dépenses, bénéfices, rapport) ── */
+/* Gris secondaire plus foncé en mode clair (#86868b → #636366). */
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) .sim-pro{--sp-doux:#636366}
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) .dp-page{--dp-doux:#636366!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) .sim-ios :is(.sim-ios-note,.sim-ios-titre,.sim-ios-sous,.sim-ios-attente){color:#636366!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) .sim-ios-segment button:not([aria-checked="true"]){color:#48484a!important}
+/* Pourcentages en couleur : version foncée sur fond blanc. */
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) .sim-pro .sim-ios-pas .sim-ios-valeur{color:color-mix(in srgb,var(--teinte,#636366) 62%,#000)!important}
+/* Signe « − » rouge. */
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) :is(.sim-ios-ligne .sim-ios-signe,.rep-page .rep-moins){color:#c4271d!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.sim-ios-ligne .sim-ios-signe,.rep-page .rep-moins){color:#ff8a80!important}
+/* Pastille de devise et bouton « Se connecter » de la répartition. */
+:root:root:root:root:root:root:root:root .choix-pastille{text-shadow:0 0 1px rgb(0 0 0 / .45),0 1px 2px rgb(0 0 0 / .35)}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] .rep-page .rep-charges-action:not(:disabled){color:rgb(255 255 255)!important;-webkit-text-fill-color:rgb(255 255 255)!important}
+
+/* Chiffres clés des encadrés « Habitudes & Défis » (texte blanc sur la couleur d'accent) : blanc plein. */
+:root:root:root:root:root:root:root:root :is(.dhd-chiffres dt,.dhd-chiffres dd,.hd-public-chiffres dt,.hd-public-chiffres dd){color:rgb(255 255 255)!important;opacity:1!important}
+
+/* ── 6. Abonnement : vert « Active » et « 2 mois offerts » plus foncé en mode clair. ── */
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]) .ab-page{--ab-vert-texte:#1d6f36}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] .ab-page .ab-bouton-s{color:var(--sd-texte)!important}
+
+/* ── 7. Gris secondaire de l'interface iPhone, mode clair : #6e6e73 → #636366 (5,4:1 sur le fond gris). ── */
+:root:root:root:root:root:root:root:root:not([data-apparence="sombre"]){--ios-doux:#636366}

@@ -191,3 +191,5 @@ import './styles-accents-iphone.css';
 // Polissage « unslop » (12/11/2026) : toujours en dernier.
 import './styles-unslop.css';
 import './styles-sombre-doux.css';
+// Lisibilité des textes, vérifiée page par page en mode sombre et clair (27/11/2026) : toujours tout à la fin.
+import './styles-contrastes.css';

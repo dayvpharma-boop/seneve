@@ -2,7 +2,9 @@
  * de nuit) des gros boutons et cartes deviennent un ton sombre teinté, comme « Lectures du jour ». Le texte prend l'accent ;
  * les cartes gardent un texte blanc. Les petits repères (barres de progression, pastilles, coches) ne changent pas.
  * Mode clair inchangé. Chargé en dernier. */
-:root{--sd-teinte:var(--accent-nuit,var(--ios-accent,#8f84ff))}
+:root{--sd-teinte:var(--accent-nuit,var(--ios-accent,#8f84ff));
+ /* 27/11/2026 : texte des boutons teintés éclairci (accent mêlé de blanc) → au moins 5,5:1 sur leur fond, pour chaque couleur d'accent. */
+ --sd-texte:color-mix(in srgb,var(--sd-teinte) 60%,#f5f5f7)}
 :root:root:root:root:root:root:root[data-apparence="sombre"] .ios-bouton,
 :root:root:root:root:root:root:root[data-apparence="sombre"] .ios-section button.bg-hd-secondary,
 :root:root:root:root:root:root:root[data-apparence="sombre"] .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a),
@@ -27,7 +29,7 @@
 :root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action,
 :root:root:root:root:root:root:root[data-apparence="sombre"] .btn:not(.link):not(.btn-link):not(.btn-secondaire):not(.btn-danger):not(:disabled),
 :root:root:root:root:root:root:root[data-apparence="sombre"] .sim-ios-bouton,
-:root:root:root:root:root:root:root[data-apparence="sombre"] .ab-cta{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;background-image:none!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;border-color:transparent!important;box-shadow:none!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ab-cta{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;background-image:none!important;color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important;border-color:transparent!important;box-shadow:none!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] .ios-bouton :is(svg,span,b,strong,i,small),
 :root:root:root:root:root:root:root[data-apparence="sombre"] .ios-section button.bg-hd-secondary :is(svg,span,b,strong,i,small),
 :root:root:root:root:root:root:root[data-apparence="sombre"] .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a) :is(svg,span,b,strong,i,small),
@@ -59,8 +61,8 @@
 :root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain :is(small,time,b,p,span,strong),
 :root:root:root:root:root:root:root[data-apparence="sombre"] .coach-page.ios .coach-msg-moi .coach-bulle :is(small,time,b,p,span,strong),
 :root:root:root:root:root:root:root[data-apparence="sombre"] .sim-ios-resultat :is(small,time,b,p,span,strong){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain small{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;opacity:1!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain span.ios-rond.ios-rond,:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain span.ios-rond.ios-rond *{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain small{color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important;opacity:1!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain span.ios-rond.ios-rond,:root:root:root:root:root:root:root[data-apparence="sombre"] .ios-prochain span.ios-rond.ios-rond *{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-texte)!important}
 @media (prefers-color-scheme:dark){
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-bouton,
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-section button.bg-hd-secondary,
@@ -86,7 +88,7 @@
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action,
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .btn:not(.link):not(.btn-link):not(.btn-secondaire):not(.btn-danger):not(:disabled),
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .sim-ios-bouton,
-:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ab-cta{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;background-image:none!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;border-color:transparent!important;box-shadow:none!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ab-cta{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;background-image:none!important;color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important;border-color:transparent!important;box-shadow:none!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-bouton :is(svg,span,b,strong,i,small),
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-section button.bg-hd-secondary :is(svg,span,b,strong,i,small),
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .bl-page.ios :is(.bl-principal,.bl-acces-bouton,.bl-parcours a) :is(svg,span,b,strong,i,small),
@@ -118,19 +120,19 @@
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain :is(small,time,b,p,span,strong),
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .coach-page.ios .coach-msg-moi .coach-bulle :is(small,time,b,p,span,strong),
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) .sim-ios-resultat :is(small,time,b,p,span,strong){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
-:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain small{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important;opacity:1!important}
-:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain span.ios-rond.ios-rond,:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain span.ios-rond.ios-rond *{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain small{color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important;opacity:1!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain span.ios-rond.ios-rond,:root:root:root:root:root:root:root:not([data-apparence="clair"]) .ios-prochain span.ios-rond.ios-rond *{background:color-mix(in srgb,var(--sd-teinte) 30%,#1c1c1e)!important;color:var(--sd-texte)!important}
 }
 /* Carte du parcours choisi en haut d'Aujourd'hui et de Parcours (13/11/2026, 20h05) : même ton que Prochain rendez-vous. */
 :root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"]{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;background-image:none!important;color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--sd-teinte) 28%,transparent)!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] :is(.jn-tab-nom,.jn-tab-meta){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-meta{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-meta{color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .14)!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-barre i{background:var(--sd-teinte)!important}
 @media (prefers-color-scheme:dark){
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"]{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;background-image:none!important;color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important;box-shadow:none!important;border:1px solid color-mix(in srgb,var(--sd-teinte) 28%,transparent)!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] :is(.jn-tab-nom,.jn-tab-meta){color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
-:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-meta{color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-meta{color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-barre{background:rgb(255 255 255 / .14)!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) :is(.espace-page,.parcours-page) .prog-tab[aria-selected="true"] .jn-tab-barre i{background:var(--sd-teinte)!important}
 }
@@ -146,12 +148,12 @@
 /* Mode sombre : « Ta première action » est une carte (texte blanc), pas un bouton — 19/11/2026. */
 :root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;background-image:none!important;color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--sd-teinte) 35%,transparent)!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action .action{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action .tag,:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action .tag :is(svg,:root:root:root:root:root:root:root[data-apparence="sombre"]span){color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action .tag,:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action .tag :is(svg,:root:root:root:root:root:root:root[data-apparence="sombre"]span){color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
 :root:root:root:root:root:root:root[data-apparence="sombre"] #s-result.resultat-anneaux .result-action .src{color:#aeaeb2!important;-webkit-text-fill-color:#aeaeb2!important}
 @media (prefers-color-scheme:dark){
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action{background:color-mix(in srgb,var(--sd-teinte) 20%,#1c1c1e)!important;background-image:none!important;color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--sd-teinte) 35%,transparent)!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action .action{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
-:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action .tag,:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action .tag :is(svg,:root:root:root:root:root:root:root:not([data-apparence="clair"])span){color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action .tag,:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action .tag :is(svg,:root:root:root:root:root:root:root:not([data-apparence="clair"])span){color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result.resultat-anneaux .result-action .src{color:#aeaeb2!important;-webkit-text-fill-color:#aeaeb2!important}
 }
 
@@ -169,21 +171,21 @@
 
 /* Mode sombre : garder le texte foncé du bouton compte et l'icône du titre en accent (19/11/2026). */
 :root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .result-action-compte .choix-continuer{color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
-:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .tag :is(svg,.material-symbols-outlined,i,span){color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .tag :is(svg,.material-symbols-outlined,i,span){color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
 @media (prefers-color-scheme:dark){
 :root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .result-action-compte .choix-continuer{color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
-:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .tag :is(svg,.material-symbols-outlined,i,span){color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .tag :is(svg,.material-symbols-outlined,i,span){color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
 }
 
 /* Mode sombre : pastille « Créer mon espace » (19/11/2026). */
 :root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-bouton{background:#2c2c2e!important;box-shadow:0 10px 24px -12px rgb(0 0 0 / .8),inset 0 0 0 1px rgb(255 255 255 / .08)!important}
-:root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-icone{background:color-mix(in srgb,var(--sd-teinte) 22%,#2c2c2e)!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-icone{background:color-mix(in srgb,var(--sd-teinte) 22%,#2c2c2e)!important;color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
 :root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-textes b{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
 :root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-textes small{color:#aeaeb2!important;-webkit-text-fill-color:#aeaeb2!important}
 :root:root:root:root:root:root:root:root[data-apparence="sombre"] #s-result .result-action .rac-fleche{background:var(--sd-teinte)!important;color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
 @media (prefers-color-scheme:dark){
 :root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-bouton{background:#2c2c2e!important;box-shadow:0 10px 24px -12px rgb(0 0 0 / .8),inset 0 0 0 1px rgb(255 255 255 / .08)!important}
-:root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-icone{background:color-mix(in srgb,var(--sd-teinte) 22%,#2c2c2e)!important;color:var(--sd-teinte)!important;-webkit-text-fill-color:var(--sd-teinte)!important}
+:root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-icone{background:color-mix(in srgb,var(--sd-teinte) 22%,#2c2c2e)!important;color:var(--sd-texte)!important;-webkit-text-fill-color:var(--sd-texte)!important}
 :root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-textes b{color:#f5f5f7!important;-webkit-text-fill-color:#f5f5f7!important}
 :root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-textes small{color:#aeaeb2!important;-webkit-text-fill-color:#aeaeb2!important}
 :root:root:root:root:root:root:root:root:not([data-apparence="clair"]) #s-result .result-action .rac-fleche{background:var(--sd-teinte)!important;color:#1c1c1e!important;-webkit-text-fill-color:#1c1c1e!important}
